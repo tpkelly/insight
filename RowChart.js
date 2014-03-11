@@ -9,9 +9,8 @@
     this.y = d3.scale.ordinal();
 
     this.maxValue = function () {
-        var max = d3.max(this.group().all(), function (d) { return d.value; });
+        var max = d3.max(this.group().all(), function (d) { return self._valueAccessor(d); });
         return max;
-
     }
 
     this.initializeAxes = function () {
@@ -44,7 +43,7 @@
     this.barXPosition = function (d) {
         var x = self.xBounds().start;
         if (self.invert()) {
-            x = self.xBounds().end - self.x(d.value);
+            x = self.xBounds().end - self.x(_valueAccessor(d));
         }
         return x;
     }
@@ -61,7 +60,7 @@
             .enter().append("rect")
                 .attr("x", this.barXPosition)
                 .attr("y", function (d, i) { return self.y(d.key); })
-                .attr("width", function (d) { return self.x(d.value) - self.xBounds().start; })
+                .attr("width", function (d) { return self.x(self._valueAccessor(d)) - self.xBounds().start; })
                 .attr("height", function (d) { return self.y.rangeBand(); })
                 .attr("fill", this.barColor)
             .on("click", function (filter) { self.filterClick(this, filter); })
@@ -79,7 +78,7 @@
             .style("font-size", function () { return self.labelFontSize(); })
             .attr("fill", function () { return self.labelColor(); })
             .attr("text-anchor", function (d) { return this.labelAnchoring; })
-            .text(function (d) { return d.key; });
+            .text(function (d) { return self._labelAccessor(d); });
     }
 
     this.draw = function () {

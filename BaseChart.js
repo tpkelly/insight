@@ -3,9 +3,12 @@
     this.dimension = dimension;
     this.group = group;
     this._keyAccessor = function (d) { return d.key; };
+    this._barColor = '#acc3ee';
     this._valueAccessor = function (d) { return d.value; };
     this._limitFunction = function (d) { return true; };
+    this._labelAccessor = function (d) { return d.key; };
     this._labelFontSize = "11px";
+    this._redrawAxes = false;
     this.isFiltered = false;
     this._margin = { top: 50, bottom: 100, left: 50, right: 50 };
     this.duration = 500;
@@ -64,9 +67,22 @@ BaseChart.prototype.keyAccessor = function (k) {
     return this;
 }
 
+BaseChart.prototype.labelAccessor = function (k) {
+    if (!arguments.length) { return this._labelAccessor; }
+    this._labelAccessor = k;
+    return this;
+}
+
 BaseChart.prototype.valueAccessor = function (v) {
     if (!arguments.length) { return this._valueAccessor; }
     this._valueAccessor = v;
+    return this;
+}
+
+BaseChart.prototype.redrawAxes = function (v)
+{
+    if (!arguments.length) { return this._redrawAxes; }
+    this._redrawAxes = v;
     return this;
 }
 
@@ -115,17 +131,14 @@ BaseChart.prototype.labelColor = function (c) {
 }
 
 BaseChart.prototype.barColor = function (c) {
-    if (!arguments.length) { return this.barColor; }
-    this.barColor = c;
+    if (!arguments.length) { return this._barColor; }
+    this._barColor = c;
     return this;
 }
 BaseChart.prototype.tooltipLabel = function (label) {
     if (!arguments.length) { return this.toolTipText; }
     this.toolTipText = label;
     return this;
-}
-BaseChart.prototype.tooltipAccessor = function (item) {
-    return this._valueAccessor(item);
 }
 
 BaseChart.prototype.tooltip = function () {
@@ -135,7 +148,7 @@ BaseChart.prototype.tooltip = function () {
             .attr('class', 'd3-tip')
             .offset([-10, 0])
             .html(function (d) {
-                return "<span class='tiplabel'>" + self.tooltipLabel() + "</span><span class='tipvalue'>" + self.tooltipAccessor(d) + "</span>";
+                return "<span class='tiplabel'>" + self.tooltipLabel() + "</span><span class='tipvalue'>" + self._valueAccessor(d) + "</span>";
             });
 
     this.chart.call(this.tip);
