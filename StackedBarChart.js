@@ -4,8 +4,6 @@
 
     var self = this;
 
-    this.series = [{ name: 'current', calculation: function (d) { return self._valueAccessor(d); }, color: this._barColor}];
-
     this.x = d3.scale.ordinal();
     this.y = d3.scale.linear();
 
@@ -26,10 +24,10 @@
 
     this.addSeries = function (f)
     {
-        this.series.push(f);
+        this.series = f;
         return this;
     }
-
+    
     this.labelAnchoring = function (d) {
         if (this.invert()) {
             return "start";
@@ -97,15 +95,23 @@
 
         for (seriesFunction in this.series) {
 
-            groups.append("rect")
-                    .attr("class", self.series[seriesFunction].name + "class")
-                    .attr("x", function (d, i) { return self.x(self._keyAccessor(d)); })
-                    .attr("y", function (d, i) { return self.y(self.calculateYPos(self.series[seriesFunction].calculation, d)); })
-                    .attr("width", function (d) { return self.x.rangeBand(); })
-                    .attr("height", function (d) { return (self.height() - self.margin().top - self.margin().bottom) - self.y(self.series[seriesFunction].calculation(d)); })
-                    .attr("fill", self.series[seriesFunction].color)
-                    .on("mouseover", function (d, item) { self.mouseOver(self, this, d); })
-                    .on("mouseout", function (d, item) { self.mouseOut(self, this, d); });
+            var bars = groups.append("rect")
+                        .attr("class", self.series[seriesFunction].name + "class")
+                        .attr("x", function (d, i) { return self.x(self._keyAccessor(d)); })
+                        .attr("y", function (d, i) { return self.y(self.calculateYPos(self.series[seriesFunction].calculation, d)); })
+                        .attr("width", function (d) { return self.x.rangeBand(); })
+                        .attr("height", function (d) { return (self.height() - self.margin().top - self.margin().bottom) - self.y(self.series[seriesFunction].calculation(d)); })
+                        .attr("fill", self.series[seriesFunction].color)
+                        .on("mouseover", function (d, item) { self.mouseOver(self, this, d); })
+                        .on("mouseout", function (d, item) { self.mouseOut(self, this, d); });
+
+            bars.append("svg:text")
+                .text(function (d) { return self.currencyFormat(self.series[seriesFunction].calculation(d)); })
+                .attr("class", "tipValue");
+
+            bars.append("svg:text")
+                .text(function (d) { return self.series[seriesFunction].label; })
+                .attr("class", "tipLabel");
         }
         
         this.chart.append("g")
@@ -145,12 +151,19 @@
 
         for (seriesFunction in this.series) {
 
-            groups.selectAll("." + self.series[seriesFunction].name + "class")
-                
-                .transition().duration(self.duration)
-                .attr("x", function (d, i) { return self.x(self._keyAccessor(d)); })
-                .attr("y", function (d, i) { return self.y(self.calculateYPos(self.series[seriesFunction].calculation, d)); })
-                .attr("height", function (d) { return (self.height() - self.margin().top - self.margin().bottom) - self.y(self.series[seriesFunction].calculation(d)); });
+            var bars = groups.selectAll("." + self.series[seriesFunction].name + "class")
+                        .transition().duration(self.duration)
+                        .attr("val", function (d) { return self.series[seriesFunction].calculation(d); })
+                        .attr("x", function (d, i) { return self.x(self._keyAccessor(d)); })
+                        .attr("y", function (d, i) { return self.y(self.calculateYPos(self.series[seriesFunction].calculation, d)); })
+                        .attr("height", function (d) { return (self.height() - self.margin().top - self.margin().bottom) - self.y(self.series[seriesFunction].calculation(d)); });
+
+
+            bars.selectAll("text.tipValue")
+                .text(function (d) { return self.currencyFormat(self.series[seriesFunction].calculation(d)); })
+
+            bars.selectAll("text.tipLabel")
+                .text(function (d) { return self.series[seriesFunction].label; })
         }
 
         this.chart.selectAll("g.y-axis").call(this.yAxis).selectAll("text")

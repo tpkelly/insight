@@ -83,6 +83,14 @@
                             .on("mouseover", function (d, item) { self.mouseOver(self, this, d); })
                             .on("mouseout", function (d, item) { self.mouseOut(self, this, d); });
 
+        bars.append("svg:text")
+            .text(function (d) { return self.currencyFormat(self._valueAccessor(d)); })
+            .attr("class", "tipValue");
+
+        bars.append("svg:text")
+            .text(function (d) { return self.tooltipLabel(); })
+            .attr("class", "tipLabel");
+
         this.chart.append("g")
             .attr("class", "y-axis")
             .call(this.yAxis)
@@ -110,13 +118,19 @@
             this.y.domain([0, d3.max(this.group().all(), function (d) { return self._valueAccessor(d); })]).range([this.height() - this.margin().top - this.margin().bottom, 0]);
         }
 
-        self.chart.selectAll("rect")
-            .data(this.dataset())
-            .transition().duration(self.duration)
-            .attr("x", function (d, i) { return self.x(self._keyAccessor(d)); })
-            .attr("y", function (d, i) { return self.y(self._valueAccessor(d)); })
-            .attr("width", function (d) { return self.x.rangeBand(); })
-            .attr("height", function (d) { return (self.height() - self.margin().top - self.margin().bottom) - self.y(self._valueAccessor(d)); });
+        var bars = self.chart.selectAll("rect")
+                    .data(this.dataset())
+                    .transition().duration(self.duration)
+                    .attr("x", function (d, i) { return self.x(self._keyAccessor(d)); })
+                    .attr("y", function (d, i) { return self.y(self._valueAccessor(d)); })
+                    .attr("width", function (d) { return self.x.rangeBand(); })
+                    .attr("height", function (d) { return (self.height() - self.margin().top - self.margin().bottom) - self.y(self._valueAccessor(d)); });
+
+        bars.selectAll("text.tipValue")
+            .text(function (d) { return self.currencyFormat(self._valueAccessor(d)); });
+
+        bars.selectAll("text.tipLabel")
+            .text(function (d) { return self.tooltipLabel(); });
 
         this.chart.selectAll("g.y-axis").call(this.yAxis).selectAll("text")
             .style("text-anchor", "end")

@@ -73,6 +73,12 @@ BaseChart.prototype.labelAccessor = function (k) {
     return this;
 }
 
+BaseChart.prototype.currencyFormat = function(k)
+{
+    var format = d3.format(",d");
+    return '£' + format(k);
+}
+
 BaseChart.prototype.valueAccessor = function (v) {
     if (!arguments.length) { return this._valueAccessor; }
     this._valueAccessor = v;
@@ -112,7 +118,10 @@ BaseChart.prototype.invert = function (i) {
 
 BaseChart.prototype.mouseOver = function (chart, item, d) {
     if (chart.hasTooltip) {
-        chart.tip.show(d);
+        var tipValue = $(item).find('.tipValue').first().html();
+        var tipLabel = $(item).find('.tipLabel').first().html();
+
+        chart.tip.show({ label: tipLabel, value: tipValue });
     }
     d3.select(item).classed("active", true);
 }
@@ -144,11 +153,12 @@ BaseChart.prototype.tooltipLabel = function (label) {
 BaseChart.prototype.tooltip = function () {
     var self = this;
     this.hasTooltip = true;
+
     this.tip = d3.tip()
             .attr('class', 'd3-tip')
             .offset([-10, 0])
             .html(function (d) {
-                return "<span class='tiplabel'>" + self.tooltipLabel() + "</span><span class='tipvalue'>" + self._valueAccessor(d) + "</span>";
+                return "<span class='tiplabel'>" + d.label + "</span><span class='tipvalue'>" + d.value + "</span>";
             });
 
     this.chart.call(this.tip);
