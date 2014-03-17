@@ -60,7 +60,7 @@ function CircularPartitionChart(name, element, dimension, group) {
         var self = this;
         this.partition
             .children(function (d) { return d.values; })
-            .value(function (d) { return d.DayRate; })
+            .value(function (d) { return d.ProjectedRevenue; })
             .nodes(self.group())
             .forEach(function (d) {
                 d._children = d.children;

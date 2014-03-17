@@ -4,46 +4,28 @@
 
     var self = this;
 
-    this._labelPadding = 10;
     this.x = d3.scale.linear();
     this.y = d3.scale.ordinal();
 
-    this.maxValue = function () {
-        var max = d3.max(this.group().all(), function (d) { return self._valueAccessor(d); });
-        return max;
-    }
+    this.yAxis = d3.svg.axis()
+					  .scale(this.y).orient("left").tickSize(0).tickPadding(10);
+
+    this.xAxis = d3.svg.axis()
+                      .scale(this.x).orient("bottom").tickSize(0).tickPadding(10).tickFormat(function (d) { return self.xFormatFunc(d); });
 
     this.initializeAxes = function () {
-        this.x.domain([0, this.maxValue()])
-                  .range([this.xBounds().start, this.xBounds().end]);
+        this.x.domain([0, this.findMax()])
+                  .range([0, this.xBounds().end]);
 
         this.y.domain(this.keys())
-                  .rangeRoundBands([this.margin().top, this.height()], 0.2);
-    }
-
-    this.filterKey = function (d) {
-        return d.key;
-    }
-
-    this.labelXPosition = function (label) {
-        var x = self.labelPadding();
-
-        if (self.invert()) {
-            x = self.xBounds().end + self.labelPadding();
-        }
-        return x;
-    }
-
-
-    this.labelYPosition = function (d) {
-        return self.y(d.key) + self.y.rangeBand() / 2;
-    }
-
+                  .rangeRoundBands([0, this.height()], 0.2);
+    }    
 
     this.barXPosition = function (d) {
-        var x = self.xBounds().start;
+        var x = 0;
+        console.log(d);
         if (self.invert()) {
-            x = self.xBounds().end - self.x(_valueAccessor(d));
+            x = self.xBounds().end - self.x(self._valueAccessor(d));
         }
         return x;
     }
@@ -54,43 +36,67 @@
         this.createChart();
         this.initializeAxes();
 
+        var bars = this.chart.append("g")
+                        .selectAll("rect")
+                        .data(this.dataset())
+                        .enter().append("rect")
+                            .attr("x", this.barXPosition)
+                            .attr("y", function (d, i) { return self.y(d.key); })
+                            .attr("width", function (d) { return self.x(self._valueAccessor(d)); })
+                            .attr("height", function (d) { return self.y.rangeBand(); })
+                            .attr("fill", this.barColor())
+                        .on("click", function (filter) { self.filterClick(this, filter); })
+                        .on("mouseover", function (d, item) { self.mouseOver(self, this, d); })
+                        .on("mouseout", function (d, item) { self.mouseOut(self, this, d); });
+
+        this.chart.selectAll("rect").data(this.dataset()).exit().remove();
+
+        bars.append("svg:text")
+            .text(function (d) { return self._tooltipFormat(self._valueAccessor(d)); })
+            .attr("class", "tipValue");
+
+        bars.append("svg:text")
+            .text(function (d) { return self.tooltipLabel(); })
+            .attr("class", "tipLabel");
+
         this.chart.append("g")
-            .selectAll("rect")
-            .data(this.dataset())
-            .enter().append("rect")
-                .attr("x", this.barXPosition)
-                .attr("y", function (d, i) { return self.y(d.key); })
-                .attr("width", function (d) { return self.x(self._valueAccessor(d)) - self.xBounds().start; })
-                .attr("height", function (d) { return self.y.rangeBand(); })
-                .attr("fill", this.barColor)
-            .on("click", function (filter) { self.filterClick(this, filter); })
-            .on("mouseover", function (d, item) { self.mouseOver(self, this, d); })
-            .on("mouseout", function (d, item) { self.mouseOut(self, this, d); });
-
-
-        this.chart.selectAll("text.label")
-            .data(this.dataset())
-            .enter()
-            .append("text")
-            .attr("class", "label")
-            .attr("x", this.labelXPosition)
-            .attr("y", this.labelYPosition)
-            .style("font-size", function () { return self.labelFontSize(); })
-            .attr("fill", function () { return self.labelColor(); })
-            .attr("text-anchor", function (d) { return this.labelAnchoring; })
-            .text(function (d) { return self._labelAccessor(d); });
+            .attr("class", "y-axis")
+            .call(this.yAxis)
+            .selectAll("text")
+            .style("text-anchor", "end")
+            .style("font-size", "12px");
     }
 
     this.draw = function () {
         var self = this;
 
-        self.chart.selectAll("rect")
+        if (self._redrawAxes) {
+            
+            this.y.domain(this.keys())
+                  .rangeRoundBands([0, this.height()], 0.2);
+
+            this.yAxis = d3.svg.axis()
+					  .scale(this.y).orient("left").tickSize(0).tickPadding(10);
+
+            this.chart
+                .selectAll("g.y-axis")
+                .transition().duration(self.duration)
+                .call(this.yAxis).selectAll("text")
+                .style("text-anchor", "end")
+                .style("font-size", "12px")
+                .style("fill", "#333")
+        }        
+        
+        var bars = self.chart.selectAll("rect")
             .data(this.dataset())
             .transition().duration(self.duration)
-            .attr("x", this.barXPosition)
-            .attr("y", function (d, i) { return self.y(d.key); })
-            .attr("width", function (d) { return self.x(d.value) - self.xBounds().start; })
-            .attr("height", function (d) { return self.y.rangeBand(); });
+            .attr("width", function (d) { return self.x(self._valueAccessor(d)); })
+
+        if (self._redrawAxes) {
+            bars.attr("y", function (d, i) { return self.y(d.key); })
+                .attr("height", function (d) { return self.y.rangeBand(); })
+        }
+
     }
     return this;
 }

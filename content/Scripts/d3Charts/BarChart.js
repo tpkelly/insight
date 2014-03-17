@@ -13,7 +13,7 @@
 
     
     this.yAxis = d3.svg.axis()
-					  .scale(this.y).orient("left").tickSize(0).tickPadding(10);
+					  .scale(this.y).orient("left").tickSize(0).tickPadding(10).tickFormat(function (d) { return self._yAxisFormat(d); });;
 
     this.xAxis = d3.svg.axis()
                       .scale(this.x).orient("bottom").tickSize(0).tickPadding(10).tickFormat(function (d) { return self.xFormatFunc(d); });
@@ -152,6 +152,11 @@
                     .attr("y", function (d, i) { return self.y(self._valueAccessor(d)); })
                     .attr("width", function (d) { return self.x.rangeBand(); })
                     .attr("height", function (d) { return (self.height() - self.margin().top - self.margin().bottom) - self.y(self._valueAccessor(d)); });
+
+
+        self.chart.selectAll("rect")
+                    .data(this.dataset())
+                    .exit().remove();
 
         bars.selectAll("text.tipValue")
             .text(function (d) { return self._tooltipFormat(self._valueAccessor(d)); });

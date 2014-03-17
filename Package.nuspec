@@ -1,11 +1,10 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>NuGet.Charts</id>
-    <version>1.0.4</version>
-    <title>NuGet.Charts</title>
+    <id>SL.Insight.Charts</id>
+    <version>1.0.6</version>
+    <title>Insight Charts</title>
     <authors>nstavrakakis</authors>
-    <owners>Microsoft</owners>
     <description>
       A long description of the package. This shows up in the right pane of the Add Package Dialog as well as in the Package Manager Console when listing packages using the Get-Package command.
     </description>

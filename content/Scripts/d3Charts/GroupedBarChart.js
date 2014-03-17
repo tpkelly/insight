@@ -45,7 +45,7 @@ function GroupedBarChart(name, element, dimension, group) {
 
     this.yScaleMax = function () {
 
-        var max = d3.max(this.group().all(), function (d) {
+        var max = d3.max(this.dataset(), function (d) {
             var m = 0;
 
             m = m < d.value.Total ? d.value.Total : m;
