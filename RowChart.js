@@ -1,6 +1,6 @@
-﻿var RowChart = function RowChart(element, dimension, group) {
+﻿var RowChart = function RowChart(name, element, dimension, group) {
 
-    BaseChart.call(this, element, dimension, group);
+    BaseChart.call(this, name, element, dimension, group);
 
     var self = this;
 

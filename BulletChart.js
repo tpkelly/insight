@@ -1,6 +1,6 @@
 ﻿
-function BulletChart(element, dimension, group) {
-    BaseChart.call(this, element, dimension, group);
+function BulletChart(name, element, dimension, group) {
+    BaseChart.call(this, name, element, dimension, group);
 
     var self = this;
 

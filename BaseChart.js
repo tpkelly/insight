@@ -1,22 +1,36 @@
-﻿var BaseChart = function BaseChart(element, dimension, group) {
+﻿var BaseChart = function BaseChart(name, element, dimension, group) {
     this.element = element;
     this.dimension = dimension;
     this.group = group;
+    this._name = name;
+    this._displayName = name;
     this._keyAccessor = function (d) { return d.key; };
     this._barColor = '#acc3ee';
     this._valueAccessor = function (d) { return d.value; };
     this._limitFunction = function (d) { return true; };
     this._labelAccessor = function (d) { return d.key; };
+    this._tooltipFormat = function (d) { return d; };
+    this._currentMax = 0;
+    this._cumulative = false;
     this._labelFontSize = "11px";
+    this._targets = [];
+    this.series = [];
     this._redrawAxes = false;
     this.isFiltered = false;
-    this._margin = { top: 50, bottom: 100, left: 50, right: 50 };
+    this._margin = { top: 0, bottom: 0, left: 0, right: 0 };
     this.duration = 500;
     this.filters = [];
     this._labelPadding = 20;
     this.hasTooltip = false;
     this.tooltipText = "";
     this._invert = false;
+}
+
+BaseChart.prototype.displayName = function(name)
+{
+    if (!arguments.length) { return this._displayName }
+    this._displayName = name;
+    return this;
 }
 
 BaseChart.prototype.width = function (w) {
@@ -36,8 +50,61 @@ BaseChart.prototype.x = function (x) {
     this._x = x;
     return this;
 }
+
+BaseChart.prototype.cumulative = function (v)
+{
+    if (!arguments.length) { return this._cumulative; }
+    this._cumulative = v;
+    return this;
+}
+
+BaseChart.prototype.updateMax = function (d) {
+    var value = 0;
+    this._currentMax = 0;
+
+    if (this.series.length) {
+        for (seriesFunction in this.series) {
+            var func = this.cumulative() ? this.series[seriesFunction].cumulative : this.series[seriesFunction].calculation;
+            value += func(d);
+            this._currentMax = value > this._currentMax ? value : this._currentMax;
+        }
+    }
+    else {
+        value += this._valueAccessor(d);
+        this._currentMax = value > this._currentMax ? value : this._currentMax;
+    }
+    if (this._targets.length)
+    {
+        for (target in this._targets)
+        {
+            var func = this.cumulative() ? this._targets[target].cumulative : this._targets[target].calculation;
+            value = func(d);
+            this._currentMax = value > this._currentMax ? value : this._currentMax;
+        }
+    }
+
+    return this._currentMax;
+}
+
+BaseChart.prototype.findMax = function () {
+    var self = this;
+    var max = d3.max(this.dataset(), function (d) {
+        return self.updateMax(d);
+    });
+
+    return max;
+}
+
+
 BaseChart.prototype.keys = function () {
-    return this.group().all().map(this._keyAccessor);
+    return this.dataset().map(this._keyAccessor);
+}
+
+BaseChart.prototype.targets = function (targets)
+{
+    if (!arguments.length) { return this._targets; }
+    this._targets = targets;
+    return this;
 }
 
 BaseChart.prototype.height = function (h) {
@@ -73,11 +140,13 @@ BaseChart.prototype.labelAccessor = function (k) {
     return this;
 }
 
-BaseChart.prototype.currencyFormat = function(k)
+BaseChart.prototype.tooltipFormat = function (f)
 {
-    var format = d3.format(",d");
-    return '£' + format(k);
+    if (!arguments.length) { return this._tooltipFormat; }
+    this._tooltipFormat = f;
+    return this;
 }
+
 
 BaseChart.prototype.valueAccessor = function (v) {
     if (!arguments.length) { return this._valueAccessor; }
@@ -116,6 +185,16 @@ BaseChart.prototype.invert = function (i) {
 
 }
 
+BaseChart.prototype.setHover = function (item)
+{
+    d3.select(item).classed("active", true);
+}
+
+
+BaseChart.prototype.removeHover = function (item) {
+    d3.select(item).classed("active", false);
+}
+
 BaseChart.prototype.mouseOver = function (chart, item, d) {
     if (chart.hasTooltip) {
         var tipValue = $(item).find('.tipValue').first().html();
@@ -123,14 +202,14 @@ BaseChart.prototype.mouseOver = function (chart, item, d) {
 
         chart.tip.show({ label: tipLabel, value: tipValue });
     }
-    d3.select(item).classed("active", true);
+    this.setHover(item);
 }
 
 BaseChart.prototype.mouseOut = function (chart, item, d) {
     if (chart.hasTooltip) {
         chart.tip.hide(d);
     }
-    d3.select(item).classed("active", false);
+    this.removeHover(item);
 }
 
 BaseChart.prototype.labelColor = function (c) {
@@ -144,6 +223,7 @@ BaseChart.prototype.barColor = function (c) {
     this._barColor = c;
     return this;
 }
+
 BaseChart.prototype.tooltipLabel = function (label) {
     if (!arguments.length) { return this.toolTipText; }
     this.toolTipText = label;
@@ -158,7 +238,7 @@ BaseChart.prototype.tooltip = function () {
             .attr('class', 'd3-tip')
             .offset([-10, 0])
             .html(function (d) {
-                return "<span class='tiplabel'>" + d.label + "</span><span class='tipvalue'>" + d.value + "</span>";
+                return "<span class='tiplabel'>" + d.label + ": </span><span class='tipvalue'>" + d.value + "</span>";
             });
 
     this.chart.call(this.tip);

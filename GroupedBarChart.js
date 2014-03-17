@@ -1,8 +1,8 @@
 ﻿
 
-function GroupedBarChart(element, dimension, group) {
+function GroupedBarChart(name, element, dimension, group) {
 
-    BaseChart.call(this, element, dimension, group);
+    BaseChart.call(this, name, element, dimension, group);
 
     var self = this;
 
@@ -101,16 +101,29 @@ function GroupedBarChart(element, dimension, group) {
                         .data(this.dataset())
                         .enter().append("g")
                             .attr("class", "group")
-                            .attr("transform", function (d) { return "translate(" + self.x(self._keyAccessor(d)) + ",0)"; })
-        groups.append("rect")
-            .attr("class", "total")
-            .attr("width", this.x.rangeBand())
-            .attr("x", 0)
-            .attr("y", function (d) { return self.y(d.value.Total); })
-            .attr("height", function (d) { return (self.height() - self.margin().top - self.margin().bottom) - self.y(d.value.Total); })
-            .attr("fill", "silver");
+                            .attr("transform", function (d) {
+                                return "translate(" + self.x(self._keyAccessor(d)) + ",0)";
+                            })
 
-        groups.selectAll("rect.subbar")
+        var total = groups.append("rect")
+                .attr("class", "total")
+                .attr("width", this.x.rangeBand())
+                .attr("x", 0)
+                .attr("y", function (d) { return self.y(d.value.Total); })
+                .attr("height", function (d) { return (self.height() - self.margin().top - self.margin().bottom) - self.y(d.value.Total); })
+                .attr("fill", "silver")
+                .on("mouseover", function (d, item) { self.mouseOver(self, this, d); })
+                .on("mouseout", function (d, item) { self.mouseOut(self, this, d); });
+
+        total.append("svg:text")
+            .text(function (d) { return self.tooltipLabel(); })
+            .attr("class", "tipLabel");
+
+        total.append("svg:text")
+            .text(function (d) { return self._tooltipFormat(d.value.Total); })
+            .attr("class", "tipValue");
+
+        var bars = groups.selectAll("rect.subbar")
                 .data(function (d) {
                     var vals = [];
                     for (var key in d.value.Groups) {
@@ -129,9 +142,13 @@ function GroupedBarChart(element, dimension, group) {
                 .on("mouseover", function (d, item) { self.mouseOver(self, this, d); })
                 .on("mouseout", function (d, item) { self.mouseOut(self, this, d); });
 
+        bars.append("svg:text")
+            .text(function (d) { return self._tooltipFormat(self._valueAccessor(d)); })
+            .attr("class", "tipValue");
 
-
-
+        bars.append("svg:text")
+            .text(function (d) { return self.tooltipLabel(); })
+            .attr("class", "tipLabel");
 
 
         this.chart.append("g")
@@ -148,7 +165,8 @@ function GroupedBarChart(element, dimension, group) {
            .style("text-anchor", "end")
            .style("font-size", "12px")
            .style("fill", "#333")
-           .attr("transform", function (d) { return "rotate(-90," + 0 + "," + 15 + ")"; });
+           .attr("transform", function (d) { return "rotate(-90," + 0 + "," + 15 + ")"; })
+           .on("click", function (filter) { return self.filterClick(this, filter); });
 
 
         var legend = this.chart.selectAll(".legend")
@@ -176,13 +194,26 @@ function GroupedBarChart(element, dimension, group) {
 
         var self = this;
 
-        self.chart.selectAll("rect")
-            .data(this.dataset())
+        var groups = this.chart.selectAll("g.group")
+                        .data(this.dataset())
+
+        groups.selectAll("rect.total")
             .transition().duration(self.duration)
-            .attr("x", function (d, i) { return self.x(d.key); })
-            .attr("y", function (d, i) { return self.y(d.value); })
-            .attr("width", function (d) { return self.x.rangeBand(); })
-            .attr("height", function (d) { return (self.height() - self.margin().top - self.margin().bottom) - self.y(d.value); });
+            .attr("y", function (d) { return self.y(d.value.Total); })
+            .attr("height", function (d) { return (self.height() - self.margin().top - self.margin().bottom) - self.y(d.value.Total); })
+
+        groups.selectAll("rect.subbar")
+                .data(function (d) {
+                    var vals = [];
+                    for (var key in d.value.Groups) {
+                        vals.push({ key: key, value: d.value.Groups[key].Value });
+                    }
+                    return vals;
+                })
+                .transition().duration(self.duration)
+                .attr("y", function (d) { return self.y(d.value); })
+                .attr("height", function (d) { return (self.height() - self.margin().top - self.margin().bottom) - self.y(d.value); })
+
     }
 }
 

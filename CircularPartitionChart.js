@@ -1,6 +1,6 @@
 ﻿
 
-function CircularPartitionChart(element, dimension, group) {
+function CircularPartitionChart(name, element, dimension, group) {
 
     //BaseChart.call(this, element, dimension, group);
     this.element = element;

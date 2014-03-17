@@ -1,7 +1,7 @@
 ﻿
-function CountChart(element, dimension, group) {
+function CountChart(name, element, dimension, group) {
 
-    BaseChart.call(this, element, dimension, group);
+    BaseChart.call(this, name, element, dimension, group);
 
     this.filter = new Date().getMonth();
 

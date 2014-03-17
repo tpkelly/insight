@@ -1,6 +1,6 @@
 ﻿
 
-function PartitionChart(element, dimension, group) {
+function PartitionChart(name, element, dimension, group) {
 
     this.element = element;
     this.group = group;

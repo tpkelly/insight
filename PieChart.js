@@ -1,7 +1,7 @@
 ﻿
-function PieChart(element, dimension, group) {
+function PieChart(name, element, dimension, group) {
 
-    BaseChart.call(this, element, dimension, group);
+    BaseChart.call(this, name, element, dimension, group);
 
     this.color = d3.scale.ordinal().range(["#9ecae1", "#7CA2B6", "#77ACC9"]);
 
