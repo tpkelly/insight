@@ -10,6 +10,7 @@
     this._limitFunction = function (d) { return true; };
     this._labelAccessor = function (d) { return d.key; };
     this._tooltipFormat = function (d) { return d; };
+    this._yAxisFormat = function (d) { return d; };
     this._currentMax = 0;
     this._cumulative = false;
     this._labelFontSize = "11px";
@@ -97,7 +98,15 @@ BaseChart.prototype.findMax = function () {
 
 
 BaseChart.prototype.keys = function () {
-    return this.dataset().map(this._keyAccessor);
+    var self = this;
+    var keys = [];
+    if (this._topResults) {
+        keys = this.dataset().filter(function (d) { return self._valueAccessor(d) > 0; }).map(this._keyAccessor);
+    }
+    else {
+        keys = this.dataset().map(this._keyAccessor);
+    }
+    return keys;
 }
 
 BaseChart.prototype.targets = function (targets)
@@ -124,8 +133,20 @@ BaseChart.prototype.createChart = function () {
     this.tooltip();
 }
 
+BaseChart.prototype.topResults = function (top)
+{
+    if (!arguments.length) { return this._topResults; }
+    this._topResults = top;
+    return this;
+}
+
 BaseChart.prototype.dataset = function () {
-    return this.group().all().filter(this._limitFunction);
+    if (this._topResults) {
+        return this.group.getData().filter(this._limitFunction);
+    }
+    else {
+        return this.group.getData().filter(this._limitFunction);
+    }
 }
 
 BaseChart.prototype.keyAccessor = function (k) {
@@ -147,6 +168,13 @@ BaseChart.prototype.tooltipFormat = function (f)
     return this;
 }
 
+
+BaseChart.prototype.yAxisFormat = function (f)
+{
+    if (!arguments.length) { return this._yAxisFormat; }
+    this._yAxisFormat = f;
+    return this;
+}
 
 BaseChart.prototype.valueAccessor = function (v) {
     if (!arguments.length) { return this._valueAccessor; }
@@ -277,7 +305,7 @@ BaseChart.prototype.labelFontSize = function (s) {
 BaseChart.prototype.xBounds = function (d) {
 
     var start = this.invert() ? this.margin().right : this.margin().left;
-    var end = this.width() - (this.margin().right + this.margin().left);
+    var end = this.width() - (this.margin().right+this.margin().left);
 
     return { start: start, end: end };
 }
@@ -305,8 +333,9 @@ BaseChart.prototype.filterClick = function (element, filter) {
     else {
         d3.select(element).classed("selected", true);
     }
+    var value = filter.key ? filter.key : filter;
 
-    this.filterEvent(this.group, this.dimension, filter);
+    this.filterEvent(this.group, this.dimension, value);
 };
 
 

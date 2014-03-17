@@ -20,7 +20,7 @@ function PartitionChart(name, element, dimension, group) {
 
     this.partition = d3.layout.partition()
         .children(function (d) { return d.values; })
-        .value(function (d) { return d.DayRate; });
+        .value(function (d) { return d.ProjectedRevenue; });
 
     this.init = function () {
 
@@ -40,7 +40,9 @@ function PartitionChart(name, element, dimension, group) {
         g.append("svg:rect")
             .attr("width", this.group().dy * kx)
             .attr("height", function (d) { return d.dx * ky; })
-            .attr("class", function (d) { return d.children ? "parent" : "child"; });
+            .attr("class", function (d) { return d.children ? "parent" : "child"; })
+            .attr('fill', 'rgb(135, 158, 192)')
+            .style('stroke', '#fff');
 
 
         g.append("svg:text")
@@ -50,7 +52,7 @@ function PartitionChart(name, element, dimension, group) {
             .attr("fill", "#ecf0f1")
             .style("font-size", "13px")
             .style("opacity", function (d) { return d.dx * ky > 12 ? 1 : 0; })
-            .text(function (d) { return d.key; })
+            .text(function (d) { return d.key; });
 
 
         function transform(d) {

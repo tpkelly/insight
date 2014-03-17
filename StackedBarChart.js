@@ -12,7 +12,7 @@
     }    
 
     this.yAxis = d3.svg.axis()
-					  .scale(this.y).orient("left").tickSize(0).tickPadding(10);
+					  .scale(this.y).orient("left").tickSize(0).tickPadding(10).tickFormat(function (d) { return self._yAxisFormat(d);});
 
     this.xAxis = d3.svg.axis()
                       .scale(this.x).orient("bottom").tickSize(0).tickPadding(10).tickFormat(function (d) { return self.xFormatFunc(d); });
@@ -152,7 +152,7 @@
             this.y.domain([0, self.findMax()]).range([this.height() - this.margin().top - this.margin().bottom, 0]);
         }
         
-
+        
         var groups = this.chart.selectAll("g.bargroup")
             .data(this.dataset())
             .each(function (d, i) { d.yPos = 0; });
@@ -164,10 +164,12 @@
 
             var bars = groups.selectAll("." + self.series[seriesFunction].name + "class.bar")
                         .transition().duration(self.duration)
-                        .attr("val", function (d) { return func(d); })
+                        .attr("val", function (d) { return d3.round(func(d)); })
                         .attr("x", function (d, i) { return self.x(self._keyAccessor(d)); })
                         .attr("y", function (d, i) { return self.y(self.calculateYPos(func, d)); })
-                        .attr("height", function (d) { return (self.height() - self.margin().top - self.margin().bottom) - self.y(func(d)); });
+                        .attr("height", function (d) {
+                            return (self.height() - self.margin().top - self.margin().bottom) - self.y(func(d),1);
+                        });
 
 
             bars.selectAll("text.tipValue")
