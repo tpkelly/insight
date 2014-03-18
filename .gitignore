@@ -25,6 +25,8 @@ _UpgradeReport_Files/
 ###############
 bin/
 obj/
+node_modules/
+.git-rewrite/
 TestResults/
 *.pdf
 ###################
