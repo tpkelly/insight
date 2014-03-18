@@ -23,7 +23,6 @@
 
     this.barXPosition = function (d) {
         var x = 0;
-        console.log(d);
         if (self.invert()) {
             x = self.xBounds().end - self.x(self._valueAccessor(d));
         }

@@ -92,30 +92,10 @@
 
 
         if (this._targets.length) {
-            for (target in this._targets) {
-
-                var tBars = this.chart.selectAll("rect.target")
-                                    .data(this.dataset())
-                                    .enter()
-                                    .append("rect")
-                                    .attr("class", "target " + self._targets[target].name + "class")
-                                    .attr("x", function (d, i) { return self.x(self._keyAccessor(d)); })
-                                    .attr("y", function (d, i) { return self.y(self._targets[target].calculation(d)); })
-                                    .attr("width", function (d) { return self.x.rangeBand(); })
-                                    .attr("height", 4)
-                                    .attr("fill", self._targets[target].color)
-                                    .on("mouseover", function (d, item) { self.mouseOver(self, this, d); })
-                                    .on("mouseout", function (d, item) { self.mouseOut(self, this, d); });
-
-                tBars.append("svg:text")
-                    .text(function (d) { return self._tooltipFormat(self._targets[target].calculation(d)); })
-                    .attr("class", "tipValue");
-
-                tBars.append("svg:text")
-                    .text(function (d) { return self._targets[target].label; })
-                    .attr("class", "tipLabel");
-            }
+            this.drawTargets();
         }
+
+        
 
         this.chart.append("g")
             .attr("class", "y-axis")
@@ -135,7 +115,9 @@
            .on("mouseout", function (d, item) { self.removeHover(this); })
            .on("click", function (filter) { return self.filterClick(this, filter); })
            .attr("transform", function (d) { return "rotate(-90," + 0 + "," + 15 + ")"; });
-
+        if (this._ranges.length) {
+            this.drawRanges();
+        }
     }
 
     this.draw = function () {
@@ -152,37 +134,15 @@
                     .attr("y", function (d, i) { return self.y(self._valueAccessor(d)); })
                     .attr("width", function (d) { return self.x.rangeBand(); })
                     .attr("height", function (d) { return (self.height() - self.margin().top - self.margin().bottom) - self.y(self._valueAccessor(d)); });
-
-
-        self.chart.selectAll("rect")
-                    .data(this.dataset())
-                    .exit().remove();
-
+        
         bars.selectAll("text.tipValue")
             .text(function (d) { return self._tooltipFormat(self._valueAccessor(d)); });
 
         bars.selectAll("text.tipLabel")
             .text(function (d) { return self.tooltipLabel(); });
 
-
-
-
         if (this._targets.length) {
-            for (target in this._targets) {
-
-                var tBars = this.chart.selectAll("rect.target")
-                                    .data(this.dataset())
-                                    .transition().duration(self.duration)
-                                    .attr("y", function (d, i) { return self.y(self._targets[target].calculation(d)); })
-
-                tBars.selectAll("text.tipValue")
-                    .text(function (d) { return self._tooltipFormat(self._targets[target].calculation(d)); })
-                    .attr("class", "tipValue");
-
-                tBars.selectAll("text.tipLabel")
-                    .text(function (d) { return self._targets[target].label; })
-                    .attr("class", "tipLabel");
-            }
+            this.updateTargets();
         }
 
         this.chart.selectAll("g.y-axis").call(this.yAxis).selectAll("text")
@@ -190,6 +150,82 @@
             .style("font-size", "12px")
             .style("fill", "#333")
     }
+
+    this.drawTargets = function ()
+    {
+        var self = this;
+
+        for (target in this._targets) {
+
+            var tBars = this.chart.selectAll("rect.target")
+                                .data(this.dataset())
+                                .enter()
+                                .append("rect")
+                                .attr("class", "target " + self._targets[target].name + "class")
+                                .attr("x", function (d, i) { return self.x(self._keyAccessor(d)); })
+                                .attr("y", function (d, i) { return self.y(self._targets[target].calculation(d)); })
+                                .attr("width", function (d) { return self.x.rangeBand(); })
+                                .attr("height", 4)
+                                .attr("fill", self._targets[target].color)
+                                .on("mouseover", function (d, item) { self.mouseOver(self, this, d); })
+                                .on("mouseout", function (d, item) { self.mouseOut(self, this, d); });
+
+            tBars.append("svg:text")
+                .text(function (d) { return self._tooltipFormat(self._targets[target].calculation(d)); })
+                .attr("class", "tipValue");
+
+            tBars.append("svg:text")
+                .text(function (d) { return self._targets[target].label; })
+                .attr("class", "tipLabel");
+        }
+    }
+
+
+    this.drawRanges = function () {
+        var self = this;
+
+        for (range in this._ranges) {
+            
+            var line = d3.svg.line()
+                .x(function (d) {
+                    return self.x(self._keyAccessor(d)) ;
+                })
+                .y(function (d) {
+                    return self.y(self._ranges[range].calculation(d));
+                });
+
+            this.chart.append("svg:path")
+                .attr("d", line(this.dataset()))
+                .attr("stroke", self._ranges[range].color)
+                .attr("stroke-width", 1)
+                .attr("fill", 'none')
+            
+        }
+    }
+
+
+
+    this.updateTargets = function()
+    {
+        var self = this;
+
+        for (target in this._targets) {
+
+            var tBars = this.chart.selectAll("rect.target")
+                                .data(this.dataset())
+                                .transition().duration(self.duration)
+                                .attr("y", function (d, i) { return self.y(self._targets[target].calculation(d)); })
+
+            tBars.selectAll("text.tipValue")
+                .text(function (d) { return self._tooltipFormat(self._targets[target].calculation(d)); })
+                .attr("class", "tipValue");
+
+            tBars.selectAll("text.tipLabel")
+                .text(function (d) { return self._targets[target].label; })
+                .attr("class", "tipLabel");
+        }
+    }
+
 }
 
 
