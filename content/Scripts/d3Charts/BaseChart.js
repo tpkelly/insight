@@ -97,12 +97,38 @@ BaseChart.prototype.findMax = function () {
     return max;
 }
 
+BaseChart.prototype.zeroValueEntry = function (d)
+{
+    var hasValue = 0;
+    
+    if (this.series.length) {
+        for (seriesFunction in this.series) {
+            var func = this.cumulative() ? this.series[seriesFunction].cumulative : this.series[seriesFunction].calculation;
+            
+            hasValue = hasValue | (Math.round(func(d),1) > 0);
+        }
+    }
+    else {
+        hasValue = hasValue | (Math.round(this._valueAccessor(d), 1) > 0);
+        
+    }
+    if (this._targets.length) {
+        for (target in this._targets) {
+            var func = this.cumulative() ? this._targets[target].cumulative : this._targets[target].calculation;
+            hasValue = hasValue | (Math.round(func(d), 1) > 0);
+        }
+    }
+    return hasValue;
+}
+
 
 BaseChart.prototype.keys = function () {
     var self = this;
+
     var keys = [];
-    if (this._topResults) {
-        keys = this.dataset().filter(function (d) { return self._valueAccessor(d) > 0; }).map(this._keyAccessor);
+
+    if (this._redrawAxes) {
+        keys = this.dataset().filter(function (d) { return self.zeroValueEntry(d); }).map(this._keyAccessor);
     }
     else {
         keys = this.dataset().map(this._keyAccessor);
@@ -332,6 +358,14 @@ BaseChart.prototype.labelAnchoring = function (d) {
     else { return "start"; }
 };
 
+BaseChart.prototype.filterFunction = function (filter)
+{
+    var value = filter.key ? filter.key : filter;
+
+    return value;
+}
+
+
 BaseChart.prototype.filterClick = function (element, filter) {
 
     if (d3.select(element).classed("selected")) {
@@ -340,7 +374,8 @@ BaseChart.prototype.filterClick = function (element, filter) {
     else {
         d3.select(element).classed("selected", true);
     }
-    var value = filter.key ? filter.key : filter;
+
+    var value = this.filterFunction(filter);
 
     this.filterEvent(this.group, this.dimension, value);
 };
