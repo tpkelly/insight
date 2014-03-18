@@ -174,12 +174,8 @@ BaseChart.prototype.topResults = function (top)
 }
 
 BaseChart.prototype.dataset = function () {
-    if (this._topResults) {
-        return this.group.getData().filter(this._limitFunction);
-    }
-    else {
-        return this.group.getData().filter(this._limitFunction);
-    }
+
+    return this.group.getData().filter(this._limitFunction);
 }
 
 BaseChart.prototype.keyAccessor = function (k) {
