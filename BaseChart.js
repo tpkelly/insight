@@ -16,6 +16,7 @@
     this._labelFontSize = "11px";
     this._targets = [];
     this.series = [];
+    this._ranges = [];
     this._redrawAxes = false;
     this.isFiltered = false;
     this._margin = { top: 0, bottom: 0, left: 0, right: 0 };
@@ -113,6 +114,12 @@ BaseChart.prototype.targets = function (targets)
 {
     if (!arguments.length) { return this._targets; }
     this._targets = targets;
+    return this;
+}
+
+BaseChart.prototype.ranges = function (ranges) {
+    if (!arguments.length) { return this._ranges; }
+    this._ranges = ranges;
     return this;
 }
 
@@ -342,3 +349,6 @@ BaseChart.prototype.filterClick = function (element, filter) {
 BaseChart.prototype.filterEvent = function (data, dimension, filter) {
 
 }
+
+BaseChart.prototype.updateTargets = function () { };
+BaseChart.prototype.drawTargets = function () { };
