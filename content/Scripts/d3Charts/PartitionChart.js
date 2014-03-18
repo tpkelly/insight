@@ -82,6 +82,8 @@ function PartitionChart(name, element, dimension, group) {
             d3.event.stopPropagation();
         }
     }
+
+
 }
 
 PartitionChart.prototype = Object.create(BaseChart.prototype);

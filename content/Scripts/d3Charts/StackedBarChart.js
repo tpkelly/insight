@@ -149,7 +149,7 @@
         var self = this;
 
         if (self.redrawAxes()) {
-            this.y.domain([0, self.findMax()]).range([this.height() - this.margin().top - this.margin().bottom, 0]);
+            this.y.domain([0, d3.round(self.findMax(),1)]).range([this.height() - this.margin().top - this.margin().bottom, 0]);
         }
         
         
@@ -186,8 +186,9 @@
                 var func = this.cumulative() ? self._targets[target].cumulative : self._targets[target].calculation;
 
                 var tBars = groups.selectAll("." + self._targets[target].name + "class.target")
-                                    .transition().duration(self.duration)
-                                    .attr("y", function (d, i) { return self.y(func(d)); })
+                                    .transition()
+                                    .duration(self.duration)
+                                    .attr("y", function (d, i) { return self.y(d3.round(func(d))); })
 
                 tBars.selectAll("text.tipValue")
                     .text(function (d) { return self._tooltipFormat(func(d)); })
