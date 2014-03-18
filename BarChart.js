@@ -115,6 +115,7 @@
            .on("mouseout", function (d, item) { self.removeHover(this); })
            .on("click", function (filter) { return self.filterClick(this, filter); })
            .attr("transform", function (d) { return "rotate(-90," + 0 + "," + 15 + ")"; });
+
         if (this._ranges.length) {
             this.drawRanges();
         }
