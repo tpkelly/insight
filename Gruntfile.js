@@ -36,14 +36,26 @@ module.exports = function(grunt) {
         }
       }
     },
-	copy: {
-	  main: {
-		files: [
-		  // includes files within path
-		  {expand: true, flatten:true, src: ['dist/*'], dest: 'C:\\Users\\nstavrakakis\\Documents\\visual studio 2013\\Projects\\ReportingTool\\ReportingTool\\Scripts\\d3Charts\\', filter: 'isFile'},
-
-		]
-	  }
+  "jsbeautifier" : {
+    files : ["src/**/*.js"],
+    options:
+    {
+      js:
+      {
+        braceStyle: 'collapse',
+        indentChart: ' ',
+        indentSize: 4
+      }
+    }
+  },
+  copy: {
+    main: {
+      files: [
+      {
+        expand: true, flatten:true, src: ['dist/*'], dest: 'C:\\Users\\nstavrakakis\\Documents\\visual studio 2013\\Projects\\ReportingTool\\ReportingTool\\Scripts\\d3Charts\\', filter: 'isFile'
+      },
+    ]
+    }
 	},
     watch: {
       files: ['<%= jshint.files %>'],
@@ -56,8 +68,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-jsbeautifier');
 
   
-  grunt.registerTask('default', ['uglify', 'concat', "copy"]);
+  grunt.registerTask('default', ['jsbeautifier', 'jshint','uglify', 'concat', "copy"]);
 
 };

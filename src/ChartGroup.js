@@ -1,13 +1,12 @@
-﻿
 var ChartGroup = function ChartGroup(name) {
     this.Name = name;
     this.Charts = ko.observableArray();
     this.Dimensions = ko.observableArray();
     this.Groups = ko.observableArray();
     this.CumulativeGroups = ko.observableArray();
-}
+};
 
-ChartGroup.prototype.addChart = function (chart) {
+ChartGroup.prototype.addChart = function(chart) {
 
     chart.init();
 
@@ -16,19 +15,19 @@ ChartGroup.prototype.addChart = function (chart) {
     this.Charts.push(chart);
 
     return chart;
-}
+};
 
-ChartGroup.prototype.addDimension = function (ndx, name, func, displayFunc) {
+ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc) {
 
     var dimension = new Dimension(name, ndx.dimension(func), displayFunc);
 
     this.Dimensions.push(dimension);
 
     return dimension;
-}
+};
 
 
-ChartGroup.prototype.chartFilterHandler = function (data, dimension, filterValue) {
+ChartGroup.prototype.chartFilterHandler = function(data, dimension, filterValue) {
 
     var self = this;
 
@@ -38,34 +37,31 @@ ChartGroup.prototype.chartFilterHandler = function (data, dimension, filterValue
 
         //if the dimension is already filtered by this value, toggle (remove) the filter
         if (filterExists) {
-            dimension.Filters.remove(filterValue)
-        }
-        else {
+            dimension.Filters.remove(filterValue);
+        } else {
             // add the provided filter to the list for this dimension
             dimension.Filters.push(filterValue);
         }
     }
 
     // reset this dimension if no filters exist, else apply the filter to the dataset.
-    if (dimension.Filters().length == 0) {
-
+    if (dimension.Filters().length === 0) {
         dimension.Dimension.filterAll();
-    }
-    else {
-        dimension.Dimension.filter(function (d) {
+    } else {
+        dimension.Dimension.filter(function(d) {
             return dimension.Filters().indexOf(d) != -1;
         });
     }
 
     this.CumulativeGroups().forEach(
-        function (d, i) {
+        function(d, i) {
             var currentCount = 0;
             var renewalCount = 0;
             var budgetCount = 0;
 
             var data = d.getData();
 
-            data.forEach(function (d, i) {
+            data.forEach(function(d, i) {
                 currentCount += d.value.Current;
                 renewalCount += d.value.Renewal;
                 budgetCount += d.value.Budget;
@@ -82,11 +78,11 @@ ChartGroup.prototype.chartFilterHandler = function (data, dimension, filterValue
 };
 
 
-ChartGroup.prototype.addSumGrouping = function (dimension, func) {
+ChartGroup.prototype.addSumGrouping = function(dimension, func) {
     var data = dimension.Dimension.group().reduceSum(func);
     var group = new Group(data, false);
 
-    group.Data.subscribe(function (newValue) {
+    group.Data.subscribe(function(newValue) {
         for (var i = 0; i < this.Charts().length; i++) {
             this.Charts()[i].draw();
         }
@@ -94,12 +90,12 @@ ChartGroup.prototype.addSumGrouping = function (dimension, func) {
 
     this.Groups.push(group);
     return group;
-}
+};
 
 
-ChartGroup.prototype.addCumulativeGrouping = function (group) {
+ChartGroup.prototype.addCumulativeGrouping = function(group) {
 
-    group.Data.subscribe(function (newValue) {
+    group.Data.subscribe(function(newValue) {
         for (var i = 0; i < this.Charts().length; i++) {
             this.Charts()[i].draw();
         }
@@ -114,7 +110,7 @@ ChartGroup.prototype.addCumulativeGrouping = function (group) {
 
     this.CumulativeGroups.push(group);
 
-    group.getData().forEach(function (d, i) {
+    group.getData().forEach(function(d, i) {
         currentCount += d.value.Current;
         renewalCount += d.value.Renewal;
         budgetCount += d.value.Budget;
@@ -124,12 +120,12 @@ ChartGroup.prototype.addCumulativeGrouping = function (group) {
         d.value.BudgetTotal = budgetCount;
     });
 
-}
+};
 
 
-ChartGroup.prototype.addCustomGrouping = function (group) {
+ChartGroup.prototype.addCustomGrouping = function(group) {
 
-    group.Data.subscribe(function (newValue) {
+    group.Data.subscribe(function(newValue) {
         for (var i = 0; i < this.Charts().length; i++) {
             this.Charts()[i].draw();
         }
@@ -137,4 +133,4 @@ ChartGroup.prototype.addCustomGrouping = function (group) {
 
     this.Groups.push(group);
     return group;
-}
+};
