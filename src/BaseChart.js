@@ -26,7 +26,7 @@ var BaseChart = function BaseChart(name, element, dimension, group) {
     this._currentMax = 0;
     this._cumulative = false;
     this._labelFontSize = "11px";
-    this._targets = [];
+    this._targets = null;
     this._series = [];
     this._ranges = [];
     this._redrawAxes = false;
@@ -109,14 +109,18 @@ BaseChart.prototype.updateMax = function(d) {
         value += this._valueAccessor(d);
         this._currentMax = value > this._currentMax ? value : this._currentMax;
     }
-    if (this._targets.length) {
-        for (var target in this._targets) {
-            func = this.cumulative() ? this._targets[target].cumulative : this._targets[target].calculation;
-            value = func(d);
-            this._currentMax = value > this._currentMax ? value : this._currentMax;
-        }
-    }
+    return this._currentMax;
+};
 
+BaseChart.prototype.targetMax = function(d) {
+    var value = 0;
+    this._currentMax = 0;
+
+    if (this._targets) {
+        func = this.cumulative() ? this._targets.cumulative : this._targets.calculation;
+        value = func(d);
+        this._currentMax = value > this._currentMax ? value : this._currentMax;
+    }
     return this._currentMax;
 };
 
@@ -125,7 +129,12 @@ BaseChart.prototype.findMax = function() {
     var max = d3.max(this.dataset(), function(d) {
         return self.updateMax(d);
     });
-
+    if (this._targets) {
+        var targetsmax = d3.max(this._targets.data.getData(), function(d) {
+            return self.targetMax(d);
+        });
+        max = max > targetsmax ? max : targetsmax;
+    }
     return max;
 };
 
@@ -143,11 +152,9 @@ BaseChart.prototype.zeroValueEntry = function(d) {
         hasValue = hasValue | (Math.round(this._valueAccessor(d), 1) > 0);
 
     }
-    if (this._targets.length) {
-        for (var target in this._targets) {
-            func = this.cumulative() ? this._targets[target].cumulative : this._targets[target].calculation;
-            hasValue = hasValue | (Math.round(func(d), 1) > 0);
-        }
+    if (this._targets) {
+        func = this.cumulative() ? this._targets.cumulative : this._targets.calculation;
+        hasValue = hasValue | (Math.round(func(d), 1) > 0);
     }
     return hasValue;
 };
@@ -208,6 +215,10 @@ BaseChart.prototype.topResults = function(top) {
 BaseChart.prototype.dataset = function() {
 
     return this.group.getData().filter(this._limitFunction);
+};
+
+BaseChart.prototype.targetData = function() {
+    return this._targets.data.getData().filter(this._limitFunction);
 };
 
 BaseChart.prototype.keyAccessor = function(k) {
@@ -359,7 +370,6 @@ BaseChart.prototype.tooltip = function() {
 BaseChart.prototype.filterKey = function() {};
 
 
-
 BaseChart.prototype.limitFunction = function(d) {
     if (!arguments.length) {
         return this._limitFunction;
@@ -418,7 +428,12 @@ BaseChart.prototype.labelAnchoring = function(d) {
 BaseChart.prototype.filterFunction = function(filter) {
     var value = filter.key ? filter.key : filter;
 
-    return value;
+    return {
+        name: value,
+        filterFunction: function(d) {
+            return String(d) == String(value);
+        }
+    };
 };
 
 
@@ -430,11 +445,15 @@ BaseChart.prototype.filterClick = function(element, filter) {
         d3.select(element).classed("selected", true);
     }
 
-    var value = this.filterFunction(filter);
+    var filterFunction = this.filterFunction(filter);
 
-    this.filterEvent(this.group, this.dimension, value);
+    this.filterEvent(this, filterFunction);
 };
 
+
+BaseChart.prototype.triggerRedraw = function() {
+
+};
 
 BaseChart.prototype.filterEvent = function(data, dimension, filter) {
 

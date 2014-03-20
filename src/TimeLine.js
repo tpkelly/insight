@@ -19,7 +19,7 @@ function TimeLine(name, element, dimension, group) {
     this.initializeAxes = function() {
         this.x = d3.scale.linear()
             .domain([0, this.maxRange])
-            .range([0, this.width() - 160]);
+            .range([0, this.width() - 190]);
 
         this.y = d3.time.scale()
             .domain(this.range)
@@ -36,19 +36,25 @@ function TimeLine(name, element, dimension, group) {
         var minExtent = self.brush.extent()[0],
             maxExtent = self.brush.extent()[1];
 
-        if (minExtent.getTime() != maxExtent.getTime()) {
-            this.dimension.Dimension.filter(function(d) {
+        var func = {
+            name: 'timeline',
+            filterFunction: function(d) {
                 return d >= minExtent && d <= maxExtent;
-            });
+            }
+        };
+
+        if (minExtent.getTime() != maxExtent.getTime()) {
+
+
+            this.filterEvent(this, func);
 
             self.mini.select('.brush')
                 .call(self.brush.extent([minExtent, maxExtent]));
         } else {
-            this.dimension.Dimension.filterAll();
+            this.filterEvent(this, func);
+            this.triggerRedraw();
         }
-        var g = this.group.Data();
 
-        this.group.Data(this.group.Data());
     };
 
 

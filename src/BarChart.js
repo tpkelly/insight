@@ -85,12 +85,9 @@ function BarChart(name, element, dimension, group) {
             })
             .attr("class", "tipLabel");
 
-
-        if (this._targets.length) {
-            this.drawTargets();
+        if (this._targets) {
+            this.drawNewTargets();
         }
-
-
 
         this.chart.append("g")
             .attr("class", "y-axis")
@@ -157,17 +154,18 @@ function BarChart(name, element, dimension, group) {
                 return self.tooltipLabel();
             });
 
-        if (this._targets.length) {
-            this.updateTargets();
+        if (this._targets) {
+            this.updateNewTargets();
         }
 
-        this.chart.selectAll("g.y-axis").call(this.yAxis).selectAll("text")
+        this.chart.selectAll("g.y-axis")
+            .call(this.yAxis).selectAll("text")
             .style("text-anchor", "end")
             .style("font-size", "12px")
             .style("fill", "#333");
     };
 
-    this.drawTargets = function() {
+    this.drawNewTargets = function() {
         var self = this;
 
         var func;
@@ -191,23 +189,24 @@ function BarChart(name, element, dimension, group) {
             return self._tooltipFormat(func(d));
         };
         var tooltipLabel = function(d) {
-            return self._targets[target].label;
+            return self._targets.label;
         };
 
-        for (var target in this._targets) {
 
-            func = self._targets[target].calculation;
+        if (this._targets) {
+
+            func = self._targets.calculation;
 
             var tBars = this.chart.selectAll("rect.target")
-                .data(this.dataset())
+                .data(this.targetData())
                 .enter()
                 .append("rect")
-                .attr("class", "target " + self._targets[target].name + "class")
+                .attr("class", "target " + self._targets.name + "class")
                 .attr("x", xPosition)
                 .attr("y", yPosition)
                 .attr("width", width)
                 .attr("height", 4)
-                .attr("fill", self._targets[target].color)
+                .attr("fill", self._targets.color)
                 .on("mouseover", mouseOver)
                 .on("mouseout", mouseOut);
 
@@ -220,7 +219,6 @@ function BarChart(name, element, dimension, group) {
                 .attr("class", "tipLabel");
         }
     };
-
 
     this.drawRanges = function() {
         var self = this;
@@ -250,8 +248,7 @@ function BarChart(name, element, dimension, group) {
     };
 
 
-
-    this.updateTargets = function() {
+    this.updateNewTargets = function() {
         var self = this;
 
         var func;
@@ -262,16 +259,13 @@ function BarChart(name, element, dimension, group) {
         var tooltipValue = function(d) {
             return self._tooltipFormat(func(d));
         };
-        var tooltipLabel = function(d) {
-            return self._targets[target].label;
-        };
 
-        for (var target in this._targets) {
+        if (this._targets) {
 
-            func = self._targets[target].calculation;
+            func = self._targets.calculation;
 
             var tBars = this.chart.selectAll("rect.target")
-                .data(this.dataset())
+                .data(this.targetData())
                 .transition()
                 .duration(self.duration)
                 .attr("y", yPosition);
@@ -280,9 +274,6 @@ function BarChart(name, element, dimension, group) {
                 .text(tooltipValue)
                 .attr("class", "tipValue");
 
-            tBars.selectAll("text.tipLabel")
-                .text(tooltipLabel)
-                .attr("class", "tipLabel");
         }
     };
 

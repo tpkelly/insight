@@ -8,6 +8,14 @@
 				"tooltipLabel"
 			],
 			[
+				"y",
+				"yPosition"
+			],
+			[
+				"too",
+				"tooltipValue"
+			],
+			[
 				"tooltip",
 				"tooltipLabel"
 			],
@@ -24,42 +32,10 @@
 	"buffers":
 	[
 		{
-			"file": "src/BulletChart.js",
-			"settings":
-			{
-				"buffer_size": 5164,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "Gruntfile.js",
-			"settings":
-			{
-				"buffer_size": 1857,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "package.json",
-			"settings":
-			{
-				"buffer_size": 311,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/GroupedBarChart.js",
-			"settings":
-			{
-				"buffer_size": 8066,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "src/DataTable.js",
 			"settings":
 			{
-				"buffer_size": 2249,
+				"buffer_size": 2319,
 				"line_ending": "Unix"
 			}
 		},
@@ -67,7 +43,7 @@
 			"file": "src/BaseChart.js",
 			"settings":
 			{
-				"buffer_size": 10102,
+				"buffer_size": 10028,
 				"line_ending": "Unix"
 			}
 		},
@@ -75,7 +51,7 @@
 			"file": "src/StackedBarChart.js",
 			"settings":
 			{
-				"buffer_size": 8905,
+				"buffer_size": 9505,
 				"line_ending": "Unix"
 			}
 		},
@@ -91,7 +67,7 @@
 			"file": "src/Group.js",
 			"settings":
 			{
-				"buffer_size": 484,
+				"buffer_size": 487,
 				"line_ending": "Unix"
 			}
 		},
@@ -110,16 +86,91 @@
 				"buffer_size": 4234,
 				"line_ending": "Unix"
 			}
+		},
+		{
+			"file": "src/Legend.js",
+			"settings":
+			{
+				"buffer_size": 1181,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/PartitionChart.js",
+			"settings":
+			{
+				"buffer_size": 2973,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Dimension.js",
+			"settings":
+			{
+				"buffer_size": 364,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/CountChart.js",
+			"settings":
+			{
+				"buffer_size": 1180,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/CircularPartitionChart.js",
+			"settings":
+			{
+				"buffer_size": 6704,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/ChartGroup.js",
+			"settings":
+			{
+				"buffer_size": 3453,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/BarChart.js",
+			"settings":
+			{
+				"buffer_size": 8513,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "examples/barchart.js",
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Windows"
+			}
 		}
 	],
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 0.0,
+		"height": 392.0,
 		"selected_items":
 		[
+			[
+				"",
+				"Code Folding: Unfold All"
+			]
 		],
-		"width": 0.0
+		"width": 416.0
 	},
 	"console":
 	{
@@ -136,6 +187,12 @@
 	},
 	"file_history":
 	[
+		"/C/nstavrakakis/NuGet.Charts/d3charts/Gruntfile.js",
+		"/C/nstavrakakis/NuGet.Charts/d3charts/src/BulletChart.js",
+		"/C/nstavrakakis/NuGet.Charts/d3charts/examples/barchart.html",
+		"/C/Users/nstavrakakis/AppData/Roaming/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
+		"/C/nstavrakakis/NuGet.Charts/d3charts/src/GroupedBarChart.js",
+		"/C/nstavrakakis/NuGet.Charts/d3charts/package.json",
 		"/C/nstavrakakis/NuGet.Charts/d3charts/src/DataTable.js"
 	],
 	"find":
@@ -154,6 +211,19 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"drawTargets",
+			"drawra",
+			"draw",
+			"barYPosition",
+			"filterKey",
+			"labelYPosition",
+			"filterkey",
+			"barYPosition",
+			"labelYPosition",
+			"invert",
+			"labelAnchoring",
+			"xAxisFormat",
+			"xformatfun",
 			"dataset",
 			"filterKey",
 			"series"
@@ -175,22 +245,23 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "src/BulletChart.js",
+					"file": "src/DataTable.js",
 					"settings":
 					{
-						"buffer_size": 5164,
+						"buffer_size": 2319,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								5164
+								948,
+								948
 							]
 						],
 						"settings":
@@ -207,158 +278,46 @@
 				},
 				{
 					"buffer": 1,
-					"file": "Gruntfile.js",
+					"file": "src/BaseChart.js",
 					"settings":
 					{
-						"buffer_size": 1857,
+						"buffer_size": 10028,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1500,
-								1500
+								8693,
+								8693
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 2,
+							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 180.0,
+						"translation.y": 5083.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "package.json",
-					"settings":
-					{
-						"buffer_size": 311,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								297,
-								297
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JSON.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "src/GroupedBarChart.js",
-					"settings":
-					{
-						"buffer_size": 8066,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1387,
-								1387
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 405.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "src/DataTable.js",
-					"settings":
-					{
-						"buffer_size": 2249,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2023,
-								2023
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 315.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "src/BaseChart.js",
-					"settings":
-					{
-						"buffer_size": 10102,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5043,
-								5050
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2598.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
 					"file": "src/StackedBarChart.js",
 					"settings":
 					{
-						"buffer_size": 8905,
+						"buffer_size": 9505,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6157,
-								6157
+								5066,
+								5066
 							]
 						],
 						"settings":
@@ -374,7 +333,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 7,
+					"buffer": 3,
 					"file": "src/TimeLine.js",
 					"settings":
 					{
@@ -396,25 +355,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1260.0,
+						"translation.y": 810.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 8,
+					"buffer": 4,
 					"file": "src/Group.js",
 					"settings":
 					{
-						"buffer_size": 484,
+						"buffer_size": 487,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								426,
-								426
+								120,
+								120
 							]
 						],
 						"settings":
@@ -430,7 +389,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 5,
 					"file": "src/RowChart.js",
 					"settings":
 					{
@@ -458,7 +417,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 10,
+					"buffer": 6,
 					"file": "src/PieChart.js",
 					"settings":
 					{
@@ -481,6 +440,252 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 1350.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "src/Legend.js",
+					"settings":
+					{
+						"buffer_size": 1181,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1082,
+								1082
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "src/PartitionChart.js",
+					"settings":
+					{
+						"buffer_size": 2973,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2849,
+								2849
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 990.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "src/Dimension.js",
+					"settings":
+					{
+						"buffer_size": 364,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								363,
+								363
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "src/CountChart.js",
+					"settings":
+					{
+						"buffer_size": 1180,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1071,
+								1071
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "src/CircularPartitionChart.js",
+					"settings":
+					{
+						"buffer_size": 6704,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2925.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "src/ChartGroup.js",
+					"settings":
+					{
+						"buffer_size": 3453,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 495.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 13,
+					"file": "src/BarChart.js",
+					"settings":
+					{
+						"buffer_size": 8513,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7521,
+								7521
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3678.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 14,
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"default_dir": "C:\\nstavrakakis\\NuGet.Charts\\d3charts\\examples",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 15,
+					"file": "examples/barchart.js",
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

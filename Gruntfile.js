@@ -54,12 +54,15 @@ module.exports = function(grunt) {
       {
         expand: true, flatten:true, src: ['dist/*'], dest: 'C:\\Users\\nstavrakakis\\Documents\\visual studio 2013\\Projects\\ReportingTool\\ReportingTool\\Scripts\\d3Charts\\', filter: 'isFile'
       },
+      {
+        expand: true, flatten:true, src: ['dist/*'], dest: 'examples\\lib\\', filter: 'isFile'
+      }
     ]
     }
 	},
     watch: {
       files: ['<%= jshint.files %>'],
-      tasks: ['jshint']
+      tasks: ['default']
     }
   });
 

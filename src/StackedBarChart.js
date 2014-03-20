@@ -146,48 +146,13 @@ function StackedBarChart(name, element, dimension, group) {
             .on("mouseout", function(d, item) {
                 self.removeHover(this);
             })
-            .on("click", function(filter) {
+            .on("click.mine", function(filter) {
+                console.log('click');
                 return self.filterClick(this, filter);
             });
 
-        if (this._targets.length) {
-            var targetX = function(d, i) {
-                return self.x(self._keyAccessor(d)) + self.x.rangeBand() / 4;
-            };
-            var targetY = function(d, i) {
-                return self.y(func(d));
-            };
-            var targetWidth = function(d) {
-                return self.x.rangeBand() / 2;
-            };
-            tooltipText = function(d) {
-                return self._tooltipFormat(func(d));
-            };
-            tooltipLabel = function(d) {
-                return self._targets[target].label;
-            };
-
-            for (var target in this._targets) {
-                func = this.cumulative() ? self._targets[target].cumulative : self._targets[target].calculation;
-
-                var tBars = groups.append("rect")
-                    .attr("class", self._targets[target].name + "class target")
-                    .attr("x", targetX)
-                    .attr("y", targetY)
-                    .attr("width", targetWidth)
-                    .attr("height", 4)
-                    .attr("fill", self._targets[target].color)
-                    .on("mouseover", mouseOver)
-                    .on("mouseout", mouseOut);
-
-                tBars.append("svg:text")
-                    .text(tooltipText)
-                    .attr("class", "tipValue");
-
-                tBars.append("svg:text")
-                    .text(tooltipLabel)
-                    .attr("class", "tipLabel");
-            }
+        if (this._targets) {
+            this.drawNewTargets();
         }
     };
 
@@ -245,7 +210,6 @@ function StackedBarChart(name, element, dimension, group) {
                 .attr("y", value)
                 .attr("height", height);
 
-
             bars.selectAll("text.tipValue")
                 .text(tooltipText);
 
@@ -254,40 +218,8 @@ function StackedBarChart(name, element, dimension, group) {
 
         }
 
-        if (this._targets.length) {
-
-            var targetX = function(d, i) {
-                return self.x(self._keyAccessor(d)) + self.x.rangeBand() / 4;
-            };
-            var targetY = function(d, i) {
-                return self.y(func(d));
-            };
-            var targetWidth = function(d) {
-                return self.x.rangeBand() / 2;
-            };
-            tooltipText = function(d) {
-                return self._tooltipFormat(func(d));
-            };
-            tooltipLabel = function(d) {
-                return self._targets[target].label;
-            };
-
-            for (var target in this._targets) {
-                func = this.cumulative() ? self._targets[target].cumulative : self._targets[target].calculation;
-
-                var tBars = groups.selectAll("." + self._targets[target].name + "class.target")
-                    .transition()
-                    .duration(self.duration)
-                    .attr("y", targetY);
-
-                tBars.selectAll("text.tipValue")
-                    .text(tooltipText)
-                    .attr("class", "tipValue");
-
-                tBars.selectAll("text.tipLabel")
-                    .text(tooltipLabel)
-                    .attr("class", "tipLabel");
-            }
+        if (this._targets) {
+            this.updateNewTargets();
         }
 
         this.chart.selectAll(".y-axis").call(this.yAxis).selectAll("text")
@@ -295,6 +227,88 @@ function StackedBarChart(name, element, dimension, group) {
             .style("font-size", "12px")
             .style("fill", "#333");
     };
+
+
+    this.drawNewTargets = function() {
+
+        var targetX = function(d, i) {
+            return self.x(self._keyAccessor(d)) + self.x.rangeBand() / 4;
+        };
+        var targetY = function(d, i) {
+            return self.y(func(d));
+        };
+        var targetWidth = function(d) {
+            return self.x.rangeBand() / 2;
+        };
+        tooltipText = function(d) {
+            return self._tooltipFormat(func(d));
+        };
+        tooltipLabel = function(d) {
+            return self._targets.label;
+        };
+
+        var mouseOver = function(d, item) {
+            self.mouseOver(self, this, d);
+        };
+        var mouseOut = function(d, item) {
+            self.mouseOut(self, this, d);
+        };
+
+        var groups = this.chart.selectAll("g")
+            .data(this.targetData());
+
+        if (this._targets) {
+
+            func = this.cumulative() ? self._targets.cumulative : self._targets.calculation;
+
+            var tBars = groups.append("rect")
+                .attr("class", self._targets.name + "class target")
+                .attr("x", targetX)
+                .attr("y", targetY)
+                .attr("width", targetWidth)
+                .attr("height", 4)
+                .attr("fill", self._targets.color)
+                .on("mouseover", mouseOver)
+                .on("mouseout", mouseOut);
+
+            tBars.append("svg:text")
+                .text(tooltipText)
+                .attr("class", "tipValue");
+
+            tBars.append("svg:text")
+                .text(tooltipLabel)
+                .attr("class", "tipLabel");
+        }
+    };
+
+    this.updateNewTargets = function() {
+
+        var targetY = function(d) {
+            return self.y(func(d));
+        };
+        tooltipText = function(d) {
+            return self._tooltipFormat(func(d));
+        };
+
+        var groups = this.chart.selectAll("g")
+            .data(this.targetData());
+
+        if (this._targets) {
+
+            func = this.cumulative() ? self._targets.cumulative : self._targets.calculation;
+
+            var tBars = groups.selectAll("rect." + self._targets.name + "class.target");
+
+            tBars.transition()
+                .duration(this.duration)
+                .attr("y", targetY);
+
+            tBars.selectAll("text.tipValue")
+                .text(tooltipText)
+                .attr("class", "tipValue");
+        }
+    };
+
 }
 
 
