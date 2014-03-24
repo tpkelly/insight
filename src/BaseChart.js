@@ -438,7 +438,6 @@ BaseChart.prototype.filterFunction = function(filter) {
 
 
 BaseChart.prototype.filterClick = function(element, filter) {
-
     if (d3.select(element).classed("selected")) {
         d3.select(element).classed("selected", false);
     } else {

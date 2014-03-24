@@ -40,7 +40,8 @@ var RowChart = function RowChart(name, element, dimension, group) {
         var bars = this.chart.append("g")
             .selectAll("rect")
             .data(this.dataset())
-            .enter().append("rect")
+            .enter()
+            .append("rect")
             .attr("x", this.barXPosition)
             .attr("y", function(d, i) {
                 return self.y(d.key);
@@ -52,9 +53,6 @@ var RowChart = function RowChart(name, element, dimension, group) {
                 return self.y.rangeBand();
             })
             .attr("fill", this.barColor())
-            .on("click", function(filter) {
-                self.filterClick(this, filter);
-            })
             .on("mouseover", function(d, item) {
                 self.mouseOver(self, this, d);
             })
@@ -62,7 +60,10 @@ var RowChart = function RowChart(name, element, dimension, group) {
                 self.mouseOut(self, this, d);
             });
 
-        this.chart.selectAll("rect").data(this.dataset()).exit().remove();
+        this.chart.selectAll("rect")
+            .data(this.dataset())
+            .exit()
+            .remove();
 
         bars.append("svg:text")
             .text(function(d) {
@@ -80,11 +81,20 @@ var RowChart = function RowChart(name, element, dimension, group) {
             .attr("class", "y-axis")
             .call(this.yAxis)
             .selectAll("text")
-            .style("text-anchor", "end")
-            .style("font-size", "12px");
+            .attr('class', 'row-chart-y')
+            .on("mouseover", function() {
+                self.setHover(this);
+            })
+            .on("mouseout", function() {
+                self.removeHover(this);
+            })
+            .on("click", function(filter) {
+                self.filterClick(this, filter);
+            });
     };
 
     this.draw = function() {
+
         var self = this;
 
         if (self._redrawAxes) {
@@ -92,34 +102,41 @@ var RowChart = function RowChart(name, element, dimension, group) {
             this.y.domain(this.keys())
                 .rangeRoundBands([0, this.height()], 0.2);
 
-            this.yAxis = d3.svg.axis()
-                .scale(this.y).orient("left").tickSize(0).tickPadding(10);
-
             this.chart
                 .selectAll("g.y-axis")
-                .transition().duration(self.duration)
-                .call(this.yAxis).selectAll("text")
-                .style("text-anchor", "end")
-                .style("font-size", "12px")
-                .style("fill", "#333");
+                .call(this.yAxis)
+                .selectAll("text")
+                .each(function() {
+                    d3.select(this).classed('row-chart-y', 'true');
+                })
+                .on("mouseover", function(d, item) {
+                    self.setHover(this);
+                })
+                .on("mouseout", function(d, item) {
+                    self.removeHover(this);
+                })
+                .on("click", function(filter) {
+                    self.filterClick(this, filter);
+                });
         }
 
         var bars = self.chart.selectAll("rect")
             .data(this.dataset())
-            .transition().duration(self.duration)
+            .transition()
+            .duration(self.duration)
             .attr("width", function(d) {
                 return self.x(self._valueAccessor(d));
             });
 
         if (self._redrawAxes) {
-            bars.attr("y", function(d, i) {
-                return self.y(d.key);
-            })
+            bars
+                .attr("y", function(d, i) {
+                    return self.y(d.key);
+                })
                 .attr("height", function(d) {
                     return self.y.rangeBand();
                 });
         }
-
     };
     return this;
 };

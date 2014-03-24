@@ -11,6 +11,41 @@ function StackedBarChart(name, element, dimension, group) {
         return d;
     };
 
+    var func;
+
+    var xPosition = function(d) {
+        return self.x(self._keyAccessor(d));
+    };
+
+    var yPosition = function(d) {
+        return self.y(self.calculateYPos(func, d));
+    };
+
+    var targetYPosition = function(d, i) {
+        return self.y(func(d));
+    };
+
+    var barWidth = function(d) {
+        return self.x.rangeBand();
+    };
+
+    var barHeight = function(d) {
+        return (self.height() - self.margin().top - self.margin().bottom) - self.y(func(d));
+    };
+
+    var mouseOver = function(d, item) {
+        self.mouseOver(self, this, d);
+    };
+    var mouseOut = function(d, item) {
+        self.mouseOut(self, this, d);
+    };
+
+    var tooltipText = function(d) {
+        return self._tooltipFormat(func(d));
+    };
+
+
+
     this.yAxis = d3.svg.axis()
         .scale(this.y).orient("left").tickSize(0).tickPadding(10).tickFormat(function(d) {
             return self._yAxisFormat(d);
@@ -69,33 +104,10 @@ function StackedBarChart(name, element, dimension, group) {
         var groups = this.chart.selectAll("g")
             .data(this.dataset());
 
-
         groups.enter().append("g").attr("class", "bargroup");
 
         var bars = groups.selectAll('rect.bar');
-        var func;
 
-        var key = function(d, i) {
-            return self.x(self._keyAccessor(d));
-        };
-        var value = function(d, i) {
-            return self.y(self.calculateYPos(func, d));
-        };
-        var width = function(d) {
-            return self.x.rangeBand();
-        };
-        var height = function(d) {
-            return (self.height() - self.margin().top - self.margin().bottom) - self.y(func(d));
-        };
-        var mouseOver = function(d, item) {
-            self.mouseOver(self, this, d);
-        };
-        var mouseOut = function(d, item) {
-            self.mouseOut(self, this, d);
-        };
-        var tooltipText = function(d) {
-            return self._tooltipFormat(func(d));
-        };
         var tooltipLabel = function(d) {
             return self._series[seriesFunction].label;
         };
@@ -105,10 +117,10 @@ function StackedBarChart(name, element, dimension, group) {
 
             bars = groups.append("rect")
                 .attr("class", self._series[seriesFunction].name + "class bar")
-                .attr("x", key)
-                .attr("y", value)
-                .attr("width", width)
-                .attr("height", height)
+                .attr("x", xPosition)
+                .attr("y", yPosition)
+                .attr("width", barWidth)
+                .attr("height", barHeight)
                 .attr("fill", self._series[seriesFunction].color)
                 .on("mouseover", mouseOver)
                 .on("mouseout", mouseOut);
@@ -152,7 +164,7 @@ function StackedBarChart(name, element, dimension, group) {
             });
 
         if (this._targets) {
-            this.drawNewTargets();
+            this.drawTargets();
         }
     };
 
@@ -164,7 +176,6 @@ function StackedBarChart(name, element, dimension, group) {
         if (self.redrawAxes()) {
             this.y.domain([0, d3.round(self.findMax(), 1)]).range([this.height() - this.margin().top - this.margin().bottom, 0]);
         }
-
 
         var groups = this.chart.selectAll("g.bargroup")
             .data(this.dataset())
@@ -219,17 +230,19 @@ function StackedBarChart(name, element, dimension, group) {
         }
 
         if (this._targets) {
-            this.updateNewTargets();
+            this.updateTargets();
         }
 
-        this.chart.selectAll(".y-axis").call(this.yAxis).selectAll("text")
+        this.chart.selectAll(".y-axis")
+            .call(this.yAxis)
+            .selectAll("text")
             .style("text-anchor", "end")
             .style("font-size", "12px")
             .style("fill", "#333");
     };
 
 
-    this.drawNewTargets = function() {
+    this.drawTargets = function() {
 
         var targetX = function(d, i) {
             return self.x(self._keyAccessor(d)) + self.x.rangeBand() / 4;
@@ -281,7 +294,7 @@ function StackedBarChart(name, element, dimension, group) {
         }
     };
 
-    this.updateNewTargets = function() {
+    this.updateTargets = function() {
 
         var targetY = function(d) {
             return self.y(func(d));

@@ -51,7 +51,7 @@ function TimeLine(name, element, dimension, group) {
             self.mini.select('.brush')
                 .call(self.brush.extent([minExtent, maxExtent]));
         } else {
-            this.filterEvent(this, func);
+            this.dimension.Dimension.filterAll();
             this.triggerRedraw();
         }
 

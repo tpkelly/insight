@@ -11,6 +11,45 @@ function BarChart(name, element, dimension, group) {
         return d;
     };
 
+    var func;
+
+    var xPosition = function(d) {
+        return self.x(self._keyAccessor(d));
+    };
+    var yPosition = function(d) {
+        return self.y(self._valueAccessor(d));
+    };
+
+    var targetYPosition = function(d, i) {
+        return self.y(func(d));
+    };
+
+    var barWidth = function(d) {
+        return self.x.rangeBand();
+    };
+
+    var barHeight = function(d) {
+        return (self.height() - self.margin().top - self.margin().bottom) - self.y(self._valueAccessor(d));
+    };
+
+    var mouseOver = function(d, item) {
+        self.mouseOver(self, this, d);
+    };
+    var mouseOut = function(d, item) {
+        self.mouseOut(self, this, d);
+    };
+
+    var tooltipText = function(d) {
+        return self._tooltipFormat(self._valueAccessor(d));
+    };
+
+    var targetTooltipText = function(d) {
+        return self._tooltipFormat(func(d));
+    };
+
+    var tooltipLabel = function(d) {
+        return self._targets.label;
+    };
 
     this.yAxis = d3.svg.axis()
         .scale(this.y).orient("left").tickSize(0).tickPadding(10).tickFormat(function(d) {
@@ -53,30 +92,16 @@ function BarChart(name, element, dimension, group) {
             .data(this.dataset())
             .enter().append("rect")
             .attr("class", "bar")
-            .attr("x", function(d, i) {
-                return self.x(self._keyAccessor(d));
-            })
-            .attr("y", function(d, i) {
-                return self.y(self._valueAccessor(d));
-            })
-            .attr("width", function(d) {
-                return self.x.rangeBand();
-            })
-            .attr("height", function(d) {
-                return (self.height() - self.margin().top - self.margin().bottom) - self.y(self._valueAccessor(d));
-            })
+            .attr("x", xPosition)
+            .attr("y", yPosition)
+            .attr("width", barWidth)
+            .attr("height", barHeight)
             .attr("fill", this._barColor)
-            .on("mouseover", function(d, item) {
-                self.mouseOver(self, this, d);
-            })
-            .on("mouseout", function(d, item) {
-                self.mouseOut(self, this, d);
-            });
+            .on("mouseover", mouseOver)
+            .on("mouseout", mouseOut);
 
         bars.append("svg:text")
-            .text(function(d) {
-                return self._tooltipFormat(self._valueAccessor(d));
-            })
+            .text(tooltipText)
             .attr("class", "tipValue");
 
         bars.append("svg:text")
@@ -86,8 +111,14 @@ function BarChart(name, element, dimension, group) {
             .attr("class", "tipLabel");
 
         if (this._targets) {
-            this.drawNewTargets();
+            this.drawTargets();
         }
+
+        this.drawAxes();
+    };
+
+    this.drawAxes = function() {
+        var self = this;
 
         this.chart.append("g")
             .attr("class", "y-axis")
@@ -103,10 +134,10 @@ function BarChart(name, element, dimension, group) {
             .attr("class", "x-axis")
             .style("text-anchor", "end")
             .style("font-size", "12px")
-            .on("mouseover", function(d, item) {
+            .on("mouseover", function() {
                 self.setHover(this);
             })
-            .on("mouseout", function(d, item) {
+            .on("mouseout", function() {
                 self.removeHover(this);
             })
             .on("click", function(filter) {
@@ -130,72 +161,36 @@ function BarChart(name, element, dimension, group) {
 
         var bars = self.chart.selectAll("rect")
             .data(this.dataset())
-            .transition().duration(self.duration)
-            .attr("x", function(d, i) {
-                return self.x(self._keyAccessor(d));
-            })
-            .attr("y", function(d, i) {
-                return self.y(self._valueAccessor(d));
-            })
-            .attr("width", function(d) {
-                return self.x.rangeBand();
-            })
-            .attr("height", function(d) {
-                return (self.height() - self.margin().top - self.margin().bottom) - self.y(self._valueAccessor(d));
-            });
+            .transition()
+            .duration(self.duration)
+            .attr("x", xPosition)
+            .attr("y", yPosition)
+            .attr("width", barWidth)
+            .attr("height", barHeight);
 
         bars.selectAll("text.tipValue")
-            .text(function(d) {
-                return self._tooltipFormat(self._valueAccessor(d));
-            });
+            .text(tooltipText);
 
-        bars.selectAll("text.tipLabel")
-            .text(function(d) {
-                return self.tooltipLabel();
-            });
 
         if (this._targets) {
-            this.updateNewTargets();
+            this.updateTargets();
         }
 
         this.chart.selectAll("g.y-axis")
-            .call(this.yAxis).selectAll("text")
+            .call(this.yAxis)
+            .selectAll("text")
             .style("text-anchor", "end")
             .style("font-size", "12px")
             .style("fill", "#333");
     };
 
-    this.drawNewTargets = function() {
+    this.drawTargets = function() {
         var self = this;
-
-        var func;
-
-        var xPosition = function(d, i) {
-            return self.x(self._keyAccessor(d));
-        };
-        var yPosition = function(d, i) {
-            return self.y(func(d));
-        };
-        var width = function(d) {
-            return self.x.rangeBand();
-        };
-        var mouseOver = function(d, item) {
-            self.mouseOver(self, this, d);
-        };
-        var mouseOut = function(d, item) {
-            self.mouseOut(self, this, d);
-        };
-        var tooltipValue = function(d) {
-            return self._tooltipFormat(func(d));
-        };
-        var tooltipLabel = function(d) {
-            return self._targets.label;
-        };
-
 
         if (this._targets) {
 
             func = self._targets.calculation;
+            label = self._targets.label;
 
             var tBars = this.chart.selectAll("rect.target")
                 .data(this.targetData())
@@ -203,19 +198,19 @@ function BarChart(name, element, dimension, group) {
                 .append("rect")
                 .attr("class", "target " + self._targets.name + "class")
                 .attr("x", xPosition)
-                .attr("y", yPosition)
-                .attr("width", width)
+                .attr("y", targetYPosition)
+                .attr("width", barWidth)
                 .attr("height", 4)
                 .attr("fill", self._targets.color)
                 .on("mouseover", mouseOver)
                 .on("mouseout", mouseOut);
 
             tBars.append("svg:text")
-                .text(tooltipValue)
+                .text(targetTooltipText)
                 .attr("class", "tipValue");
 
             tBars.append("svg:text")
-                .text(tooltipLabel)
+                .text(label)
                 .attr("class", "tipLabel");
         }
     };
@@ -248,17 +243,10 @@ function BarChart(name, element, dimension, group) {
     };
 
 
-    this.updateNewTargets = function() {
+    this.updateTargets = function() {
         var self = this;
 
         var func;
-
-        var yPosition = function(d, i) {
-            return self.y(func(d));
-        };
-        var tooltipValue = function(d) {
-            return self._tooltipFormat(func(d));
-        };
 
         if (this._targets) {
 
@@ -268,10 +256,10 @@ function BarChart(name, element, dimension, group) {
                 .data(this.targetData())
                 .transition()
                 .duration(self.duration)
-                .attr("y", yPosition);
+                .attr("y", targetYPosition);
 
             tBars.selectAll("text.tipValue")
-                .text(tooltipValue)
+                .text(targetTooltipText)
                 .attr("class", "tipValue");
 
         }
