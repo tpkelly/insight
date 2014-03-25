@@ -5,10 +5,13 @@ function PartitionChart(name, element, dimension, group) {
 
     var w = 1120,
         h = 600,
-        x = d3.scale.linear().range([0, w]),
-        y = d3.scale.linear().range([0, h]);
+        x = d3.scale.linear()
+            .range([0, w]),
+        y = d3.scale.linear()
+            .range([0, h]);
 
-    this.vis = d3.select(this.element).append("div")
+    this.vis = d3.select(this.element)
+        .append("div")
         .attr("class", "chart")
         .style("width", w + "px")
         .style("height", h + "px")
@@ -30,17 +33,20 @@ function PartitionChart(name, element, dimension, group) {
 
         var g = this.vis.selectAll("g")
             .data(self.partition.nodes(this.group()))
-            .enter().append("svg:g")
+            .enter()
+            .append("svg:g")
             .attr("transform", function(d) {
                 return "translate(" + x(d.y) + "," + y(d.x) + ")";
             })
             .on("click", click);
 
-        var kx = w / this.group().dx,
+        var kx = w / this.group()
+            .dx,
             ky = h / 1;
 
         g.append("svg:rect")
-            .attr("width", this.group().dy * kx)
+            .attr("width", this.group()
+                .dy * kx)
             .attr("height", function(d) {
                 return d.dx * ky;
             })
@@ -74,7 +80,8 @@ function PartitionChart(name, element, dimension, group) {
 
             kx = (d.y ? w - 40 : w) / (1 - d.y);
             ky = h / d.dx;
-            x.domain([d.y, 1]).range([d.y ? 40 : 0, w]);
+            x.domain([d.y, 1])
+                .range([d.y ? 40 : 0, w]);
             y.domain([d.x, d.x + d.dx]);
 
             var t = g.transition()

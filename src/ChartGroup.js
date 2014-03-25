@@ -4,11 +4,18 @@ var ChartGroup = function ChartGroup(name) {
     this.Dimensions = ko.observableArray();
     this.Groups = ko.observableArray();
     this.CumulativeGroups = ko.observableArray();
+    this.LinkedCharts = [];
+};
+
+ChartGroup.prototype.initCharts = function() {
+    this.Charts()
+        .forEach(
+            function(chart) {
+                chart.init();
+            });
 };
 
 ChartGroup.prototype.addChart = function(chart) {
-
-    chart.init();
 
     chart.filterEvent = this.chartFilterHandler.bind(this);
     chart.triggerRedraw = this.redrawCharts.bind(this);
@@ -19,7 +26,6 @@ ChartGroup.prototype.addChart = function(chart) {
 };
 
 ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc) {
-
     var dimension = new Dimension(name, ndx.dimension(func), displayFunc);
 
     this.Dimensions.push(dimension);
@@ -28,66 +34,77 @@ ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc) {
 };
 
 
-ChartGroup.prototype.chartFilterHandler = function(chart, filterValue) {
+ChartGroup.prototype.chartFilterHandler = function(chart, filterFunction) {
 
     var self = this;
 
-    var dims = this.Dimensions().filter(function(d) {
-        return d.Name == chart.dimension.Name;
-    });
+    var dims = this.Dimensions()
+        .filter(function(d) {
+            return d.Name == chart.dimension.Name;
+        });
 
     dims.map(function(dim) {
 
         if (dim.Filters) {
 
-            var filterExists = dim.Filters().filter(function(d) {
-                return String(d.name) == String(filterValue.name);
-            }).length;
+            var filterExists = dim.Filters()
+                .filter(function(d) {
+                    return d.name == filterFunction.name;
+                })
+                .length;
 
             //if the dimension is already filtered by this value, toggle (remove) the filter
             if (filterExists) {
                 dim.Filters.remove(function(filter) {
-                    return filter.name == filterValue.name;
+                    return filter.name == filterFunction.name;
                 });
             } else {
                 // add the provided filter to the list for this dimension
-                dim.Filters.push(filterValue);
+                dim.Filters.push(filterFunction);
             }
         }
 
         // reset this dimension if no filters exist, else apply the filter to the dataset.
-        if (dim.Filters().length === 0) {
+        if (dim.Filters()
+            .length === 0) {
             dim.Dimension.filterAll();
         } else {
             dim.Dimension.filter(function(d) {
-                var vals = dim.Filters().map(function(func) {
-                    return func.filterFunction(d);
-                });
+                var vals = dim.Filters()
+                    .map(function(func) {
+                        return func.filterFunction(d);
+                    });
+
                 return vals.filter(function(result) {
                     return result;
-                }).length;
+                })
+                    .length;
             });
         }
-
     });
 
-    this.CumulativeGroups().forEach(
-        function(group) {
-            group.calculateTotals();
-        }
+    this.CumulativeGroups()
+        .forEach(
+            function(group) {
+                group.calculateTotals();
+            }
     );
 
     this.redrawCharts();
 };
 
+
+
 ChartGroup.prototype.redrawCharts = function() {
-    for (var i = 0; i < this.Charts().length; i++) {
+    for (var i = 0; i < this.Charts()
+        .length; i++) {
         this.Charts()[i].draw();
     }
 };
 
 ChartGroup.prototype.addSumGrouping = function(dimension, func) {
-    var data = dimension.Dimension.group().reduceSum(func);
+    var data = dimension.Dimension.group()
+        .reduceSum(func);
     var group = new Group(data, false);
 
     this.Groups.push(group);

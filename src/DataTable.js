@@ -5,7 +5,8 @@ function DataTable(element, dimension, group) {
 
     this._columns = [];
 
-    this.chart = d3.select(this.element).append("table")
+    this.chart = d3.select(this.element)
+        .append("table")
         .attr("class", "dataTable");
 
     this.columns = function(c) {
@@ -20,7 +21,8 @@ function DataTable(element, dimension, group) {
     this.init = function() {
         var self = this;
 
-        this.header = this.chart.append("thead").append("tr");
+        this.header = this.chart.append("thead")
+            .append("tr");
         this.header.selectAll("th")
             .data(this._columns)
             .enter()
@@ -30,7 +32,8 @@ function DataTable(element, dimension, group) {
             });
 
         this.rows = this.chart.selectAll("tr.datarow")
-            .data(this.dimension.dimension.top(50).filter(this._limitFunction));
+            .data(this.dimension.dimension.top(50)
+                .filter(this._limitFunction));
 
         this.rows.enter()
             .append("tr")
@@ -58,7 +61,8 @@ function DataTable(element, dimension, group) {
         var self = this;
 
         this.rows = this.chart.selectAll("tr.datarow")
-            .data(this.dimension.dimension.top(50).filter(this._limitFunction));
+            .data(this.dimension.dimension.top(50)
+                .filter(this._limitFunction));
 
         this.rows.enter()
             .append("tr")
@@ -81,9 +85,11 @@ function DataTable(element, dimension, group) {
             return d.value;
         });
 
-        this.cells.exit().remove();
+        this.cells.exit()
+            .remove();
 
-        this.rows.exit().remove();
+        this.rows.exit()
+            .remove();
     };
 }
 

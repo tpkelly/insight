@@ -35,7 +35,8 @@ function CircularPartitionChart(name, element, dimension, group) {
         .clamp(true)
         .range([90, 20]);
 
-    this.svg = d3.select(this.element).append("svg")
+    this.svg = d3.select(this.element)
+        .append("svg")
         .attr("width", this.margin.left + this.margin.right)
         .attr("height", this.margin.top + this.margin.bottom)
         .append("g")
@@ -95,11 +96,14 @@ function CircularPartitionChart(name, element, dimension, group) {
 
 
         this.center.append("title")
-            .text("zoom out").attr('fill', '#333');
+            .text("zoom out")
+            .attr('fill', '#333');
 
         this.path = this.svg.selectAll("path")
-            .data(this.partition.nodes(this.group()).slice(1))
-            .enter().append("path")
+            .data(this.partition.nodes(this.group())
+                .slice(1))
+            .enter()
+            .append("path")
             .attr("d", this.arc)
             .style("fill", function(d) {
                 return d.fill;
@@ -118,7 +122,8 @@ function CircularPartitionChart(name, element, dimension, group) {
             k.push(p.key);
             p = p.parent;
         }
-        return k.reverse().join(".");
+        return k.reverse()
+            .join(".");
     };
 
     this.fill = function(d) {
@@ -153,7 +158,8 @@ function CircularPartitionChart(name, element, dimension, group) {
         // Rescale outside angles to match the new layout.
         var enterArc,
             exitArc,
-            outsideAngle = d3.scale.linear().domain([0, 2 * Math.PI]);
+            outsideAngle = d3.scale.linear()
+                .domain([0, 2 * Math.PI]);
 
         function insideArc(d) {
             return p.key > d.key ? {
@@ -189,9 +195,10 @@ function CircularPartitionChart(name, element, dimension, group) {
             outsideAngle.range([p.x, p.x + p.dx]);
         }
 
-        self.path = self.path.data(self.partition.nodes(root).slice(1), function(d) {
-            return d.key;
-        });
+        self.path = self.path.data(self.partition.nodes(root)
+            .slice(1), function(d) {
+                return d.key;
+            });
 
 
         // When zooming out, arcs enter from the inside and exit to the outside.
@@ -202,35 +209,39 @@ function CircularPartitionChart(name, element, dimension, group) {
             outsideAngle.range([p.x, p.x + p.dx]);
         }
 
-        d3.transition().duration(d3.event.altKey ? 7500 : 750).each(function() {
+        d3.transition()
+            .duration(d3.event.altKey ? 7500 : 750)
+            .each(function() {
 
-            self.path.exit().transition()
-                .style("fill-opacity", function(d) {
-                    return d.depth === 1 + (root === p) ? 1 : 0;
-                })
-                .attrTween("d", function(d) {
-                    return self.arcTween.call(this, exitArc(d));
-                })
-                .remove();
+                self.path.exit()
+                    .transition()
+                    .style("fill-opacity", function(d) {
+                        return d.depth === 1 + (root === p) ? 1 : 0;
+                    })
+                    .attrTween("d", function(d) {
+                        return self.arcTween.call(this, exitArc(d));
+                    })
+                    .remove();
 
-            self.path.enter().append("path")
-                .style("fill-opacity", function(d) {
-                    return d.depth === 2 - (root === p) ? 1 : 0;
-                })
-                .style("fill", function(d) {
-                    return d.fill;
-                })
-                .on("click", self.zoomIn)
-                .each(function(d) {
-                    this._current = enterArc(d);
-                });
+                self.path.enter()
+                    .append("path")
+                    .style("fill-opacity", function(d) {
+                        return d.depth === 2 - (root === p) ? 1 : 0;
+                    })
+                    .style("fill", function(d) {
+                        return d.fill;
+                    })
+                    .on("click", self.zoomIn)
+                    .each(function(d) {
+                        this._current = enterArc(d);
+                    });
 
-            self.path.transition()
-                .style("fill-opacity", 1)
-                .attrTween("d", function(d) {
-                    return self.arcTween.call(this, self.updateArc(d));
-                });
-        });
+                self.path.transition()
+                    .style("fill-opacity", 1)
+                    .attrTween("d", function(d) {
+                        return self.arcTween.call(this, self.updateArc(d));
+                    });
+            });
     };
 }
 

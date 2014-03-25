@@ -4,7 +4,9 @@ function TimeLine(name, element, dimension, group) {
 
     var self = this;
 
-    this.maxRange = d3.max(this.dataset()).value;
+    this.maxRange = d3.max(this.dataset(), function(d) {
+        return d.value;
+    });
 
     this.range = [this.dimension.Dimension.bottom(1)[0].Date, this.dimension.Dimension.top(1)[0].Date];
 
@@ -17,16 +19,22 @@ function TimeLine(name, element, dimension, group) {
     };
 
     this.initializeAxes = function() {
+
         this.x = d3.scale.linear()
             .domain([0, this.maxRange])
-            .range([0, this.width() - 190]);
+            .range([0, this.width() - this.margin()
+                .right - this.margin()
+                .left
+            ]);
 
         this.y = d3.time.scale()
             .domain(this.range)
             .range([0, this.height()]);
 
-        this.yAxis = d3.svg.axis().scale(this.y).tickSize(0).orient('right');
-
+        this.yAxis = d3.svg.axis()
+            .scale(this.y)
+            .tickSize(0)
+            .orient('right');
     };
 
     this.display = function() {
@@ -44,7 +52,6 @@ function TimeLine(name, element, dimension, group) {
         };
 
         if (minExtent.getTime() != maxExtent.getTime()) {
-
 
             this.filterEvent(this, func);
 
@@ -79,9 +86,9 @@ function TimeLine(name, element, dimension, group) {
             });
 
 
-
         //mini item rects
-        self.mini.append('g').selectAll('.miniItems')
+        self.mini.append('g')
+            .selectAll('.miniItems')
             .data(this.dataset())
             .enter()
             .append('rect')
@@ -91,7 +98,9 @@ function TimeLine(name, element, dimension, group) {
                 return self.y(self._keyAccessor(d));
             })
             .attr('width', function(d) {
-                return self.x(self._valueAccessor(d));
+                return self.x(self._valueAccessor(d) - self.margin()
+                    .right - self.margin()
+                    .left);
             })
             .attr('height', 3)
             .attr('fill', self._barColor);
@@ -118,7 +127,8 @@ function TimeLine(name, element, dimension, group) {
         //mini item rects
         self.chart.selectAll('rect.mini')
             .data(this.dataset())
-            .transition().duration(self.duration)
+            .transition()
+            .duration(self.duration)
             .attr('y', function(d) {
                 return self.y(self._keyAccessor(d));
             })

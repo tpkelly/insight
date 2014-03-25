@@ -11,28 +11,6 @@ function StackedBarChart(name, element, dimension, group) {
         return d;
     };
 
-    var func;
-
-    var xPosition = function(d) {
-        return self.x(self._keyAccessor(d));
-    };
-
-    var yPosition = function(d) {
-        return self.y(self.calculateYPos(func, d));
-    };
-
-    var targetYPosition = function(d, i) {
-        return self.y(func(d));
-    };
-
-    var barWidth = function(d) {
-        return self.x.rangeBand();
-    };
-
-    var barHeight = function(d) {
-        return (self.height() - self.margin().top - self.margin().bottom) - self.y(func(d));
-    };
-
     var mouseOver = function(d, item) {
         self.mouseOver(self, this, d);
     };
@@ -40,19 +18,21 @@ function StackedBarChart(name, element, dimension, group) {
         self.mouseOut(self, this, d);
     };
 
-    var tooltipText = function(d) {
-        return self._tooltipFormat(func(d));
-    };
-
-
-
     this.yAxis = d3.svg.axis()
-        .scale(this.y).orient("left").tickSize(0).tickPadding(10).tickFormat(function(d) {
+        .scale(this.y)
+        .orient("left")
+        .tickSize(0)
+        .tickPadding(10)
+        .tickFormat(function(d) {
             return self._yAxisFormat(d);
         });
 
     this.xAxis = d3.svg.axis()
-        .scale(this.x).orient("bottom").tickSize(0).tickPadding(10).tickFormat(function(d) {
+        .scale(this.x)
+        .orient("bottom")
+        .tickSize(0)
+        .tickPadding(10)
+        .tickFormat(function(d) {
             return self.xFormatFunc(d);
         });
 
@@ -61,20 +41,12 @@ function StackedBarChart(name, element, dimension, group) {
         return this;
     };
 
-    this.labelAnchoring = function(d) {
-        if (this.invert()) {
-            return "start";
-        } else {
-            return "end";
-        }
-    };
-
     this.initializeAxes = function() {
         this.x.domain(this.keys())
-            .rangeRoundBands([0, this.width() - this.margin().left - this.margin().right], 0.2);
+            .rangeRoundBands([0, this.xDomain()], 0.2);
 
         this.y.domain([0, this.findMax()])
-            .range([this.height() - this.margin().top - this.margin().bottom, 0]);
+            .range([this.yDomain(), 0]);
     };
 
     this.addSeries = function(series) {
@@ -90,10 +62,17 @@ function StackedBarChart(name, element, dimension, group) {
         if (!d.yPos) {
             d.yPos = 0;
         }
+
         d.yPos += func(d);
 
         return d.yPos;
     };
+
+
+    this.yPosition = function(d) {
+        return this.y(this.calculateYPos(this._valueAccessor, d));
+    }.bind(this);
+
 
     this.init = function() {
         var self = this;
@@ -101,36 +80,36 @@ function StackedBarChart(name, element, dimension, group) {
         this.createChart();
         this.initializeAxes();
 
-        var groups = this.chart.selectAll("g")
+        var groups = this.chart
+            .selectAll("g")
             .data(this.dataset());
 
-        groups.enter().append("g").attr("class", "bargroup");
+        groups.enter()
+            .append("g")
+            .attr("class", "bargroup");
 
         var bars = groups.selectAll('rect.bar');
 
-        var tooltipLabel = function(d) {
-            return self._series[seriesFunction].label;
-        };
 
         for (var seriesFunction in this._series) {
-            func = this.cumulative() ? self._series[seriesFunction].cumulative : self._series[seriesFunction].calculation;
+            this._valueAccessor = this.cumulative() ? self._series[seriesFunction].cumulative : self._series[seriesFunction].calculation;
 
             bars = groups.append("rect")
                 .attr("class", self._series[seriesFunction].name + "class bar")
-                .attr("x", xPosition)
-                .attr("y", yPosition)
-                .attr("width", barWidth)
-                .attr("height", barHeight)
-                .attr("fill", self._series[seriesFunction].color)
+                .attr("x", this.xPosition)
+                .attr("y", this.yPosition)
+                .attr("width", this.barWidth)
+                .attr("height", this.barHeight)
+                .attr("fill", this._series[seriesFunction].color)
                 .on("mouseover", mouseOver)
                 .on("mouseout", mouseOut);
 
             bars.append("svg:text")
-                .text(tooltipText)
+                .text(this.tooltipText)
                 .attr("class", "tipValue");
 
             bars.append("svg:text")
-                .text(tooltipLabel)
+                .text(this._series[seriesFunction].label)
                 .attr("class", "tipLabel");
         }
 
@@ -143,23 +122,18 @@ function StackedBarChart(name, element, dimension, group) {
             .style("fill", "#333");
 
         this.chart.append("g")
-            .attr("transform", "translate(0," + (self.height() - self.margin().bottom - self.margin().top) + ")")
+            .attr("transform", "translate(0," + (self.height() - self.margin()
+                .bottom - self.margin()
+                .top) + ")")
             .call(this.xAxis)
             .selectAll("text")
             .attr("class", "x-axis")
-            .style("text-anchor", "end")
             .style("font-size", "12px")
-            .attr("transform", function(d) {
-                return "rotate(-90," + 0 + "," + 15 + ")";
-            })
-            .on("mouseover", function(d, item) {
-                self.setHover(this);
-            })
-            .on("mouseout", function(d, item) {
-                self.removeHover(this);
-            })
-            .on("click.mine", function(filter) {
-                console.log('click');
+            .style("text-anchor", "start")
+            .style("writing-mode", "tb")
+            .on("mouseover", this.setHover)
+            .on("mouseout", this.removeHover)
+            .on("click", function(filter) {
                 return self.filterClick(this, filter);
             });
 
@@ -174,7 +148,11 @@ function StackedBarChart(name, element, dimension, group) {
         var self = this;
 
         if (self.redrawAxes()) {
-            this.y.domain([0, d3.round(self.findMax(), 1)]).range([this.height() - this.margin().top - this.margin().bottom, 0]);
+            this.y.domain([0, d3.round(self.findMax(), 1)])
+                .range([this.height() - this.margin()
+                    .top - this.margin()
+                    .bottom, 0
+                ]);
         }
 
         var groups = this.chart.selectAll("g.bargroup")
@@ -183,49 +161,22 @@ function StackedBarChart(name, element, dimension, group) {
                 d.yPos = 0;
             });
 
-        var func = this._valueAccessor;
-
-        var key = function(d, i) {
-            return self.x(self._keyAccessor(d));
-        };
-        var value = function(d, i) {
-            return self.y(self.calculateYPos(func, d));
-        };
-        var width = function(d) {
-            return self.x.rangeBand();
-        };
-        var height = function(d) {
-            return (self.height() - self.margin().top - self.margin().bottom) - self.y(func(d));
-        };
-        var mouseOver = function(d, item) {
-            self.mouseOver(self, this, d);
-        };
-        var mouseOut = function(d, item) {
-            self.mouseOut(self, this, d);
-        };
-        var tooltipText = function(d) {
-            return self._tooltipFormat(func(d));
-        };
-        var tooltipLabel = function(d) {
-            return self._series[seriesFunction].label;
-        };
-
-
         for (var seriesFunction in this._series) {
 
-            func = this.cumulative() ? self._series[seriesFunction].cumulative : self._series[seriesFunction].calculation;
+            this._valueAccessor = this.cumulative() ? self._series[seriesFunction].cumulative : self._series[seriesFunction].calculation;
 
             var bars = groups.selectAll("." + self._series[seriesFunction].name + "class.bar")
-                .transition().duration(self.duration)
-                .attr("x", key)
-                .attr("y", value)
-                .attr("height", height);
+                .transition()
+                .duration(self.duration)
+                .attr("x", this.xPosition)
+                .attr("y", this.yPosition)
+                .attr("height", this.barHeight);
 
             bars.selectAll("text.tipValue")
-                .text(tooltipText);
+                .text(this.tooltipText);
 
             bars.selectAll("text.tipLabel")
-                .text(tooltipLabel);
+                .text(this._series[seriesFunction].label);
 
         }
 
@@ -236,29 +187,12 @@ function StackedBarChart(name, element, dimension, group) {
         this.chart.selectAll(".y-axis")
             .call(this.yAxis)
             .selectAll("text")
-            .style("text-anchor", "end")
             .style("font-size", "12px")
             .style("fill", "#333");
     };
 
 
     this.drawTargets = function() {
-
-        var targetX = function(d, i) {
-            return self.x(self._keyAccessor(d)) + self.x.rangeBand() / 4;
-        };
-        var targetY = function(d, i) {
-            return self.y(func(d));
-        };
-        var targetWidth = function(d) {
-            return self.x.rangeBand() / 2;
-        };
-        tooltipText = function(d) {
-            return self._tooltipFormat(func(d));
-        };
-        tooltipLabel = function(d) {
-            return self._targets.label;
-        };
 
         var mouseOver = function(d, item) {
             self.mouseOver(self, this, d);
@@ -272,52 +206,46 @@ function StackedBarChart(name, element, dimension, group) {
 
         if (this._targets) {
 
-            func = this.cumulative() ? self._targets.cumulative : self._targets.calculation;
+            this._targetAccessor = this.cumulative() ? self._targets.cumulative : self._targets.calculation;
+
 
             var tBars = groups.append("rect")
-                .attr("class", self._targets.name + "class target")
-                .attr("x", targetX)
-                .attr("y", targetY)
-                .attr("width", targetWidth)
+                .attr("class", this._targets.name + "class target")
+                .attr("x", this.targetX)
+                .attr("y", this.targetY)
+                .attr("width", this.targetWidth)
                 .attr("height", 4)
-                .attr("fill", self._targets.color)
+                .attr("fill", this._targets.color)
                 .on("mouseover", mouseOver)
                 .on("mouseout", mouseOut);
 
             tBars.append("svg:text")
-                .text(tooltipText)
+                .text(this.targetTooltipText)
                 .attr("class", "tipValue");
 
             tBars.append("svg:text")
-                .text(tooltipLabel)
+                .text(this._targets.label)
                 .attr("class", "tipLabel");
         }
     };
 
     this.updateTargets = function() {
 
-        var targetY = function(d) {
-            return self.y(func(d));
-        };
-        tooltipText = function(d) {
-            return self._tooltipFormat(func(d));
-        };
-
         var groups = this.chart.selectAll("g")
             .data(this.targetData());
 
         if (this._targets) {
 
-            func = this.cumulative() ? self._targets.cumulative : self._targets.calculation;
+            this._valueAccessor = this.cumulative() ? self._targets.cumulative : self._targets.calculation;
 
             var tBars = groups.selectAll("rect." + self._targets.name + "class.target");
 
             tBars.transition()
                 .duration(this.duration)
-                .attr("y", targetY);
+                .attr("y", this.targetY);
 
             tBars.selectAll("text.tipValue")
-                .text(tooltipText)
+                .text(this.targetTooltipText)
                 .attr("class", "tipValue");
         }
     };

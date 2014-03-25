@@ -44,7 +44,9 @@ module.exports = function(grunt) {
       {
         braceStyle: 'collapse',
         indentChart: ' ',
-        indentSize: 4
+        indentSize: 4,
+        evalCode: true,
+        breakChainedMethods: true
       }
     }
   },

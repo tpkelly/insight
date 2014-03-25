@@ -43,7 +43,7 @@
 			"file": "src/BaseChart.js",
 			"settings":
 			{
-				"buffer_size": 10028,
+				"buffer_size": 11582,
 				"line_ending": "Unix"
 			}
 		},
@@ -51,7 +51,7 @@
 			"file": "src/StackedBarChart.js",
 			"settings":
 			{
-				"buffer_size": 9505,
+				"buffer_size": 7075,
 				"line_ending": "Unix"
 			}
 		},
@@ -59,7 +59,7 @@
 			"file": "src/TimeLine.js",
 			"settings":
 			{
-				"buffer_size": 3418,
+				"buffer_size": 3618,
 				"line_ending": "Unix"
 			}
 		},
@@ -67,7 +67,7 @@
 			"file": "src/Group.js",
 			"settings":
 			{
-				"buffer_size": 487,
+				"buffer_size": 1535,
 				"line_ending": "Unix"
 			}
 		},
@@ -75,7 +75,7 @@
 			"file": "src/RowChart.js",
 			"settings":
 			{
-				"buffer_size": 3770,
+				"buffer_size": 3962,
 				"line_ending": "Unix"
 			}
 		},
@@ -131,7 +131,7 @@
 			"file": "src/ChartGroup.js",
 			"settings":
 			{
-				"buffer_size": 3453,
+				"buffer_size": 2763,
 				"line_ending": "Unix"
 			}
 		},
@@ -139,15 +139,8 @@
 			"file": "src/BarChart.js",
 			"settings":
 			{
-				"buffer_size": 8513,
+				"buffer_size": 5783,
 				"line_ending": "Unix"
-			}
-		},
-		{
-			"settings":
-			{
-				"buffer_size": 0,
-				"line_ending": "Windows"
 			}
 		},
 		{
@@ -260,8 +253,8 @@
 						"selection":
 						[
 							[
-								948,
-								948
+								676,
+								676
 							]
 						],
 						"settings":
@@ -271,7 +264,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 540.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -281,15 +274,15 @@
 					"file": "src/BaseChart.js",
 					"settings":
 					{
-						"buffer_size": 10028,
+						"buffer_size": 11582,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								8693,
-								8693
+								0,
+								0
 							]
 						],
 						"settings":
@@ -309,15 +302,15 @@
 					"file": "src/StackedBarChart.js",
 					"settings":
 					{
-						"buffer_size": 9505,
+						"buffer_size": 7075,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5066,
-								5066
+								0,
+								0
 							]
 						],
 						"settings":
@@ -337,15 +330,15 @@
 					"file": "src/TimeLine.js",
 					"settings":
 					{
-						"buffer_size": 3418,
+						"buffer_size": 3618,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3315,
-								3315
+								0,
+								0
 							]
 						],
 						"settings":
@@ -365,15 +358,15 @@
 					"file": "src/Group.js",
 					"settings":
 					{
-						"buffer_size": 487,
+						"buffer_size": 1535,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								120,
-								120
+								0,
+								0
 							]
 						],
 						"settings":
@@ -393,15 +386,15 @@
 					"file": "src/RowChart.js",
 					"settings":
 					{
-						"buffer_size": 3770,
+						"buffer_size": 3962,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3667,
-								3667
+								0,
+								0
 							]
 						],
 						"settings":
@@ -587,7 +580,7 @@
 					"file": "src/ChartGroup.js",
 					"settings":
 					{
-						"buffer_size": 3453,
+						"buffer_size": 2763,
 						"regions":
 						{
 						},
@@ -615,34 +608,7 @@
 					"file": "src/BarChart.js",
 					"settings":
 					{
-						"buffer_size": 8513,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								7521,
-								7521
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 3678.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 14,
-					"settings":
-					{
-						"buffer_size": 0,
+						"buffer_size": 5783,
 						"regions":
 						{
 						},
@@ -655,17 +621,18 @@
 						],
 						"settings":
 						{
-							"default_dir": "C:\\nstavrakakis\\NuGet.Charts\\d3charts\\examples",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 3075.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 15,
+					"buffer": 14,
 					"file": "examples/barchart.js",
 					"settings":
 					{

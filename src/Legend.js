@@ -15,7 +15,8 @@ function Legend(name, element, dimension, group) {
 
         var legend = this.chart.selectAll(".legend")
             .data(this.dataset())
-            .enter().append("g")
+            .enter()
+            .append("g")
             .attr("class", "legend")
             .attr("transform", function(d, i) {
                 return "translate(0," + ((i * 20) + (i * 5)) + ")";

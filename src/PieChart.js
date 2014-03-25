@@ -2,7 +2,8 @@ function PieChart(name, element, dimension, group) {
 
     BaseChart.call(this, name, element, dimension, group);
 
-    this.color = d3.scale.ordinal().range(["#9ecae1", "#7CA2B6", "#77ACC9"]);
+    this.color = d3.scale.ordinal()
+        .range(["#9ecae1", "#7CA2B6", "#77ACC9"]);
 
     this.filterKey = function(d) {
         return d.data.key;
@@ -21,7 +22,8 @@ function PieChart(name, element, dimension, group) {
             return d.value;
         });
 
-    this.chart = d3.select(this.element).selectAll("svg")
+    this.chart = d3.select(this.element)
+        .selectAll("svg")
         .attr("width", this.width)
         .attr("height", this.height)
         .append("g")
@@ -32,8 +34,10 @@ function PieChart(name, element, dimension, group) {
         var self = this;
 
         self.g = self.chart.selectAll(".arc")
-            .data(this.pie(group().all()))
-            .enter().append("g")
+            .data(this.pie(group()
+                .all()))
+            .enter()
+            .append("g")
             .attr("class", "arc");
 
         self.g.append("path")
@@ -55,7 +59,9 @@ function PieChart(name, element, dimension, group) {
                 self.tip.hide(d);
                 d3.select(this)
                     .classed("active", false);
-            }).append("title").text(function(d) {
+            })
+            .append("title")
+            .text(function(d) {
                 return d.data.key + ": £" + d.value;
             });
 
@@ -77,19 +83,25 @@ function PieChart(name, element, dimension, group) {
         var self = this;
 
         self.chart.selectAll("g.arc")
-            .data(self.pie(self.group().all()))
+            .data(self.pie(self.group()
+                .all()))
             .select("path")
             .attr("d", function(d, i) {
                 return self.safeArc(d, i, self.arc);
             })
             .style("fill", function(d) {
                 return self.color(d.data.key);
-            }).transition().duration(500)
+            })
+            .transition()
+            .duration(500)
             .attrTween("d", tweenPie);
 
-        self.chart.selectAll("g.arc path title").data(self.pie(self.group().all())).text(function(d) {
-            return d.data.key + ": £" + d.value;
-        });
+        self.chart.selectAll("g.arc path title")
+            .data(self.pie(self.group()
+                .all()))
+            .text(function(d) {
+                return d.data.key + ": £" + d.value;
+            });
 
 
         self.g.selectAll("text")

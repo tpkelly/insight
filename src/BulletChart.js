@@ -23,7 +23,10 @@ function BulletChart(name, element, dimension, group) {
     this.y = d3.scale.ordinal();
 
     this.xAxis = d3.svg.axis()
-        .scale(this.x).orient("bottom").tickSize(0).tickPadding(10);
+        .scale(this.x)
+        .orient("bottom")
+        .tickSize(0)
+        .tickPadding(10);
 
 
     this.labelAnchoring = function(d) {
@@ -36,7 +39,8 @@ function BulletChart(name, element, dimension, group) {
 
     this.barXPosition = function(d) {
 
-        var y = self.xBounds().start;
+        var y = self.xBounds()
+            .start;
 
         var invert = self.invert();
 
@@ -55,19 +59,25 @@ function BulletChart(name, element, dimension, group) {
     };
 
     this.findMax = function() {
-        var max = d3.max(this.group().all(), function(d) {
-            return self.updateMax(d);
-        });
+        var max = d3.max(this.group()
+            .all(), function(d) {
+                return self.updateMax(d);
+            });
 
         return max;
     };
 
     this.initializeAxes = function() {
         this.x.domain([0, this.findMax()])
-            .range([0, this.xBounds().end]);
+            .range([0, this.xBounds()
+                .end
+            ]);
 
         this.y.domain(this.keys())
-            .rangeRoundBands([0, this.height() - this.margin().top - this.margin().bottom], 0.2);
+            .rangeRoundBands([0, this.height() - this.margin()
+                .top - this.margin()
+                .bottom
+            ], 0.2);
     };
 
 
@@ -81,8 +91,10 @@ function BulletChart(name, element, dimension, group) {
         this.initializeAxes();
 
         var bars = this.chart.selectAll("g")
-            .data(this.group().all())
-            .enter().append("g")
+            .data(this.group()
+                .all())
+            .enter()
+            .append("g")
             .attr("class", "bullet")
             .attr("transform", function(d) {
                 return "translate(0, " + self.y(d.key) + ")";
@@ -115,7 +127,8 @@ function BulletChart(name, element, dimension, group) {
         var targets = bars.append("rect")
             .attr("class", "target")
             .attr("x", function(d) {
-                return self.x(d.value.Targets) + self.xBounds().start;
+                return self.x(d.value.Targets) + self.xBounds()
+                    .start;
             })
             .attr("width", 3)
             .attr("fill", "#34495e")
@@ -124,7 +137,10 @@ function BulletChart(name, element, dimension, group) {
             });
 
         this.chart.append("g")
-            .attr("transform", "translate(" + self.margin().left + "," + (self.height() - self.margin().bottom - self.margin().top) + ")")
+            .attr("transform", "translate(" + self.margin()
+                .left + "," + (self.height() - self.margin()
+                    .bottom - self.margin()
+                    .top) + ")")
             .call(this.xAxis)
             .selectAll("text")
             .style("text-anchor", "end")
@@ -159,18 +175,22 @@ function BulletChart(name, element, dimension, group) {
         var self = this;
 
         var bars = this.chart.selectAll("g")
-            .data(this.group().all());
+            .data(this.group()
+                .all());
 
         var bullets = bars.selectAll("rect.bulletbar")
-            .transition().duration(self.duration)
+            .transition()
+            .duration(self.duration)
             .attr("width", function(d) {
                 return self.x(d.value.Actuals);
             });
 
         var targets = bars.selectAll("rect.target")
-            .transition().duration(self.duration)
+            .transition()
+            .duration(self.duration)
             .attr("x", function(d) {
-                return self.x(d.value.Targets) + self.xBounds().start;
+                return self.x(d.value.Targets) + self.xBounds()
+                    .start;
             });
 
     };

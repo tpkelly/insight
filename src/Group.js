@@ -14,7 +14,8 @@ Group.prototype.getData = function() {
     var data = this._data.all();
 
     if (this._filterFunction) {
-        data = this._data.all().filter(this._filterFunction);
+        data = this._data.all()
+            .filter(this._filterFunction);
     }
     return data;
 };
@@ -46,22 +47,23 @@ CumulativeGroup.prototype.calculateTotals = function() {
     var totals = {};
     var self = this;
 
-    this.getData().forEach(function(d, i) {
+    this.getData()
+        .forEach(function(d, i) {
 
-        var value = self._valueAccessor(d);
+            var value = self._valueAccessor(d);
 
-        for (var property in value) {
-            var totalName = property + 'Cumulative';
+            for (var property in value) {
+                var totalName = property + 'Cumulative';
 
-            if (totals[totalName]) {
-                totals[totalName] += value[property];
-                value[totalName] = totals[totalName];
-            } else {
-                totals[totalName] = value[property];
-                value[totalName] = totals[totalName];
+                if (totals[totalName]) {
+                    totals[totalName] += value[property];
+                    value[totalName] = totals[totalName];
+                } else {
+                    totals[totalName] = value[property];
+                    value[totalName] = totals[totalName];
+                }
             }
-        }
-    });
+        });
 
     return this;
 };
