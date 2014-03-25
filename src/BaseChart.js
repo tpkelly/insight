@@ -73,9 +73,10 @@ var BaseChart = function BaseChart(name, element, dimension, group) {
         return this.y(this._rangeAccessor(d));
     }.bind(this);
 
-    this.rangeX = function (d, i) {
+    this.rangeX = function(d, i) {
 
-        var offset = i == (this.keys().length - 1) ? this.x.rangeBand() : 0;
+        var offset = i == (this.keys()
+            .length - 1) ? this.x.rangeBand() : 0;
 
         return this.x(this._keyAccessor(d)) + offset;
     }.bind(this);
@@ -166,13 +167,13 @@ BaseChart.prototype.x = function(x) {
     return this;
 };
 
-BaseChart.prototype.link = function (chart, follow) {
+BaseChart.prototype.link = function(chart, follow) {
 
     if (this._linkedCharts.indexOf(chart) == -1) {
         this._linkedCharts.push(chart);
 
         if (follow) {
-            this._linkedCharts.forEach(function (c) {
+            this._linkedCharts.forEach(function(c) {
                 c.link(chart, false);
             });
         }
@@ -603,9 +604,9 @@ BaseChart.prototype.filterEvent = function(data, dimension, filter) {
 
 };
 
-BaseChart.prototype.maxUpdatedEvent = function (max) {
-    
-    this._linkedCharts.forEach(function (chart) {
+BaseChart.prototype.maxUpdatedEvent = function(max) {
+
+    this._linkedCharts.forEach(function(chart) {
 
         chart._currentMax = chart._currentMax < max ? max : chart._currentMax;
     });

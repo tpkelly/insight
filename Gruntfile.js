@@ -65,6 +65,16 @@ module.exports = function(grunt) {
     watch: {
       files: ['<%= jshint.files %>'],
       tasks: ['default']
+    },
+    connect: {
+        server: {
+            options: {
+                port: 8888,
+                base: 'examples',
+                keepalive: true
+            },
+
+        }
     }
   });
 
@@ -74,8 +84,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-jsbeautifier');
+  grunt.loadNpmTasks('grunt-contrib-connect');
 
-  
   grunt.registerTask('default', ['jsbeautifier', 'jshint','uglify', 'concat', "copy"]);
 
 };
