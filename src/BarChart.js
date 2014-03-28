@@ -31,7 +31,7 @@ function BarChart(name, element, dimension, group) {
     this.initializeAxes = function() {
 
         this.x.domain(this.keys())
-            .rangeRoundBands([0, this.xDomain()], 0.3);
+            .rangeRoundBands([0, this.xDomain()], this.barPadding());
 
         this.y.domain([0, this._currentMax])
             .range([this.yDomain(), 0]);
@@ -97,9 +97,9 @@ function BarChart(name, element, dimension, group) {
             .attr("transform", "translate(0," + (self.height() - self.margin()
                 .bottom - self.margin()
                 .top) + ")")
+            .attr("class", "x-axis")
             .call(this.xAxis)
             .selectAll("text")
-            .attr("class", "x-axis")
             .style("text-anchor", "start")
             .style("writing-mode", "tb")
             .style("font-size", "12px")
@@ -112,6 +112,10 @@ function BarChart(name, element, dimension, group) {
     };
 
     this.draw = function() {
+        this.x.domain(this.keys())
+            .rangeRoundBands([0, this.xDomain()], this.barPadding());
+
+        var k = this.keys();
 
         if (self._redrawAxes) {
             this.y.domain([0, self.findMax()])
@@ -130,11 +134,16 @@ function BarChart(name, element, dimension, group) {
             .attr("width", this.barWidth)
             .attr("height", this.barHeight);
 
-        bars.selectAll("text.tipValue")
+        var tips = this.chart.selectAll("text.tipValue")
+            .data(this.dataset())
             .text(this.tooltipText);
 
         if (this._targets) {
             this.updateTargets();
+        }
+
+        if (this._ranges) {
+            this.updateRanges();
         }
 
         this.chart.selectAll("g.y-axis")
@@ -143,6 +152,18 @@ function BarChart(name, element, dimension, group) {
             .style("text-anchor", "end")
             .style("font-size", "12px")
             .style("fill", "#333");
+
+        this.chart.selectAll("g.x-axis")
+            .call(this.xAxis)
+            .selectAll("text")
+            .style("font-size", "12px")
+            .style("text-anchor", "start")
+            .style("writing-mode", "tb")
+            .on("mouseover", this.setHover)
+            .on("mouseout", this.removeHover)
+            .on("click", function(filter) {
+                return self.filterClick(this, filter);
+            });
     };
 
     this.drawTargets = function() {
@@ -196,6 +217,26 @@ function BarChart(name, element, dimension, group) {
         }
     };
 
+
+    this.updateRanges = function() {
+
+        if (this._ranges) {
+            for (var range in this._ranges) {
+
+                this._rangeAccessor = this._ranges[range].calculation;
+
+                var transform = this._ranges[range].type(this);
+
+                var d = this.dataset();
+
+                this.chart.selectAll("path." + self._ranges[range].class)
+                    .datum(this.dataset())
+                    .attr("d", transform)
+                    .attr("fill", self._ranges[range].color)
+                    .attr("class", self._ranges[range].class);
+            }
+        }
+    };
 
     this.updateTargets = function() {
 

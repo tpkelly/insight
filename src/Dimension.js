@@ -10,4 +10,8 @@ var Dimension = function Dimension(name, dimension, displayFunction) {
     this.displayFunction = displayFunction ? displayFunction : function(d) {
         return d;
     };
+
+    this.comparer = function(d) {
+        return d.Name == this.Name;
+    }.bind(this);
 };

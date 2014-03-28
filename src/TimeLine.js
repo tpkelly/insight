@@ -53,7 +53,7 @@ function TimeLine(name, element, dimension, group) {
 
         if (minExtent.getTime() != maxExtent.getTime()) {
 
-            this.filterEvent(this, func);
+            this.filterEvent(this.dimension, func);
 
             self.mini.select('.brush')
                 .call(self.brush.extent([minExtent, maxExtent]));
@@ -71,12 +71,8 @@ function TimeLine(name, element, dimension, group) {
         this.initializeAxes();
 
         this.mini = this.chart.append('g')
-            .attr('width', function() {
-                return self.width();
-            })
-            .attr('height', function() {
-                return self.height();
-            })
+            .attr('width', this.width)
+            .attr('height', this.height)
             .attr('class', 'mini');
 
         this.brush = d3.svg.brush()

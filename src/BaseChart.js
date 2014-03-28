@@ -12,6 +12,7 @@ var BaseChart = function BaseChart(name, element, dimension, group) {
     this._ranges = [];
     this._redrawAxes = false;
     this.isFiltered = false;
+    this._barPadding = 0.2;
     this.duration = 500;
     this.filters = [];
     this._labelPadding = 20;
@@ -19,6 +20,7 @@ var BaseChart = function BaseChart(name, element, dimension, group) {
     this._tooltipText = "";
     this._invert = false;
     this._barColor = '#acc3ee';
+    this._ordered = false;
     this._linkedCharts = [];
 
     this._margin = {
@@ -27,7 +29,6 @@ var BaseChart = function BaseChart(name, element, dimension, group) {
         left: 0,
         right: 0
     };
-
 
     this._keyAccessor = function(d) {
         return d.key;
@@ -147,6 +148,22 @@ BaseChart.prototype.height = function(h) {
         return this._height;
     }
     this._height = h;
+    return this;
+};
+
+BaseChart.prototype.ordered = function(o) {
+    if (!arguments.length) {
+        return this._ordered;
+    }
+    this._ordered = o;
+    return this;
+};
+
+BaseChart.prototype.orderChildren = function(o) {
+    if (!arguments.length) {
+        return this._orderChildren;
+    }
+    this._orderChildren = o;
     return this;
 };
 
@@ -324,6 +341,7 @@ BaseChart.prototype.createChart = function() {
             .top + ")");
 
     this.tooltip();
+    return this.chart;
 };
 
 BaseChart.prototype.topResults = function(top) {
@@ -335,8 +353,9 @@ BaseChart.prototype.topResults = function(top) {
 };
 
 BaseChart.prototype.dataset = function() {
-    return this.group.getData()
-        .filter(this._limitFunction);
+    var data = this.ordered() ? this.group.getOrderedData() : this.group.getData();
+
+    return data.filter(this._limitFunction);
 };
 
 BaseChart.prototype.targetData = function() {
@@ -365,6 +384,14 @@ BaseChart.prototype.tooltipFormat = function(f) {
         return this._tooltipFormat;
     }
     this._tooltipFormat = f;
+    return this;
+};
+
+BaseChart.prototype.barPadding = function(f) {
+    if (!arguments.length) {
+        return this._barPadding;
+    }
+    this._barPadding = f;
     return this;
 };
 
@@ -568,31 +595,23 @@ BaseChart.prototype.labelAnchoring = function(d) {
     }
 };
 
-BaseChart.prototype.filterFunction = function(filter) {
+BaseChart.prototype.filterFunction = function(filter, element) {
     var value = filter.key ? filter.key : filter;
 
     return {
         name: value,
+        element: element,
         filterFunction: function(d) {
-            return d == value;
+            return String(d) == String(value);
         }
     };
 };
 
-
 BaseChart.prototype.filterClick = function(element, filter) {
-    if (d3.select(element)
-        .classed("selected")) {
-        d3.select(element)
-            .classed("selected", false);
-    } else {
-        d3.select(element)
-            .classed("selected", true);
-    }
 
-    var filterFunction = this.filterFunction(filter);
+    var filterFunction = this.filterFunction(filter, element);
 
-    this.filterEvent(this, filterFunction);
+    this.filterEvent(this.dimension, filterFunction);
 };
 
 

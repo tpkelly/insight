@@ -60,6 +60,8 @@ var RowChart = function RowChart(name, element, dimension, group) {
         this.createChart();
         this.initializeAxes();
 
+        var d = this.dataset();
+
         var bars = this.chart.append("g")
             .selectAll("rect")
             .data(this.dataset())
@@ -106,39 +108,48 @@ var RowChart = function RowChart(name, element, dimension, group) {
 
         var self = this;
 
-        if (self._redrawAxes) {
+        var k = this.keys();
+        var d = this.dataset();
 
-            this.y
-                .domain(this.keys())
-                .rangeRoundBands([0, this.height()], 0.2);
+        this.y
+            .domain(this.keys())
+            .rangeRoundBands([0, this.height()], 0.2);
+
+        this.chart
+            .selectAll("g.y-axis")
+            .call(this.yAxis)
+            .selectAll("text")
+            .each(function() {
+                d3.select(this)
+                    .classed('row-chart-y', 'true');
+            })
+            .on("mouseover", this.setHover)
+            .on("mouseout", this.removeHover)
+            .on("click", function(filter) {
+                self.filterClick(this, filter);
+            });
+
+        if (self._redrawAxes) {
 
             this.x.domain([0, this.findMax()])
                 .range([0, this.xBounds()
                     .end
                 ]);
-
-            this.chart
-                .selectAll("g.y-axis")
-                .call(this.yAxis)
-                .selectAll("text")
-                .each(function() {
-                    d3.select(this)
-                        .classed('row-chart-y', 'true');
-                })
-                .on("mouseover", this.setHover)
-                .on("mouseout", this.removeHover)
-                .on("click", function(filter) {
-                    self.filterClick(this, filter);
-                });
         }
 
         var bars = self.chart.selectAll("rect")
-            .data(this.dataset())
-            .transition()
+            .data(this.dataset());
+
+        bars.transition()
             .duration(self.duration)
             .attr("width", this.rowWidth);
 
-        bars.selectAll("text.tipValue")
+
+        var tips = self.chart
+            .selectAll("text.tipValue")
+            .data(self.dataset());
+
+        tips
             .text(this.tooltipText)
             .attr("class", "tipValue");
 

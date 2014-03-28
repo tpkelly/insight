@@ -1,5 +1,13 @@
 function Group(data) {
     this._data = data;
+    this._cumulative = false;
+    this._valueAccessor = function(d) {
+        return d;
+    };
+    this._orderFunction = function(a, b) {
+        return b.value - a.value;
+    };
+    this._ordered = false;
 }
 
 Group.prototype.filterFunction = function(f) {
@@ -10,32 +18,63 @@ Group.prototype.filterFunction = function(f) {
     return this;
 };
 
+Group.prototype.cumulative = function(c) {
+    if (!arguments.length) {
+        return this._cumulative;
+    }
+    this._cumulative = c;
+    return this;
+};
+
 Group.prototype.getData = function() {
-    var data = this._data.all();
+    var data;
 
     if (this._filterFunction) {
         data = this._data.all()
             .filter(this._filterFunction);
+    } else {
+        data = this._data.all();
+    }
+    return data;
+};
+
+Group.prototype.getOrderedData = function() {
+    var data;
+
+    if (this._filterFunction) {
+        data = this._data.top(Infinity)
+            .filter(this._filterFunction);
+    } else {
+        data = this._data.top(Infinity)
+            .sort(this.orderFunction());
     }
     return data;
 };
 
 
+Group.prototype.computeFunction = function(c) {
+    this._ordered = true;
+    if (!arguments.length) {
+        return this._compute;
+    }
+    this._compute = c;
+    return this;
+};
 
-function CumulativeGroup(data, filterFunction) {
-    Group.call(this, data);
 
-    this.cumulative = true;
-    this._filterFunction = filterFunction;
-    this._valueAccessor = function(d) {
-        return d;
-    };
-}
+Group.prototype.orderFunction = function(o) {
+    if (!arguments.length) {
+        return this._orderFunction;
+    }
+    this._orderFunction = o;
+    return this;
+};
 
-CumulativeGroup.prototype = Object.create(Group.prototype);
-CumulativeGroup.prototype.constructor = CumulativeGroup;
+Group.prototype.compute = function() {
+    this._compute();
+};
 
-CumulativeGroup.prototype.valueAccessor = function(v) {
+Group.prototype.valueAccessor = function(v) {
     if (!arguments.length) {
         return this._valueAccessor;
     }
@@ -43,29 +82,82 @@ CumulativeGroup.prototype.valueAccessor = function(v) {
     return this;
 };
 
-CumulativeGroup.prototype.calculateTotals = function() {
-    var totals = {};
-    var self = this;
 
-    this.getData()
-        .forEach(function(d, i) {
+Group.prototype.calculateTotals = function() {
+    if (this._cumulative) {
+        var totals = {};
+        var total = 0;
+        var self = this;
+        var data = this._ordered ? this.getOrderedData() : this.getData();
 
-            var value = self._valueAccessor(d);
+        data
+            .forEach(function(d, i) {
 
-            for (var property in value) {
-                var totalName = property + 'Cumulative';
+                var value = self._valueAccessor(d);
 
-                if (totals[totalName]) {
-                    totals[totalName] += value[property];
-                    value[totalName] = totals[totalName];
+                if (typeof(value) != "object") {
+                    total += value;
+                    d.Cumulative = total;
                 } else {
-                    totals[totalName] = value[property];
-                    value[totalName] = totals[totalName];
-                }
-            }
-        });
+                    for (var property in value) {
+                        var totalName = property + 'Cumulative';
 
+                        if (totals[totalName]) {
+                            totals[totalName] += value[property];
+                            value[totalName] = totals[totalName];
+                        } else {
+                            totals[totalName] = value[property];
+                            value[totalName] = totals[totalName];
+                        }
+                    }
+                }
+            });
+    }
     return this;
+};
+
+
+function SimpleGroup(data) {
+    this._data = data;
+    this._orderFunction = function(a, b) {
+        return b.values - a.values;
+    };
+}
+SimpleGroup.prototype = Object.create(Group.prototype);
+SimpleGroup.prototype.constructor = SimpleGroup;
+
+SimpleGroup.prototype.getOrderedData = function() {
+    return this._data.sort(this._orderFunction);
+};
+
+SimpleGroup.prototype.getData = function() {
+    return this._data;
+};
+
+function NestedGroup(dimension, nestFunction) {
+    this._dimension = dimension;
+    this._data = dimension.Dimension.bottom(Infinity);
+    this._nestFunction = nestFunction;
+    this._nestedData = nestFunction.entries(this._data);
+}
+
+
+NestedGroup.prototype = Object.create(Group.prototype);
+NestedGroup.prototype.constructor = NestedGroup;
+
+
+NestedGroup.prototype.getData = function() {
+    return this._nestedData;
+};
+
+NestedGroup.prototype.updateNestedData = function() {
+    this._data = this._dimension.Dimension.bottom(Infinity);
+    this._nestedData = this._nestFunction.entries(this._data);
+};
+
+
+NestedGroup.prototype.getOrderedData = function() {
+    return this._nestedData;
 };
 ;var Dimension = function Dimension(name, dimension, displayFunction) {
     this.Dimension = dimension;
@@ -79,14 +171,21 @@ CumulativeGroup.prototype.calculateTotals = function() {
     this.displayFunction = displayFunction ? displayFunction : function(d) {
         return d;
     };
+
+    this.comparer = function(d) {
+        return d.Name == this.Name;
+    }.bind(this);
 };
 ;var ChartGroup = function ChartGroup(name) {
     this.Name = name;
     this.Charts = ko.observableArray();
     this.Dimensions = ko.observableArray();
+    this.FilteredDimensions = ko.observableArray();
     this.Groups = ko.observableArray();
     this.CumulativeGroups = ko.observableArray();
+    this.ComputedGroups = ko.observableArray();
     this.LinkedCharts = [];
+    this.NestedGroups = ko.observableArray();
 };
 
 ChartGroup.prototype.initCharts = function() {
@@ -116,39 +215,55 @@ ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc) {
 };
 
 
-ChartGroup.prototype.chartFilterHandler = function(chart, filterFunction) {
+ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
 
     var self = this;
 
     var dims = this.Dimensions()
-        .filter(function(d) {
-            return d.Name == chart.dimension.Name;
-        });
+        .filter(dimension.comparer);
+
+    var activeDim = this.FilteredDimensions()
+        .filter(dimension.comparer);
+
+    if (!activeDim.length) {
+        this.FilteredDimensions.push(dimension);
+    }
+
+    d3.select(filterFunction.element)
+        .classed('selected', true);
 
     dims.map(function(dim) {
 
-        if (dim.Filters) {
+        var filterExists = dim.Filters()
+            .filter(function(d) {
+                return d.name == filterFunction.name;
+            })
+            .length;
 
-            var filterExists = dim.Filters()
-                .filter(function(d) {
-                    return d.name == filterFunction.name;
-                })
-                .length;
+        //if the dimension is already filtered by this value, toggle (remove) the filter
+        if (filterExists) {
 
-            //if the dimension is already filtered by this value, toggle (remove) the filter
-            if (filterExists) {
-                dim.Filters.remove(function(filter) {
-                    return filter.name == filterFunction.name;
-                });
-            } else {
-                // add the provided filter to the list for this dimension
-                dim.Filters.push(filterFunction);
-            }
+            dim.Filters.remove(function(filter) {
+                return filter.name == filterFunction.name;
+            });
+
+            d3.select(filterFunction.element)
+                .classed('selected', false);
+
+        } else {
+            // add the provided filter to the list for this dimension
+
+            dim.Filters.push(filterFunction);
         }
+
+        var fils = dim.Filters();
 
         // reset this dimension if no filters exist, else apply the filter to the dataset.
         if (dim.Filters()
             .length === 0) {
+
+            self.FilteredDimensions.remove(dim);
+
             dim.Dimension.filterAll();
         } else {
             dim.Dimension.filter(function(d) {
@@ -165,6 +280,19 @@ ChartGroup.prototype.chartFilterHandler = function(chart, filterFunction) {
         }
     });
 
+    this.NestedGroups()
+        .forEach(
+            function(group) {
+                group.updateNestedData();
+            }
+    );
+
+    this.ComputedGroups()
+        .forEach(
+            function(group) {
+                group.compute();
+            }
+    );
     this.CumulativeGroups()
         .forEach(
             function(group) {
@@ -187,7 +315,7 @@ ChartGroup.prototype.redrawCharts = function() {
 ChartGroup.prototype.addSumGrouping = function(dimension, func) {
     var data = dimension.Dimension.group()
         .reduceSum(func);
-    var group = new Group(data, false);
+    var group = new Group(data);
 
     this.Groups.push(group);
     return group;
@@ -195,9 +323,81 @@ ChartGroup.prototype.addSumGrouping = function(dimension, func) {
 
 ChartGroup.prototype.addCustomGrouping = function(group) {
     this.Groups.push(group);
-    if (group.cumulative) {
+    if (group.cumulative()) {
         this.CumulativeGroups.push(group);
     }
+    return group;
+};
+
+ChartGroup.prototype.multiReduceSum = function(dimension, properties) {
+
+    var data = dimension.Dimension.group()
+        .reduce(
+            function(p, v) {
+
+                for (var property in properties) {
+                    if (v.hasOwnProperty(properties[property])) {
+                        p[properties[property]] += v[properties[property]];
+                    }
+                }
+                return p;
+            },
+            function(p, v) {
+                for (var property in properties) {
+                    if (v.hasOwnProperty(properties[property])) {
+                        p[properties[property]] -= v[properties[property]];
+                    }
+                }
+                return p;
+            },
+            function() {
+                var p = {};
+                for (var property in properties) {
+                    p[properties[property]] = 0;
+                }
+                return p;
+            }
+    );
+    var group = new Group(data);
+
+    this.Groups.push(group);
+    return group;
+};
+
+ChartGroup.prototype.multiReduceCount = function(dimension, property) {
+
+    var data = dimension.Dimension.group()
+        .reduce(
+            function(p, v) {
+                if (!p.hasOwnProperty(v[property])) {
+
+                    p[v[property]] = 1;
+                } else {
+                    p[v[property]] += 1;
+                }
+
+                p.Total += 1;
+
+                return p;
+            },
+            function(p, v) {
+
+                if (v.hasOwnProperty(properties[property])) {
+                    p[v[property]] -= 1;
+                }
+                p.Total--;
+                return p;
+            },
+            function() {
+                return {
+                    Total: 0
+                };
+            }
+    );
+
+    var group = new Group(data);
+    this.Groups.push(group);
+
     return group;
 };
 ;var BaseChart = function BaseChart(name, element, dimension, group) {
@@ -214,6 +414,7 @@ ChartGroup.prototype.addCustomGrouping = function(group) {
     this._ranges = [];
     this._redrawAxes = false;
     this.isFiltered = false;
+    this._barPadding = 0.2;
     this.duration = 500;
     this.filters = [];
     this._labelPadding = 20;
@@ -221,6 +422,7 @@ ChartGroup.prototype.addCustomGrouping = function(group) {
     this._tooltipText = "";
     this._invert = false;
     this._barColor = '#acc3ee';
+    this._ordered = false;
     this._linkedCharts = [];
 
     this._margin = {
@@ -229,7 +431,6 @@ ChartGroup.prototype.addCustomGrouping = function(group) {
         left: 0,
         right: 0
     };
-
 
     this._keyAccessor = function(d) {
         return d.key;
@@ -349,6 +550,22 @@ BaseChart.prototype.height = function(h) {
         return this._height;
     }
     this._height = h;
+    return this;
+};
+
+BaseChart.prototype.ordered = function(o) {
+    if (!arguments.length) {
+        return this._ordered;
+    }
+    this._ordered = o;
+    return this;
+};
+
+BaseChart.prototype.orderChildren = function(o) {
+    if (!arguments.length) {
+        return this._orderChildren;
+    }
+    this._orderChildren = o;
     return this;
 };
 
@@ -526,6 +743,7 @@ BaseChart.prototype.createChart = function() {
             .top + ")");
 
     this.tooltip();
+    return this.chart;
 };
 
 BaseChart.prototype.topResults = function(top) {
@@ -537,8 +755,9 @@ BaseChart.prototype.topResults = function(top) {
 };
 
 BaseChart.prototype.dataset = function() {
-    return this.group.getData()
-        .filter(this._limitFunction);
+    var data = this.ordered() ? this.group.getOrderedData() : this.group.getData();
+
+    return data.filter(this._limitFunction);
 };
 
 BaseChart.prototype.targetData = function() {
@@ -567,6 +786,14 @@ BaseChart.prototype.tooltipFormat = function(f) {
         return this._tooltipFormat;
     }
     this._tooltipFormat = f;
+    return this;
+};
+
+BaseChart.prototype.barPadding = function(f) {
+    if (!arguments.length) {
+        return this._barPadding;
+    }
+    this._barPadding = f;
     return this;
 };
 
@@ -770,31 +997,23 @@ BaseChart.prototype.labelAnchoring = function(d) {
     }
 };
 
-BaseChart.prototype.filterFunction = function(filter) {
+BaseChart.prototype.filterFunction = function(filter, element) {
     var value = filter.key ? filter.key : filter;
 
     return {
         name: value,
+        element: element,
         filterFunction: function(d) {
-            return d == value;
+            return String(d) == String(value);
         }
     };
 };
 
-
 BaseChart.prototype.filterClick = function(element, filter) {
-    if (d3.select(element)
-        .classed("selected")) {
-        d3.select(element)
-            .classed("selected", false);
-    } else {
-        d3.select(element)
-            .classed("selected", true);
-    }
 
-    var filterFunction = this.filterFunction(filter);
+    var filterFunction = this.filterFunction(filter, element);
 
-    this.filterEvent(this, filterFunction);
+    this.filterEvent(this.dimension, filterFunction);
 };
 
 
@@ -868,6 +1087,111 @@ BaseChart.prototype.drawTargets = function() {};
 
 Legend.prototype = Object.create(BaseChart.prototype);
 Legend.prototype.constructor = Legend;
+;function DataTable(name, element, dimension, group) {
+    BaseChart.call(this, name, element, dimension, group);
+
+    var self = this;
+
+    this._columns = [];
+
+    this.chart = d3.select(this.element)
+        .append("table")
+        .attr("class", "dataTable");
+
+    this.columns = function(c) {
+        if (!arguments.length) {
+            return this._columns;
+        }
+        this._columns = c;
+        return this;
+
+    };
+
+    this.init = function() {
+        var self = this;
+
+        this.header = this.chart.append("thead")
+            .append("tr");
+
+        this.header.append("th")
+            .attr('class', 'blank')
+            .html("");
+
+        this.header.selectAll("th.column")
+            .data(this._columns)
+            .enter()
+            .append("th")
+            .attr('class', 'column')
+            .html(function(d) {
+                return d.label;
+            });
+
+        this.rows = this.chart.selectAll("tr.datarow")
+            .data(this.dataset());
+
+        this.rows.enter()
+            .append("tr")
+            .attr("class", "datarow");
+
+        this.rows.append("th")
+            .html(function(d) {
+                return self._keyAccessor(d);
+            });
+
+        this.cells = this.rows.selectAll("td")
+            .data(function(row) {
+                return self._columns.map(function(column) {
+                    return {
+                        column: column,
+                        value: column.formatter(column.calculation(row))
+                    };
+                });
+            });
+
+        var newEntries = this.cells.enter();
+        newEntries.append("td")
+            .html(function(d) {
+                return d.value;
+            });
+    };
+
+    this.draw = function() {
+        var self = this;
+
+        this.rows = this.chart.selectAll("tr.datarow")
+            .data(this.dataset());
+
+        this.rows.enter()
+            .append("tr")
+            .attr("class", "datarow");
+
+        this.cells = this.rows.selectAll("td")
+            .data(function(row) {
+                return self._columns.map(function(column) {
+                    return {
+                        column: column,
+                        value: column.formatter(column.calculation(row))
+                    };
+                });
+            });
+
+        this.cells.enter()
+            .append("td");
+
+        this.cells.html(function(d) {
+            return d.value;
+        });
+
+        this.cells.exit()
+            .remove();
+
+        this.rows.exit()
+            .remove();
+    };
+}
+
+DataTable.prototype = Object.create(BaseChart.prototype);
+DataTable.prototype.constructor = DataTable;
 ;function BarChart(name, element, dimension, group) {
 
     BaseChart.call(this, name, element, dimension, group);
@@ -901,7 +1225,7 @@ Legend.prototype.constructor = Legend;
     this.initializeAxes = function() {
 
         this.x.domain(this.keys())
-            .rangeRoundBands([0, this.xDomain()], 0.3);
+            .rangeRoundBands([0, this.xDomain()], this.barPadding());
 
         this.y.domain([0, this._currentMax])
             .range([this.yDomain(), 0]);
@@ -967,9 +1291,9 @@ Legend.prototype.constructor = Legend;
             .attr("transform", "translate(0," + (self.height() - self.margin()
                 .bottom - self.margin()
                 .top) + ")")
+            .attr("class", "x-axis")
             .call(this.xAxis)
             .selectAll("text")
-            .attr("class", "x-axis")
             .style("text-anchor", "start")
             .style("writing-mode", "tb")
             .style("font-size", "12px")
@@ -982,6 +1306,10 @@ Legend.prototype.constructor = Legend;
     };
 
     this.draw = function() {
+        this.x.domain(this.keys())
+            .rangeRoundBands([0, this.xDomain()], this.barPadding());
+
+        var k = this.keys();
 
         if (self._redrawAxes) {
             this.y.domain([0, self.findMax()])
@@ -1000,11 +1328,16 @@ Legend.prototype.constructor = Legend;
             .attr("width", this.barWidth)
             .attr("height", this.barHeight);
 
-        bars.selectAll("text.tipValue")
+        var tips = this.chart.selectAll("text.tipValue")
+            .data(this.dataset())
             .text(this.tooltipText);
 
         if (this._targets) {
             this.updateTargets();
+        }
+
+        if (this._ranges) {
+            this.updateRanges();
         }
 
         this.chart.selectAll("g.y-axis")
@@ -1013,6 +1346,18 @@ Legend.prototype.constructor = Legend;
             .style("text-anchor", "end")
             .style("font-size", "12px")
             .style("fill", "#333");
+
+        this.chart.selectAll("g.x-axis")
+            .call(this.xAxis)
+            .selectAll("text")
+            .style("font-size", "12px")
+            .style("text-anchor", "start")
+            .style("writing-mode", "tb")
+            .on("mouseover", this.setHover)
+            .on("mouseout", this.removeHover)
+            .on("click", function(filter) {
+                return self.filterClick(this, filter);
+            });
     };
 
     this.drawTargets = function() {
@@ -1067,6 +1412,26 @@ Legend.prototype.constructor = Legend;
     };
 
 
+    this.updateRanges = function() {
+
+        if (this._ranges) {
+            for (var range in this._ranges) {
+
+                this._rangeAccessor = this._ranges[range].calculation;
+
+                var transform = this._ranges[range].type(this);
+
+                var d = this.dataset();
+
+                this.chart.selectAll("path." + self._ranges[range].class)
+                    .datum(this.dataset())
+                    .attr("d", transform)
+                    .attr("fill", self._ranges[range].color)
+                    .attr("class", self._ranges[range].class);
+            }
+        }
+    };
+
     this.updateTargets = function() {
 
         if (this._targets) {
@@ -1088,6 +1453,181 @@ Legend.prototype.constructor = Legend;
 
 BarChart.prototype = Object.create(BaseChart.prototype);
 BarChart.prototype.constructor = BarChart;
+;var MultipleChart = function MultipleChart(name, element, dimension, group, chartGroup) {
+
+    BaseChart.call(this, name, element, dimension, group);
+
+    this._chartGroup = chartGroup;
+
+    var self = this;
+
+    this.x = d3.scale.linear();
+    this.y = d3.scale.ordinal();
+
+    this.yAxis = d3.svg.axis()
+        .scale(this.y)
+        .orient("left")
+        .tickSize(0)
+        .tickPadding(10);
+
+    this.xAxis = d3.svg.axis()
+        .scale(this.x)
+        .orient("bottom")
+        .tickSize(0)
+        .tickPadding(10)
+        .tickFormat(function(d) {
+            return self.xFormatFunc(d);
+        });
+
+    this.initializeAxes = function(set) {
+        this.x.domain([0, this.findMax()])
+            .range([0, this.xBounds()
+                .end
+            ]);
+
+        this.y.domain(this.keys())
+            .rangeRoundBands([0, this.yDomain()], 0.2);
+    };
+
+    this.rowWidth = function(d) {
+        return this.x(this._valueAccessor(d));
+    }.bind(this);
+
+    this.yPosition = function(d) {
+        return this.y(d.key);
+    }.bind(this);
+
+    this.rowHeight = function() {
+        return this.y.rangeBand();
+    }.bind(this);
+
+    this.barXPosition = function(d) {
+        var x = 0;
+        if (this.invert()) {
+            x = this.xBounds()
+                .end - this.x(this._valueAccessor(d));
+        }
+        return x;
+    }.bind(this);
+
+
+    this.subChartName = function(key) {
+        return 'sub' + self._name + key.replace(/\s/g, '');
+    };
+
+
+    this.createChart = function() {
+        this.chart = d3.select(this.element)
+            .append("div")
+            .attr("class", "chart multiChart");
+
+        return this.chart;
+    };
+
+    this.subCharts = [];
+
+    this.init = function() {
+        this.createChart();
+
+        var charts = this.chart.selectAll('div.subchart')
+            .data(this.dataset());
+
+        charts.enter()
+            .append('div')
+            .attr('class', 'subchart')
+            .attr('id', function(d) {
+                return self.subChartName(self._keyAccessor(d));
+            })
+            .append('div')
+            .text(self._keyAccessor);
+
+        this.dataset()
+            .forEach(function(subChart) {
+
+
+                var data = [];
+
+                var k = self.dimension.Dimension.group()
+                    .reduceCount()
+                    .all()
+                    .map(self._keyAccessor);
+
+                k.forEach(function(d) {
+                    var o = {
+                        key: d
+                    };
+
+                    var value = $.grep(subChart.values, function(e) {
+                        return e.key == d;
+                    });
+
+
+                    var val = value.length ? self._valueAccessor(value[0]) : 0;
+
+                    o.values = val;
+
+                    data.push(o);
+                });
+
+
+
+                var group = new SimpleGroup(data);
+
+                var name = '#' + self.subChartName(subChart.key);
+
+
+                var newChart = new RowChart(subChart.key, name, self.dimension, group, self._chartGroup)
+                    .width(300)
+                    .height(300)
+                    .tooltipLabel(self._tooltipLabel)
+                    .tooltipFormat(self._tooltipFormat)
+                    .ordered(self._orderChildren)
+                    .valueAccessor(function(d) {
+                        return d.values;
+                    })
+                    .margin({
+                        left: 120,
+                        top: 0,
+                        bottom: 0,
+                        right: 0
+                    });
+                self.subCharts.push(newChart);
+                self._chartGroup.addChart(newChart);
+                newChart.init();
+            });
+    };
+
+    this.draw = function() {
+
+        var charts = this.chart.selectAll('div.subchart')
+            .data(this.dataset());
+
+        var data = this.dataset();
+
+        this.subCharts.forEach(function(sc) {
+
+            var subChartData = $.grep(data, function(d) {
+                return d.key == sc.displayName();
+            });
+
+            subChartData = subChartData.length ? sc._valueAccessor(subChartData[0]) : [];
+
+            sc.group.getData()
+                .forEach(function(currentDataValue) {
+                    var newDataValue = $.grep(subChartData, function(d) {
+                        return d.key == currentDataValue.key;
+                    })[0];
+
+                    currentDataValue.values = newDataValue ? newDataValue.values : 0;
+                });
+
+        });
+    };
+};
+
+
+MultipleChart.prototype = Object.create(BaseChart.prototype);
+MultipleChart.prototype.constructor = MultipleChart;
 ;function GroupedBarChart(name, element, dimension, group) {
 
     BaseChart.call(this, name, element, dimension, group);
@@ -1391,7 +1931,7 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
 
     this.yAxis = d3.svg.axis()
         .scale(this.y)
-        .orient("left")
+        .orient('left')
         .tickSize(0)
         .tickPadding(10)
         .tickFormat(function(d) {
@@ -1400,7 +1940,7 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
 
     this.xAxis = d3.svg.axis()
         .scale(this.x)
-        .orient("bottom")
+        .orient('bottom')
         .tickSize(0)
         .tickPadding(10)
         .tickFormat(function(d) {
@@ -1452,12 +1992,12 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
         this.initializeAxes();
 
         var groups = this.chart
-            .selectAll("g")
+            .selectAll('g')
             .data(this.dataset());
 
         groups.enter()
-            .append("g")
-            .attr("class", "bargroup");
+            .append('g')
+            .attr('class', 'bargroup');
 
         var bars = groups.selectAll('rect.bar');
 
@@ -1465,46 +2005,46 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
         for (var seriesFunction in this._series) {
             this._valueAccessor = this.cumulative() ? self._series[seriesFunction].cumulative : self._series[seriesFunction].calculation;
 
-            bars = groups.append("rect")
-                .attr("class", self._series[seriesFunction].name + "class bar")
-                .attr("x", this.xPosition)
-                .attr("y", this.yPosition)
-                .attr("width", this.barWidth)
-                .attr("height", this.barHeight)
-                .attr("fill", this._series[seriesFunction].color)
-                .on("mouseover", mouseOver)
-                .on("mouseout", mouseOut);
+            bars = groups.append('rect')
+                .attr('class', self._series[seriesFunction].name + 'class bar')
+                .attr('x', this.xPosition)
+                .attr('y', this.yPosition)
+                .attr('width', this.barWidth)
+                .attr('height', this.barHeight)
+                .attr('fill', this._series[seriesFunction].color)
+                .on('mouseover', mouseOver)
+                .on('mouseout', mouseOut);
 
-            bars.append("svg:text")
+            bars.append('svg:text')
                 .text(this.tooltipText)
-                .attr("class", "tipValue");
+                .attr('class', 'tipValue');
 
-            bars.append("svg:text")
+            bars.append('svg:text')
                 .text(this._series[seriesFunction].label)
-                .attr("class", "tipLabel");
+                .attr('class', 'tipLabel');
         }
 
-        this.chart.append("g")
-            .attr("class", "y-axis")
+        this.chart.append('g')
+            .attr('class', 'y-axis')
             .call(this.yAxis)
-            .selectAll("text")
-            .style("text-anchor", "end")
-            .style("font-size", "12px")
-            .style("fill", "#333");
+            .selectAll('text')
+            .style('text-anchor', 'end')
+            .style('font-size', '12px')
+            .style('fill', '#333');
 
-        this.chart.append("g")
-            .attr("transform", "translate(0," + (self.height() - self.margin()
+        this.chart.append('g')
+            .attr('transform', 'translate(0,' + (self.height() - self.margin()
                 .bottom - self.margin()
-                .top) + ")")
+                .top) + ')')
             .call(this.xAxis)
-            .selectAll("text")
-            .attr("class", "x-axis")
-            .style("font-size", "12px")
-            .style("text-anchor", "start")
-            .style("writing-mode", "tb")
-            .on("mouseover", this.setHover)
-            .on("mouseout", this.removeHover)
-            .on("click", function(filter) {
+            .selectAll('text')
+            .attr('class', 'x-axis')
+            .style('font-size', '12px')
+            .style('text-anchor', 'start')
+            .style('writing-mode', 'tb')
+            .on('mouseover', this.setHover)
+            .on('mouseout', this.removeHover)
+            .on('click', function(filter) {
                 return self.filterClick(this, filter);
             });
 
@@ -1526,7 +2066,7 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
                 ]);
         }
 
-        var groups = this.chart.selectAll("g.bargroup")
+        var groups = this.chart.selectAll('g.bargroup')
             .data(this.dataset())
             .each(function(d, i) {
                 d.yPos = 0;
@@ -1536,17 +2076,17 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
 
             this._valueAccessor = this.cumulative() ? self._series[seriesFunction].cumulative : self._series[seriesFunction].calculation;
 
-            var bars = groups.selectAll("." + self._series[seriesFunction].name + "class.bar")
+            var bars = groups.selectAll('.' + self._series[seriesFunction].name + 'class.bar')
                 .transition()
                 .duration(self.duration)
-                .attr("x", this.xPosition)
-                .attr("y", this.yPosition)
-                .attr("height", this.barHeight);
+                .attr('x', this.xPosition)
+                .attr('y', this.yPosition)
+                .attr('height', this.barHeight);
 
-            bars.selectAll("text.tipValue")
+            bars.selectAll('text.tipValue')
                 .text(this.tooltipText);
 
-            bars.selectAll("text.tipLabel")
+            bars.selectAll('text.tipLabel')
                 .text(this._series[seriesFunction].label);
 
         }
@@ -1555,11 +2095,11 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
             this.updateTargets();
         }
 
-        this.chart.selectAll(".y-axis")
+        this.chart.selectAll('.y-axis')
             .call(this.yAxis)
-            .selectAll("text")
-            .style("font-size", "12px")
-            .style("fill", "#333");
+            .selectAll('text')
+            .style('font-size', '12px')
+            .style('fill', '#333');
     };
 
 
@@ -1572,7 +2112,7 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
             self.mouseOut(self, this, d);
         };
 
-        var groups = this.chart.selectAll("g")
+        var groups = this.chart.selectAll('g')
             .data(this.targetData());
 
         if (this._targets) {
@@ -1580,44 +2120,44 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
             this._targetAccessor = this.cumulative() ? self._targets.cumulative : self._targets.calculation;
 
 
-            var tBars = groups.append("rect")
-                .attr("class", this._targets.name + "class target")
-                .attr("x", this.targetX)
-                .attr("y", this.targetY)
-                .attr("width", this.targetWidth)
-                .attr("height", 4)
-                .attr("fill", this._targets.color)
-                .on("mouseover", mouseOver)
-                .on("mouseout", mouseOut);
+            var tBars = groups.append('rect')
+                .attr('class', this._targets.name + 'class target')
+                .attr('x', this.targetX)
+                .attr('y', this.targetY)
+                .attr('width', this.targetWidth)
+                .attr('height', 4)
+                .attr('fill', this._targets.color)
+                .on('mouseover', mouseOver)
+                .on('mouseout', mouseOut);
 
-            tBars.append("svg:text")
+            tBars.append('svg:text')
                 .text(this.targetTooltipText)
-                .attr("class", "tipValue");
+                .attr('class', 'tipValue');
 
-            tBars.append("svg:text")
+            tBars.append('svg:text')
                 .text(this._targets.label)
-                .attr("class", "tipLabel");
+                .attr('class', 'tipLabel');
         }
     };
 
     this.updateTargets = function() {
 
-        var groups = this.chart.selectAll("g")
+        var groups = this.chart.selectAll('g')
             .data(this.targetData());
 
         if (this._targets) {
 
             this._valueAccessor = this.cumulative() ? self._targets.cumulative : self._targets.calculation;
 
-            var tBars = groups.selectAll("rect." + self._targets.name + "class.target");
+            var tBars = groups.selectAll('rect.' + self._targets.name + 'class.target');
 
             tBars.transition()
                 .duration(this.duration)
-                .attr("y", this.targetY);
+                .attr('y', this.targetY);
 
-            tBars.selectAll("text.tipValue")
+            tBars.selectAll('text.tipValue')
                 .text(this.targetTooltipText)
-                .attr("class", "tipValue");
+                .attr('class', 'tipValue');
         }
     };
 
@@ -1681,7 +2221,7 @@ StackedBarChart.prototype.constructor = StackedBarChart;
 
         if (minExtent.getTime() != maxExtent.getTime()) {
 
-            this.filterEvent(this, func);
+            this.filterEvent(this.dimension, func);
 
             self.mini.select('.brush')
                 .call(self.brush.extent([minExtent, maxExtent]));
@@ -1699,12 +2239,8 @@ StackedBarChart.prototype.constructor = StackedBarChart;
         this.initializeAxes();
 
         this.mini = this.chart.append('g')
-            .attr('width', function() {
-                return self.width();
-            })
-            .attr('height', function() {
-                return self.height();
-            })
+            .attr('width', this.width)
+            .attr('height', this.height)
             .attr('class', 'mini');
 
         this.brush = d3.svg.brush()
@@ -1832,6 +2368,8 @@ TimeLine.prototype.constructor = TimeLine;
         this.createChart();
         this.initializeAxes();
 
+        var d = this.dataset();
+
         var bars = this.chart.append("g")
             .selectAll("rect")
             .data(this.dataset())
@@ -1878,39 +2416,48 @@ TimeLine.prototype.constructor = TimeLine;
 
         var self = this;
 
-        if (self._redrawAxes) {
+        var k = this.keys();
+        var d = this.dataset();
 
-            this.y
-                .domain(this.keys())
-                .rangeRoundBands([0, this.height()], 0.2);
+        this.y
+            .domain(this.keys())
+            .rangeRoundBands([0, this.height()], 0.2);
+
+        this.chart
+            .selectAll("g.y-axis")
+            .call(this.yAxis)
+            .selectAll("text")
+            .each(function() {
+                d3.select(this)
+                    .classed('row-chart-y', 'true');
+            })
+            .on("mouseover", this.setHover)
+            .on("mouseout", this.removeHover)
+            .on("click", function(filter) {
+                self.filterClick(this, filter);
+            });
+
+        if (self._redrawAxes) {
 
             this.x.domain([0, this.findMax()])
                 .range([0, this.xBounds()
                     .end
                 ]);
-
-            this.chart
-                .selectAll("g.y-axis")
-                .call(this.yAxis)
-                .selectAll("text")
-                .each(function() {
-                    d3.select(this)
-                        .classed('row-chart-y', 'true');
-                })
-                .on("mouseover", this.setHover)
-                .on("mouseout", this.removeHover)
-                .on("click", function(filter) {
-                    self.filterClick(this, filter);
-                });
         }
 
         var bars = self.chart.selectAll("rect")
-            .data(this.dataset())
-            .transition()
+            .data(this.dataset());
+
+        bars.transition()
             .duration(self.duration)
             .attr("width", this.rowWidth);
 
-        bars.selectAll("text.tipValue")
+
+        var tips = self.chart
+            .selectAll("text.tipValue")
+            .data(self.dataset());
+
+        tips
             .text(this.tooltipText)
             .attr("class", "tipValue");
 

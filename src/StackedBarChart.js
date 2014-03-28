@@ -20,7 +20,7 @@ function StackedBarChart(name, element, dimension, group) {
 
     this.yAxis = d3.svg.axis()
         .scale(this.y)
-        .orient("left")
+        .orient('left')
         .tickSize(0)
         .tickPadding(10)
         .tickFormat(function(d) {
@@ -29,7 +29,7 @@ function StackedBarChart(name, element, dimension, group) {
 
     this.xAxis = d3.svg.axis()
         .scale(this.x)
-        .orient("bottom")
+        .orient('bottom')
         .tickSize(0)
         .tickPadding(10)
         .tickFormat(function(d) {
@@ -81,12 +81,12 @@ function StackedBarChart(name, element, dimension, group) {
         this.initializeAxes();
 
         var groups = this.chart
-            .selectAll("g")
+            .selectAll('g')
             .data(this.dataset());
 
         groups.enter()
-            .append("g")
-            .attr("class", "bargroup");
+            .append('g')
+            .attr('class', 'bargroup');
 
         var bars = groups.selectAll('rect.bar');
 
@@ -94,46 +94,46 @@ function StackedBarChart(name, element, dimension, group) {
         for (var seriesFunction in this._series) {
             this._valueAccessor = this.cumulative() ? self._series[seriesFunction].cumulative : self._series[seriesFunction].calculation;
 
-            bars = groups.append("rect")
-                .attr("class", self._series[seriesFunction].name + "class bar")
-                .attr("x", this.xPosition)
-                .attr("y", this.yPosition)
-                .attr("width", this.barWidth)
-                .attr("height", this.barHeight)
-                .attr("fill", this._series[seriesFunction].color)
-                .on("mouseover", mouseOver)
-                .on("mouseout", mouseOut);
+            bars = groups.append('rect')
+                .attr('class', self._series[seriesFunction].name + 'class bar')
+                .attr('x', this.xPosition)
+                .attr('y', this.yPosition)
+                .attr('width', this.barWidth)
+                .attr('height', this.barHeight)
+                .attr('fill', this._series[seriesFunction].color)
+                .on('mouseover', mouseOver)
+                .on('mouseout', mouseOut);
 
-            bars.append("svg:text")
+            bars.append('svg:text')
                 .text(this.tooltipText)
-                .attr("class", "tipValue");
+                .attr('class', 'tipValue');
 
-            bars.append("svg:text")
+            bars.append('svg:text')
                 .text(this._series[seriesFunction].label)
-                .attr("class", "tipLabel");
+                .attr('class', 'tipLabel');
         }
 
-        this.chart.append("g")
-            .attr("class", "y-axis")
+        this.chart.append('g')
+            .attr('class', 'y-axis')
             .call(this.yAxis)
-            .selectAll("text")
-            .style("text-anchor", "end")
-            .style("font-size", "12px")
-            .style("fill", "#333");
+            .selectAll('text')
+            .style('text-anchor', 'end')
+            .style('font-size', '12px')
+            .style('fill', '#333');
 
-        this.chart.append("g")
-            .attr("transform", "translate(0," + (self.height() - self.margin()
+        this.chart.append('g')
+            .attr('transform', 'translate(0,' + (self.height() - self.margin()
                 .bottom - self.margin()
-                .top) + ")")
+                .top) + ')')
             .call(this.xAxis)
-            .selectAll("text")
-            .attr("class", "x-axis")
-            .style("font-size", "12px")
-            .style("text-anchor", "start")
-            .style("writing-mode", "tb")
-            .on("mouseover", this.setHover)
-            .on("mouseout", this.removeHover)
-            .on("click", function(filter) {
+            .selectAll('text')
+            .attr('class', 'x-axis')
+            .style('font-size', '12px')
+            .style('text-anchor', 'start')
+            .style('writing-mode', 'tb')
+            .on('mouseover', this.setHover)
+            .on('mouseout', this.removeHover)
+            .on('click', function(filter) {
                 return self.filterClick(this, filter);
             });
 
@@ -155,7 +155,7 @@ function StackedBarChart(name, element, dimension, group) {
                 ]);
         }
 
-        var groups = this.chart.selectAll("g.bargroup")
+        var groups = this.chart.selectAll('g.bargroup')
             .data(this.dataset())
             .each(function(d, i) {
                 d.yPos = 0;
@@ -165,17 +165,17 @@ function StackedBarChart(name, element, dimension, group) {
 
             this._valueAccessor = this.cumulative() ? self._series[seriesFunction].cumulative : self._series[seriesFunction].calculation;
 
-            var bars = groups.selectAll("." + self._series[seriesFunction].name + "class.bar")
+            var bars = groups.selectAll('.' + self._series[seriesFunction].name + 'class.bar')
                 .transition()
                 .duration(self.duration)
-                .attr("x", this.xPosition)
-                .attr("y", this.yPosition)
-                .attr("height", this.barHeight);
+                .attr('x', this.xPosition)
+                .attr('y', this.yPosition)
+                .attr('height', this.barHeight);
 
-            bars.selectAll("text.tipValue")
+            bars.selectAll('text.tipValue')
                 .text(this.tooltipText);
 
-            bars.selectAll("text.tipLabel")
+            bars.selectAll('text.tipLabel')
                 .text(this._series[seriesFunction].label);
 
         }
@@ -184,11 +184,11 @@ function StackedBarChart(name, element, dimension, group) {
             this.updateTargets();
         }
 
-        this.chart.selectAll(".y-axis")
+        this.chart.selectAll('.y-axis')
             .call(this.yAxis)
-            .selectAll("text")
-            .style("font-size", "12px")
-            .style("fill", "#333");
+            .selectAll('text')
+            .style('font-size', '12px')
+            .style('fill', '#333');
     };
 
 
@@ -201,7 +201,7 @@ function StackedBarChart(name, element, dimension, group) {
             self.mouseOut(self, this, d);
         };
 
-        var groups = this.chart.selectAll("g")
+        var groups = this.chart.selectAll('g')
             .data(this.targetData());
 
         if (this._targets) {
@@ -209,44 +209,44 @@ function StackedBarChart(name, element, dimension, group) {
             this._targetAccessor = this.cumulative() ? self._targets.cumulative : self._targets.calculation;
 
 
-            var tBars = groups.append("rect")
-                .attr("class", this._targets.name + "class target")
-                .attr("x", this.targetX)
-                .attr("y", this.targetY)
-                .attr("width", this.targetWidth)
-                .attr("height", 4)
-                .attr("fill", this._targets.color)
-                .on("mouseover", mouseOver)
-                .on("mouseout", mouseOut);
+            var tBars = groups.append('rect')
+                .attr('class', this._targets.name + 'class target')
+                .attr('x', this.targetX)
+                .attr('y', this.targetY)
+                .attr('width', this.targetWidth)
+                .attr('height', 4)
+                .attr('fill', this._targets.color)
+                .on('mouseover', mouseOver)
+                .on('mouseout', mouseOut);
 
-            tBars.append("svg:text")
+            tBars.append('svg:text')
                 .text(this.targetTooltipText)
-                .attr("class", "tipValue");
+                .attr('class', 'tipValue');
 
-            tBars.append("svg:text")
+            tBars.append('svg:text')
                 .text(this._targets.label)
-                .attr("class", "tipLabel");
+                .attr('class', 'tipLabel');
         }
     };
 
     this.updateTargets = function() {
 
-        var groups = this.chart.selectAll("g")
+        var groups = this.chart.selectAll('g')
             .data(this.targetData());
 
         if (this._targets) {
 
             this._valueAccessor = this.cumulative() ? self._targets.cumulative : self._targets.calculation;
 
-            var tBars = groups.selectAll("rect." + self._targets.name + "class.target");
+            var tBars = groups.selectAll('rect.' + self._targets.name + 'class.target');
 
             tBars.transition()
                 .duration(this.duration)
-                .attr("y", this.targetY);
+                .attr('y', this.targetY);
 
-            tBars.selectAll("text.tipValue")
+            tBars.selectAll('text.tipValue')
                 .text(this.targetTooltipText)
-                .attr("class", "tipValue");
+                .attr('class', 'tipValue');
         }
     };
 

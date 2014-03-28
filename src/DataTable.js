@@ -1,5 +1,5 @@
-function DataTable(element, dimension, group) {
-    BaseChart.call(this, element, dimension, group);
+function DataTable(name, element, dimension, group) {
+    BaseChart.call(this, name, element, dimension, group);
 
     var self = this;
 
@@ -23,46 +23,54 @@ function DataTable(element, dimension, group) {
 
         this.header = this.chart.append("thead")
             .append("tr");
-        this.header.selectAll("th")
+
+        this.header.append("th")
+            .attr('class', 'blank')
+            .html("");
+
+        this.header.selectAll("th.column")
             .data(this._columns)
             .enter()
             .append("th")
+            .attr('class', 'column')
             .html(function(d) {
-                return d;
+                return d.label;
             });
 
         this.rows = this.chart.selectAll("tr.datarow")
-            .data(this.dimension.dimension.top(50)
-                .filter(this._limitFunction));
+            .data(this.dataset());
 
         this.rows.enter()
             .append("tr")
             .attr("class", "datarow");
+
+        this.rows.append("th")
+            .html(function(d) {
+                return self._keyAccessor(d);
+            });
 
         this.cells = this.rows.selectAll("td")
             .data(function(row) {
                 return self._columns.map(function(column) {
                     return {
                         column: column,
-                        value: row[column]
+                        value: column.formatter(column.calculation(row))
                     };
                 });
             });
 
-        this.cells.enter()
-            .append("td");
-
-        this.cells.html(function(d) {
-            return d.value;
-        });
+        var newEntries = this.cells.enter();
+        newEntries.append("td")
+            .html(function(d) {
+                return d.value;
+            });
     };
 
     this.draw = function() {
         var self = this;
 
         this.rows = this.chart.selectAll("tr.datarow")
-            .data(this.dimension.dimension.top(50)
-                .filter(this._limitFunction));
+            .data(this.dataset());
 
         this.rows.enter()
             .append("tr")
@@ -73,7 +81,7 @@ function DataTable(element, dimension, group) {
                 return self._columns.map(function(column) {
                     return {
                         column: column,
-                        value: row[column]
+                        value: column.formatter(column.calculation(row))
                     };
                 });
             });

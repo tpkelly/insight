@@ -1,5 +1,13 @@
 function Group(data) {
     this._data = data;
+    this._cumulative = false;
+    this._valueAccessor = function(d) {
+        return d;
+    };
+    this._orderFunction = function(a, b) {
+        return b.value - a.value;
+    };
+    this._ordered = false;
 }
 
 Group.prototype.filterFunction = function(f) {
@@ -10,32 +18,63 @@ Group.prototype.filterFunction = function(f) {
     return this;
 };
 
+Group.prototype.cumulative = function(c) {
+    if (!arguments.length) {
+        return this._cumulative;
+    }
+    this._cumulative = c;
+    return this;
+};
+
 Group.prototype.getData = function() {
-    var data = this._data.all();
+    var data;
 
     if (this._filterFunction) {
         data = this._data.all()
             .filter(this._filterFunction);
+    } else {
+        data = this._data.all();
+    }
+    return data;
+};
+
+Group.prototype.getOrderedData = function() {
+    var data;
+
+    if (this._filterFunction) {
+        data = this._data.top(Infinity)
+            .filter(this._filterFunction);
+    } else {
+        data = this._data.top(Infinity)
+            .sort(this.orderFunction());
     }
     return data;
 };
 
 
+Group.prototype.computeFunction = function(c) {
+    this._ordered = true;
+    if (!arguments.length) {
+        return this._compute;
+    }
+    this._compute = c;
+    return this;
+};
 
-function CumulativeGroup(data, filterFunction) {
-    Group.call(this, data);
 
-    this.cumulative = true;
-    this._filterFunction = filterFunction;
-    this._valueAccessor = function(d) {
-        return d;
-    };
-}
+Group.prototype.orderFunction = function(o) {
+    if (!arguments.length) {
+        return this._orderFunction;
+    }
+    this._orderFunction = o;
+    return this;
+};
 
-CumulativeGroup.prototype = Object.create(Group.prototype);
-CumulativeGroup.prototype.constructor = CumulativeGroup;
+Group.prototype.compute = function() {
+    this._compute();
+};
 
-CumulativeGroup.prototype.valueAccessor = function(v) {
+Group.prototype.valueAccessor = function(v) {
     if (!arguments.length) {
         return this._valueAccessor;
     }
@@ -43,27 +82,80 @@ CumulativeGroup.prototype.valueAccessor = function(v) {
     return this;
 };
 
-CumulativeGroup.prototype.calculateTotals = function() {
-    var totals = {};
-    var self = this;
 
-    this.getData()
-        .forEach(function(d, i) {
+Group.prototype.calculateTotals = function() {
+    if (this._cumulative) {
+        var totals = {};
+        var total = 0;
+        var self = this;
+        var data = this._ordered ? this.getOrderedData() : this.getData();
 
-            var value = self._valueAccessor(d);
+        data
+            .forEach(function(d, i) {
 
-            for (var property in value) {
-                var totalName = property + 'Cumulative';
+                var value = self._valueAccessor(d);
 
-                if (totals[totalName]) {
-                    totals[totalName] += value[property];
-                    value[totalName] = totals[totalName];
+                if (typeof(value) != "object") {
+                    total += value;
+                    d.Cumulative = total;
                 } else {
-                    totals[totalName] = value[property];
-                    value[totalName] = totals[totalName];
-                }
-            }
-        });
+                    for (var property in value) {
+                        var totalName = property + 'Cumulative';
 
+                        if (totals[totalName]) {
+                            totals[totalName] += value[property];
+                            value[totalName] = totals[totalName];
+                        } else {
+                            totals[totalName] = value[property];
+                            value[totalName] = totals[totalName];
+                        }
+                    }
+                }
+            });
+    }
     return this;
+};
+
+
+function SimpleGroup(data) {
+    this._data = data;
+    this._orderFunction = function(a, b) {
+        return b.values - a.values;
+    };
+}
+SimpleGroup.prototype = Object.create(Group.prototype);
+SimpleGroup.prototype.constructor = SimpleGroup;
+
+SimpleGroup.prototype.getOrderedData = function() {
+    return this._data.sort(this._orderFunction);
+};
+
+SimpleGroup.prototype.getData = function() {
+    return this._data;
+};
+
+function NestedGroup(dimension, nestFunction) {
+    this._dimension = dimension;
+    this._data = dimension.Dimension.bottom(Infinity);
+    this._nestFunction = nestFunction;
+    this._nestedData = nestFunction.entries(this._data);
+}
+
+
+NestedGroup.prototype = Object.create(Group.prototype);
+NestedGroup.prototype.constructor = NestedGroup;
+
+
+NestedGroup.prototype.getData = function() {
+    return this._nestedData;
+};
+
+NestedGroup.prototype.updateNestedData = function() {
+    this._data = this._dimension.Dimension.bottom(Infinity);
+    this._nestedData = this._nestFunction.entries(this._data);
+};
+
+
+NestedGroup.prototype.getOrderedData = function() {
+    return this._nestedData;
 };

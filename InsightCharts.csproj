@@ -57,6 +57,8 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="examples\chessboard.html" />
+    <Content Include="examples\index.html" />
     <Content Include="examples\revenuereport.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -74,6 +76,7 @@
     <Content Include="examples\lib\InsightCharts.min.js" />
     <Content Include="examples\lib\jquery-1.10.2.js" />
     <Content Include="Gruntfile.js" />
+    <Content Include="src\MultipleChart.js" />
     <Content Include="src\BarChart.js" />
     <Content Include="src\BaseChart.js" />
     <Content Include="src\BulletChart.js" />

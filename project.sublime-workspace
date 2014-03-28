@@ -35,7 +35,7 @@
 			"file": "src/DataTable.js",
 			"settings":
 			{
-				"buffer_size": 2319,
+				"buffer_size": 2640,
 				"line_ending": "Unix"
 			}
 		},
@@ -43,7 +43,7 @@
 			"file": "src/BaseChart.js",
 			"settings":
 			{
-				"buffer_size": 11582,
+				"buffer_size": 13937,
 				"line_ending": "Unix"
 			}
 		},
@@ -51,7 +51,7 @@
 			"file": "src/StackedBarChart.js",
 			"settings":
 			{
-				"buffer_size": 7075,
+				"buffer_size": 7174,
 				"line_ending": "Unix"
 			}
 		},
@@ -59,7 +59,7 @@
 			"file": "src/TimeLine.js",
 			"settings":
 			{
-				"buffer_size": 3618,
+				"buffer_size": 3637,
 				"line_ending": "Unix"
 			}
 		},
@@ -67,7 +67,7 @@
 			"file": "src/Group.js",
 			"settings":
 			{
-				"buffer_size": 1535,
+				"buffer_size": 3084,
 				"line_ending": "Unix"
 			}
 		},
@@ -75,7 +75,7 @@
 			"file": "src/RowChart.js",
 			"settings":
 			{
-				"buffer_size": 3962,
+				"buffer_size": 4136,
 				"line_ending": "Unix"
 			}
 		},
@@ -83,7 +83,7 @@
 			"file": "src/PieChart.js",
 			"settings":
 			{
-				"buffer_size": 4234,
+				"buffer_size": 4402,
 				"line_ending": "Unix"
 			}
 		},
@@ -91,7 +91,7 @@
 			"file": "src/Legend.js",
 			"settings":
 			{
-				"buffer_size": 1181,
+				"buffer_size": 1194,
 				"line_ending": "Unix"
 			}
 		},
@@ -99,7 +99,7 @@
 			"file": "src/PartitionChart.js",
 			"settings":
 			{
-				"buffer_size": 2973,
+				"buffer_size": 3068,
 				"line_ending": "Unix"
 			}
 		},
@@ -107,7 +107,7 @@
 			"file": "src/Dimension.js",
 			"settings":
 			{
-				"buffer_size": 364,
+				"buffer_size": 479,
 				"line_ending": "Unix"
 			}
 		},
@@ -115,7 +115,7 @@
 			"file": "src/CountChart.js",
 			"settings":
 			{
-				"buffer_size": 1180,
+				"buffer_size": 1228,
 				"line_ending": "Unix"
 			}
 		},
@@ -123,7 +123,7 @@
 			"file": "src/CircularPartitionChart.js",
 			"settings":
 			{
-				"buffer_size": 6704,
+				"buffer_size": 6975,
 				"line_ending": "Unix"
 			}
 		},
@@ -131,7 +131,7 @@
 			"file": "src/ChartGroup.js",
 			"settings":
 			{
-				"buffer_size": 2763,
+				"buffer_size": 5480,
 				"line_ending": "Unix"
 			}
 		},
@@ -139,7 +139,7 @@
 			"file": "src/BarChart.js",
 			"settings":
 			{
-				"buffer_size": 5783,
+				"buffer_size": 6017,
 				"line_ending": "Unix"
 			}
 		},
@@ -246,15 +246,15 @@
 					"file": "src/DataTable.js",
 					"settings":
 					{
-						"buffer_size": 2319,
+						"buffer_size": 2640,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								676,
-								676
+								0,
+								0
 							]
 						],
 						"settings":
@@ -274,7 +274,7 @@
 					"file": "src/BaseChart.js",
 					"settings":
 					{
-						"buffer_size": 11582,
+						"buffer_size": 13937,
 						"regions":
 						{
 						},
@@ -302,7 +302,7 @@
 					"file": "src/StackedBarChart.js",
 					"settings":
 					{
-						"buffer_size": 7075,
+						"buffer_size": 7174,
 						"regions":
 						{
 						},
@@ -330,7 +330,7 @@
 					"file": "src/TimeLine.js",
 					"settings":
 					{
-						"buffer_size": 3618,
+						"buffer_size": 3637,
 						"regions":
 						{
 						},
@@ -358,7 +358,7 @@
 					"file": "src/Group.js",
 					"settings":
 					{
-						"buffer_size": 1535,
+						"buffer_size": 3084,
 						"regions":
 						{
 						},
@@ -386,7 +386,7 @@
 					"file": "src/RowChart.js",
 					"settings":
 					{
-						"buffer_size": 3962,
+						"buffer_size": 4136,
 						"regions":
 						{
 						},
@@ -414,15 +414,15 @@
 					"file": "src/PieChart.js",
 					"settings":
 					{
-						"buffer_size": 4234,
+						"buffer_size": 4402,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3928,
-								3928
+								0,
+								0
 							]
 						],
 						"settings":
@@ -442,15 +442,15 @@
 					"file": "src/Legend.js",
 					"settings":
 					{
-						"buffer_size": 1181,
+						"buffer_size": 1194,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1082,
-								1082
+								0,
+								0
 							]
 						],
 						"settings":
@@ -470,15 +470,15 @@
 					"file": "src/PartitionChart.js",
 					"settings":
 					{
-						"buffer_size": 2973,
+						"buffer_size": 3068,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2849,
-								2849
+								0,
+								0
 							]
 						],
 						"settings":
@@ -498,20 +498,22 @@
 					"file": "src/Dimension.js",
 					"settings":
 					{
-						"buffer_size": 364,
+						"buffer_size": 479,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								363,
-								363
+								0,
+								0
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -524,15 +526,15 @@
 					"file": "src/CountChart.js",
 					"settings":
 					{
-						"buffer_size": 1180,
+						"buffer_size": 1228,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1071,
-								1071
+								0,
+								0
 							]
 						],
 						"settings":
@@ -552,7 +554,7 @@
 					"file": "src/CircularPartitionChart.js",
 					"settings":
 					{
-						"buffer_size": 6704,
+						"buffer_size": 6975,
 						"regions":
 						{
 						},
@@ -580,7 +582,7 @@
 					"file": "src/ChartGroup.js",
 					"settings":
 					{
-						"buffer_size": 2763,
+						"buffer_size": 5480,
 						"regions":
 						{
 						},
@@ -608,7 +610,7 @@
 					"file": "src/BarChart.js",
 					"settings":
 					{
-						"buffer_size": 5783,
+						"buffer_size": 6017,
 						"regions":
 						{
 						},

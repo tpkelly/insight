@@ -7,7 +7,7 @@ module.exports = function(grunt) {
         separator: ';'
       },
       dist: {
-        src: ['src/Group.js','src/Dimension.js','src/ChartGroup.js','src/BaseChart.js','src/Legend.js','src/BarChart.js','src/GroupedBarChart.js', 'src/StackedBarChart.js', 'src/Timeline.js', 'src/BaseChart.js', 'src/RowChart.js', 'src/PartitionChart.js'],
+          src: ['src/Group.js', 'src/Dimension.js', 'src/ChartGroup.js', 'src/BaseChart.js', 'src/Legend.js', 'src/DataTable.js', 'src/BarChart.js', 'src/MultipleChart.js', 'src/GroupedBarChart.js', 'src/StackedBarChart.js', 'src/Timeline.js', 'src/BaseChart.js', 'src/RowChart.js', 'src/PartitionChart.js'],
         dest: 'dist/<%= pkg.name %>.js'
       }
     },
@@ -25,7 +25,7 @@ module.exports = function(grunt) {
       files: ['test/**/*.html']
     },
     jshint: {
-      files: ['Gruntfile.js', 'src/**/*.js'],
+        files: ['Gruntfile.js', 'src/**/*.js', 'examples/*/*.js','!examples/lib/*.js'],
       options: {
         // options here to override JSHint defaults
         globals: {
