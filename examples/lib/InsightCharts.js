@@ -1192,7 +1192,7 @@ Legend.prototype.constructor = Legend;
 
 DataTable.prototype = Object.create(BaseChart.prototype);
 DataTable.prototype.constructor = DataTable;
-;function BarChart(name, element, dimension, group) {
+;var BarChart = function BarChart(name, element, dimension, group) {
 
     BaseChart.call(this, name, element, dimension, group);
 
@@ -1448,7 +1448,7 @@ DataTable.prototype.constructor = DataTable;
         }
     };
 
-}
+};
 
 
 BarChart.prototype = Object.create(BaseChart.prototype);
