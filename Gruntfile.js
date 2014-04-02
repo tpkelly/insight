@@ -2,6 +2,17 @@ module.exports = function(grunt) {
   var sourceFiles = ['src/Group.js', 'src/Dimension.js', 'src/ChartGroup.js', 'src/BaseChart.js', 'src/Legend.js', 'src/DataTable.js', 'src/BarChart.js', 'src/MultipleChart.js', 'src/GroupedBarChart.js', 'src/StackedBarChart.js', 'src/Timeline.js', 'src/BaseChart.js', 'src/RowChart.js', 'src/PartitionChart.js'];
 
 
+  // Livereload and connect variables
+    var LIVERELOAD_PORT = 35729;
+    var lrSnippet = require('connect-livereload')({
+        port: LIVERELOAD_PORT
+    });
+
+    var mountFolder = function( connect, dir ) {
+        return connect.static(require('path').resolve(dir));
+    };
+
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
@@ -12,6 +23,24 @@ module.exports = function(grunt) {
           src: sourceFiles,
         dest: 'dist/<%= pkg.name %>.js'
       }
+    },
+    connect: {
+                
+                server: {
+                  options: {
+                    port: 8999,
+                    hostname: 'localhost',
+                    middleware: function( connect ) {
+                        return [lrSnippet, mountFolder(connect, '.')];
+                    }                    
+                }
+              },
+                
+    },
+    open: {
+           dev:{
+            path: 'http://localhost:<%= connect.server.options.port %>/_SpecRunner.html'
+          }
     },
     uglify: {
       options: {
@@ -78,18 +107,11 @@ module.exports = function(grunt) {
         }
     },
     watch: {
-      files: ['<%= jshint.files %>'],
-      tasks: ['default']
-    },
-    connect: {
-        server: {
-            options: {
-                port: 8888,
-                base: 'examples',
-                keepalive: true
-            },
-
-        }
+      files: ['<%= jshint.files %>', 'tests/*.spec.js'],
+      tasks: ['jsbeautifier', 'jshint', 'uglify', 'concat', 'jasmine', 'copy'],
+      options: {
+                livereload: true
+            }
     }
   });
 
@@ -99,9 +121,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-open');
   grunt.loadNpmTasks('grunt-jsbeautifier');
   grunt.loadNpmTasks('grunt-contrib-connect');
 
-  grunt.registerTask('default', ['jsbeautifier', 'jshint','uglify', 'concat', "copy"]);
+  grunt.registerTask('default', ['jsbeautifier', 'jshint','uglify', 'concat', 'connect:server', 'open:dev', 'copy', 'watch']);
 
 };

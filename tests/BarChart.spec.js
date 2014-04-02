@@ -33,4 +33,5 @@ describe("Bar Chart Tests", function() {
         expect(chart.width()).toBe(200);
     });
 
+
 });
