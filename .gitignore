@@ -10,6 +10,10 @@
 *.cache
 *.suo
 
+.grunt
+.git-rewrite
+
+
 # Include dlls if they’re in the NuGet packages directory
 !/packages/*/lib/*.dll
 !/packages/*/lib/*/*.dll
@@ -25,6 +29,8 @@ _UpgradeReport_Files/
 ###############
 bin/
 obj/
+.grunt/
+.git-rewrite/
 node_modules/
 .git-rewrite/
 TestResults/
