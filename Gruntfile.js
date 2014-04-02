@@ -21,11 +21,10 @@ module.exports = function(grunt) {
       },
       dist: {
           src: sourceFiles,
-        dest: 'dist/<%= pkg.name %>.js'
+          dest: 'dist/<%= pkg.name %>.js'
       }
     },
     connect: {
-                
                 server: {
                   options: {
                     port: 8999,
@@ -108,7 +107,7 @@ module.exports = function(grunt) {
     },
     watch: {
       files: ['<%= jshint.files %>', 'tests/*.spec.js'],
-      tasks: ['jsbeautifier', 'jshint', 'uglify', 'concat', 'jasmine', 'copy'],
+      tasks: ['jsbeautifier', 'jshint', 'concat', 'uglify', 'jasmine', 'copy'],
       options: {
                 livereload: true
             }
@@ -125,6 +124,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jsbeautifier');
   grunt.loadNpmTasks('grunt-contrib-connect');
 
-  grunt.registerTask('default', ['jsbeautifier', 'jshint','uglify', 'concat', 'connect:server', 'open:dev', 'copy', 'watch']);
+  grunt.registerTask('default', ['jsbeautifier', 'jshint', 'concat', 'uglify', 'connect:server', 'open:dev', 'copy', 'watch']);
 
 };
