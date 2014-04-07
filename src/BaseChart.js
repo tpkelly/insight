@@ -464,11 +464,11 @@ BaseChart.prototype.mouseOver = function(chart, item, d) {
         var tipValue = $(item)
             .find('.tipValue')
             .first()
-            .html();
+            .text();
         var tipLabel = $(item)
             .find('.tipLabel')
             .first()
-            .html();
+            .text();
 
         chart.tip.show({
             label: tipLabel,

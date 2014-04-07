@@ -112,4 +112,20 @@ describe("Bar Chart Tests", function() {
         expect(chart._keyAccessor(item)).toBe('New Value');
     });
 
+    it("should be non-cumulative by default", function() {
+        
+        var chart = new BarChart("asd", "asda", "asdads", "ada");
+
+        expect(chart.cumulative()).toBe(false);
+    });
+
+    it("should be cumulative when we want it to be", function() {
+        
+        var chart = new BarChart("asd", "asda", "asdads", "ada")
+                .cumulative(true);
+
+        expect(chart.cumulative()).toBe(true);
+    });
+
+
 });
