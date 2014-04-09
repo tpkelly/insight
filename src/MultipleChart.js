@@ -89,7 +89,6 @@ var MultipleChart = function MultipleChart(name, element, dimension, group, char
         this.dataset()
             .forEach(function(subChart) {
 
-
                 var data = [];
 
                 var k = self.dimension.Dimension.group()

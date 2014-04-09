@@ -124,8 +124,52 @@ describe("Bar Chart Tests", function() {
         var chart = new BarChart("asd", "asda", "asdads", "ada")
                 .cumulative(true);
 
-        expect(chart.cumulative()).toBe(true);
     });
 
+
+    it("default x axis should be ordinal", function() {
+        
+        var chart = new BarChart("asd", "asda", "asdads", "ada");
+        chart.x.domain(["a", "b", "c"]).rangeBands([0,3]);
+        var actual = chart.x("c");
+        expect(actual).toBe(2);
+
+        var actual = chart.x("b");
+        expect(actual).toBe(1);
+    });
+
+    it("should allow time scales on the x axis", function() {
+        
+        var chart = new BarChart("asd", "asda", "asdads", "ada")
+                            .setXAxis(d3.time.scale());
+        
+        var start = new Date(2013,0,1);
+        var end = new Date(2014,0,1);
+
+        chart.x.domain([start, end]).range([0,400]);
+
+        var start = chart.x(start);
+        var end = chart.x(end);
+
+        expect(end).toBe(400);
+        expect(start).toBe(0);
+    });
+
+    it("time scaled x axis should work correctly", function() {
+        
+        var chart = new BarChart("asd", "asda", "asdads", "ada")
+                            .setXAxis(d3.time.scale());
+        
+        var start = new Date(2013,0,1);
+        var end = new Date(2014,0,1);
+
+        chart.x.domain([start, end]).range([0,400]);
+
+        var start = chart.x(start);
+        var end = chart.x(end);
+
+        expect(end).toBe(400);
+        expect(start).toBe(0);
+    });
 
 });

@@ -4,9 +4,6 @@ function StackedBarChart(name, element, dimension, group) {
 
     var self = this;
 
-    this.x = d3.scale.ordinal();
-    this.y = d3.scale.linear();
-
     this.xFormatFunc = function(d) {
         return d;
     };
@@ -18,36 +15,14 @@ function StackedBarChart(name, element, dimension, group) {
         self.mouseOut(self, this, d);
     };
 
-    this.yAxis = d3.svg.axis()
-        .scale(this.y)
-        .orient('left')
-        .tickSize(0)
-        .tickPadding(10)
-        .tickFormat(function(d) {
-            return self._yAxisFormat(d);
-        });
 
-    this.xAxis = d3.svg.axis()
-        .scale(this.x)
-        .orient('bottom')
-        .tickSize(0)
-        .tickPadding(10)
-        .tickFormat(function(d) {
-            return self.xFormatFunc(d);
-        });
 
     this.xAxisFormat = function(f) {
         this.xFormatFunc = f;
         return this;
     };
 
-    this.initializeAxes = function() {
-        this.x.domain(this.keys())
-            .rangeRoundBands([0, this.xDomain()], 0.2);
 
-        this.y.domain([0, this.findMax()])
-            .range([this.yDomain(), 0]);
-    };
 
     this.addSeries = function(series) {
 
@@ -74,11 +49,57 @@ function StackedBarChart(name, element, dimension, group) {
     }.bind(this);
 
 
+
     this.init = function() {
         var self = this;
 
         this.createChart();
         this.initializeAxes();
+
+        this.yAxis = d3.svg.axis()
+            .scale(this.y)
+            .orient('left')
+            .tickSize(0)
+            .tickPadding(10)
+            .tickFormat(function(d) {
+                return self._yAxisFormat(d);
+            });
+
+        this.xAxis = d3.svg.axis()
+            .scale(this.x)
+            .orient('bottom')
+            .tickSize(0)
+            .tickPadding(10)
+            .tickFormat(function(d) {
+                return self.xFormatFunc(d);
+            });
+
+
+
+        if (this.zoomable()) {
+
+            this.chart.append("clipPath")
+                .attr("id", "clip")
+                .append("rect")
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", this.width())
+                .attr("height", this.yDomain());
+
+            this.zoom = d3.behavior.zoom()
+                .on("zoom", this.dragging);
+
+            this.zoom.x(this.x);
+
+            this.chart.append("rect")
+                .attr("class", "pane")
+                .attr("width", this.width())
+                .attr("height", this.yDomain())
+                .on("click", self.clickEvent)
+                .style("fill", "none")
+                .style("pointer-events", "all")
+                .call(this.zoom);
+        }
 
         var groups = this.chart
             .selectAll('g')
@@ -90,7 +111,6 @@ function StackedBarChart(name, element, dimension, group) {
 
         var bars = groups.selectAll('rect.bar');
 
-
         for (var seriesFunction in this._series) {
             this._valueAccessor = this.cumulative() ? self._series[seriesFunction].cumulative : self._series[seriesFunction].calculation;
 
@@ -101,6 +121,7 @@ function StackedBarChart(name, element, dimension, group) {
                 .attr('width', this.barWidth)
                 .attr('height', this.barHeight)
                 .attr('fill', this._series[seriesFunction].color)
+                .attr("clip-path", "url(#clip)")
                 .on('mouseover', mouseOver)
                 .on('mouseout', mouseOut);
 
@@ -122,6 +143,7 @@ function StackedBarChart(name, element, dimension, group) {
             .style('fill', '#333');
 
         this.chart.append('g')
+            .attr('class', 'x-axis')
             .attr('transform', 'translate(0,' + (self.height() - self.margin()
                 .bottom - self.margin()
                 .top) + ')')
@@ -143,11 +165,11 @@ function StackedBarChart(name, element, dimension, group) {
     };
 
 
-    this.draw = function() {
+    this.draw = function(drag) {
 
         var self = this;
 
-        if (self.redrawAxes()) {
+        if (drag && self.redrawAxes()) {
             this.y.domain([0, d3.round(self.findMax(), 1)])
                 .range([this.height() - this.margin()
                     .top - this.margin()
@@ -165,12 +187,16 @@ function StackedBarChart(name, element, dimension, group) {
 
             this._valueAccessor = this.cumulative() ? self._series[seriesFunction].cumulative : self._series[seriesFunction].calculation;
 
+            var duration = drag ? 0 : self.duration;
+
             var bars = groups.selectAll('.' + self._series[seriesFunction].name + 'class.bar')
                 .transition()
-                .duration(self.duration)
+                .duration(duration)
                 .attr('x', this.xPosition)
                 .attr('y', this.yPosition)
                 .attr('height', this.barHeight);
+
+
 
             bars.selectAll('text.tipValue')
                 .text(this.tooltipText);
@@ -181,8 +207,16 @@ function StackedBarChart(name, element, dimension, group) {
         }
 
         if (this._targets) {
-            this.updateTargets();
+            this.updateTargets(drag);
         }
+
+        this.chart.selectAll('g.x-axis')
+            .call(this.xAxis)
+            .selectAll("text")
+            .attr('class', 'x-axis')
+            .style('font-size', '12px')
+            .style('text-anchor', 'start')
+            .style('writing-mode', 'tb');
 
         this.chart.selectAll('.y-axis')
             .call(this.yAxis)
@@ -191,15 +225,8 @@ function StackedBarChart(name, element, dimension, group) {
             .style('fill', '#333');
     };
 
-
     this.drawTargets = function() {
 
-        var mouseOver = function(d, item) {
-            self.mouseOver(self, this, d);
-        };
-        var mouseOut = function(d, item) {
-            self.mouseOut(self, this, d);
-        };
 
         var groups = this.chart.selectAll('g')
             .data(this.targetData());
@@ -216,6 +243,7 @@ function StackedBarChart(name, element, dimension, group) {
                 .attr('width', this.targetWidth)
                 .attr('height', 4)
                 .attr('fill', this._targets.color)
+                .attr("clip-path", "url(#clip)")
                 .on('mouseover', mouseOver)
                 .on('mouseout', mouseOut);
 
@@ -229,9 +257,9 @@ function StackedBarChart(name, element, dimension, group) {
         }
     };
 
-    this.updateTargets = function() {
+    this.updateTargets = function(drag) {
 
-        var groups = this.chart.selectAll('g')
+        var groups = this.chart.selectAll('g.bargroup')
             .data(this.targetData());
 
         if (this._targets) {
@@ -240,14 +268,22 @@ function StackedBarChart(name, element, dimension, group) {
 
             var tBars = groups.selectAll('rect.' + self._targets.name + 'class.target');
 
+            var duration = drag ? 0 : this.duration;
+
             tBars.transition()
-                .duration(this.duration)
+                .duration(duration)
+                .attr('x', this.targetX)
                 .attr('y', this.targetY);
 
             tBars.selectAll('text.tipValue')
                 .text(this.targetTooltipText)
                 .attr('class', 'tipValue');
         }
+    };
+
+    this.dragging = function() {
+
+        self.draw(true);
     };
 
 }

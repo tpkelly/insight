@@ -4,6 +4,10 @@ var BaseChart = function BaseChart(name, element, dimension, group) {
     this.group = group;
     this._name = name;
     this._displayName = name;
+
+    this.x = d3.scale.ordinal();
+    this.y = d3.scale.linear();
+
     this._currentMax = 0;
     this._cumulative = false;
     this._labelFontSize = "11px";
@@ -22,7 +26,9 @@ var BaseChart = function BaseChart(name, element, dimension, group) {
     this._barColor = '#acc3ee';
     this._ordered = false;
     this._linkedCharts = [];
-
+    this._xRangeType = this.x.rangeRoundBands;
+    this._yRangeType = this.y.range;
+    this._barWidthFunction = this.x.rangeBand;
     this._margin = {
         top: 0,
         bottom: 0,
@@ -77,13 +83,13 @@ var BaseChart = function BaseChart(name, element, dimension, group) {
     this.rangeX = function(d, i) {
 
         var offset = i == (this.keys()
-            .length - 1) ? this.x.rangeBand() : 0;
+            .length - 1) ? this._barWidthFunction(d) : 0;
 
         return this.x(this._keyAccessor(d)) + offset;
     }.bind(this);
 
     this.barWidth = function(d) {
-        return this.x.rangeBand();
+        return this._barWidthFunction(d);
     }.bind(this);
 
     this.barHeight = function(d) {
@@ -97,11 +103,11 @@ var BaseChart = function BaseChart(name, element, dimension, group) {
     }.bind(this);
 
     this.targetX = function(d, i) {
-        return this.x(this._keyAccessor(d)) + this.x.rangeBand() / 4;
+        return this.x(this._keyAccessor(d)) + this._barWidthFunction(d) / 4;
     }.bind(this);
 
     this.targetWidth = function(d) {
-        return this.x.rangeBand() / 2;
+        return this._barWidthFunction(d) / 2;
     }.bind(this);
 
     this.targetTooltipText = function(d) {
@@ -126,6 +132,15 @@ var BaseChart = function BaseChart(name, element, dimension, group) {
     }.bind(this);
 
 };
+
+BaseChart.prototype.zoomable = function(zoom) {
+    if (!arguments.length) {
+        return this._zoomable;
+    }
+    this._zoomable = zoom;
+    return this;
+};
+
 
 BaseChart.prototype.displayName = function(name) {
     if (!arguments.length) {
@@ -182,6 +197,42 @@ BaseChart.prototype.x = function(x) {
     }
     this._x = x;
     return this;
+};
+
+BaseChart.prototype.setXAxisRange = function(rangeAccessor) {
+    this._xRangeType = rangeAccessor(this.x);
+    return this;
+};
+
+BaseChart.prototype.initializeAxes = function() {
+    //have to pass the chart as a variable as the sub functions are run in a different context
+    this.initializeXAxis(this);
+    this.initializeYAxis(this);
+};
+
+BaseChart.prototype.xDomainRange = function() {
+    //default behaviour for x axis is to treat it as an orginal range using the dataset's keys
+    return this.keys();
+};
+
+BaseChart.prototype.initializeYAxis = function(chart) {
+    this.applyYAxisRange.call(chart.y.domain([0, chart.findMax()]), chart, chart._yRangeType);
+};
+
+BaseChart.prototype.initializeXAxis = function(chart) {
+    this.applyXAxisRange.call(chart.x.domain(chart.xDomainRange()), chart, chart._xRangeType);
+};
+
+BaseChart.prototype.applyXAxisRange = function(chart, f) {
+    f.apply(this, [
+        [0, chart.xDomain()], chart.barPadding()
+    ]);
+};
+
+BaseChart.prototype.applyYAxisRange = function(chart, f) {
+    f.apply(this, [
+        [chart.yDomain(), 0], 0
+    ]);
 };
 
 BaseChart.prototype.link = function(chart, follow) {
@@ -428,6 +479,15 @@ BaseChart.prototype.margin = function(m) {
     return this;
 };
 
+
+BaseChart.prototype.setXAxis = function(x) {
+
+    if (!arguments.length) {
+        return this.x;
+    }
+    this.x = x;
+    return this;
+};
 
 BaseChart.prototype.draw = function() {
 

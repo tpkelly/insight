@@ -163,9 +163,14 @@ function TimelineChart(element, key, values) {
             .domain([0, max]);
 
         self.chart.select("g.x.axis")
-            .call(self.xAxis);
+            .call(self.xAxis)
+            .selectAll("text")
+            .style("font-size", "12px");
+
         self.chart.select("g.y.axis")
-            .call(self.yAxis);
+            .call(self.yAxis)
+            .selectAll("text")
+            .style("font-size", "12px");
 
         var items = self.chart.selectAll("rect.item")
             .data(self.dataset())
@@ -196,7 +201,7 @@ function TimelineChart(element, key, values) {
             })
             .attr("width", function(d) {
                 var nextMonth = new Date(d.Date.getFullYear(), d.Date.getMonth() + 1, 1);
-                //console.log(d.Date + "  " + nextMonth);
+
                 var width = self.x(nextMonth) - self.x(d.Date);
                 return width;
             })

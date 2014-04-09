@@ -4,38 +4,12 @@ var BarChart = function BarChart(name, element, dimension, group) {
 
     var self = this;
 
-    this.x = d3.scale.ordinal();
-    this.y = d3.scale.linear();
 
     this.xFormatFunc = function(d) {
         return d;
     };
 
-    this.yAxis = d3.svg.axis()
-        .scale(this.y)
-        .orient("left")
-        .tickSize(0)
-        .tickFormat(function(d) {
-            return self._yAxisFormat(d);
-        });
 
-    this.xAxis = d3.svg.axis()
-        .scale(this.x)
-        .orient("bottom")
-        .tickSize(0)
-        .tickFormat(function(d) {
-            return self.xFormatFunc(d);
-        });
-
-
-    this.initializeAxes = function() {
-
-        this.x.domain(this.keys())
-            .rangeRoundBands([0, this.xDomain()], this.barPadding());
-
-        this.y.domain([0, this._currentMax])
-            .range([this.yDomain(), 0]);
-    };
 
     this.init = function() {
         var self = this;
@@ -46,8 +20,28 @@ var BarChart = function BarChart(name, element, dimension, group) {
 
         this.initializeAxes();
 
-        if (this._ranges.length) {
-            this.drawRanges();
+        this.yAxis = d3.svg.axis()
+            .scale(this.y)
+            .orient("left")
+            .tickSize(0)
+            .tickFormat(function(d) {
+                return self._yAxisFormat(d);
+            });
+
+        this.xAxis = d3.svg.axis()
+            .scale(this.x)
+            .orient("bottom")
+            .tickSize(0)
+            .tickFormat(function(d) {
+                return self.xFormatFunc(d);
+            });
+
+        var behindRanges = this._ranges.filter(function(range) {
+            return range.position == 'behind';
+        });
+
+        if (behindRanges) {
+            this.drawRanges(behindRanges);
         }
 
         var bars = this.chart.selectAll("rect.bar")
@@ -75,6 +69,14 @@ var BarChart = function BarChart(name, element, dimension, group) {
             .text(this._tooltipLabel)
             .attr("class", "tipLabel");
 
+
+        var frontRanges = this._ranges.filter(function(range) {
+            return range.position == 'front';
+        });
+
+        if (frontRanges) {
+            this.drawRanges(frontRanges);
+        }
 
         if (this._targets) {
             this.drawTargets();
@@ -199,20 +201,20 @@ var BarChart = function BarChart(name, element, dimension, group) {
         }
     };
 
-    this.drawRanges = function() {
+    this.drawRanges = function(ranges) {
 
-        if (this._ranges) {
-            for (var range in this._ranges) {
+        if (ranges) {
+            for (var range in ranges) {
 
-                this._rangeAccessor = this._ranges[range].calculation;
+                this._rangeAccessor = ranges[range].calculation;
 
-                var transform = this._ranges[range].type(this);
+                var transform = ranges[range].type(this);
 
                 this.chart.append("svg:path")
                     .datum(this.dataset())
                     .attr("d", transform)
-                    .attr("fill", self._ranges[range].color)
-                    .attr("class", self._ranges[range].class);
+                    .attr("fill", ranges[range].color)
+                    .attr("class", ranges[range].class);
             }
         }
     };
