@@ -568,6 +568,16 @@ BaseChart.prototype.height = function(h) {
     return this;
 };
 
+
+BaseChart.prototype.orderable = function(o) {
+    if (!arguments.length) {
+        return this._orderable;
+    }
+    this._orderable = o;
+    return this;
+};
+
+
 BaseChart.prototype.ordered = function(o) {
     if (!arguments.length) {
         return this._ordered;
@@ -779,12 +789,57 @@ BaseChart.prototype.ranges = function(ranges) {
     return this;
 };
 
+BaseChart.prototype.toggleSortIcon = function() {
+
+    var self = this;
+
+    if (self.ordered()) {
+        d3.select(self.element)
+            .select('.fa-arrow-up')
+            .style('display', 'inline-block');
+    } else {
+        d3.select(self.element)
+            .select('.fa-arrow-up')
+            .style('display', 'none');
+    }
+
+};
+
+
+BaseChart.prototype.titleClicked = function() {
+    this.ordered(!this.ordered());
+
+    this.toggleSortIcon.call(this);
+
+    this.draw();
+
+};
+
+BaseChart.prototype.applyOrderableHeader = function() {
+
+    var self = this;
+
+    if (this.orderable()) {
+
+        var display = this.ordered() ? 'inline-block' : 'none';
+
+        d3.select(this.element)
+            .select("div.title")
+            .style("cursor", "pointer")
+            .on("click", this.titleClicked.bind(this))
+            .append('div')
+            .attr('class', 'fa fa-arrow-up')
+            .style('display', display);
+    }
+};
+
 
 BaseChart.prototype.createChart = function() {
     d3.select(this.element)
         .append("div")
         .attr('class', 'title')
         .text(this._displayName);
+
 
     this.chart = d3.select(this.element)
         .append("svg")
@@ -797,6 +852,8 @@ BaseChart.prototype.createChart = function() {
         .attr("transform", "translate(" + this.margin()
             .left + "," + this.margin()
             .top + ")");
+
+    this.applyOrderableHeader();
 
     this.tooltip();
     return this.chart;
@@ -2249,6 +2306,7 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
             tBars.transition()
                 .duration(duration)
                 .attr('x', this.targetX)
+                .attr('width', this.targetWidth)
                 .attr('y', this.targetY);
 
             tBars.selectAll('text.tipValue')

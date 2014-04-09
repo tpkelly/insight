@@ -274,6 +274,7 @@ function StackedBarChart(name, element, dimension, group) {
             tBars.transition()
                 .duration(duration)
                 .attr('x', this.targetX)
+                .attr('width', this.targetWidth)
                 .attr('y', this.targetY);
 
             tBars.selectAll('text.tipValue')
