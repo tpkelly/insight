@@ -103,7 +103,7 @@ var BaseChart = function BaseChart(name, element, dimension, group) {
     }.bind(this);
 
     this.targetX = function(d, i) {
-        return this.x(this._keyAccessor(d)) + this._barWidthFunction(d) / 4;
+        return this.x(this._keyAccessor(d)) + this._barWidthFunction(d) / 3;
     }.bind(this);
 
     this.targetWidth = function(d) {

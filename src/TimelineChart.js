@@ -23,6 +23,8 @@ function TimelineChart(element, key, values) {
                 .attr("y", this.y.baseVal.value + d3.event.dy)
                 .attr("height", this.height.baseVal.value - d3.event.dy)
                 .classed("active", true);
+
+
         })
         .on("dragend", function(d, i) {
 

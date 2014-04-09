@@ -44,6 +44,8 @@ function TimeLine(name, element, dimension, group) {
         var minExtent = self.brush.extent()[0],
             maxExtent = self.brush.extent()[1];
 
+        console.log(minExtent + ", " + maxExtent);
+
         var func = {
             name: 'timeline',
             filterFunction: function(d) {
@@ -51,15 +53,22 @@ function TimeLine(name, element, dimension, group) {
             }
         };
 
-        if (minExtent.getTime() != maxExtent.getTime()) {
+
+        if (String(minExtent) != String(maxExtent)) {
+
+            if (this.oldFilter) {
+                this.filterEvent(this.dimension, this.oldFilter);
+            }
 
             this.filterEvent(this.dimension, func);
+
+            this.oldFilter = func;
 
             self.mini.select('.brush')
                 .call(self.brush.extent([minExtent, maxExtent]));
         } else {
-            this.dimension.Dimension.filterAll();
-            this.triggerRedraw();
+            console.log("filter all");
+            this.filterEvent(this.dimension, this.oldFilter);
         }
 
     };

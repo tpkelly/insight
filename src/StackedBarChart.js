@@ -194,6 +194,7 @@ function StackedBarChart(name, element, dimension, group) {
                 .duration(duration)
                 .attr('x', this.xPosition)
                 .attr('y', this.yPosition)
+                .attr('width', this.barWidth)
                 .attr('height', this.barHeight);
 
 

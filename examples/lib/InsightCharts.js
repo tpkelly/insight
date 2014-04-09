@@ -505,7 +505,7 @@ ChartGroup.prototype.multiReduceCount = function(dimension, property) {
     }.bind(this);
 
     this.targetX = function(d, i) {
-        return this.x(this._keyAccessor(d)) + this._barWidthFunction(d) / 4;
+        return this.x(this._keyAccessor(d)) + this._barWidthFunction(d) / 3;
     }.bind(this);
 
     this.targetWidth = function(d) {
@@ -2166,6 +2166,7 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
                 .duration(duration)
                 .attr('x', this.xPosition)
                 .attr('y', this.yPosition)
+                .attr('width', this.barWidth)
                 .attr('height', this.barHeight);
 
 
@@ -2309,6 +2310,8 @@ StackedBarChart.prototype.constructor = StackedBarChart;
         var minExtent = self.brush.extent()[0],
             maxExtent = self.brush.extent()[1];
 
+        console.log(minExtent + ", " + maxExtent);
+
         var func = {
             name: 'timeline',
             filterFunction: function(d) {
@@ -2316,15 +2319,22 @@ StackedBarChart.prototype.constructor = StackedBarChart;
             }
         };
 
-        if (minExtent.getTime() != maxExtent.getTime()) {
+
+        if (String(minExtent) != String(maxExtent)) {
+
+            if (this.oldFilter) {
+                this.filterEvent(this.dimension, this.oldFilter);
+            }
 
             this.filterEvent(this.dimension, func);
+
+            this.oldFilter = func;
 
             self.mini.select('.brush')
                 .call(self.brush.extent([minExtent, maxExtent]));
         } else {
-            this.dimension.Dimension.filterAll();
-            this.triggerRedraw();
+            console.log("filter all");
+            this.filterEvent(this.dimension, this.oldFilter);
         }
 
     };
@@ -2428,6 +2438,8 @@ TimeLine.prototype.constructor = TimeLine;
                 .attr("y", this.y.baseVal.value + d3.event.dy)
                 .attr("height", this.height.baseVal.value - d3.event.dy)
                 .classed("active", true);
+
+
         })
         .on("dragend", function(d, i) {
 
