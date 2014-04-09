@@ -138,9 +138,7 @@ function StackedBarChart(name, element, dimension, group) {
             .attr('class', 'y-axis')
             .call(this.yAxis)
             .selectAll('text')
-            .style('text-anchor', 'end')
-            .style('font-size', '12px')
-            .style('fill', '#333');
+            .attr('class', 'axis-text');
 
         this.chart.append('g')
             .attr('class', 'x-axis')
@@ -149,8 +147,7 @@ function StackedBarChart(name, element, dimension, group) {
                 .top) + ')')
             .call(this.xAxis)
             .selectAll('text')
-            .attr('class', 'x-axis')
-            .style('font-size', '12px')
+            .attr('class', 'x-axis axis-text')
             .style('text-anchor', 'start')
             .style('writing-mode', 'tb')
             .on('mouseover', this.setHover)
@@ -191,7 +188,7 @@ function StackedBarChart(name, element, dimension, group) {
 
             var bars = groups.selectAll('.' + self._series[seriesFunction].name + 'class.bar')
                 .transition()
-                .duration(duration)
+                .duration(this.animationDuration)
                 .attr('x', this.xPosition)
                 .attr('y', this.yPosition)
                 .attr('width', this.barWidth)
@@ -214,16 +211,14 @@ function StackedBarChart(name, element, dimension, group) {
         this.chart.selectAll('g.x-axis')
             .call(this.xAxis)
             .selectAll("text")
-            .attr('class', 'x-axis')
-            .style('font-size', '12px')
+            .attr('class', 'x-axis axis-text')
             .style('text-anchor', 'start')
             .style('writing-mode', 'tb');
 
         this.chart.selectAll('.y-axis')
             .call(this.yAxis)
             .selectAll('text')
-            .style('font-size', '12px')
-            .style('fill', '#333');
+            .attr('class', 'axis-text');
     };
 
     this.drawTargets = function() {

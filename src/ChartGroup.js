@@ -40,89 +40,90 @@ ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc) {
 ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
 
     var self = this;
+    if (filterFunction) {
+        var dims = this.Dimensions()
+            .filter(dimension.comparer);
 
-    var dims = this.Dimensions()
-        .filter(dimension.comparer);
+        var activeDim = this.FilteredDimensions()
+            .filter(dimension.comparer);
 
-    var activeDim = this.FilteredDimensions()
-        .filter(dimension.comparer);
-
-    if (!activeDim.length) {
-        this.FilteredDimensions.push(dimension);
-    }
-
-    d3.select(filterFunction.element)
-        .classed('selected', true);
-
-    dims.map(function(dim) {
-
-        var filterExists = dim.Filters()
-            .filter(function(d) {
-                return d.name == filterFunction.name;
-            })
-            .length;
-
-        //if the dimension is already filtered by this value, toggle (remove) the filter
-        if (filterExists) {
-
-            dim.Filters.remove(function(filter) {
-                return filter.name == filterFunction.name;
-            });
-
-            d3.select(filterFunction.element)
-                .classed('selected', false);
-
-        } else {
-            // add the provided filter to the list for this dimension
-
-            dim.Filters.push(filterFunction);
+        if (!activeDim.length) {
+            this.FilteredDimensions.push(dimension);
         }
 
-        var fils = dim.Filters();
+        d3.select(filterFunction.element)
+            .classed('selected', true);
 
-        // reset this dimension if no filters exist, else apply the filter to the dataset.
-        if (dim.Filters()
-            .length === 0) {
+        dims.map(function(dim) {
 
-            self.FilteredDimensions.remove(dim);
-
-            dim.Dimension.filterAll();
-        } else {
-            dim.Dimension.filter(function(d) {
-                var vals = dim.Filters()
-                    .map(function(func) {
-                        return func.filterFunction(d);
-                    });
-
-                return vals.filter(function(result) {
-                    return result;
+            var filterExists = dim.Filters()
+                .filter(function(d) {
+                    return d.name == filterFunction.name;
                 })
-                    .length;
-            });
-        }
-    });
+                .length;
 
-    this.NestedGroups()
-        .forEach(
-            function(group) {
-                group.updateNestedData();
-            }
-    );
+            //if the dimension is already filtered by this value, toggle (remove) the filter
+            if (filterExists) {
 
-    this.ComputedGroups()
-        .forEach(
-            function(group) {
-                group.compute();
-            }
-    );
-    this.CumulativeGroups()
-        .forEach(
-            function(group) {
-                group.calculateTotals();
-            }
-    );
+                dim.Filters.remove(function(filter) {
+                    return filter.name == filterFunction.name;
+                });
 
-    this.redrawCharts();
+                d3.select(filterFunction.element)
+                    .classed('selected', false);
+
+            } else {
+                // add the provided filter to the list for this dimension
+
+                dim.Filters.push(filterFunction);
+            }
+
+            var fils = dim.Filters();
+
+            // reset this dimension if no filters exist, else apply the filter to the dataset.
+            if (dim.Filters()
+                .length === 0) {
+
+                self.FilteredDimensions.remove(dim);
+
+                dim.Dimension.filterAll();
+            } else {
+                dim.Dimension.filter(function(d) {
+                    var vals = dim.Filters()
+                        .map(function(func) {
+                            return func.filterFunction(d);
+                        });
+
+                    return vals.filter(function(result) {
+                        return result;
+                    })
+                        .length;
+                });
+            }
+        });
+
+        this.NestedGroups()
+            .forEach(
+                function(group) {
+                    group.updateNestedData();
+                }
+        );
+
+        this.ComputedGroups()
+            .forEach(
+                function(group) {
+                    group.compute();
+                }
+        );
+        this.CumulativeGroups()
+            .forEach(
+                function(group) {
+                    group.calculateTotals();
+                }
+        );
+
+        this.redrawCharts();
+    }
 };
 
 

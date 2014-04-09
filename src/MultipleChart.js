@@ -57,7 +57,7 @@ var MultipleChart = function MultipleChart(name, element, dimension, group, char
 
 
     this.subChartName = function(key) {
-        return 'sub' + self._name + key.replace(/\s/g, '');
+        return 'sub' + self._name.replace(/ /g, "_") + key.replace(/\s/g, '');
     };
 
 
@@ -65,6 +65,11 @@ var MultipleChart = function MultipleChart(name, element, dimension, group, char
         this.chart = d3.select(this.element)
             .append("div")
             .attr("class", "chart multiChart");
+
+        this.chart.append("div")
+            .attr('class', 'title')
+            .text(this._displayName);
+
 
         return this.chart;
     };

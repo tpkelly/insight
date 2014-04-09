@@ -92,8 +92,7 @@ var BarChart = function BarChart(name, element, dimension, group) {
             .attr("class", "y-axis")
             .call(this.yAxis)
             .selectAll("text")
-            .style("text-anchor", "end")
-            .style("font-size", "12px");
+            .attr('class', 'axis-text');
 
         this.chart.append("g")
             .attr("transform", "translate(0," + (self.height() - self.margin()
@@ -104,7 +103,7 @@ var BarChart = function BarChart(name, element, dimension, group) {
             .selectAll("text")
             .style("text-anchor", "start")
             .style("writing-mode", "tb")
-            .style("font-size", "12px")
+            .attr('class', 'axis-text')
             .on("mouseover", this.setHover)
             .on("mouseout", this.removeHover)
             .on("click", function(filter) {
@@ -130,7 +129,7 @@ var BarChart = function BarChart(name, element, dimension, group) {
         var bars = self.chart.selectAll("rect")
             .data(this.dataset())
             .transition()
-            .duration(this.duration)
+            .duration(this.animationDuration)
             .attr("x", this.xPosition)
             .attr("y", this.yPosition)
             .attr("width", this.barWidth)
@@ -151,14 +150,12 @@ var BarChart = function BarChart(name, element, dimension, group) {
         this.chart.selectAll("g.y-axis")
             .call(this.yAxis)
             .selectAll("text")
-            .style("text-anchor", "end")
-            .style("font-size", "12px")
-            .style("fill", "#333");
+            .attr('class', 'axis-text');
 
         this.chart.selectAll("g.x-axis")
             .call(this.xAxis)
             .selectAll("text")
-            .style("font-size", "12px")
+            .attr('class', 'axis-text')
             .style("text-anchor", "start")
             .style("writing-mode", "tb")
             .on("mouseover", this.setHover)
@@ -233,6 +230,8 @@ var BarChart = function BarChart(name, element, dimension, group) {
 
                 this.chart.selectAll("path." + self._ranges[range].class)
                     .datum(this.dataset())
+                    .transition()
+                    .duration(this.duration)
                     .attr("d", transform)
                     .attr("fill", self._ranges[range].color)
                     .attr("class", self._ranges[range].class);

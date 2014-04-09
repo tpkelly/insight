@@ -80,6 +80,11 @@ var BaseChart = function BaseChart(name, element, dimension, group) {
         return this.y(this._rangeAccessor(d));
     }.bind(this);
 
+
+    this.animationDuration = function(d, i) {
+        return this.duration + (i * 50);
+    }.bind(this);
+
     this.rangeX = function(d, i) {
 
         var offset = i == (this.keys()
@@ -140,6 +145,7 @@ BaseChart.prototype.zoomable = function(zoom) {
     this._zoomable = zoom;
     return this;
 };
+
 
 
 BaseChart.prototype.displayName = function(name) {
@@ -426,7 +432,7 @@ BaseChart.prototype.applyOrderableHeader = function() {
             .style("cursor", "pointer")
             .on("click", this.titleClicked.bind(this))
             .append('div')
-            .attr('class', 'fa fa-arrow-up')
+            .attr('class', 'order-icon fa fa-arrow-up')
             .style('display', display);
     }
 };

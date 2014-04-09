@@ -218,89 +218,90 @@ ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc) {
 ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
 
     var self = this;
+    if (filterFunction) {
+        var dims = this.Dimensions()
+            .filter(dimension.comparer);
 
-    var dims = this.Dimensions()
-        .filter(dimension.comparer);
+        var activeDim = this.FilteredDimensions()
+            .filter(dimension.comparer);
 
-    var activeDim = this.FilteredDimensions()
-        .filter(dimension.comparer);
-
-    if (!activeDim.length) {
-        this.FilteredDimensions.push(dimension);
-    }
-
-    d3.select(filterFunction.element)
-        .classed('selected', true);
-
-    dims.map(function(dim) {
-
-        var filterExists = dim.Filters()
-            .filter(function(d) {
-                return d.name == filterFunction.name;
-            })
-            .length;
-
-        //if the dimension is already filtered by this value, toggle (remove) the filter
-        if (filterExists) {
-
-            dim.Filters.remove(function(filter) {
-                return filter.name == filterFunction.name;
-            });
-
-            d3.select(filterFunction.element)
-                .classed('selected', false);
-
-        } else {
-            // add the provided filter to the list for this dimension
-
-            dim.Filters.push(filterFunction);
+        if (!activeDim.length) {
+            this.FilteredDimensions.push(dimension);
         }
 
-        var fils = dim.Filters();
+        d3.select(filterFunction.element)
+            .classed('selected', true);
 
-        // reset this dimension if no filters exist, else apply the filter to the dataset.
-        if (dim.Filters()
-            .length === 0) {
+        dims.map(function(dim) {
 
-            self.FilteredDimensions.remove(dim);
-
-            dim.Dimension.filterAll();
-        } else {
-            dim.Dimension.filter(function(d) {
-                var vals = dim.Filters()
-                    .map(function(func) {
-                        return func.filterFunction(d);
-                    });
-
-                return vals.filter(function(result) {
-                    return result;
+            var filterExists = dim.Filters()
+                .filter(function(d) {
+                    return d.name == filterFunction.name;
                 })
-                    .length;
-            });
-        }
-    });
+                .length;
 
-    this.NestedGroups()
-        .forEach(
-            function(group) {
-                group.updateNestedData();
-            }
-    );
+            //if the dimension is already filtered by this value, toggle (remove) the filter
+            if (filterExists) {
 
-    this.ComputedGroups()
-        .forEach(
-            function(group) {
-                group.compute();
-            }
-    );
-    this.CumulativeGroups()
-        .forEach(
-            function(group) {
-                group.calculateTotals();
-            }
-    );
+                dim.Filters.remove(function(filter) {
+                    return filter.name == filterFunction.name;
+                });
 
-    this.redrawCharts();
+                d3.select(filterFunction.element)
+                    .classed('selected', false);
+
+            } else {
+                // add the provided filter to the list for this dimension
+
+                dim.Filters.push(filterFunction);
+            }
+
+            var fils = dim.Filters();
+
+            // reset this dimension if no filters exist, else apply the filter to the dataset.
+            if (dim.Filters()
+                .length === 0) {
+
+                self.FilteredDimensions.remove(dim);
+
+                dim.Dimension.filterAll();
+            } else {
+                dim.Dimension.filter(function(d) {
+                    var vals = dim.Filters()
+                        .map(function(func) {
+                            return func.filterFunction(d);
+                        });
+
+                    return vals.filter(function(result) {
+                        return result;
+                    })
+                        .length;
+                });
+            }
+        });
+
+        this.NestedGroups()
+            .forEach(
+                function(group) {
+                    group.updateNestedData();
+                }
+        );
+
+        this.ComputedGroups()
+            .forEach(
+                function(group) {
+                    group.compute();
+                }
+        );
+        this.CumulativeGroups()
+            .forEach(
+                function(group) {
+                    group.calculateTotals();
+                }
+        );
+
+        this.redrawCharts();
+    }
 };
 
 
@@ -482,6 +483,11 @@ ChartGroup.prototype.multiReduceCount = function(dimension, property) {
         return this.y(this._rangeAccessor(d));
     }.bind(this);
 
+
+    this.animationDuration = function(d, i) {
+        return this.duration + (i * 50);
+    }.bind(this);
+
     this.rangeX = function(d, i) {
 
         var offset = i == (this.keys()
@@ -542,6 +548,7 @@ BaseChart.prototype.zoomable = function(zoom) {
     this._zoomable = zoom;
     return this;
 };
+
 
 
 BaseChart.prototype.displayName = function(name) {
@@ -828,7 +835,7 @@ BaseChart.prototype.applyOrderableHeader = function() {
             .style("cursor", "pointer")
             .on("click", this.titleClicked.bind(this))
             .append('div')
-            .attr('class', 'fa fa-arrow-up')
+            .attr('class', 'order-icon fa fa-arrow-up')
             .style('display', display);
     }
 };
@@ -1408,8 +1415,7 @@ DataTable.prototype.constructor = DataTable;
             .attr("class", "y-axis")
             .call(this.yAxis)
             .selectAll("text")
-            .style("text-anchor", "end")
-            .style("font-size", "12px");
+            .attr('class', 'axis-text');
 
         this.chart.append("g")
             .attr("transform", "translate(0," + (self.height() - self.margin()
@@ -1420,7 +1426,7 @@ DataTable.prototype.constructor = DataTable;
             .selectAll("text")
             .style("text-anchor", "start")
             .style("writing-mode", "tb")
-            .style("font-size", "12px")
+            .attr('class', 'axis-text')
             .on("mouseover", this.setHover)
             .on("mouseout", this.removeHover)
             .on("click", function(filter) {
@@ -1446,7 +1452,7 @@ DataTable.prototype.constructor = DataTable;
         var bars = self.chart.selectAll("rect")
             .data(this.dataset())
             .transition()
-            .duration(this.duration)
+            .duration(this.animationDuration)
             .attr("x", this.xPosition)
             .attr("y", this.yPosition)
             .attr("width", this.barWidth)
@@ -1467,14 +1473,12 @@ DataTable.prototype.constructor = DataTable;
         this.chart.selectAll("g.y-axis")
             .call(this.yAxis)
             .selectAll("text")
-            .style("text-anchor", "end")
-            .style("font-size", "12px")
-            .style("fill", "#333");
+            .attr('class', 'axis-text');
 
         this.chart.selectAll("g.x-axis")
             .call(this.xAxis)
             .selectAll("text")
-            .style("font-size", "12px")
+            .attr('class', 'axis-text')
             .style("text-anchor", "start")
             .style("writing-mode", "tb")
             .on("mouseover", this.setHover)
@@ -1549,6 +1553,8 @@ DataTable.prototype.constructor = DataTable;
 
                 this.chart.selectAll("path." + self._ranges[range].class)
                     .datum(this.dataset())
+                    .transition()
+                    .duration(this.duration)
                     .attr("d", transform)
                     .attr("fill", self._ranges[range].color)
                     .attr("class", self._ranges[range].class);
@@ -1636,7 +1642,7 @@ BarChart.prototype.constructor = BarChart;
 
 
     this.subChartName = function(key) {
-        return 'sub' + self._name + key.replace(/\s/g, '');
+        return 'sub' + self._name.replace(/ /g, "_") + key.replace(/\s/g, '');
     };
 
 
@@ -1644,6 +1650,11 @@ BarChart.prototype.constructor = BarChart;
         this.chart = d3.select(this.element)
             .append("div")
             .attr("class", "chart multiChart");
+
+        this.chart.append("div")
+            .attr('class', 'title')
+            .text(this._displayName);
+
 
         return this.chart;
     };
@@ -2170,9 +2181,7 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
             .attr('class', 'y-axis')
             .call(this.yAxis)
             .selectAll('text')
-            .style('text-anchor', 'end')
-            .style('font-size', '12px')
-            .style('fill', '#333');
+            .attr('class', 'axis-text');
 
         this.chart.append('g')
             .attr('class', 'x-axis')
@@ -2181,8 +2190,7 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
                 .top) + ')')
             .call(this.xAxis)
             .selectAll('text')
-            .attr('class', 'x-axis')
-            .style('font-size', '12px')
+            .attr('class', 'x-axis axis-text')
             .style('text-anchor', 'start')
             .style('writing-mode', 'tb')
             .on('mouseover', this.setHover)
@@ -2223,7 +2231,7 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
 
             var bars = groups.selectAll('.' + self._series[seriesFunction].name + 'class.bar')
                 .transition()
-                .duration(duration)
+                .duration(this.animationDuration)
                 .attr('x', this.xPosition)
                 .attr('y', this.yPosition)
                 .attr('width', this.barWidth)
@@ -2246,16 +2254,14 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
         this.chart.selectAll('g.x-axis')
             .call(this.xAxis)
             .selectAll("text")
-            .attr('class', 'x-axis')
-            .style('font-size', '12px')
+            .attr('class', 'x-axis axis-text')
             .style('text-anchor', 'start')
             .style('writing-mode', 'tb');
 
         this.chart.selectAll('.y-axis')
             .call(this.yAxis)
             .selectAll('text')
-            .style('font-size', '12px')
-            .style('fill', '#333');
+            .attr('class', 'axis-text');
     };
 
     this.drawTargets = function() {
@@ -2814,9 +2820,6 @@ TimelineChart.prototype.constructor = TimelineChart;
 
         var self = this;
 
-        var k = this.keys();
-        var d = this.dataset();
-
         this.y
             .domain(this.keys())
             .rangeRoundBands([0, this.height()], 0.2);
@@ -2847,7 +2850,7 @@ TimelineChart.prototype.constructor = TimelineChart;
             .data(this.dataset());
 
         bars.transition()
-            .duration(self.duration)
+            .duration(this.animationDuration)
             .attr("width", this.rowWidth);
 
 

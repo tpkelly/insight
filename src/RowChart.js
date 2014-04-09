@@ -108,9 +108,6 @@ var RowChart = function RowChart(name, element, dimension, group) {
 
         var self = this;
 
-        var k = this.keys();
-        var d = this.dataset();
-
         this.y
             .domain(this.keys())
             .rangeRoundBands([0, this.height()], 0.2);
@@ -141,7 +138,7 @@ var RowChart = function RowChart(name, element, dimension, group) {
             .data(this.dataset());
 
         bars.transition()
-            .duration(self.duration)
+            .duration(this.animationDuration)
             .attr("width", this.rowWidth);
 
 
