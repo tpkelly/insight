@@ -184,11 +184,11 @@ function StackedBarChart(name, element, dimension, group) {
 
             this._valueAccessor = this.cumulative() ? self._series[seriesFunction].cumulative : self._series[seriesFunction].calculation;
 
-            var duration = drag ? 0 : self.duration;
+            var duration = drag ? 0 : this.animationDuration;
 
             var bars = groups.selectAll('.' + self._series[seriesFunction].name + 'class.bar')
                 .transition()
-                .duration(this.animationDuration)
+                .duration(duration)
                 .attr('x', this.xPosition)
                 .attr('y', this.yPosition)
                 .attr('width', this.barWidth)
@@ -264,7 +264,7 @@ function StackedBarChart(name, element, dimension, group) {
 
             var tBars = groups.selectAll('rect.' + self._targets.name + 'class.target');
 
-            var duration = drag ? 0 : this.duration;
+            var duration = drag ? 0 : this.animationDuration;
 
             tBars.transition()
                 .duration(duration)
