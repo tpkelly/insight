@@ -379,6 +379,11 @@ BaseChart.prototype.ranges = function(ranges) {
 
 
 BaseChart.prototype.createChart = function() {
+    d3.select(this.element)
+        .append("div")
+        .attr('class', 'title')
+        .text(this._displayName);
+
     this.chart = d3.select(this.element)
         .append("svg")
         .attr("class", "chart");

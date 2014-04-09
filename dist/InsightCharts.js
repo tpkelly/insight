@@ -781,6 +781,11 @@ BaseChart.prototype.ranges = function(ranges) {
 
 
 BaseChart.prototype.createChart = function() {
+    d3.select(this.element)
+        .append("div")
+        .attr('class', 'title')
+        .text(this._displayName);
+
     this.chart = d3.select(this.element)
         .append("svg")
         .attr("class", "chart");
@@ -1599,9 +1604,7 @@ BarChart.prototype.constructor = BarChart;
             .attr('class', 'subchart')
             .attr('id', function(d) {
                 return self.subChartName(self._keyAccessor(d));
-            })
-            .append('div')
-            .text(self._keyAccessor);
+            });
 
         this.dataset()
             .forEach(function(subChart) {
@@ -2310,8 +2313,6 @@ StackedBarChart.prototype.constructor = StackedBarChart;
         var minExtent = self.brush.extent()[0],
             maxExtent = self.brush.extent()[1];
 
-        console.log(minExtent + ", " + maxExtent);
-
         var func = {
             name: 'timeline',
             filterFunction: function(d) {
@@ -2321,7 +2322,7 @@ StackedBarChart.prototype.constructor = StackedBarChart;
 
 
         if (String(minExtent) != String(maxExtent)) {
-
+            // remove old filter if one exists
             if (this.oldFilter) {
                 this.filterEvent(this.dimension, this.oldFilter);
             }
@@ -2333,7 +2334,6 @@ StackedBarChart.prototype.constructor = StackedBarChart;
             self.mini.select('.brush')
                 .call(self.brush.extent([minExtent, maxExtent]));
         } else {
-            console.log("filter all");
             this.filterEvent(this.dimension, this.oldFilter);
         }
 

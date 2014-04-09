@@ -82,9 +82,7 @@ var MultipleChart = function MultipleChart(name, element, dimension, group, char
             .attr('class', 'subchart')
             .attr('id', function(d) {
                 return self.subChartName(self._keyAccessor(d));
-            })
-            .append('div')
-            .text(self._keyAccessor);
+            });
 
         this.dataset()
             .forEach(function(subChart) {
