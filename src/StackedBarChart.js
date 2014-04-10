@@ -210,10 +210,15 @@ function StackedBarChart(name, element, dimension, group) {
 
         this.chart.selectAll('g.x-axis')
             .call(this.xAxis)
-            .selectAll("text")
+            .selectAll("text:not(.selected)")
             .attr('class', 'x-axis axis-text')
             .style('text-anchor', 'start')
-            .style('writing-mode', 'tb');
+            .style('writing-mode', 'tb')
+            .on('mouseover', this.setHover)
+            .on('mouseout', this.removeHover)
+            .on('click', function(filter) {
+                return self.filterClick(this, filter);
+            });
 
         this.chart.selectAll('.y-axis')
             .call(this.yAxis)

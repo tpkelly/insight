@@ -236,7 +236,7 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
 
             var filterExists = dim.Filters()
                 .filter(function(d) {
-                    return d.name == filterFunction.name;
+                    return String(d.name) == String(filterFunction.name);
                 })
                 .length;
 
@@ -244,7 +244,7 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
             if (filterExists) {
 
                 dim.Filters.remove(function(filter) {
-                    return filter.name == filterFunction.name;
+                    return String(filter.name) == String(filterFunction.name);
                 });
 
                 d3.select(filterFunction.element)
@@ -2253,10 +2253,15 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
 
         this.chart.selectAll('g.x-axis')
             .call(this.xAxis)
-            .selectAll("text")
+            .selectAll("text:not(.selected)")
             .attr('class', 'x-axis axis-text')
             .style('text-anchor', 'start')
-            .style('writing-mode', 'tb');
+            .style('writing-mode', 'tb')
+            .on('mouseover', this.setHover)
+            .on('mouseout', this.removeHover)
+            .on('click', function(filter) {
+                return self.filterClick(this, filter);
+            });
 
         this.chart.selectAll('.y-axis')
             .call(this.yAxis)

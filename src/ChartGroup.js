@@ -58,7 +58,7 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
 
             var filterExists = dim.Filters()
                 .filter(function(d) {
-                    return d.name == filterFunction.name;
+                    return String(d.name) == String(filterFunction.name);
                 })
                 .length;
 
@@ -66,7 +66,7 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
             if (filterExists) {
 
                 dim.Filters.remove(function(filter) {
-                    return filter.name == filterFunction.name;
+                    return String(filter.name) == String(filterFunction.name);
                 });
 
                 d3.select(filterFunction.element)
