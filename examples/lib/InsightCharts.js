@@ -45,13 +45,17 @@ Group.prototype.getData = function() {
 Group.prototype.getOrderedData = function() {
     var data;
 
-    if (this._filterFunction) {
-        data = this._data.top(Infinity)
-            .filter(this._filterFunction);
-    } else {
-        data = this._data.top(Infinity)
+    if (this._data.all) {
+        data = data = this._data.top(Infinity)
             .sort(this.orderFunction());
+    } else {
+        data = this._data.sort(this.orderFunction());
     }
+
+    if (this._filterFunction) {
+        data = data.filter(this._filterFunction);
+    }
+
     return data;
 };
 
@@ -2259,8 +2263,6 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
                 .attr('width', this.barWidth)
                 .attr('height', this.barHeight);
 
-
-
             bars.selectAll('text.tipValue')
                 .text(this.tooltipText);
 
@@ -2274,7 +2276,7 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
         }
 
         var xaxis = this.chart.selectAll('g.x-axis')
-                        .call(this.xAxis);
+            .call(this.xAxis);
         xaxis
             .selectAll("text")
             .style('text-anchor', 'start')
@@ -2286,11 +2288,11 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
             .on('click', function(filter) {
                 return self.filterClick(this, filter);
             });
-        
+
         xaxis
             .selectAll("text:not(.selected)")
             .attr('class', 'x-axis axis-text');
-            
+
 
         this.chart.selectAll('.y-axis')
             .call(this.yAxis)

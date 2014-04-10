@@ -184,8 +184,6 @@ function StackedBarChart(name, element, dimension, group) {
                 .attr('width', this.barWidth)
                 .attr('height', this.barHeight);
 
-
-
             bars.selectAll('text.tipValue')
                 .text(this.tooltipText);
 
@@ -199,7 +197,7 @@ function StackedBarChart(name, element, dimension, group) {
         }
 
         var xaxis = this.chart.selectAll('g.x-axis')
-                        .call(this.xAxis);
+            .call(this.xAxis);
         xaxis
             .selectAll("text")
             .style('text-anchor', 'start')
@@ -211,11 +209,11 @@ function StackedBarChart(name, element, dimension, group) {
             .on('click', function(filter) {
                 return self.filterClick(this, filter);
             });
-        
+
         xaxis
             .selectAll("text:not(.selected)")
             .attr('class', 'x-axis axis-text');
-            
+
 
         this.chart.selectAll('.y-axis')
             .call(this.yAxis)

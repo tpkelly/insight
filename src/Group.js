@@ -45,13 +45,17 @@ Group.prototype.getData = function() {
 Group.prototype.getOrderedData = function() {
     var data;
 
-    if (this._filterFunction) {
-        data = this._data.top(Infinity)
-            .filter(this._filterFunction);
-    } else {
-        data = this._data.top(Infinity)
+    if (this._data.all) {
+        data = data = this._data.top(Infinity)
             .sort(this.orderFunction());
+    } else {
+        data = this._data.sort(this.orderFunction());
     }
+
+    if (this._filterFunction) {
+        data = data.filter(this._filterFunction);
+    }
+
     return data;
 };
 
