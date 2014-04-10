@@ -35,11 +35,16 @@ ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc) {
 
     return dimension;
 };
-
+ChartGroup.prototype.compareFilters = function(filterFunction) {
+    return function(d) {
+        return String(d.name) == String(filterFunction.name);
+    };
+};
 
 ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
 
     var self = this;
+
     if (filterFunction) {
         var dims = this.Dimensions()
             .filter(dimension.comparer);
@@ -54,20 +59,18 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
         d3.select(filterFunction.element)
             .classed('selected', true);
 
+        var comparerFunction = this.compareFilters(filterFunction);
+
         dims.map(function(dim) {
 
             var filterExists = dim.Filters()
-                .filter(function(d) {
-                    return String(d.name) == String(filterFunction.name);
-                })
+                .filter(comparerFunction)
                 .length;
 
             //if the dimension is already filtered by this value, toggle (remove) the filter
             if (filterExists) {
 
-                dim.Filters.remove(function(filter) {
-                    return String(filter.name) == String(filterFunction.name);
-                });
+                dim.Filters.remove(comparerFunction);
 
                 d3.select(filterFunction.element)
                     .classed('selected', false);
@@ -102,6 +105,7 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
             }
         });
 
+        // recalculate non standard groups
         this.NestedGroups()
             .forEach(
                 function(group) {

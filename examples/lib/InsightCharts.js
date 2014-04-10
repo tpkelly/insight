@@ -28,13 +28,17 @@ Group.prototype.cumulative = function(c) {
 
 Group.prototype.getData = function() {
     var data;
+    if (this._data.all) {
+        data = this._data.all();
+    } else {
+        //not a crossfilter set
+        data = this._data;
+    }
 
     if (this._filterFunction) {
-        data = this._data.all()
-            .filter(this._filterFunction);
-    } else {
-        data = this._data.all();
+        data = data.filter(this._filterFunction);
     }
+
     return data;
 };
 
@@ -213,11 +217,16 @@ ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc) {
 
     return dimension;
 };
-
+ChartGroup.prototype.compareFilters = function(filterFunction) {
+    return function(d) {
+        return String(d.name) == String(filterFunction.name);
+    };
+};
 
 ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
 
     var self = this;
+
     if (filterFunction) {
         var dims = this.Dimensions()
             .filter(dimension.comparer);
@@ -232,20 +241,18 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
         d3.select(filterFunction.element)
             .classed('selected', true);
 
+        var comparerFunction = this.compareFilters(filterFunction);
+
         dims.map(function(dim) {
 
             var filterExists = dim.Filters()
-                .filter(function(d) {
-                    return String(d.name) == String(filterFunction.name);
-                })
+                .filter(comparerFunction)
                 .length;
 
             //if the dimension is already filtered by this value, toggle (remove) the filter
             if (filterExists) {
 
-                dim.Filters.remove(function(filter) {
-                    return String(filter.name) == String(filterFunction.name);
-                });
+                dim.Filters.remove(comparerFunction);
 
                 d3.select(filterFunction.element)
                     .classed('selected', false);
@@ -280,6 +287,7 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
             }
         });
 
+        // recalculate non standard groups
         this.NestedGroups()
             .forEach(
                 function(group) {
@@ -420,7 +428,7 @@ ChartGroup.prototype.multiReduceCount = function(dimension, property) {
     this._redrawAxes = false;
     this.isFiltered = false;
     this._barPadding = 0.2;
-    this.duration = 500;
+    this.duration = 400;
     this.filters = [];
     this._labelPadding = 20;
     this.hasTooltip = false;
@@ -472,7 +480,9 @@ ChartGroup.prototype.multiReduceCount = function(dimension, property) {
     };
 
     this.xPosition = function(d) {
-        return this.x(this._keyAccessor(d));
+        var offset = Math.round((this._barWidthFunction == this.x.rangeBand || this._barWidthFunction == this.x.rangeRound) ? 0 : this.barWidth(d) / 2);
+
+        return this.x(this._keyAccessor(d)) - offset;
     }.bind(this);
 
     this.yPosition = function(d) {
@@ -489,7 +499,6 @@ ChartGroup.prototype.multiReduceCount = function(dimension, property) {
     }.bind(this);
 
     this.rangeX = function(d, i) {
-
         var offset = i == (this.keys()
             .length - 1) ? this._barWidthFunction(d) : 0;
 
@@ -511,11 +520,14 @@ ChartGroup.prototype.multiReduceCount = function(dimension, property) {
     }.bind(this);
 
     this.targetX = function(d, i) {
-        return this.x(this._keyAccessor(d)) + this._barWidthFunction(d) / 3;
+
+        var offset = (this._barWidthFunction == this.x.rangeBand) ? 0 : this.barWidth(d) / 2;
+
+        return (this.x(this._keyAccessor(d)) + this._barWidthFunction(d) / 3) - offset;
     }.bind(this);
 
     this.targetWidth = function(d) {
-        return this._barWidthFunction(d) / 2;
+        return this._barWidthFunction(d) / 3;
     }.bind(this);
 
     this.targetTooltipText = function(d) {
@@ -720,6 +732,7 @@ BaseChart.prototype.targetMax = function(d) {
     }
     return this._currentMax;
 };
+
 
 BaseChart.prototype.findMax = function() {
     var self = this;
@@ -1088,6 +1101,17 @@ BaseChart.prototype.labelFontSize = function(s) {
     return this;
 };
 
+
+
+BaseChart.prototype.stackedSeries = function(series) {
+
+    if (!arguments.length) {
+        return this._series;
+    }
+    this._series = series;
+    return this;
+};
+
 BaseChart.prototype.xBounds = function(d) {
 
     var start = this.invert() ? this.margin()
@@ -1425,7 +1449,9 @@ DataTable.prototype.constructor = DataTable;
             .call(this.xAxis)
             .selectAll("text")
             .style("text-anchor", "start")
-            .style("writing-mode", "tb")
+            .attr("transform", "rotate(90)")
+            .attr("dx", "10")
+            .attr("dy", "0")
             .attr('class', 'axis-text')
             .on("mouseover", this.setHover)
             .on("mouseout", this.removeHover)
@@ -1475,17 +1501,23 @@ DataTable.prototype.constructor = DataTable;
             .selectAll("text")
             .attr('class', 'axis-text');
 
-        this.chart.selectAll("g.x-axis")
-            .call(this.xAxis)
-            .selectAll("text")
-            .attr('class', 'axis-text')
+        var xaxis = this.chart.selectAll("g.x-axis")
+            .call(this.xAxis);
+
+        xaxis.selectAll("text")
             .style("text-anchor", "start")
-            .style("writing-mode", "tb")
+            .attr("transform", "rotate(90)")
+            .attr("dx", "10")
+            .attr("dy", "0")
             .on("mouseover", this.setHover)
             .on("mouseout", this.removeHover)
             .on("click", function(filter) {
                 return self.filterClick(this, filter);
             });
+
+        xaxis.selectAll("text:not(.selected)")
+            .attr('class', 'axis-text');
+
     };
 
     this.drawTargets = function() {
@@ -1499,9 +1531,9 @@ DataTable.prototype.constructor = DataTable;
                 .enter()
                 .append("rect")
                 .attr("class", "target " + this._targets.name + "class")
-                .attr("x", this.xPosition)
+                .attr("x", this.targetX)
                 .attr("y", this.targetY)
-                .attr("width", this.barWidth)
+                .attr("width", this.targetWidth)
                 .attr("height", 4)
                 .attr("fill", this._targets.color)
                 .on("mouseover", function(d) {
@@ -2066,16 +2098,6 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
     };
 
 
-
-    this.addSeries = function(series) {
-
-        if (!arguments.length) {
-            return this._series;
-        }
-        this._series = series;
-        return this;
-    };
-
     this.calculateYPos = function(func, d) {
         if (!d.yPos) {
             d.yPos = 0;
@@ -2103,7 +2125,6 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
             .scale(this.y)
             .orient('left')
             .tickSize(0)
-            .tickPadding(10)
             .tickFormat(function(d) {
                 return self._yAxisFormat(d);
             });
@@ -2112,7 +2133,6 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
             .scale(this.x)
             .orient('bottom')
             .tickSize(0)
-            .tickPadding(10)
             .tickFormat(function(d) {
                 return self.xFormatFunc(d);
             });
@@ -2192,7 +2212,9 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
             .selectAll('text')
             .attr('class', 'x-axis axis-text')
             .style('text-anchor', 'start')
-            .style('writing-mode', 'tb')
+            .attr("transform", "rotate(90)")
+            .attr("dx", "10")
+            .attr("dy", "0")
             .on('mouseover', this.setHover)
             .on('mouseout', this.removeHover)
             .on('click', function(filter) {
@@ -2251,17 +2273,24 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
             this.updateTargets(drag);
         }
 
-        this.chart.selectAll('g.x-axis')
-            .call(this.xAxis)
-            .selectAll("text:not(.selected)")
-            .attr('class', 'x-axis axis-text')
+        var xaxis = this.chart.selectAll('g.x-axis')
+                        .call(this.xAxis);
+        xaxis
+            .selectAll("text")
             .style('text-anchor', 'start')
-            .style('writing-mode', 'tb')
+            .attr("transform", "rotate(90)")
+            .attr("dx", "10")
+            .attr("dy", "0")
             .on('mouseover', this.setHover)
             .on('mouseout', this.removeHover)
             .on('click', function(filter) {
                 return self.filterClick(this, filter);
             });
+        
+        xaxis
+            .selectAll("text:not(.selected)")
+            .attr('class', 'x-axis axis-text');
+            
 
         this.chart.selectAll('.y-axis')
             .call(this.yAxis)

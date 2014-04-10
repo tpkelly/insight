@@ -28,13 +28,17 @@ Group.prototype.cumulative = function(c) {
 
 Group.prototype.getData = function() {
     var data;
+    if (this._data.all) {
+        data = this._data.all();
+    } else {
+        //not a crossfilter set
+        data = this._data;
+    }
 
     if (this._filterFunction) {
-        data = this._data.all()
-            .filter(this._filterFunction);
-    } else {
-        data = this._data.all();
+        data = data.filter(this._filterFunction);
     }
+
     return data;
 };
 

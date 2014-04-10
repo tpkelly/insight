@@ -1,6 +1,104 @@
-describe("Bar Chart Tests", function() {
+describe("Base Chart Tests", function() {
 
     var group = ko.observable();
+
+    var dataset = [
+            {
+                key: 'asdk',
+                value: 100,
+                another: 300,
+                target: 500,
+                maxrange: 123,
+                minrange: 1
+            },
+            {
+                key: 'ada',
+                value: 120,
+                another: 700,
+                target: 1,
+                maxrange: 123,
+                minrange: 1
+            },
+            {
+                key: 'fhfghgf',
+                value: 300,
+                another: 400,
+                target: 300,
+                maxrange: 123,
+                minrange: 1
+            },
+            {
+                key: 'rtert',
+                value: 500,
+                another: 5200,
+                target: 2000,
+                maxrange: 123,
+                minrange: 1
+            },
+            {
+                key: 'd,gj',
+                value: 118,
+                another: 500,
+                target: 1300,
+                maxrange: 123,
+                minrange: 1
+            }
+        ];
+
+
+    var series = [
+            {
+                name: 'value',
+                label: 'Value', 
+                calculation: function (d) { return d.value; }, 
+                color: '#acc3ee'
+            },
+            {
+                name: 'another',
+                label: 'Another',  
+                calculation: function (d) { return d.another; }, 
+                color: '#e67e22'
+            }
+        ];
+
+
+    var maxRange = function (chart) {
+                return d3.svg.area()
+                        .x(chart.rangeX)
+                        .y0(0)
+                        .y1(chart.rangeY);
+            };
+
+    var ranges = [
+           {
+               name: 'min',
+               label: 'Minimum',
+               color: 'silver',
+               position: 'behind',
+               calculation: function (d) { return d.minrange; },
+               type: maxRange
+           },
+           {
+               name: 'max',
+               label: 'Maximum',
+               color: 'silver',
+               position: 'behind',
+               calculation: function (d) { return d.maxrange; },
+               type: maxRange
+           }
+       ];
+
+    var group = new Group(dataset);
+
+    var targets =
+        {
+            name: 'targets',
+            label: 'Targets',
+            color: '#2c3e50',
+            calculation: function (d) { return d.target; },
+            data: group
+        };
+
 
     it("will initialize with a name", function() {
         
@@ -171,5 +269,86 @@ describe("Bar Chart Tests", function() {
         expect(end).toBe(400);
         expect(start).toBe(0);
     });
+
+    it("should be zoomable", function() {
+        
+        var chart = new BarChart("asd", "asda", "asdads", "ada");
+                            
+        chart.zoomable(true);
+
+        expect(chart.zoomable()).toBe(true);
+    });
+
+    it("can calculate maximum of single series", function() {
+        
+        var chart = new BarChart("asd", "asda", "asdads", group);
+
+        expect(chart.findMax()).toBe(500);
+    });
+
+    it("can calculate maximum of single series with a target series from the same dataset", function() {
+        
+        
+        var chart = new BarChart("asd", "asda", "asdads", group).targets(targets);
+
+        expect(chart.findMax()).toBe(2000);
+    });
+
+    it("can calculate maximum when using a stacked series", function() {
+        
+        var chart = new BarChart("asd", "asda", "asdads", group)
+                        .stackedSeries(series)
+                        .targets(targets);
+
+        expect(chart.findMax()).toBe(5700);
+    });
+
+    it("can calculate maximum when using ranges, when range isn't largest value", function() {
+        
+        
+        
+
+        var maxRange = function (chart) {
+                return d3.svg.area()
+                        .x(chart.rangeX)
+                        .y0(0)
+                        .y1(chart.rangeY);
+            };
+
+
+        var chart = new BarChart("asd", "asda", "asdads", group)
+                        .stackedSeries(series)
+                        .ranges(ranges)
+                        .targets(targets);
+
+        expect(chart.findMax()).toBe(5700);
+    });
+    
+    it("can calculate maximum when using ranges, when range is largest value", function() {
+        
+        var newItem = {
+            key: 'ada',
+            value: 120,
+            another: 700,
+            target: 1,
+            maxrange: 12300,
+            minrange: 1
+        }
+
+        dataset.push(newItem);
+
+
+       var chart = new BarChart("asd", "asda", "asdads", group)
+                        .stackedSeries(series)
+                        .ranges(ranges)
+                        .targets(targets);
+
+
+
+       expect(chart.findMax()).toBe(12300);
+       
+       dataset.splice(dataset.indexOf(newItem), 1);
+    });
+
 
 });

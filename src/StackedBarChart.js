@@ -23,16 +23,6 @@ function StackedBarChart(name, element, dimension, group) {
     };
 
 
-
-    this.addSeries = function(series) {
-
-        if (!arguments.length) {
-            return this._series;
-        }
-        this._series = series;
-        return this;
-    };
-
     this.calculateYPos = function(func, d) {
         if (!d.yPos) {
             d.yPos = 0;
@@ -60,7 +50,6 @@ function StackedBarChart(name, element, dimension, group) {
             .scale(this.y)
             .orient('left')
             .tickSize(0)
-            .tickPadding(10)
             .tickFormat(function(d) {
                 return self._yAxisFormat(d);
             });
@@ -69,7 +58,6 @@ function StackedBarChart(name, element, dimension, group) {
             .scale(this.x)
             .orient('bottom')
             .tickSize(0)
-            .tickPadding(10)
             .tickFormat(function(d) {
                 return self.xFormatFunc(d);
             });
@@ -149,7 +137,9 @@ function StackedBarChart(name, element, dimension, group) {
             .selectAll('text')
             .attr('class', 'x-axis axis-text')
             .style('text-anchor', 'start')
-            .style('writing-mode', 'tb')
+            .attr("transform", "rotate(90)")
+            .attr("dx", "10")
+            .attr("dy", "0")
             .on('mouseover', this.setHover)
             .on('mouseout', this.removeHover)
             .on('click', function(filter) {
@@ -208,17 +198,24 @@ function StackedBarChart(name, element, dimension, group) {
             this.updateTargets(drag);
         }
 
-        this.chart.selectAll('g.x-axis')
-            .call(this.xAxis)
-            .selectAll("text:not(.selected)")
-            .attr('class', 'x-axis axis-text')
+        var xaxis = this.chart.selectAll('g.x-axis')
+                        .call(this.xAxis);
+        xaxis
+            .selectAll("text")
             .style('text-anchor', 'start')
-            .style('writing-mode', 'tb')
+            .attr("transform", "rotate(90)")
+            .attr("dx", "10")
+            .attr("dy", "0")
             .on('mouseover', this.setHover)
             .on('mouseout', this.removeHover)
             .on('click', function(filter) {
                 return self.filterClick(this, filter);
             });
+        
+        xaxis
+            .selectAll("text:not(.selected)")
+            .attr('class', 'x-axis axis-text');
+            
 
         this.chart.selectAll('.y-axis')
             .call(this.yAxis)

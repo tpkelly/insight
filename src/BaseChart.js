@@ -17,7 +17,7 @@ var BaseChart = function BaseChart(name, element, dimension, group) {
     this._redrawAxes = false;
     this.isFiltered = false;
     this._barPadding = 0.2;
-    this.duration = 500;
+    this.duration = 400;
     this.filters = [];
     this._labelPadding = 20;
     this.hasTooltip = false;
@@ -69,7 +69,9 @@ var BaseChart = function BaseChart(name, element, dimension, group) {
     };
 
     this.xPosition = function(d) {
-        return this.x(this._keyAccessor(d));
+        var offset = Math.round((this._barWidthFunction == this.x.rangeBand || this._barWidthFunction == this.x.rangeRound) ? 0 : this.barWidth(d) / 2);
+
+        return this.x(this._keyAccessor(d)) - offset;
     }.bind(this);
 
     this.yPosition = function(d) {
@@ -86,7 +88,6 @@ var BaseChart = function BaseChart(name, element, dimension, group) {
     }.bind(this);
 
     this.rangeX = function(d, i) {
-
         var offset = i == (this.keys()
             .length - 1) ? this._barWidthFunction(d) : 0;
 
@@ -108,11 +109,14 @@ var BaseChart = function BaseChart(name, element, dimension, group) {
     }.bind(this);
 
     this.targetX = function(d, i) {
-        return this.x(this._keyAccessor(d)) + this._barWidthFunction(d) / 3;
+
+        var offset = (this._barWidthFunction == this.x.rangeBand) ? 0 : this.barWidth(d) / 2;
+
+        return (this.x(this._keyAccessor(d)) + this._barWidthFunction(d) / 3) - offset;
     }.bind(this);
 
     this.targetWidth = function(d) {
-        return this._barWidthFunction(d) / 2;
+        return this._barWidthFunction(d) / 3;
     }.bind(this);
 
     this.targetTooltipText = function(d) {
@@ -317,6 +321,7 @@ BaseChart.prototype.targetMax = function(d) {
     }
     return this._currentMax;
 };
+
 
 BaseChart.prototype.findMax = function() {
     var self = this;
@@ -682,6 +687,17 @@ BaseChart.prototype.labelFontSize = function(s) {
         return this._labelFontSize;
     }
     this._labelFontSize = s;
+    return this;
+};
+
+
+
+BaseChart.prototype.stackedSeries = function(series) {
+
+    if (!arguments.length) {
+        return this._series;
+    }
+    this._series = series;
     return this;
 };
 

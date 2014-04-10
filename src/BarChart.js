@@ -102,7 +102,9 @@ var BarChart = function BarChart(name, element, dimension, group) {
             .call(this.xAxis)
             .selectAll("text")
             .style("text-anchor", "start")
-            .style("writing-mode", "tb")
+            .attr("transform", "rotate(90)")
+            .attr("dx", "10")
+            .attr("dy", "0")
             .attr('class', 'axis-text')
             .on("mouseover", this.setHover)
             .on("mouseout", this.removeHover)
@@ -152,17 +154,23 @@ var BarChart = function BarChart(name, element, dimension, group) {
             .selectAll("text")
             .attr('class', 'axis-text');
 
-        this.chart.selectAll("g.x-axis")
-            .call(this.xAxis)
-            .selectAll("text")
-            .attr('class', 'axis-text')
+        var xaxis = this.chart.selectAll("g.x-axis")
+            .call(this.xAxis);
+
+        xaxis.selectAll("text")
             .style("text-anchor", "start")
-            .style("writing-mode", "tb")
+            .attr("transform", "rotate(90)")
+            .attr("dx", "10")
+            .attr("dy", "0")
             .on("mouseover", this.setHover)
             .on("mouseout", this.removeHover)
             .on("click", function(filter) {
                 return self.filterClick(this, filter);
             });
+
+        xaxis.selectAll("text:not(.selected)")
+            .attr('class', 'axis-text');
+
     };
 
     this.drawTargets = function() {
@@ -176,9 +184,9 @@ var BarChart = function BarChart(name, element, dimension, group) {
                 .enter()
                 .append("rect")
                 .attr("class", "target " + this._targets.name + "class")
-                .attr("x", this.xPosition)
+                .attr("x", this.targetX)
                 .attr("y", this.targetY)
-                .attr("width", this.barWidth)
+                .attr("width", this.targetWidth)
                 .attr("height", 4)
                 .attr("fill", this._targets.color)
                 .on("mouseover", function(d) {
