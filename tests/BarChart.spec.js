@@ -175,6 +175,54 @@ describe("Base Chart Tests", function() {
         expect(chart.margin().right).toBe(expectedMargin.right);
     });
 
+    it("isFunction works with a function", function() {
+        
+        var chart = new BarChart("Name", "asda", "asdads", "ada");
+
+        expect(chart.isFunction(function(f){ return f;})).toBe(true);
+
+    });
+
+    it("isFunction works with a non function object", function() {
+        
+        var chart = new BarChart("Name", "asda", "asdads", "ada");
+
+        expect(chart.isFunction({h:"hello"})).toBe(false);
+
+    });
+
+    it("isFunction works with a primitive", function() {
+        
+        var chart = new BarChart("Name", "asda", "asdads", "ada");
+
+        expect(chart.isFunction("hello")).toBe(false);
+
+    });
+
+    it("bar colour can be set with string", function() {
+        
+        var chart = new BarChart("Name", "asda", "asdads", "ada")
+                            .barColor('blue');
+
+        expect(chart.barColor()).toBe('blue');
+        expect(chart.calculateBarColor({})).toBe('blue');
+    });
+
+    it("bar colour can be set with a function", function() {
+        
+        var colorFunc = function(d){
+            var c = d % 2 ? 'red' : 'black';
+            return c;
+        };
+
+        var chart = new BarChart("Name", "asda", "asdads", "ada")
+                            .barColor(colorFunc);
+
+        expect(chart.barColor()).toBe(colorFunc);
+        expect(chart.calculateBarColor(1)).toBe('red');
+    });
+
+
     it("should correctly return a custom margin", function() {
         
         var expectedMargin = {top:100, bottom:10, left:20, right:30};

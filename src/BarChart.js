@@ -53,7 +53,7 @@ var BarChart = function BarChart(name, element, dimension, group) {
             .attr("y", this.yPosition)
             .attr("width", this.barWidth)
             .attr("height", this.barHeight)
-            .attr("fill", this._barColor)
+            .attr("fill", this.calculateBarColor)
             .on("mouseover", function(d) {
                 self.mouseOver(self, this);
             })

@@ -140,6 +140,16 @@ var BaseChart = function BaseChart(name, element, dimension, group) {
             .right;
     }.bind(this);
 
+    this.calculateBarColor = function(d) {
+
+        var c = this.barColor();
+
+        var colour = this.isFunction(c) ? c(d) : c;
+
+        return colour;
+
+    }.bind(this);
+
 };
 
 BaseChart.prototype.zoomable = function(zoom) {
@@ -620,6 +630,11 @@ BaseChart.prototype.mouseOut = function(chart, item, d) {
 
     d3.select(item)
         .classed("active", false);
+};
+
+BaseChart.prototype.isFunction = function(functionToCheck) {
+    var getType = {};
+    return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
 };
 
 BaseChart.prototype.labelColor = function(c) {
