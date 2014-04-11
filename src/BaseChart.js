@@ -287,6 +287,11 @@ BaseChart.prototype.cumulative = function(v) {
     return this;
 };
 
+
+BaseChart.prototype.xFormatFunc = function(d) {
+    return d;
+};
+
 BaseChart.prototype.xAxisFormat = function(v) {
     if (!arguments.length) {
         return this.xFormatFunc;

@@ -60,37 +60,6 @@ var RowChart = function RowChart(name, element, dimension, group) {
         this.createChart();
         this.initializeAxes();
 
-        var d = this.dataset();
-
-        var bars = this.chart.append("g")
-            .selectAll("rect")
-            .data(this.dataset())
-            .enter()
-            .append("rect")
-            .attr("x", this.barXPosition)
-            .attr("y", this.yPosition)
-            .attr("width", this.rowWidth)
-            .attr("height", this.rowHeight)
-            .attr("fill", this.barColor())
-            .on("mouseover", function(d, item) {
-                self.mouseOver(self, this, d);
-            })
-            .on("mouseout", function(d, item) {
-                self.mouseOut(self, this, d);
-            });
-
-        this.chart.selectAll("rect")
-            .data(this.dataset())
-            .exit()
-            .remove();
-
-        bars.append("svg:text")
-            .text(this.tooltipText)
-            .attr("class", "tipValue");
-
-        bars.append("svg:text")
-            .text(this._tooltipLabel)
-            .attr("class", "tipLabel");
 
         this.chart.append("g")
             .attr("class", "y-axis")
@@ -102,11 +71,14 @@ var RowChart = function RowChart(name, element, dimension, group) {
             .on("click", function(filter) {
                 self.filterClick(this, filter);
             });
+
+        this.draw();
     };
 
     this.draw = function() {
 
         var self = this;
+
 
         this.y
             .domain(this.keys())
@@ -134,27 +106,52 @@ var RowChart = function RowChart(name, element, dimension, group) {
                 ]);
         }
 
-        var bars = self.chart.selectAll("rect")
+        var bars = this.chart.selectAll("rect")
             .data(this.dataset());
+
+        var newBars = bars.enter()
+            .append("rect")
+            .attr("x", 0)
+            .attr("y", this.yPosition)
+            .attr("width", 0)
+            .attr("fill", this.barColor())
+            .attr("height", this.rowHeight)
+            .on("mouseover", function(d, item) {
+                self.mouseOver(self, this, d);
+            })
+            .on("mouseout", function(d, item) {
+                self.mouseOut(self, this, d);
+            });
+
+        newBars.append("svg:text")
+            .attr("class", "tipValue");
+
+        newBars.append("svg:text")
+            .attr("class", "tipLabel");
 
         bars.transition()
             .duration(this.animationDuration)
+            .attr("x", this.barXPosition)
             .attr("width", this.rowWidth);
 
+        bars.selectAll('text.tipValue')
+            .text(this.tooltipText);
 
-        var tips = self.chart
-            .selectAll("text.tipValue")
-            .data(self.dataset());
-
-        tips
-            .text(this.tooltipText)
-            .attr("class", "tipValue");
+        bars.selectAll('text.tipLabel')
+            .text(this._tooltipLabel);
 
         if (self._redrawAxes) {
             bars.attr("y", this.yPosition)
                 .attr("height", this.rowHeight);
         }
+
+        bars.exit()
+            .remove();
+
+
+
     };
+
     return this;
 };
 

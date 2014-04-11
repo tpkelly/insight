@@ -93,25 +93,30 @@ function StackedBarChart(name, element, dimension, group) {
             .selectAll('g')
             .data(this.dataset());
 
-        groups.enter()
+        var newGroups = groups.enter()
             .append('g')
             .attr('class', 'bargroup');
 
-        var bars = groups.selectAll('rect.bar');
+        var bars = newGroups.selectAll('rect.bar');
 
         for (var seriesFunction in this._series) {
             this._valueAccessor = this.cumulative() ? self._series[seriesFunction].cumulative : self._series[seriesFunction].calculation;
 
-            bars = groups.append('rect')
+            bars = newGroups.append('rect')
                 .attr('class', self._series[seriesFunction].name + 'class bar')
                 .attr('x', this.xPosition)
-                .attr('y', this.yPosition)
+                .attr('y', this.yDomain())
                 .attr('width', this.barWidth)
-                .attr('height', this.barHeight)
+                .attr('height', 0)
                 .attr('fill', this._series[seriesFunction].color)
                 .attr("clip-path", "url(#clip)")
                 .on('mouseover', mouseOver)
                 .on('mouseout', mouseOut);
+
+            bars.transition()
+                .duration(this.animationDuration)
+                .attr('y', this.yPosition)
+                .attr('height', this.barHeight);
 
             bars.append('svg:text')
                 .text(this.tooltipText)
@@ -198,6 +203,7 @@ function StackedBarChart(name, element, dimension, group) {
 
         var xaxis = this.chart.selectAll('g.x-axis')
             .call(this.xAxis);
+
         xaxis
             .selectAll("text")
             .style('text-anchor', 'start')
