@@ -458,12 +458,14 @@ BaseChart.prototype.applyOrderableHeader = function() {
 };
 
 
-BaseChart.prototype.createChart = function() {
-    d3.select(this.element)
-        .append("div")
-        .attr('class', 'title')
-        .text(this._displayName);
+BaseChart.prototype.createChart = function(ignoreTitle) {
 
+    if (!ignoreTitle) {
+        d3.select(this.element)
+            .append("div")
+            .attr('class', 'title')
+            .text(this._displayName);
+    }
 
     this.chart = d3.select(this.element)
         .append("svg")

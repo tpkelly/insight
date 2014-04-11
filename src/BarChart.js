@@ -43,7 +43,7 @@ var BarChart = function BarChart(name, element, dimension, group) {
 
         if (self._redrawAxes) {
             this.y.domain([0, self.findMax()])
-                .range([this.height() - this.margin()
+                .rangeRound([this.height() - this.margin()
                     .top - this.margin()
                     .bottom, 0
                 ]);

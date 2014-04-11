@@ -873,12 +873,14 @@ BaseChart.prototype.applyOrderableHeader = function() {
 };
 
 
-BaseChart.prototype.createChart = function() {
-    d3.select(this.element)
-        .append("div")
-        .attr('class', 'title')
-        .text(this._displayName);
+BaseChart.prototype.createChart = function(ignoreTitle) {
 
+    if (!ignoreTitle) {
+        d3.select(this.element)
+            .append("div")
+            .attr('class', 'title')
+            .text(this._displayName);
+    }
 
     this.chart = d3.select(this.element)
         .append("svg")
@@ -1414,7 +1416,7 @@ DataTable.prototype.constructor = DataTable;
 
         if (self._redrawAxes) {
             this.y.domain([0, self.findMax()])
-                .range([this.height() - this.margin()
+                .rangeRound([this.height() - this.margin()
                     .top - this.margin()
                     .bottom, 0
                 ]);
@@ -2378,21 +2380,18 @@ StackedBarChart.prototype.constructor = StackedBarChart;
 
     this.initializeAxes = function() {
 
-        this.x = d3.scale.linear()
-            .domain([0, this.maxRange])
-            .range([0, this.width() - this.margin()
-                .right - this.margin()
-                .left
-            ]);
-
-        this.y = d3.time.scale()
+        this.x = d3.time.scale()
             .domain(this.range)
-            .range([0, this.height()]);
+            .rangeRound([0, this.width()]);
 
-        this.yAxis = d3.svg.axis()
-            .scale(this.y)
+        this.y = d3.scale.linear()
+            .domain([0, this.maxRange])
+            .rangeRound([this.yDomain(), 0]);
+
+        this.xAxis = d3.svg.axis()
+            .scale(this.x)
             .tickSize(0)
-            .orient('right');
+            .orient('bottom');
     };
 
     this.display = function() {
@@ -2430,17 +2429,17 @@ StackedBarChart.prototype.constructor = StackedBarChart;
 
 
     this.init = function() {
-        var self = this;
+
         this.createChart();
         this.initializeAxes();
 
         this.mini = this.chart.append('g')
-            .attr('width', this.width)
-            .attr('height', this.height)
+            .attr('width', this.width())
+            .attr('height', this.yDomain())
             .attr('class', 'mini');
 
         this.brush = d3.svg.brush()
-            .y(this.y)
+            .x(this.x)
             .on('brush', function() {
                 self.display();
             });
@@ -2453,29 +2452,23 @@ StackedBarChart.prototype.constructor = StackedBarChart;
             .enter()
             .append('rect')
             .attr('class', 'minitems')
-            .attr('x', 60)
-            .attr('y', function(d) {
-                return self.y(self._keyAccessor(d));
-            })
-            .attr('width', function(d) {
-                return self.x(self._valueAccessor(d) - self.margin()
-                    .right - self.margin()
-                    .left);
-            })
-            .attr('height', 3)
+            .attr('x', this.xPosition)
+            .attr('y', this.yPosition)
+            .attr('width', 5)
+            .attr('height', this.barHeight)
             .attr('fill', self._barColor);
 
         self.mini.append('g')
-            .attr('class', 'y axis')
-
-        .style('font-size', '11px')
-            .call(self.yAxis);
+            .attr('class', 'x axis')
+            .attr('transform', 'translate(0,' + this.yDomain() + ')')
+            .style('font-size', '11px')
+            .call(self.xAxis);
 
         self.mini.append('g')
             .attr('class', 'x brush')
             .call(self.brush)
             .selectAll('rect')
-            .attr('width', self.width())
+            .attr('height', this.yDomain())
             .attr('fill', self._brushColor)
             .style('opacity', '0.5');
     };
@@ -2485,16 +2478,12 @@ StackedBarChart.prototype.constructor = StackedBarChart;
         var self = this;
 
         //mini item rects
-        self.chart.selectAll('rect.mini')
+        self.chart.selectAll('rect.minitems')
             .data(this.dataset())
             .transition()
             .duration(self.duration)
-            .attr('y', function(d) {
-                return self.y(self._keyAccessor(d));
-            })
-            .attr('width', function(d) {
-                return self.x(self._valueAccessor(d));
-            });
+            .attr('y', this.yPosition)
+            .attr('height', this.barHeight);
 
     };
 }
