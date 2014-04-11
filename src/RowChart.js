@@ -54,6 +54,7 @@ var RowChart = function RowChart(name, element, dimension, group) {
     }.bind(this);
 
 
+
     this.init = function() {
         var self = this;
 
@@ -75,10 +76,10 @@ var RowChart = function RowChart(name, element, dimension, group) {
         this.draw();
     };
 
+
     this.draw = function() {
 
         var self = this;
-
 
         this.y
             .domain(this.keys())
@@ -107,7 +108,10 @@ var RowChart = function RowChart(name, element, dimension, group) {
         }
 
         var bars = this.chart.selectAll("rect")
-            .data(this.dataset());
+            .data(this.dataset(), this.matcher);
+
+        bars.exit()
+            .remove();
 
         var newBars = bars.enter()
             .append("rect")
@@ -129,9 +133,12 @@ var RowChart = function RowChart(name, element, dimension, group) {
         newBars.append("svg:text")
             .attr("class", "tipLabel");
 
-        bars.transition()
-            .duration(this.animationDuration)
-            .attr("x", this.barXPosition)
+
+
+        var trans = bars.transition()
+            .duration(this.animationDuration);
+
+        trans.attr("x", this.barXPosition)
             .attr("width", this.rowWidth);
 
         bars.selectAll('text.tipValue')
@@ -140,13 +147,11 @@ var RowChart = function RowChart(name, element, dimension, group) {
         bars.selectAll('text.tipLabel')
             .text(this._tooltipLabel);
 
-        if (self._redrawAxes) {
-            bars.attr("y", this.yPosition)
+        if (self._redrawAxes || self.orderable()) {
+            trans
+                .attr("y", this.yPosition)
                 .attr("height", this.rowHeight);
         }
-
-        bars.exit()
-            .remove();
 
 
 

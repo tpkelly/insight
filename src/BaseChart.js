@@ -47,6 +47,9 @@ var BaseChart = function BaseChart(name, element, dimension, group) {
     this._targetAccessor = function(d) {
         return d.value;
     };
+    this.matcher = function(d) {
+        return this._keyAccessor(d);
+    }.bind(this);
 
     this._rangeAccessor = function(d) {
         return d.value;
@@ -456,6 +459,7 @@ BaseChart.prototype.applyOrderableHeader = function() {
             .style('display', display);
     }
 };
+
 
 
 BaseChart.prototype.createChart = function(ignoreTitle) {

@@ -66,7 +66,7 @@ var BarChart = function BarChart(name, element, dimension, group) {
     this.drawBars = function() {
 
         bars = self.chart.selectAll("rect")
-            .data(this.dataset());
+            .data(this.dataset(), this.matcher);
 
         var newRows = bars.enter()
             .append("rect")
@@ -151,7 +151,7 @@ var BarChart = function BarChart(name, element, dimension, group) {
             this._targetAccessor = this._targets.calculation;
 
             var targets = this.chart.selectAll("rect.target")
-                .data(this.targetData());
+                .data(this.targetData(), this.matcher);
 
             var newTargets = targets
                 .enter()
@@ -213,7 +213,7 @@ var BarChart = function BarChart(name, element, dimension, group) {
                 }
 
                 this.chart.selectAll(rangeIdentifier)
-                    .datum(this.dataset())
+                    .datum(this.dataset(), this.matcher)
                     .transition()
                     .duration(this.animationDuration)
                     .attr("d", transform);

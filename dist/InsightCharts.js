@@ -462,6 +462,9 @@ ChartGroup.prototype.multiReduceCount = function(dimension, property) {
     this._targetAccessor = function(d) {
         return d.value;
     };
+    this.matcher = function(d) {
+        return this._keyAccessor(d);
+    }.bind(this);
 
     this._rangeAccessor = function(d) {
         return d.value;
@@ -871,6 +874,7 @@ BaseChart.prototype.applyOrderableHeader = function() {
             .style('display', display);
     }
 };
+
 
 
 BaseChart.prototype.createChart = function(ignoreTitle) {
@@ -1439,7 +1443,7 @@ DataTable.prototype.constructor = DataTable;
     this.drawBars = function() {
 
         bars = self.chart.selectAll("rect")
-            .data(this.dataset());
+            .data(this.dataset(), this.matcher);
 
         var newRows = bars.enter()
             .append("rect")
@@ -1524,7 +1528,7 @@ DataTable.prototype.constructor = DataTable;
             this._targetAccessor = this._targets.calculation;
 
             var targets = this.chart.selectAll("rect.target")
-                .data(this.targetData());
+                .data(this.targetData(), this.matcher);
 
             var newTargets = targets
                 .enter()
@@ -1586,7 +1590,7 @@ DataTable.prototype.constructor = DataTable;
                 }
 
                 this.chart.selectAll(rangeIdentifier)
-                    .datum(this.dataset())
+                    .datum(this.dataset(), this.matcher)
                     .transition()
                     .duration(this.animationDuration)
                     .attr("d", transform);
@@ -2780,6 +2784,7 @@ TimelineChart.prototype.constructor = TimelineChart;
     }.bind(this);
 
 
+
     this.init = function() {
         var self = this;
 
@@ -2801,10 +2806,10 @@ TimelineChart.prototype.constructor = TimelineChart;
         this.draw();
     };
 
+
     this.draw = function() {
 
         var self = this;
-
 
         this.y
             .domain(this.keys())
@@ -2833,7 +2838,10 @@ TimelineChart.prototype.constructor = TimelineChart;
         }
 
         var bars = this.chart.selectAll("rect")
-            .data(this.dataset());
+            .data(this.dataset(), this.matcher);
+
+        bars.exit()
+            .remove();
 
         var newBars = bars.enter()
             .append("rect")
@@ -2855,9 +2863,12 @@ TimelineChart.prototype.constructor = TimelineChart;
         newBars.append("svg:text")
             .attr("class", "tipLabel");
 
-        bars.transition()
-            .duration(this.animationDuration)
-            .attr("x", this.barXPosition)
+
+
+        var trans = bars.transition()
+            .duration(this.animationDuration);
+
+        trans.attr("x", this.barXPosition)
             .attr("width", this.rowWidth);
 
         bars.selectAll('text.tipValue')
@@ -2866,13 +2877,11 @@ TimelineChart.prototype.constructor = TimelineChart;
         bars.selectAll('text.tipLabel')
             .text(this._tooltipLabel);
 
-        if (self._redrawAxes) {
-            bars.attr("y", this.yPosition)
+        if (self._redrawAxes || self.orderable()) {
+            trans
+                .attr("y", this.yPosition)
                 .attr("height", this.rowHeight);
         }
-
-        bars.exit()
-            .remove();
 
 
 
