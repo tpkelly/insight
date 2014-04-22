@@ -2,65 +2,47 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Bar Chart Example</title>
+    <title>Zoomable Time Chart</title>
     <script type="text/javascript" src="./lib/jquery-1.10.2.js"></script>
     <script type="text/javascript" src="./lib/d3.v3.js"></script>
     <script type="text/javascript" src="./lib/d3.tip.js"></script>
-    <script type="text/javascript" src="./lib/knockout-3.0.0.js"></script>
-    <script type="text/javascript" src="./lib/crossfilter.js"></script>
     <script type="text/javascript" src="./lib/InsightCharts.js"></script>
-    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans|Lato" />
+    <link href="css/prism.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/prism.js" data-manual></script>
+    <script src="js/barchart.js"></script>
     <script type="text/javascript">
         $(document).ready(function(){
-
-            d3.json('revenuereport.json', function(data){
-
-                var dataset = crossfilter(data);
-
-                var exampleGroup = new ChartGroup("Example Group");
-
-                var yearDim = exampleGroup.addDimension(dataset, "Year", function (x) { return x.Year; });
-                
-                var dataGroup = new Group(exampleGroup.multiReduceSum(yearDim, ["CurrentRevenue", "RenewalRevenue"]));
-
-                var stackedSeries = [
-                    {
-                        name: 'current', label: 'Current', calculation: function (d) { return d.value.CurrentRevenue; }, color: '#acc3ee'
-                    },
-                    {
-                        name: 'renewals', label: 'Renewals', calculation: function (d) { return d.value.RenewalRevenue; }, color: '#e67e22'
+            $.ajax(
+                {
+                    url: "js/barchart.js",
+                    dataType: 'html', 
+                    success: function(result){
+                        $('#source').text(result);
+                        Prism.highlightAll();
                     }
-                ];
-
-
-                var currencyFormatter = function (value) {
-                    var format = d3.format(",f");
-                    return '�' + format(value);
                 }
-
-                var yearBarChart = new BarChart('Yearly', "#barChart", yearDim, dataGroup)
-                                    .width(300)
-                                    .height(300)
-                                    .margin({ top: 20, left: 65, bottom: 70, right: 0 })
-                                    .barColor('#ACC3EE')
-                                    .tooltipFormat(currencyFormatter)
-                                    .tooltipLabel('Current')
-                                    .yAxisFormat(currencyFormatter)
-                                    .valueAccessor(function (d) { return d.value.CurrentRevenue + d.value.RenewalRevenue; });
-
-                exampleGroup.addChart(yearBarChart);
-
-                exampleGroup.initCharts();
-
-            })
-
+            ); 
         });
     </script>
 </head>
 <body>
-    <div>
-        <h1>Bar Chart</h1>
-        <div id="barChart">
+    <div id="content">
+
+        <div id="description">
+            <h1>Zoomable Time Chart</h1>
+            <p>This example shows a bar chart using JSON data, a zoomable time x-axis and an x range limit.</p>
+            <p></p>
+            <p></p>
+        </div>
+        <pre>
+            <code id="source" class="language-javascript">
+            </code>
+        </pre>
+    </div>
+    <div id="chartContainer">
+        <div id="barChart" class="exampleChart">
         </div>
     </div>
 </body>

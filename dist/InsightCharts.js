@@ -170,12 +170,8 @@ NestedGroup.prototype.getOrderedData = function() {
 ;var Dimension = function Dimension(name, dimension, displayFunction) {
     this.Dimension = dimension;
     this.Name = name;
-    this.Filters = ko.observableArray();
-    this.Keys = this.Dimension.group()
-        .all()
-        .map(function(d) {
-            return d.key;
-        });
+    this.Filters = [];
+
     this.displayFunction = displayFunction ? displayFunction : function(d) {
         return d;
     };
@@ -184,20 +180,38 @@ NestedGroup.prototype.getOrderedData = function() {
         return d.Name == this.Name;
     }.bind(this);
 };
+;var InsightFormatters = (function(d3) {
+    var exports = {};
+
+
+    exports.moduleProperty = 1;
+
+    exports.currencyFormatter = function(value) {
+        var format = d3.format(",f");
+        return '£' + format(value);
+    };
+
+    exports.dateFormatter = function(value) {
+        var format = d3.time.format("%b %Y");
+        return format(value);
+    };
+
+    return exports;
+}(d3));
 ;var ChartGroup = function ChartGroup(name) {
     this.Name = name;
-    this.Charts = ko.observableArray();
-    this.Dimensions = ko.observableArray();
-    this.FilteredDimensions = ko.observableArray();
-    this.Groups = ko.observableArray();
-    this.CumulativeGroups = ko.observableArray();
-    this.ComputedGroups = ko.observableArray();
+    this.Charts = [];
+    this.Dimensions = [];
+    this.FilteredDimensions = [];
+    this.Groups = [];
+    this.CumulativeGroups = [];
+    this.ComputedGroups = [];
     this.LinkedCharts = [];
-    this.NestedGroups = ko.observableArray();
+    this.NestedGroups = [];
 };
 
 ChartGroup.prototype.initCharts = function() {
-    this.Charts()
+    this.Charts
         .forEach(
             function(chart) {
                 chart.init();
@@ -221,6 +235,7 @@ ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc) {
 
     return dimension;
 };
+
 ChartGroup.prototype.compareFilters = function(filterFunction) {
     return function(d) {
         return String(d.name) == String(filterFunction.name);
@@ -232,34 +247,33 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
     var self = this;
 
     if (filterFunction) {
-        var dims = this.Dimensions()
+        var dims = this.Dimensions
             .filter(dimension.comparer);
 
-        var activeDim = this.FilteredDimensions()
+        var activeDim = this.FilteredDimensions
             .filter(dimension.comparer);
 
         if (!activeDim.length) {
             this.FilteredDimensions.push(dimension);
         }
 
-        d3.select(filterFunction.element)
-            .classed('selected', true);
+        // d3.select(filterFunction.element)
+        //     .classed('selected', true);
 
         var comparerFunction = this.compareFilters(filterFunction);
 
         dims.map(function(dim) {
 
-            var filterExists = dim.Filters()
+            var filterExists = dim.Filters
                 .filter(comparerFunction)
                 .length;
 
             //if the dimension is already filtered by this value, toggle (remove) the filter
             if (filterExists) {
 
-                dim.Filters.remove(comparerFunction);
-
-                d3.select(filterFunction.element)
-                    .classed('selected', false);
+                self.removeMatchesFromArray(dim.Filters, comparerFunction);
+                // d3.select(filterFunction.element)
+                //     .classed('selected', false);
 
             } else {
                 // add the provided filter to the list for this dimension
@@ -267,18 +281,15 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
                 dim.Filters.push(filterFunction);
             }
 
-            var fils = dim.Filters();
-
             // reset this dimension if no filters exist, else apply the filter to the dataset.
-            if (dim.Filters()
-                .length === 0) {
+            if (dim.Filters.length === 0) {
 
-                self.FilteredDimensions.remove(dim);
-
+                self.removeItemFromArray(self.FilteredDimensions, dim);
                 dim.Dimension.filterAll();
+
             } else {
                 dim.Dimension.filter(function(d) {
-                    var vals = dim.Filters()
+                    var vals = dim.Filters
                         .map(function(func) {
                             return func.filterFunction(d);
                         });
@@ -292,20 +303,20 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
         });
 
         // recalculate non standard groups
-        this.NestedGroups()
+        this.NestedGroups
             .forEach(
                 function(group) {
                     group.updateNestedData();
                 }
         );
 
-        this.ComputedGroups()
+        this.ComputedGroups
             .forEach(
                 function(group) {
                     group.compute();
                 }
         );
-        this.CumulativeGroups()
+        this.CumulativeGroups
             .forEach(
                 function(group) {
                     group.calculateTotals();
@@ -319,9 +330,9 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
 
 
 ChartGroup.prototype.redrawCharts = function() {
-    for (var i = 0; i < this.Charts()
+    for (var i = 0; i < this.Charts
         .length; i++) {
-        this.Charts()[i].draw();
+        this.Charts[i].draw();
     }
 };
 
@@ -413,10 +424,25 @@ ChartGroup.prototype.multiReduceCount = function(dimension, property) {
 
     return group;
 };
-;var BaseChart = function BaseChart(name, element, dimension, group) {
+
+ChartGroup.prototype.removeMatchesFromArray = function(array, comparer) {
+    var self = this;
+    var matches = array.filter(comparer);
+    matches.forEach(function(match) {
+        self.removeItemFromArray(array, match);
+    });
+};
+ChartGroup.prototype.removeItemFromArray = function(array, item) {
+
+    var index = array.indexOf(item);
+    if (index > -1) {
+        array.splice(index, 1);
+    }
+};
+;var BaseChart = function BaseChart(name, element, dimension, data) {
     this.element = element;
     this.dimension = dimension;
-    this.group = group;
+    this.group = data;
     this._name = name;
     this._displayName = name;
 
@@ -502,7 +528,7 @@ ChartGroup.prototype.multiReduceCount = function(dimension, property) {
 
 
     this.animationDuration = function(d, i) {
-        return this.duration + (i * 50);
+        return this.duration + (i);
     }.bind(this);
 
     this.rangeX = function(d, i) {
@@ -647,6 +673,41 @@ BaseChart.prototype.x = function(x) {
     return this;
 };
 
+BaseChart.prototype.initZoom = function() {
+    this.zoom = d3.behavior.zoom()
+        .on("zoom", this.dragging.bind(this));
+
+    this.zoom.x(this.x);
+
+    this.chart.append("rect")
+        .attr("class", "pane")
+        .attr("width", this.width())
+        .attr("height", this.yDomain())
+        .on("click", self.clickEvent)
+        .style("fill", "none")
+        .style("pointer-events", "all")
+        .call(this.zoom);
+};
+
+BaseChart.prototype.addClipPath = function() {
+
+    this.chart.append("clipPath")
+        .attr("id", "clip")
+        .append("rect")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", this.width())
+        .attr("height", this.yDomain());
+
+
+
+};
+
+BaseChart.prototype.dragging = function() {
+
+    this.draw(true);
+};
+
 BaseChart.prototype.setXAxisRange = function(rangeAccessor) {
     this._xRangeType = rangeAccessor(this.x);
     return this;
@@ -661,6 +722,14 @@ BaseChart.prototype.initializeAxes = function() {
 BaseChart.prototype.xDomainRange = function() {
     //default behaviour for x axis is to treat it as an orginal range using the dataset's keys
     return this.keys();
+};
+
+BaseChart.prototype.xRange = function(f) {
+    if (!arguments.length) {
+        return this.xDomainRange();
+    }
+    this.xDomainRange = f;
+    return this;
 };
 
 BaseChart.prototype.initializeYAxis = function(chart) {
@@ -1106,7 +1175,7 @@ BaseChart.prototype.tooltip = function() {
 BaseChart.prototype.filterKey = function() {};
 
 
-BaseChart.prototype.limitFunction = function(d) {
+BaseChart.prototype.limit = function(d) {
     if (!arguments.length) {
         return this._limitFunction;
     }
@@ -1193,10 +1262,11 @@ BaseChart.prototype.filterFunction = function(filter, element) {
 };
 
 BaseChart.prototype.filterClick = function(element, filter) {
+    if (this.dimension) {
+        var filterFunction = this.filterFunction(filter, element);
 
-    var filterFunction = this.filterFunction(filter, element);
-
-    this.filterEvent(this.dimension, filterFunction);
+        this.filterEvent(this.dimension, filterFunction);
+    }
 };
 
 
@@ -1204,7 +1274,7 @@ BaseChart.prototype.triggerRedraw = function() {
 
 };
 
-BaseChart.prototype.filterEvent = function(data, dimension, filter) {
+BaseChart.prototype.filterEvent = function(dimension, filter) {
 
 };
 
@@ -1407,16 +1477,20 @@ DataTable.prototype.constructor = DataTable;
                 return self.xFormatFunc(d);
             });
 
+        this.addClipPath();
+
+        if (this.zoomable()) {
+            this.initZoom();
+        }
+
         this.drawAxes();
+
 
         this.draw();
 
     };
 
-    this.draw = function() {
-
-        this.x.domain(this.keys())
-            .rangeRoundBands([0, this.xDomain()], this.barPadding());
+    this.draw = function(dragging) {
 
         if (self._redrawAxes) {
             this.y.domain([0, self.findMax()])
@@ -1428,22 +1502,23 @@ DataTable.prototype.constructor = DataTable;
 
         this.drawRanges('behind');
 
-        this.drawBars();
+        this.drawBars(dragging);
 
         this.drawRanges('front');
 
-        this.drawTargets();
+        this.drawTargets(dragging);
 
         this.updateAxes();
-
     };
 
 
 
-    this.drawBars = function() {
+    this.drawBars = function(drag) {
 
-        bars = self.chart.selectAll("rect")
+        bars = self.chart.selectAll("rect.bar")
             .data(this.dataset(), this.matcher);
+
+        var duration = drag ? 0 : this.animationDuration;
 
         var newRows = bars.enter()
             .append("rect")
@@ -1451,6 +1526,7 @@ DataTable.prototype.constructor = DataTable;
             .attr("fill", this.calculateBarColor)
             .attr("x", this.xPosition)
             .attr("y", this.yDomain())
+            .attr("clip-path", "url(#clip)")
             .attr("height", 0)
             .on("mouseover", function(d) {
                 self.mouseOver(self, this);
@@ -1468,7 +1544,7 @@ DataTable.prototype.constructor = DataTable;
             .attr("class", "tipLabel");
 
         bars.transition()
-            .duration(this.animationDuration)
+            .duration(duration)
             .attr("x", this.xPosition)
             .attr("y", this.yPosition)
             .attr("width", this.barWidth)
@@ -2130,31 +2206,10 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
                 return self.xFormatFunc(d);
             });
 
-
+        this.addClipPath();
 
         if (this.zoomable()) {
-
-            this.chart.append("clipPath")
-                .attr("id", "clip")
-                .append("rect")
-                .attr("x", 0)
-                .attr("y", 0)
-                .attr("width", this.width())
-                .attr("height", this.yDomain());
-
-            this.zoom = d3.behavior.zoom()
-                .on("zoom", this.dragging);
-
-            this.zoom.x(this.x);
-
-            this.chart.append("rect")
-                .attr("class", "pane")
-                .attr("width", this.width())
-                .attr("height", this.yDomain())
-                .on("click", self.clickEvent)
-                .style("fill", "none")
-                .style("pointer-events", "all")
-                .call(this.zoom);
+            this.initZoom();
         }
 
         var groups = this.chart
@@ -2350,11 +2405,6 @@ GroupedBarChart.prototype.constructor = GroupedBarChart;
                 .text(this.targetTooltipText)
                 .attr('class', 'tipValue');
         }
-    };
-
-    this.dragging = function() {
-
-        self.draw(true);
     };
 
 }
@@ -2862,8 +2912,6 @@ TimelineChart.prototype.constructor = TimelineChart;
 
         newBars.append("svg:text")
             .attr("class", "tipLabel");
-
-
 
         var trans = bars.transition()
             .duration(this.animationDuration);

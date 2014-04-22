@@ -30,16 +30,20 @@ var BarChart = function BarChart(name, element, dimension, group) {
                 return self.xFormatFunc(d);
             });
 
+        this.addClipPath();
+
+        if (this.zoomable()) {
+            this.initZoom();
+        }
+
         this.drawAxes();
+
 
         this.draw();
 
     };
 
-    this.draw = function() {
-
-        this.x.domain(this.keys())
-            .rangeRoundBands([0, this.xDomain()], this.barPadding());
+    this.draw = function(dragging) {
 
         if (self._redrawAxes) {
             this.y.domain([0, self.findMax()])
@@ -51,22 +55,23 @@ var BarChart = function BarChart(name, element, dimension, group) {
 
         this.drawRanges('behind');
 
-        this.drawBars();
+        this.drawBars(dragging);
 
         this.drawRanges('front');
 
-        this.drawTargets();
+        this.drawTargets(dragging);
 
         this.updateAxes();
-
     };
 
 
 
-    this.drawBars = function() {
+    this.drawBars = function(drag) {
 
-        bars = self.chart.selectAll("rect")
+        bars = self.chart.selectAll("rect.bar")
             .data(this.dataset(), this.matcher);
+
+        var duration = drag ? 0 : this.animationDuration;
 
         var newRows = bars.enter()
             .append("rect")
@@ -74,6 +79,7 @@ var BarChart = function BarChart(name, element, dimension, group) {
             .attr("fill", this.calculateBarColor)
             .attr("x", this.xPosition)
             .attr("y", this.yDomain())
+            .attr("clip-path", "url(#clip)")
             .attr("height", 0)
             .on("mouseover", function(d) {
                 self.mouseOver(self, this);
@@ -91,7 +97,7 @@ var BarChart = function BarChart(name, element, dimension, group) {
             .attr("class", "tipLabel");
 
         bars.transition()
-            .duration(this.animationDuration)
+            .duration(duration)
             .attr("x", this.xPosition)
             .attr("y", this.yPosition)
             .attr("width", this.barWidth)

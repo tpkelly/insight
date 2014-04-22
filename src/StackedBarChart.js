@@ -62,31 +62,10 @@ function StackedBarChart(name, element, dimension, group) {
                 return self.xFormatFunc(d);
             });
 
-
+        this.addClipPath();
 
         if (this.zoomable()) {
-
-            this.chart.append("clipPath")
-                .attr("id", "clip")
-                .append("rect")
-                .attr("x", 0)
-                .attr("y", 0)
-                .attr("width", this.width())
-                .attr("height", this.yDomain());
-
-            this.zoom = d3.behavior.zoom()
-                .on("zoom", this.dragging);
-
-            this.zoom.x(this.x);
-
-            this.chart.append("rect")
-                .attr("class", "pane")
-                .attr("width", this.width())
-                .attr("height", this.yDomain())
-                .on("click", self.clickEvent)
-                .style("fill", "none")
-                .style("pointer-events", "all")
-                .call(this.zoom);
+            this.initZoom();
         }
 
         var groups = this.chart
@@ -282,11 +261,6 @@ function StackedBarChart(name, element, dimension, group) {
                 .text(this.targetTooltipText)
                 .attr('class', 'tipValue');
         }
-    };
-
-    this.dragging = function() {
-
-        self.draw(true);
     };
 
 }

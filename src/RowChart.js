@@ -133,8 +133,6 @@ var RowChart = function RowChart(name, element, dimension, group) {
         newBars.append("svg:text")
             .attr("class", "tipLabel");
 
-
-
         var trans = bars.transition()
             .duration(this.animationDuration);
 

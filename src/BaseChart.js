@@ -1,7 +1,7 @@
-var BaseChart = function BaseChart(name, element, dimension, group) {
+var BaseChart = function BaseChart(name, element, dimension, data) {
     this.element = element;
     this.dimension = dimension;
-    this.group = group;
+    this.group = data;
     this._name = name;
     this._displayName = name;
 
@@ -87,7 +87,7 @@ var BaseChart = function BaseChart(name, element, dimension, group) {
 
 
     this.animationDuration = function(d, i) {
-        return this.duration + (i * 50);
+        return this.duration + (i);
     }.bind(this);
 
     this.rangeX = function(d, i) {
@@ -232,6 +232,41 @@ BaseChart.prototype.x = function(x) {
     return this;
 };
 
+BaseChart.prototype.initZoom = function() {
+    this.zoom = d3.behavior.zoom()
+        .on("zoom", this.dragging.bind(this));
+
+    this.zoom.x(this.x);
+
+    this.chart.append("rect")
+        .attr("class", "pane")
+        .attr("width", this.width())
+        .attr("height", this.yDomain())
+        .on("click", self.clickEvent)
+        .style("fill", "none")
+        .style("pointer-events", "all")
+        .call(this.zoom);
+};
+
+BaseChart.prototype.addClipPath = function() {
+
+    this.chart.append("clipPath")
+        .attr("id", "clip")
+        .append("rect")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", this.width())
+        .attr("height", this.yDomain());
+
+
+
+};
+
+BaseChart.prototype.dragging = function() {
+
+    this.draw(true);
+};
+
 BaseChart.prototype.setXAxisRange = function(rangeAccessor) {
     this._xRangeType = rangeAccessor(this.x);
     return this;
@@ -246,6 +281,14 @@ BaseChart.prototype.initializeAxes = function() {
 BaseChart.prototype.xDomainRange = function() {
     //default behaviour for x axis is to treat it as an orginal range using the dataset's keys
     return this.keys();
+};
+
+BaseChart.prototype.xRange = function(f) {
+    if (!arguments.length) {
+        return this.xDomainRange();
+    }
+    this.xDomainRange = f;
+    return this;
 };
 
 BaseChart.prototype.initializeYAxis = function(chart) {
@@ -691,7 +734,7 @@ BaseChart.prototype.tooltip = function() {
 BaseChart.prototype.filterKey = function() {};
 
 
-BaseChart.prototype.limitFunction = function(d) {
+BaseChart.prototype.limit = function(d) {
     if (!arguments.length) {
         return this._limitFunction;
     }
@@ -778,10 +821,11 @@ BaseChart.prototype.filterFunction = function(filter, element) {
 };
 
 BaseChart.prototype.filterClick = function(element, filter) {
+    if (this.dimension) {
+        var filterFunction = this.filterFunction(filter, element);
 
-    var filterFunction = this.filterFunction(filter, element);
-
-    this.filterEvent(this.dimension, filterFunction);
+        this.filterEvent(this.dimension, filterFunction);
+    }
 };
 
 
@@ -789,7 +833,7 @@ BaseChart.prototype.triggerRedraw = function() {
 
 };
 
-BaseChart.prototype.filterEvent = function(data, dimension, filter) {
+BaseChart.prototype.filterEvent = function(dimension, filter) {
 
 };
 
