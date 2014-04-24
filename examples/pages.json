@@ -1,0 +1,14 @@
+[
+    {
+        "name": "simplebar",
+        "pageName": "Simple Bar Chart",     
+        "script": "js/barChart.js",
+        "imageUrl": "images/barchart.png"
+    }, 
+    {
+        "name": "zoomableBar",
+        "pageName": "Zoomable Bar Chart", 
+        "script": "js/zoomableBar.js",
+        "imageUrl": "images/zoomableBar.png"
+    }
+]

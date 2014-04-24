@@ -1,9 +1,43 @@
 ﻿<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html ng-app="insightCharts" ng-controller="MainCtrl">
 <head>
-    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title ng:bind-template="{{title}}"> </title>
+    <script src="../bower_components/jquery/jquery.js"></script>
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../bower_components/crossfilter/crossfilter.js"></script>
+    <script src="../bower_components/d3/d3.js"></script>
+    <script src="../bower_components/angular-route/angular-route.js"></script>
+    <script src="../bower_components/angular-resource/angular-resource.js"></script>
+    <script type="text/javascript" src="./lib/InsightCharts.js"></script>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans|PT+Sans|Lato" />
+    <link href="css/prism.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/prism.js" data-manual></script>
+    <script src="lib/d3.tip.js" data-manual></script>
+    <script src="js/app.js"></script>
+    <script src="js/insightChartsControllers.js"></script>
+    <script src="js/insightChartsServices.js"></script>
 </head>
 <body>
+    <div id="content">
 
+        <header>
+            <a id="logo" href="#"><h1>Insight Charts</h1></a>
+            <p id="summary">
+                A Javascript chart library with support for dataset filtering.
+            </p>
+            <ul id="menu">
+                <li><a href="./">Examples</a></li>
+            </ul>
+        </header>
+
+        <div id="description">
+            <div ng-view class="view-frame"></div>
+        </div>
+        
+    </div>
+        
 </body>
+
 </html>
