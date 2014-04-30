@@ -1,34 +1,94 @@
-var BarChart = function BarChart(name, element, dimension, group) {
+function BarChart(name, element, dimension, group) {
 
     BaseChart.call(this, name, element, dimension, group);
 
     var self = this;
 
-    var bars;
+    this.xFormatFunc = function(d) {
+        return d;
+    };
+
+    var mouseOver = function(d, item) {
+        self.mouseOver(self, this, d);
+    };
+    var mouseOut = function(d, item) {
+        self.mouseOut(self, this, d);
+    };
+
+    this.xAxisFormat = function(f) {
+        this.xFormatFunc = f;
+        return this;
+    };
+
+
+    this.calculateYPos = function(func, d) {
+        if (!d.yPos) {
+            d.yPos = 0;
+        }
+
+        d.yPos += func(d);
+
+        return d.yPos;
+    };
+
+    this.calculateXPos = function(width, d) {
+        if (!d.xPos) {
+            d.xPos = self.xPosition(d);
+        } else {
+            d.xPos += width;
+        }
+        return d.xPos;
+    };
+
+    this.yPosition = function(d) {
+
+        var position = self.stackedBars() ? self.y(self.calculateYPos(self._valueAccessor, d)) : self.y(self._valueAccessor(d));
+
+        return position;
+    };
+
+    this.groupedBarWidth = function(d) {
+
+        var groupWidth = self.barWidth(d);
+
+        var width = self.stackedBars() || (_series
+            .length == 1) ? groupWidth : groupWidth / _series
+            .length;
+
+        return width;
+    };
+
+    this.offsetXPosition = function(d) {
+
+        var width = self.groupedBarWidth(d);
+        var position = self.stackedBars() ? self.xPosition(d) : self.calculateXPos(width, d);
+
+        return position;
+    };
+
+    this.stackedBars = function() {
+        return self.stacked() || (_series
+            .length == 1);
+    };
 
     this.init = function() {
 
+        var self = this;
+
         this.createChart();
-
-        this._currentMax = this.findMax();
-
         this.initializeAxes();
 
         this.yAxis = d3.svg.axis()
             .scale(this.y)
-            .orient("left")
+            .orient('left')
             .tickSize(0)
-            .tickFormat(function(d) {
-                return self._yAxisFormat(d);
-            });
+            .tickFormat(yAxisFormat);
 
         this.xAxis = d3.svg.axis()
             .scale(this.x)
-            .orient("bottom")
+            .orient('bottom')
             .tickSize(0)
-            .tickFormat(function(d) {
-                return self.xFormatFunc(d);
-            });
+            .tickFormat(xAxisFormat);
 
         this.addClipPath();
 
@@ -38,168 +98,68 @@ var BarChart = function BarChart(name, element, dimension, group) {
 
         this.drawAxes();
 
-
         this.draw();
-
     };
 
     this.draw = function(dragging) {
 
-        if (self._redrawAxes) {
-            this.y.domain([0, self.findMax()])
-                .rangeRound([this.height() - this.margin()
+        var self = this;
+
+        if (dragging && self.redrawAxes()) {
+            this.y.domain([0, d3.round(self.findMax(), 1)])
+                .range([this.height() - this.margin()
                     .top - this.margin()
                     .bottom, 0
                 ]);
         }
 
-        this.drawRanges('behind');
+        this.drawRanges(InsightConstants.Behind);
 
         this.drawBars(dragging);
 
-        this.drawRanges('front');
+        this.drawRanges(InsightConstants.Front);
 
         this.drawTargets(dragging);
 
         this.updateAxes();
     };
 
-
-
-    this.drawBars = function(drag) {
-
-        bars = self.chart.selectAll("rect.bar")
-            .data(this.dataset(), this.matcher);
-
-        var duration = drag ? 0 : this.animationDuration;
-
-        var newRows = bars.enter()
-            .append("rect")
-            .attr("class", "bar")
-            .attr("fill", this.calculateBarColor)
-            .attr("x", this.xPosition)
-            .attr("y", this.yDomain())
-            .attr("clip-path", "url(#clip)")
-            .attr("height", 0)
-            .on("mouseover", function(d) {
-                self.mouseOver(self, this);
-            })
-            .on("mouseout", function(d) {
-                self.mouseOut(self, this);
-            });
-
-        newRows.append("svg:text")
-            .text(this.tooltipText)
-            .attr("class", "tipValue");
-
-        newRows.append("svg:text")
-            .text(this._tooltipLabel)
-            .attr("class", "tipLabel");
-
-        bars.transition()
-            .duration(duration)
-            .attr("x", this.xPosition)
-            .attr("y", this.yPosition)
-            .attr("width", this.barWidth)
-            .attr("height", this.barHeight);
-
-        bars.selectAll("text.tipValue")
-            .text(this.tooltipText);
-
-    };
-
     this.drawAxes = function() {
-        var self = this;
 
-        this.chart.append("g")
-            .attr("class", "y-axis")
-            .call(this.yAxis);
-
-        this.chart.append("g")
-            .attr("transform", "translate(0," + (self.height() - self.margin()
-                .bottom - self.margin()
-                .top) + ")")
-            .attr("class", "x-axis");
-
-    };
-
-
-    this.updateAxes = function() {
-
-        this.chart.selectAll("g.y-axis")
+        this.chart.append('g')
+            .attr('class', InsightConstants.YAxisClass)
             .call(this.yAxis)
-            .selectAll("text")
-            .attr('class', 'axis-text');
+            .selectAll('text')
+            .attr('class', InsightConstants.AxisTextClass);
 
-        var xaxis = this.chart.selectAll("g.x-axis")
-            .call(this.xAxis);
 
-        xaxis.selectAll("text")
-            .style("text-anchor", "start")
-            .attr("transform", "rotate(90)")
+        this.chart.append('g')
+            .attr('class', InsightConstants.XAxisClass)
+            .attr('transform', 'translate(0,' + (self.height() - self.margin()
+                .bottom - self.margin()
+                .top) + ')')
+            .call(this.xAxis)
+            .selectAll('text')
+            .attr('class', InsightConstants.AxisTextClass)
+            .style('text-anchor', 'start')
+            .attr("transform", InsightConstants.XAxisRotation)
             .attr("dx", "10")
             .attr("dy", "0")
-            .on("mouseover", this.setHover)
-            .on("mouseout", this.removeHover)
-            .on("click", function(filter) {
+            .on('mouseover', this.setHover)
+            .on('mouseout', this.removeHover)
+            .on('click', function(filter) {
                 return self.filterClick(this, filter);
             });
-
-        xaxis.selectAll("text:not(.selected)")
-            .attr('class', 'axis-text');
-
     };
 
-    this.drawTargets = function() {
 
-        if (this._targets) {
-
-            this._targetAccessor = this._targets.calculation;
-
-            var targets = this.chart.selectAll("rect.target")
-                .data(this.targetData(), this.matcher);
-
-            var newTargets = targets
-                .enter()
-                .append("rect")
-                .attr("class", "target " + this._targets.name + "class")
-                .on("mouseover", function(d) {
-                    self.mouseOver(self, this);
-                })
-                .on("mouseout", function(d) {
-                    self.mouseOut(self, this);
-                });
-
-            newTargets.append("svg:text")
-                .text(this.targetTooltipText)
-                .attr("class", "tipValue");
-
-            newTargets.append("svg:text")
-                .text(this._targets.label)
-                .attr("class", "tipLabel");
-
-            targets
-                .transition()
-                .duration(this.animationDuration)
-                .attr("x", this.targetX)
-                .attr("y", this.targetY)
-                .attr("width", this.targetWidth)
-                .attr("height", 4)
-                .attr("fill", this._targets.color);
-
-
-            targets.selectAll("text.tipValue")
-                .text(this.targetTooltipText)
-                .attr("class", "tipValue");
-        }
-    };
 
 
     this.drawRanges = function(filter) {
 
-        var ranges = filter ? this._ranges.filter(function(range) {
+        var ranges = filter ? _ranges.filter(function(range) {
             return range.position == filter;
-        }) : this._ranges;
+        }) : _ranges;
 
         if (ranges) {
             for (var range in ranges) {
@@ -232,7 +192,138 @@ var BarChart = function BarChart(name, element, dimension, group) {
         return rangeSelector[0].length;
     };
 
-};
+    this.drawBars = function(drag) {
+
+        var reset = function(d) {
+            d.yPos = 0;
+            d.xPos = 0;
+        };
+
+        var groups = this.chart
+            .selectAll('g.' + InsightConstants.BarGroupClass)
+            .data(this.dataset(), this.matcher)
+            .each(reset);
+
+        var newGroups = groups.enter()
+            .append('g')
+            .attr('class', InsightConstants.BarGroupClass);
+
+        var newBars = newGroups.selectAll('rect.bar');
+
+        for (var seriesFunction in this.series()) {
+
+            this._valueAccessor = this.cumulative() ? _series[seriesFunction].cumulative : _series[seriesFunction].calculation;
+
+            newBars = newGroups.append('rect')
+                .attr('class', _series[seriesFunction].name + 'class bar')
+                .attr('y', this.yDomain())
+                .attr('height', 0)
+                .attr('fill', this.series()[seriesFunction].color())
+                .attr("clip-path", "url(#clip)")
+                .on('mouseover', mouseOver)
+                .on('mouseout', mouseOut);
+
+            newBars.append('svg:text')
+                .attr('class', InsightConstants.ToolTipTextClass);
+
+            newBars.append('svg:text')
+                .attr('class', InsightConstants.ToolTipLabelClass);
+
+            var duration = drag ? 0 : this.animationDuration;
+
+            var bars = groups.selectAll('.' + _series[seriesFunction].name + 'class.bar')
+                .transition()
+                .duration(duration)
+                .attr('y', this.yPosition)
+                .attr('x', this.offsetXPosition)
+                .attr('width', this.groupedBarWidth)
+                .attr('height', this.barHeight);
+
+
+            bars.selectAll("." + InsightConstants.ToolTipTextClass)
+                .text(this.tooltipText);
+
+            bars.selectAll("." + InsightConstants.ToolTipLabelClass)
+                .text(this.series()[seriesFunction].label);
+        }
+
+    };
+
+
+    this.updateAxes = function() {
+
+        var xaxis = this.chart.selectAll('g.x-axis')
+            .call(this.xAxis);
+
+        xaxis
+            .selectAll("text")
+            .style('text-anchor', 'start')
+            .attr("transform", InsightConstants.XAxisRotation)
+            .attr("dx", "10")
+            .attr("dy", "0")
+            .on('mouseover', this.setHover)
+            .on('mouseout', this.removeHover)
+            .on('click', function(filter) {
+                return self.filterClick(this, filter);
+            });
+
+        xaxis
+            .selectAll("text:not(.selected)")
+            .attr('class', 'x-axis axis-text');
+
+
+        this.chart.selectAll('.y-axis')
+            .call(this.yAxis)
+            .selectAll('text')
+            .attr('class', 'axis-text');
+
+    };
+
+    this.drawTargets = function() {
+
+        if (_targets) {
+
+            this._targetAccessor = _targets.calculation;
+
+            var targets = this.chart.selectAll("rect.target")
+                .data(this.targetData(), this.matcher);
+
+            var newTargets = targets
+                .enter()
+                .append("rect")
+                .attr("class", "target " + _targets.name + "class")
+                .on("mouseover", function(d) {
+                    self.mouseOver(self, this);
+                })
+                .on("mouseout", function(d) {
+                    self.mouseOut(self, this);
+                });
+
+            newTargets.append("svg:text")
+                .text(this.targetTooltipText)
+                .attr("class", InsightConstants.ToolTipTextClass);
+
+            newTargets.append("svg:text")
+                .text(_targets.label)
+                .attr("class", InsightConstants.ToolTipLabelClass);
+
+            targets
+                .transition()
+                .duration(this.animationDuration)
+                .attr("x", this.targetX)
+                .attr("y", this.targetY)
+                .attr("width", this.targetWidth)
+                .attr("height", 4)
+                .attr("fill", _targets.color);
+
+
+            targets.selectAll("." + InsightConstants.ToolTipTextClass)
+                .text(this.targetTooltipText)
+                .attr("class", InsightConstants.ToolTipTextClass);
+        }
+    };
+
+}
 
 
 BarChart.prototype = Object.create(BaseChart.prototype);

@@ -48,13 +48,13 @@ var series = [
             name: 'value',
             label: 'Value', 
             calculation: function (d) { return d.value; }, 
-            color: '#acc3ee'
+            color: function(d) { return '#acc3ee'; }
         },
         {
             name: 'another',
             label: 'Another',  
             calculation: function (d) { return d.another; }, 
-            color: '#e67e22'
+            color: function(d) { return '#e67e22'; }
         }
     ];
 
@@ -96,8 +96,17 @@ var targets =
         data: group
     };
 
+var div = document.createElement("div");
+div.id  = 'testChart';
 
+var createChartElement = function(){
+     
+    document.body.appendChild(div);        
+};
 
+var removeChartElement = function(){
+    document.body.removeChild(div);
+};
 
 describe("Group tests", function() {
 
@@ -150,10 +159,52 @@ describe("Base Chart Tests", function() {
 
     it("height should be correct", function() {
         
-        var chart = new BarChart("asd", "asda", "asdads", "ada");
+        var chart = new BarChart("#asd", "asda", "asdads", "ada");
         chart.height(300);
         expect(chart.height()).toBe(300);
     });
+
+    it("bar width for single series is correct", function() {
+        
+        createChartElement();
+
+        var chart = new BarChart("testChart", "#testChart", null, group);
+
+        chart.width(100);
+        chart.barPadding(0);
+
+        chart.init();
+
+        var calculatedBarWidth = chart.barWidth(dataset[0]);
+
+        expect(calculatedBarWidth).toBe(20);
+
+        removeChartElement();
+    });
+
+    it("bar width for two series is correctly half of the group width", function() {
+        
+        createChartElement();
+
+        var chart = new BarChart("testChart", "#testChart", null, group)
+                        .series(series);
+
+        chart.width(100);
+        chart.barPadding(0);
+
+        chart.init();
+
+        var dataPoint = dataset[0];
+
+        var calculatedBarWidth = chart.barWidth(dataPoint);
+        var groupedBarWidth = chart.groupedBarWidth(dataPoint);
+
+        expect(calculatedBarWidth).toBe(20);
+        expect(groupedBarWidth).toBe(10);
+
+        removeChartElement();
+    });
+
 
     it("both dimensions should be correct", function() {
         
@@ -204,8 +255,7 @@ describe("Base Chart Tests", function() {
         var chart = new BarChart("Name", "asda", "asdads", "ada")
                             .barColor('blue');
 
-        expect(chart.barColor()).toBe('blue');
-        expect(chart.calculateBarColor({})).toBe('blue');
+        expect(chart.calculateBarColor()).toBe('blue');
     });
 
     it("bar colour can be set with a function", function() {
@@ -218,7 +268,6 @@ describe("Base Chart Tests", function() {
         var chart = new BarChart("Name", "asda", "asdads", "ada")
                             .barColor(colorFunc);
 
-        expect(chart.barColor()).toBe(colorFunc);
         expect(chart.calculateBarColor(1)).toBe('red');
     });
 
@@ -302,7 +351,6 @@ describe("Base Chart Tests", function() {
         
         var chart = new BarChart("asd", "asda", "asdads", "ada")
                 .cumulative(true);
-
     });
 
 
@@ -378,7 +426,7 @@ describe("Base Chart Tests", function() {
     it("can calculate maximum when using a stacked series", function() {
         
         var chart = new BarChart("asd", "asda", "asdads", group)
-                        .stackedSeries(series)
+                        .series(series)
                         .targets(targets);
 
         expect(chart.findMax()).toBe(5700);
@@ -386,9 +434,6 @@ describe("Base Chart Tests", function() {
 
     it("can calculate maximum when using ranges, when range isn't largest value", function() {
         
-        
-        
-
         var maxRange = function (chart) {
                 return d3.svg.area()
                         .x(chart.rangeX)
@@ -398,7 +443,7 @@ describe("Base Chart Tests", function() {
 
 
         var chart = new BarChart("asd", "asda", "asdads", group)
-                        .stackedSeries(series)
+                        .series(series)
                         .ranges(ranges)
                         .targets(targets);
 
@@ -420,7 +465,7 @@ describe("Base Chart Tests", function() {
 
 
        var chart = new BarChart("asd", "asda", "asdads", group)
-                        .stackedSeries(series)
+                        .series(series)
                         .ranges(ranges)
                         .targets(targets);
 

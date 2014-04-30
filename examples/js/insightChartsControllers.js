@@ -27,8 +27,15 @@ insightChartsControllers.controller('Example', ['$scope', '$routeParams', 'Examp
             $.ajax(
                 {
                     url: script,
+                    dataType:'html',
                     success: function(result){
                         $('#source').text(result);
+
+                        var script   = document.createElement("script");
+                        script.type  = "text/javascript";
+                        script.text  = result;
+                        document.body.appendChild(script);
+
                         Prism.highlightAll();
                     }
                 }

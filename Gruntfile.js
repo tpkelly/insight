@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-  var sourceFiles = ['src/Group.js', 'src/Dimension.js', 'src/InsightCharts.Formatters.js', 'src/ChartGroup.js', 'src/BaseChart.js', 'src/Legend.js', 'src/DataTable.js', 'src/BarChart.js', 'src/MultipleChart.js', 'src/GroupedBarChart.js', 'src/StackedBarChart.js', 'src/Timeline.js', 'src/BaseChart.js','src/TimelineChart.js', 'src/RowChart.js', 'src/PartitionChart.js'];
+  var sourceFiles = ['src/Group.js', 'src/Dimension.js', 'src/InsightCharts.Formatters.js', 'src/InsightCharts.Constants.js', 'src/ChartGroup.js', 'src/BaseChart.js', 'src/Legend.js', 'src/DataTable.js', 'src/BarChart.js', 'src/MultipleChart.js', 'src/GroupedBarChart.js', 'src/StackedBarChart.js', 'src/Timeline.js', 'src/BaseChart.js','src/TimelineChart.js', 'src/RowChart.js', 'src/PartitionChart.js'];
 
 
   // Livereload and connect variables
@@ -100,7 +100,7 @@ module.exports = function(grunt) {
             src: sourceFiles,
             options: {
                 specs: 'tests/*spec.js',
-                vendor: ['./lib/jquery-1.10.2.js', './lib/d3.v3.js', './lib/crossfilter.js', './lib/knockout-3.0.0.js', './lib/d3.tip.js'],
+                vendor: ['./bower_components/jquery/jquery.js', './bower_components/d3/d3.js', './bower_components/crossfilter/crossfilter.js', './lib/d3.tip.js'],
                 keepRunner: true
             }
         }
