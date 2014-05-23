@@ -258,6 +258,18 @@ describe("Base Chart Tests", function() {
         expect(chart.calculateBarColor()).toBe('blue');
     });
 
+    it("multiple charts allow specific properties", function() {
+        
+        var chart = new BarChart("Name", "asda", "asdads", "ada")
+                            .barColor('blue');
+
+        var chart2 = new BarChart("Name", "asda", "asdads", "ada")
+                            .barColor('red');
+
+        expect(chart.calculateBarColor()).toBe('blue');
+        expect(chart2.calculateBarColor()).toBe('red');
+    });
+
     it("bar colour can be set with a function", function() {
         
         var colorFunc = function(d){
@@ -269,6 +281,7 @@ describe("Base Chart Tests", function() {
                             .barColor(colorFunc);
 
         expect(chart.calculateBarColor(1)).toBe('red');
+        expect(chart.calculateBarColor(0)).toBe('black');
     });
 
 

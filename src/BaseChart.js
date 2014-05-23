@@ -5,7 +5,7 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     this.dimension = dimension;
     this.group = data;
     this._name = name;
-    displayName = d3.functor(name);
+    var displayName = d3.functor(name);
 
     this.x = d3.scale.ordinal();
     this.y = d3.scale.linear();
@@ -18,20 +18,20 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
         return d.value;
     };
 
-    height = d3.functor(300);
-    width = d3.functor(300);
-    stacked = d3.functor(false);
-    cumulative = d3.functor(false);
-    redrawAxes = d3.functor(false);
-    barPadding = d3.functor(0.2);
-    labelPadding = d3.functor(20);
-    labelFontSize = d3.functor("11px");
-    ordered = d3.functor(false);
-    orderable = d3.functor(false);
-    barColor = d3.functor('blue');
-    invert = d3.functor(false);
+    var height = d3.functor(300);
+    var width = d3.functor(300);
+    var stacked = d3.functor(false);
+    var cumulative = d3.functor(false);
+    var redrawAxes = d3.functor(false);
+    var barPadding = d3.functor(0.2);
+    var labelPadding = d3.functor(20);
+    var labelFontSize = d3.functor("11px");
+    var ordered = d3.functor(false);
+    var orderable = d3.functor(false);
+    var barColor = d3.functor('blue');
+    var invert = d3.functor(false);
 
-    tooltipLabel = d3.functor("Value");
+    var tooltipLabel = d3.functor("Value");
 
     this._currentMax = 0;
 
@@ -58,14 +58,15 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
             return self.tooltipLabel();
         },
         calculation: self._valueAccessor,
-        color: function() {
-            return self.barColor();
+        color: function(d) {
+            //console.log(barColor);
+            return barColor(d);
         }
     };
 
-    _series = [this._defaultSeries];
-    _targets = null;
-    _ranges = [];
+    var _series = [this._defaultSeries];
+    var _targets = null;
+    var _ranges = [];
 
     this._targetAccessor = function(d) {
         return d.value;
@@ -407,16 +408,17 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
 
         var func;
 
-        for (var seriesFunction in _series) {
-            func = this.cumulative() ? _series[seriesFunction].cumulative : _series[seriesFunction].calculation;
+        for (var seriesFunction in this.series()) {
+            func = this.cumulative() ? this.series()[seriesFunction].cumulative : this.series()[seriesFunction].calculation;
             value += func(d);
             this._currentMax = value > this._currentMax ? value : this._currentMax;
         }
 
 
-        if (_ranges.length) {
-            for (var rangeFunction in _ranges) {
-                func = _ranges[rangeFunction].calculation;
+        if (this.ranges()
+            .length) {
+            for (var rangeFunction in this.ranges()) {
+                func = this.ranges()[rangeFunction].calculation;
                 value = func(d);
                 this._currentMax = value > this._currentMax ? value : this._currentMax;
             }
@@ -459,10 +461,10 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
         var hasValue = 0;
         var func;
 
-        if (_series
+        if (this.series()
             .length) {
-            for (var seriesFunction in _series) {
-                func = this.cumulative() ? _series[seriesFunction].cumulative : _series[seriesFunction].calculation;
+            for (var seriesFunction in this.series()) {
+                func = this.cumulative() ? this.series()[seriesFunction].cumulative : this.series()[seriesFunction].calculation;
 
                 hasValue = hasValue | (Math.round(func(d), 1) > 0);
             }

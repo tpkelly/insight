@@ -28,5 +28,11 @@
         "pageName": "Stacked Bar with Target", 
         "script": "js/targets.js",
         "imageUrl": "images/stackedTarget.png"
+    },
+    {
+        "name": "Dataset",
+        "pageName": "Crossfiltered Charts", 
+        "script": "js/dataset.js",
+        "imageUrl": "images/crossfilter.png"
     }
 ]

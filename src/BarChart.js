@@ -51,8 +51,8 @@ function BarChart(name, element, dimension, group) {
 
         var groupWidth = self.barWidth(d);
 
-        var width = self.stackedBars() || (_series
-            .length == 1) ? groupWidth : groupWidth / _series
+        var width = self.stackedBars() || (self.series()
+            .length == 1) ? groupWidth : groupWidth / self.series()
             .length;
 
         return width;
@@ -67,7 +67,7 @@ function BarChart(name, element, dimension, group) {
     };
 
     this.stackedBars = function() {
-        return self.stacked() || (_series
+        return self.stacked() || (this.series()
             .length == 1);
     };
 
@@ -157,9 +157,10 @@ function BarChart(name, element, dimension, group) {
 
     this.drawRanges = function(filter) {
 
-        var ranges = filter ? _ranges.filter(function(range) {
-            return range.position == filter;
-        }) : _ranges;
+        var ranges = filter ? this.ranges()
+            .filter(function(range) {
+                return range.position == filter;
+            }) : this.ranges();
 
         if (ranges) {
             for (var range in ranges) {
@@ -210,15 +211,18 @@ function BarChart(name, element, dimension, group) {
 
         var newBars = newGroups.selectAll('rect.bar');
 
+        console.log(this);
+
         for (var seriesFunction in this.series()) {
 
-            this._valueAccessor = this.cumulative() ? _series[seriesFunction].cumulative : _series[seriesFunction].calculation;
+            this._valueAccessor = this.cumulative() ? this.series()[seriesFunction].cumulative : this.series()[seriesFunction].calculation;
+
 
             newBars = newGroups.append('rect')
-                .attr('class', _series[seriesFunction].name + 'class bar')
+                .attr('class', this.series()[seriesFunction].name + 'class bar')
                 .attr('y', this.yDomain())
                 .attr('height', 0)
-                .attr('fill', this.series()[seriesFunction].color())
+                .attr('fill', this.series()[seriesFunction].color)
                 .attr("clip-path", "url(#clip)")
                 .on('mouseover', mouseOver)
                 .on('mouseout', mouseOut);
@@ -231,7 +235,7 @@ function BarChart(name, element, dimension, group) {
 
             var duration = drag ? 0 : this.animationDuration;
 
-            var bars = groups.selectAll('.' + _series[seriesFunction].name + 'class.bar')
+            var bars = groups.selectAll('.' + this.series()[seriesFunction].name + 'class.bar')
                 .transition()
                 .duration(duration)
                 .attr('y', this.yPosition)
@@ -246,7 +250,6 @@ function BarChart(name, element, dimension, group) {
             bars.selectAll("." + InsightConstants.ToolTipLabelClass)
                 .text(this.series()[seriesFunction].label);
         }
-
     };
 
 
@@ -281,7 +284,7 @@ function BarChart(name, element, dimension, group) {
 
     this.drawTargets = function() {
 
-        if (_targets) {
+        if (this.targets()) {
 
             this._targetAccessor = _targets.calculation;
 
@@ -322,7 +325,6 @@ function BarChart(name, element, dimension, group) {
                 .attr("class", InsightConstants.ToolTipTextClass);
         }
     };
-
 }
 
 

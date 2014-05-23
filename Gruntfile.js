@@ -28,9 +28,10 @@ module.exports = function(grunt) {
                 server: {
                   options: {
                     port: 8999,
+                    base: 'examples',
                     hostname: 'localhost',
                     middleware: function( connect ) {
-                        return [lrSnippet, mountFolder(connect, '.')];
+                        return [lrSnippet, mountFolder(connect, 'examples')];
                     }                    
                 }
               },
@@ -38,7 +39,7 @@ module.exports = function(grunt) {
     },
     open: {
            dev:{
-            path: 'http://localhost:<%= connect.server.options.port %>/_SpecRunner.html'
+            path: 'http://localhost:<%= connect.server.options.port %>'
           }
     },
     uglify: {
@@ -91,8 +92,18 @@ module.exports = function(grunt) {
       },
       {
         expand: true, flatten:true, src: ['dist/*'], dest: 'C:\\nstavrakakis\\dashboard\\lib\\insightcharts\\', filter: 'isFile'
+      },
+      {
+        expand: true, filter: 'isFile', flatten: true, dest: 'examples\\lib\\' , src: ['./bower_components/jquery/jquery.js', './bower_components/angular/angular.js', './bower_components/crossfilter/crossfilter.js', './bower_components/d3/d3.js', './bower_components/angular-route/angular-route.js', './bower_components/angular-route/angular-route.js', './bower_components/angular-resource/angular-resource.js']
       }
     ]
+    },
+    deploy:{
+      files: [
+        {
+          expand: true, flatten:false, src: ['examples/*'], dest: 'C:\\inetpub\\wwwroot\\insight\\'
+        }
+      ]
     }
 	},
   jasmine: {
@@ -107,7 +118,7 @@ module.exports = function(grunt) {
     },
     watch: {
       files: ['<%= jshint.files %>', 'tests/*.spec.js'],
-      tasks: ['jsbeautifier', 'jshint', 'concat', 'uglify', 'jasmine', 'copy'],
+      tasks: ['jsbeautifier', 'jshint', 'concat', 'uglify', 'jasmine', 'copy:main'],
       options: {
                 livereload: true
             }
@@ -124,6 +135,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jsbeautifier');
   grunt.loadNpmTasks('grunt-contrib-connect');
 
-  grunt.registerTask('default', ['jsbeautifier', 'jshint', 'concat', 'uglify', 'connect:server', 'open:dev', 'copy', 'watch']);
-
+  grunt.registerTask('default', ['jsbeautifier', 'jshint', 'concat', 'uglify', 'copy:main', 'connect:server', 'open:dev', 'copy:main', 'watch']);
+  grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'concat', 'uglify', 'copy:deploy']);
 };
