@@ -10,6 +10,7 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     this.x = d3.scale.ordinal();
     this.y = d3.scale.linear();
 
+
     this._keyAccessor = function(d) {
         return d.key;
     };
@@ -229,7 +230,6 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     this.calculateBarColor = function(d) {
 
         return barColor(d);
-
     };
 
     this.zoomable = function(_) {
@@ -797,9 +797,6 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
         labelFontSize = d3.functor(_);
         return this;
     };
-
-
-
 
 
     this.labelAnchoring = function(d) {

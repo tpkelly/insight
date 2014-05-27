@@ -24,9 +24,11 @@ $(document).ready(function(){
     var countryDimension = exampleGroup.addDimension(ndx, "country", countryFunc, countryFunc);
     var voteDimension = exampleGroup.addDimension(ndx, "vote", voteFunc, voteFunc);
 
-    var countryGrouping = exampleGroup.addSumGrouping(countryDimension, valueFunc)
-    var voteGrouping = exampleGroup.addSumGrouping(voteDimension, valueFunc)
+    var countryGrouping = exampleGroup.aggregate(countryDimension, valueFunc)
+    var voteGrouping = exampleGroup.aggregate(voteDimension, valueFunc)
     
+
+
     var colourFunc = function(d){ 
         var colour = d.key == 'Yes' ? '#33ce74' : '#d35400';
         return colour; 

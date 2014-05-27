@@ -6,15 +6,15 @@ var insightChartsControllers = angular.module('insightChartsControllers', []);
 
 insightChartsControllers.controller('Index', ['$scope', 'Examples',
     function($scope, Examples) {
-        $scope.title = "moo";
         $scope.examples = Examples.query();
     } 
   ]
 );
 
-insightChartsControllers.controller('MainCtrl', ['$scope',
-    function($scope) {
+insightChartsControllers.controller('MainCtrl', ['$scope', 'Examples',
+    function($scope, Examples) {
         $scope.title = "Index";
+        $scope.examples = Examples.query();
     } 
   ]
 );

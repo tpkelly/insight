@@ -2,6 +2,10 @@ function BarChart(name, element, dimension, group) {
 
     BaseChart.call(this, name, element, dimension, group);
 
+
+    this.y2 = null;
+
+
     var self = this;
 
     this.xFormatFunc = function(d) {

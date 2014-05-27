@@ -29,7 +29,7 @@ ChartGroup.prototype.addChart = function(chart) {
 };
 
 ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc) {
-    var dimension = new Dimension(name, ndx.dimension(func), displayFunc);
+    var dimension = new Dimension(name, func, ndx.dimension(func), displayFunc);
 
     this.Dimensions.push(dimension);
 
@@ -136,6 +136,31 @@ ChartGroup.prototype.redrawCharts = function() {
     }
 };
 
+
+ChartGroup.prototype.aggregate = function(dimension, input) {
+
+    var group;
+
+    if (input instanceof Array) {
+
+        group = this.multiReduceSum(dimension, input);
+
+        this.Groups.push(group);
+
+    } else {
+
+        var data = dimension.Dimension.group()
+            .reduceSum(input);
+
+        group = new Group(data);
+
+        this.Groups.push(group);
+    }
+
+    return group;
+};
+
+
 ChartGroup.prototype.addSumGrouping = function(dimension, func) {
     var data = dimension.Dimension.group()
         .reduceSum(func);
@@ -184,7 +209,6 @@ ChartGroup.prototype.multiReduceSum = function(dimension, properties) {
     );
     var group = new Group(data);
 
-    this.Groups.push(group);
     return group;
 };
 

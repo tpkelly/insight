@@ -73,6 +73,10 @@ body {
     text-decoration: none;
 }
 
+#menu li ul {
+    padding-left: 1em;
+}
+
 h1
 {
     font-size: 1.8em;
@@ -100,7 +104,6 @@ p{
     width: 300px;
     float: left;
     margin: 0 1em 1em 0;
-    background: #4A4E52;
 }
 .chartthumb img
 {
