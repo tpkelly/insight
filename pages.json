@@ -3,36 +3,36 @@
         "name": "simplebar",
         "pageName": "Simple Bar Chart",     
         "script": "js/barChart.js",
-        "imageUrl": "images/barchart.png"
+        "imageUrl": "images/barchart.PNG"
     }, 
     {
         "name": "zoomableBar",
         "pageName": "Zoomable Bar Chart", 
         "script": "js/zoomableBar.js",
-        "imageUrl": "images/zoomableBar.png"
+        "imageUrl": "images/zoomableBar.PNG"
     },
     {
         "name": "stackedGroupedBar",
         "pageName": "Stacked & Grouped Bar Chart", 
         "script": "js/stackedBar.js",
-        "imageUrl": "images/stackedBar.png"
+        "imageUrl": "images/stackedBar.PNG"
     },
     {
         "name": "rangeTarget",
         "pageName": "Ranges & Targets", 
         "script": "js/rangeTarget.js",
-        "imageUrl": "images/rangeTarget.png"
+        "imageUrl": "images/rangeTarget.PNG"
     },
     {
         "name": "stackedWithTarget",
         "pageName": "Stacked Bar with Target", 
         "script": "js/targets.js",
-        "imageUrl": "images/stackedTarget.png"
+        "imageUrl": "images/stackedTarget.PNG"
     },
     {
         "name": "Dataset",
         "pageName": "Crossfiltered Charts", 
         "script": "js/dataset.js",
-        "imageUrl": "images/crossfilter.png"
+        "imageUrl": "images/crossfilter.PNG"
     }
 ]
