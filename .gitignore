@@ -2,7 +2,8 @@
 .grunt
 .git-rewrite
 bower_components
-.grunt/
+.grunt
 .git-rewrite/
 node_modules/
 .git-rewrite/
+*.sublime-*
