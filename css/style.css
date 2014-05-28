@@ -25,6 +25,10 @@ img
     overflow: hidden;
 }
 
+#snippet 
+{
+    font-size: 18px;    
+}
 
 .exampleChart {
     user-select: none;
