@@ -2,7 +2,7 @@
     {
         "name": "simplebar",
         "pageName": "Simple Bar Chart",     
-        "script": "js/barChart.js",
+        "script": "js/barchart.js",
         "imageUrl": "images/barchart.PNG"
     }, 
     {
