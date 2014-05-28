@@ -65,10 +65,9 @@ $(document)
         exampleGroup.initCharts();
 
 
-        $('#description h1')
+        $('h1.exampleTitle')
             .css('cursor', 'pointer')
             .click(function(d) {
-
                 barChart.stacked(!barChart.stacked());
                 barChart.draw();
             });

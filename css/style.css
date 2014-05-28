@@ -14,13 +14,6 @@ img
     max-width: 100%; 
 }
 
-.exampleTitle
-{
-    line-height: 3em;
-    color: #fff;
-    text-align: center;
-}
-
 #source {
     font-size: 12px;
 }
@@ -34,9 +27,6 @@ img
 
 
 .exampleChart {
-    text-align: center;
-    font-family: "Open Sans";
-    margin: 3em 0;
     user-select: none;
     -webkit-user-select: none;
     -mox-user-select: none;
@@ -44,11 +34,6 @@ img
 
 .exampleChart svg {
     font-size: 12px;
-}
-
-.exampleChart .title {
-    text-align: center;
-    font-weight: bold;
 }
 
 .d3-tip

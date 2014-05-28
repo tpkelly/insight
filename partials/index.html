@@ -1,8 +1,19 @@
-    
-<a ng-repeat="example in examples" href="#/example/{{example.name}}">
-  <div class="col-xs-6 col-sm-3">
-    <img src="{{example.imageUrl}}"/>
-  </div>
-</a>
+<div class="jumbotron">
+    <div class="container">
+        <h1>Insight Charts</h1>
+        <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
+        <p>
+            <a class="btn btn-primary btn-lg" role="button" href="#">Examples »</a>
+        </p>
 
-
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <a ng-repeat="example in examples" class="col-xs-6 col-sm-3 col-lg-3" href="#/example/{{example.name}}">
+            <div class="">
+                <img src="{{example.imageUrl}}" />
+            </div>
+        </a>
+    </div>
+</div>

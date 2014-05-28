@@ -48,7 +48,7 @@ module.exports = function(grunt) {
             }
         },
         "jsbeautifier": {
-            files: ["./**/*.js"],
+            files: ["./js/*.js", "./**/*.html"],
             options: {
                 js: {
                     braceStyle: 'collapse',
@@ -56,11 +56,21 @@ module.exports = function(grunt) {
                     indentSize: 4,
                     evalCode: true,
                     breakChainedMethods: true
+                },
+                html: {
+                    braceStyle: "collapse",
+                    indentChar: " ",
+                    indentScripts: "keep",
+                    indentSize: 4,
+                    maxPreserveNewlines: 10,
+                    preserveNewlines: true,
+                    unformatted: ["a", "sub", "sup", "b", "i", "u"],
+                    wrapLineLength: 0
                 }
             }
         },
         watch: {
-            files: ['<%= jshint.files %>', 'tests/*.spec.js'],
+            files: ['<%= jshint.files %>', './**/*.html', 'tests/*.spec.js'],
             tasks: ['jsbeautifier', 'jshint'],
             options: {
                 livereload: true
