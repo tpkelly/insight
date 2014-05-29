@@ -25,7 +25,7 @@ function BulletChart(name, element, dimension, group) {
     this.xAxis = d3.svg.axis()
         .scale(this.x)
         .orient("bottom")
-        .tickSize(0)
+        .tickSize(self.tickSize())
         .tickPadding(10);
 
 

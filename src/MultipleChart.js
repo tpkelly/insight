@@ -12,13 +12,13 @@ var MultipleChart = function MultipleChart(name, element, dimension, group, char
     this.yAxis = d3.svg.axis()
         .scale(this.y)
         .orient("left")
-        .tickSize(0)
+        .tickSize(self.tickSize())
         .tickPadding(10);
 
     this.xAxis = d3.svg.axis()
         .scale(this.x)
         .orient("bottom")
-        .tickSize(0)
+        .tickSize(self.tickSize())
         .tickPadding(10)
         .tickFormat(function(d) {
             return self.xFormatFunc(d);

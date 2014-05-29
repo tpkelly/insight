@@ -31,6 +31,8 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     var orderable = d3.functor(false);
     var barColor = d3.functor('blue');
     var invert = d3.functor(false);
+    var tickSize = d3.functor(0);
+    var tickPadding = d3.functor(10);
 
     var tooltipLabel = d3.functor("Value");
 
@@ -162,6 +164,7 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
             .bottom;
     };
 
+
     this.xDomain = function() {
         return self.width() - self.margin()
             .left - self.margin()
@@ -247,6 +250,23 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
         displayName = d3.functor(_);
         return this;
     };
+
+    this.tickSize = function(_) {
+        if (!arguments.length) {
+            return tickSize();
+        }
+        tickSize = d3.functor(_);
+        return this;
+    };
+
+    this.tickPadding = function(_) {
+        if (!arguments.length) {
+            return tickPadding();
+        }
+        tickPadding = d3.functor(_);
+        return this;
+    };
+
 
     this.width = function(_) {
         if (!arguments.length) {

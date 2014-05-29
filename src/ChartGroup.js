@@ -95,8 +95,8 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
                         });
 
                     return vals.filter(function(result) {
-                        return result;
-                    })
+                            return result;
+                        })
                         .length;
                 });
             }
@@ -206,7 +206,7 @@ ChartGroup.prototype.multiReduceSum = function(dimension, properties) {
                 }
                 return p;
             }
-    );
+        );
     var group = new Group(data);
 
     return group;
@@ -241,7 +241,7 @@ ChartGroup.prototype.multiReduceCount = function(dimension, property) {
                     Total: 0
                 };
             }
-    );
+        );
 
     var group = new Group(data);
     this.Groups.push(group);

@@ -56,7 +56,7 @@ function BarChart(name, element, dimension, group) {
         var groupWidth = self.barWidth(d);
 
         var width = self.stackedBars() || (self.series()
-            .length == 1) ? groupWidth : groupWidth / self.series()
+                .length == 1) ? groupWidth : groupWidth / self.series()
             .length;
 
         return width;
@@ -85,13 +85,15 @@ function BarChart(name, element, dimension, group) {
         this.yAxis = d3.svg.axis()
             .scale(this.y)
             .orient('left')
-            .tickSize(0)
+            .tickSize(self.tickSize())
+            .tickPadding(self.tickPadding())
             .tickFormat(yAxisFormat);
 
         this.xAxis = d3.svg.axis()
             .scale(this.x)
             .orient('bottom')
-            .tickSize(0)
+            .tickSize(self.tickSize())
+            .tickPadding(self.tickPadding())
             .tickFormat(xAxisFormat);
 
         this.addClipPath();

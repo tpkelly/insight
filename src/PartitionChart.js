@@ -6,9 +6,9 @@ function PartitionChart(name, element, dimension, group) {
     var w = 1120,
         h = 600,
         x = d3.scale.linear()
-            .range([0, w]),
+        .range([0, w]),
         y = d3.scale.linear()
-            .range([0, h]);
+        .range([0, h]);
 
     this.vis = d3.select(this.element)
         .append("div")

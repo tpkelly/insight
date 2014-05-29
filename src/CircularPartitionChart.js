@@ -159,7 +159,7 @@ function CircularPartitionChart(name, element, dimension, group) {
         var enterArc,
             exitArc,
             outsideAngle = d3.scale.linear()
-                .domain([0, 2 * Math.PI]);
+            .domain([0, 2 * Math.PI]);
 
         function insideArc(d) {
             return p.key > d.key ? {

@@ -10,14 +10,14 @@ var RowChart = function RowChart(name, element, dimension, group) {
     this.yAxis = d3.svg.axis()
         .scale(this.y)
         .orient("left")
-        .tickSize(0)
-        .tickPadding(10);
+        .tickSize(self.tickSize())
+        .tickPadding(self.tickPadding());
 
     this.xAxis = d3.svg.axis()
         .scale(this.x)
         .orient("bottom")
-        .tickSize(0)
-        .tickPadding(10)
+        .tickSize(self.tickSize())
+        .tickPadding(self.tickPadding())
         .tickFormat(function(d) {
             return self.xFormatFunc(d);
         });

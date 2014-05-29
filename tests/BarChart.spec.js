@@ -164,6 +164,55 @@ describe("Base Chart Tests", function() {
         expect(chart.height()).toBe(300);
     });
 
+    it("default tick padding is 10", function(){
+
+        createChartElement();
+
+        var chart = new BarChart("testChart", "#testChart", null, group);
+        
+        chart.init();
+        
+        expect(chart.tickPadding()).toBe(10);
+    });
+
+
+    it("custom tick padding works correctly", function(){
+
+        createChartElement();
+
+        var chart = new BarChart("testChart", "#testChart", null, group);
+        
+        chart.tickPadding(15);
+
+        chart.init();
+        
+        expect(chart.tickPadding()).toBe(15);
+    });
+
+    it("default tick size is 0", function(){
+
+        createChartElement();
+
+        var chart = new BarChart("testChart", "#testChart", null, group);
+        
+        chart.init();
+
+        expect(chart.tickSize()).toBe(0);
+    });
+
+    it("settings tick size works correctly", function(){
+
+        createChartElement();
+
+        var chart = new BarChart("testChart", "#testChart", null, group);
+        chart.tickSize(5);
+        
+        chart.init();
+
+        expect(chart.tickSize()).toBe(5);
+    });
+
+
     it("bar width for single series is correct", function() {
         
         createChartElement();

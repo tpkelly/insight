@@ -81,31 +81,6 @@ module.exports = function(grunt) {
       }
     }
   },
-  copy: {
-    main: {
-      files: [
-      {
-        expand: true, flatten:true, src: ['dist/*'], dest: 'C:\\Users\\nstavrakakis\\Documents\\visual studio 2013\\Projects\\ReportingTool\\ReportingTool\\Scripts\\d3Charts\\', filter: 'isFile'
-      },
-      {
-        expand: true, flatten:true, src: ['dist/*'], dest: 'examples\\lib\\', filter: 'isFile'
-      },
-      {
-        expand: true, flatten:true, src: ['dist/*'], dest: 'C:\\nstavrakakis\\dashboard\\lib\\insightcharts\\', filter: 'isFile'
-      },
-      {
-        expand: true, filter: 'isFile', flatten: true, dest: 'examples\\lib\\' , src: ['./bower_components/jquery/jquery.js', './bower_components/angular/angular.js', './bower_components/crossfilter/crossfilter.js', './bower_components/d3/d3.js', './bower_components/angular-route/angular-route.js', './bower_components/angular-route/angular-route.js', './bower_components/angular-resource/angular-resource.js']
-      }
-    ]
-    },
-    deploy:{
-      files: [
-        {
-          expand: true, flatten:false, src: ['examples/*'], dest: 'C:\\inetpub\\wwwroot\\insight\\'
-        }
-      ]
-    }
-	},
   jasmine: {
         dev: {
             src: sourceFiles,
@@ -118,7 +93,7 @@ module.exports = function(grunt) {
     },
     watch: {
       files: ['<%= jshint.files %>', 'tests/*.spec.js'],
-      tasks: ['jsbeautifier', 'jshint', 'concat', 'uglify', 'jasmine', 'copy:main'],
+      tasks: ['jsbeautifier', 'jshint', 'concat', 'uglify', 'jasmine'],
       options: {
                 livereload: true
             }
@@ -135,6 +110,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jsbeautifier');
   grunt.loadNpmTasks('grunt-contrib-connect');
 
-  grunt.registerTask('default', ['jsbeautifier', 'jshint', 'concat', 'uglify', 'copy:main', 'connect:server', 'open:dev', 'copy:main', 'watch']);
-  grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'concat', 'uglify', 'copy:deploy']);
+  grunt.registerTask('default', ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'watch']);
+  grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'concat', 'uglify']);
 };
