@@ -1608,11 +1608,11 @@ DataTable.prototype.constructor = DataTable;
             .orient('left')
             .tickFormat(yAxisFormat);
 
+        console.log(this.yAxis.tickSize());
+
         this.xAxis = d3.svg.axis()
             .scale(this.x)
             .orient('bottom')
-            .tickSize(self.tickSize())
-            .tickPadding(self.tickPadding())
             .tickFormat(xAxisFormat);
 
         this.addClipPath();
@@ -1787,8 +1787,6 @@ DataTable.prototype.constructor = DataTable;
             .selectAll("text")
             .style('text-anchor', 'start')
             .attr("transform", InsightConstants.XAxisRotation)
-            .attr("dx", "10")
-            .attr("dy", "0")
             .on('mouseover', this.setHover)
             .on('mouseout', this.removeHover)
             .on('click', function(filter) {
