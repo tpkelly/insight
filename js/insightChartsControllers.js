@@ -32,7 +32,7 @@
 
                 var script = $scope.page.script;
                 var css = $scope.page.partialCSS;
-                
+
                 $.ajax({
                     url: script,
                     dataType: 'html',

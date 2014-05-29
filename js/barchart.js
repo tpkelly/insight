@@ -14,11 +14,11 @@ var data = [{
 
 $(document)
     .ready(function() {
-        
+
         var exampleGroup = new ChartGroup("Example Group");
 
         var dataset = new Group(data);
-        
+
         var barChart = new BarChart('', "#exampleChart", {}, dataset)
             .width(640)
             .height(400)
