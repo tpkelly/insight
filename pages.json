@@ -2,37 +2,49 @@
     {
         "name": "simplebar",
         "pageName": "Simple Bar Chart",     
-        "script": "js/barchart.js",
-        "imageUrl": "images/barchart.PNG"
+        "script": "examples/barchart.js",
+        "imageUrl": "images/barchart.PNG",
+        "partial": "examples/partials/example.html",
+        "partialCSS": "examples/css/simpleBar.css"
     }, 
     {
         "name": "zoomableBar",
         "pageName": "Zoomable Bar Chart", 
-        "script": "js/zoomableBar.js",
-        "imageUrl": "images/zoomableBar.PNG"
+        "script": "examples/zoomableBar.js",
+        "imageUrl": "images/zoomableBar.PNG",
+        "partial": "examples/partials/example.html",
+        "partialCSS": "examples/css/example.css"
     },
     {
         "name": "stackedGroupedBar",
         "pageName": "Stacked & Grouped Bar Chart", 
-        "script": "js/stackedBar.js",
-        "imageUrl": "images/stackedBar.PNG"
+        "script": "examples/stackedBar.js",
+        "imageUrl": "images/stackedBar.PNG",
+        "partial": "examples/partials/example.html",
+        "partialCSS": "examples/css/example.css"
     },
     {
         "name": "rangeTarget",
         "pageName": "Ranges & Targets", 
-        "script": "js/rangeTarget.js",
-        "imageUrl": "images/rangeTarget.PNG"
+        "script": "examples/rangeTarget.js",
+        "imageUrl": "images/rangeTarget.PNG",
+        "partial": "examples/partials/example.html",
+        "partialCSS": "examples/css/example.css"
     },
     {
         "name": "stackedWithTarget",
         "pageName": "Stacked Bar with Target", 
-        "script": "js/targets.js",
-        "imageUrl": "images/stackedTarget.PNG"
+        "script": "examples/targets.js",
+        "imageUrl": "images/stackedTarget.PNG",
+        "partial": "examples/partials/example.html",
+        "partialCSS": "examples/css/example.css"
     },
     {
         "name": "Dataset",
         "pageName": "Crossfiltered Charts", 
-        "script": "js/dataset.js",
-        "imageUrl": "images/crossfilter.PNG"
+        "script": "examples/dataset.js",
+        "imageUrl": "images/crossfilter.PNG",
+        "partial": "examples/partials/dataset.html",
+        "partialCSS": "examples/css/example.css"
     }
 ]

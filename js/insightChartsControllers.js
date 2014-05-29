@@ -23,7 +23,16 @@
     insightChartsControllers.controller('Example', ['$scope', '$routeParams', 'ExamplePage',
         function($scope, $routeParams, ExamplePage) {
 
-            $scope.loadScript = function(script) {
+            $scope.onHtmlLoaded = function() {
+                $scope.loadContent();
+            };
+
+
+            $scope.loadContent = function() {
+
+                var script = $scope.page.script;
+                var css = $scope.page.partialCSS;
+                
                 $.ajax({
                     url: script,
                     dataType: 'html',
@@ -34,17 +43,25 @@
                         var script = document.createElement("script");
                         script.type = "text/javascript";
                         script.text = result;
+
+                        var style = document.createElement("link");
+                        style.type = "text/css";
+                        style.rel = "stylesheet";
+                        style.href = css;
+
                         document.body.appendChild(script);
+                        document.body.appendChild(style);
 
                         Prism.highlightAll();
+
                     }
                 });
             };
 
+
             ExamplePage.get($routeParams.example, function(page) {
                 $scope.$parent.title = page.pageName;
-                $scope.example = page;
-                $scope.loadScript(page.script);
+                $scope.page = page;
             });
 
         }

@@ -84,6 +84,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-jsbeautifier');
     grunt.loadNpmTasks('grunt-contrib-connect');
 
+
     grunt.registerTask('default', ['jsbeautifier', 'jshint', 'connect:server', 'open:dev', 'watch']);
 
 };
