@@ -2,15 +2,7 @@ function BarChart(name, element, dimension, group) {
 
     BaseChart.call(this, name, element, dimension, group);
 
-
-    this.y2 = null;
-
-
     var self = this;
-
-    this.xFormatFunc = function(d) {
-        return d;
-    };
 
     var mouseOver = function(d, item) {
         self.mouseOver(self, this, d);
@@ -18,12 +10,6 @@ function BarChart(name, element, dimension, group) {
     var mouseOut = function(d, item) {
         self.mouseOut(self, this, d);
     };
-
-    this.xAxisFormat = function(f) {
-        this.xFormatFunc = f;
-        return this;
-    };
-
 
     this.calculateYPos = function(func, d) {
         if (!d.yPos) {
@@ -87,16 +73,14 @@ function BarChart(name, element, dimension, group) {
             .orient(self.yOrientation())
             .tickSize(self.tickSize())
             .tickPadding(self.tickPadding())
-            .tickFormat(yAxisFormat);
-
-        console.log(self.xOrientation());
+            .tickFormat(self.yAxisFormat());
 
         this.xAxis = d3.svg.axis()
             .scale(this.x)
             .orient(self.xOrientation())
             .tickSize(self.tickSize())
             .tickPadding(self.tickPadding())
-            .tickFormat(xAxisFormat);
+            .tickFormat(self.xAxisFormat());
 
         this.addClipPath();
 
@@ -217,12 +201,9 @@ function BarChart(name, element, dimension, group) {
 
         var newBars = newGroups.selectAll('rect.bar');
 
-        console.log(this);
-
         for (var seriesFunction in this.series()) {
 
             this._valueAccessor = this.cumulative() ? this.series()[seriesFunction].cumulative : this.series()[seriesFunction].calculation;
-
 
             newBars = newGroups.append('rect')
                 .attr('class', this.series()[seriesFunction].name + 'class bar')

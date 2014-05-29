@@ -77,6 +77,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-jsbeautifier');
 
-  grunt.registerTask('default', ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify']);
+  grunt.registerTask('default', ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'watch']);
   grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'concat', 'uglify']);
 };

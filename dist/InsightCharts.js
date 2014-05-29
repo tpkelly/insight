@@ -515,7 +515,16 @@ ChartGroup.prototype.removeItemFromArray = function(array, item) {
     var tickPadding = d3.functor(10);
     var yOrientation = d3.functor('left');
     var xOrientation = d3.functor('bottom');
+
     var tooltipLabel = d3.functor("Value");
+
+    var yAxisFormat = function(d) {
+        return d;
+    };
+
+    var xAxisFormat = function(d) {
+        return d;
+    };
 
     this._currentMax = 0;
 
@@ -576,13 +585,7 @@ ChartGroup.prototype.removeItemFromArray = function(array, item) {
         return d;
     };
 
-    yAxisFormat = function(d) {
-        return d;
-    };
 
-    xAxisFormat = function(d) {
-        return d;
-    };
 
     this.xPosition = function(d) {
         var offset = Math.round((self._barWidthFunction == self.x.rangeBand || self._barWidthFunction == self.x.rangeRound) ? 0 : self.barWidth(d) / 2);
@@ -830,7 +833,7 @@ ChartGroup.prototype.removeItemFromArray = function(array, item) {
         this.chart.append("clipPath")
             .attr("id", "clip")
             .append("rect")
-            .attr("x", 0)
+            .attr("x", 1)
             .attr("y", 0)
             .attr("width", this.width())
             .attr("height", this.yDomain());
@@ -912,9 +915,9 @@ ChartGroup.prototype.removeItemFromArray = function(array, item) {
 
     this.xAxisFormat = function(_) {
         if (!arguments.length) {
-            return self._xAxisFormat;
+            return xAxisFormat;
         }
-        self._xAxisFormat = _;
+        xAxisFormat = _;
         return this;
     };
 
@@ -1540,15 +1543,7 @@ DataTable.prototype.constructor = DataTable;
 
     BaseChart.call(this, name, element, dimension, group);
 
-
-    this.y2 = null;
-
-
     var self = this;
-
-    this.xFormatFunc = function(d) {
-        return d;
-    };
 
     var mouseOver = function(d, item) {
         self.mouseOver(self, this, d);
@@ -1556,12 +1551,6 @@ DataTable.prototype.constructor = DataTable;
     var mouseOut = function(d, item) {
         self.mouseOut(self, this, d);
     };
-
-    this.xAxisFormat = function(f) {
-        this.xFormatFunc = f;
-        return this;
-    };
-
 
     this.calculateYPos = function(func, d) {
         if (!d.yPos) {
@@ -1625,14 +1614,14 @@ DataTable.prototype.constructor = DataTable;
             .orient(self.yOrientation())
             .tickSize(self.tickSize())
             .tickPadding(self.tickPadding())
-            .tickFormat(yAxisFormat);
+            .tickFormat(self.yAxisFormat());
 
         this.xAxis = d3.svg.axis()
             .scale(this.x)
             .orient(self.xOrientation())
             .tickSize(self.tickSize())
             .tickPadding(self.tickPadding())
-            .tickFormat(xAxisFormat);
+            .tickFormat(self.xAxisFormat());
 
         this.addClipPath();
 
@@ -1679,12 +1668,14 @@ DataTable.prototype.constructor = DataTable;
 
         this.chart.append('g')
             .attr('class', InsightConstants.XAxisClass)
-            .style('writing-mode', 'tb')
+            .attr('transform', 'translate(0,' + (self.height() - self.margin()
+                .bottom - self.margin()
+                .top) + ')')
             .call(this.xAxis)
             .selectAll('text')
             .attr('class', InsightConstants.AxisTextClass)
             .style('text-anchor', 'start')
-            .attr("transform", InsightConstants.XAxisRotation)
+            .style('writing-mode', 'tb')
             .on('mouseover', this.setHover)
             .on('mouseout', this.removeHover)
             .on('click', function(filter) {
@@ -1751,12 +1742,9 @@ DataTable.prototype.constructor = DataTable;
 
         var newBars = newGroups.selectAll('rect.bar');
 
-        console.log(this);
-
         for (var seriesFunction in this.series()) {
 
             this._valueAccessor = this.cumulative() ? this.series()[seriesFunction].cumulative : this.series()[seriesFunction].calculation;
-
 
             newBars = newGroups.append('rect')
                 .attr('class', this.series()[seriesFunction].name + 'class bar')
@@ -1801,6 +1789,7 @@ DataTable.prototype.constructor = DataTable;
         xaxis
             .selectAll("text")
             .style('text-anchor', 'start')
+            .style('writing-mode', 'tb')
             .on('mouseover', this.setHover)
             .on('mouseout', this.removeHover)
             .on('click', function(filter) {

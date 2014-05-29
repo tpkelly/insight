@@ -35,8 +35,16 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     var tickPadding = d3.functor(10);
     var yOrientation = d3.functor('left');
     var xOrientation = d3.functor('bottom');
-    
+
     var tooltipLabel = d3.functor("Value");
+
+    var yAxisFormat = function(d) {
+        return d;
+    };
+
+    var xAxisFormat = function(d) {
+        return d;
+    };
 
     this._currentMax = 0;
 
@@ -97,13 +105,7 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
         return d;
     };
 
-    yAxisFormat = function(d) {
-        return d;
-    };
 
-    xAxisFormat = function(d) {
-        return d;
-    };
 
     this.xPosition = function(d) {
         var offset = Math.round((self._barWidthFunction == self.x.rangeBand || self._barWidthFunction == self.x.rangeRound) ? 0 : self.barWidth(d) / 2);
@@ -351,7 +353,7 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
         this.chart.append("clipPath")
             .attr("id", "clip")
             .append("rect")
-            .attr("x", 0)
+            .attr("x", 1)
             .attr("y", 0)
             .attr("width", this.width())
             .attr("height", this.yDomain());
@@ -433,9 +435,9 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
 
     this.xAxisFormat = function(_) {
         if (!arguments.length) {
-            return self._xAxisFormat;
+            return xAxisFormat;
         }
-        self._xAxisFormat = _;
+        xAxisFormat = _;
         return this;
     };
 
