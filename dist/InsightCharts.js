@@ -1606,8 +1606,6 @@ DataTable.prototype.constructor = DataTable;
         this.yAxis = d3.svg.axis()
             .scale(this.y)
             .orient('left')
-            .tickSize(self.tickSize())
-            .tickPadding(self.tickPadding())
             .tickFormat(yAxisFormat);
 
         this.xAxis = d3.svg.axis()
@@ -1670,7 +1668,7 @@ DataTable.prototype.constructor = DataTable;
             .attr('class', InsightConstants.AxisTextClass)
             .style('text-anchor', 'start')
             .attr("transform", InsightConstants.XAxisRotation)
-            .attr("dx", "10")
+            .attr("dx", "0")
             .attr("dy", "0")
             .on('mouseover', this.setHover)
             .on('mouseout', this.removeHover)
