@@ -89,6 +89,8 @@ function BarChart(name, element, dimension, group) {
             .tickPadding(self.tickPadding())
             .tickFormat(yAxisFormat);
 
+        console.log(self.xOrientation());
+
         this.xAxis = d3.svg.axis()
             .scale(this.x)
             .orient(self.xOrientation())
@@ -141,12 +143,14 @@ function BarChart(name, element, dimension, group) {
 
         this.chart.append('g')
             .attr('class', InsightConstants.XAxisClass)
-            .style('writing-mode', 'tb')
+            .attr('transform', 'translate(0,' + (self.height() - self.margin()
+                .bottom - self.margin()
+                .top) + ')')
             .call(this.xAxis)
             .selectAll('text')
             .attr('class', InsightConstants.AxisTextClass)
             .style('text-anchor', 'start')
-            .attr("transform", InsightConstants.XAxisRotation)
+            .style('writing-mode', 'tb')
             .on('mouseover', this.setHover)
             .on('mouseout', this.removeHover)
             .on('click', function(filter) {
@@ -263,6 +267,7 @@ function BarChart(name, element, dimension, group) {
         xaxis
             .selectAll("text")
             .style('text-anchor', 'start')
+            .style('writing-mode', 'tb')
             .on('mouseover', this.setHover)
             .on('mouseout', this.removeHover)
             .on('click', function(filter) {

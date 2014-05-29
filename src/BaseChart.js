@@ -35,6 +35,7 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     var tickPadding = d3.functor(10);
     var yOrientation = d3.functor('left');
     var xOrientation = d3.functor('bottom');
+    
     var tooltipLabel = d3.functor("Value");
 
     this._currentMax = 0;
