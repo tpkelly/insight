@@ -1679,9 +1679,7 @@ DataTable.prototype.constructor = DataTable;
 
         this.chart.append('g')
             .attr('class', InsightConstants.XAxisClass)
-            .attr('transform', 'translate(0,' + (self.height() - self.margin()
-                .bottom - self.margin()
-                .top) + ')')
+            .style('writing-mode', 'tb')
             .call(this.xAxis)
             .selectAll('text')
             .attr('class', InsightConstants.AxisTextClass)
@@ -1803,7 +1801,6 @@ DataTable.prototype.constructor = DataTable;
         xaxis
             .selectAll("text")
             .style('text-anchor', 'start')
-            .attr("transform", InsightConstants.XAxisRotation)
             .on('mouseover', this.setHover)
             .on('mouseout', this.removeHover)
             .on('click', function(filter) {
