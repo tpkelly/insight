@@ -33,7 +33,8 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     var invert = d3.functor(false);
     var tickSize = d3.functor(0);
     var tickPadding = d3.functor(10);
-
+    var yOrientation = d3.functor('left');
+    var xOrientation = d3.functor('bottom');
     var tooltipLabel = d3.functor("Value");
 
     this._currentMax = 0;
@@ -248,6 +249,22 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
             return displayName();
         }
         displayName = d3.functor(_);
+        return this;
+    };
+
+    this.yOrientation = function(_) {
+        if (!arguments.length) {
+            return yOrientation();
+        }
+        yOrientation = d3.functor(_);
+        return this;
+    };
+
+    this.xOrientation = function(_) {
+        if (!arguments.length) {
+            return xOrientation();
+        }
+        xOrientation = d3.functor(_);
         return this;
     };
 

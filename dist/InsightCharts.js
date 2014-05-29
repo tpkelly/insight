@@ -513,7 +513,8 @@ ChartGroup.prototype.removeItemFromArray = function(array, item) {
     var invert = d3.functor(false);
     var tickSize = d3.functor(0);
     var tickPadding = d3.functor(10);
-
+    var yOrientation = d3.functor('left');
+    var xOrientation = d3.functor('bottom');
     var tooltipLabel = d3.functor("Value");
 
     this._currentMax = 0;
@@ -728,6 +729,22 @@ ChartGroup.prototype.removeItemFromArray = function(array, item) {
             return displayName();
         }
         displayName = d3.functor(_);
+        return this;
+    };
+
+    this.yOrientation = function(_) {
+        if (!arguments.length) {
+            return yOrientation();
+        }
+        yOrientation = d3.functor(_);
+        return this;
+    };
+
+    this.xOrientation = function(_) {
+        if (!arguments.length) {
+            return xOrientation();
+        }
+        xOrientation = d3.functor(_);
         return this;
     };
 
@@ -1605,14 +1622,16 @@ DataTable.prototype.constructor = DataTable;
 
         this.yAxis = d3.svg.axis()
             .scale(this.y)
-            .orient('left')
+            .orient(self.yOrientation())
+            .tickSize(self.tickSize())
+            .tickPadding(self.tickPadding())
             .tickFormat(yAxisFormat);
-
-        console.log(this.yAxis.tickSize());
 
         this.xAxis = d3.svg.axis()
             .scale(this.x)
-            .orient('bottom')
+            .orient(self.xOrientation())
+            .tickSize(self.tickSize())
+            .tickPadding(self.tickPadding())
             .tickFormat(xAxisFormat);
 
         this.addClipPath();
@@ -1668,8 +1687,6 @@ DataTable.prototype.constructor = DataTable;
             .attr('class', InsightConstants.AxisTextClass)
             .style('text-anchor', 'start')
             .attr("transform", InsightConstants.XAxisRotation)
-            .attr("dx", "0")
-            .attr("dy", "0")
             .on('mouseover', this.setHover)
             .on('mouseout', this.removeHover)
             .on('click', function(filter) {
