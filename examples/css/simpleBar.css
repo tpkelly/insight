@@ -15,4 +15,5 @@
     stroke: #666;
     stroke-width: 1;
     shape-rendering: crispEdges;
+    fill: none;
 }

@@ -8,4 +8,13 @@
     color: #fff;
     padding: 1em;
     font-size: 12px;
+    fill: none;
+}
+
+.x-axis, .y-axis
+{
+    stroke: #34495e;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+    fill: none;
 }

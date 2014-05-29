@@ -73,7 +73,6 @@ module.exports = function(grunt) {
             files: ['<%= jshint.files %>', './**/*.html', 'tests/*.spec.js'],
             tasks: ['jsbeautifier', 'jshint'],
             options: {
-                livereload: true
             }
         }
     });
