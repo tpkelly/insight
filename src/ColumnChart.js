@@ -1,18 +1,23 @@
-function ColumnChart(name, element, dimension, group) {
+function ColumnChart(name, element, dimension, group)
+{
 
     BaseChart.call(this, name, element, dimension, group);
 
     var self = this;
 
-    var mouseOver = function(d, item) {
+    var mouseOver = function(d, item)
+    {
         self.mouseOver(self, this, d);
     };
-    var mouseOut = function(d, item) {
+    var mouseOut = function(d, item)
+    {
         self.mouseOut(self, this, d);
     };
 
-    this.calculateYPos = function(func, d) {
-        if (!d.yPos) {
+    this.calculateYPos = function(func, d)
+    {
+        if (!d.yPos)
+        {
             d.yPos = 0;
         }
 
@@ -21,23 +26,29 @@ function ColumnChart(name, element, dimension, group) {
         return d.yPos;
     };
 
-    this.calculateXPos = function(width, d) {
-        if (!d.xPos) {
+    this.calculateXPos = function(width, d)
+    {
+        if (!d.xPos)
+        {
             d.xPos = self.xPosition(d);
-        } else {
+        }
+        else
+        {
             d.xPos += width;
         }
         return d.xPos;
     };
 
-    this.yPosition = function(d) {
+    this.yPosition = function(d)
+    {
 
         var position = self.stackedBars() ? self.y(self.calculateYPos(self._valueAccessor, d)) : self.y(self._valueAccessor(d));
 
         return position;
     };
 
-    this.groupedBarWidth = function(d) {
+    this.groupedBarWidth = function(d)
+    {
 
         var groupWidth = self.barWidth(d);
 
@@ -48,7 +59,8 @@ function ColumnChart(name, element, dimension, group) {
         return width;
     };
 
-    this.offsetXPosition = function(d) {
+    this.offsetXPosition = function(d)
+    {
 
         var width = self.groupedBarWidth(d);
         var position = self.stackedBars() ? self.xPosition(d) : self.calculateXPos(width, d);
@@ -56,12 +68,14 @@ function ColumnChart(name, element, dimension, group) {
         return position;
     };
 
-    this.stackedBars = function() {
+    this.stackedBars = function()
+    {
         return self.stacked() || (this.series()
             .length == 1);
     };
 
-    this.init = function() {
+    this.init = function()
+    {
 
         var self = this;
 
@@ -84,7 +98,8 @@ function ColumnChart(name, element, dimension, group) {
 
         this.addClipPath();
 
-        if (this.zoomable()) {
+        if (this.zoomable())
+        {
             this.initZoom();
         }
 
@@ -93,11 +108,12 @@ function ColumnChart(name, element, dimension, group) {
         this.draw();
     };
 
-    this.draw = function(dragging) {
-
+    this.draw = function(dragging)
+    {
         var self = this;
 
-        if (dragging && self.redrawAxes()) {
+        if (dragging && self.redrawAxes())
+        {
             this.y.domain([0, d3.round(self.findMax(), 1)])
                 .range([this.height() - this.margin()
                     .top - this.margin()
@@ -116,7 +132,8 @@ function ColumnChart(name, element, dimension, group) {
         this.updateAxes();
     };
 
-    this.drawAxes = function() {
+    this.drawAxes = function()
+    {
 
         this.chart.append('g')
             .attr('class', InsightConstants.YAxisClass)
@@ -137,7 +154,8 @@ function ColumnChart(name, element, dimension, group) {
             .style('writing-mode', 'tb')
             .on('mouseover', this.setHover)
             .on('mouseout', this.removeHover)
-            .on('click', function(filter) {
+            .on('click', function(filter)
+            {
                 return self.filterClick(this, filter);
             });
     };
@@ -145,15 +163,19 @@ function ColumnChart(name, element, dimension, group) {
 
 
 
-    this.drawRanges = function(filter) {
+    this.drawRanges = function(filter)
+    {
 
         var ranges = filter ? this.ranges()
-            .filter(function(range) {
+            .filter(function(range)
+            {
                 return range.position == filter;
             }) : this.ranges();
 
-        if (ranges) {
-            for (var range in ranges) {
+        if (ranges)
+        {
+            for (var range in ranges)
+            {
 
                 this._rangeAccessor = ranges[range].calculation;
 
@@ -163,7 +185,8 @@ function ColumnChart(name, element, dimension, group) {
 
                 var rangeElement = this.chart.selectAll(rangeIdentifier);
 
-                if (!this.rangeExists(rangeElement)) {
+                if (!this.rangeExists(rangeElement))
+                {
                     this.chart.append("path")
                         .attr("class", ranges[range].class)
                         .attr("fill", ranges[range].color);
@@ -178,14 +201,17 @@ function ColumnChart(name, element, dimension, group) {
         }
     };
 
-    this.rangeExists = function(rangeSelector) {
+    this.rangeExists = function(rangeSelector)
+    {
 
         return rangeSelector[0].length;
     };
 
-    this.drawBars = function(drag) {
+    this.drawBars = function(drag)
+    {
 
-        var reset = function(d) {
+        var reset = function(d)
+        {
             d.yPos = 0;
             d.xPos = 0;
         };
@@ -201,7 +227,8 @@ function ColumnChart(name, element, dimension, group) {
 
         var newBars = newGroups.selectAll('rect.bar');
 
-        for (var seriesFunction in this.series()) {
+        for (var seriesFunction in this.series())
+        {
 
             this._valueAccessor = this.cumulative() ? this.series()[seriesFunction].cumulative : this.series()[seriesFunction].calculation;
 
@@ -239,7 +266,8 @@ function ColumnChart(name, element, dimension, group) {
     };
 
 
-    this.updateAxes = function() {
+    this.updateAxes = function()
+    {
 
         var xaxis = this.chart.selectAll('g.' + InsightConstants.XAxisClass)
             .call(this.xAxis);
@@ -250,7 +278,8 @@ function ColumnChart(name, element, dimension, group) {
             .style('writing-mode', 'tb')
             .on('mouseover', this.setHover)
             .on('mouseout', this.removeHover)
-            .on('click', function(filter) {
+            .on('click', function(filter)
+            {
                 return self.filterClick(this, filter);
             });
 
@@ -265,9 +294,11 @@ function ColumnChart(name, element, dimension, group) {
 
     };
 
-    this.drawTargets = function() {
+    this.drawTargets = function()
+    {
 
-        if (this.targets()) {
+        if (this.targets())
+        {
 
             this._targetAccessor = _targets.calculation;
 
@@ -278,10 +309,12 @@ function ColumnChart(name, element, dimension, group) {
                 .enter()
                 .append("rect")
                 .attr("class", "target " + _targets.name + "class")
-                .on("mouseover", function(d) {
+                .on("mouseover", function(d)
+                {
                     self.mouseOver(self, this);
                 })
-                .on("mouseout", function(d) {
+                .on("mouseout", function(d)
+                {
                     self.mouseOut(self, this);
                 });
 

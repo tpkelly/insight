@@ -1,4 +1,5 @@
-function PartitionChart(name, element, dimension, group) {
+function PartitionChart(name, element, dimension, group)
+{
 
     this.element = element;
     this.group = group;
@@ -20,14 +21,17 @@ function PartitionChart(name, element, dimension, group) {
         .attr("height", h);
 
     this.partition = d3.layout.partition()
-        .children(function(d) {
+        .children(function(d)
+        {
             return d.values;
         })
-        .value(function(d) {
+        .value(function(d)
+        {
             return d.ProjectedRevenue;
         });
 
-    this.init = function() {
+    this.init = function()
+    {
 
         var self = this;
 
@@ -35,7 +39,8 @@ function PartitionChart(name, element, dimension, group) {
             .data(self.partition.nodes(this.group()))
             .enter()
             .append("svg:g")
-            .attr("transform", function(d) {
+            .attr("transform", function(d)
+            {
                 return "translate(" + x(d.y) + "," + y(d.x) + ")";
             })
             .on("click", click);
@@ -47,10 +52,12 @@ function PartitionChart(name, element, dimension, group) {
         g.append("svg:rect")
             .attr("width", this.group()
                 .dy * kx)
-            .attr("height", function(d) {
+            .attr("height", function(d)
+            {
                 return d.dx * ky;
             })
-            .attr("class", function(d) {
+            .attr("class", function(d)
+            {
                 return d.children ? "parent" : "child";
             })
             .attr('fill', 'rgb(135, 158, 192)')
@@ -63,19 +70,23 @@ function PartitionChart(name, element, dimension, group) {
             .attr("dx", "2em")
             .attr("fill", "#ecf0f1")
             .style("font-size", "13px")
-            .style("opacity", function(d) {
+            .style("opacity", function(d)
+            {
                 return d.dx * ky > 12 ? 1 : 0;
             })
-            .text(function(d) {
+            .text(function(d)
+            {
                 return d.key;
             });
 
 
-        function transform(d) {
+        function transform(d)
+        {
             return "translate(8," + d.dx * ky / 2 + ")";
         }
 
-        function click(d) {
+        function click(d)
+        {
             if (!d.children) return;
 
             kx = (d.y ? w - 40 : w) / (1 - d.y);
@@ -86,19 +97,22 @@ function PartitionChart(name, element, dimension, group) {
 
             var t = g.transition()
                 .duration(d3.event.altKey ? 7500 : 750)
-                .attr("transform", function(d) {
+                .attr("transform", function(d)
+                {
                     return "translate(" + x(d.y) + "," + y(d.x) + ")";
                 });
 
             t.select("rect")
                 .attr("width", d.dy * kx)
-                .attr("height", function(d) {
+                .attr("height", function(d)
+                {
                     return d.dx * ky;
                 });
 
             t.select("text")
                 .attr("transform", transform)
-                .style("opacity", function(d) {
+                .style("opacity", function(d)
+                {
                     return d.dx * ky > 12 ? 1 : 0;
                 });
 

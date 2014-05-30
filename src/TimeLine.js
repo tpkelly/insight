@@ -1,24 +1,29 @@
-function TimeLine(name, element, dimension, group) {
+function TimeLine(name, element, dimension, group)
+{
 
     BaseChart.call(this, name, element, dimension, group);
 
     var self = this;
 
-    this.maxRange = d3.max(this.dataset(), function(d) {
+    this.maxRange = d3.max(this.dataset(), function(d)
+    {
         return d.value;
     });
 
     this.range = [this.dimension.Dimension.bottom(1)[0].Date, this.dimension.Dimension.top(1)[0].Date];
 
-    this.brushColor = function(d) {
-        if (!arguments.length) {
+    this.brushColor = function(d)
+    {
+        if (!arguments.length)
+        {
             return this._brushColor;
         }
         this._brushColor = d;
         return this;
     };
 
-    this.initializeAxes = function() {
+    this.initializeAxes = function()
+    {
 
         this.x = d3.time.scale()
             .domain(this.range)
@@ -34,7 +39,8 @@ function TimeLine(name, element, dimension, group) {
             .orient('bottom');
     };
 
-    this.display = function() {
+    this.display = function()
+    {
 
         var self = this;
 
@@ -43,15 +49,18 @@ function TimeLine(name, element, dimension, group) {
 
         var func = {
             name: 'timeline',
-            filterFunction: function(d) {
+            filterFunction: function(d)
+            {
                 return d >= minExtent && d <= maxExtent;
             }
         };
 
 
-        if (String(minExtent) != String(maxExtent)) {
+        if (String(minExtent) != String(maxExtent))
+        {
             // remove old filter if one exists
-            if (this.oldFilter) {
+            if (this.oldFilter)
+            {
                 this.filterEvent(this.dimension, this.oldFilter);
             }
 
@@ -61,14 +70,17 @@ function TimeLine(name, element, dimension, group) {
 
             self.mini.select('.brush')
                 .call(self.brush.extent([minExtent, maxExtent]));
-        } else {
+        }
+        else
+        {
             this.filterEvent(this.dimension, this.oldFilter);
         }
 
     };
 
 
-    this.init = function() {
+    this.init = function()
+    {
 
         this.createChart();
         this.initializeAxes();
@@ -80,7 +92,8 @@ function TimeLine(name, element, dimension, group) {
 
         this.brush = d3.svg.brush()
             .x(this.x)
-            .on('brush', function() {
+            .on('brush', function()
+            {
                 self.display();
             });
 
@@ -114,7 +127,8 @@ function TimeLine(name, element, dimension, group) {
     };
 
 
-    this.draw = function() {
+    this.draw = function()
+    {
         var self = this;
 
         //mini item rects

@@ -1,11 +1,13 @@
-function CountChart(name, element, dimension, group) {
+function CountChart(name, element, dimension, group)
+{
 
     BaseChart.call(this, name, element, dimension, group);
 
     this.filter = new Date()
         .getMonth();
 
-    this.init = function() {
+    this.init = function()
+    {
         var self = this;
 
         d3.select(this.element)
@@ -14,27 +16,32 @@ function CountChart(name, element, dimension, group) {
             .enter()
             .append("div")
             .attr("class", "counter")
-            .html(function(d) {
+            .html(function(d)
+            {
                 return d.key;
             })
             .append("span")
-            .html(function(d) {
+            .html(function(d)
+            {
                 var label = d.value > 0 ? "£" : "";
                 return label + d.value;
             });
     };
 
-    this.draw = function() {
+    this.draw = function()
+    {
         var self = this;
 
         d3.select(this.element)
             .selectAll(".counter")
             .data(this.dataset())
-            .html(function(d) {
+            .html(function(d)
+            {
                 return d.key;
             })
             .append("span")
-            .html(function(d) {
+            .html(function(d)
+            {
                 var label = d.value > 0 ? "£" : "";
                 return label + d.value;
             })

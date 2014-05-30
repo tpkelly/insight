@@ -1,4 +1,5 @@
-var MultipleChart = function MultipleChart(name, element, dimension, group, chartGroup) {
+var MultipleChart = function MultipleChart(name, element, dimension, group, chartGroup)
+{
 
     BaseChart.call(this, name, element, dimension, group);
 
@@ -20,11 +21,13 @@ var MultipleChart = function MultipleChart(name, element, dimension, group, char
         .orient("bottom")
         .tickSize(self.tickSize())
         .tickPadding(10)
-        .tickFormat(function(d) {
+        .tickFormat(function(d)
+        {
             return self.xFormatFunc(d);
         });
 
-    this.initializeAxes = function(set) {
+    this.initializeAxes = function(set)
+    {
         this.x.domain([0, this.findMax()])
             .range([0, this.xBounds()
                 .end
@@ -34,21 +37,26 @@ var MultipleChart = function MultipleChart(name, element, dimension, group, char
             .rangeRoundBands([0, this.yDomain()], 0.2);
     };
 
-    this.rowWidth = function(d) {
+    this.rowWidth = function(d)
+    {
         return this.x(this._valueAccessor(d));
     }.bind(this);
 
-    this.yPosition = function(d) {
+    this.yPosition = function(d)
+    {
         return this.y(d.key);
     }.bind(this);
 
-    this.rowHeight = function() {
+    this.rowHeight = function()
+    {
         return this.y.rangeBand();
     }.bind(this);
 
-    this.barXPosition = function(d) {
+    this.barXPosition = function(d)
+    {
         var x = 0;
-        if (this.invert()) {
+        if (this.invert())
+        {
             x = this.xBounds()
                 .end - this.x(this._valueAccessor(d));
         }
@@ -56,12 +64,14 @@ var MultipleChart = function MultipleChart(name, element, dimension, group, char
     }.bind(this);
 
 
-    this.subChartName = function(key) {
+    this.subChartName = function(key)
+    {
         return 'sub' + self._name.replace(/ /g, "_") + key.replace(/\s/g, '');
     };
 
 
-    this.createChart = function() {
+    this.createChart = function()
+    {
         this.chart = d3.select(this.element)
             .append("div")
             .attr("class", "chart multiChart");
@@ -76,7 +86,8 @@ var MultipleChart = function MultipleChart(name, element, dimension, group, char
 
     this.subCharts = [];
 
-    this.init = function() {
+    this.init = function()
+    {
         this.createChart();
 
         var charts = this.chart.selectAll('div.subchart')
@@ -85,12 +96,14 @@ var MultipleChart = function MultipleChart(name, element, dimension, group, char
         charts.enter()
             .append('div')
             .attr('class', 'subchart')
-            .attr('id', function(d) {
+            .attr('id', function(d)
+            {
                 return self.subChartName(self._keyAccessor(d));
             });
 
         this.dataset()
-            .forEach(function(subChart) {
+            .forEach(function(subChart)
+            {
 
                 var data = [];
 
@@ -99,12 +112,14 @@ var MultipleChart = function MultipleChart(name, element, dimension, group, char
                     .all()
                     .map(self._keyAccessor);
 
-                k.forEach(function(d) {
+                k.forEach(function(d)
+                {
                     var o = {
                         key: d
                     };
 
-                    var value = $.grep(subChart.values, function(e) {
+                    var value = $.grep(subChart.values, function(e)
+                    {
                         return e.key == d;
                     });
 
@@ -129,10 +144,12 @@ var MultipleChart = function MultipleChart(name, element, dimension, group, char
                     .tooltipLabel(self._tooltipLabel)
                     .tooltipFormat(self._tooltipFormat)
                     .ordered(self._orderChildren)
-                    .valueAccessor(function(d) {
+                    .valueAccessor(function(d)
+                    {
                         return d.values;
                     })
-                    .margin({
+                    .margin(
+                    {
                         left: 120,
                         top: 0,
                         bottom: 0,
@@ -144,24 +161,29 @@ var MultipleChart = function MultipleChart(name, element, dimension, group, char
             });
     };
 
-    this.draw = function() {
+    this.draw = function()
+    {
 
         var charts = this.chart.selectAll('div.subchart')
             .data(this.dataset());
 
         var data = this.dataset();
 
-        this.subCharts.forEach(function(sc) {
+        this.subCharts.forEach(function(sc)
+        {
 
-            var subChartData = $.grep(data, function(d) {
+            var subChartData = $.grep(data, function(d)
+            {
                 return d.key == sc.displayName();
             });
 
             subChartData = subChartData.length ? sc._valueAccessor(subChartData[0]) : [];
 
             sc.group.getData()
-                .forEach(function(currentDataValue) {
-                    var newDataValue = $.grep(subChartData, function(d) {
+                .forEach(function(currentDataValue)
+                {
+                    var newDataValue = $.grep(subChartData, function(d)
+                    {
                         return d.key == currentDataValue.key;
                     })[0];
 

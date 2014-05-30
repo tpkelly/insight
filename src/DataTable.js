@@ -1,4 +1,5 @@
-function DataTable(name, element, dimension, group) {
+function DataTable(name, element, dimension, group)
+{
     BaseChart.call(this, name, element, dimension, group);
 
     var self = this;
@@ -9,8 +10,10 @@ function DataTable(name, element, dimension, group) {
         .append("table")
         .attr("class", "dataTable");
 
-    this.columns = function(c) {
-        if (!arguments.length) {
+    this.columns = function(c)
+    {
+        if (!arguments.length)
+        {
             return this._columns;
         }
         this._columns = c;
@@ -18,7 +21,8 @@ function DataTable(name, element, dimension, group) {
 
     };
 
-    this.init = function() {
+    this.init = function()
+    {
         var self = this;
 
         this.header = this.chart.append("thead")
@@ -33,7 +37,8 @@ function DataTable(name, element, dimension, group) {
             .enter()
             .append("th")
             .attr('class', 'column')
-            .html(function(d) {
+            .html(function(d)
+            {
                 return d.label;
             });
 
@@ -45,13 +50,16 @@ function DataTable(name, element, dimension, group) {
             .attr("class", "datarow");
 
         this.rows.append("th")
-            .html(function(d) {
+            .html(function(d)
+            {
                 return self._keyAccessor(d);
             });
 
         this.cells = this.rows.selectAll("td")
-            .data(function(row) {
-                return self._columns.map(function(column) {
+            .data(function(row)
+            {
+                return self._columns.map(function(column)
+                {
                     return {
                         column: column,
                         value: column.formatter(column.calculation(row))
@@ -61,12 +69,14 @@ function DataTable(name, element, dimension, group) {
 
         var newEntries = this.cells.enter();
         newEntries.append("td")
-            .html(function(d) {
+            .html(function(d)
+            {
                 return d.value;
             });
     };
 
-    this.draw = function() {
+    this.draw = function()
+    {
         var self = this;
 
         this.rows = this.chart.selectAll("tr.datarow")
@@ -77,8 +87,10 @@ function DataTable(name, element, dimension, group) {
             .attr("class", "datarow");
 
         this.cells = this.rows.selectAll("td")
-            .data(function(row) {
-                return self._columns.map(function(column) {
+            .data(function(row)
+            {
+                return self._columns.map(function(column)
+                {
                     return {
                         column: column,
                         value: column.formatter(column.calculation(row))
@@ -89,7 +101,8 @@ function DataTable(name, element, dimension, group) {
         this.cells.enter()
             .append("td");
 
-        this.cells.html(function(d) {
+        this.cells.html(function(d)
+        {
             return d.value;
         });
 

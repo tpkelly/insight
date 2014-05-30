@@ -1,30 +1,37 @@
-function StackedBarChart(name, element, dimension, group) {
+function StackedBarChart(name, element, dimension, group)
+{
 
     BaseChart.call(this, name, element, dimension, group);
 
     var self = this;
 
-    this.xFormatFunc = function(d) {
+    this.xFormatFunc = function(d)
+    {
         return d;
     };
 
-    var mouseOver = function(d, item) {
+    var mouseOver = function(d, item)
+    {
         self.mouseOver(self, this, d);
     };
-    var mouseOut = function(d, item) {
+    var mouseOut = function(d, item)
+    {
         self.mouseOut(self, this, d);
     };
 
 
 
-    this.xAxisFormat = function(f) {
+    this.xAxisFormat = function(f)
+    {
         this.xFormatFunc = f;
         return this;
     };
 
 
-    this.calculateYPos = function(func, d) {
-        if (!d.yPos) {
+    this.calculateYPos = function(func, d)
+    {
+        if (!d.yPos)
+        {
             d.yPos = 0;
         }
 
@@ -34,13 +41,15 @@ function StackedBarChart(name, element, dimension, group) {
     };
 
 
-    this.yPosition = function(d) {
+    this.yPosition = function(d)
+    {
         return this.y(this.calculateYPos(this._valueAccessor, d));
     }.bind(this);
 
 
 
-    this.init = function() {
+    this.init = function()
+    {
         var self = this;
 
         this.createChart();
@@ -50,7 +59,8 @@ function StackedBarChart(name, element, dimension, group) {
             .scale(this.y)
             .orient('left')
             .tickSize(0)
-            .tickFormat(function(d) {
+            .tickFormat(function(d)
+            {
                 return self._yAxisFormat(d);
             });
 
@@ -58,13 +68,15 @@ function StackedBarChart(name, element, dimension, group) {
             .scale(this.x)
             .orient('bottom')
             .tickSize(0)
-            .tickFormat(function(d) {
+            .tickFormat(function(d)
+            {
                 return self.xFormatFunc(d);
             });
 
         this.addClipPath();
 
-        if (this.zoomable()) {
+        if (this.zoomable())
+        {
             this.initZoom();
         }
 
@@ -78,7 +90,8 @@ function StackedBarChart(name, element, dimension, group) {
 
         var bars = newGroups.selectAll('rect.bar');
 
-        for (var seriesFunction in this._series) {
+        for (var seriesFunction in this._series)
+        {
             this._valueAccessor = this.cumulative() ? self._series[seriesFunction].cumulative : self._series[seriesFunction].calculation;
 
             bars = newGroups.append('rect')
@@ -126,21 +139,25 @@ function StackedBarChart(name, element, dimension, group) {
             .attr("dy", "0")
             .on('mouseover', this.setHover)
             .on('mouseout', this.removeHover)
-            .on('click', function(filter) {
+            .on('click', function(filter)
+            {
                 return self.filterClick(this, filter);
             });
 
-        if (this._targets) {
+        if (this._targets)
+        {
             this.drawTargets();
         }
     };
 
 
-    this.draw = function(drag) {
+    this.draw = function(drag)
+    {
 
         var self = this;
 
-        if (drag && self.redrawAxes()) {
+        if (drag && self.redrawAxes())
+        {
             this.y.domain([0, d3.round(self.findMax(), 1)])
                 .range([this.height() - this.margin()
                     .top - this.margin()
@@ -150,11 +167,13 @@ function StackedBarChart(name, element, dimension, group) {
 
         var groups = this.chart.selectAll('g.bargroup')
             .data(this.dataset())
-            .each(function(d, i) {
+            .each(function(d, i)
+            {
                 d.yPos = 0;
             });
 
-        for (var seriesFunction in this._series) {
+        for (var seriesFunction in this._series)
+        {
 
             this._valueAccessor = this.cumulative() ? self._series[seriesFunction].cumulative : self._series[seriesFunction].calculation;
 
@@ -176,7 +195,8 @@ function StackedBarChart(name, element, dimension, group) {
 
         }
 
-        if (this._targets) {
+        if (this._targets)
+        {
             this.updateTargets(drag);
         }
 
@@ -191,7 +211,8 @@ function StackedBarChart(name, element, dimension, group) {
             .attr("dy", "0")
             .on('mouseover', this.setHover)
             .on('mouseout', this.removeHover)
-            .on('click', function(filter) {
+            .on('click', function(filter)
+            {
                 return self.filterClick(this, filter);
             });
 
@@ -206,13 +227,15 @@ function StackedBarChart(name, element, dimension, group) {
             .attr('class', 'axis-text');
     };
 
-    this.drawTargets = function() {
+    this.drawTargets = function()
+    {
 
 
         var groups = this.chart.selectAll('g')
             .data(this.targetData());
 
-        if (this._targets) {
+        if (this._targets)
+        {
 
             this._targetAccessor = this.cumulative() ? self._targets.cumulative : self._targets.calculation;
 
@@ -238,12 +261,14 @@ function StackedBarChart(name, element, dimension, group) {
         }
     };
 
-    this.updateTargets = function(drag) {
+    this.updateTargets = function(drag)
+    {
 
         var groups = this.chart.selectAll('g.bargroup')
             .data(this.targetData());
 
-        if (this._targets) {
+        if (this._targets)
+        {
 
             this._valueAccessor = this.cumulative() ? self._targets.cumulative : self._targets.calculation;
 

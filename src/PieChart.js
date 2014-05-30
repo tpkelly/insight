@@ -1,11 +1,13 @@
-function PieChart(name, element, dimension, group) {
+function PieChart(name, element, dimension, group)
+{
 
     BaseChart.call(this, name, element, dimension, group);
 
     this.color = d3.scale.ordinal()
         .range(["#9ecae1", "#7CA2B6", "#77ACC9"]);
 
-    this.filterKey = function(d) {
+    this.filterKey = function(d)
+    {
         return d.data.key;
     };
 
@@ -18,7 +20,8 @@ function PieChart(name, element, dimension, group) {
 
     this.pie = d3.layout.pie()
         .sort(null)
-        .value(function(d) {
+        .value(function(d)
+        {
             return d.value;
         });
 
@@ -30,7 +33,8 @@ function PieChart(name, element, dimension, group) {
         .attr("transform", "translate(" + this.width() / 2 + "," + this.height() / 2 + ")");
 
 
-    this.init = function() {
+    this.init = function()
+    {
         var self = this;
 
         self.g = self.chart.selectAll(".arc")
@@ -41,44 +45,53 @@ function PieChart(name, element, dimension, group) {
             .attr("class", "arc");
 
         self.g.append("path")
-            .attr("d", function(d, i) {
+            .attr("d", function(d, i)
+            {
                 return self.safeArc(d, i, self.arc);
             })
-            .style("fill", function(d) {
+            .style("fill", function(d)
+            {
                 return self.color(d.data.key);
             })
-            .on("click", function(d) {
+            .on("click", function(d)
+            {
                 return self.filterClick(self, this, d);
             })
-            .on("mouseover", function(d) {
+            .on("mouseover", function(d)
+            {
                 self.tip.show(d);
                 d3.select(this)
                     .classed("active", true);
             })
-            .on("mouseout", function(d) {
+            .on("mouseout", function(d)
+            {
                 self.tip.hide(d);
                 d3.select(this)
                     .classed("active", false);
             })
             .append("title")
-            .text(function(d) {
+            .text(function(d)
+            {
                 return d.data.key + ": £" + d.value;
             });
 
 
         self.g.append("text")
-            .attr("transform", function(d) {
+            .attr("transform", function(d)
+            {
                 return "translate(" + self.arc.centroid(d) + ")";
             })
             .attr("dy", ".35em")
             .attr('fill', '#fff')
             .style("text-anchor", "middle")
-            .text(function(d) {
+            .text(function(d)
+            {
                 return d.data.value > 0 ? d.data.key : "";
             });
     };
 
-    this.draw = function() {
+    this.draw = function()
+    {
 
         var self = this;
 
@@ -86,10 +99,12 @@ function PieChart(name, element, dimension, group) {
             .data(self.pie(self.group()
                 .all()))
             .select("path")
-            .attr("d", function(d, i) {
+            .attr("d", function(d, i)
+            {
                 return self.safeArc(d, i, self.arc);
             })
-            .style("fill", function(d) {
+            .style("fill", function(d)
+            {
                 return self.color(d.data.key);
             })
             .transition()
@@ -99,23 +114,27 @@ function PieChart(name, element, dimension, group) {
         self.chart.selectAll("g.arc path title")
             .data(self.pie(self.group()
                 .all()))
-            .text(function(d) {
+            .text(function(d)
+            {
                 return d.data.key + ": £" + d.value;
             });
 
 
         self.g.selectAll("text")
-            .attr("transform", function(d) {
+            .attr("transform", function(d)
+            {
                 return "translate(" + self.arc.centroid(d) + ")";
             })
             .attr("dy", ".35em")
             .attr('fill', '#fff')
             .style("text-anchor", "middle")
-            .text(function(d) {
+            .text(function(d)
+            {
                 return d.data.value > 0 ? d.data.key : "";
             });
 
-        function tweenPie(b) {
+        function tweenPie(b)
+        {
             b.innerRadius = 40;
             var current = this._current;
             if (isOffCanvas(current))
@@ -125,13 +144,15 @@ function PieChart(name, element, dimension, group) {
                 };
             var i = d3.interpolate(current, b);
             this._current = i(0);
-            return function(t) {
+            return function(t)
+            {
                 return self.safeArc(i(t), 0, self.arc);
             };
         }
 
 
-        function isOffCanvas(current) {
+        function isOffCanvas(current)
+        {
             return !current || isNaN(current.startAngle) || isNaN(current.endAngle);
         }
 
@@ -141,7 +162,8 @@ function PieChart(name, element, dimension, group) {
 
 
 
-    this.safeArc = function(d, i, arc) {
+    this.safeArc = function(d, i, arc)
+    {
         var path = this.arc(d, i);
 
         if (path.indexOf("NaN") >= 0)
@@ -149,12 +171,14 @@ function PieChart(name, element, dimension, group) {
         return path;
     };
 
-    function sliceTooSmall(d) {
+    function sliceTooSmall(d)
+    {
         var angle = (d.endAngle - d.startAngle);
         return isNaN(angle) || angle < 10;
     }
 
-    function sliceHasNoData(d) {
+    function sliceHasNoData(d)
+    {
         return d.value === 0;
     }
 

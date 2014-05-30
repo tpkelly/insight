@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-  var sourceFiles = ['src/Group.js', 'src/Dimension.js', 'src/InsightCharts.Formatters.js', 'src/InsightCharts.Constants.js', 'src/Series.js', 'src/ChartGroup.js', 'src/BaseChart.js', 'src/Legend.js', 'src/DataTable.js', 'src/ColumnChart.js', 'src/MultipleChart.js', 'src/GroupedBarChart.js', 'src/StackedBarChart.js', 'src/Timeline.js', 'src/BaseChart.js','src/TimelineChart.js', 'src/RowChart.js', 'src/PartitionChart.js'];
+  var sourceFiles = ['src/cube/Group.js', 'src/cube/Dimension.js', 'src/InsightCharts.Formatters.js', 'src/InsightCharts.Constants.js', 'src/new/Series.js', 'src/new/Chart.js', 'src/new/Scale.js','src/new/Axis.js', 'src/new/LineSeries.js','src/new/ColumnSeries.js', 'src/ChartGroup.js', 'src/BaseChart.js', 'src/Legend.js', 'src/DataTable.js', 'src/ColumnChart.js', 'src/MultipleChart.js', 'src/GroupedBarChart.js', 'src/StackedBarChart.js', 'src/Timeline.js', 'src/BaseChart.js','src/TimelineChart.js', 'src/RowChart.js', 'src/PartitionChart.js'];
 
 
 
@@ -45,7 +45,7 @@ module.exports = function(grunt) {
     {
       js:
       {
-        braceStyle: 'collapse',
+        braceStyle: 'expand',
         indentChart: ' ',
         indentSize: 4,
         evalCode: true,

@@ -1,4 +1,5 @@
-function TimelineChart(element, key, values) {
+function TimelineChart(element, key, values)
+{
 
     BaseChart.call(this, name, element, null, null);
 
@@ -7,7 +8,8 @@ function TimelineChart(element, key, values) {
     this.values = values;
     this.key = key;
 
-    this.dataset = function() {
+    this.dataset = function()
+    {
 
         return this.values;
     };
@@ -16,7 +18,8 @@ function TimelineChart(element, key, values) {
     this.longdrag = false;
 
     this.drag = d3.behavior.drag()
-        .on("drag", function(d, i) {
+        .on("drag", function(d, i)
+        {
             var diff = 0;
 
             d3.select(this)
@@ -26,7 +29,8 @@ function TimelineChart(element, key, values) {
 
 
         })
-        .on("dragend", function(d, i) {
+        .on("dragend", function(d, i)
+        {
 
             self.updatedEntryHandler.call(this, self.key, d, Math.round(self.y.invert(this.y.baseVal.value)));
             d3.select(this)
@@ -34,7 +38,8 @@ function TimelineChart(element, key, values) {
         });
 
 
-    this.updatedEntryHandler = function(key, d, i) {
+    this.updatedEntryHandler = function(key, d, i)
+    {
         self.draw();
     };
 
@@ -42,8 +47,10 @@ function TimelineChart(element, key, values) {
 
     };
 
-    this.clickEvent = function() {
-        if (!self.longdrag) {
+    this.clickEvent = function()
+    {
+        if (!self.longdrag)
+        {
             var m = d3.mouse(this);
             var xPos = self.x.invert(m[0]);
             xPos = new Date(xPos.getFullYear(), xPos.getMonth(), 1, 1, 0, 0);
@@ -57,16 +64,19 @@ function TimelineChart(element, key, values) {
         self.longdrag = false;
     };
 
-    this.keys = function() {
+    this.keys = function()
+    {
         var keys = this.dataset()
-            .map(function(d) {
+            .map(function(d)
+            {
                 return new Date(d.Date);
             });
 
         return keys;
     };
 
-    this.initializeAxes = function() {
+    this.initializeAxes = function()
+    {
 
         this.x = d3.time.scale();
         this.y = d3.scale.linear();
@@ -100,16 +110,19 @@ function TimelineChart(element, key, values) {
         this.zoom.x(this.x);
     };
 
-    this.dragging = function() {
+    this.dragging = function()
+    {
 
-        self.timeout = setTimeout(function() {
+        self.timeout = setTimeout(function()
+        {
             self.longdrag = true;
         }, 100);
 
         self.draw();
     };
 
-    this.init = function() {
+    this.init = function()
+    {
 
         this.createChart();
 
@@ -118,7 +131,8 @@ function TimelineChart(element, key, values) {
         this.initializeAxes();
 
 
-        $.each(this.dataset(), function(i, d) {
+        $.each(this.dataset(), function(i, d)
+        {
             d.Date = new Date(d.Date);
         });
 
@@ -154,7 +168,8 @@ function TimelineChart(element, key, values) {
     };
 
 
-    this.draw = function() {
+    this.draw = function()
+    {
 
         var item = self.dataset();
 
@@ -192,25 +207,30 @@ function TimelineChart(element, key, values) {
         self.chart.selectAll("rect.item")
             .data(self.dataset())
             .attr("class", "item")
-            .attr("y", function(d) {
+            .attr("y", function(d)
+            {
                 var ypos = self.y(self._valueAccessor(d));
                 return ypos;
             })
             .attr("height", self.barHeight)
-            .attr("x", function(d) {
+            .attr("x", function(d)
+            {
                 var xPos = self.x(d.Date);
                 return xPos;
             })
-            .attr("width", function(d) {
+            .attr("width", function(d)
+            {
                 var nextMonth = new Date(d.Date.getFullYear(), d.Date.getMonth() + 1, 1);
 
                 var width = self.x(nextMonth) - self.x(d.Date);
                 return width;
             })
-            .on("mouseover", function(d) {
+            .on("mouseover", function(d)
+            {
                 self.mouseOver(self, this);
             })
-            .on("mouseout", function(d) {
+            .on("mouseout", function(d)
+            {
                 self.mouseOut(self, this);
             })
             .attr("clip-path", "url(#clip)")

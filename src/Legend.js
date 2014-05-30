@@ -1,14 +1,17 @@
-function Legend(name, element, dimension, group) {
+function Legend(name, element, dimension, group)
+{
 
     BaseChart.call(this, name, element, dimension, group);
 
     var self = this;
 
-    this.dataset = function() {
+    this.dataset = function()
+    {
         return this.group;
     };
 
-    this.init = function() {
+    this.init = function()
+    {
         var self = this;
 
         this.createChart();
@@ -18,7 +21,8 @@ function Legend(name, element, dimension, group) {
             .enter()
             .append("g")
             .attr("class", "legend")
-            .attr("transform", function(d, i) {
+            .attr("transform", function(d, i)
+            {
                 return "translate(0," + ((i * 20) + (i * 5)) + ")";
             });
 
@@ -28,7 +32,8 @@ function Legend(name, element, dimension, group) {
             .attr("height", 20)
             .attr("rx", 10)
             .attr("ry", 10)
-            .style("fill", function(d) {
+            .style("fill", function(d)
+            {
                 return d.color;
             });
 
@@ -36,7 +41,8 @@ function Legend(name, element, dimension, group) {
             .attr("x", 25)
             .attr("y", 10)
             .attr("dy", ".35em")
-            .text(function(d) {
+            .text(function(d)
+            {
                 return d.label;
             });
 

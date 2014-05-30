@@ -1,4 +1,5 @@
-function GroupedBarChart(name, element, dimension, group) {
+function GroupedBarChart(name, element, dimension, group)
+{
 
     BaseChart.call(this, name, element, dimension, group);
 
@@ -10,7 +11,8 @@ function GroupedBarChart(name, element, dimension, group) {
 
     this.y = d3.scale.linear();
 
-    this.xFormatFunc = function(d) {
+    this.xFormatFunc = function(d)
+    {
         return d;
     };
 
@@ -28,34 +30,44 @@ function GroupedBarChart(name, element, dimension, group) {
         .orient("bottom")
         .tickSize(0)
         .tickPadding(10)
-        .tickFormat(function(d) {
+        .tickFormat(function(d)
+        {
             return self.xFormatFunc(d);
         });
 
-    this.xAxisFormat = function(f) {
+    this.xAxisFormat = function(f)
+    {
         this.xFormatFunc = f;
         return this;
     };
 
-    this.labelAnchoring = function(d) {
-        if (this.invert()) {
+    this.labelAnchoring = function(d)
+    {
+        if (this.invert())
+        {
             return "start";
-        } else {
+        }
+        else
+        {
             return "end";
         }
     };
 
-    this.groupNames = function(d) {
-        if (!arguments) {
+    this.groupNames = function(d)
+    {
+        if (!arguments)
+        {
             return this._groupNames;
         }
         this._groupNames = d;
         return this;
     };
 
-    this.yScaleMax = function() {
+    this.yScaleMax = function()
+    {
 
-        var max = d3.max(this.dataset(), function(d) {
+        var max = d3.max(this.dataset(), function(d)
+        {
             var m = 0;
 
             m = m < d.value.Total ? d.value.Total : m;
@@ -65,7 +77,8 @@ function GroupedBarChart(name, element, dimension, group) {
         return max;
     };
 
-    this.initializeAxes = function() {
+    this.initializeAxes = function()
+    {
 
         this.x.domain(this.keys())
             .rangeRoundBands([0, this.width() - this.margin()
@@ -82,7 +95,8 @@ function GroupedBarChart(name, element, dimension, group) {
             ]);
     };
 
-    this.init = function() {
+    this.init = function()
+    {
         var self = this;
 
         this.createChart();
@@ -93,7 +107,8 @@ function GroupedBarChart(name, element, dimension, group) {
             .enter()
             .append("g")
             .attr("class", "group")
-            .attr("transform", function(d) {
+            .attr("transform", function(d)
+            {
                 return "translate(" + self.x(self._keyAccessor(d)) + ",0)";
             });
 
@@ -101,39 +116,48 @@ function GroupedBarChart(name, element, dimension, group) {
             .attr("class", "total")
             .attr("width", this.x.rangeBand())
             .attr("x", 0)
-            .attr("y", function(d) {
+            .attr("y", function(d)
+            {
                 return self.y(d.value.Total);
             })
-            .attr("height", function(d) {
+            .attr("height", function(d)
+            {
                 return (self.height() - self.margin()
                     .top - self.margin()
                     .bottom) - self.y(d.value.Total);
             })
             .attr("fill", "silver")
-            .on("mouseover", function(d, item) {
+            .on("mouseover", function(d, item)
+            {
                 self.mouseOver(self, this, d);
             })
-            .on("mouseout", function(d, item) {
+            .on("mouseout", function(d, item)
+            {
                 self.mouseOut(self, this, d);
             });
 
         total.append("svg:text")
-            .text(function(d) {
+            .text(function(d)
+            {
                 return self.tooltipLabel();
             })
             .attr("class", "tipLabel");
 
         total.append("svg:text")
-            .text(function(d) {
+            .text(function(d)
+            {
                 return self._tooltipFormat(d.value.Total);
             })
             .attr("class", "tipValue");
 
         var bars = groups.selectAll("rect.subbar")
-            .data(function(d) {
+            .data(function(d)
+            {
                 var vals = [];
-                for (var key in d.value.Groups) {
-                    vals.push({
+                for (var key in d.value.Groups)
+                {
+                    vals.push(
+                    {
                         key: key,
                         value: d.value.Groups[key].Value
                     });
@@ -146,35 +170,43 @@ function GroupedBarChart(name, element, dimension, group) {
             .append("rect")
             .attr("class", "subbar")
             .attr("width", this.subX.rangeBand())
-            .attr("x", function(d) {
+            .attr("x", function(d)
+            {
                 return self.subX(d.key);
             })
-            .attr("y", function(d) {
+            .attr("y", function(d)
+            {
                 return self.y(d.value);
             })
-            .attr("height", function(d) {
+            .attr("height", function(d)
+            {
                 return (self.height() - self.margin()
                     .top - self.margin()
                     .bottom) - self.y(d.value);
             })
-            .attr("fill", function(d) {
+            .attr("fill", function(d)
+            {
                 return self.color(d.key);
             })
-            .on("mouseover", function(d, item) {
+            .on("mouseover", function(d, item)
+            {
                 self.mouseOver(self, this, d);
             })
-            .on("mouseout", function(d, item) {
+            .on("mouseout", function(d, item)
+            {
                 self.mouseOut(self, this, d);
             });
 
         bars.append("svg:text")
-            .text(function(d) {
+            .text(function(d)
+            {
                 return self._tooltipFormat(self._valueAccessor(d));
             })
             .attr("class", "tipValue");
 
         bars.append("svg:text")
-            .text(function(d) {
+            .text(function(d)
+            {
                 return self.tooltipLabel();
             })
             .attr("class", "tipLabel");
@@ -196,10 +228,12 @@ function GroupedBarChart(name, element, dimension, group) {
             .style("text-anchor", "end")
             .style("font-size", "12px")
             .style("fill", "#333")
-            .attr("transform", function(d) {
+            .attr("transform", function(d)
+            {
                 return "rotate(-90," + 0 + "," + 15 + ")";
             })
-            .on("click", function(filter) {
+            .on("click", function(filter)
+            {
                 return self.filterClick(this, filter);
             });
 
@@ -209,7 +243,8 @@ function GroupedBarChart(name, element, dimension, group) {
             .enter()
             .append("g")
             .attr("class", "legend")
-            .attr("transform", function(d, i) {
+            .attr("transform", function(d, i)
+            {
                 return "translate(0," + i * 20 + ")";
             });
 
@@ -226,13 +261,15 @@ function GroupedBarChart(name, element, dimension, group) {
             .attr("y", 9)
             .attr("dy", ".35em")
             .style("text-anchor", "end")
-            .text(function(d) {
+            .text(function(d)
+            {
                 return d;
             });
 
     };
 
-    this.draw = function() {
+    this.draw = function()
+    {
 
         var self = this;
 
@@ -242,20 +279,25 @@ function GroupedBarChart(name, element, dimension, group) {
         groups.selectAll("rect.total")
             .transition()
             .duration(self.duration)
-            .attr("y", function(d) {
+            .attr("y", function(d)
+            {
                 return self.y(d.value.Total);
             })
-            .attr("height", function(d) {
+            .attr("height", function(d)
+            {
                 return (self.height() - self.margin()
                     .top - self.margin()
                     .bottom) - self.y(d.value.Total);
             });
 
         groups.selectAll("rect.subbar")
-            .data(function(d) {
+            .data(function(d)
+            {
                 var vals = [];
-                for (var key in d.value.Groups) {
-                    vals.push({
+                for (var key in d.value.Groups)
+                {
+                    vals.push(
+                    {
                         key: key,
                         value: d.value.Groups[key].Value
                     });
@@ -264,10 +306,12 @@ function GroupedBarChart(name, element, dimension, group) {
             })
             .transition()
             .duration(self.duration)
-            .attr("y", function(d) {
+            .attr("y", function(d)
+            {
                 return self.y(d.value);
             })
-            .attr("height", function(d) {
+            .attr("height", function(d)
+            {
                 return (self.height() - self.margin()
                     .top - self.margin()
                     .bottom) - self.y(d.value);

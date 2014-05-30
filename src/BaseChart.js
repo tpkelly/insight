@@ -1,4 +1,5 @@
-var BaseChart = function BaseChart(name, element, dimension, data) {
+var BaseChart = function BaseChart(name, element, dimension, data)
+{
     var self = this;
 
     this.element = element;
@@ -10,11 +11,13 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     this.x = d3.scale.ordinal();
     this.y = d3.scale.linear();
 
-    this._keyAccessor = function(d) {
+    this._keyAccessor = function(d)
+    {
         return d.key;
     };
 
-    this._valueAccessor = function(d) {
+    this._valueAccessor = function(d)
+    {
         return d.value;
     };
 
@@ -36,11 +39,13 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     var xOrientation = d3.functor('bottom');
     var tooltipLabel = d3.functor("Value");
 
-    var yAxisFormat = function(d) {
+    var yAxisFormat = function(d)
+    {
         return d;
     };
 
-    var xAxisFormat = function(d) {
+    var xAxisFormat = function(d)
+    {
         return d;
     };
 
@@ -65,11 +70,13 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
 
     this._defaultSeries = {
         name: 'default',
-        label: function() {
+        label: function()
+        {
             return self.tooltipLabel();
         },
         calculation: self._valueAccessor,
-        color: function(d) {
+        color: function(d)
+        {
             //console.log(barColor);
             return barColor(d);
         }
@@ -79,101 +86,121 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     var _targets = null;
     var _ranges = [];
 
-    this._targetAccessor = function(d) {
+    this._targetAccessor = function(d)
+    {
         return d.value;
     };
 
-    this.matcher = function(d) {
+    this.matcher = function(d)
+    {
         return self._keyAccessor(d);
     };
 
-    this._rangeAccessor = function(d) {
+    this._rangeAccessor = function(d)
+    {
         return d.value;
     };
 
-    this._limitFunction = function(d) {
+    this._limitFunction = function(d)
+    {
         return true;
     };
 
-    this._labelAccessor = function(d) {
+    this._labelAccessor = function(d)
+    {
         return d.key;
     };
 
-    this._tooltipFormat = function(d) {
+    this._tooltipFormat = function(d)
+    {
         return d;
     };
 
 
 
-    this.xPosition = function(d) {
+    this.xPosition = function(d)
+    {
         var offset = Math.round((self._barWidthFunction == self.x.rangeBand || self._barWidthFunction == self.x.rangeRound) ? 0 : self.barWidth(d) / 2);
 
         return self.x(self._keyAccessor(d)) - offset;
     };
 
-    this.yPosition = function(d) {
+    this.yPosition = function(d)
+    {
         return self.y(self._valueAccessor(d));
     };
 
-    this.rangeY = function(d, i) {
+    this.rangeY = function(d, i)
+    {
         return self.y(self._rangeAccessor(d));
     };
 
 
-    this.animationDuration = function(d, i) {
+    this.animationDuration = function(d, i)
+    {
         return self.duration + (i);
     };
 
-    this.rangeX = function(d, i) {
+    this.rangeX = function(d, i)
+    {
         var offset = i == (self.keys()
             .length - 1) ? self._barWidthFunction(d) : 0;
 
         return self.x(self._keyAccessor(d)) + offset;
     };
 
-    this.barHeight = function(d) {
+    this.barHeight = function(d)
+    {
         return (self.height() - self.margin()
             .top - self.margin()
             .bottom) - self.y(self._valueAccessor(d));
     };
 
-    this.targetY = function(d, i) {
+    this.targetY = function(d, i)
+    {
         return self.y(self._targetAccessor(d));
     };
 
-    this.targetX = function(d, i) {
+    this.targetX = function(d, i)
+    {
 
         var offset = (self._barWidthFunction == self.x.rangeBand) ? 0 : self.barWidth(d) / 2;
 
         return (self.x(self._keyAccessor(d)) + self._barWidthFunction(d) / 3) - offset;
     };
 
-    this.targetWidth = function(d) {
+    this.targetWidth = function(d)
+    {
         return self._barWidthFunction(d) / 3;
     };
 
-    this.targetTooltipText = function(d) {
+    this.targetTooltipText = function(d)
+    {
         return self._tooltipFormat(self._targetAccessor(d));
     };
 
-    this.tooltipText = function(d) {
+    this.tooltipText = function(d)
+    {
         return self._tooltipFormat(self._valueAccessor(d));
     };
 
-    this.yDomain = function() {
+    this.yDomain = function()
+    {
         return self.height() - self.margin()
             .top - self.margin()
             .bottom;
     };
 
 
-    this.xDomain = function() {
+    this.xDomain = function()
+    {
         return self.width() - self.margin()
             .left - self.margin()
             .right;
     };
 
-    this.xBounds = function(d) {
+    this.xBounds = function(d)
+    {
 
         var start = this.invert() ? this.margin()
             .right : this.margin()
@@ -188,7 +215,8 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
         };
     };
 
-    this.yBounds = function(d) {
+    this.yBounds = function(d)
+    {
 
         var start = this.invert() ? this.margin()
             .top : this.margin()
@@ -204,9 +232,11 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
         };
     };
 
-    this.createChart = function(ignoreTitle) {
+    this.createChart = function(ignoreTitle)
+    {
 
-        if (!ignoreTitle) {
+        if (!ignoreTitle)
+        {
             d3.select(this.element)
                 .append("div")
                 .attr('class', 'title')
@@ -232,53 +262,66 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
         return this.chart;
     };
 
-    this.calculateBarColor = function(d) {
+    this.calculateBarColor = function(d)
+    {
 
         return barColor(d);
     };
 
-    this.zoomable = function(_) {
-        if (!arguments.length) {
+    this.zoomable = function(_)
+    {
+        if (!arguments.length)
+        {
             return this._zoomable;
         }
         this._zoomable = _;
         return this;
     };
 
-    this.displayName = function(_) {
-        if (!arguments.length) {
+    this.displayName = function(_)
+    {
+        if (!arguments.length)
+        {
             return displayName();
         }
         displayName = d3.functor(_);
         return this;
     };
 
-    this.yOrientation = function(_) {
-        if (!arguments.length) {
+    this.yOrientation = function(_)
+    {
+        if (!arguments.length)
+        {
             return yOrientation();
         }
         yOrientation = d3.functor(_);
         return this;
     };
 
-    this.xOrientation = function(_) {
-        if (!arguments.length) {
+    this.xOrientation = function(_)
+    {
+        if (!arguments.length)
+        {
             return xOrientation();
         }
         xOrientation = d3.functor(_);
         return this;
     };
 
-    this.tickSize = function(_) {
-        if (!arguments.length) {
+    this.tickSize = function(_)
+    {
+        if (!arguments.length)
+        {
             return tickSize();
         }
         tickSize = d3.functor(_);
         return this;
     };
 
-    this.tickPadding = function(_) {
-        if (!arguments.length) {
+    this.tickPadding = function(_)
+    {
+        if (!arguments.length)
+        {
             return tickPadding();
         }
         tickPadding = d3.functor(_);
@@ -286,8 +329,10 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     };
 
 
-    this.width = function(_) {
-        if (!arguments.length) {
+    this.width = function(_)
+    {
+        if (!arguments.length)
+        {
             return width();
         }
 
@@ -295,16 +340,20 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
         return this;
     };
 
-    this.height = function(_) {
-        if (!arguments.length) {
+    this.height = function(_)
+    {
+        if (!arguments.length)
+        {
             return height();
         }
         height = d3.functor(_);
         return this;
     };
 
-    this.orderable = function(_) {
-        if (!arguments.length) {
+    this.orderable = function(_)
+    {
+        if (!arguments.length)
+        {
             return orderable();
         }
         orderable = d3.functor(_);
@@ -312,16 +361,20 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     };
 
 
-    this.ordered = function(_) {
-        if (!arguments.length) {
+    this.ordered = function(_)
+    {
+        if (!arguments.length)
+        {
             return ordered();
         }
         ordered = d3.functor(_);
         return this;
     };
 
-    this.orderChildren = function(_) {
-        if (!arguments.length) {
+    this.orderChildren = function(_)
+    {
+        if (!arguments.length)
+        {
             return this._orderChildren;
         }
         this._orderChildren = _;
@@ -329,7 +382,8 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     };
 
 
-    this.initZoom = function() {
+    this.initZoom = function()
+    {
         this.zoom = d3.behavior.zoom()
             .on("zoom", this.dragging.bind(this));
 
@@ -346,7 +400,8 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     };
 
 
-    this.addClipPath = function() {
+    this.addClipPath = function()
+    {
 
         this.chart.append("clipPath")
             .attr("id", "clip")
@@ -358,62 +413,76 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
 
     };
 
-    this.dragging = function() {
+    this.dragging = function()
+    {
 
         this.draw(true);
     };
 
-    this.setXAxisRange = function(rangeAccessor) {
+    this.setXAxisRange = function(rangeAccessor)
+    {
         this._xRangeType = rangeAccessor(this.x);
         return this;
     };
 
-    this.initializeAxes = function() {
+    this.initializeAxes = function()
+    {
         //have to pass the chart as a variable as the sub functions are run in a different context
         this.initializeXAxis(this);
         this.initializeYAxis(this);
     };
 
-    this.xDomainRange = function() {
+    this.xDomainRange = function()
+    {
         //default behaviour for x axis is to treat it as an orginal range using the dataset's keys
         return this.keys();
     };
 
-    this.xRange = function(f) {
-        if (!arguments.length) {
+    this.xRange = function(f)
+    {
+        if (!arguments.length)
+        {
             return this.xDomainRange();
         }
         this.xDomainRange = f;
         return this;
     };
 
-    this.initializeYAxis = function(chart) {
+    this.initializeYAxis = function(chart)
+    {
         this.applyYAxisRange.call(chart.y.domain([0, chart.findMax()]), chart, chart._yRangeType);
     };
 
-    this.initializeXAxis = function(chart) {
+    this.initializeXAxis = function(chart)
+    {
         this.applyXAxisRange.call(chart.x.domain(chart.xDomainRange()), chart, chart._xRangeType);
     };
 
-    this.applyXAxisRange = function(chart, f) {
+    this.applyXAxisRange = function(chart, f)
+    {
         f.apply(this, [
             [0, chart.xDomain()], chart.barPadding()
         ]);
     };
 
-    this.applyYAxisRange = function(chart, f) {
+    this.applyYAxisRange = function(chart, f)
+    {
         f.apply(this, [
             [chart.yDomain(), 0], 0
         ]);
     };
 
-    this.link = function(chart, follow) {
+    this.link = function(chart, follow)
+    {
 
-        if (this._linkedCharts.indexOf(chart) == -1) {
+        if (this._linkedCharts.indexOf(chart) == -1)
+        {
             this._linkedCharts.push(chart);
 
-            if (follow) {
-                this._linkedCharts.forEach(function(c) {
+            if (follow)
+            {
+                this._linkedCharts.forEach(function(c)
+                {
                     c.link(chart, false);
                 });
             }
@@ -422,8 +491,10 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     };
 
 
-    this.cumulative = function(_) {
-        if (!arguments.length) {
+    this.cumulative = function(_)
+    {
+        if (!arguments.length)
+        {
             return cumulative();
         }
         cumulative = d3.functor(_);
@@ -431,8 +502,10 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     };
 
 
-    this.xAxisFormat = function(_) {
-        if (!arguments.length) {
+    this.xAxisFormat = function(_)
+    {
+        if (!arguments.length)
+        {
             return xAxisFormat;
         }
         xAxisFormat = _;
@@ -441,12 +514,14 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
 
 
 
-    this.updateMax = function(d) {
+    this.updateMax = function(d)
+    {
         var value = 0;
 
         var func;
 
-        for (var seriesFunction in this.series()) {
+        for (var seriesFunction in this.series())
+        {
             func = this.cumulative() ? this.series()[seriesFunction].cumulative : this.series()[seriesFunction].calculation;
             value += func(d);
             this._currentMax = value > this._currentMax ? value : this._currentMax;
@@ -454,8 +529,10 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
 
 
         if (this.ranges()
-            .length) {
-            for (var rangeFunction in this.ranges()) {
+            .length)
+        {
+            for (var rangeFunction in this.ranges())
+            {
                 func = this.ranges()[rangeFunction].calculation;
                 value = func(d);
                 this._currentMax = value > this._currentMax ? value : this._currentMax;
@@ -465,10 +542,12 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     };
 
 
-    this.targetMax = function(d) {
+    this.targetMax = function(d)
+    {
         var value = 0;
 
-        if (_targets) {
+        if (_targets)
+        {
             func = this.cumulative() ? _targets.cumulative : _targets.calculation;
             value = func(d);
             this._currentMax = value > this._currentMax ? value : this._currentMax;
@@ -476,15 +555,19 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
         return this._currentMax;
     };
 
-    this.findMax = function() {
+    this.findMax = function()
+    {
         var self = this;
 
-        var max = d3.max(this.dataset(), function(d) {
+        var max = d3.max(this.dataset(), function(d)
+        {
             return self.updateMax(d);
         });
 
-        if (_targets) {
-            var targetsmax = d3.max(_targets.data.getData(), function(d) {
+        if (_targets)
+        {
+            var targetsmax = d3.max(_targets.data.getData(), function(d)
+            {
                 return self.targetMax(d);
             });
             max = max > targetsmax ? max : targetsmax;
@@ -495,22 +578,28 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
         return max;
     };
 
-    this.zeroValueEntry = function(d) {
+    this.zeroValueEntry = function(d)
+    {
         var hasValue = 0;
         var func;
 
         if (this.series()
-            .length) {
-            for (var seriesFunction in this.series()) {
+            .length)
+        {
+            for (var seriesFunction in this.series())
+            {
                 func = this.cumulative() ? this.series()[seriesFunction].cumulative : this.series()[seriesFunction].calculation;
 
                 hasValue = hasValue | (Math.round(func(d), 1) > 0);
             }
-        } else {
+        }
+        else
+        {
             hasValue = hasValue | (Math.round(this._valueAccessor(d), 1) > 0);
 
         }
-        if (_targets) {
+        if (_targets)
+        {
             func = this.cumulative() ? _targets.cumulative : _targets.calculation;
             hasValue = hasValue | (Math.round(func(d), 1) > 0);
         }
@@ -519,66 +608,83 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
 
 
 
-    this.keys = function() {
+    this.keys = function()
+    {
         var self = this;
 
         var keys = [];
 
-        if (this.redrawAxes()) {
+        if (this.redrawAxes())
+        {
             keys = this.dataset()
-                .filter(function(d) {
+                .filter(function(d)
+                {
                     return self.zeroValueEntry(d);
                 })
                 .map(this._keyAccessor);
-        } else {
+        }
+        else
+        {
             keys = this.dataset()
                 .map(this._keyAccessor);
         }
         return keys;
     };
 
-    this.series = function(_) {
+    this.series = function(_)
+    {
 
-        if (!arguments.length) {
+        if (!arguments.length)
+        {
             return _series;
         }
         _series = _;
         return this;
     };
 
-    this.stacked = function(_) {
-        if (!arguments.length) {
+    this.stacked = function(_)
+    {
+        if (!arguments.length)
+        {
             return stacked();
         }
         stacked = d3.functor(_);
         return this;
     };
 
-    this.targets = function(targets) {
-        if (!arguments.length) {
+    this.targets = function(targets)
+    {
+        if (!arguments.length)
+        {
             return _targets;
         }
         _targets = targets;
         return this;
     };
 
-    this.ranges = function(_) {
-        if (!arguments.length) {
+    this.ranges = function(_)
+    {
+        if (!arguments.length)
+        {
             return _ranges;
         }
         _ranges = _;
         return this;
     };
 
-    this.toggleSortIcon = function() {
+    this.toggleSortIcon = function()
+    {
 
         var self = this;
 
-        if (self.ordered()) {
+        if (self.ordered())
+        {
             d3.select(self.element)
                 .select('.fa-arrow-up')
                 .style('display', 'inline-block');
-        } else {
+        }
+        else
+        {
             d3.select(self.element)
                 .select('.fa-arrow-up')
                 .style('display', 'none');
@@ -586,7 +692,8 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
 
     };
 
-    this.titleClicked = function() {
+    this.titleClicked = function()
+    {
         this.ordered(!this.ordered());
 
         this.toggleSortIcon.call(this);
@@ -595,11 +702,13 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
 
     };
 
-    this.applyOrderableHeader = function() {
+    this.applyOrderableHeader = function()
+    {
 
         var self = this;
 
-        if (this.orderable()) {
+        if (this.orderable())
+        {
 
             var display = this.ordered() ? 'inline-block' : 'none';
 
@@ -613,51 +722,63 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
         }
     };
 
-    this.topResults = function(_) {
-        if (!arguments.length) {
+    this.topResults = function(_)
+    {
+        if (!arguments.length)
+        {
             return this._topResults;
         }
         this._topResults = _;
         return this;
     };
 
-    this.dataset = function() {
+    this.dataset = function()
+    {
         var data = this.ordered() ? this.group.getOrderedData() : this.group.getData();
 
         return data.filter(this._limitFunction);
     };
 
-    this.targetData = function() {
+    this.targetData = function()
+    {
         return _targets.data.getData()
             .filter(this._limitFunction);
     };
 
-    this.keyAccessor = function(_) {
-        if (!arguments.length) {
+    this.keyAccessor = function(_)
+    {
+        if (!arguments.length)
+        {
             return this._keyAccessor;
         }
         this._keyAccessor = _;
         return this;
     };
 
-    this.labelAccessor = function(_) {
-        if (!arguments.length) {
+    this.labelAccessor = function(_)
+    {
+        if (!arguments.length)
+        {
             return this._labelAccessor;
         }
         this._labelAccessor = _;
         return this;
     };
 
-    this.tooltipFormat = function(_) {
-        if (!arguments.length) {
+    this.tooltipFormat = function(_)
+    {
+        if (!arguments.length)
+        {
             return this._tooltipFormat;
         }
         this._tooltipFormat = _;
         return this;
     };
 
-    this.barPadding = function(_) {
-        if (!arguments.length) {
+    this.barPadding = function(_)
+    {
+        if (!arguments.length)
+        {
             return barPadding();
         }
         barPadding = d3.functor(_);
@@ -665,8 +786,10 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     };
 
 
-    this.yAxisFormat = function(_) {
-        if (!arguments.length) {
+    this.yAxisFormat = function(_)
+    {
+        if (!arguments.length)
+        {
             return yAxisFormat;
         }
         yAxisFormat = _;
@@ -674,8 +797,10 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     };
 
 
-    this.valueAccessor = function(_) {
-        if (!arguments.length) {
+    this.valueAccessor = function(_)
+    {
+        if (!arguments.length)
+        {
             return this._valueAccessor;
         }
         this._valueAccessor = _;
@@ -683,16 +808,20 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
         return this;
     };
 
-    this.redrawAxes = function(_) {
-        if (!arguments.length) {
+    this.redrawAxes = function(_)
+    {
+        if (!arguments.length)
+        {
             return redrawAxes();
         }
         redrawAxes = d3.functor(_);
         return this;
     };
 
-    this.margin = function(_) {
-        if (!arguments.length) {
+    this.margin = function(_)
+    {
+        if (!arguments.length)
+        {
             return this._margin;
         }
         this._margin = _;
@@ -700,38 +829,46 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     };
 
 
-    this.setXAxis = function(_) {
+    this.setXAxis = function(_)
+    {
 
-        if (!arguments.length) {
+        if (!arguments.length)
+        {
             return this.x;
         }
         this.x = _;
         return this;
     };
 
-    this.invert = function(_) {
+    this.invert = function(_)
+    {
 
-        if (!arguments.length) {
+        if (!arguments.length)
+        {
             return invert();
         }
         invert = d3.functor(_);
         return this;
     };
 
-    this.setHover = function() {
+    this.setHover = function()
+    {
         d3.select(this)
             .classed("active", true);
     };
 
 
 
-    this.removeHover = function() {
+    this.removeHover = function()
+    {
         d3.select(this)
             .classed("active", false);
     };
 
-    this.mouseOver = function(chart, item, d) {
-        if (chart.hasTooltip) {
+    this.mouseOver = function(chart, item, d)
+    {
+        if (chart.hasTooltip)
+        {
             var tipValue = $(item)
                 .find('.tipValue')
                 .first()
@@ -741,7 +878,8 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
                 .first()
                 .text();
 
-            chart.tip.show({
+            chart.tip.show(
+            {
                 label: tipLabel,
                 value: tipValue
             });
@@ -751,8 +889,10 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
             .classed("active", true);
     };
 
-    this.mouseOut = function(chart, item, d) {
-        if (chart.hasTooltip) {
+    this.mouseOut = function(chart, item, d)
+    {
+        if (chart.hasTooltip)
+        {
             chart.tip.hide(d);
         }
 
@@ -761,43 +901,52 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     };
 
 
-    this.isFunction = function(functionToCheck) {
+    this.isFunction = function(functionToCheck)
+    {
         var getType = {};
         return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
     };
 
-    this.labelColor = function(_) {
-        if (!arguments.length) {
+    this.labelColor = function(_)
+    {
+        if (!arguments.length)
+        {
             return this._labelColor;
         }
         this._labelColor = _;
         return this;
     };
 
-    this.barColor = function(_) {
-        if (!arguments.length) {
+    this.barColor = function(_)
+    {
+        if (!arguments.length)
+        {
             return barColor();
         }
         barColor = d3.functor(_);
         return this;
     };
 
-    this.tooltipLabel = function(_) {
-        if (!arguments.length) {
+    this.tooltipLabel = function(_)
+    {
+        if (!arguments.length)
+        {
             return tooltipLabel();
         }
         tooltipLabel = d3.functor(_);
         return this;
     };
 
-    this.tooltip = function() {
+    this.tooltip = function()
+    {
         var self = this;
         this.hasTooltip = true;
 
         this.tip = d3.tip()
             .attr('class', 'd3-tip')
             .offset([-10, 0])
-            .html(function(d) {
+            .html(function(d)
+            {
                 return "<span class='tiplabel'>" + d.label + ": </span><span class='tipvalue'>" + d.value + "</span>";
             });
 
@@ -810,8 +959,10 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     this.filterKey = function() {};
 
 
-    this.limit = function(_) {
-        if (!arguments.length) {
+    this.limit = function(_)
+    {
+        if (!arguments.length)
+        {
             return this._limitFunction;
         }
         this._limitFunction = _;
@@ -819,16 +970,20 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     };
 
 
-    this.labelPadding = function(_) {
-        if (!arguments.length) {
+    this.labelPadding = function(_)
+    {
+        if (!arguments.length)
+        {
             return labelPadding();
         }
         labelPadding = d3.functor(_);
         return this;
     };
 
-    this.labelFontSize = function(_) {
-        if (!arguments.length) {
+    this.labelFontSize = function(_)
+    {
+        if (!arguments.length)
+        {
             return labelFontSize();
         }
         labelFontSize = d3.functor(_);
@@ -836,21 +991,27 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     };
 
 
-    this.labelAnchoring = function(d) {
-        if (this.invert()) {
+    this.labelAnchoring = function(d)
+    {
+        if (this.invert())
+        {
             return "end";
-        } else {
+        }
+        else
+        {
             return "start";
         }
     };
 
-    this.filterFunction = function(filter, element) {
+    this.filterFunction = function(filter, element)
+    {
         var value = filter.key ? filter.key : filter;
 
         return {
             name: value,
             element: element,
-            filterFunction: function(d) {
+            filterFunction: function(d)
+            {
                 return String(d) == String(value);
             }
         };
@@ -878,23 +1039,28 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     this.drawTargets = function() {};
 
     // Events 
-    this.maxUpdatedEvent = function(max) {
+    this.maxUpdatedEvent = function(max)
+    {
 
-        this._linkedCharts.forEach(function(chart) {
+        this._linkedCharts.forEach(function(chart)
+        {
 
             chart._currentMax = chart._currentMax < max ? max : chart._currentMax;
         });
     };
 
-    this.filterClick = function(element, filter) {
-        if (this.dimension) {
+    this.filterClick = function(element, filter)
+    {
+        if (this.dimension)
+        {
             var filterFunction = this.filterFunction(filter, element);
 
             this.filterEvent(this.dimension, filterFunction);
         }
     };
 
-    this.barWidth = function(d) {
+    this.barWidth = function(d)
+    {
         return self._barWidthFunction(d);
     };
 

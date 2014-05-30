@@ -1,4 +1,5 @@
-var RowChart = function RowChart(name, element, dimension, group) {
+var RowChart = function RowChart(name, element, dimension, group)
+{
 
     BaseChart.call(this, name, element, dimension, group);
 
@@ -10,7 +11,8 @@ var RowChart = function RowChart(name, element, dimension, group) {
 
 
 
-    this.initializeAxes = function() {
+    this.initializeAxes = function()
+    {
 
         this.yAxis = d3.svg.axis()
             .scale(this.y)
@@ -38,21 +40,26 @@ var RowChart = function RowChart(name, element, dimension, group) {
             ], self.barPadding());
     };
 
-    this.rowWidth = function(d) {
+    this.rowWidth = function(d)
+    {
         return this.x(this._valueAccessor(d));
     }.bind(this);
 
-    this.yPosition = function(d) {
+    this.yPosition = function(d)
+    {
         return this.y(d.key);
     }.bind(this);
 
-    this.rowHeight = function() {
+    this.rowHeight = function()
+    {
         return this.y.rangeBand();
     }.bind(this);
 
-    this.barXPosition = function(d) {
+    this.barXPosition = function(d)
+    {
         var x = 0;
-        if (this.invert()) {
+        if (this.invert())
+        {
             x = this.xBounds()
                 .end - this.x(this._valueAccessor(d));
         }
@@ -60,7 +67,8 @@ var RowChart = function RowChart(name, element, dimension, group) {
     }.bind(this);
 
 
-    this.init = function() {
+    this.init = function()
+    {
         var self = this;
 
         this.createChart();
@@ -74,7 +82,8 @@ var RowChart = function RowChart(name, element, dimension, group) {
             .attr('class', InsightConstants.AxisTextClass)
             .on("mouseover", this.setHover)
             .on("mouseout", this.removeHover)
-            .on("click", function(filter) {
+            .on("click", function(filter)
+            {
                 self.filterClick(this, filter);
             });
 
@@ -82,7 +91,8 @@ var RowChart = function RowChart(name, element, dimension, group) {
     };
 
 
-    this.draw = function() {
+    this.draw = function()
+    {
 
         var self = this;
 
@@ -97,17 +107,20 @@ var RowChart = function RowChart(name, element, dimension, group) {
             .attr('transform', 'translate(' + transY + ',0)')
             .call(this.yAxis)
             .selectAll("text")
-            .each(function() {
+            .each(function()
+            {
                 d3.select(this)
                     .classed(InsightConstants.AxisTextClass, 'true');
             })
             .on("mouseover", this.setHover)
             .on("mouseout", this.removeHover)
-            .on("click", function(filter) {
+            .on("click", function(filter)
+            {
                 self.filterClick(this, filter);
             });
 
-        if (self._redrawAxes) {
+        if (self._redrawAxes)
+        {
 
             this.x.domain([0, this.findMax()])
                 .range([0, this.xBounds()
@@ -128,10 +141,12 @@ var RowChart = function RowChart(name, element, dimension, group) {
             .attr("width", 0)
             .attr("fill", this.barColor())
             .attr("height", this.rowHeight)
-            .on("mouseover", function(d, item) {
+            .on("mouseover", function(d, item)
+            {
                 self.mouseOver(self, this, d);
             })
-            .on("mouseout", function(d, item) {
+            .on("mouseout", function(d, item)
+            {
                 self.mouseOut(self, this, d);
             });
 
@@ -153,7 +168,8 @@ var RowChart = function RowChart(name, element, dimension, group) {
         bars.selectAll('text.tipLabel')
             .text(this.tooltipLabel());
 
-        if (self._redrawAxes || self.orderable()) {
+        if (self._redrawAxes || self.orderable())
+        {
             trans
                 .attr("y", this.yPosition)
                 .attr("height", this.rowHeight);
