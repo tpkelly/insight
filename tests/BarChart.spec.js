@@ -144,7 +144,7 @@ describe("Base Chart Tests", function() {
 
     it("will initialize with a name", function() {
         
-        var chart = new BarChart("Name", "asda", "asdads", "ada");
+        var chart = new ColumnChart("Name", "asda", "asdads", "ada");
 
         expect(chart.displayName()).toBe("Name");
 
@@ -152,14 +152,14 @@ describe("Base Chart Tests", function() {
 
     it("width should be correct", function() {
         
-        var chart = new BarChart("asd", "asda", "asdads", "ada");
+        var chart = new ColumnChart("asd", "asda", "asdads", "ada");
         chart.width(500);
         expect(chart.width()).toBe(500);
     });
 
     it("height should be correct", function() {
         
-        var chart = new BarChart("#asd", "asda", "asdads", "ada");
+        var chart = new ColumnChart("#asd", "asda", "asdads", "ada");
         chart.height(300);
         expect(chart.height()).toBe(300);
     });
@@ -168,7 +168,7 @@ describe("Base Chart Tests", function() {
 
         createChartElement();
 
-        var chart = new BarChart("testChart", "#testChart", null, group);
+        var chart = new ColumnChart("testChart", "#testChart", null, group);
         
         chart.init();
         
@@ -180,7 +180,7 @@ describe("Base Chart Tests", function() {
 
         createChartElement();
 
-        var chart = new BarChart("testChart", "#testChart", null, group);
+        var chart = new ColumnChart("testChart", "#testChart", null, group);
         
         chart.tickPadding(15);
 
@@ -193,7 +193,7 @@ describe("Base Chart Tests", function() {
 
         createChartElement();
 
-        var chart = new BarChart("testChart", "#testChart", null, group);
+        var chart = new ColumnChart("testChart", "#testChart", null, group);
         
         chart.init();
 
@@ -204,7 +204,7 @@ describe("Base Chart Tests", function() {
 
         createChartElement();
 
-        var chart = new BarChart("testChart", "#testChart", null, group);
+        var chart = new ColumnChart("testChart", "#testChart", null, group);
         chart.tickSize(5);
         
         chart.init();
@@ -217,7 +217,7 @@ describe("Base Chart Tests", function() {
         
         createChartElement();
 
-        var chart = new BarChart("testChart", "#testChart", null, group);
+        var chart = new ColumnChart("testChart", "#testChart", null, group);
 
         chart.width(100);
         chart.barPadding(0);
@@ -235,7 +235,7 @@ describe("Base Chart Tests", function() {
         
         createChartElement();
 
-        var chart = new BarChart("testChart", "#testChart", null, group)
+        var chart = new ColumnChart("testChart", "#testChart", null, group)
                         .series(series);
 
         chart.width(100);
@@ -257,7 +257,7 @@ describe("Base Chart Tests", function() {
 
     it("both dimensions should be correct", function() {
         
-        var chart = new BarChart("asd", "asda", "asdads", "ada");
+        var chart = new ColumnChart("asd", "asda", "asdads", "ada");
         chart.width(200);
         chart.height(300);
         expect(chart.height()).toBe(300);
@@ -266,7 +266,7 @@ describe("Base Chart Tests", function() {
 
     it("should have a default 0 margin", function() {
         
-        var chart = new BarChart("asd", "asda", "asdads", "ada");
+        var chart = new ColumnChart("asd", "asda", "asdads", "ada");
 
         var expectedMargin = {top:0, bottom:0, left:0, right:0};
         expect(chart.margin().top).toBe(expectedMargin.top);
@@ -277,7 +277,7 @@ describe("Base Chart Tests", function() {
 
     it("isFunction works with a function", function() {
         
-        var chart = new BarChart("Name", "asda", "asdads", "ada");
+        var chart = new ColumnChart("Name", "asda", "asdads", "ada");
 
         expect(chart.isFunction(function(f){ return f;})).toBe(true);
 
@@ -285,7 +285,7 @@ describe("Base Chart Tests", function() {
 
     it("isFunction works with a non function object", function() {
         
-        var chart = new BarChart("Name", "asda", "asdads", "ada");
+        var chart = new ColumnChart("Name", "asda", "asdads", "ada");
 
         expect(chart.isFunction({h:"hello"})).toBe(false);
 
@@ -293,7 +293,7 @@ describe("Base Chart Tests", function() {
 
     it("isFunction works with a primitive", function() {
         
-        var chart = new BarChart("Name", "asda", "asdads", "ada");
+        var chart = new ColumnChart("Name", "asda", "asdads", "ada");
 
         expect(chart.isFunction("hello")).toBe(false);
 
@@ -301,7 +301,7 @@ describe("Base Chart Tests", function() {
 
     it("bar colour can be set with string", function() {
         
-        var chart = new BarChart("Name", "asda", "asdads", "ada")
+        var chart = new ColumnChart("Name", "asda", "asdads", "ada")
                             .barColor('blue');
 
         expect(chart.calculateBarColor()).toBe('blue');
@@ -309,10 +309,10 @@ describe("Base Chart Tests", function() {
 
     it("multiple charts allow specific properties", function() {
         
-        var chart = new BarChart("Name", "asda", "asdads", "ada")
+        var chart = new ColumnChart("Name", "asda", "asdads", "ada")
                             .barColor('blue');
 
-        var chart2 = new BarChart("Name", "asda", "asdads", "ada")
+        var chart2 = new ColumnChart("Name", "asda", "asdads", "ada")
                             .barColor('red');
 
         expect(chart.calculateBarColor()).toBe('blue');
@@ -326,7 +326,7 @@ describe("Base Chart Tests", function() {
             return c;
         };
 
-        var chart = new BarChart("Name", "asda", "asdads", "ada")
+        var chart = new ColumnChart("Name", "asda", "asdads", "ada")
                             .barColor(colorFunc);
 
         expect(chart.calculateBarColor(1)).toBe('red');
@@ -338,7 +338,7 @@ describe("Base Chart Tests", function() {
         
         var expectedMargin = {top:100, bottom:10, left:20, right:30};
 
-        var chart = new BarChart("asd", "asda", "asdads", "ada")
+        var chart = new ColumnChart("asd", "asda", "asdads", "ada")
                 .margin(expectedMargin);
 
         expect(chart.margin().top).toBe(expectedMargin.top);
@@ -349,14 +349,14 @@ describe("Base Chart Tests", function() {
 
     it("should not be ordered by default", function() {
         
-        var chart = new BarChart("asd", "asda", "asdads", "ada");
+        var chart = new ColumnChart("asd", "asda", "asdads", "ada");
         
         expect(chart.ordered()).toBe(false);
     });
 
     it("should be ordered if we want it to be", function() {
         
-        var chart = new BarChart("asd", "asda", "asdads", "ada")
+        var chart = new ColumnChart("asd", "asda", "asdads", "ada")
                 .ordered(true);
         
         expect(chart.ordered()).toBe(true);
@@ -364,7 +364,7 @@ describe("Base Chart Tests", function() {
 
     it("should return value by default", function() {
         
-        var chart = new BarChart("asd", "asda", "asdads", "ada");
+        var chart = new ColumnChart("asd", "asda", "asdads", "ada");
 
         var item = {key: 'label', value: 'data'};
 
@@ -373,7 +373,7 @@ describe("Base Chart Tests", function() {
 
     it("should return default key", function() {
         
-        var chart = new BarChart("asd", "asda", "asdads", "ada");
+        var chart = new ColumnChart("asd", "asda", "asdads", "ada");
 
         var item = {key: 'label', value: 'data'};
 
@@ -382,7 +382,7 @@ describe("Base Chart Tests", function() {
 
     it("should use specified value accessor", function() {
         
-        var chart = new BarChart("asd", "asda", "asdads", "ada");
+        var chart = new ColumnChart("asd", "asda", "asdads", "ada");
 
         var item = {key: 'label', value: 'data', alternative: 'New Value'};
 
@@ -393,7 +393,7 @@ describe("Base Chart Tests", function() {
 
     it("should use specified key accessor", function() {
         
-        var chart = new BarChart("asd", "asda", "asdads", "ada");
+        var chart = new ColumnChart("asd", "asda", "asdads", "ada");
 
         var item = {key: 'label', value: 'data', alternative: 'New Value'};
 
@@ -404,21 +404,21 @@ describe("Base Chart Tests", function() {
 
     it("should be non-cumulative by default", function() {
         
-        var chart = new BarChart("asd", "asda", "asdads", "ada");
+        var chart = new ColumnChart("asd", "asda", "asdads", "ada");
 
         expect(chart.cumulative()).toBe(false);
     });
 
     it("should be cumulative when we want it to be", function() {
         
-        var chart = new BarChart("asd", "asda", "asdads", "ada")
+        var chart = new ColumnChart("asd", "asda", "asdads", "ada")
                 .cumulative(true);
     });
 
 
     it("default x axis should be ordinal", function() {
         
-        var chart = new BarChart("asd", "asda", "asdads", "ada");
+        var chart = new ColumnChart("asd", "asda", "asdads", "ada");
         chart.x.domain(["a", "b", "c"]).rangeBands([0,3]);
         var actual = chart.x("c");
         expect(actual).toBe(2);
@@ -429,7 +429,7 @@ describe("Base Chart Tests", function() {
 
     it("should allow time scales on the x axis", function() {
         
-        var chart = new BarChart("asd", "asda", "asdads", "ada")
+        var chart = new ColumnChart("asd", "asda", "asdads", "ada")
                             .setXAxis(d3.time.scale());
         
         var start = new Date(2013,0,1);
@@ -446,7 +446,7 @@ describe("Base Chart Tests", function() {
 
     it("time scaled x axis should work correctly", function() {
         
-        var chart = new BarChart("asd", "asda", "asdads", "ada")
+        var chart = new ColumnChart("asd", "asda", "asdads", "ada")
                             .setXAxis(d3.time.scale());
         
         var start = new Date(2013,0,1);
@@ -463,7 +463,7 @@ describe("Base Chart Tests", function() {
 
     it("should be zoomable", function() {
         
-        var chart = new BarChart("asd", "asda", "asdads", "ada");
+        var chart = new ColumnChart("asd", "asda", "asdads", "ada");
                             
         chart.zoomable(true);
 
@@ -472,7 +472,7 @@ describe("Base Chart Tests", function() {
 
     it("can calculate maximum of single series", function() {
         
-        var chart = new BarChart("asd", "asda", "asdads", group);
+        var chart = new ColumnChart("asd", "asda", "asdads", group);
 
         expect(chart.findMax()).toBe(500);
     });
@@ -480,14 +480,14 @@ describe("Base Chart Tests", function() {
     it("can calculate maximum of single series with a target series from the same dataset", function() {
         
         
-        var chart = new BarChart("asd", "asda", "asdads", group).targets(targets);
+        var chart = new ColumnChart("asd", "asda", "asdads", group).targets(targets);
 
         expect(chart.findMax()).toBe(1300);
     });
 
     it("can calculate maximum when using a stacked series", function() {
         
-        var chart = new BarChart("asd", "asda", "asdads", group)
+        var chart = new ColumnChart("asd", "asda", "asdads", group)
                         .series(series)
                         .targets(targets);
 
@@ -504,7 +504,7 @@ describe("Base Chart Tests", function() {
             };
 
 
-        var chart = new BarChart("asd", "asda", "asdads", group)
+        var chart = new ColumnChart("asd", "asda", "asdads", group)
                         .series(series)
                         .ranges(ranges)
                         .targets(targets);
@@ -526,7 +526,7 @@ describe("Base Chart Tests", function() {
         dataset.push(newItem);
 
 
-       var chart = new BarChart("asd", "asda", "asdads", group)
+       var chart = new ColumnChart("asd", "asda", "asdads", group)
                         .series(series)
                         .ranges(ranges)
                         .targets(targets);

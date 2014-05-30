@@ -10,7 +10,6 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     this.x = d3.scale.ordinal();
     this.y = d3.scale.linear();
 
-
     this._keyAccessor = function(d) {
         return d.key;
     };
@@ -35,7 +34,6 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
     var tickPadding = d3.functor(10);
     var yOrientation = d3.functor('left');
     var xOrientation = d3.functor('bottom');
-
     var tooltipLabel = d3.functor("Value");
 
     var yAxisFormat = function(d) {
@@ -718,7 +716,6 @@ var BaseChart = function BaseChart(name, element, dimension, data) {
         }
         invert = d3.functor(_);
         return this;
-
     };
 
     this.setHover = function() {

@@ -61,7 +61,7 @@ describe("ChartGroup", function() {
                 
         var group = new ChartGroup("Charts");
 
-        var barChart = new BarChart("TestChart", "#testChart", {}, data)
+        var barChart = new ColumnChart("TestChart", "#testChart", {}, data)
 
         group.addChart(barChart);
         expect(group.Charts.length).toBe(1);
@@ -77,7 +77,7 @@ describe("ChartGroup", function() {
 
         var dimension = new Dimension("TestDimension", {});
 
-        var barChart = new BarChart("TestChart", "#testChart", dimension, group)
+        var barChart = new ColumnChart("TestChart", "#testChart", dimension, group)
 
         chartGroup.addChart(barChart);
         

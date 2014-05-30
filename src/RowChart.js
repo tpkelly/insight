@@ -7,29 +7,35 @@ var RowChart = function RowChart(name, element, dimension, group) {
     this.x = d3.scale.linear();
     this.y = d3.scale.ordinal();
 
-    this.yAxis = d3.svg.axis()
-        .scale(this.y)
-        .orient("left")
-        .tickSize(self.tickSize())
-        .tickPadding(self.tickPadding());
 
-    this.xAxis = d3.svg.axis()
-        .scale(this.x)
-        .orient("bottom")
-        .tickSize(self.tickSize())
-        .tickPadding(self.tickPadding())
-        .tickFormat(function(d) {
-            return self.xFormatFunc(d);
-        });
+
 
     this.initializeAxes = function() {
+
+        this.yAxis = d3.svg.axis()
+            .scale(this.y)
+            .orient(self.yOrientation())
+            .tickSize(self.tickSize())
+            .tickPadding(self.tickPadding())
+            .tickFormat(self.yAxisFormat());
+
+        this.xAxis = d3.svg.axis()
+            .scale(this.x)
+            .orient(self.xOrientation())
+            .tickSize(self.tickSize())
+            .tickPadding(self.tickPadding())
+            .tickFormat(self.xAxisFormat());
+
         this.x.domain([0, this.findMax()])
             .range([0, this.xBounds()
                 .end
             ]);
 
         this.y.domain(this.keys())
-            .rangeRoundBands([0, this.yDomain()], 0.2);
+            .rangeRoundBands([this.yBounds()
+                .start, this.yBounds()
+                .end
+            ], self.barPadding());
     };
 
     this.rowWidth = function(d) {
@@ -54,7 +60,6 @@ var RowChart = function RowChart(name, element, dimension, group) {
     }.bind(this);
 
 
-
     this.init = function() {
         var self = this;
 
@@ -63,10 +68,10 @@ var RowChart = function RowChart(name, element, dimension, group) {
 
 
         this.chart.append("g")
-            .attr("class", "y-axis")
+            .attr("class", InsightConstants.YAxisClass)
             .call(this.yAxis)
             .selectAll("text")
-            .attr('class', 'row-chart-y')
+            .attr('class', InsightConstants.AxisTextClass)
             .on("mouseover", this.setHover)
             .on("mouseout", this.removeHover)
             .on("click", function(filter) {
@@ -83,15 +88,18 @@ var RowChart = function RowChart(name, element, dimension, group) {
 
         this.y
             .domain(this.keys())
-            .rangeRoundBands([0, this.height()], 0.2);
+            .rangeRoundBands([0, this.height()], self.barPadding());
 
+        var transY = this.invert() ? (this.width() - this.margin()
+            .right) : 0;
         this.chart
-            .selectAll("g.y-axis")
+            .selectAll("g." + InsightConstants.YAxisClass)
+            .attr('transform', 'translate(' + transY + ',0)')
             .call(this.yAxis)
             .selectAll("text")
             .each(function() {
                 d3.select(this)
-                    .classed('row-chart-y', 'true');
+                    .classed(InsightConstants.AxisTextClass, 'true');
             })
             .on("mouseover", this.setHover)
             .on("mouseout", this.removeHover)
@@ -143,7 +151,7 @@ var RowChart = function RowChart(name, element, dimension, group) {
             .text(this.tooltipText);
 
         bars.selectAll('text.tipLabel')
-            .text(this._tooltipLabel);
+            .text(this.tooltipLabel());
 
         if (self._redrawAxes || self.orderable()) {
             trans
