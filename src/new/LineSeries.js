@@ -5,6 +5,17 @@ function LineSeries(name, chart, data, x, y, color)
 
     var self = this;
 
+
+    var mouseOver = function(d, item)
+    {
+        self.chart.mouseOver(self, this, d);
+    };
+
+    var mouseOut = function(d, item)
+    {
+        self.chart.mouseOut(self, this, d);
+    };
+
     this.findMax = function()
     {
         var self = this;
@@ -46,7 +57,8 @@ function LineSeries(name, chart, data, x, y, color)
 
         var transform = d3.svg.line()
             .x(self.rangeX)
-            .y(self.rangeY);
+            .y(self.rangeY)
+            .interpolate('linear');
 
         var rangeIdentifier = "path." + this.name;
 
@@ -65,6 +77,38 @@ function LineSeries(name, chart, data, x, y, color)
             .transition()
             .duration(this.animationDuration)
             .attr("d", transform);
+
+
+        var circles = this.chart.chart.selectAll("circle")
+            .data(this.dataset());
+
+        circles.enter()
+            .append('circle')
+            .attr('class', 'target-point')
+            .on('mouseover', mouseOver)
+            .on('mouseout', mouseOut);
+
+        circles
+            .transition()
+            .duration(function(d, i)
+            {
+                return 600 + (i * 20);
+            })
+            .attr("cx", self.rangeX)
+            .attr("cy", self.rangeY)
+            .attr("r", 3.5);
+
+        circles.append('svg:text')
+            .attr('class', InsightConstants.ToolTipTextClass);
+
+        circles.append('svg:text')
+            .attr('class', InsightConstants.ToolTipLabelClass);
+
+        circles.selectAll("." + InsightConstants.ToolTipTextClass)
+            .text(this.valueAccessor);
+
+        circles.selectAll("." + InsightConstants.ToolTipLabelClass)
+            .text('Label');
     };
 
     this.rangeExists = function(rangeSelector)

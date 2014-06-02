@@ -17,5 +17,11 @@ var InsightFormatters = (function(d3)
         return format(value);
     };
 
+    exports.percentageFormatter = function(value)
+    {
+        var format = d3.format("%");
+        return format(value);
+    };
+
     return exports;
 }(d3));

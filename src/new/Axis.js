@@ -1,17 +1,24 @@
-function Axis(chart, scale, type, anchor)
+function Axis(chart, scale, anchor)
 {
     this.chart = chart;
     this.scale = scale;
     this.anchor = anchor ? anchor : 'left';
-    this.type = type;
 
     var self = this;
 
-    var orientation = d3.functor("left");
     var tickSize = d3.functor(0);
     var tickPadding = d3.functor(10);
     var labelOrientation = d3.functor("lr");
-    var textAnchor = d3.functor('end');
+    var orientation = scale.horizontal() ? d3.functor(this.anchor) : d3.functor(this.anchor);
+
+    if (scale.horizontal())
+    {
+        textAnchor = this.anchor == 'left' ? 'end' : 'start';
+    }
+    if (scale.vertical())
+    {
+        textAnchor = 'middle';
+    }
 
     var format = function(d)
     {
@@ -64,9 +71,9 @@ function Axis(chart, scale, type, anchor)
     {
         if (!arguments.length)
         {
-            return textAnchor();
+            return textAnchor;
         }
-        textAnchor = d3.functor(_);
+        textAnchor = _;
         return this;
     };
 
@@ -103,7 +110,10 @@ function Axis(chart, scale, type, anchor)
         }
         else if (self.scale.vertical())
         {
-            transform += "0,0)";
+            var xShift = self.anchor == 'left' ? 0 : self.chart.width() - self.chart.margin()
+                .right - self.chart.margin()
+                .left;
+            transform += xShift + ",0)";
         }
 
         return transform;
@@ -117,7 +127,9 @@ function Axis(chart, scale, type, anchor)
             .call(this.axis)
             .selectAll('text')
             .attr('class', InsightConstants.AxisTextClass)
-            .style('text-anchor', self.textAnchor())
+            .style('text-anchor', self.textAnchor)
             .style('writing-mode', self.labelOrientation());
+
+
     };
 }

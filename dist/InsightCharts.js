@@ -245,6 +245,12 @@ NestedGroup.prototype.getOrderedData = function()
         return format(value);
     };
 
+    exports.percentageFormatter = function(value)
+    {
+        var format = d3.format("%");
+        return format(value);
+    };
+
     return exports;
 }(d3));
 ;var InsightConstants = (function()
@@ -617,20 +623,27 @@ NestedGroup.prototype.getOrderedData = function()
         return this;
     };
 }
-;function Axis(chart, scale, type, anchor)
+;function Axis(chart, scale, anchor)
 {
     this.chart = chart;
     this.scale = scale;
     this.anchor = anchor ? anchor : 'left';
-    this.type = type;
 
     var self = this;
 
-    var orientation = d3.functor("left");
     var tickSize = d3.functor(0);
     var tickPadding = d3.functor(10);
     var labelOrientation = d3.functor("lr");
-    var textAnchor = d3.functor('end');
+    var orientation = scale.horizontal() ? d3.functor(this.anchor) : d3.functor(this.anchor);
+
+    if (scale.horizontal())
+    {
+        textAnchor = this.anchor == 'left' ? 'end' : 'start';
+    }
+    if (scale.vertical())
+    {
+        textAnchor = 'middle';
+    }
 
     var format = function(d)
     {
@@ -683,9 +696,9 @@ NestedGroup.prototype.getOrderedData = function()
     {
         if (!arguments.length)
         {
-            return textAnchor();
+            return textAnchor;
         }
-        textAnchor = d3.functor(_);
+        textAnchor = _;
         return this;
     };
 
@@ -722,7 +735,10 @@ NestedGroup.prototype.getOrderedData = function()
         }
         else if (self.scale.vertical())
         {
-            transform += "0,0)";
+            var xShift = self.anchor == 'left' ? 0 : self.chart.width() - self.chart.margin()
+                .right - self.chart.margin()
+                .left;
+            transform += xShift + ",0)";
         }
 
         return transform;
@@ -736,8 +752,10 @@ NestedGroup.prototype.getOrderedData = function()
             .call(this.axis)
             .selectAll('text')
             .attr('class', InsightConstants.AxisTextClass)
-            .style('text-anchor', self.textAnchor())
+            .style('text-anchor', self.textAnchor)
             .style('writing-mode', self.labelOrientation());
+
+
     };
 }
 ;function LineSeries(name, chart, data, x, y, color)
@@ -746,6 +764,17 @@ NestedGroup.prototype.getOrderedData = function()
     Series.call(this, name, chart, data, x, y, color);
 
     var self = this;
+
+
+    var mouseOver = function(d, item)
+    {
+        self.chart.mouseOver(self, this, d);
+    };
+
+    var mouseOut = function(d, item)
+    {
+        self.chart.mouseOut(self, this, d);
+    };
 
     this.findMax = function()
     {
@@ -788,7 +817,8 @@ NestedGroup.prototype.getOrderedData = function()
 
         var transform = d3.svg.line()
             .x(self.rangeX)
-            .y(self.rangeY);
+            .y(self.rangeY)
+            .interpolate('linear');
 
         var rangeIdentifier = "path." + this.name;
 
@@ -807,6 +837,38 @@ NestedGroup.prototype.getOrderedData = function()
             .transition()
             .duration(this.animationDuration)
             .attr("d", transform);
+
+
+        var circles = this.chart.chart.selectAll("circle")
+            .data(this.dataset());
+
+        circles.enter()
+            .append('circle')
+            .attr('class', 'target-point')
+            .on('mouseover', mouseOver)
+            .on('mouseout', mouseOut);
+
+        circles
+            .transition()
+            .duration(function(d, i)
+            {
+                return 600 + (i * 20);
+            })
+            .attr("cx", self.rangeX)
+            .attr("cy", self.rangeY)
+            .attr("r", 3.5);
+
+        circles.append('svg:text')
+            .attr('class', InsightConstants.ToolTipTextClass);
+
+        circles.append('svg:text')
+            .attr('class', InsightConstants.ToolTipLabelClass);
+
+        circles.selectAll("." + InsightConstants.ToolTipTextClass)
+            .text(this.valueAccessor);
+
+        circles.selectAll("." + InsightConstants.ToolTipLabelClass)
+            .text('Label');
     };
 
     this.rangeExists = function(rangeSelector)
