@@ -11,10 +11,17 @@
     fill: none;
 }
 
-.x-axis, .y-axis
+.x-axis, .y-axis, .in-axis
 {
     stroke: #34495e;
     stroke-width: 1;
     shape-rendering: crispEdges;
     fill: none;
+}
+
+circle.target-point 
+{
+    stroke: #33485d;
+    fill: #fff;
+    stroke-width: 2;
 }
