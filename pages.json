@@ -57,8 +57,24 @@
     },
     {
         "name": "newcharts",
-        "pageName": "Test Charts", 
+        "pageName": "New Format Charts", 
         "script": "examples/newCharts.js",
+        "imageUrl": "images/barChart.PNG",
+        "partial": "examples/partials/newCharts.html",
+        "partialCSS": "examples/css/example.css"
+    },
+    {
+        "name": "timeaxis",
+        "pageName": "Time Chart", 
+        "script": "examples/lineCharts.js",
+        "imageUrl": "images/barChart.PNG",
+        "partial": "examples/partials/newCharts.html",
+        "partialCSS": "examples/css/example.css"
+    },
+    {
+        "name": "pareto",
+        "pageName": "Pareto Chart", 
+        "script": "examples/pareto.js",
         "imageUrl": "images/barChart.PNG",
         "partial": "examples/partials/newCharts.html",
         "partialCSS": "examples/css/example.css"

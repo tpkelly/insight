@@ -36,19 +36,25 @@ $(document)
         exampleGroup.addChart(barChart);
         exampleGroup.initCharts();
 
-        barChart.chart.selectAll("line.horizontalGrid").data([2,6,14]).enter()
+        barChart.chart.selectAll("line.horizontalGrid")
+            .data([2, 6, 14])
+            .enter()
             .append("line")
-                .attr(
-                {
-                    "class":"horizontalGrid",
-                    "x1" : barChart.margin().right,
-                    "x2" : barChart.width(),
-                    "y1" : function(d){ return barChart.y(d);},
-                    "y2" : function(d){ return barChart.y(d);},
-                    "fill" : "none",
-                    "shape-rendering" : "crispEdges",
-                    "stroke" : "silver",
-                    "stroke-width" : "1px"
-                });
-        
+            .attr({
+                "class": "horizontalGrid",
+                "x1": barChart.margin()
+                    .right,
+                "x2": barChart.width(),
+                "y1": function(d) {
+                    return barChart.y(d);
+                },
+                "y2": function(d) {
+                    return barChart.y(d);
+                },
+                "fill": "none",
+                "shape-rendering": "crispEdges",
+                "stroke": "silver",
+                "stroke-width": "1px"
+            });
+
     });

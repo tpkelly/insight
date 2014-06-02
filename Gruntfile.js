@@ -2,12 +2,6 @@ module.exports = function(grunt) {
     var sourceFiles = ['src/Group.js', 'src/Dimension.js', 'src/InsightCharts.Formatters.js', 'src/InsightCharts.Constants.js', 'src/ChartGroup.js', 'src/BaseChart.js', 'src/Legend.js', 'src/DataTable.js', 'src/BarChart.js', 'src/MultipleChart.js', 'src/GroupedBarChart.js', 'src/StackedBarChart.js', 'src/Timeline.js', 'src/BaseChart.js', 'src/TimelineChart.js', 'src/RowChart.js', 'src/PartitionChart.js'];
 
 
-    // Livereload and connect variables
-    var LIVERELOAD_PORT = 35729;
-    var lrSnippet = require('connect-livereload')({
-        port: LIVERELOAD_PORT
-    });
-
     var mountFolder = function(connect, dir) {
         return connect.static(require('path')
             .resolve(dir));
@@ -24,7 +18,7 @@ module.exports = function(grunt) {
                     base: '.',
                     hostname: 'localhost',
                     middleware: function(connect) {
-                        return [lrSnippet, mountFolder(connect, '.')];
+                        return [mountFolder(connect, '.')];
                     }
                 }
             },
@@ -48,7 +42,7 @@ module.exports = function(grunt) {
             }
         },
         "jsbeautifier": {
-            files: ["./js/*.js", "./**/*.html", "index.html"],
+            files: ["./js/*.js", "./examples/*.js", "./**/*.html", "index.html"],
             options: {
                 js: {
                     braceStyle: 'collapse',
@@ -77,7 +71,7 @@ module.exports = function(grunt) {
           }
         },
         watch: {
-            files: ['<%= jshint.files %>', '../insight/dist/*.js', './**/*.html', 'tests/*.spec.js'],
+            files: ['<%= jshint.files %>', '../insight/dist/*.js', '**/examples/*', './**/*.html', 'tests/*.spec.js'],
             tasks: ['copy', 'jsbeautifier', 'jshint']
         }        
     });

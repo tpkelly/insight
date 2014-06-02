@@ -50,5 +50,5 @@ $(document)
         exampleGroup.addChart(rowChart);
         exampleGroup.addChart(invertedRowChart);
         exampleGroup.initCharts();
-        
+
     });
