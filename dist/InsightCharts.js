@@ -514,9 +514,7 @@ NestedGroup.prototype.getOrderedData = function()
     this.chart = chart;
     this.bounds = [];
     this.type = type;
-
-
-    this.bounds = bounds;
+    this.direction = direction;
 
     this.domain = function()
     {
@@ -527,6 +525,24 @@ NestedGroup.prototype.getOrderedData = function()
         else if (this.type == 'ordinal')
         {
             return this.findOrdinalValues();
+        }
+    };
+
+    this.calculateBounds = function()
+    {
+        if (self.horizontal())
+        {
+            self.bounds[0] = 0;
+            self.bounds[1] = self.chart.width() - self.chart.margin()
+                .right - self.chart.margin()
+                .left;
+        }
+        else if (self.vertical())
+        {
+            self.bounds[1] = 0;
+            self.bounds[0] = self.chart.height() - self.chart.margin()
+                .top - self.chart.margin()
+                .bottom;
         }
     };
 
@@ -543,6 +559,17 @@ NestedGroup.prototype.getOrderedData = function()
 
         return vals;
     };
+
+    this.horizontal = function()
+    {
+        return this.direction == 'h';
+    };
+
+    this.vertical = function()
+    {
+        return this.direction == 'v';
+    };
+
 
     this.findMax = function()
     {
@@ -573,6 +600,8 @@ NestedGroup.prototype.getOrderedData = function()
 
     this.applyAxisRange = function(rangeType)
     {
+        self.calculateBounds();
+
         rangeType.apply(this, [
             self.bounds, self.chart.barPadding()
         ]);
@@ -597,16 +626,16 @@ NestedGroup.prototype.getOrderedData = function()
 
     var self = this;
 
-    var format = function(d)
-    {
-        return d;
-    };
-
     var orientation = d3.functor("left");
     var tickSize = d3.functor(0);
     var tickPadding = d3.functor(10);
     var labelOrientation = d3.functor("lr");
     var textAnchor = d3.functor('end');
+
+    var format = function(d)
+    {
+        return d;
+    };
 
     this.chart.addAxis(this);
 
@@ -685,13 +714,13 @@ NestedGroup.prototype.getOrderedData = function()
     {
         var transform = "translate(";
 
-        if (self.type == 'h')
+        if (self.scale.horizontal())
         {
             transform += '0,' + (self.chart.height() - self.chart.margin()
                 .bottom - self.chart.margin()
                 .top) + ')';
         }
-        else if (self.type == 'v')
+        else if (self.scale.vertical())
         {
             transform += "0,0)";
         }

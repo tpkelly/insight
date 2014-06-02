@@ -9,9 +9,7 @@ function Scale(chart, scale, direction, type)
     this.chart = chart;
     this.bounds = [];
     this.type = type;
-
-
-    this.bounds = bounds;
+    this.direction = direction;
 
     this.domain = function()
     {
@@ -22,6 +20,24 @@ function Scale(chart, scale, direction, type)
         else if (this.type == 'ordinal')
         {
             return this.findOrdinalValues();
+        }
+    };
+
+    this.calculateBounds = function()
+    {
+        if (self.horizontal())
+        {
+            self.bounds[0] = 0;
+            self.bounds[1] = self.chart.width() - self.chart.margin()
+                .right - self.chart.margin()
+                .left;
+        }
+        else if (self.vertical())
+        {
+            self.bounds[1] = 0;
+            self.bounds[0] = self.chart.height() - self.chart.margin()
+                .top - self.chart.margin()
+                .bottom;
         }
     };
 
@@ -38,6 +54,17 @@ function Scale(chart, scale, direction, type)
 
         return vals;
     };
+
+    this.horizontal = function()
+    {
+        return this.direction == 'h';
+    };
+
+    this.vertical = function()
+    {
+        return this.direction == 'v';
+    };
+
 
     this.findMax = function()
     {
@@ -68,6 +95,8 @@ function Scale(chart, scale, direction, type)
 
     this.applyAxisRange = function(rangeType)
     {
+        self.calculateBounds();
+
         rangeType.apply(this, [
             self.bounds, self.chart.barPadding()
         ]);

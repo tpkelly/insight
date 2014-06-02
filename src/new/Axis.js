@@ -7,16 +7,16 @@ function Axis(chart, scale, type, anchor)
 
     var self = this;
 
-    var format = function(d)
-    {
-        return d;
-    };
-
     var orientation = d3.functor("left");
     var tickSize = d3.functor(0);
     var tickPadding = d3.functor(10);
     var labelOrientation = d3.functor("lr");
     var textAnchor = d3.functor('end');
+
+    var format = function(d)
+    {
+        return d;
+    };
 
     this.chart.addAxis(this);
 
@@ -95,13 +95,13 @@ function Axis(chart, scale, type, anchor)
     {
         var transform = "translate(";
 
-        if (self.type == 'h')
+        if (self.scale.horizontal())
         {
             transform += '0,' + (self.chart.height() - self.chart.margin()
                 .bottom - self.chart.margin()
                 .top) + ')';
         }
-        else if (self.type == 'v')
+        else if (self.scale.vertical())
         {
             transform += "0,0)";
         }
