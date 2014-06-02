@@ -34,11 +34,8 @@ $(document)
             var xScale = new Scale(chart, d3.time.scale(), 'h', 'time');
             var yScale = new Scale(chart, d3.scale.linear(), 'v', 'linear');
 
-            var line = new LineSeries('valueLine', chart, dateData, xScale, yScale, 'cyan');
-
-            line.tooltipFormat = function(d) {
-                return InsightFormatters.currencyFormatter(d.value);
-            };
+            var line = new LineSeries('valueLine', chart, dateData, xScale, yScale, 'cyan')
+                .tooltipFormat(InsightFormatters.currencyFormatter);
 
             chart.series()
                 .push(line);

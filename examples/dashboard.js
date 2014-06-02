@@ -33,12 +33,26 @@ $(document)
             }, function(d) {
                 return d.Date;
             });
+            var client = exampleGroup.addDimension(ndx, "Client", function(d) {
+                return d.Client;
+            }, function(d) {
+                return d.Client;
+            });
 
             var yearData = exampleGroup.aggregate(year, ['CurrentRevenue', 'ProjectedRevenue']);
             var officeData = exampleGroup.aggregate(office, ['CurrentRevenue', 'ProjectedRevenue']);
             var salesmanData = exampleGroup.aggregate(salesman, ['CurrentRevenue', 'ProjectedRevenue']);
             var dateData = exampleGroup.aggregate(date, ['CurrentRevenue', 'ProjectedRevenue']);
+            var clientData = exampleGroup.aggregate(client, function(d) {
+                    return d.ProjectedRevenue;
+                })
+                .cumulative(true);
 
+
+            computeGroupValues(clientData);
+
+            exampleGroup.ComputedGroups.push(clientData);
+            exampleGroup.CumulativeGroups.push(clientData);
 
             var series = [{
                 name: 'current',
@@ -109,11 +123,128 @@ $(document)
                     top: 0
                 });
 
+            var pareto = new Chart('Chart 1', "#pareto")
+                .width(250)
+                .height(400)
+                .margin({
+                    top: 10,
+                    left: 70,
+                    right: 45,
+                    bottom: 150
+                });
 
+            var x = new Scale(pareto, d3.scale.ordinal(), 'h', 'ordinal')
+                .ordered(true);
+
+            var y = new Scale(pareto, d3.scale.linear(), 'v', 'linear');
+            var y2 = new Scale(pareto, d3.scale.linear(), 'v', 'linear');
+
+            var series = new ColumnSeries('clientColumn', pareto, clientData, x, y);
+
+            var line = new LineSeries('percentLine', pareto, clientData, x, y2, 'cyan')
+                .tooltipFormat(InsightFormatters.percentageFormatter)
+                .tooltipLabelFormat("Percentage");
+
+            series.series = [{
+                name: 'value',
+                accessor: function(d) {
+                    return d.value;
+                },
+                label: 'Value',
+                color: '#e67e22',
+                tooltipValue: function(d) {
+                    return InsightFormatters.currencyFormatter(d.value);
+                }
+            }];
+
+            line.valueAccessor = function(d) {
+                return d.Cumulative;
+            };
+
+            pareto.series([series, line]);
+
+            var xAxis = new Axis(pareto, "x", x, 'bottom')
+                .textAnchor('start')
+                .labelOrientation('tb');
+
+            var yAxis = new Axis(pareto, "y", y, 'left')
+                .format(InsightFormatters.currencyFormatter);
+
+            var yAxis2 = new Axis(pareto, "y2", y2, 'right')
+                .format(InsightFormatters.percentageFormatter);
+
+
+            var timeChart = new Chart('Chart 1', "#timeChart")
+                .width(800)
+                .height(350)
+                .margin({
+                    top: 10,
+                    left: 60,
+                    right: 40,
+                    bottom: 100
+                });
+
+
+
+            var xTime = new Scale(timeChart, d3.time.scale(), 'h', 'time');
+            var yTime = new Scale(timeChart, d3.scale.linear(), 'v', 'linear');
+
+            var line = new LineSeries('valueLine', timeChart, dateData, xTime, yTime, 'cyan')
+                .tooltipFormat(InsightFormatters.currencyFormatter);
+
+            line.valueAccessor = function(d) {
+                return d.value.ProjectedRevenue;
+            };
+
+
+            timeChart.series()
+                .push(line);
+
+            timeChart.zoomable(xTime);
+
+            var xAxis = new Axis(timeChart, "x", xTime, 'bottom')
+                .labelOrientation('tb')
+                .tickSize(5)
+                .textAnchor('start')
+                .format(InsightFormatters.dateFormatter);
+
+            var yAxis = new Axis(timeChart, "y", yTime, 'left')
+                .tickSize(5)
+                .format(InsightFormatters.currencyFormatter);
 
             exampleGroup.addChart(yearChart);
             exampleGroup.addChart(officeChart);
             exampleGroup.addChart(personChart);
+            exampleGroup.addChart(timeChart);
+            exampleGroup.addChart(pareto);
             exampleGroup.initCharts();
         });
     });
+
+
+function computeGroupValues(group) {
+    var aggregateFunction = function() {
+
+        var self = this;
+        var total = 0;
+
+        this.getData()
+            .forEach(function(d) {
+                total += d.value;
+            });
+
+        this.getData()
+            .forEach(function(d) {
+                d.Percentage = d.value / total;
+            });
+
+    }.bind(group);
+
+    group.computeFunction(aggregateFunction)
+        .valueAccessor(function(d) {
+            return d.Percentage;
+        })
+
+    group.compute();
+    group.calculateTotals();
+}

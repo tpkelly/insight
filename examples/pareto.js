@@ -58,7 +58,6 @@ $(document)
                 return d.Cumulative;
             };
 
-
             chart.series([series, line]);
 
             var xAxis = new Axis(chart, "x", x, 'bottom')

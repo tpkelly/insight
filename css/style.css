@@ -14,6 +14,11 @@ img
     max-width: 100%; 
 }
 
+.exampleChart svg {
+    font-size: 12px;
+}
+
+
 #source {
     font-size: 12px;
 }
@@ -43,4 +48,19 @@ img
     padding: 1em;
     font-size: 12px;
     fill: none;
+}
+
+.x-axis, .y-axis, .in-axis
+{
+    stroke: #34495e;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+    fill: none;
+}
+
+circle.target-point 
+{
+    stroke: #33485d;
+    fill: #fff;
+    stroke-width: 2;
 }
