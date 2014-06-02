@@ -46,5 +46,21 @@
         "imageUrl": "images/crossfilter.PNG",
         "partial": "examples/partials/dataset.html",
         "partialCSS": "examples/css/example.css"
+    },
+    {
+        "name": "rowchart",
+        "pageName": "Row Charts", 
+        "script": "examples/rowChart.js",
+        "imageUrl": "images/barChart.PNG",
+        "partial": "examples/partials/example.html",
+        "partialCSS": "examples/css/example.css"
+    },
+    {
+        "name": "newcharts",
+        "pageName": "Test Charts", 
+        "script": "examples/newCharts.js",
+        "imageUrl": "images/barChart.PNG",
+        "partial": "examples/partials/newCharts.html",
+        "partialCSS": "examples/css/example.css"
     }
 ]

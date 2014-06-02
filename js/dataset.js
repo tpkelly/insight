@@ -67,7 +67,7 @@ $(document)
             return colour;
         };
 
-        var barChart = new BarChart('a', "#exampleChart", countryDimension, countryGrouping)
+        var barChart = new ColumnChart('a', "#exampleChart", countryDimension, countryGrouping)
             .width(300)
             .height(300)
             .margin({
@@ -79,7 +79,7 @@ $(document)
             .barColor('#ACC3EE')
             .tooltipLabel('Blah');
 
-        var voteChart = new BarChart('s', "#voteChart", voteDimension, voteGrouping)
+        var voteChart = new ColumnChart('s', "#voteChart", voteDimension, voteGrouping)
             .width(300)
             .height(300)
             .margin({

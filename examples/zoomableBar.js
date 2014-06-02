@@ -15,7 +15,7 @@ $(document)
                 return [new Date(2013, 11, 1), new Date(2014, 12, 30)];
             };
 
-            var yearBarChart = new BarChart('', "#exampleChart", {}, dataset)
+            var yearBarChart = new ColumnChart('', "#exampleChart", {}, dataset)
                 .width(640)
                 .height(400)
                 .margin({

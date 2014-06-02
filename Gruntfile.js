@@ -48,7 +48,7 @@ module.exports = function(grunt) {
             }
         },
         "jsbeautifier": {
-            files: ["./js/*.js", "./**/*.html"],
+            files: ["./js/*.js", "./**/*.html", "index.html"],
             options: {
                 js: {
                     braceStyle: 'collapse',
@@ -69,12 +69,17 @@ module.exports = function(grunt) {
                 }
             }
         },
+        copy: {
+          main: {
+            files: [
+              {flatten: true, expand: true, src: ['../insight/dist/*'], dest: './dist/', filter: 'isFile'}
+            ]
+          }
+        },
         watch: {
-            files: ['<%= jshint.files %>', './**/*.html', 'tests/*.spec.js'],
-            tasks: ['jsbeautifier', 'jshint'],
-            options: {
-            }
-        }
+            files: ['<%= jshint.files %>', '../insight/dist/*.js', './**/*.html', 'tests/*.spec.js'],
+            tasks: ['copy', 'jsbeautifier', 'jshint']
+        }        
     });
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -82,6 +87,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-open');
     grunt.loadNpmTasks('grunt-jsbeautifier');
     grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
 
     grunt.registerTask('default', ['jsbeautifier', 'jshint', 'connect:server', 'open:dev', 'watch']);

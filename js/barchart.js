@@ -19,7 +19,7 @@ $(document)
 
         var dataset = new Group(data);
 
-        var barChart = new BarChart('', "#exampleChart", {}, dataset)
+        var barChart = new ColumnChart('', "#exampleChart", {}, dataset)
             .width(640)
             .height(400)
             .margin({
