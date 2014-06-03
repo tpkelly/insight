@@ -1,11 +1,15 @@
-function Chart(name, element)
+function Chart(name, element, dimension)
 {
 
     this.name = name;
     this.element = element;
+    this.dimension = dimension;
 
     var height = d3.functor(300);
     var width = d3.functor(300);
+    var zoomable = false;
+    var zoomScale = null;
+
     this.chart = null;
 
     this._margin = {
@@ -18,10 +22,29 @@ function Chart(name, element)
     var series = [];
     var scales = [];
     var axes = [];
+    var self = this;
+    var barPadding = d3.functor(0.1);
 
     this.addAxis = function(axis)
     {
         axes.push(axis);
+    };
+
+
+    this.addClipPath = function()
+    {
+        this.chart.append("clipPath")
+            .attr("id", this.clipPath())
+            .append("rect")
+            .attr("x", 1)
+            .attr("y", 0)
+            .attr("width", this.width() - this.margin()
+                .left - this.margin()
+                .right)
+            .attr("height", this.height() - this.margin()
+                .top - this.margin()
+                .bottom);
+
     };
 
     this.init = function()
@@ -38,6 +61,7 @@ function Chart(name, element)
                 .left + "," + this.margin()
                 .top + ")");
 
+        this.addClipPath();
 
         for (var scale in scales)
         {
@@ -52,14 +76,96 @@ function Chart(name, element)
             a.initialize();
         }
 
+        if (zoomable)
+        {
+            this.initZoom();
+        }
+
         this.tooltip();
 
-        this.draw();
+        this.draw(false);
     };
 
-    this.barPadding = function()
+    this.draw = function(dragging)
     {
-        return 0.02;
+
+        this.recalculateScales();
+
+        for (var axis in axes)
+        {
+            var a = axes[axis];
+            a.draw(dragging);
+        }
+
+        for (var series in this.series())
+        {
+            var s = this.series()[series];
+            s.draw(dragging);
+        }
+    };
+
+    this.recalculateScales = function()
+    {
+        for (var index in scales)
+        {
+            var scale = scales[index];
+            var zx = zoomScale != scale;
+            if (zx)
+            {
+                scale.calculateRange();
+            }
+        }
+    };
+
+    this.zoomable = function(scale)
+    {
+        zoomable = true;
+        zoomScale = scale;
+        return this;
+    };
+
+    this.initZoom = function()
+    {
+        this.zoom = d3.behavior.zoom()
+            .on("zoom", self.dragging.bind(self));
+
+        this.zoom.x(zoomScale.scale);
+
+        if (!this.zoomExists())
+        {
+            this.chart.append("rect")
+                .attr("class", "zoompane")
+                .attr("width", this.width())
+                .attr("height", this.height() - this.margin()
+                    .top - this.margin()
+                    .bottom)
+                .style("fill", "none")
+                .style("pointer-events", "all");
+        }
+
+        this.chart.select('.zoompane')
+            .call(this.zoom);
+    };
+
+    this.zoomExists = function()
+    {
+        var z = this.chart.selectAll('.zoompane');
+        return z[0].length;
+    };
+
+    this.dragging = function()
+    {
+        self.draw(true);
+    };
+
+    this.barPadding = function(_)
+    {
+        if (!arguments.length)
+        {
+            return barPadding();
+        }
+        barPadding = d3.functor(_);
+        return this;
     };
 
     this.margin = function(_)
@@ -70,6 +176,37 @@ function Chart(name, element)
         }
         this._margin = _;
         return this;
+    };
+
+    this.clipPath = function()
+    {
+
+        return this.name.split(' ')
+            .join('_') + "clip";
+    };
+
+    this.filterFunction = function(filter, element)
+    {
+        var value = filter.key ? filter.key : filter;
+
+        return {
+            name: value,
+            element: element,
+            filterFunction: function(d)
+            {
+                return String(d) == String(value);
+            }
+        };
+    };
+
+    this.filterClick = function(element, filter)
+    {
+        if (this.dimension)
+        {
+            var filterFunction = this.filterFunction(filter, element);
+
+            this.filterEvent(this.dimension, filterFunction);
+        }
     };
 
     this.tooltip = function()
@@ -113,7 +250,6 @@ function Chart(name, element)
 
     this.mouseOut = function(chart, item, d)
     {
-
         this.tip.hide(d);
 
         d3.select(item)
@@ -160,30 +296,12 @@ function Chart(name, element)
         scales = _;
     };
 
-    this.draw = function()
-    {
-
-        for (var series in this.series())
-        {
-            var s = this.series()[series];
-            s.draw();
-        }
-
-        for (var axis in axes)
-        {
-            var a = axes[axis];
-            a.draw();
-        }
-
-
-    };
 
     this.addHorizontalScale = function(type, typeString, direction)
     {
-
         var scale = new Scale(this, type, direction, typeString);
-
     };
+
 
     this.addHorizontalAxis = function(scale)
     {

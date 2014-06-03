@@ -189,6 +189,32 @@ ChartGroup.prototype.aggregate = function(dimension, input)
     return group;
 };
 
+ChartGroup.prototype.count = function(dimension, input)
+{
+
+    var group;
+
+    if (input instanceof Array)
+    {
+
+        group = this.multiReduceCount(dimension, input);
+
+        this.Groups.push(group);
+
+    }
+    else
+    {
+        var data = dimension.Dimension.group()
+            .reduceCount(input);
+
+        group = new Group(data);
+
+        this.Groups.push(group);
+    }
+
+    return group;
+};
+
 
 ChartGroup.prototype.addSumGrouping = function(dimension, func)
 {
@@ -253,42 +279,45 @@ ChartGroup.prototype.multiReduceSum = function(dimension, properties)
     return group;
 };
 
-ChartGroup.prototype.multiReduceCount = function(dimension, property)
+ChartGroup.prototype.multiReduceCount = function(dimension, properties)
 {
 
     var data = dimension.Dimension.group()
         .reduce(
             function(p, v)
             {
-                if (!p.hasOwnProperty(v[property]))
+                for (var property in properties)
                 {
-
-                    p[v[property]] = 1;
+                    if (v.hasOwnProperty(properties[property]))
+                    {
+                        p[properties[property]][v[properties[property]]] = p[properties[property]].hasOwnProperty(v[properties[property]]) ? p[properties[property]][v[properties[property]]] + 1 : 1;
+                        p[properties[property]].Total++;
+                    }
                 }
-                else
-                {
-                    p[v[property]] += 1;
-                }
-
-                p.Total += 1;
-
                 return p;
             },
             function(p, v)
             {
-
-                if (v.hasOwnProperty(properties[property]))
+                for (var property in properties)
                 {
-                    p[v[property]] -= 1;
+                    if (v.hasOwnProperty(properties[property]))
+                    {
+                        p[properties[property]][v[properties[property]]] = p[properties[property]].hasOwnProperty(v[properties[property]]) ? p[properties[property]][v[properties[property]]] - 1 : 1;
+                        p[properties[property]].Total--;
+                    }
                 }
-                p.Total--;
                 return p;
             },
             function()
             {
-                return {
-                    Total: 0
-                };
+                var p = {};
+                for (var property in properties)
+                {
+                    p[properties[property]] = {
+                        Total: 0
+                    };
+                }
+                return p;
             }
         );
 

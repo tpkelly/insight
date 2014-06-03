@@ -2,14 +2,17 @@ function Group(data)
 {
     this._data = data;
     this._cumulative = false;
+
     this._valueAccessor = function(d)
     {
         return d;
     };
+
     this._orderFunction = function(a, b)
     {
         return b.value - a.value;
     };
+
     this._ordered = false;
 }
 

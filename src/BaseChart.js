@@ -402,7 +402,6 @@ var BaseChart = function BaseChart(name, element, dimension, data)
 
     this.addClipPath = function()
     {
-
         this.chart.append("clipPath")
             .attr("id", "clip")
             .append("rect")
@@ -415,7 +414,6 @@ var BaseChart = function BaseChart(name, element, dimension, data)
 
     this.dragging = function()
     {
-
         this.draw(true);
     };
 

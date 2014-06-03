@@ -7,9 +7,12 @@ function Scale(chart, scale, direction, type)
     this.rangeType = this.scale.rangeRoundBands ? this.scale.rangeRoundBands : this.scale.range;
     this.series = [];
     this.chart = chart;
-    this.bounds = [];
     this.type = type;
     this.direction = direction;
+    this.bounds = [];
+
+    chart.scales()
+        .push(this);
 
     this.domain = function()
     {
@@ -21,25 +24,62 @@ function Scale(chart, scale, direction, type)
         {
             return this.findOrdinalValues();
         }
+        if (this.type == 'time')
+        {
+            return [this.minTime(), this.maxTime()];
+        }
     };
 
     this.calculateBounds = function()
     {
+        var bounds = [];
+
         if (self.horizontal())
         {
-            self.bounds[0] = 0;
-            self.bounds[1] = self.chart.width() - self.chart.margin()
+            bounds[0] = 0;
+            bounds[1] = self.chart.width() - self.chart.margin()
                 .right - self.chart.margin()
                 .left;
         }
         else if (self.vertical())
         {
-            self.bounds[1] = 0;
-            self.bounds[0] = self.chart.height() - self.chart.margin()
+            bounds[1] = 0;
+            bounds[0] = self.chart.height() - self.chart.margin()
                 .top - self.chart.margin()
                 .bottom;
         }
+        return bounds;
     };
+
+    this.minTime = function()
+    {
+        var minTime = new Date(8640000000000000);
+
+        for (var series in this.series)
+        {
+            var s = this.series[series];
+            var cMin = d3.min(s.keys());
+            minTime = cMin < minTime ? cMin : minTime;
+        }
+
+        return minTime;
+    };
+
+
+    this.maxTime = function()
+    {
+        var maxTime = new Date(-8640000000000000);
+
+        for (var series in this.series)
+        {
+            var s = this.series[series];
+            var cMax = d3.max(s.keys());
+            maxTime = cMax > maxTime ? cMax : maxTime;
+        }
+
+        return maxTime;
+    };
+
 
     this.findOrdinalValues = function()
     {
@@ -90,15 +130,22 @@ function Scale(chart, scale, direction, type)
 
     this.initialize = function()
     {
-        this.applyAxisRange.call(this.scale.domain(this.domain()), this.rangeType);
+        this.applyScaleRange.call(this.scale.domain(this.domain()), this.rangeType);
     };
 
-    this.applyAxisRange = function(rangeType)
+    this.calculateRange = function()
     {
-        self.calculateBounds();
+        this.scale.domain(this.domain());
+    };
+
+    this.applyScaleRange = function(rangeType)
+    {
+        var bounds = self.calculateBounds();
+
+        this.bounds = bounds;
 
         rangeType.apply(this, [
-            self.bounds, self.chart.barPadding()
+            bounds, self.chart.barPadding()
         ]);
     };
 

@@ -1,8 +1,9 @@
-function Axis(chart, scale, anchor)
+function Axis(chart, name, scale, anchor)
 {
     this.chart = chart;
     this.scale = scale;
     this.anchor = anchor ? anchor : 'left';
+    this.name = name;
 
     var self = this;
 
@@ -10,14 +11,15 @@ function Axis(chart, scale, anchor)
     var tickPadding = d3.functor(10);
     var labelOrientation = d3.functor("lr");
     var orientation = scale.horizontal() ? d3.functor(this.anchor) : d3.functor(this.anchor);
+    var textAnchor;
 
-    if (scale.horizontal())
+    if (scale.vertical())
     {
         textAnchor = this.anchor == 'left' ? 'end' : 'start';
     }
-    if (scale.vertical())
+    if (scale.horizontal())
     {
-        textAnchor = 'middle';
+        textAnchor = 'start';
     }
 
     var format = function(d)
@@ -83,7 +85,9 @@ function Axis(chart, scale, anchor)
         {
             return labelOrientation();
         }
+
         labelOrientation = d3.functor(_);
+
         return this;
     };
 
@@ -96,6 +100,19 @@ function Axis(chart, scale, anchor)
             .tickSize(self.tickSize())
             .tickPadding(self.tickPadding())
             .tickFormat(self.format());
+
+        this.chart.chart.append('g')
+            .attr('class', self.name + ' ' + InsightConstants.AxisClass)
+            .attr('transform', self.transform())
+            .call(this.axis)
+            .selectAll('text')
+            .attr('class', self.name + ' ' + InsightConstants.AxisTextClass)
+            .style('text-anchor', self.textAnchor())
+            .style('writing-mode', self.labelOrientation())
+            .on('click', function(filter)
+            {
+                return self.chart.filterClick(this, filter);
+            });
     };
 
     this.transform = function()
@@ -119,17 +136,14 @@ function Axis(chart, scale, anchor)
         return transform;
     };
 
-    this.draw = function()
+    this.draw = function(dragging)
     {
-        this.chart.chart.append('g')
-            .attr('class', InsightConstants.AxisClass)
-            .attr('transform', self.transform())
-            .call(this.axis)
-            .selectAll('text')
-            .attr('class', InsightConstants.AxisTextClass)
-            .style('text-anchor', self.textAnchor)
+        var axis = this.chart.chart.selectAll('g.' + self.name + '.' + InsightConstants.AxisClass)
+            .call(this.axis);
+
+        axis
+            .selectAll("text")
+            .style('text-anchor', self.textAnchor())
             .style('writing-mode', self.labelOrientation());
-
-
     };
 }

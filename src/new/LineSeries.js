@@ -5,15 +5,32 @@ function LineSeries(name, chart, data, x, y, color)
 
     var self = this;
 
+    var lineType = 'linear';
 
     var mouseOver = function(d, item)
     {
         self.chart.mouseOver(self, this, d);
+
+        d3.select(this)
+            .classed("hover", true);
     };
 
     var mouseOut = function(d, item)
     {
         self.chart.mouseOut(self, this, d);
+    };
+
+    var lineOver = function(d, item) {
+
+    };
+
+    var lineOut = function(d, item) {
+
+    };
+
+    var lineClick = function(d, item)
+    {
+        console.log(d);
     };
 
     this.findMax = function()
@@ -51,33 +68,46 @@ function LineSeries(name, chart, data, x, y, color)
         return val;
     };
 
-
-    this.draw = function()
+    this.lineType = function(_)
     {
+        if (!arguments.length)
+        {
+            return lineType;
+        }
+        lineType = _;
+        return this;
+    };
 
+    this.draw = function(dragging)
+    {
         var transform = d3.svg.line()
             .x(self.rangeX)
             .y(self.rangeY)
-            .interpolate('linear');
+            .interpolate(lineType);
 
-        var rangeIdentifier = "path." + this.name;
+        var rangeIdentifier = "path." + this.name + ".in-line";
 
         var rangeElement = this.chart.chart.selectAll(rangeIdentifier);
 
         if (!this.rangeExists(rangeElement))
         {
             this.chart.chart.append("path")
-                .attr("class", this.name)
+                .attr("class", this.name + " in-line")
                 .attr("stroke", this.color)
-                .attr("fill", "none");
+                .attr("fill", "none")
+                .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
+                .on('mouseover', lineOver)
+                .on('mouseout', lineOut)
+                .on('click', lineClick);
         }
+
+        var duration = dragging ? 0 : 300;
 
         this.chart.chart.selectAll(rangeIdentifier)
             .datum(this.dataset(), this.matcher)
             .transition()
-            .duration(this.animationDuration)
+            .duration(duration)
             .attr("d", transform);
-
 
         var circles = this.chart.chart.selectAll("circle")
             .data(this.dataset());
@@ -85,15 +115,18 @@ function LineSeries(name, chart, data, x, y, color)
         circles.enter()
             .append('circle')
             .attr('class', 'target-point')
+            .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
+            .attr("cx", self.rangeX)
+            .attr("cy", self.chart.height() - self.chart.margin()
+                .bottom - self.chart.margin()
+                .top)
             .on('mouseover', mouseOver)
             .on('mouseout', mouseOut);
 
+
         circles
             .transition()
-            .duration(function(d, i)
-            {
-                return 600 + (i * 20);
-            })
+            .duration(duration)
             .attr("cx", self.rangeX)
             .attr("cy", self.rangeY)
             .attr("r", 3.5);
@@ -105,10 +138,10 @@ function LineSeries(name, chart, data, x, y, color)
             .attr('class', InsightConstants.ToolTipLabelClass);
 
         circles.selectAll("." + InsightConstants.ToolTipTextClass)
-            .text(this.valueAccessor);
+            .text(this.tooltipValue);
 
         circles.selectAll("." + InsightConstants.ToolTipLabelClass)
-            .text('Label');
+            .text(this.tooltipLabel);
     };
 
     this.rangeExists = function(rangeSelector)

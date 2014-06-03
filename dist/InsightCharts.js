@@ -2,14 +2,17 @@ function Group(data)
 {
     this._data = data;
     this._cumulative = false;
+
     this._valueAccessor = function(d)
     {
         return d;
     };
+
     this._orderFunction = function(a, b)
     {
         return b.value - a.value;
     };
+
     this._ordered = false;
 }
 
@@ -283,6 +286,15 @@ NestedGroup.prototype.getOrderedData = function()
     x.addSeries(this);
     y.addSeries(this);
 
+    var self = this;
+    var cssClass = "";
+
+    var tooltipFormat = function(d)
+    {
+        return d;
+    };
+
+    var tooltipLabel = d3.functor("Label");
 
     this.dataset = function()
     {
@@ -298,6 +310,15 @@ NestedGroup.prototype.getOrderedData = function()
             .map(this.keyAccessor);
     };
 
+    this.cssClass = function(_)
+    {
+        if (!arguments.length)
+        {
+            return cssClass;
+        }
+        cssClass = _;
+        return this;
+    };
 
     this.keyAccessor = function(d)
     {
@@ -309,21 +330,56 @@ NestedGroup.prototype.getOrderedData = function()
         return d.value;
     };
 
+    this.tooltipValue = function(d)
+    {
+        return tooltipFormat(self.valueAccessor(d));
+    };
+
+    this.tooltipLabel = function(d)
+    {
+        return tooltipLabel(d);
+    };
+
+    this.tooltipLabelFormat = function(_)
+    {
+
+        if (!arguments.length)
+        {
+            return tooltipLabel;
+        }
+        tooltipLabel = d3.functor(_);
+        return this;
+    };
+
+    this.tooltipFormat = function(_)
+    {
+        if (!arguments.length)
+        {
+            return tooltipFormat;
+        }
+        tooltipFormat = _;
+        return this;
+    };
 
     this.matcher = this.keyAccessor;
 
     this.findMax = function() {};
 
     this.draw = function() {};
+
 }
-;function Chart(name, element)
+;function Chart(name, element, dimension)
 {
 
     this.name = name;
     this.element = element;
+    this.dimension = dimension;
 
     var height = d3.functor(300);
     var width = d3.functor(300);
+    var zoomable = false;
+    var zoomScale = null;
+
     this.chart = null;
 
     this._margin = {
@@ -336,10 +392,29 @@ NestedGroup.prototype.getOrderedData = function()
     var series = [];
     var scales = [];
     var axes = [];
+    var self = this;
+    var barPadding = d3.functor(0.1);
 
     this.addAxis = function(axis)
     {
         axes.push(axis);
+    };
+
+
+    this.addClipPath = function()
+    {
+        this.chart.append("clipPath")
+            .attr("id", this.clipPath())
+            .append("rect")
+            .attr("x", 1)
+            .attr("y", 0)
+            .attr("width", this.width() - this.margin()
+                .left - this.margin()
+                .right)
+            .attr("height", this.height() - this.margin()
+                .top - this.margin()
+                .bottom);
+
     };
 
     this.init = function()
@@ -356,6 +431,7 @@ NestedGroup.prototype.getOrderedData = function()
                 .left + "," + this.margin()
                 .top + ")");
 
+        this.addClipPath();
 
         for (var scale in scales)
         {
@@ -370,14 +446,96 @@ NestedGroup.prototype.getOrderedData = function()
             a.initialize();
         }
 
+        if (zoomable)
+        {
+            this.initZoom();
+        }
+
         this.tooltip();
 
-        this.draw();
+        this.draw(false);
     };
 
-    this.barPadding = function()
+    this.draw = function(dragging)
     {
-        return 0.02;
+
+        this.recalculateScales();
+
+        for (var axis in axes)
+        {
+            var a = axes[axis];
+            a.draw(dragging);
+        }
+
+        for (var series in this.series())
+        {
+            var s = this.series()[series];
+            s.draw(dragging);
+        }
+    };
+
+    this.recalculateScales = function()
+    {
+        for (var index in scales)
+        {
+            var scale = scales[index];
+            var zx = zoomScale != scale;
+            if (zx)
+            {
+                scale.calculateRange();
+            }
+        }
+    };
+
+    this.zoomable = function(scale)
+    {
+        zoomable = true;
+        zoomScale = scale;
+        return this;
+    };
+
+    this.initZoom = function()
+    {
+        this.zoom = d3.behavior.zoom()
+            .on("zoom", self.dragging.bind(self));
+
+        this.zoom.x(zoomScale.scale);
+
+        if (!this.zoomExists())
+        {
+            this.chart.append("rect")
+                .attr("class", "zoompane")
+                .attr("width", this.width())
+                .attr("height", this.height() - this.margin()
+                    .top - this.margin()
+                    .bottom)
+                .style("fill", "none")
+                .style("pointer-events", "all");
+        }
+
+        this.chart.select('.zoompane')
+            .call(this.zoom);
+    };
+
+    this.zoomExists = function()
+    {
+        var z = this.chart.selectAll('.zoompane');
+        return z[0].length;
+    };
+
+    this.dragging = function()
+    {
+        self.draw(true);
+    };
+
+    this.barPadding = function(_)
+    {
+        if (!arguments.length)
+        {
+            return barPadding();
+        }
+        barPadding = d3.functor(_);
+        return this;
     };
 
     this.margin = function(_)
@@ -388,6 +546,37 @@ NestedGroup.prototype.getOrderedData = function()
         }
         this._margin = _;
         return this;
+    };
+
+    this.clipPath = function()
+    {
+
+        return this.name.split(' ')
+            .join('_') + "clip";
+    };
+
+    this.filterFunction = function(filter, element)
+    {
+        var value = filter.key ? filter.key : filter;
+
+        return {
+            name: value,
+            element: element,
+            filterFunction: function(d)
+            {
+                return String(d) == String(value);
+            }
+        };
+    };
+
+    this.filterClick = function(element, filter)
+    {
+        if (this.dimension)
+        {
+            var filterFunction = this.filterFunction(filter, element);
+
+            this.filterEvent(this.dimension, filterFunction);
+        }
     };
 
     this.tooltip = function()
@@ -431,7 +620,6 @@ NestedGroup.prototype.getOrderedData = function()
 
     this.mouseOut = function(chart, item, d)
     {
-
         this.tip.hide(d);
 
         d3.select(item)
@@ -478,30 +666,12 @@ NestedGroup.prototype.getOrderedData = function()
         scales = _;
     };
 
-    this.draw = function()
-    {
-
-        for (var series in this.series())
-        {
-            var s = this.series()[series];
-            s.draw();
-        }
-
-        for (var axis in axes)
-        {
-            var a = axes[axis];
-            a.draw();
-        }
-
-
-    };
 
     this.addHorizontalScale = function(type, typeString, direction)
     {
-
         var scale = new Scale(this, type, direction, typeString);
-
     };
+
 
     this.addHorizontalAxis = function(scale)
     {
@@ -518,9 +688,12 @@ NestedGroup.prototype.getOrderedData = function()
     this.rangeType = this.scale.rangeRoundBands ? this.scale.rangeRoundBands : this.scale.range;
     this.series = [];
     this.chart = chart;
-    this.bounds = [];
     this.type = type;
     this.direction = direction;
+    this.bounds = [];
+
+    chart.scales()
+        .push(this);
 
     this.domain = function()
     {
@@ -532,25 +705,62 @@ NestedGroup.prototype.getOrderedData = function()
         {
             return this.findOrdinalValues();
         }
+        if (this.type == 'time')
+        {
+            return [this.minTime(), this.maxTime()];
+        }
     };
 
     this.calculateBounds = function()
     {
+        var bounds = [];
+
         if (self.horizontal())
         {
-            self.bounds[0] = 0;
-            self.bounds[1] = self.chart.width() - self.chart.margin()
+            bounds[0] = 0;
+            bounds[1] = self.chart.width() - self.chart.margin()
                 .right - self.chart.margin()
                 .left;
         }
         else if (self.vertical())
         {
-            self.bounds[1] = 0;
-            self.bounds[0] = self.chart.height() - self.chart.margin()
+            bounds[1] = 0;
+            bounds[0] = self.chart.height() - self.chart.margin()
                 .top - self.chart.margin()
                 .bottom;
         }
+        return bounds;
     };
+
+    this.minTime = function()
+    {
+        var minTime = new Date(8640000000000000);
+
+        for (var series in this.series)
+        {
+            var s = this.series[series];
+            var cMin = d3.min(s.keys());
+            minTime = cMin < minTime ? cMin : minTime;
+        }
+
+        return minTime;
+    };
+
+
+    this.maxTime = function()
+    {
+        var maxTime = new Date(-8640000000000000);
+
+        for (var series in this.series)
+        {
+            var s = this.series[series];
+            var cMax = d3.max(s.keys());
+            maxTime = cMax > maxTime ? cMax : maxTime;
+        }
+
+        return maxTime;
+    };
+
 
     this.findOrdinalValues = function()
     {
@@ -601,15 +811,22 @@ NestedGroup.prototype.getOrderedData = function()
 
     this.initialize = function()
     {
-        this.applyAxisRange.call(this.scale.domain(this.domain()), this.rangeType);
+        this.applyScaleRange.call(this.scale.domain(this.domain()), this.rangeType);
     };
 
-    this.applyAxisRange = function(rangeType)
+    this.calculateRange = function()
     {
-        self.calculateBounds();
+        this.scale.domain(this.domain());
+    };
+
+    this.applyScaleRange = function(rangeType)
+    {
+        var bounds = self.calculateBounds();
+
+        this.bounds = bounds;
 
         rangeType.apply(this, [
-            self.bounds, self.chart.barPadding()
+            bounds, self.chart.barPadding()
         ]);
     };
 
@@ -623,11 +840,12 @@ NestedGroup.prototype.getOrderedData = function()
         return this;
     };
 }
-;function Axis(chart, scale, anchor)
+;function Axis(chart, name, scale, anchor)
 {
     this.chart = chart;
     this.scale = scale;
     this.anchor = anchor ? anchor : 'left';
+    this.name = name;
 
     var self = this;
 
@@ -635,14 +853,15 @@ NestedGroup.prototype.getOrderedData = function()
     var tickPadding = d3.functor(10);
     var labelOrientation = d3.functor("lr");
     var orientation = scale.horizontal() ? d3.functor(this.anchor) : d3.functor(this.anchor);
+    var textAnchor;
 
-    if (scale.horizontal())
+    if (scale.vertical())
     {
         textAnchor = this.anchor == 'left' ? 'end' : 'start';
     }
-    if (scale.vertical())
+    if (scale.horizontal())
     {
-        textAnchor = 'middle';
+        textAnchor = 'start';
     }
 
     var format = function(d)
@@ -708,7 +927,9 @@ NestedGroup.prototype.getOrderedData = function()
         {
             return labelOrientation();
         }
+
         labelOrientation = d3.functor(_);
+
         return this;
     };
 
@@ -721,6 +942,19 @@ NestedGroup.prototype.getOrderedData = function()
             .tickSize(self.tickSize())
             .tickPadding(self.tickPadding())
             .tickFormat(self.format());
+
+        this.chart.chart.append('g')
+            .attr('class', self.name + ' ' + InsightConstants.AxisClass)
+            .attr('transform', self.transform())
+            .call(this.axis)
+            .selectAll('text')
+            .attr('class', self.name + ' ' + InsightConstants.AxisTextClass)
+            .style('text-anchor', self.textAnchor())
+            .style('writing-mode', self.labelOrientation())
+            .on('click', function(filter)
+            {
+                return self.chart.filterClick(this, filter);
+            });
     };
 
     this.transform = function()
@@ -744,18 +978,15 @@ NestedGroup.prototype.getOrderedData = function()
         return transform;
     };
 
-    this.draw = function()
+    this.draw = function(dragging)
     {
-        this.chart.chart.append('g')
-            .attr('class', InsightConstants.AxisClass)
-            .attr('transform', self.transform())
-            .call(this.axis)
-            .selectAll('text')
-            .attr('class', InsightConstants.AxisTextClass)
-            .style('text-anchor', self.textAnchor)
+        var axis = this.chart.chart.selectAll('g.' + self.name + '.' + InsightConstants.AxisClass)
+            .call(this.axis);
+
+        axis
+            .selectAll("text")
+            .style('text-anchor', self.textAnchor())
             .style('writing-mode', self.labelOrientation());
-
-
     };
 }
 ;function LineSeries(name, chart, data, x, y, color)
@@ -765,15 +996,32 @@ NestedGroup.prototype.getOrderedData = function()
 
     var self = this;
 
+    var lineType = 'linear';
 
     var mouseOver = function(d, item)
     {
         self.chart.mouseOver(self, this, d);
+
+        d3.select(this)
+            .classed("hover", true);
     };
 
     var mouseOut = function(d, item)
     {
         self.chart.mouseOut(self, this, d);
+    };
+
+    var lineOver = function(d, item) {
+
+    };
+
+    var lineOut = function(d, item) {
+
+    };
+
+    var lineClick = function(d, item)
+    {
+        console.log(d);
     };
 
     this.findMax = function()
@@ -811,33 +1059,46 @@ NestedGroup.prototype.getOrderedData = function()
         return val;
     };
 
-
-    this.draw = function()
+    this.lineType = function(_)
     {
+        if (!arguments.length)
+        {
+            return lineType;
+        }
+        lineType = _;
+        return this;
+    };
 
+    this.draw = function(dragging)
+    {
         var transform = d3.svg.line()
             .x(self.rangeX)
             .y(self.rangeY)
-            .interpolate('linear');
+            .interpolate(lineType);
 
-        var rangeIdentifier = "path." + this.name;
+        var rangeIdentifier = "path." + this.name + ".in-line";
 
         var rangeElement = this.chart.chart.selectAll(rangeIdentifier);
 
         if (!this.rangeExists(rangeElement))
         {
             this.chart.chart.append("path")
-                .attr("class", this.name)
+                .attr("class", this.name + " in-line")
                 .attr("stroke", this.color)
-                .attr("fill", "none");
+                .attr("fill", "none")
+                .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
+                .on('mouseover', lineOver)
+                .on('mouseout', lineOut)
+                .on('click', lineClick);
         }
+
+        var duration = dragging ? 0 : 300;
 
         this.chart.chart.selectAll(rangeIdentifier)
             .datum(this.dataset(), this.matcher)
             .transition()
-            .duration(this.animationDuration)
+            .duration(duration)
             .attr("d", transform);
-
 
         var circles = this.chart.chart.selectAll("circle")
             .data(this.dataset());
@@ -845,15 +1106,18 @@ NestedGroup.prototype.getOrderedData = function()
         circles.enter()
             .append('circle')
             .attr('class', 'target-point')
+            .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
+            .attr("cx", self.rangeX)
+            .attr("cy", self.chart.height() - self.chart.margin()
+                .bottom - self.chart.margin()
+                .top)
             .on('mouseover', mouseOver)
             .on('mouseout', mouseOut);
 
+
         circles
             .transition()
-            .duration(function(d, i)
-            {
-                return 600 + (i * 20);
-            })
+            .duration(duration)
             .attr("cx", self.rangeX)
             .attr("cy", self.rangeY)
             .attr("r", 3.5);
@@ -865,10 +1129,10 @@ NestedGroup.prototype.getOrderedData = function()
             .attr('class', InsightConstants.ToolTipLabelClass);
 
         circles.selectAll("." + InsightConstants.ToolTipTextClass)
-            .text(this.valueAccessor);
+            .text(this.tooltipValue);
 
         circles.selectAll("." + InsightConstants.ToolTipLabelClass)
-            .text('Label');
+            .text(this.tooltipLabel);
     };
 
     this.rangeExists = function(rangeSelector)
@@ -902,6 +1166,7 @@ LineSeries.prototype.constructor = LineSeries;
 
 
 
+
     this.findMax = function()
     {
         var self = this;
@@ -918,7 +1183,6 @@ LineSeries.prototype.constructor = LineSeries;
 
         return max;
     };
-
 
 
     this.series = [
@@ -1051,7 +1315,7 @@ LineSeries.prototype.constructor = LineSeries;
                 .attr('y', this.y.bounds[0])
                 .attr('height', 0)
                 .attr('fill', s.color)
-                .attr("clip-path", "url(#clip)")
+                .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
                 .on('mouseover', mouseOver)
                 .on('mouseout', mouseOut);
 
@@ -1273,6 +1537,32 @@ ChartGroup.prototype.aggregate = function(dimension, input)
     return group;
 };
 
+ChartGroup.prototype.count = function(dimension, input)
+{
+
+    var group;
+
+    if (input instanceof Array)
+    {
+
+        group = this.multiReduceCount(dimension, input);
+
+        this.Groups.push(group);
+
+    }
+    else
+    {
+        var data = dimension.Dimension.group()
+            .reduceCount(input);
+
+        group = new Group(data);
+
+        this.Groups.push(group);
+    }
+
+    return group;
+};
+
 
 ChartGroup.prototype.addSumGrouping = function(dimension, func)
 {
@@ -1337,42 +1627,45 @@ ChartGroup.prototype.multiReduceSum = function(dimension, properties)
     return group;
 };
 
-ChartGroup.prototype.multiReduceCount = function(dimension, property)
+ChartGroup.prototype.multiReduceCount = function(dimension, properties)
 {
 
     var data = dimension.Dimension.group()
         .reduce(
             function(p, v)
             {
-                if (!p.hasOwnProperty(v[property]))
+                for (var property in properties)
                 {
-
-                    p[v[property]] = 1;
+                    if (v.hasOwnProperty(properties[property]))
+                    {
+                        p[properties[property]][v[properties[property]]] = p[properties[property]].hasOwnProperty(v[properties[property]]) ? p[properties[property]][v[properties[property]]] + 1 : 1;
+                        p[properties[property]].Total++;
+                    }
                 }
-                else
-                {
-                    p[v[property]] += 1;
-                }
-
-                p.Total += 1;
-
                 return p;
             },
             function(p, v)
             {
-
-                if (v.hasOwnProperty(properties[property]))
+                for (var property in properties)
                 {
-                    p[v[property]] -= 1;
+                    if (v.hasOwnProperty(properties[property]))
+                    {
+                        p[properties[property]][v[properties[property]]] = p[properties[property]].hasOwnProperty(v[properties[property]]) ? p[properties[property]][v[properties[property]]] - 1 : 1;
+                        p[properties[property]].Total--;
+                    }
                 }
-                p.Total--;
                 return p;
             },
             function()
             {
-                return {
-                    Total: 0
-                };
+                var p = {};
+                for (var property in properties)
+                {
+                    p[properties[property]] = {
+                        Total: 0
+                    };
+                }
+                return p;
             }
         );
 
@@ -1804,7 +2097,6 @@ ChartGroup.prototype.removeItemFromArray = function(array, item)
 
     this.addClipPath = function()
     {
-
         this.chart.append("clipPath")
             .attr("id", "clip")
             .append("rect")
@@ -1817,7 +2109,6 @@ ChartGroup.prototype.removeItemFromArray = function(array, item)
 
     this.dragging = function()
     {
-
         this.draw(true);
     };
 
@@ -2525,124 +2816,6 @@ ChartGroup.prototype.removeItemFromArray = function(array, item)
 
 Legend.prototype = Object.create(BaseChart.prototype);
 Legend.prototype.constructor = Legend;
-;function DataTable(name, element, dimension, group)
-{
-    BaseChart.call(this, name, element, dimension, group);
-
-    var self = this;
-
-    this._columns = [];
-
-    this.chart = d3.select(this.element)
-        .append("table")
-        .attr("class", "dataTable");
-
-    this.columns = function(c)
-    {
-        if (!arguments.length)
-        {
-            return this._columns;
-        }
-        this._columns = c;
-        return this;
-
-    };
-
-    this.init = function()
-    {
-        var self = this;
-
-        this.header = this.chart.append("thead")
-            .append("tr");
-
-        this.header.append("th")
-            .attr('class', 'blank')
-            .html("");
-
-        this.header.selectAll("th.column")
-            .data(this._columns)
-            .enter()
-            .append("th")
-            .attr('class', 'column')
-            .html(function(d)
-            {
-                return d.label;
-            });
-
-        this.rows = this.chart.selectAll("tr.datarow")
-            .data(this.dataset());
-
-        this.rows.enter()
-            .append("tr")
-            .attr("class", "datarow");
-
-        this.rows.append("th")
-            .html(function(d)
-            {
-                return self._keyAccessor(d);
-            });
-
-        this.cells = this.rows.selectAll("td")
-            .data(function(row)
-            {
-                return self._columns.map(function(column)
-                {
-                    return {
-                        column: column,
-                        value: column.formatter(column.calculation(row))
-                    };
-                });
-            });
-
-        var newEntries = this.cells.enter();
-        newEntries.append("td")
-            .html(function(d)
-            {
-                return d.value;
-            });
-    };
-
-    this.draw = function()
-    {
-        var self = this;
-
-        this.rows = this.chart.selectAll("tr.datarow")
-            .data(this.dataset());
-
-        this.rows.enter()
-            .append("tr")
-            .attr("class", "datarow");
-
-        this.cells = this.rows.selectAll("td")
-            .data(function(row)
-            {
-                return self._columns.map(function(column)
-                {
-                    return {
-                        column: column,
-                        value: column.formatter(column.calculation(row))
-                    };
-                });
-            });
-
-        this.cells.enter()
-            .append("td");
-
-        this.cells.html(function(d)
-        {
-            return d.value;
-        });
-
-        this.cells.exit()
-            .remove();
-
-        this.rows.exit()
-            .remove();
-    };
-}
-
-DataTable.prototype = Object.create(BaseChart.prototype);
-DataTable.prototype.constructor = DataTable;
 ;function ColumnChart(name, element, dimension, group)
 {
 
@@ -3190,1026 +3363,6 @@ ColumnChart.prototype.constructor = ColumnChart;
 
 MultipleChart.prototype = Object.create(BaseChart.prototype);
 MultipleChart.prototype.constructor = MultipleChart;
-;function GroupedBarChart(name, element, dimension, group)
-{
-
-    BaseChart.call(this, name, element, dimension, group);
-
-    var self = this;
-
-    this.groupNames = [];
-    this.x = d3.scale.ordinal();
-    this.subX = d3.scale.ordinal();
-
-    this.y = d3.scale.linear();
-
-    this.xFormatFunc = function(d)
-    {
-        return d;
-    };
-
-    this.color = d3.scale.ordinal()
-        .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
-
-    this.yAxis = d3.svg.axis()
-        .scale(this.y)
-        .orient("left")
-        .tickSize(0)
-        .tickPadding(10);
-
-    this.xAxis = d3.svg.axis()
-        .scale(this.x)
-        .orient("bottom")
-        .tickSize(0)
-        .tickPadding(10)
-        .tickFormat(function(d)
-        {
-            return self.xFormatFunc(d);
-        });
-
-    this.xAxisFormat = function(f)
-    {
-        this.xFormatFunc = f;
-        return this;
-    };
-
-    this.labelAnchoring = function(d)
-    {
-        if (this.invert())
-        {
-            return "start";
-        }
-        else
-        {
-            return "end";
-        }
-    };
-
-    this.groupNames = function(d)
-    {
-        if (!arguments)
-        {
-            return this._groupNames;
-        }
-        this._groupNames = d;
-        return this;
-    };
-
-    this.yScaleMax = function()
-    {
-
-        var max = d3.max(this.dataset(), function(d)
-        {
-            var m = 0;
-
-            m = m < d.value.Total ? d.value.Total : m;
-
-            return m;
-        });
-        return max;
-    };
-
-    this.initializeAxes = function()
-    {
-
-        this.x.domain(this.keys())
-            .rangeRoundBands([0, this.width() - this.margin()
-                .left - this.margin()
-                .right
-            ], 0.2);
-        this.subX.domain(this._groupNames)
-            .rangeRoundBands([0, this.x.rangeBand()], 0.1);
-
-        this.y.domain([0, this.yScaleMax()])
-            .range([this.height() - this.margin()
-                .top - this.margin()
-                .bottom, 0
-            ]);
-    };
-
-    this.init = function()
-    {
-        var self = this;
-
-        this.createChart();
-        this.initializeAxes();
-
-        var groups = this.chart.selectAll(".group")
-            .data(this.dataset())
-            .enter()
-            .append("g")
-            .attr("class", "group")
-            .attr("transform", function(d)
-            {
-                return "translate(" + self.x(self._keyAccessor(d)) + ",0)";
-            });
-
-        var total = groups.append("rect")
-            .attr("class", "total")
-            .attr("width", this.x.rangeBand())
-            .attr("x", 0)
-            .attr("y", function(d)
-            {
-                return self.y(d.value.Total);
-            })
-            .attr("height", function(d)
-            {
-                return (self.height() - self.margin()
-                    .top - self.margin()
-                    .bottom) - self.y(d.value.Total);
-            })
-            .attr("fill", "silver")
-            .on("mouseover", function(d, item)
-            {
-                self.mouseOver(self, this, d);
-            })
-            .on("mouseout", function(d, item)
-            {
-                self.mouseOut(self, this, d);
-            });
-
-        total.append("svg:text")
-            .text(function(d)
-            {
-                return self.tooltipLabel();
-            })
-            .attr("class", "tipLabel");
-
-        total.append("svg:text")
-            .text(function(d)
-            {
-                return self._tooltipFormat(d.value.Total);
-            })
-            .attr("class", "tipValue");
-
-        var bars = groups.selectAll("rect.subbar")
-            .data(function(d)
-            {
-                var vals = [];
-                for (var key in d.value.Groups)
-                {
-                    vals.push(
-                    {
-                        key: key,
-                        value: d.value.Groups[key].Value
-                    });
-                }
-                return vals;
-            });
-
-        bars
-            .enter()
-            .append("rect")
-            .attr("class", "subbar")
-            .attr("width", this.subX.rangeBand())
-            .attr("x", function(d)
-            {
-                return self.subX(d.key);
-            })
-            .attr("y", function(d)
-            {
-                return self.y(d.value);
-            })
-            .attr("height", function(d)
-            {
-                return (self.height() - self.margin()
-                    .top - self.margin()
-                    .bottom) - self.y(d.value);
-            })
-            .attr("fill", function(d)
-            {
-                return self.color(d.key);
-            })
-            .on("mouseover", function(d, item)
-            {
-                self.mouseOver(self, this, d);
-            })
-            .on("mouseout", function(d, item)
-            {
-                self.mouseOut(self, this, d);
-            });
-
-        bars.append("svg:text")
-            .text(function(d)
-            {
-                return self._tooltipFormat(self._valueAccessor(d));
-            })
-            .attr("class", "tipValue");
-
-        bars.append("svg:text")
-            .text(function(d)
-            {
-                return self.tooltipLabel();
-            })
-            .attr("class", "tipLabel");
-
-
-        this.chart.append("g")
-            .call(this.yAxis)
-            .selectAll("text")
-            .style("text-anchor", "end")
-            .style("font-size", "12px")
-            .style("fill", "#333");
-
-        this.chart.append("g")
-            .attr("transform", "translate(0," + (self.height() - self.margin()
-                .bottom - self.margin()
-                .top) + ")")
-            .call(this.xAxis)
-            .selectAll("text")
-            .style("text-anchor", "end")
-            .style("font-size", "12px")
-            .style("fill", "#333")
-            .attr("transform", function(d)
-            {
-                return "rotate(-90," + 0 + "," + 15 + ")";
-            })
-            .on("click", function(filter)
-            {
-                return self.filterClick(this, filter);
-            });
-
-
-        var legend = this.chart.selectAll(".legend")
-            .data(this._groupNames)
-            .enter()
-            .append("g")
-            .attr("class", "legend")
-            .attr("transform", function(d, i)
-            {
-                return "translate(0," + i * 20 + ")";
-            });
-
-        legend.append("rect")
-            .attr("x", this.width() - this.margin()
-                .right / 2)
-            .attr("width", 18)
-            .attr("height", 18)
-            .style("fill", this.color);
-
-        legend.append("text")
-            .attr("x", this.width() - this.margin()
-                .right / 2 - 10)
-            .attr("y", 9)
-            .attr("dy", ".35em")
-            .style("text-anchor", "end")
-            .text(function(d)
-            {
-                return d;
-            });
-
-    };
-
-    this.draw = function()
-    {
-
-        var self = this;
-
-        var groups = this.chart.selectAll("g.group")
-            .data(this.dataset());
-
-        groups.selectAll("rect.total")
-            .transition()
-            .duration(self.duration)
-            .attr("y", function(d)
-            {
-                return self.y(d.value.Total);
-            })
-            .attr("height", function(d)
-            {
-                return (self.height() - self.margin()
-                    .top - self.margin()
-                    .bottom) - self.y(d.value.Total);
-            });
-
-        groups.selectAll("rect.subbar")
-            .data(function(d)
-            {
-                var vals = [];
-                for (var key in d.value.Groups)
-                {
-                    vals.push(
-                    {
-                        key: key,
-                        value: d.value.Groups[key].Value
-                    });
-                }
-                return vals;
-            })
-            .transition()
-            .duration(self.duration)
-            .attr("y", function(d)
-            {
-                return self.y(d.value);
-            })
-            .attr("height", function(d)
-            {
-                return (self.height() - self.margin()
-                    .top - self.margin()
-                    .bottom) - self.y(d.value);
-            });
-
-    };
-}
-
-
-GroupedBarChart.prototype = Object.create(BaseChart.prototype);
-GroupedBarChart.prototype.constructor = GroupedBarChart;
-;function StackedBarChart(name, element, dimension, group)
-{
-
-    BaseChart.call(this, name, element, dimension, group);
-
-    var self = this;
-
-    this.xFormatFunc = function(d)
-    {
-        return d;
-    };
-
-    var mouseOver = function(d, item)
-    {
-        self.mouseOver(self, this, d);
-    };
-    var mouseOut = function(d, item)
-    {
-        self.mouseOut(self, this, d);
-    };
-
-
-
-    this.xAxisFormat = function(f)
-    {
-        this.xFormatFunc = f;
-        return this;
-    };
-
-
-    this.calculateYPos = function(func, d)
-    {
-        if (!d.yPos)
-        {
-            d.yPos = 0;
-        }
-
-        d.yPos += func(d);
-
-        return d.yPos;
-    };
-
-
-    this.yPosition = function(d)
-    {
-        return this.y(this.calculateYPos(this._valueAccessor, d));
-    }.bind(this);
-
-
-
-    this.init = function()
-    {
-        var self = this;
-
-        this.createChart();
-        this.initializeAxes();
-
-        this.yAxis = d3.svg.axis()
-            .scale(this.y)
-            .orient('left')
-            .tickSize(0)
-            .tickFormat(function(d)
-            {
-                return self._yAxisFormat(d);
-            });
-
-        this.xAxis = d3.svg.axis()
-            .scale(this.x)
-            .orient('bottom')
-            .tickSize(0)
-            .tickFormat(function(d)
-            {
-                return self.xFormatFunc(d);
-            });
-
-        this.addClipPath();
-
-        if (this.zoomable())
-        {
-            this.initZoom();
-        }
-
-        var groups = this.chart
-            .selectAll('g')
-            .data(this.dataset());
-
-        var newGroups = groups.enter()
-            .append('g')
-            .attr('class', 'bargroup');
-
-        var bars = newGroups.selectAll('rect.bar');
-
-        for (var seriesFunction in this._series)
-        {
-            this._valueAccessor = this.cumulative() ? self._series[seriesFunction].cumulative : self._series[seriesFunction].calculation;
-
-            bars = newGroups.append('rect')
-                .attr('class', self._series[seriesFunction].name + 'class bar')
-                .attr('x', this.xPosition)
-                .attr('y', this.yDomain())
-                .attr('width', this.barWidth)
-                .attr('height', 0)
-                .attr('fill', this._series[seriesFunction].color)
-                .attr("clip-path", "url(#clip)")
-                .on('mouseover', mouseOver)
-                .on('mouseout', mouseOut);
-
-            bars.transition()
-                .duration(this.animationDuration)
-                .attr('y', this.yPosition)
-                .attr('height', this.barHeight);
-
-            bars.append('svg:text')
-                .text(this.tooltipText)
-                .attr('class', 'tipValue');
-
-            bars.append('svg:text')
-                .text(this._series[seriesFunction].label)
-                .attr('class', 'tipLabel');
-        }
-
-        this.chart.append('g')
-            .attr('class', 'y-axis')
-            .call(this.yAxis)
-            .selectAll('text')
-            .attr('class', 'axis-text');
-
-        this.chart.append('g')
-            .attr('class', 'x-axis')
-            .attr('transform', 'translate(0,' + (self.height() - self.margin()
-                .bottom - self.margin()
-                .top) + ')')
-            .call(this.xAxis)
-            .selectAll('text')
-            .attr('class', 'x-axis axis-text')
-            .style('text-anchor', 'start')
-            .attr("transform", "rotate(90)")
-            .attr("dx", "10")
-            .attr("dy", "0")
-            .on('mouseover', this.setHover)
-            .on('mouseout', this.removeHover)
-            .on('click', function(filter)
-            {
-                return self.filterClick(this, filter);
-            });
-
-        if (this._targets)
-        {
-            this.drawTargets();
-        }
-    };
-
-
-    this.draw = function(drag)
-    {
-
-        var self = this;
-
-        if (drag && self.redrawAxes())
-        {
-            this.y.domain([0, d3.round(self.findMax(), 1)])
-                .range([this.height() - this.margin()
-                    .top - this.margin()
-                    .bottom, 0
-                ]);
-        }
-
-        var groups = this.chart.selectAll('g.bargroup')
-            .data(this.dataset())
-            .each(function(d, i)
-            {
-                d.yPos = 0;
-            });
-
-        for (var seriesFunction in this._series)
-        {
-
-            this._valueAccessor = this.cumulative() ? self._series[seriesFunction].cumulative : self._series[seriesFunction].calculation;
-
-            var duration = drag ? 0 : this.animationDuration;
-
-            var bars = groups.selectAll('.' + self._series[seriesFunction].name + 'class.bar')
-                .transition()
-                .duration(duration)
-                .attr('x', this.xPosition)
-                .attr('y', this.yPosition)
-                .attr('width', this.barWidth)
-                .attr('height', this.barHeight);
-
-            bars.selectAll('text.tipValue')
-                .text(this.tooltipText);
-
-            bars.selectAll('text.tipLabel')
-                .text(this._series[seriesFunction].label);
-
-        }
-
-        if (this._targets)
-        {
-            this.updateTargets(drag);
-        }
-
-        var xaxis = this.chart.selectAll('g.x-axis')
-            .call(this.xAxis);
-
-        xaxis
-            .selectAll("text")
-            .style('text-anchor', 'start')
-            .attr("transform", "rotate(90)")
-            .attr("dx", "10")
-            .attr("dy", "0")
-            .on('mouseover', this.setHover)
-            .on('mouseout', this.removeHover)
-            .on('click', function(filter)
-            {
-                return self.filterClick(this, filter);
-            });
-
-        xaxis
-            .selectAll("text:not(.selected)")
-            .attr('class', 'x-axis axis-text');
-
-
-        this.chart.selectAll('.y-axis')
-            .call(this.yAxis)
-            .selectAll('text')
-            .attr('class', 'axis-text');
-    };
-
-    this.drawTargets = function()
-    {
-
-
-        var groups = this.chart.selectAll('g')
-            .data(this.targetData());
-
-        if (this._targets)
-        {
-
-            this._targetAccessor = this.cumulative() ? self._targets.cumulative : self._targets.calculation;
-
-
-            var tBars = groups.append('rect')
-                .attr('class', this._targets.name + 'class target')
-                .attr('x', this.targetX)
-                .attr('y', this.targetY)
-                .attr('width', this.targetWidth)
-                .attr('height', 4)
-                .attr('fill', this._targets.color)
-                .attr("clip-path", "url(#clip)")
-                .on('mouseover', mouseOver)
-                .on('mouseout', mouseOut);
-
-            tBars.append('svg:text')
-                .text(this.targetTooltipText)
-                .attr('class', 'tipValue');
-
-            tBars.append('svg:text')
-                .text(this._targets.label)
-                .attr('class', 'tipLabel');
-        }
-    };
-
-    this.updateTargets = function(drag)
-    {
-
-        var groups = this.chart.selectAll('g.bargroup')
-            .data(this.targetData());
-
-        if (this._targets)
-        {
-
-            this._valueAccessor = this.cumulative() ? self._targets.cumulative : self._targets.calculation;
-
-            var tBars = groups.selectAll('rect.' + self._targets.name + 'class.target');
-
-            var duration = drag ? 0 : this.animationDuration;
-
-            tBars.transition()
-                .duration(duration)
-                .attr('x', this.targetX)
-                .attr('width', this.targetWidth)
-                .attr('y', this.targetY);
-
-            tBars.selectAll('text.tipValue')
-                .text(this.targetTooltipText)
-                .attr('class', 'tipValue');
-        }
-    };
-
-}
-
-
-StackedBarChart.prototype = Object.create(BaseChart.prototype);
-StackedBarChart.prototype.constructor = StackedBarChart;
-;function TimeLine(name, element, dimension, group)
-{
-
-    BaseChart.call(this, name, element, dimension, group);
-
-    var self = this;
-
-    this.maxRange = d3.max(this.dataset(), function(d)
-    {
-        return d.value;
-    });
-
-    this.range = [this.dimension.Dimension.bottom(1)[0].Date, this.dimension.Dimension.top(1)[0].Date];
-
-    this.brushColor = function(d)
-    {
-        if (!arguments.length)
-        {
-            return this._brushColor;
-        }
-        this._brushColor = d;
-        return this;
-    };
-
-    this.initializeAxes = function()
-    {
-
-        this.x = d3.time.scale()
-            .domain(this.range)
-            .rangeRound([0, this.width()]);
-
-        this.y = d3.scale.linear()
-            .domain([0, this.maxRange])
-            .rangeRound([this.yDomain(), 0]);
-
-        this.xAxis = d3.svg.axis()
-            .scale(this.x)
-            .tickSize(0)
-            .orient('bottom');
-    };
-
-    this.display = function()
-    {
-
-        var self = this;
-
-        var minExtent = self.brush.extent()[0],
-            maxExtent = self.brush.extent()[1];
-
-        var func = {
-            name: 'timeline',
-            filterFunction: function(d)
-            {
-                return d >= minExtent && d <= maxExtent;
-            }
-        };
-
-
-        if (String(minExtent) != String(maxExtent))
-        {
-            // remove old filter if one exists
-            if (this.oldFilter)
-            {
-                this.filterEvent(this.dimension, this.oldFilter);
-            }
-
-            this.filterEvent(this.dimension, func);
-
-            this.oldFilter = func;
-
-            self.mini.select('.brush')
-                .call(self.brush.extent([minExtent, maxExtent]));
-        }
-        else
-        {
-            this.filterEvent(this.dimension, this.oldFilter);
-        }
-
-    };
-
-
-    this.init = function()
-    {
-
-        this.createChart();
-        this.initializeAxes();
-
-        this.mini = this.chart.append('g')
-            .attr('width', this.width())
-            .attr('height', this.yDomain())
-            .attr('class', 'mini');
-
-        this.brush = d3.svg.brush()
-            .x(this.x)
-            .on('brush', function()
-            {
-                self.display();
-            });
-
-
-        //mini item rects
-        self.mini.append('g')
-            .selectAll('.miniItems')
-            .data(this.dataset())
-            .enter()
-            .append('rect')
-            .attr('class', 'minitems')
-            .attr('x', this.xPosition)
-            .attr('y', this.yPosition)
-            .attr('width', 5)
-            .attr('height', this.barHeight)
-            .attr('fill', self._barColor);
-
-        self.mini.append('g')
-            .attr('class', 'x axis')
-            .attr('transform', 'translate(0,' + this.yDomain() + ')')
-            .style('font-size', '11px')
-            .call(self.xAxis);
-
-        self.mini.append('g')
-            .attr('class', 'x brush')
-            .call(self.brush)
-            .selectAll('rect')
-            .attr('height', this.yDomain())
-            .attr('fill', self._brushColor)
-            .style('opacity', '0.5');
-    };
-
-
-    this.draw = function()
-    {
-        var self = this;
-
-        //mini item rects
-        self.chart.selectAll('rect.minitems')
-            .data(this.dataset())
-            .transition()
-            .duration(self.duration)
-            .attr('y', this.yPosition)
-            .attr('height', this.barHeight);
-
-    };
-}
-
-
-TimeLine.prototype = Object.create(BaseChart.prototype);
-TimeLine.prototype.constructor = TimeLine;
-;function TimelineChart(element, key, values)
-{
-
-    BaseChart.call(this, name, element, null, null);
-
-    var self = this;
-
-    this.values = values;
-    this.key = key;
-
-    this.dataset = function()
-    {
-
-        return this.values;
-    };
-
-
-    this.longdrag = false;
-
-    this.drag = d3.behavior.drag()
-        .on("drag", function(d, i)
-        {
-            var diff = 0;
-
-            d3.select(this)
-                .attr("y", this.y.baseVal.value + d3.event.dy)
-                .attr("height", this.height.baseVal.value - d3.event.dy)
-                .classed("active", true);
-
-
-        })
-        .on("dragend", function(d, i)
-        {
-
-            self.updatedEntryHandler.call(this, self.key, d, Math.round(self.y.invert(this.y.baseVal.value)));
-            d3.select(this)
-                .classed("active", false);
-        });
-
-
-    this.updatedEntryHandler = function(key, d, i)
-    {
-        self.draw();
-    };
-
-    this.newEntryHandler = function(key, d, i) {
-
-    };
-
-    this.clickEvent = function()
-    {
-        if (!self.longdrag)
-        {
-            var m = d3.mouse(this);
-            var xPos = self.x.invert(m[0]);
-            xPos = new Date(xPos.getFullYear(), xPos.getMonth(), 1, 1, 0, 0);
-
-            var yPos = Math.round(self.y.invert(m[1]));
-
-            self.newEntryHandler(self.key, xPos, yPos);
-        }
-
-        clearTimeout(self.timeout);
-        self.longdrag = false;
-    };
-
-    this.keys = function()
-    {
-        var keys = this.dataset()
-            .map(function(d)
-            {
-                return new Date(d.Date);
-            });
-
-        return keys;
-    };
-
-    this.initializeAxes = function()
-    {
-
-        this.x = d3.time.scale();
-        this.y = d3.scale.linear();
-        var max = this.findMax();
-        max = max ? max + 10 : 10;
-
-        var keys = this.keys();
-
-        this.x.domain([new Date(2013, 0, 1), new Date(2015, 0, 1)])
-            .range([0, this.xDomain()]);
-
-        this.y
-            .domain([0, max])
-            .rangeRound([this.yDomain(), 0]);
-
-        this.xAxis = d3.svg.axis()
-            .scale(this.x)
-            .orient("bottom")
-            .tickSize(0)
-            .tickPadding(6);
-
-        this.yAxis = d3.svg.axis()
-            .scale(this.y)
-            .tickSize(0)
-            .orient("left")
-            .tickPadding(10);
-
-        this.zoom = d3.behavior.zoom()
-            .on("zoom", this.dragging);
-
-        this.zoom.x(this.x);
-    };
-
-    this.dragging = function()
-    {
-
-        self.timeout = setTimeout(function()
-        {
-            self.longdrag = true;
-        }, 100);
-
-        self.draw();
-    };
-
-    this.init = function()
-    {
-
-        this.createChart();
-
-        this._currentMax = this.findMax();
-
-        this.initializeAxes();
-
-
-        $.each(this.dataset(), function(i, d)
-        {
-            d.Date = new Date(d.Date);
-        });
-
-        this.chart.append("clipPath")
-            .attr("id", "clip")
-            .append("rect")
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("width", this.width())
-            .attr("height", this.yDomain());
-
-        this.chart.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + (self.height() - self.margin()
-                .bottom - self.margin()
-                .top) + ")");
-
-        this.chart.append("g")
-            .attr("class", "y axis")
-            .attr("transform", "translate(" + 0 + ",0)");
-
-        this.chart.append("rect")
-            .attr("class", "pane")
-            .attr("width", this.width())
-            .attr("height", this.yDomain())
-            .on("click", self.clickEvent)
-            .style("fill", "none")
-            .style("pointer-events", "all")
-            .call(this.zoom);
-
-        this.draw();
-
-    };
-
-
-    this.draw = function()
-    {
-
-        var item = self.dataset();
-
-        var max = self.findMax();
-
-        max = max ? max + 10 : 10;
-        self.y
-            .domain([0, max]);
-
-        self.chart.select("g.x.axis")
-            .call(self.xAxis)
-            .selectAll("text")
-            .style("font-size", "12px");
-
-        self.chart.select("g.y.axis")
-            .call(self.yAxis)
-            .selectAll("text")
-            .style("font-size", "12px");
-
-        var items = self.chart.selectAll("rect.item")
-            .data(self.dataset())
-            .enter()
-            .append("rect")
-            .attr("class", "item")
-            .attr("fill", "#ACC3EE");
-
-        items.append("svg:text")
-            .text(this.tooltipText)
-            .attr("class", "tipValue");
-
-        items.append("svg:text")
-            .text(this._tooltipLabel)
-            .attr("class", "tipLabel");
-
-        self.chart.selectAll("rect.item")
-            .data(self.dataset())
-            .attr("class", "item")
-            .attr("y", function(d)
-            {
-                var ypos = self.y(self._valueAccessor(d));
-                return ypos;
-            })
-            .attr("height", self.barHeight)
-            .attr("x", function(d)
-            {
-                var xPos = self.x(d.Date);
-                return xPos;
-            })
-            .attr("width", function(d)
-            {
-                var nextMonth = new Date(d.Date.getFullYear(), d.Date.getMonth() + 1, 1);
-
-                var width = self.x(nextMonth) - self.x(d.Date);
-                return width;
-            })
-            .on("mouseover", function(d)
-            {
-                self.mouseOver(self, this);
-            })
-            .on("mouseout", function(d)
-            {
-                self.mouseOut(self, this);
-            })
-            .attr("clip-path", "url(#clip)")
-            .call(self.drag)
-            .transition()
-            .duration(500);
-
-        var tips = this.chart.selectAll("text.tipValue")
-            .data(this.dataset())
-            .text(this.tooltipText);
-
-
-    };
-
-
-}
-
-
-TimelineChart.prototype = Object.create(BaseChart.prototype);
-TimelineChart.prototype.constructor = TimelineChart;
 ;var RowChart = function RowChart(name, element, dimension, group)
 {
 

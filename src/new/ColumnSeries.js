@@ -20,6 +20,7 @@ function ColumnSeries(name, chart, data, x, y, color)
 
 
 
+
     this.findMax = function()
     {
         var self = this;
@@ -36,7 +37,6 @@ function ColumnSeries(name, chart, data, x, y, color)
 
         return max;
     };
-
 
 
     this.series = [
@@ -169,7 +169,7 @@ function ColumnSeries(name, chart, data, x, y, color)
                 .attr('y', this.y.bounds[0])
                 .attr('height', 0)
                 .attr('fill', s.color)
-                .attr("clip-path", "url(#clip)")
+                .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
                 .on('mouseover', mouseOver)
                 .on('mouseout', mouseOut);
 

@@ -12,6 +12,15 @@ function Series(name, chart, data, x, y, color)
     x.addSeries(this);
     y.addSeries(this);
 
+    var self = this;
+    var cssClass = "";
+
+    var tooltipFormat = function(d)
+    {
+        return d;
+    };
+
+    var tooltipLabel = d3.functor("Label");
 
     this.dataset = function()
     {
@@ -27,6 +36,15 @@ function Series(name, chart, data, x, y, color)
             .map(this.keyAccessor);
     };
 
+    this.cssClass = function(_)
+    {
+        if (!arguments.length)
+        {
+            return cssClass;
+        }
+        cssClass = _;
+        return this;
+    };
 
     this.keyAccessor = function(d)
     {
@@ -38,10 +56,41 @@ function Series(name, chart, data, x, y, color)
         return d.value;
     };
 
+    this.tooltipValue = function(d)
+    {
+        return tooltipFormat(self.valueAccessor(d));
+    };
+
+    this.tooltipLabel = function(d)
+    {
+        return tooltipLabel(d);
+    };
+
+    this.tooltipLabelFormat = function(_)
+    {
+
+        if (!arguments.length)
+        {
+            return tooltipLabel;
+        }
+        tooltipLabel = d3.functor(_);
+        return this;
+    };
+
+    this.tooltipFormat = function(_)
+    {
+        if (!arguments.length)
+        {
+            return tooltipFormat;
+        }
+        tooltipFormat = _;
+        return this;
+    };
 
     this.matcher = this.keyAccessor;
 
     this.findMax = function() {};
 
     this.draw = function() {};
+
 }
