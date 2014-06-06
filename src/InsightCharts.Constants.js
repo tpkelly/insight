@@ -5,6 +5,7 @@ var InsightConstants = (function()
     exports.Behind = 'behind';
     exports.Front = 'front';
     exports.AxisTextClass = 'axis-text';
+    exports.AxisLabelClass = 'axis-label';
     exports.YAxisClass = 'y-axis';
     exports.AxisClass = 'in-axis';
     exports.XAxisClass = 'x-axis';
@@ -12,5 +13,6 @@ var InsightConstants = (function()
     exports.ToolTipTextClass = "tipValue";
     exports.ToolTipLabelClass = "tipLabel";
     exports.BarGroupClass = "bargroup";
+    exports.Bubble = "bubble";
     return exports;
 }());

@@ -20,6 +20,20 @@ function Series(name, chart, data, x, y, color)
         return d;
     };
 
+
+
+    var xFunction = function(d)
+    {
+        return d.key;
+    };
+
+    var yFunction = function(d)
+    {
+        return d.value;
+    };
+
+    var tooltipFunction = yFunction;
+
     var tooltipLabel = d3.functor("Label");
 
     this.dataset = function()
@@ -30,10 +44,12 @@ function Series(name, chart, data, x, y, color)
         return data;
     };
 
+
+
     this.keys = function()
     {
         return this.dataset()
-            .map(this.keyAccessor);
+            .map(xFunction);
     };
 
     this.cssClass = function(_)
@@ -51,14 +67,42 @@ function Series(name, chart, data, x, y, color)
         return d.key;
     };
 
-    this.valueAccessor = function(d)
+    this.xFunction = function(_)
     {
-        return d.value;
+        if (!arguments.length)
+        {
+            return xFunction;
+        }
+        xFunction = _;
+
+        return this;
+    };
+
+    this.yFunction = function(_)
+    {
+        if (!arguments.length)
+        {
+            return yFunction;
+        }
+        yFunction = _;
+
+        return this;
+    };
+
+    this.tooltipFunction = function(_)
+    {
+        if (!arguments.length)
+        {
+            return tooltipFunction;
+        }
+        tooltipFunction = _;
+
+        return this;
     };
 
     this.tooltipValue = function(d)
     {
-        return tooltipFormat(self.valueAccessor(d));
+        return tooltipFormat(tooltipFunction(d));
     };
 
     this.tooltipLabel = function(d)
@@ -89,8 +133,23 @@ function Series(name, chart, data, x, y, color)
 
     this.matcher = this.keyAccessor;
 
-    this.findMax = function() {};
+    this.findMax = function(scale)
+    {
+        var self = this;
+
+        var max = 0;
+        var data = this.data.getData();
+
+        var func = scale == self.x ? self.xFunction() : self.yFunction();
+
+        var m = d3.max(data, func);
+
+        max = m > max ? m : max;
+
+        return max;
+    };
 
     this.draw = function() {};
 
+    return this;
 }

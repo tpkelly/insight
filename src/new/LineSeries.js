@@ -28,27 +28,13 @@ function LineSeries(name, chart, data, x, y, color)
 
     };
 
-    var lineClick = function(d, item)
-    {
-        console.log(d);
-    };
+    var lineClick = function(d, item) {
 
-    this.findMax = function()
-    {
-        var self = this;
-
-        var max = 0;
-        var data = this.data.getData();
-        var m = d3.max(data, this.valueAccessor);
-
-        max = m > max ? m : max;
-
-        return max;
     };
 
     this.rangeY = function(d)
     {
-        return self.y.scale(self.valueAccessor(d));
+        return self.y.scale(self.yFunction()(d));
     };
 
     this.rangeX = function(d, i)
@@ -57,12 +43,12 @@ function LineSeries(name, chart, data, x, y, color)
 
         if (self.x.scale.rangeBand)
         {
-            val = self.x.scale(self.keyAccessor(d)) + (self.x.scale.rangeBand() / 2);
+            val = self.x.scale(self.xFunction()(d)) + (self.x.scale.rangeBand() / 2);
         }
         else
         {
 
-            val = self.x.scale(self.keyAccessor(d));
+            val = self.x.scale(self.xFunction()(d));
         }
 
         return val;
@@ -129,7 +115,7 @@ function LineSeries(name, chart, data, x, y, color)
             .duration(duration)
             .attr("cx", self.rangeX)
             .attr("cy", self.rangeY)
-            .attr("r", 3.5);
+            .attr("r", 2.5);
 
         circles.append('svg:text')
             .attr('class', InsightConstants.ToolTipTextClass);

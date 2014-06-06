@@ -1,11 +1,11 @@
-function Scale(chart, scale, direction, type)
+function Scale(chart, title, scale, direction, type)
 {
-
     var ordered = d3.functor(false);
     var self = this;
     this.scale = scale;
-    this.rangeType = this.scale.rangeRoundBands ? this.scale.rangeRoundBands : this.scale.range;
+    this.rangeType = this.scale.rangeRoundBands ? this.scale.rangeRoundBands : this.scale.rangeRound;
     this.series = [];
+    this.title = title;
     this.chart = chart;
     this.type = type;
     this.direction = direction;
@@ -55,13 +55,11 @@ function Scale(chart, scale, direction, type)
     {
         var minTime = new Date(8640000000000000);
 
-        for (var series in this.series)
+        this.series.map(function(series)
         {
-            var s = this.series[series];
-            var cMin = d3.min(s.keys());
+            var cMin = d3.min(series.keys());
             minTime = cMin < minTime ? cMin : minTime;
-        }
-
+        });
         return minTime;
     };
 
@@ -70,12 +68,11 @@ function Scale(chart, scale, direction, type)
     {
         var maxTime = new Date(-8640000000000000);
 
-        for (var series in this.series)
+        this.series.map(function(series)
         {
-            var s = this.series[series];
-            var cMax = d3.max(s.keys());
+            var cMax = d3.max(series.keys());
             maxTime = cMax > maxTime ? cMax : maxTime;
-        }
+        });
 
         return maxTime;
     };
@@ -85,12 +82,10 @@ function Scale(chart, scale, direction, type)
     {
         var vals = [];
 
-        for (var series in this.series)
+        this.series.map(function(series)
         {
-            var s = this.series[series];
-
-            vals = s.keys();
-        }
+            vals = series.keys();
+        });
 
         return vals;
     };
@@ -110,14 +105,12 @@ function Scale(chart, scale, direction, type)
     {
         var max = 0;
 
-        for (var series in this.series)
+        this.series.map(function(series)
         {
-            var s = this.series[series];
-
-            var m = s.findMax();
+            var m = series.findMax(self);
 
             max = m > max ? m : max;
-        }
+        });
 
         return max;
     };
@@ -142,7 +135,7 @@ function Scale(chart, scale, direction, type)
     {
         var bounds = self.calculateBounds();
 
-        this.bounds = bounds;
+        self.bounds = bounds;
 
         rangeType.apply(this, [
             bounds, self.chart.barPadding()

@@ -1039,10 +1039,8 @@ var BaseChart = function BaseChart(name, element, dimension, data)
     // Events 
     this.maxUpdatedEvent = function(max)
     {
-
         this._linkedCharts.forEach(function(chart)
         {
-
             chart._currentMax = chart._currentMax < max ? max : chart._currentMax;
         });
     };

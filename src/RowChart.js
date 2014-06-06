@@ -13,7 +13,6 @@ var RowChart = function RowChart(name, element, dimension, group)
 
     this.initializeAxes = function()
     {
-
         this.yAxis = d3.svg.axis()
             .scale(this.y)
             .orient(self.yOrientation())

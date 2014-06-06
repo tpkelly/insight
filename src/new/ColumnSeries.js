@@ -78,7 +78,7 @@ function ColumnSeries(name, chart, data, x, y, color)
 
     this.xPosition = function(d)
     {
-        return self.x.scale(self.keyAccessor(d));
+        return self.x.scale(self.xFunction()(d));
     };
 
     this.calculateXPos = function(width, d)
@@ -97,7 +97,7 @@ function ColumnSeries(name, chart, data, x, y, color)
     this.yPosition = function(d)
     {
 
-        var position = self.stackedBars() ? self.y.scale(self.calculateYPos(self.valueAccessor, d)) : self.y.scale(self.valueAccessor(d));
+        var position = self.stackedBars() ? self.y.scale(self.calculateYPos(self.yFunction(), d)) : self.y.scale(self.yFunction()(d));
 
         return position;
     };
@@ -130,7 +130,7 @@ function ColumnSeries(name, chart, data, x, y, color)
     {
         return (self.chart.height() - self.chart.margin()
             .top - self.chart.margin()
-            .bottom) - self.y.scale(self.valueAccessor(d));
+            .bottom) - self.y.scale(self.yFunction()(d));
     };
 
     this.stackedBars = function()
@@ -158,11 +158,16 @@ function ColumnSeries(name, chart, data, x, y, color)
 
         var newBars = newGroups.selectAll('rect.bar');
 
+        var click = function(filter)
+        {
+            return self.chart.filterClick(this, filter);
+        };
+
         for (var ser in this.series)
         {
             var s = this.series[ser];
 
-            this.valueAccessor = s.accessor;
+            this.yFunction(s.accessor);
 
             newBars = newGroups.append('rect')
                 .attr('class', s.name + 'class bar')
@@ -171,7 +176,8 @@ function ColumnSeries(name, chart, data, x, y, color)
                 .attr('fill', s.color)
                 .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
                 .on('mouseover', mouseOver)
-                .on('mouseout', mouseOut);
+                .on('mouseout', mouseOut)
+                .on('click', click);
 
             newBars.append('svg:text')
                 .attr('class', InsightConstants.ToolTipTextClass);

@@ -91,28 +91,13 @@ function Axis(chart, name, scale, anchor)
         return this;
     };
 
-
-    this.initialize = function()
+    this.tickRotation = function()
     {
-        this.axis = d3.svg.axis()
-            .scale(this.scale.scale)
-            .orient(self.orientation())
-            .tickSize(self.tickSize())
-            .tickPadding(self.tickPadding())
-            .tickFormat(self.format());
+        var offset = self.tickPadding() + (self.tickSize() * 2);
 
-        this.chart.chart.append('g')
-            .attr('class', self.name + ' ' + InsightConstants.AxisClass)
-            .attr('transform', self.transform())
-            .call(this.axis)
-            .selectAll('text')
-            .attr('class', self.name + ' ' + InsightConstants.AxisTextClass)
-            .style('text-anchor', self.textAnchor())
-            .style('writing-mode', self.labelOrientation())
-            .on('click', function(filter)
-            {
-                return self.chart.filterClick(this, filter);
-            });
+        var rotation = this.labelOrientation() == 'tb' ? 'rotate(90,0,' + offset + ')' : '';
+
+        return rotation;
     };
 
     this.transform = function()
@@ -136,14 +121,104 @@ function Axis(chart, name, scale, anchor)
         return transform;
     };
 
+    this.labelHorizontalPosition = function()
+    {
+        var pos = "";
+
+        if (self.scale.horizontal())
+        {
+
+        }
+        else if (self.scale.vertical())
+        {
+
+        }
+
+        return pos;
+    };
+
+    this.labelVerticalPosition = function()
+    {
+        var pos = "";
+
+        if (self.scale.horizontal())
+        {
+
+        }
+        else if (self.scale.vertical())
+        {
+
+        }
+
+        return pos;
+    };
+
+    this.positionLabels = function(labels)
+    {
+
+        if (self.scale.horizontal())
+        {
+            labels.style('left', 0)
+                .style('bottom', 0)
+                .style('width', '100%')
+                .style('text-align', 'center');
+        }
+        else if (self.scale.vertical())
+        {
+            labels.style('left', '0')
+                .style('top', '35%');
+        }
+    };
+
+    this.initialize = function()
+    {
+        this.axis = d3.svg.axis()
+            .scale(this.scale.scale)
+            .orient(self.orientation())
+            .tickSize(self.tickSize())
+            .tickPadding(self.tickPadding())
+            .tickFormat(self.format());
+
+        this.chart.chart.append('g')
+            .attr('class', self.name + ' ' + InsightConstants.AxisClass)
+            .attr('transform', self.transform())
+            .call(this.axis)
+            .selectAll('text')
+            .attr('class', self.name + ' ' + InsightConstants.AxisTextClass)
+            .style('text-anchor', self.textAnchor())
+            .style('transform', self.tickRotation());
+
+        var labels = d3.select(this.chart.element)
+            .append('div')
+            .attr('class', self.name + InsightConstants.AxisLabelClass)
+            .style('position', 'absolute')
+            .text(self.scale.title);
+
+        this.positionLabels(labels);
+
+    };
+
+
+
     this.draw = function(dragging)
     {
+        this.axis = d3.svg.axis()
+            .scale(this.scale.scale)
+            .orient(self.orientation())
+            .tickSize(self.tickSize())
+            .tickPadding(self.tickPadding())
+            .tickFormat(self.format());
+
         var axis = this.chart.chart.selectAll('g.' + self.name + '.' + InsightConstants.AxisClass)
             .call(this.axis);
 
         axis
             .selectAll("text")
-            .style('text-anchor', self.textAnchor())
-            .style('writing-mode', self.labelOrientation());
+            .attr('transform', self.tickRotation())
+            .style('text-anchor', self.textAnchor());
+
+        d3.select(this.chart.element)
+            .select('div.' + self.name + InsightConstants.AxisLabelClass)
+            .text(self.scale.title);
     };
 }

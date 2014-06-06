@@ -212,6 +212,340 @@ NestedGroup.prototype.getOrderedData = function()
 {
     return this._nestedData;
 };
+;function Grouping(dimension)
+{
+    this._cumulative = false;
+
+    this.dimension = dimension;
+
+    var sumProperties = [];
+    var countProperties = [];
+    var averageProperties = [];
+
+    this._valueAccessor = function(d)
+    {
+        return d;
+    };
+
+    this._orderFunction = function(a, b)
+    {
+        return b.value - a.value;
+    };
+
+    this._ordered = false;
+
+    this.sum = function(_)
+    {
+        if (!arguments.length)
+        {
+            return sumProperties;
+        }
+        sumProperties = _;
+        return this;
+    };
+
+    this.count = function(_)
+    {
+        if (!arguments.length)
+        {
+            return countProperties;
+        }
+        countProperties = _;
+        return this;
+    };
+
+    this.average = function(_)
+    {
+        if (!arguments.length)
+        {
+            return averageProperties;
+        }
+        averageProperties = _;
+
+        sumProperties = this.unique(sumProperties.concat(averageProperties));
+
+        return this;
+    };
+
+    return this;
+}
+
+Grouping.prototype.filterFunction = function(f)
+{
+    if (!arguments.length)
+    {
+        return this._filterFunction;
+    }
+    this._filterFunction = f;
+    return this;
+};
+
+Grouping.prototype.cumulative = function(c)
+{
+    if (!arguments.length)
+    {
+        return this._cumulative;
+    }
+    this._cumulative = c;
+    return this;
+};
+
+Grouping.prototype.unique = function(array)
+{
+    var a = array.concat();
+    for (var i = 0; i < a.length; ++i)
+    {
+        for (var j = i + 1; j < a.length; ++j)
+        {
+            if (a[i] === a[j])
+                a.splice(j--, 1);
+        }
+    }
+
+    return a;
+};
+
+Grouping.prototype.initialize = function()
+{
+    var propertiesToSum = this.sum();
+    var propertiesToCount = this.count();
+    var propertiesToAverage = this.average();
+
+    var data = this.dimension.Dimension.group()
+        .reduce(
+            function(p, v)
+            {
+                p.Count++;
+
+                for (var property in propertiesToSum)
+                {
+                    if (v.hasOwnProperty(propertiesToSum[property]))
+                    {
+                        p[propertiesToSum[property]].Sum += v[propertiesToSum[property]];
+                    }
+                }
+
+                for (var avProperty in propertiesToAverage)
+                {
+                    if (v.hasOwnProperty(propertiesToAverage[avProperty]))
+                    {
+                        p[propertiesToAverage[avProperty]].Average = p[propertiesToAverage[avProperty]].Average + ((v[propertiesToAverage[avProperty]] - p[propertiesToAverage[avProperty]].Average) / p.Count);
+                    }
+                }
+
+                for (var countProp in propertiesToCount)
+                {
+                    if (v.hasOwnProperty(propertiesToCount[countProp]))
+                    {
+                        p[propertiesToCount[countProp]][v[propertiesToCount[countProp]]] = p[propertiesToCount[countProp]].hasOwnProperty(v[propertiesToCount[countProp]]) ? p[propertiesToCount[countProp]][v[propertiesToCount[countProp]]] + 1 : 1;
+                        p[propertiesToCount[countProp]].Total++;
+                    }
+                }
+
+                return p;
+            },
+            function(p, v)
+            {
+                p.Count--;
+
+                for (var property in propertiesToSum)
+                {
+                    if (v.hasOwnProperty(propertiesToSum[property]))
+                    {
+                        p[propertiesToSum[property]].Sum -= v[propertiesToSum[property]];
+                    }
+                }
+
+
+                for (var countProp in propertiesToCount)
+                {
+                    if (v.hasOwnProperty(propertiesToCount[countProp]))
+                    {
+                        p[propertiesToCount[countProp]][v[propertiesToCount[countProp]]] = p[propertiesToCount[countProp]].hasOwnProperty(v[propertiesToCount[countProp]]) ? p[propertiesToCount[countProp]][v[propertiesToCount[countProp]]] - 1 : 1;
+                        p[propertiesToCount[countProp]].Total--;
+                    }
+                }
+
+                for (var avProperty in propertiesToAverage)
+                {
+                    if (v.hasOwnProperty(propertiesToAverage[avProperty]))
+                    {
+                        var valRemoved = v[propertiesToAverage[avProperty]];
+                        var sum = p[propertiesToAverage[avProperty]].Sum;
+                        p[propertiesToAverage[avProperty]].Average = sum / p.Count;
+
+                        var result = p[propertiesToAverage[avProperty]].Average;
+
+                        if (!isFinite(result))
+                        {
+                            p[propertiesToAverage[avProperty]].Average = 0;
+                        }
+                    }
+                }
+
+
+                return p;
+            },
+            function()
+            {
+                var p = {
+                    Count: 0
+                };
+
+                for (var property in propertiesToSum)
+                {
+                    p[propertiesToSum[property]] = p[propertiesToSum[property]] ? p[propertiesToSum[property]] :
+                    {};
+                    p[propertiesToSum[property]].Sum = 0;
+                }
+                for (var avProperty in propertiesToAverage)
+                {
+                    p[propertiesToAverage[avProperty]] = p[propertiesToAverage[avProperty]] ? p[propertiesToAverage[avProperty]] :
+                    {};
+                    p[propertiesToAverage[avProperty]].Average = 0;
+                }
+                for (var countProp in propertiesToCount)
+                {
+                    p[propertiesToCount[countProp]] = p[propertiesToCount[countProp]] ? p[propertiesToCount[countProp]] :
+                    {};
+                    p[propertiesToCount[countProp]].Total = 0;
+                }
+                return p;
+            }
+        );
+
+    this._data = data;
+
+    return this;
+};
+
+
+
+
+Grouping.prototype.getData = function()
+{
+    var data;
+    if (this._data.all)
+    {
+        data = this._data.all();
+    }
+    else
+    {
+        //not a crossfilter set
+        data = this._data;
+    }
+
+    if (this._filterFunction)
+    {
+        data = data.filter(this._filterFunction);
+    }
+
+    return data;
+};
+
+Grouping.prototype.getOrderedData = function()
+{
+    var data;
+
+    if (this._data.all)
+    {
+        data = data = this._data.top(Infinity)
+            .sort(this.orderFunction());
+    }
+    else
+    {
+        data = this._data.sort(this.orderFunction());
+    }
+
+    if (this._filterFunction)
+    {
+        data = data.filter(this._filterFunction);
+    }
+
+    return data;
+};
+
+
+Grouping.prototype.computeFunction = function(c)
+{
+    this._ordered = true;
+    if (!arguments.length)
+    {
+        return this._compute;
+    }
+    this._compute = c;
+    return this;
+};
+
+
+Grouping.prototype.orderFunction = function(o)
+{
+    if (!arguments.length)
+    {
+        return this._orderFunction;
+    }
+    this._orderFunction = o;
+    return this;
+};
+
+Grouping.prototype.compute = function()
+{
+    this._compute();
+};
+
+Grouping.prototype.valueAccessor = function(v)
+{
+    if (!arguments.length)
+    {
+        return this._valueAccessor;
+    }
+    this._valueAccessor = v;
+    return this;
+};
+
+
+Grouping.prototype.calculateTotals = function()
+{
+    if (this._cumulative)
+    {
+        var totals = {};
+        var total = 0;
+        var self = this;
+        var data = this._ordered ? this.getOrderedData() : this.getData();
+
+        data
+            .forEach(function(d, i)
+            {
+
+                var value = self._valueAccessor(d);
+
+                if (typeof(value) != "object")
+                {
+                    total += value;
+                    d.Cumulative = total;
+                }
+                else
+                {
+                    for (var property in value)
+                    {
+                        var totalName = property + 'Cumulative';
+
+                        if (totals[totalName])
+                        {
+                            totals[totalName] += value[property];
+                            value[totalName] = totals[totalName];
+                        }
+                        else
+                        {
+                            totals[totalName] = value[property];
+                            value[totalName] = totals[totalName];
+                        }
+                    }
+                }
+            });
+    }
+    return this;
+};
 ;var Dimension = function Dimension(name, func, dimension, displayFunction)
 {
     this.Dimension = dimension;
@@ -263,6 +597,7 @@ NestedGroup.prototype.getOrderedData = function()
     exports.Behind = 'behind';
     exports.Front = 'front';
     exports.AxisTextClass = 'axis-text';
+    exports.AxisLabelClass = 'axis-label';
     exports.YAxisClass = 'y-axis';
     exports.AxisClass = 'in-axis';
     exports.XAxisClass = 'x-axis';
@@ -270,6 +605,7 @@ NestedGroup.prototype.getOrderedData = function()
     exports.ToolTipTextClass = "tipValue";
     exports.ToolTipLabelClass = "tipLabel";
     exports.BarGroupClass = "bargroup";
+    exports.Bubble = "bubble";
     return exports;
 }());
 ;function Series(name, chart, data, x, y, color)
@@ -294,6 +630,20 @@ NestedGroup.prototype.getOrderedData = function()
         return d;
     };
 
+
+
+    var xFunction = function(d)
+    {
+        return d.key;
+    };
+
+    var yFunction = function(d)
+    {
+        return d.value;
+    };
+
+    var tooltipFunction = yFunction;
+
     var tooltipLabel = d3.functor("Label");
 
     this.dataset = function()
@@ -304,10 +654,12 @@ NestedGroup.prototype.getOrderedData = function()
         return data;
     };
 
+
+
     this.keys = function()
     {
         return this.dataset()
-            .map(this.keyAccessor);
+            .map(xFunction);
     };
 
     this.cssClass = function(_)
@@ -325,14 +677,42 @@ NestedGroup.prototype.getOrderedData = function()
         return d.key;
     };
 
-    this.valueAccessor = function(d)
+    this.xFunction = function(_)
     {
-        return d.value;
+        if (!arguments.length)
+        {
+            return xFunction;
+        }
+        xFunction = _;
+
+        return this;
+    };
+
+    this.yFunction = function(_)
+    {
+        if (!arguments.length)
+        {
+            return yFunction;
+        }
+        yFunction = _;
+
+        return this;
+    };
+
+    this.tooltipFunction = function(_)
+    {
+        if (!arguments.length)
+        {
+            return tooltipFunction;
+        }
+        tooltipFunction = _;
+
+        return this;
     };
 
     this.tooltipValue = function(d)
     {
-        return tooltipFormat(self.valueAccessor(d));
+        return tooltipFormat(tooltipFunction(d));
     };
 
     this.tooltipLabel = function(d)
@@ -363,10 +743,25 @@ NestedGroup.prototype.getOrderedData = function()
 
     this.matcher = this.keyAccessor;
 
-    this.findMax = function() {};
+    this.findMax = function(scale)
+    {
+        var self = this;
+
+        var max = 0;
+        var data = this.data.getData();
+
+        var func = scale == self.x ? self.xFunction() : self.yFunction();
+
+        var m = d3.max(data, func);
+
+        max = m > max ? m : max;
+
+        return max;
+    };
 
     this.draw = function() {};
 
+    return this;
 }
 ;function Chart(name, element, dimension)
 {
@@ -433,18 +828,15 @@ NestedGroup.prototype.getOrderedData = function()
 
         this.addClipPath();
 
-        for (var scale in scales)
+        scales.map(function(scale)
         {
-            var s = scales[scale];
-            s.initialize();
+            scale.initialize();
+        });
 
-        }
-
-        for (var axis in axes)
+        axes.map(function(axis)
         {
-            var a = axes[axis];
-            a.initialize();
-        }
+            axis.initialize();
+        });
 
         if (zoomable)
         {
@@ -461,30 +853,28 @@ NestedGroup.prototype.getOrderedData = function()
 
         this.recalculateScales();
 
-        for (var axis in axes)
+        axes.map(function(axis)
         {
-            var a = axes[axis];
-            a.draw(dragging);
-        }
+            axis.draw(dragging);
+        });
 
-        for (var series in this.series())
-        {
-            var s = this.series()[series];
-            s.draw(dragging);
-        }
+        this.series()
+            .map(function(series)
+            {
+                series.draw(dragging);
+            });
     };
 
     this.recalculateScales = function()
     {
-        for (var index in scales)
+        scales.map(function(scale)
         {
-            var scale = scales[index];
             var zx = zoomScale != scale;
             if (zx)
             {
                 scale.calculateRange();
             }
-        }
+        });
     };
 
     this.zoomable = function(scale)
@@ -679,14 +1069,149 @@ NestedGroup.prototype.getOrderedData = function()
     };
 
 }
-;function Scale(chart, scale, direction, type)
+;function BubbleSeries(name, chart, data, x, y, color)
 {
 
+    Series.call(this, name, chart, data, x, y, color);
+
+    var radiusFunction = d3.functor(10);
+    var fillFunction = d3.functor(color);
+    var maxRad = d3.functor(50);
+    var minRad = d3.functor(7);
+
+    var self = this;
+
+    var mouseOver = function(d, item)
+    {
+        self.chart.mouseOver(self, this, d);
+
+        d3.select(this)
+            .classed("hover", true);
+    };
+
+    var mouseOut = function(d, item)
+    {
+        self.chart.mouseOut(self, this, d);
+    };
+
+    this.rangeY = function(d)
+    {
+        var f = self.yFunction();
+
+        return self.y.scale(self.yFunction()(d));
+    };
+
+    this.rangeX = function(d, i)
+    {
+        var f = self.xFunction();
+        return self.x.scale(self.xFunction()(d));
+    };
+
+    this.radiusFunction = function(_)
+    {
+        if (!arguments.length)
+        {
+            return radiusFunction;
+        }
+        radiusFunction = _;
+
+        return this;
+    };
+
+
+    this.fillFunction = function(_)
+    {
+        if (!arguments.length)
+        {
+            return fillFunction;
+        }
+        fillFunction = _;
+
+        return this;
+    };
+
+
+    this.draw = function(drag)
+    {
+
+        var selector = this.name + InsightConstants.Bubble;
+
+        var duration = drag ? 0 : function(d, i)
+        {
+            return 200 + (i * 20);
+        };
+
+        var data = this.dataset();
+
+        var min = d3.min(data, radiusFunction);
+        var max = d3.max(data, radiusFunction);
+
+        var rad = function(d)
+        {
+            return d.radius;
+        };
+
+        var click = function(filter)
+        {
+            return self.chart.filterClick(this, filter);
+        };
+
+
+        data.forEach(function(d)
+        {
+            var radiusInput = radiusFunction(d);
+
+            d.radius = minRad() + (((radiusInput - min) * (maxRad() - minRad())) / (max - min));
+        });
+
+        //this sort ensures that smaller bubbles are on top of larger ones, so that they are always selectable.  Without changing original array
+        data = data.concat()
+            .sort(function(a, b)
+            {
+                return d3.descending(rad(a), rad(b));
+            });
+
+        var bubbles = this.chart.chart.selectAll('circle.' + selector)
+            .data(data, this.matcher);
+
+        bubbles.enter()
+            .append('circle')
+            .attr('class', selector + " " + InsightConstants.Bubble)
+            .on('mouseover', mouseOver)
+            .on('mouseout', mouseOut)
+            .on('click', click);
+
+        bubbles.transition()
+            .duration(duration)
+            .attr('r', rad)
+            .attr('cx', self.rangeX)
+            .attr('cy', self.rangeY)
+            .attr('fill', fillFunction);
+
+        bubbles.append('svg:text')
+            .attr('class', InsightConstants.ToolTipTextClass);
+
+        bubbles.append('svg:text')
+            .attr('class', InsightConstants.ToolTipLabelClass);
+
+        bubbles.selectAll("." + InsightConstants.ToolTipTextClass)
+            .text(this.tooltipValue);
+
+        bubbles.selectAll("." + InsightConstants.ToolTipLabelClass)
+            .text(this.tooltipLabel);
+    };
+}
+
+BubbleSeries.prototype = Object.create(Series.prototype);
+BubbleSeries.prototype.constructor = BubbleSeries;
+;function Scale(chart, title, scale, direction, type)
+{
     var ordered = d3.functor(false);
     var self = this;
     this.scale = scale;
-    this.rangeType = this.scale.rangeRoundBands ? this.scale.rangeRoundBands : this.scale.range;
+    this.rangeType = this.scale.rangeRoundBands ? this.scale.rangeRoundBands : this.scale.rangeRound;
     this.series = [];
+    this.title = title;
     this.chart = chart;
     this.type = type;
     this.direction = direction;
@@ -736,13 +1261,11 @@ NestedGroup.prototype.getOrderedData = function()
     {
         var minTime = new Date(8640000000000000);
 
-        for (var series in this.series)
+        this.series.map(function(series)
         {
-            var s = this.series[series];
-            var cMin = d3.min(s.keys());
+            var cMin = d3.min(series.keys());
             minTime = cMin < minTime ? cMin : minTime;
-        }
-
+        });
         return minTime;
     };
 
@@ -751,12 +1274,11 @@ NestedGroup.prototype.getOrderedData = function()
     {
         var maxTime = new Date(-8640000000000000);
 
-        for (var series in this.series)
+        this.series.map(function(series)
         {
-            var s = this.series[series];
-            var cMax = d3.max(s.keys());
+            var cMax = d3.max(series.keys());
             maxTime = cMax > maxTime ? cMax : maxTime;
-        }
+        });
 
         return maxTime;
     };
@@ -766,12 +1288,10 @@ NestedGroup.prototype.getOrderedData = function()
     {
         var vals = [];
 
-        for (var series in this.series)
+        this.series.map(function(series)
         {
-            var s = this.series[series];
-
-            vals = s.keys();
-        }
+            vals = series.keys();
+        });
 
         return vals;
     };
@@ -791,14 +1311,12 @@ NestedGroup.prototype.getOrderedData = function()
     {
         var max = 0;
 
-        for (var series in this.series)
+        this.series.map(function(series)
         {
-            var s = this.series[series];
-
-            var m = s.findMax();
+            var m = series.findMax(self);
 
             max = m > max ? m : max;
-        }
+        });
 
         return max;
     };
@@ -823,7 +1341,7 @@ NestedGroup.prototype.getOrderedData = function()
     {
         var bounds = self.calculateBounds();
 
-        this.bounds = bounds;
+        self.bounds = bounds;
 
         rangeType.apply(this, [
             bounds, self.chart.barPadding()
@@ -933,28 +1451,13 @@ NestedGroup.prototype.getOrderedData = function()
         return this;
     };
 
-
-    this.initialize = function()
+    this.tickRotation = function()
     {
-        this.axis = d3.svg.axis()
-            .scale(this.scale.scale)
-            .orient(self.orientation())
-            .tickSize(self.tickSize())
-            .tickPadding(self.tickPadding())
-            .tickFormat(self.format());
+        var offset = self.tickPadding() + (self.tickSize() * 2);
 
-        this.chart.chart.append('g')
-            .attr('class', self.name + ' ' + InsightConstants.AxisClass)
-            .attr('transform', self.transform())
-            .call(this.axis)
-            .selectAll('text')
-            .attr('class', self.name + ' ' + InsightConstants.AxisTextClass)
-            .style('text-anchor', self.textAnchor())
-            .style('writing-mode', self.labelOrientation())
-            .on('click', function(filter)
-            {
-                return self.chart.filterClick(this, filter);
-            });
+        var rotation = this.labelOrientation() == 'tb' ? 'rotate(90,0,' + offset + ')' : '';
+
+        return rotation;
     };
 
     this.transform = function()
@@ -978,15 +1481,105 @@ NestedGroup.prototype.getOrderedData = function()
         return transform;
     };
 
+    this.labelHorizontalPosition = function()
+    {
+        var pos = "";
+
+        if (self.scale.horizontal())
+        {
+
+        }
+        else if (self.scale.vertical())
+        {
+
+        }
+
+        return pos;
+    };
+
+    this.labelVerticalPosition = function()
+    {
+        var pos = "";
+
+        if (self.scale.horizontal())
+        {
+
+        }
+        else if (self.scale.vertical())
+        {
+
+        }
+
+        return pos;
+    };
+
+    this.positionLabels = function(labels)
+    {
+
+        if (self.scale.horizontal())
+        {
+            labels.style('left', 0)
+                .style('bottom', 0)
+                .style('width', '100%')
+                .style('text-align', 'center');
+        }
+        else if (self.scale.vertical())
+        {
+            labels.style('left', '0')
+                .style('top', '35%');
+        }
+    };
+
+    this.initialize = function()
+    {
+        this.axis = d3.svg.axis()
+            .scale(this.scale.scale)
+            .orient(self.orientation())
+            .tickSize(self.tickSize())
+            .tickPadding(self.tickPadding())
+            .tickFormat(self.format());
+
+        this.chart.chart.append('g')
+            .attr('class', self.name + ' ' + InsightConstants.AxisClass)
+            .attr('transform', self.transform())
+            .call(this.axis)
+            .selectAll('text')
+            .attr('class', self.name + ' ' + InsightConstants.AxisTextClass)
+            .style('text-anchor', self.textAnchor())
+            .style('transform', self.tickRotation());
+
+        var labels = d3.select(this.chart.element)
+            .append('div')
+            .attr('class', self.name + InsightConstants.AxisLabelClass)
+            .style('position', 'absolute')
+            .text(self.scale.title);
+
+        this.positionLabels(labels);
+
+    };
+
+
+
     this.draw = function(dragging)
     {
+        this.axis = d3.svg.axis()
+            .scale(this.scale.scale)
+            .orient(self.orientation())
+            .tickSize(self.tickSize())
+            .tickPadding(self.tickPadding())
+            .tickFormat(self.format());
+
         var axis = this.chart.chart.selectAll('g.' + self.name + '.' + InsightConstants.AxisClass)
             .call(this.axis);
 
         axis
             .selectAll("text")
-            .style('text-anchor', self.textAnchor())
-            .style('writing-mode', self.labelOrientation());
+            .attr('transform', self.tickRotation())
+            .style('text-anchor', self.textAnchor());
+
+        d3.select(this.chart.element)
+            .select('div.' + self.name + InsightConstants.AxisLabelClass)
+            .text(self.scale.title);
     };
 }
 ;function LineSeries(name, chart, data, x, y, color)
@@ -1019,27 +1612,13 @@ NestedGroup.prototype.getOrderedData = function()
 
     };
 
-    var lineClick = function(d, item)
-    {
-        console.log(d);
-    };
+    var lineClick = function(d, item) {
 
-    this.findMax = function()
-    {
-        var self = this;
-
-        var max = 0;
-        var data = this.data.getData();
-        var m = d3.max(data, this.valueAccessor);
-
-        max = m > max ? m : max;
-
-        return max;
     };
 
     this.rangeY = function(d)
     {
-        return self.y.scale(self.valueAccessor(d));
+        return self.y.scale(self.yFunction()(d));
     };
 
     this.rangeX = function(d, i)
@@ -1048,12 +1627,12 @@ NestedGroup.prototype.getOrderedData = function()
 
         if (self.x.scale.rangeBand)
         {
-            val = self.x.scale(self.keyAccessor(d)) + (self.x.scale.rangeBand() / 2);
+            val = self.x.scale(self.xFunction()(d)) + (self.x.scale.rangeBand() / 2);
         }
         else
         {
 
-            val = self.x.scale(self.keyAccessor(d));
+            val = self.x.scale(self.xFunction()(d));
         }
 
         return val;
@@ -1120,7 +1699,7 @@ NestedGroup.prototype.getOrderedData = function()
             .duration(duration)
             .attr("cx", self.rangeX)
             .attr("cy", self.rangeY)
-            .attr("r", 3.5);
+            .attr("r", 2.5);
 
         circles.append('svg:text')
             .attr('class', InsightConstants.ToolTipTextClass);
@@ -1224,7 +1803,7 @@ LineSeries.prototype.constructor = LineSeries;
 
     this.xPosition = function(d)
     {
-        return self.x.scale(self.keyAccessor(d));
+        return self.x.scale(self.xFunction()(d));
     };
 
     this.calculateXPos = function(width, d)
@@ -1243,7 +1822,7 @@ LineSeries.prototype.constructor = LineSeries;
     this.yPosition = function(d)
     {
 
-        var position = self.stackedBars() ? self.y.scale(self.calculateYPos(self.valueAccessor, d)) : self.y.scale(self.valueAccessor(d));
+        var position = self.stackedBars() ? self.y.scale(self.calculateYPos(self.yFunction(), d)) : self.y.scale(self.yFunction()(d));
 
         return position;
     };
@@ -1276,7 +1855,7 @@ LineSeries.prototype.constructor = LineSeries;
     {
         return (self.chart.height() - self.chart.margin()
             .top - self.chart.margin()
-            .bottom) - self.y.scale(self.valueAccessor(d));
+            .bottom) - self.y.scale(self.yFunction()(d));
     };
 
     this.stackedBars = function()
@@ -1304,11 +1883,16 @@ LineSeries.prototype.constructor = LineSeries;
 
         var newBars = newGroups.selectAll('rect.bar');
 
+        var click = function(filter)
+        {
+            return self.chart.filterClick(this, filter);
+        };
+
         for (var ser in this.series)
         {
             var s = this.series[ser];
 
-            this.valueAccessor = s.accessor;
+            this.yFunction(s.accessor);
 
             newBars = newGroups.append('rect')
                 .attr('class', s.name + 'class bar')
@@ -1317,7 +1901,8 @@ LineSeries.prototype.constructor = LineSeries;
                 .attr('fill', s.color)
                 .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
                 .on('mouseover', mouseOver)
-                .on('mouseout', mouseOut);
+                .on('mouseout', mouseOut)
+                .on('click', click);
 
             newBars.append('svg:text')
                 .attr('class', InsightConstants.ToolTipTextClass);
@@ -2734,10 +3319,8 @@ ChartGroup.prototype.removeItemFromArray = function(array, item)
     // Events 
     this.maxUpdatedEvent = function(max)
     {
-
         this._linkedCharts.forEach(function(chart)
         {
-
             chart._currentMax = chart._currentMax < max ? max : chart._currentMax;
         });
     };
@@ -2758,64 +3341,6 @@ ChartGroup.prototype.removeItemFromArray = function(array, item)
     };
 
 };
-;function Legend(name, element, dimension, group)
-{
-
-    BaseChart.call(this, name, element, dimension, group);
-
-    var self = this;
-
-    this.dataset = function()
-    {
-        return this.group;
-    };
-
-    this.init = function()
-    {
-        var self = this;
-
-        this.createChart();
-
-        var legend = this.chart.selectAll(".legend")
-            .data(this.dataset())
-            .enter()
-            .append("g")
-            .attr("class", "legend")
-            .attr("transform", function(d, i)
-            {
-                return "translate(0," + ((i * 20) + (i * 5)) + ")";
-            });
-
-        legend.append("rect")
-            .attr("x", 0)
-            .attr("width", 20)
-            .attr("height", 20)
-            .attr("rx", 10)
-            .attr("ry", 10)
-            .style("fill", function(d)
-            {
-                return d.color;
-            });
-
-        legend.append("text")
-            .attr("x", 25)
-            .attr("y", 10)
-            .attr("dy", ".35em")
-            .text(function(d)
-            {
-                return d.label;
-            });
-
-    };
-
-    this.draw = function() {
-
-    };
-}
-
-
-Legend.prototype = Object.create(BaseChart.prototype);
-Legend.prototype.constructor = Legend;
 ;function ColumnChart(name, element, dimension, group)
 {
 
@@ -3378,7 +3903,6 @@ MultipleChart.prototype.constructor = MultipleChart;
 
     this.initializeAxes = function()
     {
-
         this.yAxis = d3.svg.axis()
             .scale(this.y)
             .orient(self.yOrientation())

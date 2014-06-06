@@ -63,18 +63,15 @@ function Chart(name, element, dimension)
 
         this.addClipPath();
 
-        for (var scale in scales)
+        scales.map(function(scale)
         {
-            var s = scales[scale];
-            s.initialize();
+            scale.initialize();
+        });
 
-        }
-
-        for (var axis in axes)
+        axes.map(function(axis)
         {
-            var a = axes[axis];
-            a.initialize();
-        }
+            axis.initialize();
+        });
 
         if (zoomable)
         {
@@ -91,30 +88,28 @@ function Chart(name, element, dimension)
 
         this.recalculateScales();
 
-        for (var axis in axes)
+        axes.map(function(axis)
         {
-            var a = axes[axis];
-            a.draw(dragging);
-        }
+            axis.draw(dragging);
+        });
 
-        for (var series in this.series())
-        {
-            var s = this.series()[series];
-            s.draw(dragging);
-        }
+        this.series()
+            .map(function(series)
+            {
+                series.draw(dragging);
+            });
     };
 
     this.recalculateScales = function()
     {
-        for (var index in scales)
+        scales.map(function(scale)
         {
-            var scale = scales[index];
             var zx = zoomScale != scale;
             if (zx)
             {
                 scale.calculateRange();
             }
-        }
+        });
     };
 
     this.zoomable = function(scale)

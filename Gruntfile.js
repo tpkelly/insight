@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-  var sourceFiles = ['src/cube/Group.js', 'src/cube/Dimension.js', 'src/InsightCharts.Formatters.js', 'src/InsightCharts.Constants.js', 'src/new/Series.js', 'src/new/Chart.js', 'src/new/Scale.js','src/new/Axis.js', 'src/new/LineSeries.js','src/new/ColumnSeries.js', 'src/ChartGroup.js', 'src/BaseChart.js', 'src/Legend.js', 'src/DataTable.js', 'src/ColumnChart.js', 'src/MultipleChart.js', 'src/GroupedBarChart.js', 'src/StackedBarChart.js', 'src/Timeline.js', 'src/BaseChart.js','src/TimelineChart.js', 'src/RowChart.js', 'src/PartitionChart.js'];
+  var sourceFiles = ['src/cube/Group.js', 'src/cube/Grouping.js', 'src/cube/Dimension.js', 'src/InsightCharts.Formatters.js', 'src/InsightCharts.Constants.js', 'src/new/Series.js', 'src/new/Chart.js','src/new/BubbleSeries.js',  'src/new/Scale.js','src/new/Axis.js', 'src/new/LineSeries.js','src/new/ColumnSeries.js', 'src/ChartGroup.js', 'src/BaseChart.js', 'src/Legend.js', 'src/DataTable.js', 'src/ColumnChart.js', 'src/MultipleChart.js', 'src/GroupedBarChart.js', 'src/StackedBarChart.js', 'src/Timeline.js', 'src/BaseChart.js','src/TimelineChart.js', 'src/RowChart.js', 'src/PartitionChart.js'];
 
 
 
@@ -65,7 +65,7 @@ module.exports = function(grunt) {
     },
     watch: {
       files: ['<%= jshint.files %>', 'tests/*.spec.js'],
-      tasks: ['jsbeautifier', 'jshint', 'concat', 'uglify', 'jasmine']
+      tasks: ['jsbeautifier', 'jshint', 'concat', 'uglify']
     }
   });
 
@@ -77,6 +77,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-jsbeautifier');
 
-  grunt.registerTask('default', ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'watch']);
+  grunt.registerTask('default', ['jsbeautifier', 'jshint', 'concat', 'uglify', 'watch']);
   grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'concat', 'uglify']);
 };
