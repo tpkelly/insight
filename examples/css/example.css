@@ -7,13 +7,14 @@
     background-color: #333;
     color: #fff;
     padding: 1em;
-    font-size: 12px;
-    fill: none;
+    font-size: 15px;
+    opacity: 0.8;
+    transition: 0.2s ease all;
 }
 
 .x-axis, .y-axis, .in-axis
 {
-    stroke: #34495e;
+    stroke: #B1CBE6;
     stroke-width: 1;
     shape-rendering: crispEdges;
     fill: none;
@@ -21,7 +22,36 @@
 
 circle.target-point 
 {
-    stroke: #33485d;
-    fill: #fff;
+    stroke: #fff;
+    fill: cyan;
+    stroke-width: 1;
+}
+
+rect.bar
+{
+    transition: 0.2s ease all;
+}
+
+rect.bar:hover
+{
+    fill: #34495e;
+}
+
+.axis-label
+{
+    color: #34495e;
+    font-weight: bold;
+}
+
+.bubble
+{
+    opacity: 0.5;
+    stroke: #FFF;
     stroke-width: 2;
+    transition: 0.3s ease all;
+    fill: rgb(44, 44, 85);
+}
+.bubble:hover
+{
+    stroke: #222;
 }

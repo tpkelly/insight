@@ -35,7 +35,8 @@ $(document)
             var yScale = new Scale(chart, d3.scale.linear(), 'v', 'linear');
 
             var line = new LineSeries('valueLine', chart, dateData, xScale, yScale, 'cyan')
-                .tooltipFormat(InsightFormatters.currencyFormatter);
+                .tooltipFormat(InsightFormatters.currencyFormatter)
+                .lineType('monotone');
 
             chart.series()
                 .push(line);

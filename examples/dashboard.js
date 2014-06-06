@@ -111,15 +111,12 @@ $(document)
                 })
                 .redrawAxes(true)
                 .orderable(true)
-                .yAxisFormat(function(d) {
-                    return d.split(" ")[0];
-                })
                 .invert(true)
                 .yOrientation('right')
                 .margin({
                     bottom: 0,
                     left: 0,
-                    right: 80,
+                    right: 100,
                     top: 0
                 });
 
@@ -143,7 +140,10 @@ $(document)
 
             var line = new LineSeries('percentLine', pareto, clientData, x, y2, 'cyan')
                 .tooltipFormat(InsightFormatters.percentageFormatter)
-                .tooltipLabelFormat("Percentage");
+                .tooltipLabelFormat("Percentage")
+                .yFunction(function(d) {
+                    return d.Cumulative;
+                });
 
             series.series = [{
                 name: 'value',
@@ -157,9 +157,7 @@ $(document)
                 }
             }];
 
-            line.valueAccessor = function(d) {
-                return d.Cumulative;
-            };
+
 
             pareto.series([series, line]);
 
@@ -184,18 +182,15 @@ $(document)
                     bottom: 100
                 });
 
-
-
             var xTime = new Scale(timeChart, d3.time.scale(), 'h', 'time');
             var yTime = new Scale(timeChart, d3.scale.linear(), 'v', 'linear');
 
             var line = new LineSeries('valueLine', timeChart, dateData, xTime, yTime, 'cyan')
-                .tooltipFormat(InsightFormatters.currencyFormatter);
-
-            line.valueAccessor = function(d) {
-                return d.value.ProjectedRevenue;
-            };
-
+                .tooltipFormat(InsightFormatters.currencyFormatter)
+                .lineType('monotone')
+                .yFunction(function(d) {
+                    return d.value.ProjectedRevenue;
+                });
 
             timeChart.series()
                 .push(line);

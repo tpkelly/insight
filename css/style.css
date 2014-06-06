@@ -52,10 +52,23 @@ img
 
 .x-axis, .y-axis, .in-axis
 {
-    stroke: #34495e;
+    stroke: #999;
     stroke-width: 1;
     shape-rendering: crispEdges;
     fill: none;
+}
+
+path.in-line
+{
+    stroke-width: 3;
+    transition: 0.25s ease all;
+    -webkit-transition: 0.25s ease all;
+    -moz-transition: 0.25s ease all;
+}
+
+.in-axis text
+{
+    stroke: #777;
 }
 
 circle.target-point 
@@ -63,4 +76,10 @@ circle.target-point
     stroke: #33485d;
     fill: #fff;
     stroke-width: 2;
+}
+
+path.in-line:hover
+{
+    stroke: darkblue;
+
 }

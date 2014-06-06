@@ -78,5 +78,13 @@
         "imageUrl": "images/barChart.PNG",
         "partial": "examples/partials/newCharts.html",
         "partialCSS": "examples/css/example.css"
+    },
+    {
+        "name": "appstore",
+        "pageName": "App Store Analysis", 
+        "script": "examples/appstore.js",
+        "imageUrl": "images/barChart.PNG",
+        "partial": "examples/partials/appstore.html",
+        "partialCSS": "examples/css/example.css"
     }
 ]
