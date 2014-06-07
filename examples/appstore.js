@@ -7,39 +7,7 @@ var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
 $(document)
     .ready(function() {
 
-        var last_response_len = false;
-        var buffer = 0;
-        var buffs = "";
-        $.ajax('results.json', {
-            xhrFields: {
-                onprogress: function(e) {
-                    var this_response, response = e.currentTarget.response;
-                    if (last_response_len === false) {
-                        this_response = response;
-                        last_response_len = response.length;
-                        buffer += response.length;
-                        buffs += this_response;
-                    } else {
-                        this_response = response.substring(last_response_len);
-                        last_response_len = response.length;
-                        buffer += response.length;
-                        buffs += this_response;
-
-                    }
-                    if (buffer > 200000) {
-                        console.log(buffs);
-                        buffer = 0;
-                        debugger;
-                    }
-                }
-            }
-        })
-            .done(function(data) {
-                console.log('loaded');
-            })
-            .fail(function(data) {});
-        console.log('Request Sent');
-
+        
         // d3.json('appstore.json', function(data) {
 
         //     data.forEach(function(d) {
