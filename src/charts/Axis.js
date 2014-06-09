@@ -188,7 +188,7 @@ function Axis(chart, name, scale, anchor)
             .style('text-anchor', self.textAnchor())
             .style('transform', self.tickRotation());
 
-        var labels = d3.select(this.chart.element)
+        var labels = this.chart.container
             .append('div')
             .attr('class', self.name + InsightConstants.AxisLabelClass)
             .style('position', 'absolute')

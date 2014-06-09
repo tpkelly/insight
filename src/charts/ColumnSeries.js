@@ -19,8 +19,6 @@ function ColumnSeries(name, chart, data, x, y, color)
     };
 
 
-
-
     this.findMax = function()
     {
         var self = this;
@@ -119,7 +117,6 @@ function ColumnSeries(name, chart, data, x, y, color)
 
     this.offsetXPosition = function(d)
     {
-
         var width = self.groupedBarWidth(d);
         var position = self.stackedBars() ? self.xPosition(d) : self.calculateXPos(width, d);
 
@@ -140,7 +137,6 @@ function ColumnSeries(name, chart, data, x, y, color)
 
     this.draw = function(drag)
     {
-
         var reset = function(d)
         {
             d.yPos = 0;
@@ -161,6 +157,11 @@ function ColumnSeries(name, chart, data, x, y, color)
         var click = function(filter)
         {
             return self.chart.filterClick(this, filter);
+        };
+
+        var duration = drag ? 0 : function(d, i)
+        {
+            return 200 + (i * 10);
         };
 
         for (var ser in this.series)
@@ -185,7 +186,6 @@ function ColumnSeries(name, chart, data, x, y, color)
             newBars.append('svg:text')
                 .attr('class', InsightConstants.ToolTipLabelClass);
 
-            var duration = drag ? 0 : 300;
 
             var bars = groups.selectAll('.' + s.name + 'class.bar')
                 .transition()

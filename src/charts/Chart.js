@@ -9,6 +9,7 @@ function Chart(name, element, dimension)
     var width = d3.functor(300);
     var zoomable = false;
     var zoomScale = null;
+    this.container = null;
 
     this.chart = null;
 
@@ -44,12 +45,17 @@ function Chart(name, element, dimension)
             .attr("height", this.height() - this.margin()
                 .top - this.margin()
                 .bottom);
-
     };
 
     this.init = function()
     {
-        this.chart = d3.select(this.element)
+        this.container = d3.select(this.element)
+            .append('div')
+            .attr('class', InsightConstants.ContainerClass)
+            .style('width', this.width() + 'px')
+            .style('position', 'relative');
+
+        this.chart = this.container
             .append("svg")
             .attr("class", "chart");
 

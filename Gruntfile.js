@@ -1,6 +1,5 @@
 module.exports = function(grunt) {
-  var sourceFiles = ['src/cube/Group.js', 'src/cube/Grouping.js', 'src/cube/Dimension.js', 'src/InsightCharts.Formatters.js', 'src/InsightCharts.Constants.js', 'src/new/Series.js', 'src/new/Chart.js','src/new/BubbleSeries.js',  'src/new/Scale.js','src/new/Axis.js', 'src/new/LineSeries.js','src/new/ColumnSeries.js', 'src/ChartGroup.js', 'src/BaseChart.js', 'src/Legend.js', 'src/DataTable.js', 'src/ColumnChart.js', 'src/MultipleChart.js', 'src/GroupedBarChart.js', 'src/StackedBarChart.js', 'src/Timeline.js', 'src/BaseChart.js','src/TimelineChart.js', 'src/RowChart.js', 'src/PartitionChart.js'];
-
+  var sourceFiles = ['src/mda/*.js', 'src/charts/InsightCharts.Formatters.js', 'src/charts/InsightCharts.Constants.js', 'src/charts/Series.js', 'src/charts/Chart.js', 'src/charts/ChartGroup.js','src/charts/BubbleSeries.js',  'src/charts/Scale.js','src/charts/Axis.js', 'src/charts/LineSeries.js','src/charts/ColumnSeries.js'];
 
 
   grunt.initConfig({

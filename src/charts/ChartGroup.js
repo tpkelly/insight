@@ -51,7 +51,6 @@ ChartGroup.prototype.compareFilters = function(filterFunction)
 
 ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction)
 {
-
     var self = this;
 
     if (filterFunction)

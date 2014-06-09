@@ -1,7 +1,6 @@
 function Grouping(dimension)
 {
     this._cumulative = false;
-
     this.dimension = dimension;
 
     var sumProperties = [];

@@ -13,6 +13,7 @@ var InsightConstants = (function()
     exports.ToolTipTextClass = "tipValue";
     exports.ToolTipLabelClass = "tipLabel";
     exports.BarGroupClass = "bargroup";
+    exports.ContainerClass = "incontainer";
     exports.Bubble = "bubble";
     return exports;
 }());
