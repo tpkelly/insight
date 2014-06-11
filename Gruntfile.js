@@ -1,6 +1,16 @@
 module.exports = function(grunt) {
   var sourceFiles = ['src/mda/*.js', 'src/charts/InsightCharts.Formatters.js', 'src/charts/InsightCharts.Constants.js', 'src/charts/Series.js', 'src/charts/Chart.js', 'src/charts/ChartGroup.js','src/charts/BubbleSeries.js',  'src/charts/Scale.js','src/charts/Axis.js', 'src/charts/LineSeries.js','src/charts/ColumnSeries.js'];
-
+   
+  var LIVERELOAD_PORT = 35729;
+  var lrSnippet = require('connect-livereload')({
+      port: LIVERELOAD_PORT
+  });
+  
+  var mountFolder = function(connect, dir) {
+        return connect.static(require('path')
+            .resolve(dir));
+    };
+  
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -23,9 +33,6 @@ module.exports = function(grunt) {
         }
       }
     },
-    qunit: {
-      files: ['test/**/*.html']
-    },
     jshint: {
         files: ['Gruntfile.js', 'src/**/*.js', 'examples/*/*.js','!examples/lib/*.js', '!examples/js/*.js' ],
       options: {
@@ -44,7 +51,7 @@ module.exports = function(grunt) {
     {
       js:
       {
-        braceStyle: 'expand',
+        braceStyle: 'collapse',
         indentChart: ' ',
         indentSize: 4,
         evalCode: true,
@@ -62,9 +69,39 @@ module.exports = function(grunt) {
             }
         }
     },
+    connect: {
+            server: {
+                options: {
+                    port: 9000,
+                    base: '.',
+                    hostname: 'localhost',
+                    middleware: function(connect) {
+                        return [lrSnippet, mountFolder(connect, '.')];
+                    }
+                }
+            },
+
+        },
+    open: {
+        dev: {
+            path: 'http://localhost:<%= connect.server.options.port %>/_SpecRunner.html'
+        }
+    },
     watch: {
       files: ['<%= jshint.files %>', 'tests/*.spec.js'],
-      tasks: ['jsbeautifier', 'jshint', 'concat', 'uglify']
+      tasks: ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'jsdoc'],
+      options: {
+          livereload: true
+      }
+    },
+    jsdoc : {
+        dist : {
+            src: ['src/**/*.js'], 
+            options: {
+                destination: 'doc',
+                template: 'doctemplate'
+            }
+        }
     }
   });
 
@@ -74,8 +111,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-open');
+  grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-jsbeautifier');
+  grunt.loadNpmTasks('grunt-jsdoc');
 
-  grunt.registerTask('default', ['jsbeautifier', 'jshint', 'concat', 'uglify', 'watch']);
+  grunt.registerTask('default', ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'jsdoc', 'connect:server','open','watch']);
   grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'concat', 'uglify']);
 };

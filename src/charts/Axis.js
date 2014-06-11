@@ -1,5 +1,4 @@
-function Axis(chart, name, scale, anchor)
-{
+function Axis(chart, name, scale, anchor) {
     this.chart = chart;
     this.scale = scale;
     this.anchor = anchor ? anchor : 'left';
@@ -13,76 +12,61 @@ function Axis(chart, name, scale, anchor)
     var orientation = scale.horizontal() ? d3.functor(this.anchor) : d3.functor(this.anchor);
     var textAnchor;
 
-    if (scale.vertical())
-    {
+    if (scale.vertical()) {
         textAnchor = this.anchor == 'left' ? 'end' : 'start';
     }
-    if (scale.horizontal())
-    {
+    if (scale.horizontal()) {
         textAnchor = 'start';
     }
 
-    var format = function(d)
-    {
+    var format = function(d) {
         return d;
     };
 
     this.chart.addAxis(this);
 
-    this.format = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.format = function(_) {
+        if (!arguments.length) {
             return format;
         }
         format = _;
         return this;
     };
 
-    this.orientation = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.orientation = function(_) {
+        if (!arguments.length) {
             return orientation();
         }
         orientation = d3.functor(_);
         return this;
     };
 
-    this.tickSize = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.tickSize = function(_) {
+        if (!arguments.length) {
             return tickSize();
         }
         tickSize = d3.functor(_);
         return this;
     };
 
-    this.tickPadding = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.tickPadding = function(_) {
+        if (!arguments.length) {
             return tickPadding();
         }
         tickPadding = d3.functor(_);
         return this;
     };
 
-    this.textAnchor = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.textAnchor = function(_) {
+        if (!arguments.length) {
             return textAnchor;
         }
         textAnchor = _;
         return this;
     };
 
-    this.labelOrientation = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.labelOrientation = function(_) {
+        if (!arguments.length) {
             return labelOrientation();
         }
 
@@ -91,8 +75,7 @@ function Axis(chart, name, scale, anchor)
         return this;
     };
 
-    this.tickRotation = function()
-    {
+    this.tickRotation = function() {
         var offset = self.tickPadding() + (self.tickSize() * 2);
 
         var rotation = this.labelOrientation() == 'tb' ? 'rotate(90,0,' + offset + ')' : '';
@@ -100,18 +83,14 @@ function Axis(chart, name, scale, anchor)
         return rotation;
     };
 
-    this.transform = function()
-    {
+    this.transform = function() {
         var transform = "translate(";
 
-        if (self.scale.horizontal())
-        {
+        if (self.scale.horizontal()) {
             transform += '0,' + (self.chart.height() - self.chart.margin()
                 .bottom - self.chart.margin()
                 .top) + ')';
-        }
-        else if (self.scale.vertical())
-        {
+        } else if (self.scale.vertical()) {
             var xShift = self.anchor == 'left' ? 0 : self.chart.width() - self.chart.margin()
                 .right - self.chart.margin()
                 .left;
@@ -121,57 +100,44 @@ function Axis(chart, name, scale, anchor)
         return transform;
     };
 
-    this.labelHorizontalPosition = function()
-    {
+    this.labelHorizontalPosition = function() {
         var pos = "";
 
-        if (self.scale.horizontal())
-        {
+        if (self.scale.horizontal()) {
 
-        }
-        else if (self.scale.vertical())
-        {
+        } else if (self.scale.vertical()) {
 
         }
 
         return pos;
     };
 
-    this.labelVerticalPosition = function()
-    {
+    this.labelVerticalPosition = function() {
         var pos = "";
 
-        if (self.scale.horizontal())
-        {
+        if (self.scale.horizontal()) {
 
-        }
-        else if (self.scale.vertical())
-        {
+        } else if (self.scale.vertical()) {
 
         }
 
         return pos;
     };
 
-    this.positionLabels = function(labels)
-    {
+    this.positionLabels = function(labels) {
 
-        if (self.scale.horizontal())
-        {
+        if (self.scale.horizontal()) {
             labels.style('left', 0)
                 .style('bottom', 0)
                 .style('width', '100%')
                 .style('text-align', 'center');
-        }
-        else if (self.scale.vertical())
-        {
+        } else if (self.scale.vertical()) {
             labels.style('left', '0')
                 .style('top', '35%');
         }
     };
 
-    this.initialize = function()
-    {
+    this.initialize = function() {
         this.axis = d3.svg.axis()
             .scale(this.scale.scale)
             .orient(self.orientation())
@@ -200,8 +166,7 @@ function Axis(chart, name, scale, anchor)
 
 
 
-    this.draw = function(dragging)
-    {
+    this.draw = function(dragging) {
         this.axis = d3.svg.axis()
             .scale(this.scale.scale)
             .orient(self.orientation())

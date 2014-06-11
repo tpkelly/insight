@@ -61,7 +61,7 @@ describe("ChartGroup", function() {
                 
         var group = new ChartGroup("Charts");
 
-        var barChart = new ColumnChart("TestChart", "#testChart", {}, data)
+        var barChart = new Chart("TestChart", "#testChart", {}, data)
 
         group.addChart(barChart);
         expect(group.Charts.length).toBe(1);
@@ -69,26 +69,7 @@ describe("ChartGroup", function() {
         group.Charts = [];        
     });
     
-    it("Filter functions are called", function() {
-                
-        var chartGroup = new ChartGroup("Charts");
-
-        var group = new Group(data);
-
-        var dimension = new Dimension("TestDimension", {});
-
-        var barChart = new ColumnChart("TestChart", "#testChart", dimension, group)
-
-        chartGroup.addChart(barChart);
-        
-        barChart.draw = jasmine.createSpy("filter spy");
-        
-        barChart.filterClick({}, "2014")
-
-        expect(barChart.draw).toHaveBeenCalled();
-    });
-
-        
+            
 
 })
 

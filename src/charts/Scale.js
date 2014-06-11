@@ -1,5 +1,4 @@
-function Scale(chart, title, scale, direction, type)
-{
+function Scale(chart, title, scale, direction, type) {
     var ordered = d3.functor(false);
     var self = this;
     this.scale = scale;
@@ -14,35 +13,26 @@ function Scale(chart, title, scale, direction, type)
     chart.scales()
         .push(this);
 
-    this.domain = function()
-    {
-        if (this.type == 'linear')
-        {
+    this.domain = function() {
+        if (this.type == 'linear') {
             return [0, this.findMax()];
-        }
-        else if (this.type == 'ordinal')
-        {
+        } else if (this.type == 'ordinal') {
             return this.findOrdinalValues();
         }
-        if (this.type == 'time')
-        {
+        if (this.type == 'time') {
             return [this.minTime(), this.maxTime()];
         }
     };
 
-    this.calculateBounds = function()
-    {
+    this.calculateBounds = function() {
         var bounds = [];
 
-        if (self.horizontal())
-        {
+        if (self.horizontal()) {
             bounds[0] = 0;
             bounds[1] = self.chart.width() - self.chart.margin()
                 .right - self.chart.margin()
                 .left;
-        }
-        else if (self.vertical())
-        {
+        } else if (self.vertical()) {
             bounds[1] = 0;
             bounds[0] = self.chart.height() - self.chart.margin()
                 .top - self.chart.margin()
@@ -51,12 +41,10 @@ function Scale(chart, title, scale, direction, type)
         return bounds;
     };
 
-    this.minTime = function()
-    {
+    this.minTime = function() {
         var minTime = new Date(8640000000000000);
 
-        this.series.map(function(series)
-        {
+        this.series.map(function(series) {
             var cMin = d3.min(series.keys());
             minTime = cMin < minTime ? cMin : minTime;
         });
@@ -64,12 +52,10 @@ function Scale(chart, title, scale, direction, type)
     };
 
 
-    this.maxTime = function()
-    {
+    this.maxTime = function() {
         var maxTime = new Date(-8640000000000000);
 
-        this.series.map(function(series)
-        {
+        this.series.map(function(series) {
             var cMax = d3.max(series.keys());
             maxTime = cMax > maxTime ? cMax : maxTime;
         });
@@ -78,35 +64,29 @@ function Scale(chart, title, scale, direction, type)
     };
 
 
-    this.findOrdinalValues = function()
-    {
+    this.findOrdinalValues = function() {
         var vals = [];
 
-        this.series.map(function(series)
-        {
+        this.series.map(function(series) {
             vals = series.keys();
         });
 
         return vals;
     };
 
-    this.horizontal = function()
-    {
+    this.horizontal = function() {
         return this.direction == 'h';
     };
 
-    this.vertical = function()
-    {
+    this.vertical = function() {
         return this.direction == 'v';
     };
 
 
-    this.findMax = function()
-    {
+    this.findMax = function() {
         var max = 0;
 
-        this.series.map(function(series)
-        {
+        this.series.map(function(series) {
             var m = series.findMax(self);
 
             max = m > max ? m : max;
@@ -115,24 +95,20 @@ function Scale(chart, title, scale, direction, type)
         return max;
     };
 
-    this.addSeries = function(series)
-    {
+    this.addSeries = function(series) {
         this.series.push(series);
     };
 
 
-    this.initialize = function()
-    {
+    this.initialize = function() {
         this.applyScaleRange.call(this.scale.domain(this.domain()), this.rangeType);
     };
 
-    this.calculateRange = function()
-    {
+    this.calculateRange = function() {
         this.scale.domain(this.domain());
     };
 
-    this.applyScaleRange = function(rangeType)
-    {
+    this.applyScaleRange = function(rangeType) {
         var bounds = self.calculateBounds();
 
         self.bounds = bounds;
@@ -142,10 +118,8 @@ function Scale(chart, title, scale, direction, type)
         ]);
     };
 
-    this.ordered = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.ordered = function(_) {
+        if (!arguments.length) {
             return ordered();
         }
         ordered = d3.functor(_);

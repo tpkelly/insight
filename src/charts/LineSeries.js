@@ -1,5 +1,4 @@
-function LineSeries(name, chart, data, x, y, color)
-{
+function LineSeries(name, chart, data, x, y, color) {
 
     Series.call(this, name, chart, data, x, y, color);
 
@@ -7,16 +6,14 @@ function LineSeries(name, chart, data, x, y, color)
 
     var lineType = 'linear';
 
-    var mouseOver = function(d, item)
-    {
+    var mouseOver = function(d, item) {
         self.chart.mouseOver(self, this, d);
 
         d3.select(this)
             .classed("hover", true);
     };
 
-    var mouseOut = function(d, item)
-    {
+    var mouseOut = function(d, item) {
         self.chart.mouseOut(self, this, d);
     };
 
@@ -32,21 +29,16 @@ function LineSeries(name, chart, data, x, y, color)
 
     };
 
-    this.rangeY = function(d)
-    {
+    this.rangeY = function(d) {
         return self.y.scale(self.yFunction()(d));
     };
 
-    this.rangeX = function(d, i)
-    {
+    this.rangeX = function(d, i) {
         var val = 0;
 
-        if (self.x.scale.rangeBand)
-        {
+        if (self.x.scale.rangeBand) {
             val = self.x.scale(self.xFunction()(d)) + (self.x.scale.rangeBand() / 2);
-        }
-        else
-        {
+        } else {
 
             val = self.x.scale(self.xFunction()(d));
         }
@@ -54,18 +46,15 @@ function LineSeries(name, chart, data, x, y, color)
         return val;
     };
 
-    this.lineType = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.lineType = function(_) {
+        if (!arguments.length) {
             return lineType;
         }
         lineType = _;
         return this;
     };
 
-    this.draw = function(dragging)
-    {
+    this.draw = function(dragging) {
         var transform = d3.svg.line()
             .x(self.rangeX)
             .y(self.rangeY)
@@ -75,8 +64,7 @@ function LineSeries(name, chart, data, x, y, color)
 
         var rangeElement = this.chart.chart.selectAll(rangeIdentifier);
 
-        if (!this.rangeExists(rangeElement))
-        {
+        if (!this.rangeExists(rangeElement)) {
             this.chart.chart.append("path")
                 .attr("class", this.name + " in-line")
                 .attr("stroke", this.color)
@@ -87,7 +75,9 @@ function LineSeries(name, chart, data, x, y, color)
                 .on('click', lineClick);
         }
 
-        var duration = dragging ? 0 : 300;
+        var duration = dragging ? 0 : function(d, i) {
+            return 300 + i * 20;
+        };
 
         this.chart.chart.selectAll(rangeIdentifier)
             .datum(this.dataset(), this.matcher)
@@ -130,8 +120,7 @@ function LineSeries(name, chart, data, x, y, color)
             .text(this.tooltipLabel);
     };
 
-    this.rangeExists = function(rangeSelector)
-    {
+    this.rangeExists = function(rangeSelector) {
 
         return rangeSelector[0].length;
     };

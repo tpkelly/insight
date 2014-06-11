@@ -1,7 +1,12 @@
-function DataSet(data)
-{
+function DataSet(data) {
 
     this._data = data;
+
+    this._orderFunction = function(a, b) {
+        return b.value - a.value;
+    };
+
+    this._filterFunction = null;
 }
 
 
@@ -9,143 +14,130 @@ DataSet.prototype.initialize = function() {
 
 };
 
-DataSet.prototype.filterFunction = function(f)
-{
-    if (!arguments.length)
-    {
+DataSet.prototype.filterFunction = function(f) {
+    if (!arguments.length) {
         return this._filterFunction;
     }
     this._filterFunction = f;
     return this;
 };
 
-DataSet.prototype.getData = function()
-{
+DataSet.prototype.getData = function() {
     var data;
-    if (this._data.all)
-    {
+    if (this._data.all) {
         data = this._data.all();
-    }
-    else
-    {
+    } else {
         //not a crossfilter set
         data = this._data;
     }
 
-    if (this._filterFunction)
-    {
+    if (this._filterFunction) {
         data = data.filter(this._filterFunction);
     }
 
     return data;
 };
 
+DataSet.prototype.orderFunction = function(o) {
+    if (!arguments.length) {
+        return this._orderFunction;
+    }
+    this._orderFunction = o;
+    return this;
+};
 
-DataSet.prototype.getOrderedData = function()
-{
+DataSet.prototype.filterFunction = function(f) {
+    if (!arguments.length) {
+        return this._filterFunction;
+    }
+    this._filterFunction = f;
+    return this;
+};
+
+
+DataSet.prototype.getOrderedData = function() {
     var data;
 
-    data = this._data.sort(this.orderFunction());
+    data = this._data.sort(this._orderFunction);
 
-    if (this._filterFunction)
-    {
+    if (this._filterFunction) {
         data = data.filter(this._filterFunction);
     }
 
     return data;
 };
-;var Dimension = function Dimension(name, func, dimension, displayFunction)
-{
+;var Dimension = function Dimension(name, func, dimension, displayFunction) {
     this.Dimension = dimension;
     this.Name = name;
     this.Filters = [];
     this.Function = func;
 
-    this.displayFunction = displayFunction ? displayFunction : function(d)
-    {
+    this.displayFunction = displayFunction ? displayFunction : function(d) {
         return d;
     };
 
-    this.comparer = function(d)
-    {
+    this.comparer = function(d) {
         return d.Name == this.Name;
     }.bind(this);
 };
-;function Group(data)
-{
+;function Group(data) {
     this._data = data;
     this._cumulative = false;
 
-    this._valueAccessor = function(d)
-    {
+    this._valueAccessor = function(d) {
         return d;
     };
 
-    this._orderFunction = function(a, b)
-    {
+    this._orderFunction = function(a, b) {
         return b.value - a.value;
     };
 
     this._ordered = false;
 }
 
-Group.prototype.filterFunction = function(f)
-{
-    if (!arguments.length)
-    {
+Group.prototype.filterFunction = function(f) {
+    if (!arguments.length) {
         return this._filterFunction;
     }
     this._filterFunction = f;
     return this;
 };
 
-Group.prototype.cumulative = function(c)
-{
-    if (!arguments.length)
-    {
+Group.prototype.cumulative = function(c) {
+    if (!arguments.length) {
         return this._cumulative;
     }
     this._cumulative = c;
     return this;
 };
 
-Group.prototype.getData = function()
-{
+Group.prototype.getData = function() {
     var data;
-    if (this._data.all)
-    {
+    if (this._data.all) {
         data = this._data.all();
-    }
-    else
-    {
+    } else {
         //not a crossfilter set
         data = this._data;
     }
 
-    if (this._filterFunction)
-    {
+    if (this._filterFunction) {
         data = data.filter(this._filterFunction);
     }
 
     return data;
 };
 
-Group.prototype.getOrderedData = function()
-{
+Group.prototype.getOrderedData = function() {
     var data;
 
-    if (this._data.all)
-    {
+    if (this._data.all) {
         data = data = this._data.top(Infinity)
             .sort(this.orderFunction());
-    }
-    else
-    {
+    } else {
         data = this._data.sort(this.orderFunction());
     }
 
-    if (this._filterFunction)
-    {
+    if (this._filterFunction) {
         data = data.filter(this._filterFunction);
     }
 
@@ -153,11 +145,9 @@ Group.prototype.getOrderedData = function()
 };
 
 
-Group.prototype.computeFunction = function(c)
-{
+Group.prototype.computeFunction = function(c) {
     this._ordered = true;
-    if (!arguments.length)
-    {
+    if (!arguments.length) {
         return this._compute;
     }
     this._compute = c;
@@ -165,25 +155,20 @@ Group.prototype.computeFunction = function(c)
 };
 
 
-Group.prototype.orderFunction = function(o)
-{
-    if (!arguments.length)
-    {
+Group.prototype.orderFunction = function(o) {
+    if (!arguments.length) {
         return this._orderFunction;
     }
     this._orderFunction = o;
     return this;
 };
 
-Group.prototype.compute = function()
-{
+Group.prototype.compute = function() {
     this._compute();
 };
 
-Group.prototype.valueAccessor = function(v)
-{
-    if (!arguments.length)
-    {
+Group.prototype.valueAccessor = function(v) {
+    if (!arguments.length) {
         return this._valueAccessor;
     }
     this._valueAccessor = v;
@@ -191,39 +176,29 @@ Group.prototype.valueAccessor = function(v)
 };
 
 
-Group.prototype.calculateTotals = function()
-{
-    if (this._cumulative)
-    {
+Group.prototype.calculateTotals = function() {
+    if (this._cumulative) {
         var totals = {};
         var total = 0;
         var self = this;
         var data = this._ordered ? this.getOrderedData() : this.getData();
 
         data
-            .forEach(function(d, i)
-            {
+            .forEach(function(d, i) {
 
                 var value = self._valueAccessor(d);
 
-                if (typeof(value) != "object")
-                {
+                if (typeof(value) != "object") {
                     total += value;
                     d.Cumulative = total;
-                }
-                else
-                {
-                    for (var property in value)
-                    {
+                } else {
+                    for (var property in value) {
                         var totalName = property + 'Cumulative';
 
-                        if (totals[totalName])
-                        {
+                        if (totals[totalName]) {
                             totals[totalName] += value[property];
                             value[totalName] = totals[totalName];
-                        }
-                        else
-                        {
+                        } else {
                             totals[totalName] = value[property];
                             value[totalName] = totals[totalName];
                         }
@@ -235,29 +210,24 @@ Group.prototype.calculateTotals = function()
 };
 
 
-function SimpleGroup(data)
-{
+function SimpleGroup(data) {
     this._data = data;
-    this._orderFunction = function(a, b)
-    {
+    this._orderFunction = function(a, b) {
         return b.values - a.values;
     };
 }
 SimpleGroup.prototype = Object.create(Group.prototype);
 SimpleGroup.prototype.constructor = SimpleGroup;
 
-SimpleGroup.prototype.getOrderedData = function()
-{
+SimpleGroup.prototype.getOrderedData = function() {
     return this._data.sort(this._orderFunction);
 };
 
-SimpleGroup.prototype.getData = function()
-{
+SimpleGroup.prototype.getData = function() {
     return this._data;
 };
 
-function NestedGroup(dimension, nestFunction)
-{
+function NestedGroup(dimension, nestFunction) {
     this._dimension = dimension;
     this._data = dimension.Dimension.bottom(Infinity);
     this._nestFunction = nestFunction;
@@ -269,67 +239,88 @@ NestedGroup.prototype = Object.create(Group.prototype);
 NestedGroup.prototype.constructor = NestedGroup;
 
 
-NestedGroup.prototype.getData = function()
-{
+NestedGroup.prototype.getData = function() {
     return this._nestedData;
 };
 
-NestedGroup.prototype.updateNestedData = function()
-{
+NestedGroup.prototype.updateNestedData = function() {
     this._data = this._dimension.Dimension.bottom(Infinity);
     this._nestedData = this._nestFunction.entries(this._data);
 };
 
 
-NestedGroup.prototype.getOrderedData = function()
-{
+NestedGroup.prototype.getOrderedData = function() {
     return this._nestedData;
 };
-;function Grouping(dimension)
-{
+;/**
+ * A Grouping is generated on a dimension, to reduce the items in the data set into groups along the provided dimension
+ * @constructor
+ * @param {Dimension} dimension - The dimension to group
+ */
+function Grouping(dimension) {
     this._cumulative = false;
     this.dimension = dimension;
 
     var sumProperties = [];
     var countProperties = [];
     var averageProperties = [];
+    this._compute = null;
 
-    this._valueAccessor = function(d)
-    {
+
+    this._valueAccessor = function(d) {
         return d;
     };
 
-    this._orderFunction = function(a, b)
-    {
-        return b.value - a.value;
+
+    this._orderFunction = function(a, b) {
+        return b.value.Count - a.value.Count;
     };
 
     this._ordered = false;
 
-    this.sum = function(_)
-    {
-        if (!arguments.length)
-        {
+    /**
+     * The sum function gets or sets the properties that this group will sum across.
+     * @returns {String[]}
+     */
+    /**
+     * @param {String[]} properties - An array of property names in the dataset that will be summed along this grouping's dimension
+     * @returns {this}
+     */
+    this.sum = function(_) {
+        if (!arguments.length) {
             return sumProperties;
         }
         sumProperties = _;
         return this;
     };
 
-    this.count = function(_)
-    {
-        if (!arguments.length)
-        {
+
+    /**
+     * The count function gets or sets the properties whose value occurences will be counted across this dimension.
+     * @returns {String[]}
+     */
+    /**
+     * @param {String[]} properties - An array of property names that will have their occuring values counted during aggregation
+     * @returns {this}
+     */
+    this.count = function(_) {
+        if (!arguments.length) {
             return countProperties;
         }
         countProperties = _;
         return this;
     };
 
-    this.average = function(_)
-    {
-        if (!arguments.length)
-        {
+    /**
+     * The average function gets or sets the properties whose values will be averaged for across this grouped dimension
+     * @returns {String[]}
+     */
+    /**
+     * @param {String[]} properties - An array of property names that will have be averaged during aggregation
+     * @returns {this}
+     */
+    this.average = function(_) {
+        if (!arguments.length) {
             return averageProperties;
         }
         averageProperties = _;
@@ -342,33 +333,44 @@ NestedGroup.prototype.getOrderedData = function()
     return this;
 }
 
-Grouping.prototype.filterFunction = function(f)
-{
-    if (!arguments.length)
-    {
+
+/**
+ * Gets or sets whether the group's data is ordered.
+ * @returns {String[]}
+ */
+/**
+ * @param {boolean} order - a boolean for whether to order the group's values
+ * @returns {this}
+ */
+Grouping.prototype.ordered = function(_) {
+    if (!arguments.length) {
+        return this._ordered;
+    }
+    this._ordered = _;
+
+    return this;
+};
+
+Grouping.prototype.filter = function(f) {
+    if (!arguments.length) {
         return this._filterFunction;
     }
     this._filterFunction = f;
     return this;
 };
 
-Grouping.prototype.cumulative = function(c)
-{
-    if (!arguments.length)
-    {
+Grouping.prototype.cumulative = function(c) {
+    if (!arguments.length) {
         return this._cumulative;
     }
     this._cumulative = c;
     return this;
 };
 
-Grouping.prototype.unique = function(array)
-{
+Grouping.prototype.unique = function(array) {
     var a = array.concat();
-    for (var i = 0; i < a.length; ++i)
-    {
-        for (var j = i + 1; j < a.length; ++j)
-        {
+    for (var i = 0; i < a.length; ++i) {
+        for (var j = i + 1; j < a.length; ++j) {
             if (a[i] === a[j])
                 a.splice(j--, 1);
         }
@@ -377,38 +379,30 @@ Grouping.prototype.unique = function(array)
     return a;
 };
 
-Grouping.prototype.initialize = function()
-{
+Grouping.prototype.initialize = function() {
     var propertiesToSum = this.sum();
     var propertiesToCount = this.count();
     var propertiesToAverage = this.average();
 
     var data = this.dimension.Dimension.group()
         .reduce(
-            function(p, v)
-            {
+            function(p, v) {
                 p.Count++;
 
-                for (var property in propertiesToSum)
-                {
-                    if (v.hasOwnProperty(propertiesToSum[property]))
-                    {
+                for (var property in propertiesToSum) {
+                    if (v.hasOwnProperty(propertiesToSum[property])) {
                         p[propertiesToSum[property]].Sum += v[propertiesToSum[property]];
                     }
                 }
 
-                for (var avProperty in propertiesToAverage)
-                {
-                    if (v.hasOwnProperty(propertiesToAverage[avProperty]))
-                    {
+                for (var avProperty in propertiesToAverage) {
+                    if (v.hasOwnProperty(propertiesToAverage[avProperty])) {
                         p[propertiesToAverage[avProperty]].Average = p[propertiesToAverage[avProperty]].Average + ((v[propertiesToAverage[avProperty]] - p[propertiesToAverage[avProperty]].Average) / p.Count);
                     }
                 }
 
-                for (var countProp in propertiesToCount)
-                {
-                    if (v.hasOwnProperty(propertiesToCount[countProp]))
-                    {
+                for (var countProp in propertiesToCount) {
+                    if (v.hasOwnProperty(propertiesToCount[countProp])) {
                         p[propertiesToCount[countProp]][v[propertiesToCount[countProp]]] = p[propertiesToCount[countProp]].hasOwnProperty(v[propertiesToCount[countProp]]) ? p[propertiesToCount[countProp]][v[propertiesToCount[countProp]]] + 1 : 1;
                         p[propertiesToCount[countProp]].Total++;
                     }
@@ -416,40 +410,32 @@ Grouping.prototype.initialize = function()
 
                 return p;
             },
-            function(p, v)
-            {
+            function(p, v) {
                 p.Count--;
 
-                for (var property in propertiesToSum)
-                {
-                    if (v.hasOwnProperty(propertiesToSum[property]))
-                    {
+                for (var property in propertiesToSum) {
+                    if (v.hasOwnProperty(propertiesToSum[property])) {
                         p[propertiesToSum[property]].Sum -= v[propertiesToSum[property]];
                     }
                 }
 
 
-                for (var countProp in propertiesToCount)
-                {
-                    if (v.hasOwnProperty(propertiesToCount[countProp]))
-                    {
+                for (var countProp in propertiesToCount) {
+                    if (v.hasOwnProperty(propertiesToCount[countProp])) {
                         p[propertiesToCount[countProp]][v[propertiesToCount[countProp]]] = p[propertiesToCount[countProp]].hasOwnProperty(v[propertiesToCount[countProp]]) ? p[propertiesToCount[countProp]][v[propertiesToCount[countProp]]] - 1 : 1;
                         p[propertiesToCount[countProp]].Total--;
                     }
                 }
 
-                for (var avProperty in propertiesToAverage)
-                {
-                    if (v.hasOwnProperty(propertiesToAverage[avProperty]))
-                    {
+                for (var avProperty in propertiesToAverage) {
+                    if (v.hasOwnProperty(propertiesToAverage[avProperty])) {
                         var valRemoved = v[propertiesToAverage[avProperty]];
                         var sum = p[propertiesToAverage[avProperty]].Sum;
                         p[propertiesToAverage[avProperty]].Average = sum / p.Count;
 
                         var result = p[propertiesToAverage[avProperty]].Average;
 
-                        if (!isFinite(result))
-                        {
+                        if (!isFinite(result)) {
                             p[propertiesToAverage[avProperty]].Average = 0;
                         }
                     }
@@ -458,28 +444,21 @@ Grouping.prototype.initialize = function()
 
                 return p;
             },
-            function()
-            {
+            function() {
                 var p = {
                     Count: 0
                 };
 
-                for (var property in propertiesToSum)
-                {
-                    p[propertiesToSum[property]] = p[propertiesToSum[property]] ? p[propertiesToSum[property]] :
-                    {};
+                for (var property in propertiesToSum) {
+                    p[propertiesToSum[property]] = p[propertiesToSum[property]] ? p[propertiesToSum[property]] : {};
                     p[propertiesToSum[property]].Sum = 0;
                 }
-                for (var avProperty in propertiesToAverage)
-                {
-                    p[propertiesToAverage[avProperty]] = p[propertiesToAverage[avProperty]] ? p[propertiesToAverage[avProperty]] :
-                    {};
+                for (var avProperty in propertiesToAverage) {
+                    p[propertiesToAverage[avProperty]] = p[propertiesToAverage[avProperty]] ? p[propertiesToAverage[avProperty]] : {};
                     p[propertiesToAverage[avProperty]].Average = 0;
                 }
-                for (var countProp in propertiesToCount)
-                {
-                    p[propertiesToCount[countProp]] = p[propertiesToCount[countProp]] ? p[propertiesToCount[countProp]] :
-                    {};
+                for (var countProp in propertiesToCount) {
+                    p[propertiesToCount[countProp]] = p[propertiesToCount[countProp]] ? p[propertiesToCount[countProp]] : {};
                     p[propertiesToCount[countProp]].Total = 0;
                 }
                 return p;
@@ -492,45 +471,42 @@ Grouping.prototype.initialize = function()
 };
 
 
-
-
-Grouping.prototype.getData = function()
-{
-    var data;
-    if (this._data.all)
-    {
-        data = this._data.all();
+Grouping.prototype.recalculate = function() {
+    if (this._compute) {
+        this._compute();
     }
-    else
-    {
+};
+
+
+Grouping.prototype.getData = function() {
+    var data;
+    if (this._data.all) {
+        data = this._data.all();
+    } else {
         //not a crossfilter set
         data = this._data;
     }
 
-    if (this._filterFunction)
-    {
+    if (this._filterFunction) {
         data = data.filter(this._filterFunction);
     }
 
     return data;
 };
 
-Grouping.prototype.getOrderedData = function()
-{
+
+
+Grouping.prototype.getOrderedData = function() {
     var data;
 
-    if (this._data.all)
-    {
+    if (this._data.all) {
         data = data = this._data.top(Infinity)
             .sort(this.orderFunction());
-    }
-    else
-    {
+    } else {
         data = this._data.sort(this.orderFunction());
     }
 
-    if (this._filterFunction)
-    {
+    if (this._filterFunction) {
         data = data.filter(this._filterFunction);
     }
 
@@ -538,11 +514,9 @@ Grouping.prototype.getOrderedData = function()
 };
 
 
-Grouping.prototype.computeFunction = function(c)
-{
+Grouping.prototype.computeFunction = function(c) {
     this._ordered = true;
-    if (!arguments.length)
-    {
+    if (!arguments.length) {
         return this._compute;
     }
     this._compute = c;
@@ -550,25 +524,20 @@ Grouping.prototype.computeFunction = function(c)
 };
 
 
-Grouping.prototype.orderFunction = function(o)
-{
-    if (!arguments.length)
-    {
+Grouping.prototype.orderFunction = function(o) {
+    if (!arguments.length) {
         return this._orderFunction;
     }
     this._orderFunction = o;
     return this;
 };
 
-Grouping.prototype.compute = function()
-{
+Grouping.prototype.compute = function() {
     this._compute();
 };
 
-Grouping.prototype.valueAccessor = function(v)
-{
-    if (!arguments.length)
-    {
+Grouping.prototype.valueAccessor = function(v) {
+    if (!arguments.length) {
         return this._valueAccessor;
     }
     this._valueAccessor = v;
@@ -576,39 +545,29 @@ Grouping.prototype.valueAccessor = function(v)
 };
 
 
-Grouping.prototype.calculateTotals = function()
-{
-    if (this._cumulative)
-    {
+Grouping.prototype.calculateTotals = function() {
+    if (this._cumulative) {
         var totals = {};
         var total = 0;
         var self = this;
         var data = this._ordered ? this.getOrderedData() : this.getData();
 
         data
-            .forEach(function(d, i)
-            {
+            .forEach(function(d, i) {
 
                 var value = self._valueAccessor(d);
 
-                if (typeof(value) != "object")
-                {
+                if (typeof(value) != "object") {
                     total += value;
                     d.Cumulative = total;
-                }
-                else
-                {
-                    for (var property in value)
-                    {
+                } else {
+                    for (var property in value) {
                         var totalName = property + 'Cumulative';
 
-                        if (totals[totalName])
-                        {
+                        if (totals[totalName]) {
                             totals[totalName] += value[property];
                             value[totalName] = totals[totalName];
-                        }
-                        else
-                        {
+                        } else {
                             totals[totalName] = value[property];
                             value[totalName] = totals[totalName];
                         }
@@ -618,35 +577,30 @@ Grouping.prototype.calculateTotals = function()
     }
     return this;
 };
-;var InsightFormatters = (function(d3)
-{
+;var InsightFormatters = (function(d3) {
     var exports = {};
 
 
     exports.moduleProperty = 1;
 
-    exports.currencyFormatter = function(value)
-    {
+    exports.currencyFormatter = function(value) {
         var format = d3.format(",f");
         return '£' + format(value);
     };
 
-    exports.dateFormatter = function(value)
-    {
+    exports.dateFormatter = function(value) {
         var format = d3.time.format("%b %Y");
         return format(value);
     };
 
-    exports.percentageFormatter = function(value)
-    {
+    exports.percentageFormatter = function(value) {
         var format = d3.format("%");
         return format(value);
     };
 
     return exports;
 }(d3));
-;var InsightConstants = (function()
-{
+;var InsightConstants = (function() {
     var exports = {};
 
     exports.Behind = 'behind';
@@ -665,8 +619,7 @@ Grouping.prototype.calculateTotals = function()
     exports.Bubble = "bubble";
     return exports;
 }());
-;function Series(name, chart, data, x, y, color)
-{
+;function Series(name, chart, data, x, y, color) {
 
     this.chart = chart;
     this.data = data;
@@ -675,6 +628,7 @@ Grouping.prototype.calculateTotals = function()
     this.name = name;
     this.color = d3.functor(color);
     this.animationDuration = 300;
+    this.matcher = this.keyAccessor;
 
     x.addSeries(this);
     y.addSeries(this);
@@ -682,62 +636,57 @@ Grouping.prototype.calculateTotals = function()
     var self = this;
     var cssClass = "";
 
-    var tooltipFormat = function(d)
-    {
+    var filter = null;
+
+    // private functions used internally, set by functions below that are exposed on the object
+
+    var tooltipFormat = function(d) {
         return d;
     };
 
-
-
-    var xFunction = function(d)
-    {
+    var xFunction = function(d) {
         return d.key;
     };
 
-    var yFunction = function(d)
-    {
+    var yFunction = function(d) {
         return d.value;
     };
+
 
     var tooltipFunction = yFunction;
 
     var tooltipLabel = d3.functor("Label");
 
-    this.dataset = function()
-    {
-        //won't always be x that determins this (rowcharts, bullets etc.), need concept of ordering by data scale?
+    this.dataset = function() {
+        //won't always be x that determines this (rowcharts, bullets etc.), need concept of ordering by data scale?
         var data = this.x.ordered() ? this.data.getOrderedData() : this.data.getData();
+
+        if (filter) {
+            data = data.filter(filter);
+        }
 
         return data;
     };
 
-
-
-    this.keys = function()
-    {
+    this.keys = function() {
         return this.dataset()
             .map(xFunction);
     };
 
-    this.cssClass = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.cssClass = function(_) {
+        if (!arguments.length) {
             return cssClass;
         }
         cssClass = _;
         return this;
     };
 
-    this.keyAccessor = function(d)
-    {
+    this.keyAccessor = function(d) {
         return d.key;
     };
 
-    this.xFunction = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.xFunction = function(_) {
+        if (!arguments.length) {
             return xFunction;
         }
         xFunction = _;
@@ -745,10 +694,8 @@ Grouping.prototype.calculateTotals = function()
         return this;
     };
 
-    this.yFunction = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.yFunction = function(_) {
+        if (!arguments.length) {
             return yFunction;
         }
         tooltipFunction = _;
@@ -757,10 +704,17 @@ Grouping.prototype.calculateTotals = function()
         return this;
     };
 
-    this.tooltipFunction = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.filterFunction = function(_) {
+        if (!arguments.length) {
+            return filter;
+        }
+        filter = _;
+
+        return this;
+    };
+
+    this.tooltipFunction = function(_) {
+        if (!arguments.length) {
             return tooltipFunction;
         }
         tooltipFunction = _;
@@ -768,41 +722,32 @@ Grouping.prototype.calculateTotals = function()
         return this;
     };
 
-    this.tooltipValue = function(d)
-    {
+    this.tooltipValue = function(d) {
         return tooltipFormat(tooltipFunction(d));
     };
 
-    this.tooltipLabel = function(d)
-    {
+    this.tooltipLabel = function(d) {
         return tooltipLabel(d);
     };
 
-    this.tooltipLabelFormat = function(_)
-    {
+    this.tooltipLabelFormat = function(_) {
 
-        if (!arguments.length)
-        {
+        if (!arguments.length) {
             return tooltipLabel;
         }
         tooltipLabel = d3.functor(_);
         return this;
     };
 
-    this.tooltipFormat = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.tooltipFormat = function(_) {
+        if (!arguments.length) {
             return tooltipFormat;
         }
         tooltipFormat = _;
         return this;
     };
 
-    this.matcher = this.keyAccessor;
-
-    this.findMax = function(scale)
-    {
+    this.findMax = function(scale) {
         var self = this;
 
         var max = 0;
@@ -821,8 +766,7 @@ Grouping.prototype.calculateTotals = function()
 
     return this;
 }
-;function Chart(name, element, dimension)
-{
+;function Chart(name, element, dimension) {
 
     this.name = name;
     this.element = element;
@@ -849,18 +793,16 @@ Grouping.prototype.calculateTotals = function()
     var self = this;
     var barPadding = d3.functor(0.1);
 
-    this.addAxis = function(axis)
-    {
+    this.addAxis = function(axis) {
         axes.push(axis);
     };
 
-    this.axes = function()
-    {
+    this.axes = function() {
         return axes;
     };
 
-    this.addClipPath = function()
-    {
+
+    this.addClipPath = function() {
         this.chart.append("clipPath")
             .attr("id", this.clipPath())
             .append("rect")
@@ -874,8 +816,7 @@ Grouping.prototype.calculateTotals = function()
                 .bottom);
     };
 
-    this.init = function(create, container)
-    {
+    this.init = function(create, container) {
         this.container = create ? d3.select(container)
             .append('div') : d3.select(this.element)
             .append('div');
@@ -900,18 +841,15 @@ Grouping.prototype.calculateTotals = function()
 
         this.addClipPath();
 
-        scales.map(function(scale)
-        {
+        scales.map(function(scale) {
             scale.initialize();
         });
 
-        axes.map(function(axis)
-        {
+        axes.map(function(axis) {
             axis.initialize();
         });
 
-        if (zoomable)
-        {
+        if (zoomable) {
             this.initZoom();
         }
 
@@ -920,8 +858,7 @@ Grouping.prototype.calculateTotals = function()
         this.draw(false);
     };
 
-    this.resizeChart = function()
-    {
+    this.resizeChart = function() {
         this.container.style('width', this.width() + "px");
 
         this.chartSVG
@@ -945,52 +882,43 @@ Grouping.prototype.calculateTotals = function()
                 .bottom);
     };
 
-    this.draw = function(dragging)
-    {
+    this.draw = function(dragging) {
         this.resizeChart();
 
         this.recalculateScales();
 
-        axes.map(function(axis)
-        {
+        axes.map(function(axis) {
             axis.draw(dragging);
         });
 
         this.series()
-            .map(function(series)
-            {
+            .map(function(series) {
                 series.draw(dragging);
             });
     };
 
-    this.recalculateScales = function()
-    {
-        scales.map(function(scale)
-        {
+    this.recalculateScales = function() {
+        scales.map(function(scale) {
             var zx = zoomScale != scale;
-            if (zx)
-            {
+            if (zx) {
                 scale.initialize();
             }
         });
     };
 
-    this.zoomable = function(scale)
-    {
+    this.zoomable = function(scale) {
         zoomable = true;
         zoomScale = scale;
         return this;
     };
 
-    this.initZoom = function()
-    {
+    this.initZoom = function() {
         this.zoom = d3.behavior.zoom()
             .on("zoom", self.dragging.bind(self));
 
         this.zoom.x(zoomScale.scale);
 
-        if (!this.zoomExists())
-        {
+        if (!this.zoomExists()) {
             this.chart.append("rect")
                 .attr("class", "zoompane")
                 .attr("width", this.width())
@@ -1005,70 +933,58 @@ Grouping.prototype.calculateTotals = function()
             .call(this.zoom);
     };
 
-    this.zoomExists = function()
-    {
+    this.zoomExists = function() {
         var z = this.chart.selectAll('.zoompane');
         return z[0].length;
     };
 
-    this.dragging = function()
-    {
+    this.dragging = function() {
         self.draw(true);
     };
 
-    this.barPadding = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.barPadding = function(_) {
+        if (!arguments.length) {
             return barPadding();
         }
         barPadding = d3.functor(_);
         return this;
     };
 
-    this.margin = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.margin = function(_) {
+        if (!arguments.length) {
             return this._margin;
         }
         this._margin = _;
         return this;
     };
 
-    this.clipPath = function()
-    {
+    this.clipPath = function() {
 
         return this.name.split(' ')
             .join('_') + "clip";
     };
 
-    this.filterFunction = function(filter, element)
-    {
+    this.filterFunction = function(filter, element) {
         var value = filter.key ? filter.key : filter;
 
         return {
             name: value,
             element: element,
-            filterFunction: function(d)
-            {
+            filterFunction: function(d) {
                 return String(d) == String(value);
             }
         };
     };
 
-    this.dimensionSelector = function(d)
-    {
+    this.dimensionSelector = function(d) {
 
         var result = self.dimension && d.key.replace ? self.dimension.Name + d.key.replace(/[^A-Z0-9]/ig, "_") : "";
 
         return result;
     };
 
-    this.filterClick = function(element, filter)
-    {
-        if (this.dimension)
-        {
+    this.filterClick = function(element, filter) {
+        if (this.dimension) {
             var selected = d3.select(element)
                 .classed('selected');
 
@@ -1081,14 +997,12 @@ Grouping.prototype.calculateTotals = function()
         }
     };
 
-    this.tooltip = function()
-    {
+    this.tooltip = function() {
 
         this.tip = d3.tip()
             .attr('class', 'd3-tip')
             .offset([-10, 0])
-            .html(function(d)
-            {
+            .html(function(d) {
                 return "<span class='tiplabel'>" + d.label + ": </span><span class='tipvalue'>" + d.value + "</span>";
             });
 
@@ -1097,8 +1011,7 @@ Grouping.prototype.calculateTotals = function()
         return this;
     };
 
-    this.mouseOver = function(chart, item, d)
-    {
+    this.mouseOver = function(chart, item, d) {
 
         var tipValue = $(item)
             .find('.tipValue')
@@ -1110,8 +1023,7 @@ Grouping.prototype.calculateTotals = function()
             .first()
             .text();
 
-        this.tip.show(
-        {
+        this.tip.show({
             label: tipLabel,
             value: tipValue
         });
@@ -1120,18 +1032,15 @@ Grouping.prototype.calculateTotals = function()
             .classed("active", true);
     };
 
-    this.mouseOut = function(chart, item, d)
-    {
+    this.mouseOut = function(chart, item, d) {
         this.tip.hide(d);
 
         d3.select(item)
             .classed("active", false);
     };
 
-    this.width = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.width = function(_) {
+        if (!arguments.length) {
             return width();
         }
 
@@ -1139,50 +1048,41 @@ Grouping.prototype.calculateTotals = function()
         return this;
     };
 
-    this.height = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.height = function(_) {
+        if (!arguments.length) {
             return height();
         }
         height = d3.functor(_);
         return this;
     };
 
-    this.series = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.series = function(_) {
+        if (!arguments.length) {
             return series;
         }
         series = _;
     };
 
 
-    this.scales = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.scales = function(_) {
+        if (!arguments.length) {
             return scales;
         }
         scales = _;
     };
 
 
-    this.addHorizontalScale = function(type, typeString, direction)
-    {
+    this.addHorizontalScale = function(type, typeString, direction) {
         var scale = new Scale(this, type, direction, typeString);
     };
 
 
-    this.addHorizontalAxis = function(scale)
-    {
+    this.addHorizontalAxis = function(scale) {
         var axis = new Axis(this, scale, 'h', 'left');
     };
 
 }
-;var ChartGroup = function ChartGroup(name)
-{
+;var ChartGroup = function ChartGroup(name) {
     this.Name = name;
     this.Charts = [];
     this.Dimensions = [];
@@ -1194,18 +1094,15 @@ Grouping.prototype.calculateTotals = function()
     this.NestedGroups = [];
 };
 
-ChartGroup.prototype.initCharts = function()
-{
+ChartGroup.prototype.initCharts = function() {
     this.Charts
         .forEach(
-            function(chart)
-            {
+            function(chart) {
                 chart.init();
             });
 };
 
-ChartGroup.prototype.addChart = function(chart)
-{
+ChartGroup.prototype.addChart = function(chart) {
 
     chart.filterEvent = this.chartFilterHandler.bind(this);
     chart.triggerRedraw = this.redrawCharts.bind(this);
@@ -1215,8 +1112,7 @@ ChartGroup.prototype.addChart = function(chart)
     return chart;
 };
 
-ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc)
-{
+ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc) {
     var dimension = new Dimension(name, func, ndx.dimension(func), displayFunc);
 
     this.Dimensions.push(dimension);
@@ -1224,73 +1120,58 @@ ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc)
     return dimension;
 };
 
-ChartGroup.prototype.compareFilters = function(filterFunction)
-{
-    return function(d)
-    {
+ChartGroup.prototype.compareFilters = function(filterFunction) {
+    return function(d) {
         return String(d.name) == String(filterFunction.name);
     };
 };
 
-ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction)
-{
+ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
     var self = this;
 
-    if (filterFunction)
-    {
+    if (filterFunction) {
         var dims = this.Dimensions
             .filter(dimension.comparer);
 
         var activeDim = this.FilteredDimensions
             .filter(dimension.comparer);
 
-        if (!activeDim.length)
-        {
+        if (!activeDim.length) {
             this.FilteredDimensions.push(dimension);
         }
 
         var comparerFunction = this.compareFilters(filterFunction);
 
-        dims.map(function(dim)
-        {
+        dims.map(function(dim) {
 
             var filterExists = dim.Filters
                 .filter(comparerFunction)
                 .length;
 
             //if the dimension is already filtered by this value, toggle (remove) the filter
-            if (filterExists)
-            {
+            if (filterExists) {
                 self.removeMatchesFromArray(dim.Filters, comparerFunction);
 
-            }
-            else
-            {
+            } else {
                 // add the provided filter to the list for this dimension
 
                 dim.Filters.push(filterFunction);
             }
 
             // reset this dimension if no filters exist, else apply the filter to the dataset.
-            if (dim.Filters.length === 0)
-            {
+            if (dim.Filters.length === 0) {
 
                 self.removeItemFromArray(self.FilteredDimensions, dim);
                 dim.Dimension.filterAll();
 
-            }
-            else
-            {
-                dim.Dimension.filter(function(d)
-                {
+            } else {
+                dim.Dimension.filter(function(d) {
                     var vals = dim.Filters
-                        .map(function(func)
-                        {
+                        .map(function(func) {
                             return func.filterFunction(d);
                         });
 
-                    return vals.filter(function(result)
-                        {
+                    return vals.filter(function(result) {
                             return result;
                         })
                         .length;
@@ -1298,26 +1179,28 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction)
             }
         });
 
+        this.Groups.forEach(function(group) {
+            group.recalculate();
+
+        });
+
         // recalculate non standard groups
         this.NestedGroups
             .forEach(
-                function(group)
-                {
+                function(group) {
                     group.updateNestedData();
                 }
         );
 
         this.ComputedGroups
             .forEach(
-                function(group)
-                {
+                function(group) {
                     group.compute();
                 }
         );
         this.CumulativeGroups
             .forEach(
-                function(group)
-                {
+                function(group) {
                     group.calculateTotals();
                 }
         );
@@ -1328,31 +1211,25 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction)
 
 
 
-ChartGroup.prototype.redrawCharts = function()
-{
+ChartGroup.prototype.redrawCharts = function() {
     for (var i = 0; i < this.Charts
-        .length; i++)
-    {
+        .length; i++) {
         this.Charts[i].draw();
     }
 };
 
 
-ChartGroup.prototype.aggregate = function(dimension, input)
-{
+ChartGroup.prototype.aggregate = function(dimension, input) {
 
     var group;
 
-    if (input instanceof Array)
-    {
+    if (input instanceof Array) {
 
         group = this.multiReduceSum(dimension, input);
 
         this.Groups.push(group);
 
-    }
-    else
-    {
+    } else {
 
         var data = dimension.Dimension.group()
             .reduceSum(input);
@@ -1365,21 +1242,17 @@ ChartGroup.prototype.aggregate = function(dimension, input)
     return group;
 };
 
-ChartGroup.prototype.count = function(dimension, input)
-{
+ChartGroup.prototype.count = function(dimension, input) {
 
     var group;
 
-    if (input instanceof Array)
-    {
+    if (input instanceof Array) {
 
         group = this.multiReduceCount(dimension, input);
 
         this.Groups.push(group);
 
-    }
-    else
-    {
+    } else {
         var data = dimension.Dimension.group()
             .reduceCount(input);
 
@@ -1392,8 +1265,7 @@ ChartGroup.prototype.count = function(dimension, input)
 };
 
 
-ChartGroup.prototype.addSumGrouping = function(dimension, func)
-{
+ChartGroup.prototype.addSumGrouping = function(dimension, func) {
     var data = dimension.Dimension.group()
         .reduceSum(func);
     var group = new Group(data);
@@ -1402,49 +1274,38 @@ ChartGroup.prototype.addSumGrouping = function(dimension, func)
     return group;
 };
 
-ChartGroup.prototype.addCustomGrouping = function(group)
-{
+ChartGroup.prototype.addCustomGrouping = function(group) {
     this.Groups.push(group);
-    if (group.cumulative())
-    {
+    if (group.cumulative()) {
         this.CumulativeGroups.push(group);
     }
     return group;
 };
 
-ChartGroup.prototype.multiReduceSum = function(dimension, properties)
-{
+ChartGroup.prototype.multiReduceSum = function(dimension, properties) {
 
     var data = dimension.Dimension.group()
         .reduce(
-            function(p, v)
-            {
+            function(p, v) {
 
-                for (var property in properties)
-                {
-                    if (v.hasOwnProperty(properties[property]))
-                    {
+                for (var property in properties) {
+                    if (v.hasOwnProperty(properties[property])) {
                         p[properties[property]] += v[properties[property]];
                     }
                 }
                 return p;
             },
-            function(p, v)
-            {
-                for (var property in properties)
-                {
-                    if (v.hasOwnProperty(properties[property]))
-                    {
+            function(p, v) {
+                for (var property in properties) {
+                    if (v.hasOwnProperty(properties[property])) {
                         p[properties[property]] -= v[properties[property]];
                     }
                 }
                 return p;
             },
-            function()
-            {
+            function() {
                 var p = {};
-                for (var property in properties)
-                {
+                for (var property in properties) {
                     p[properties[property]] = 0;
                 }
                 return p;
@@ -1455,40 +1316,31 @@ ChartGroup.prototype.multiReduceSum = function(dimension, properties)
     return group;
 };
 
-ChartGroup.prototype.multiReduceCount = function(dimension, properties)
-{
+ChartGroup.prototype.multiReduceCount = function(dimension, properties) {
 
     var data = dimension.Dimension.group()
         .reduce(
-            function(p, v)
-            {
-                for (var property in properties)
-                {
-                    if (v.hasOwnProperty(properties[property]))
-                    {
+            function(p, v) {
+                for (var property in properties) {
+                    if (v.hasOwnProperty(properties[property])) {
                         p[properties[property]][v[properties[property]]] = p[properties[property]].hasOwnProperty(v[properties[property]]) ? p[properties[property]][v[properties[property]]] + 1 : 1;
                         p[properties[property]].Total++;
                     }
                 }
                 return p;
             },
-            function(p, v)
-            {
-                for (var property in properties)
-                {
-                    if (v.hasOwnProperty(properties[property]))
-                    {
+            function(p, v) {
+                for (var property in properties) {
+                    if (v.hasOwnProperty(properties[property])) {
                         p[properties[property]][v[properties[property]]] = p[properties[property]].hasOwnProperty(v[properties[property]]) ? p[properties[property]][v[properties[property]]] - 1 : 1;
                         p[properties[property]].Total--;
                     }
                 }
                 return p;
             },
-            function()
-            {
+            function() {
                 var p = {};
-                for (var property in properties)
-                {
+                for (var property in properties) {
                     p[properties[property]] = {
                         Total: 0
                     };
@@ -1503,26 +1355,21 @@ ChartGroup.prototype.multiReduceCount = function(dimension, properties)
     return group;
 };
 
-ChartGroup.prototype.removeMatchesFromArray = function(array, comparer)
-{
+ChartGroup.prototype.removeMatchesFromArray = function(array, comparer) {
     var self = this;
     var matches = array.filter(comparer);
-    matches.forEach(function(match)
-    {
+    matches.forEach(function(match) {
         self.removeItemFromArray(array, match);
     });
 };
-ChartGroup.prototype.removeItemFromArray = function(array, item)
-{
+ChartGroup.prototype.removeItemFromArray = function(array, item) {
 
     var index = array.indexOf(item);
-    if (index > -1)
-    {
+    if (index > -1) {
         array.splice(index, 1);
     }
 };
-;function BubbleSeries(name, chart, data, x, y, color)
-{
+;function BubbleSeries(name, chart, data, x, y, color) {
 
     Series.call(this, name, chart, data, x, y, color);
 
@@ -1533,36 +1380,30 @@ ChartGroup.prototype.removeItemFromArray = function(array, item)
 
     var self = this;
 
-    var mouseOver = function(d, item)
-    {
+    var mouseOver = function(d, item) {
         self.chart.mouseOver(self, this, d);
 
         d3.select(this)
             .classed("hover", true);
     };
 
-    var mouseOut = function(d, item)
-    {
+    var mouseOut = function(d, item) {
         self.chart.mouseOut(self, this, d);
     };
 
-    this.rangeY = function(d)
-    {
+    this.rangeY = function(d) {
         var f = self.yFunction();
 
         return self.y.scale(self.yFunction()(d));
     };
 
-    this.rangeX = function(d, i)
-    {
+    this.rangeX = function(d, i) {
         var f = self.xFunction();
         return self.x.scale(self.xFunction()(d));
     };
 
-    this.radiusFunction = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.radiusFunction = function(_) {
+        if (!arguments.length) {
             return radiusFunction;
         }
         radiusFunction = _;
@@ -1571,10 +1412,8 @@ ChartGroup.prototype.removeItemFromArray = function(array, item)
     };
 
 
-    this.fillFunction = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.fillFunction = function(_) {
+        if (!arguments.length) {
             return fillFunction;
         }
         fillFunction = _;
@@ -1584,15 +1423,12 @@ ChartGroup.prototype.removeItemFromArray = function(array, item)
 
     this.selector = this.name + InsightConstants.Bubble;
 
-    this.className = function(d)
-    {
+    this.className = function(d) {
         return self.selector + " " + InsightConstants.Bubble + " " + self.chart.dimensionSelector(d);
     };
 
-    this.draw = function(drag)
-    {
-        var duration = drag ? 0 : function(d, i)
-        {
+    this.draw = function(drag) {
+        var duration = drag ? 0 : function(d, i) {
             return 200 + (i * 20);
         };
 
@@ -1601,20 +1437,17 @@ ChartGroup.prototype.removeItemFromArray = function(array, item)
         var min = d3.min(data, radiusFunction);
         var max = d3.max(data, radiusFunction);
 
-        var rad = function(d)
-        {
+        var rad = function(d) {
             return d.radius;
         };
 
-        var click = function(filter)
-        {
+        var click = function(filter) {
             return self.chart.filterClick(this, filter);
         };
 
 
 
-        data.forEach(function(d)
-        {
+        data.forEach(function(d) {
             var radiusInput = radiusFunction(d);
 
             d.radius = minRad() + (((radiusInput - min) * (maxRad() - minRad())) / (max - min));
@@ -1622,8 +1455,7 @@ ChartGroup.prototype.removeItemFromArray = function(array, item)
 
         //this sort ensures that smaller bubbles are on top of larger ones, so that they are always selectable.  Without changing original array
         data = data.concat()
-            .sort(function(a, b)
-            {
+            .sort(function(a, b) {
                 return d3.descending(rad(a), rad(b));
             });
 
@@ -1660,8 +1492,7 @@ ChartGroup.prototype.removeItemFromArray = function(array, item)
 
 BubbleSeries.prototype = Object.create(Series.prototype);
 BubbleSeries.prototype.constructor = BubbleSeries;
-;function Scale(chart, title, scale, direction, type)
-{
+;function Scale(chart, title, scale, direction, type) {
     var ordered = d3.functor(false);
     var self = this;
     this.scale = scale;
@@ -1676,35 +1507,26 @@ BubbleSeries.prototype.constructor = BubbleSeries;
     chart.scales()
         .push(this);
 
-    this.domain = function()
-    {
-        if (this.type == 'linear')
-        {
+    this.domain = function() {
+        if (this.type == 'linear') {
             return [0, this.findMax()];
-        }
-        else if (this.type == 'ordinal')
-        {
+        } else if (this.type == 'ordinal') {
             return this.findOrdinalValues();
         }
-        if (this.type == 'time')
-        {
+        if (this.type == 'time') {
             return [this.minTime(), this.maxTime()];
         }
     };
 
-    this.calculateBounds = function()
-    {
+    this.calculateBounds = function() {
         var bounds = [];
 
-        if (self.horizontal())
-        {
+        if (self.horizontal()) {
             bounds[0] = 0;
             bounds[1] = self.chart.width() - self.chart.margin()
                 .right - self.chart.margin()
                 .left;
-        }
-        else if (self.vertical())
-        {
+        } else if (self.vertical()) {
             bounds[1] = 0;
             bounds[0] = self.chart.height() - self.chart.margin()
                 .top - self.chart.margin()
@@ -1713,12 +1535,10 @@ BubbleSeries.prototype.constructor = BubbleSeries;
         return bounds;
     };
 
-    this.minTime = function()
-    {
+    this.minTime = function() {
         var minTime = new Date(8640000000000000);
 
-        this.series.map(function(series)
-        {
+        this.series.map(function(series) {
             var cMin = d3.min(series.keys());
             minTime = cMin < minTime ? cMin : minTime;
         });
@@ -1726,12 +1546,10 @@ BubbleSeries.prototype.constructor = BubbleSeries;
     };
 
 
-    this.maxTime = function()
-    {
+    this.maxTime = function() {
         var maxTime = new Date(-8640000000000000);
 
-        this.series.map(function(series)
-        {
+        this.series.map(function(series) {
             var cMax = d3.max(series.keys());
             maxTime = cMax > maxTime ? cMax : maxTime;
         });
@@ -1740,35 +1558,29 @@ BubbleSeries.prototype.constructor = BubbleSeries;
     };
 
 
-    this.findOrdinalValues = function()
-    {
+    this.findOrdinalValues = function() {
         var vals = [];
 
-        this.series.map(function(series)
-        {
+        this.series.map(function(series) {
             vals = series.keys();
         });
 
         return vals;
     };
 
-    this.horizontal = function()
-    {
+    this.horizontal = function() {
         return this.direction == 'h';
     };
 
-    this.vertical = function()
-    {
+    this.vertical = function() {
         return this.direction == 'v';
     };
 
 
-    this.findMax = function()
-    {
+    this.findMax = function() {
         var max = 0;
 
-        this.series.map(function(series)
-        {
+        this.series.map(function(series) {
             var m = series.findMax(self);
 
             max = m > max ? m : max;
@@ -1777,24 +1589,20 @@ BubbleSeries.prototype.constructor = BubbleSeries;
         return max;
     };
 
-    this.addSeries = function(series)
-    {
+    this.addSeries = function(series) {
         this.series.push(series);
     };
 
 
-    this.initialize = function()
-    {
+    this.initialize = function() {
         this.applyScaleRange.call(this.scale.domain(this.domain()), this.rangeType);
     };
 
-    this.calculateRange = function()
-    {
+    this.calculateRange = function() {
         this.scale.domain(this.domain());
     };
 
-    this.applyScaleRange = function(rangeType)
-    {
+    this.applyScaleRange = function(rangeType) {
         var bounds = self.calculateBounds();
 
         self.bounds = bounds;
@@ -1804,18 +1612,15 @@ BubbleSeries.prototype.constructor = BubbleSeries;
         ]);
     };
 
-    this.ordered = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.ordered = function(_) {
+        if (!arguments.length) {
             return ordered();
         }
         ordered = d3.functor(_);
         return this;
     };
 }
-;function Axis(chart, name, scale, anchor)
-{
+;function Axis(chart, name, scale, anchor) {
     this.chart = chart;
     this.scale = scale;
     this.anchor = anchor ? anchor : 'left';
@@ -1829,76 +1634,61 @@ BubbleSeries.prototype.constructor = BubbleSeries;
     var orientation = scale.horizontal() ? d3.functor(this.anchor) : d3.functor(this.anchor);
     var textAnchor;
 
-    if (scale.vertical())
-    {
+    if (scale.vertical()) {
         textAnchor = this.anchor == 'left' ? 'end' : 'start';
     }
-    if (scale.horizontal())
-    {
+    if (scale.horizontal()) {
         textAnchor = 'start';
     }
 
-    var format = function(d)
-    {
+    var format = function(d) {
         return d;
     };
 
     this.chart.addAxis(this);
 
-    this.format = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.format = function(_) {
+        if (!arguments.length) {
             return format;
         }
         format = _;
         return this;
     };
 
-    this.orientation = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.orientation = function(_) {
+        if (!arguments.length) {
             return orientation();
         }
         orientation = d3.functor(_);
         return this;
     };
 
-    this.tickSize = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.tickSize = function(_) {
+        if (!arguments.length) {
             return tickSize();
         }
         tickSize = d3.functor(_);
         return this;
     };
 
-    this.tickPadding = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.tickPadding = function(_) {
+        if (!arguments.length) {
             return tickPadding();
         }
         tickPadding = d3.functor(_);
         return this;
     };
 
-    this.textAnchor = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.textAnchor = function(_) {
+        if (!arguments.length) {
             return textAnchor;
         }
         textAnchor = _;
         return this;
     };
 
-    this.labelOrientation = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.labelOrientation = function(_) {
+        if (!arguments.length) {
             return labelOrientation();
         }
 
@@ -1907,8 +1697,7 @@ BubbleSeries.prototype.constructor = BubbleSeries;
         return this;
     };
 
-    this.tickRotation = function()
-    {
+    this.tickRotation = function() {
         var offset = self.tickPadding() + (self.tickSize() * 2);
 
         var rotation = this.labelOrientation() == 'tb' ? 'rotate(90,0,' + offset + ')' : '';
@@ -1916,18 +1705,14 @@ BubbleSeries.prototype.constructor = BubbleSeries;
         return rotation;
     };
 
-    this.transform = function()
-    {
+    this.transform = function() {
         var transform = "translate(";
 
-        if (self.scale.horizontal())
-        {
+        if (self.scale.horizontal()) {
             transform += '0,' + (self.chart.height() - self.chart.margin()
                 .bottom - self.chart.margin()
                 .top) + ')';
-        }
-        else if (self.scale.vertical())
-        {
+        } else if (self.scale.vertical()) {
             var xShift = self.anchor == 'left' ? 0 : self.chart.width() - self.chart.margin()
                 .right - self.chart.margin()
                 .left;
@@ -1937,57 +1722,44 @@ BubbleSeries.prototype.constructor = BubbleSeries;
         return transform;
     };
 
-    this.labelHorizontalPosition = function()
-    {
+    this.labelHorizontalPosition = function() {
         var pos = "";
 
-        if (self.scale.horizontal())
-        {
+        if (self.scale.horizontal()) {
 
-        }
-        else if (self.scale.vertical())
-        {
+        } else if (self.scale.vertical()) {
 
         }
 
         return pos;
     };
 
-    this.labelVerticalPosition = function()
-    {
+    this.labelVerticalPosition = function() {
         var pos = "";
 
-        if (self.scale.horizontal())
-        {
+        if (self.scale.horizontal()) {
 
-        }
-        else if (self.scale.vertical())
-        {
+        } else if (self.scale.vertical()) {
 
         }
 
         return pos;
     };
 
-    this.positionLabels = function(labels)
-    {
+    this.positionLabels = function(labels) {
 
-        if (self.scale.horizontal())
-        {
+        if (self.scale.horizontal()) {
             labels.style('left', 0)
                 .style('bottom', 0)
                 .style('width', '100%')
                 .style('text-align', 'center');
-        }
-        else if (self.scale.vertical())
-        {
+        } else if (self.scale.vertical()) {
             labels.style('left', '0')
                 .style('top', '35%');
         }
     };
 
-    this.initialize = function()
-    {
+    this.initialize = function() {
         this.axis = d3.svg.axis()
             .scale(this.scale.scale)
             .orient(self.orientation())
@@ -2016,8 +1788,7 @@ BubbleSeries.prototype.constructor = BubbleSeries;
 
 
 
-    this.draw = function(dragging)
-    {
+    this.draw = function(dragging) {
         this.axis = d3.svg.axis()
             .scale(this.scale.scale)
             .orient(self.orientation())
@@ -2039,8 +1810,7 @@ BubbleSeries.prototype.constructor = BubbleSeries;
             .text(self.scale.title);
     };
 }
-;function LineSeries(name, chart, data, x, y, color)
-{
+;function LineSeries(name, chart, data, x, y, color) {
 
     Series.call(this, name, chart, data, x, y, color);
 
@@ -2048,16 +1818,14 @@ BubbleSeries.prototype.constructor = BubbleSeries;
 
     var lineType = 'linear';
 
-    var mouseOver = function(d, item)
-    {
+    var mouseOver = function(d, item) {
         self.chart.mouseOver(self, this, d);
 
         d3.select(this)
             .classed("hover", true);
     };
 
-    var mouseOut = function(d, item)
-    {
+    var mouseOut = function(d, item) {
         self.chart.mouseOut(self, this, d);
     };
 
@@ -2073,21 +1841,16 @@ BubbleSeries.prototype.constructor = BubbleSeries;
 
     };
 
-    this.rangeY = function(d)
-    {
+    this.rangeY = function(d) {
         return self.y.scale(self.yFunction()(d));
     };
 
-    this.rangeX = function(d, i)
-    {
+    this.rangeX = function(d, i) {
         var val = 0;
 
-        if (self.x.scale.rangeBand)
-        {
+        if (self.x.scale.rangeBand) {
             val = self.x.scale(self.xFunction()(d)) + (self.x.scale.rangeBand() / 2);
-        }
-        else
-        {
+        } else {
 
             val = self.x.scale(self.xFunction()(d));
         }
@@ -2095,18 +1858,15 @@ BubbleSeries.prototype.constructor = BubbleSeries;
         return val;
     };
 
-    this.lineType = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.lineType = function(_) {
+        if (!arguments.length) {
             return lineType;
         }
         lineType = _;
         return this;
     };
 
-    this.draw = function(dragging)
-    {
+    this.draw = function(dragging) {
         var transform = d3.svg.line()
             .x(self.rangeX)
             .y(self.rangeY)
@@ -2116,8 +1876,7 @@ BubbleSeries.prototype.constructor = BubbleSeries;
 
         var rangeElement = this.chart.chart.selectAll(rangeIdentifier);
 
-        if (!this.rangeExists(rangeElement))
-        {
+        if (!this.rangeExists(rangeElement)) {
             this.chart.chart.append("path")
                 .attr("class", this.name + " in-line")
                 .attr("stroke", this.color)
@@ -2128,7 +1887,9 @@ BubbleSeries.prototype.constructor = BubbleSeries;
                 .on('click', lineClick);
         }
 
-        var duration = dragging ? 0 : 300;
+        var duration = dragging ? 0 : function(d, i) {
+            return 300 + i * 20;
+        };
 
         this.chart.chart.selectAll(rangeIdentifier)
             .datum(this.dataset(), this.matcher)
@@ -2171,8 +1932,7 @@ BubbleSeries.prototype.constructor = BubbleSeries;
             .text(this.tooltipLabel);
     };
 
-    this.rangeExists = function(rangeSelector)
-    {
+    this.rangeExists = function(rangeSelector) {
 
         return rangeSelector[0].length;
     };
@@ -2180,8 +1940,7 @@ BubbleSeries.prototype.constructor = BubbleSeries;
 
 LineSeries.prototype = Object.create(Series.prototype);
 LineSeries.prototype.constructor = LineSeries;
-;function ColumnSeries(name, chart, data, x, y, color)
-{
+;function ColumnSeries(name, chart, data, x, y, color) {
 
     Series.call(this, name, chart, data, x, y, color);
 
@@ -2191,26 +1950,36 @@ LineSeries.prototype.constructor = LineSeries;
 
     var barWidthFunction = this.x.rangeType;
 
-    var mouseOver = function(d, item)
-    {
+    var mouseOver = function(d, item) {
         self.chart.mouseOver(self, this, d);
     };
 
-    var mouseOut = function(d, item)
-    {
+    var mouseOut = function(d, item) {
         self.chart.mouseOut(self, this, d);
     };
 
 
-    this.seriesMax = function(d)
-    {
+    this.series = [{
+        name: 'default',
+        accessor: function(d) {
+            return self.yFunction()(d);
+        },
+        tooltipValue: function(d) {
+            return self.tooltipFunction()(d);
+        },
+        color: d3.functor('silver'),
+        label: 'Value'
+    }];
+
+
+
+    this.seriesMax = function(d) {
         var max = 0;
         var seriesMax = 0;
 
         var stacked = self.stacked();
 
-        for (var series in self.series)
-        {
+        for (var series in self.series) {
             var s = self.series[series];
 
             var seriesValue = s.accessor(d);
@@ -2223,43 +1992,23 @@ LineSeries.prototype.constructor = LineSeries;
         return max;
     };
 
-    this.findMax = function()
-    {
+    this.findMax = function() {
         var max = d3.max(this.data.getData(), this.seriesMax);
 
         return max;
     };
 
 
-    this.series = [
-    {
-        name: 'default',
-        accessor: function(d)
-        {
-            return d.value;
-        },
-        tooltipValue: function(d)
-        {
-            return d.value;
-        },
-        color: d3.functor('silver'),
-        label: 'Value'
-    }];
-
-    this.stacked = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.stacked = function(_) {
+        if (!arguments.length) {
             return stacked();
         }
         stacked = d3.functor(_);
         return this;
     };
 
-    this.calculateYPos = function(func, d)
-    {
-        if (!d.yPos)
-        {
+    this.calculateYPos = function(func, d) {
+        if (!d.yPos) {
             d.yPos = 0;
         }
 
@@ -2268,39 +2017,31 @@ LineSeries.prototype.constructor = LineSeries;
         return d.yPos;
     };
 
-    this.xPosition = function(d)
-    {
+    this.xPosition = function(d) {
         return self.x.scale(self.xFunction()(d));
     };
 
-    this.calculateXPos = function(width, d)
-    {
-        if (!d.xPos)
-        {
+    this.calculateXPos = function(width, d) {
+        if (!d.xPos) {
             d.xPos = self.xPosition(d);
-        }
-        else
-        {
+        } else {
             d.xPos += width;
         }
         return d.xPos;
     };
 
-    this.yPosition = function(d)
-    {
+    this.yPosition = function(d) {
 
         var position = self.stackedBars() ? self.y.scale(self.calculateYPos(self.yFunction(), d)) : self.y.scale(self.yFunction()(d));
 
         return position;
     };
 
-    this.barWidth = function(d)
-    {
+    this.barWidth = function(d) {
         return self.x.scale.rangeBand(d);
     };
 
-    this.groupedBarWidth = function(d)
-    {
+    this.groupedBarWidth = function(d) {
 
         var groupWidth = self.barWidth(d);
 
@@ -2309,35 +2050,29 @@ LineSeries.prototype.constructor = LineSeries;
         return width;
     };
 
-    this.offsetXPosition = function(d)
-    {
+    this.offsetXPosition = function(d) {
         var width = self.groupedBarWidth(d);
         var position = self.stackedBars() ? self.xPosition(d) : self.calculateXPos(width, d);
 
         return position;
     };
 
-    this.barHeight = function(d)
-    {
+    this.barHeight = function(d) {
         return (self.chart.height() - self.chart.margin()
             .top - self.chart.margin()
             .bottom) - self.y.scale(self.yFunction()(d));
     };
 
-    this.stackedBars = function()
-    {
+    this.stackedBars = function() {
         return self.stacked();
     };
 
-    this.className = function(d)
-    {
+    this.className = function(d) {
         return seriesName + 'class bar ' + self.chart.dimensionSelector(d);
     };
 
-    this.draw = function(drag)
-    {
-        var reset = function(d)
-        {
+    this.draw = function(drag) {
+        var reset = function(d) {
             d.yPos = 0;
             d.xPos = 0;
         };
@@ -2353,19 +2088,16 @@ LineSeries.prototype.constructor = LineSeries;
 
         var newBars = newGroups.selectAll('rect.bar');
 
-        var click = function(filter)
-        {
+        var click = function(filter) {
             return self.chart.filterClick(this, filter);
         };
 
-        var duration = function(d, i)
-        {
+        var duration = function(d, i) {
             return 200 + (i * 20);
         };
 
 
-        for (var ser in this.series)
-        {
+        for (var ser in this.series) {
             var s = this.series[ser];
 
             seriesName = s.name;
@@ -2404,6 +2136,8 @@ LineSeries.prototype.constructor = LineSeries;
                 .text(s.label);
         }
     };
+
+    return this;
 }
 
 ColumnSeries.prototype = Object.create(Series.prototype);

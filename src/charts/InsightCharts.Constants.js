@@ -1,5 +1,4 @@
-var InsightConstants = (function()
-{
+var InsightConstants = (function() {
     var exports = {};
 
     exports.Behind = 'behind';

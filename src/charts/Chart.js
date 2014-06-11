@@ -1,5 +1,4 @@
-function Chart(name, element, dimension)
-{
+function Chart(name, element, dimension) {
 
     this.name = name;
     this.element = element;
@@ -26,18 +25,16 @@ function Chart(name, element, dimension)
     var self = this;
     var barPadding = d3.functor(0.1);
 
-    this.addAxis = function(axis)
-    {
+    this.addAxis = function(axis) {
         axes.push(axis);
     };
 
-    this.axes = function()
-    {
+    this.axes = function() {
         return axes;
     };
 
-    this.addClipPath = function()
-    {
+
+    this.addClipPath = function() {
         this.chart.append("clipPath")
             .attr("id", this.clipPath())
             .append("rect")
@@ -51,8 +48,7 @@ function Chart(name, element, dimension)
                 .bottom);
     };
 
-    this.init = function(create, container)
-    {
+    this.init = function(create, container) {
         this.container = create ? d3.select(container)
             .append('div') : d3.select(this.element)
             .append('div');
@@ -77,18 +73,15 @@ function Chart(name, element, dimension)
 
         this.addClipPath();
 
-        scales.map(function(scale)
-        {
+        scales.map(function(scale) {
             scale.initialize();
         });
 
-        axes.map(function(axis)
-        {
+        axes.map(function(axis) {
             axis.initialize();
         });
 
-        if (zoomable)
-        {
+        if (zoomable) {
             this.initZoom();
         }
 
@@ -97,8 +90,7 @@ function Chart(name, element, dimension)
         this.draw(false);
     };
 
-    this.resizeChart = function()
-    {
+    this.resizeChart = function() {
         this.container.style('width', this.width() + "px");
 
         this.chartSVG
@@ -122,52 +114,43 @@ function Chart(name, element, dimension)
                 .bottom);
     };
 
-    this.draw = function(dragging)
-    {
+    this.draw = function(dragging) {
         this.resizeChart();
 
         this.recalculateScales();
 
-        axes.map(function(axis)
-        {
+        axes.map(function(axis) {
             axis.draw(dragging);
         });
 
         this.series()
-            .map(function(series)
-            {
+            .map(function(series) {
                 series.draw(dragging);
             });
     };
 
-    this.recalculateScales = function()
-    {
-        scales.map(function(scale)
-        {
+    this.recalculateScales = function() {
+        scales.map(function(scale) {
             var zx = zoomScale != scale;
-            if (zx)
-            {
+            if (zx) {
                 scale.initialize();
             }
         });
     };
 
-    this.zoomable = function(scale)
-    {
+    this.zoomable = function(scale) {
         zoomable = true;
         zoomScale = scale;
         return this;
     };
 
-    this.initZoom = function()
-    {
+    this.initZoom = function() {
         this.zoom = d3.behavior.zoom()
             .on("zoom", self.dragging.bind(self));
 
         this.zoom.x(zoomScale.scale);
 
-        if (!this.zoomExists())
-        {
+        if (!this.zoomExists()) {
             this.chart.append("rect")
                 .attr("class", "zoompane")
                 .attr("width", this.width())
@@ -182,70 +165,58 @@ function Chart(name, element, dimension)
             .call(this.zoom);
     };
 
-    this.zoomExists = function()
-    {
+    this.zoomExists = function() {
         var z = this.chart.selectAll('.zoompane');
         return z[0].length;
     };
 
-    this.dragging = function()
-    {
+    this.dragging = function() {
         self.draw(true);
     };
 
-    this.barPadding = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.barPadding = function(_) {
+        if (!arguments.length) {
             return barPadding();
         }
         barPadding = d3.functor(_);
         return this;
     };
 
-    this.margin = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.margin = function(_) {
+        if (!arguments.length) {
             return this._margin;
         }
         this._margin = _;
         return this;
     };
 
-    this.clipPath = function()
-    {
+    this.clipPath = function() {
 
         return this.name.split(' ')
             .join('_') + "clip";
     };
 
-    this.filterFunction = function(filter, element)
-    {
+    this.filterFunction = function(filter, element) {
         var value = filter.key ? filter.key : filter;
 
         return {
             name: value,
             element: element,
-            filterFunction: function(d)
-            {
+            filterFunction: function(d) {
                 return String(d) == String(value);
             }
         };
     };
 
-    this.dimensionSelector = function(d)
-    {
+    this.dimensionSelector = function(d) {
 
         var result = self.dimension && d.key.replace ? self.dimension.Name + d.key.replace(/[^A-Z0-9]/ig, "_") : "";
 
         return result;
     };
 
-    this.filterClick = function(element, filter)
-    {
-        if (this.dimension)
-        {
+    this.filterClick = function(element, filter) {
+        if (this.dimension) {
             var selected = d3.select(element)
                 .classed('selected');
 
@@ -258,14 +229,12 @@ function Chart(name, element, dimension)
         }
     };
 
-    this.tooltip = function()
-    {
+    this.tooltip = function() {
 
         this.tip = d3.tip()
             .attr('class', 'd3-tip')
             .offset([-10, 0])
-            .html(function(d)
-            {
+            .html(function(d) {
                 return "<span class='tiplabel'>" + d.label + ": </span><span class='tipvalue'>" + d.value + "</span>";
             });
 
@@ -274,8 +243,7 @@ function Chart(name, element, dimension)
         return this;
     };
 
-    this.mouseOver = function(chart, item, d)
-    {
+    this.mouseOver = function(chart, item, d) {
 
         var tipValue = $(item)
             .find('.tipValue')
@@ -287,8 +255,7 @@ function Chart(name, element, dimension)
             .first()
             .text();
 
-        this.tip.show(
-        {
+        this.tip.show({
             label: tipLabel,
             value: tipValue
         });
@@ -297,18 +264,15 @@ function Chart(name, element, dimension)
             .classed("active", true);
     };
 
-    this.mouseOut = function(chart, item, d)
-    {
+    this.mouseOut = function(chart, item, d) {
         this.tip.hide(d);
 
         d3.select(item)
             .classed("active", false);
     };
 
-    this.width = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.width = function(_) {
+        if (!arguments.length) {
             return width();
         }
 
@@ -316,44 +280,36 @@ function Chart(name, element, dimension)
         return this;
     };
 
-    this.height = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.height = function(_) {
+        if (!arguments.length) {
             return height();
         }
         height = d3.functor(_);
         return this;
     };
 
-    this.series = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.series = function(_) {
+        if (!arguments.length) {
             return series;
         }
         series = _;
     };
 
 
-    this.scales = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.scales = function(_) {
+        if (!arguments.length) {
             return scales;
         }
         scales = _;
     };
 
 
-    this.addHorizontalScale = function(type, typeString, direction)
-    {
+    this.addHorizontalScale = function(type, typeString, direction) {
         var scale = new Scale(this, type, direction, typeString);
     };
 
 
-    this.addHorizontalAxis = function(scale)
-    {
+    this.addHorizontalAxis = function(scale) {
         var axis = new Axis(this, scale, 'h', 'left');
     };
 

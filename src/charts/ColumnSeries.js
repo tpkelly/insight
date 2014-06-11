@@ -1,5 +1,4 @@
-function ColumnSeries(name, chart, data, x, y, color)
-{
+function ColumnSeries(name, chart, data, x, y, color) {
 
     Series.call(this, name, chart, data, x, y, color);
 
@@ -9,26 +8,36 @@ function ColumnSeries(name, chart, data, x, y, color)
 
     var barWidthFunction = this.x.rangeType;
 
-    var mouseOver = function(d, item)
-    {
+    var mouseOver = function(d, item) {
         self.chart.mouseOver(self, this, d);
     };
 
-    var mouseOut = function(d, item)
-    {
+    var mouseOut = function(d, item) {
         self.chart.mouseOut(self, this, d);
     };
 
 
-    this.seriesMax = function(d)
-    {
+    this.series = [{
+        name: 'default',
+        accessor: function(d) {
+            return self.yFunction()(d);
+        },
+        tooltipValue: function(d) {
+            return self.tooltipFunction()(d);
+        },
+        color: d3.functor('silver'),
+        label: 'Value'
+    }];
+
+
+
+    this.seriesMax = function(d) {
         var max = 0;
         var seriesMax = 0;
 
         var stacked = self.stacked();
 
-        for (var series in self.series)
-        {
+        for (var series in self.series) {
             var s = self.series[series];
 
             var seriesValue = s.accessor(d);
@@ -41,43 +50,23 @@ function ColumnSeries(name, chart, data, x, y, color)
         return max;
     };
 
-    this.findMax = function()
-    {
+    this.findMax = function() {
         var max = d3.max(this.data.getData(), this.seriesMax);
 
         return max;
     };
 
 
-    this.series = [
-    {
-        name: 'default',
-        accessor: function(d)
-        {
-            return d.value;
-        },
-        tooltipValue: function(d)
-        {
-            return d.value;
-        },
-        color: d3.functor('silver'),
-        label: 'Value'
-    }];
-
-    this.stacked = function(_)
-    {
-        if (!arguments.length)
-        {
+    this.stacked = function(_) {
+        if (!arguments.length) {
             return stacked();
         }
         stacked = d3.functor(_);
         return this;
     };
 
-    this.calculateYPos = function(func, d)
-    {
-        if (!d.yPos)
-        {
+    this.calculateYPos = function(func, d) {
+        if (!d.yPos) {
             d.yPos = 0;
         }
 
@@ -86,39 +75,31 @@ function ColumnSeries(name, chart, data, x, y, color)
         return d.yPos;
     };
 
-    this.xPosition = function(d)
-    {
+    this.xPosition = function(d) {
         return self.x.scale(self.xFunction()(d));
     };
 
-    this.calculateXPos = function(width, d)
-    {
-        if (!d.xPos)
-        {
+    this.calculateXPos = function(width, d) {
+        if (!d.xPos) {
             d.xPos = self.xPosition(d);
-        }
-        else
-        {
+        } else {
             d.xPos += width;
         }
         return d.xPos;
     };
 
-    this.yPosition = function(d)
-    {
+    this.yPosition = function(d) {
 
         var position = self.stackedBars() ? self.y.scale(self.calculateYPos(self.yFunction(), d)) : self.y.scale(self.yFunction()(d));
 
         return position;
     };
 
-    this.barWidth = function(d)
-    {
+    this.barWidth = function(d) {
         return self.x.scale.rangeBand(d);
     };
 
-    this.groupedBarWidth = function(d)
-    {
+    this.groupedBarWidth = function(d) {
 
         var groupWidth = self.barWidth(d);
 
@@ -127,35 +108,29 @@ function ColumnSeries(name, chart, data, x, y, color)
         return width;
     };
 
-    this.offsetXPosition = function(d)
-    {
+    this.offsetXPosition = function(d) {
         var width = self.groupedBarWidth(d);
         var position = self.stackedBars() ? self.xPosition(d) : self.calculateXPos(width, d);
 
         return position;
     };
 
-    this.barHeight = function(d)
-    {
+    this.barHeight = function(d) {
         return (self.chart.height() - self.chart.margin()
             .top - self.chart.margin()
             .bottom) - self.y.scale(self.yFunction()(d));
     };
 
-    this.stackedBars = function()
-    {
+    this.stackedBars = function() {
         return self.stacked();
     };
 
-    this.className = function(d)
-    {
+    this.className = function(d) {
         return seriesName + 'class bar ' + self.chart.dimensionSelector(d);
     };
 
-    this.draw = function(drag)
-    {
-        var reset = function(d)
-        {
+    this.draw = function(drag) {
+        var reset = function(d) {
             d.yPos = 0;
             d.xPos = 0;
         };
@@ -171,19 +146,16 @@ function ColumnSeries(name, chart, data, x, y, color)
 
         var newBars = newGroups.selectAll('rect.bar');
 
-        var click = function(filter)
-        {
+        var click = function(filter) {
             return self.chart.filterClick(this, filter);
         };
 
-        var duration = function(d, i)
-        {
+        var duration = function(d, i) {
             return 200 + (i * 20);
         };
 
 
-        for (var ser in this.series)
-        {
+        for (var ser in this.series) {
             var s = this.series[ser];
 
             seriesName = s.name;
@@ -222,6 +194,8 @@ function ColumnSeries(name, chart, data, x, y, color)
                 .text(s.label);
         }
     };
+
+    return this;
 }
 
 ColumnSeries.prototype = Object.create(Series.prototype);
