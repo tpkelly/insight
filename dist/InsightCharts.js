@@ -661,6 +661,7 @@ Grouping.prototype.calculateTotals = function()
     exports.ToolTipLabelClass = "tipLabel";
     exports.BarGroupClass = "bargroup";
     exports.ContainerClass = "incontainer";
+    exports.ChartSVG = "chartSVG";
     exports.Bubble = "bubble";
     return exports;
 }());
@@ -852,6 +853,10 @@ Grouping.prototype.calculateTotals = function()
         axes.push(axis);
     };
 
+    this.axes = function()
+    {
+        return axes;
+    };
 
     this.addClipPath = function()
     {
@@ -868,22 +873,26 @@ Grouping.prototype.calculateTotals = function()
                 .bottom);
     };
 
-    this.init = function()
+    this.init = function(create, container)
     {
-        this.container = d3.select(this.element)
-            .append('div')
+        this.container = create ? d3.select(container)
+            .append('div') : d3.select(this.element)
+            .append('div');
+
+        this.container
             .attr('class', InsightConstants.ContainerClass)
             .style('width', this.width() + 'px')
-            .style('position', 'relative');
+            .style('position', 'relative')
+            .style('display', 'inline-block');
 
-        this.chart = this.container
+        this.chartSVG = this.container
             .append("svg")
-            .attr("class", "chart");
-
-        this.chart.attr("width", this.width())
+            .attr("class", InsightConstants.ChartSVG)
+            .attr("width", this.width())
             .attr("height", this.height());
 
-        this.chart = this.chart.append("g")
+        this.chart = this.chartSVG.append("g")
+            .attr('class', InsightConstants.Chart)
             .attr("transform", "translate(" + this.margin()
                 .left + "," + this.margin()
                 .top + ")");
@@ -910,8 +919,34 @@ Grouping.prototype.calculateTotals = function()
         this.draw(false);
     };
 
+    this.resizeChart = function()
+    {
+        this.container.style('width', this.width() + "px");
+
+        this.chartSVG
+            .attr("width", this.width())
+            .attr("height", this.height());
+
+        this.chart = this.chart
+            .attr("transform", "translate(" + this.margin()
+                .left + "," + this.margin()
+                .top + ")");
+
+        this.chart.select("#" + this.clipPath())
+            .append("rect")
+            .attr("x", 1)
+            .attr("y", 0)
+            .attr("width", this.width() - this.margin()
+                .left - this.margin()
+                .right)
+            .attr("height", this.height() - this.margin()
+                .top - this.margin()
+                .bottom);
+    };
+
     this.draw = function(dragging)
     {
+        this.resizeChart();
 
         this.recalculateScales();
 
@@ -934,7 +969,7 @@ Grouping.prototype.calculateTotals = function()
             var zx = zoomScale != scale;
             if (zx)
             {
-                scale.calculateRange();
+                scale.initialize();
             }
         });
     };
@@ -1021,10 +1056,24 @@ Grouping.prototype.calculateTotals = function()
         };
     };
 
+    this.dimensionSelector = function(d)
+    {
+
+        var result = self.dimension && d.key.replace ? self.dimension.Name + d.key.replace(/[^A-Z0-9]/ig, "_") : "";
+
+        return result;
+    };
+
     this.filterClick = function(element, filter)
     {
         if (this.dimension)
         {
+            var selected = d3.select(element)
+                .classed('selected');
+
+            d3.selectAll('.' + self.dimensionSelector(filter))
+                .classed('selected', !selected);
+
             var filterFunction = this.filterFunction(filter, element);
 
             this.filterEvent(this.dimension, filterFunction);
@@ -1199,9 +1248,6 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction)
             this.FilteredDimensions.push(dimension);
         }
 
-        // d3.select(filterFunction.element)
-        //     .classed('selected', true);
-
         var comparerFunction = this.compareFilters(filterFunction);
 
         dims.map(function(dim)
@@ -1214,10 +1260,7 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction)
             //if the dimension is already filtered by this value, toggle (remove) the filter
             if (filterExists)
             {
-
                 self.removeMatchesFromArray(dim.Filters, comparerFunction);
-                // d3.select(filterFunction.element)
-                //     .classed('selected', false);
 
             }
             else
@@ -1538,12 +1581,15 @@ ChartGroup.prototype.removeItemFromArray = function(array, item)
         return this;
     };
 
+    this.selector = this.name + InsightConstants.Bubble;
+
+    this.className = function(d)
+    {
+        return self.selector + " " + InsightConstants.Bubble + " " + self.chart.dimensionSelector(d);
+    };
 
     this.draw = function(drag)
     {
-
-        var selector = this.name + InsightConstants.Bubble;
-
         var duration = drag ? 0 : function(d, i)
         {
             return 200 + (i * 20);
@@ -1565,6 +1611,7 @@ ChartGroup.prototype.removeItemFromArray = function(array, item)
         };
 
 
+
         data.forEach(function(d)
         {
             var radiusInput = radiusFunction(d);
@@ -1579,12 +1626,12 @@ ChartGroup.prototype.removeItemFromArray = function(array, item)
                 return d3.descending(rad(a), rad(b));
             });
 
-        var bubbles = this.chart.chart.selectAll('circle.' + selector)
+        var bubbles = this.chart.chart.selectAll('circle.' + self.selector)
             .data(data, this.matcher);
 
         bubbles.enter()
             .append('circle')
-            .attr('class', selector + " " + InsightConstants.Bubble)
+            .attr('class', self.className)
             .on('mouseover', mouseOver)
             .on('mouseout', mouseOut)
             .on('click', click);
@@ -1978,6 +2025,7 @@ BubbleSeries.prototype.constructor = BubbleSeries;
             .tickFormat(self.format());
 
         var axis = this.chart.chart.selectAll('g.' + self.name + '.' + InsightConstants.AxisClass)
+            .attr('transform', self.transform())
             .call(this.axis);
 
         axis
@@ -2138,6 +2186,7 @@ LineSeries.prototype.constructor = LineSeries;
 
     var self = this;
     var stacked = d3.functor(false);
+    var seriesName = "";
 
     var barWidthFunction = this.x.rangeType;
 
@@ -2152,19 +2201,30 @@ LineSeries.prototype.constructor = LineSeries;
     };
 
 
+    this.seriesMax = function(d)
+    {
+        var max = 0;
+        var seriesMax = 0;
+
+        var stacked = self.stacked();
+
+        for (var series in self.series)
+        {
+            var s = self.series[series];
+
+            var seriesValue = s.accessor(d);
+
+            seriesMax = stacked ? seriesMax + seriesValue : seriesValue;
+
+            max = seriesMax > max ? seriesMax : max;
+        }
+
+        return max;
+    };
+
     this.findMax = function()
     {
-        var self = this;
-
-        var max = 0;
-
-        for (var series in this.series)
-        {
-            var s = this.series[series];
-            var data = this.data.getData();
-            var m = d3.max(data, s.accessor);
-            max = m > max ? m : max;
-        }
+        var max = d3.max(this.data.getData(), this.seriesMax);
 
         return max;
     };
@@ -2268,6 +2328,11 @@ LineSeries.prototype.constructor = LineSeries;
         return self.stacked();
     };
 
+    this.className = function(d)
+    {
+        return seriesName + 'class bar ' + self.chart.dimensionSelector(d);
+    };
+
     this.draw = function(drag)
     {
         var reset = function(d)
@@ -2292,19 +2357,22 @@ LineSeries.prototype.constructor = LineSeries;
             return self.chart.filterClick(this, filter);
         };
 
-        var duration = drag ? 0 : function(d, i)
+        var duration = function(d, i)
         {
-            return 200 + (i * 10);
+            return 200 + (i * 20);
         };
+
 
         for (var ser in this.series)
         {
             var s = this.series[ser];
 
+            seriesName = s.name;
+
             this.yFunction(s.accessor);
 
             newBars = newGroups.append('rect')
-                .attr('class', s.name + 'class bar')
+                .attr('class', self.className)
                 .attr('y', this.y.bounds[0])
                 .attr('height', 0)
                 .attr('fill', s.color)
@@ -2320,7 +2388,7 @@ LineSeries.prototype.constructor = LineSeries;
                 .attr('class', InsightConstants.ToolTipLabelClass);
 
 
-            var bars = groups.selectAll('.' + s.name + 'class.bar')
+            var bars = groups.selectAll('.' + seriesName + 'class.bar')
                 .transition()
                 .duration(duration)
                 .attr('y', this.yPosition)

@@ -31,6 +31,10 @@ function Chart(name, element, dimension)
         axes.push(axis);
     };
 
+    this.axes = function()
+    {
+        return axes;
+    };
 
     this.addClipPath = function()
     {
@@ -47,22 +51,26 @@ function Chart(name, element, dimension)
                 .bottom);
     };
 
-    this.init = function()
+    this.init = function(create, container)
     {
-        this.container = d3.select(this.element)
-            .append('div')
+        this.container = create ? d3.select(container)
+            .append('div') : d3.select(this.element)
+            .append('div');
+
+        this.container
             .attr('class', InsightConstants.ContainerClass)
             .style('width', this.width() + 'px')
-            .style('position', 'relative');
+            .style('position', 'relative')
+            .style('display', 'inline-block');
 
-        this.chart = this.container
+        this.chartSVG = this.container
             .append("svg")
-            .attr("class", "chart");
-
-        this.chart.attr("width", this.width())
+            .attr("class", InsightConstants.ChartSVG)
+            .attr("width", this.width())
             .attr("height", this.height());
 
-        this.chart = this.chart.append("g")
+        this.chart = this.chartSVG.append("g")
+            .attr('class', InsightConstants.Chart)
             .attr("transform", "translate(" + this.margin()
                 .left + "," + this.margin()
                 .top + ")");
@@ -89,8 +97,34 @@ function Chart(name, element, dimension)
         this.draw(false);
     };
 
+    this.resizeChart = function()
+    {
+        this.container.style('width', this.width() + "px");
+
+        this.chartSVG
+            .attr("width", this.width())
+            .attr("height", this.height());
+
+        this.chart = this.chart
+            .attr("transform", "translate(" + this.margin()
+                .left + "," + this.margin()
+                .top + ")");
+
+        this.chart.select("#" + this.clipPath())
+            .append("rect")
+            .attr("x", 1)
+            .attr("y", 0)
+            .attr("width", this.width() - this.margin()
+                .left - this.margin()
+                .right)
+            .attr("height", this.height() - this.margin()
+                .top - this.margin()
+                .bottom);
+    };
+
     this.draw = function(dragging)
     {
+        this.resizeChart();
 
         this.recalculateScales();
 
@@ -113,7 +147,7 @@ function Chart(name, element, dimension)
             var zx = zoomScale != scale;
             if (zx)
             {
-                scale.calculateRange();
+                scale.initialize();
             }
         });
     };
@@ -200,10 +234,24 @@ function Chart(name, element, dimension)
         };
     };
 
+    this.dimensionSelector = function(d)
+    {
+
+        var result = self.dimension && d.key.replace ? self.dimension.Name + d.key.replace(/[^A-Z0-9]/ig, "_") : "";
+
+        return result;
+    };
+
     this.filterClick = function(element, filter)
     {
         if (this.dimension)
         {
+            var selected = d3.select(element)
+                .classed('selected');
+
+            d3.selectAll('.' + self.dimensionSelector(filter))
+                .classed('selected', !selected);
+
             var filterFunction = this.filterFunction(filter, element);
 
             this.filterEvent(this.dimension, filterFunction);

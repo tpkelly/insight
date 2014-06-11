@@ -5,6 +5,7 @@ function ColumnSeries(name, chart, data, x, y, color)
 
     var self = this;
     var stacked = d3.functor(false);
+    var seriesName = "";
 
     var barWidthFunction = this.x.rangeType;
 
@@ -19,19 +20,30 @@ function ColumnSeries(name, chart, data, x, y, color)
     };
 
 
+    this.seriesMax = function(d)
+    {
+        var max = 0;
+        var seriesMax = 0;
+
+        var stacked = self.stacked();
+
+        for (var series in self.series)
+        {
+            var s = self.series[series];
+
+            var seriesValue = s.accessor(d);
+
+            seriesMax = stacked ? seriesMax + seriesValue : seriesValue;
+
+            max = seriesMax > max ? seriesMax : max;
+        }
+
+        return max;
+    };
+
     this.findMax = function()
     {
-        var self = this;
-
-        var max = 0;
-
-        for (var series in this.series)
-        {
-            var s = this.series[series];
-            var data = this.data.getData();
-            var m = d3.max(data, s.accessor);
-            max = m > max ? m : max;
-        }
+        var max = d3.max(this.data.getData(), this.seriesMax);
 
         return max;
     };
@@ -135,6 +147,11 @@ function ColumnSeries(name, chart, data, x, y, color)
         return self.stacked();
     };
 
+    this.className = function(d)
+    {
+        return seriesName + 'class bar ' + self.chart.dimensionSelector(d);
+    };
+
     this.draw = function(drag)
     {
         var reset = function(d)
@@ -159,19 +176,22 @@ function ColumnSeries(name, chart, data, x, y, color)
             return self.chart.filterClick(this, filter);
         };
 
-        var duration = drag ? 0 : function(d, i)
+        var duration = function(d, i)
         {
-            return 200 + (i * 10);
+            return 200 + (i * 20);
         };
+
 
         for (var ser in this.series)
         {
             var s = this.series[ser];
 
+            seriesName = s.name;
+
             this.yFunction(s.accessor);
 
             newBars = newGroups.append('rect')
-                .attr('class', s.name + 'class bar')
+                .attr('class', self.className)
                 .attr('y', this.y.bounds[0])
                 .attr('height', 0)
                 .attr('fill', s.color)
@@ -187,7 +207,7 @@ function ColumnSeries(name, chart, data, x, y, color)
                 .attr('class', InsightConstants.ToolTipLabelClass);
 
 
-            var bars = groups.selectAll('.' + s.name + 'class.bar')
+            var bars = groups.selectAll('.' + seriesName + 'class.bar')
                 .transition()
                 .duration(duration)
                 .attr('y', this.yPosition)

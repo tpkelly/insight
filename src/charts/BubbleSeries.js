@@ -59,12 +59,15 @@ function BubbleSeries(name, chart, data, x, y, color)
         return this;
     };
 
+    this.selector = this.name + InsightConstants.Bubble;
+
+    this.className = function(d)
+    {
+        return self.selector + " " + InsightConstants.Bubble + " " + self.chart.dimensionSelector(d);
+    };
 
     this.draw = function(drag)
     {
-
-        var selector = this.name + InsightConstants.Bubble;
-
         var duration = drag ? 0 : function(d, i)
         {
             return 200 + (i * 20);
@@ -86,6 +89,7 @@ function BubbleSeries(name, chart, data, x, y, color)
         };
 
 
+
         data.forEach(function(d)
         {
             var radiusInput = radiusFunction(d);
@@ -100,12 +104,12 @@ function BubbleSeries(name, chart, data, x, y, color)
                 return d3.descending(rad(a), rad(b));
             });
 
-        var bubbles = this.chart.chart.selectAll('circle.' + selector)
+        var bubbles = this.chart.chart.selectAll('circle.' + self.selector)
             .data(data, this.matcher);
 
         bubbles.enter()
             .append('circle')
-            .attr('class', selector + " " + InsightConstants.Bubble)
+            .attr('class', self.className)
             .on('mouseover', mouseOver)
             .on('mouseout', mouseOut)
             .on('click', click);

@@ -14,6 +14,7 @@ var InsightConstants = (function()
     exports.ToolTipLabelClass = "tipLabel";
     exports.BarGroupClass = "bargroup";
     exports.ContainerClass = "incontainer";
+    exports.ChartSVG = "chartSVG";
     exports.Bubble = "bubble";
     return exports;
 }());

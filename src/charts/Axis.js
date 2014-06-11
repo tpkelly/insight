@@ -210,6 +210,7 @@ function Axis(chart, name, scale, anchor)
             .tickFormat(self.format());
 
         var axis = this.chart.chart.selectAll('g.' + self.name + '.' + InsightConstants.AxisClass)
+            .attr('transform', self.transform())
             .call(this.axis);
 
         axis

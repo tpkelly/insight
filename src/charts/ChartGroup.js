@@ -66,9 +66,6 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction)
             this.FilteredDimensions.push(dimension);
         }
 
-        // d3.select(filterFunction.element)
-        //     .classed('selected', true);
-
         var comparerFunction = this.compareFilters(filterFunction);
 
         dims.map(function(dim)
@@ -81,10 +78,7 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction)
             //if the dimension is already filtered by this value, toggle (remove) the filter
             if (filterExists)
             {
-
                 self.removeMatchesFromArray(dim.Filters, comparerFunction);
-                // d3.select(filterFunction.element)
-                //     .classed('selected', false);
 
             }
             else
