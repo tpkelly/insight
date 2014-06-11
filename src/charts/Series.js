@@ -84,6 +84,7 @@ function Series(name, chart, data, x, y, color)
         {
             return yFunction;
         }
+        tooltipFunction = _;
         yFunction = _;
 
         return this;

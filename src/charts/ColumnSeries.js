@@ -216,7 +216,7 @@ function ColumnSeries(name, chart, data, x, y, color)
                 .attr('height', this.barHeight);
 
             bars.selectAll("." + InsightConstants.ToolTipTextClass)
-                .text(s.tooltipValue);
+                .text(self.tooltipFormat()(s.tooltipValue));
 
             bars.selectAll("." + InsightConstants.ToolTipLabelClass)
                 .text(s.label);
