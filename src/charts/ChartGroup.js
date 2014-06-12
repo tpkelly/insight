@@ -4,7 +4,6 @@ var ChartGroup = function ChartGroup(name) {
     this.Dimensions = [];
     this.FilteredDimensions = [];
     this.Groups = [];
-    this.CumulativeGroups = [];
     this.ComputedGroups = [];
     this.LinkedCharts = [];
     this.NestedGroups = [];
@@ -112,12 +111,6 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
             .forEach(
                 function(group) {
                     group.compute();
-                }
-        );
-        this.CumulativeGroups
-            .forEach(
-                function(group) {
-                    group.calculateTotals();
                 }
         );
 

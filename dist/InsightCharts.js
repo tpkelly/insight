@@ -277,11 +277,12 @@ NestedGroup.prototype.getOrderedData = function() {
  * @class
  */
 function Grouping(dimension) {
-    this._cumulative = false;
+
     this.dimension = dimension;
 
     var sumProperties = [];
     var countProperties = [];
+    var cumulativeProperties = [];
     var averageProperties = [];
     this._compute = null;
 
@@ -313,6 +314,21 @@ function Grouping(dimension) {
         return this;
     };
 
+    /**
+     * The cumulatie function gets or sets the properties whose value occurences will be accumulated across this dimension.
+     * @returns {String[]}
+     */
+    /**
+     * @param {String[]} properties - An array of property names that will have their occuring values accumulated after aggregation
+     * @returns {this}
+     */
+    this.cumulative = function(_) {
+        if (!arguments.length) {
+            return cumulativeProperties;
+        }
+        cumulativeProperties = _;
+        return this;
+    };
 
     /**
      * The count function gets or sets the properties whose value occurences will be counted across this dimension.
@@ -382,13 +398,6 @@ Grouping.prototype.filter = function(f) {
     return this;
 };
 
-Grouping.prototype.cumulative = function(c) {
-    if (!arguments.length) {
-        return this._cumulative;
-    }
-    this._cumulative = c;
-    return this;
-};
 
 /**
  * A Helper function to to return the distinct elements in an array.  Used when properties to be averaged are defined, as they must also be added to the sum properties list without duplicating them.
@@ -499,6 +508,11 @@ Grouping.prototype.initialize = function() {
 
     this._data = data;
 
+    if (this.cumulative()
+        .length) {
+
+    }
+
     return this;
 };
 
@@ -599,34 +613,46 @@ Grouping.prototype.valueAccessor = function(v) {
 };
 
 
+Grouping.prototype.getDescendantProperty = function(obj, desc) {
+    var arr = desc.split(".");
+    while (arr.length && (obj = obj[arr.shift()]));
+    return obj;
+};
+
+Grouping.prototype.getDescendantConainer = function(obj, desc) {
+    var arr = desc.split(".");
+    while (arr.length > 1) {
+        obj = obj[arr.shift()];
+    }
+    return obj;
+};
+
 Grouping.prototype.calculateTotals = function() {
-    if (this._cumulative) {
+
+    var self = this;
+
+    var cumulativeProperties = this.cumulative();
+
+    if (cumulativeProperties.length) {
         var totals = {};
-        var total = 0;
-        var self = this;
+
         var data = this._ordered ? this.getOrderedData() : this.getData();
 
         data
             .forEach(function(d, i) {
 
-                var value = self._valueAccessor(d);
+                cumulativeProperties.map(function(propertyName) {
 
-                if (typeof(value) != "object") {
-                    total += value;
-                    d.Cumulative = total;
-                } else {
-                    for (var property in value) {
-                        var totalName = property + 'Cumulative';
+                    var value = self.getDescendantProperty(d.value, propertyName);
 
-                        if (totals[totalName]) {
-                            totals[totalName] += value[property];
-                            value[totalName] = totals[totalName];
-                        } else {
-                            totals[totalName] = value[property];
-                            value[totalName] = totals[totalName];
-                        }
-                    }
-                }
+                    var totalName = propertyName + 'Cumulative';
+
+                    totals[totalName] = totals[totalName] ? totals[totalName] + value : value;
+
+                    d.value[totalName] = totals[totalName];
+
+                });
+
             });
     }
     return this;
@@ -1151,7 +1177,6 @@ Grouping.prototype.calculateTotals = function() {
     this.Dimensions = [];
     this.FilteredDimensions = [];
     this.Groups = [];
-    this.CumulativeGroups = [];
     this.ComputedGroups = [];
     this.LinkedCharts = [];
     this.NestedGroups = [];
@@ -1259,12 +1284,6 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
             .forEach(
                 function(group) {
                     group.compute();
-                }
-        );
-        this.CumulativeGroups
-            .forEach(
-                function(group) {
-                    group.calculateTotals();
                 }
         );
 

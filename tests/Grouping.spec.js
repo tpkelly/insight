@@ -121,13 +121,19 @@ describe("Grouping tests", function() {
         
         var ndx = crossfilter(dataset);
 
-        var dimension =  chartGroup.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
+        var dimension =  chartGroup.addDimension(ndx, 'age', function(d){return d.Age;}, function(d){return d.Age;});
         
         var group = new Grouping(dimension)
-                        .ordered(true);
+                        .average(['IQ'])
+                        .cumulative(['IQ.Sum','IQ.Average']);
 
-        group.initialize(); 
+        group.initialize();
 
+        group.calculateTotals();
+
+        var data = group.getData();
+
+        console.log(data);
     
     });
     
