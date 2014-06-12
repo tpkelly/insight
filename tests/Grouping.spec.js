@@ -21,7 +21,6 @@ var dataset =
 {"Id":20,"Forename":"Frances","Surname":"Lawson","Country":"Northern Ireland","DisplayColour":"#e739c9","Age":14,"IQ":71}];
 
 
-
 var chartGroup = new ChartGroup('Testing');
 
 describe("Grouping tests", function() {
@@ -129,12 +128,13 @@ describe("Grouping tests", function() {
 
         group.initialize();
 
-        group.calculateTotals();
-
         var data = group.getData();
 
-        console.log(data);
-    
+        
+        expect(data[data.length-1].value.IQ.AverageCumulative).toBe(1203);
+        expect(data[data.length-1].value.IQ.SumCumulative).toBe(1616);
+
+        
     });
     
 

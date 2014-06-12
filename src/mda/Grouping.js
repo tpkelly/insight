@@ -238,7 +238,7 @@ Grouping.prototype.initialize = function() {
 
     if (this.cumulative()
         .length) {
-
+        this.calculateTotals();
     }
 
     return this;
@@ -251,6 +251,10 @@ Grouping.prototype.initialize = function() {
  * @param {object[]} data - The short name used to identify this dimension, and any linked dimensions sharing the same name
  */
 Grouping.prototype.recalculate = function() {
+    if (this.cumulative()
+        .length) {
+        this.calculateTotals();
+    }
     if (this._compute) {
         this._compute();
     }
@@ -341,18 +345,21 @@ Grouping.prototype.valueAccessor = function(v) {
 };
 
 
-Grouping.prototype.getDescendantProperty = function(obj, desc) {
+Grouping.prototype.getDescendant = function(obj, desc) {
     var arr = desc.split(".");
-    while (arr.length && (obj = obj[arr.shift()]));
-    return obj;
-};
+    var name = desc;
+    var container = null;
 
-Grouping.prototype.getDescendantConainer = function(obj, desc) {
-    var arr = desc.split(".");
-    while (arr.length > 1) {
-        obj = obj[arr.shift()];
+    while (arr.length) {
+        name = arr.shift();
+        container = obj;
+        obj = obj[name];
     }
-    return obj;
+    return {
+        container: container,
+        value: obj,
+        propertyName: name
+    };
 };
 
 Grouping.prototype.calculateTotals = function() {
@@ -371,13 +378,13 @@ Grouping.prototype.calculateTotals = function() {
 
                 cumulativeProperties.map(function(propertyName) {
 
-                    var value = self.getDescendantProperty(d.value, propertyName);
+                    var desc = self.getDescendant(d.value, propertyName);
 
-                    var totalName = propertyName + 'Cumulative';
+                    var totalName = desc.propertyName + 'Cumulative';
 
-                    totals[totalName] = totals[totalName] ? totals[totalName] + value : value;
+                    totals[totalName] = totals[totalName] ? totals[totalName] + desc.value : desc.value;
 
-                    d.value[totalName] = totals[totalName];
+                    desc.container[totalName] = totals[totalName];
 
                 });
 

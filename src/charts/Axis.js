@@ -175,6 +175,8 @@ function Axis(chart, name, scale, anchor) {
             .tickFormat(self.format());
 
         var axis = this.chart.chart.selectAll('g.' + self.name + '.' + InsightConstants.AxisClass)
+            .transition()
+            .duration(500)
             .attr('transform', self.transform())
             .call(this.axis);
 
