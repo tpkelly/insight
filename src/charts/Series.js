@@ -7,7 +7,6 @@ function Series(name, chart, data, x, y, color) {
     this.name = name;
     this.color = d3.functor(color);
     this.animationDuration = 300;
-    this.matcher = this.keyAccessor;
 
     x.addSeries(this);
     y.addSeries(this);
@@ -64,6 +63,8 @@ function Series(name, chart, data, x, y, color) {
         return d.key;
     };
 
+    this.matcher = this.keyAccessor;
+
     this.xFunction = function(_) {
         if (!arguments.length) {
             return xFunction;
@@ -79,6 +80,14 @@ function Series(name, chart, data, x, y, color) {
         }
         tooltipFunction = _;
         yFunction = _;
+
+        //todo - fix this
+        if (this.series) {
+            if (this.series.length == 1) {
+                this.series[0].accessor = _;
+                this.series[0].tooltipValue = _;
+            }
+        }
 
         return this;
     };

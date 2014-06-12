@@ -116,19 +116,21 @@ describe("Grouping tests", function() {
 
     });
 
-    it("will filter records properly", function() {
+    
+    it("will calculate a cumulative property", function() {
         
         var ndx = crossfilter(dataset);
 
         var dimension =  chartGroup.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
         
         var group = new Grouping(dimension)
-                                        .filter(function(d){ return d.key=='Scotland';});
+                        .ordered(true);
+
         group.initialize(); 
 
-        var data = group.getOrderedData();
-        
+    
     });
+    
 
 })
 

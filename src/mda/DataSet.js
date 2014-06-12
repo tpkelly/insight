@@ -1,3 +1,9 @@
+/**
+ * A DataSet is wrapper around a simple object array, but providing some functions that are required by charts to load and filter data.
+ * A DataSet should be used with an array of data that is to be charted without being used in a crossfilter or dimensional dataset.
+ * @constructor
+ * @param {object[]} data - The short name used to identify this dimension, and any linked dimensions sharing the same name
+ */
 function DataSet(data) {
 
     this._data = data;

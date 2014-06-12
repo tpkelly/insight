@@ -75,7 +75,6 @@ function BubbleSeries(name, chart, data, x, y, color) {
         };
 
 
-
         data.forEach(function(d) {
             var radiusInput = radiusFunction(d);
 
@@ -89,7 +88,7 @@ function BubbleSeries(name, chart, data, x, y, color) {
             });
 
         var bubbles = this.chart.chart.selectAll('circle.' + self.selector)
-            .data(data, this.matcher);
+            .data(data, self.matcher);
 
         bubbles.enter()
             .append('circle')

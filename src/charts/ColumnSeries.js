@@ -20,10 +20,10 @@ function ColumnSeries(name, chart, data, x, y, color) {
     this.series = [{
         name: 'default',
         accessor: function(d) {
-            return self.yFunction()(d);
+            return d.value.Count;
         },
         tooltipValue: function(d) {
-            return self.tooltipFunction()(d);
+            return d.value.Count;
         },
         color: d3.functor('silver'),
         label: 'Value'

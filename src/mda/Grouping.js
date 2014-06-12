@@ -2,6 +2,7 @@
  * A Grouping is generated on a dimension, to reduce the items in the data set into groups along the provided dimension
  * @constructor
  * @param {Dimension} dimension - The dimension to group
+ * @class
  */
 function Grouping(dimension) {
     this._cumulative = false;
@@ -97,6 +98,10 @@ Grouping.prototype.ordered = function(_) {
     return this;
 };
 
+/**
+ * The filter method gets or sets the function used to filter the results returned by this grouping.
+ * @param {function} filterFunction - A function taking a parameter representing an object in the list.  The function must return true or false as per <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter">Array Filter</a>.
+ */
 Grouping.prototype.filter = function(f) {
     if (!arguments.length) {
         return this._filterFunction;
@@ -113,6 +118,11 @@ Grouping.prototype.cumulative = function(c) {
     return this;
 };
 
+/**
+ * A Helper function to to return the distinct elements in an array.  Used when properties to be averaged are defined, as they must also be added to the sum properties list without duplicating them.
+ * @returns {array} - The input array filtered to only contain unique items
+ * @param {object[]} data - An array from which to remove duplicate values
+ */
 Grouping.prototype.unique = function(array) {
     var a = array.concat();
     for (var i = 0; i < a.length; ++i) {
@@ -121,10 +131,15 @@ Grouping.prototype.unique = function(array) {
                 a.splice(j--, 1);
         }
     }
-
     return a;
 };
 
+
+/**
+ * This method performs the aggregation of the underlying crossfilter dimension, calculating any additional properties during the map-reduce phase.
+ * It must be run prior to a group being used
+ * @todo This should probably be run during the constructor? If not, lazily evaluated by getData() if it hasn't been run already.
+ */
 Grouping.prototype.initialize = function() {
     var propertiesToSum = this.sum();
     var propertiesToCount = this.count();
@@ -187,7 +202,6 @@ Grouping.prototype.initialize = function() {
                     }
                 }
 
-
                 return p;
             },
             function() {
@@ -217,6 +231,11 @@ Grouping.prototype.initialize = function() {
 };
 
 
+/**
+ * This method is called when any post aggregation calculations, provided by the computeFunction() setter, need to be recalculated.
+ * For example, calculating group percentages after totals have been created during map-reduce.
+ * @param {object[]} data - The short name used to identify this dimension, and any linked dimensions sharing the same name
+ */
 Grouping.prototype.recalculate = function() {
     if (this._compute) {
         this._compute();
@@ -224,13 +243,15 @@ Grouping.prototype.recalculate = function() {
 };
 
 
+/**
+ * This method is used to return the group's data, without ordering.  It checks if there is any filtering requested and applies the filter to the return array.
+ * @returns {object[]} return - The grouping's data in an object array, with an object per slice of the dimension.
+ */
 Grouping.prototype.getData = function() {
     var data;
-    if (this._data.all) {
+
+    if (this._data) {
         data = this._data.all();
-    } else {
-        //not a crossfilter set
-        data = this._data;
     }
 
     if (this._filterFunction) {
@@ -241,15 +262,16 @@ Grouping.prototype.getData = function() {
 };
 
 
-
+/**
+ * This method is used to return the group's data, with ordering applied.  It checks if there is any filtering requested and applies the filter to the return array.
+ * @returns {object[]} return - The grouping's data in an object array, with an object per slice of the dimension.
+ */
 Grouping.prototype.getOrderedData = function() {
     var data;
 
-    if (this._data.all) {
+    if (this._data) {
         data = data = this._data.top(Infinity)
             .sort(this.orderFunction());
-    } else {
-        data = this._data.sort(this.orderFunction());
     }
 
     if (this._filterFunction) {
@@ -260,16 +282,30 @@ Grouping.prototype.getOrderedData = function() {
 };
 
 
+/**
+ * This getter/setter defines the post aggregation function that will be run once dimension map-reduce has been performed.  Used for any calculations that require the outputs of the map-reduce stage.
+ * @returns {function}
+ */
+/**
+ * @param {function} compareFunction - A function taking two parameters, that compares them and returns a value greater than 0 then the second parameter will be lower in the ordering than the first.
+ * @returns {this}
+ */
 Grouping.prototype.computeFunction = function(c) {
     this._ordered = true;
     if (!arguments.length) {
         return this._compute;
     }
-    this._compute = c;
+    this._compute = c.bind(this);
     return this;
 };
 
 
+/**
+ * This method gets or sets the function used to compare the elements in this grouping if sorting is requested.  See <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">MDN</a> for examples of comparison functions.
+ * @returns {this}
+ * @param {function} function - The function to be run once once map-reduce has been performed.
+ * @todo Auto-bind to this inside the setter?
+ */
 Grouping.prototype.orderFunction = function(o) {
     if (!arguments.length) {
         return this._orderFunction;

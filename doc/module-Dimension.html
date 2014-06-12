@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Index</title>
+    <title>Module: Dimension</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -34,6 +34,47 @@
     </div>
     <ul class="list">
     
+        <li class="item" data-name="Grouping">
+            <span class="title">
+                <a href="Grouping.html">Grouping</a>
+                
+                <span class="static">static</span>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Grouping#computeFunction"><a href="Grouping.html#computeFunction">computeFunction</a></li>
+            
+                <li data-name="Grouping#filter"><a href="Grouping.html#filter">filter</a></li>
+            
+                <li data-name="Grouping#getData"><a href="Grouping.html#getData">getData</a></li>
+            
+                <li data-name="Grouping#getOrderedData"><a href="Grouping.html#getOrderedData">getOrderedData</a></li>
+            
+                <li data-name="Grouping#initialize"><a href="Grouping.html#initialize">initialize</a></li>
+            
+                <li data-name="Grouping#ordered"><a href="Grouping.html#ordered">ordered</a></li>
+            
+                <li data-name="Grouping#orderFunction"><a href="Grouping.html#orderFunction">orderFunction</a></li>
+            
+                <li data-name="Grouping#recalculate"><a href="Grouping.html#recalculate">recalculate</a></li>
+            
+                <li data-name="Grouping#unique"><a href="Grouping.html#unique">unique</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
         <li class="item" data-name="DataSet">
             <span class="title">
                 <a href="DataSet.html">DataSet</a>
@@ -53,94 +94,92 @@
             </ul>
         </li>
     
-        <li class="item" data-name="Dimension">
-            <span class="title">
-                <a href="Dimension.html">Dimension</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="Grouping">
-            <span class="title">
-                <a href="Grouping.html">Grouping</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            <span class="subtitle">Methods</span>
-            
-                <li data-name="Grouping#average"><a href="Grouping.html#average">average</a></li>
-            
-                <li data-name="Grouping#computeFunction"><a href="Grouping.html#computeFunction">computeFunction</a></li>
-            
-                <li data-name="Grouping#count"><a href="Grouping.html#count">count</a></li>
-            
-                <li data-name="Grouping#filter"><a href="Grouping.html#filter">filter</a></li>
-            
-                <li data-name="Grouping#getData"><a href="Grouping.html#getData">getData</a></li>
-            
-                <li data-name="Grouping#getOrderedData"><a href="Grouping.html#getOrderedData">getOrderedData</a></li>
-            
-                <li data-name="Grouping#initialize"><a href="Grouping.html#initialize">initialize</a></li>
-            
-                <li data-name="Grouping#ordered"><a href="Grouping.html#ordered">ordered</a></li>
-            
-                <li data-name="Grouping#orderFunction"><a href="Grouping.html#orderFunction">orderFunction</a></li>
-            
-                <li data-name="Grouping#recalculate"><a href="Grouping.html#recalculate">recalculate</a></li>
-            
-                <li data-name="Grouping#sum"><a href="Grouping.html#sum">sum</a></li>
-            
-                <li data-name="Grouping#unique"><a href="Grouping.html#unique">unique</a></li>
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
     </ul>
 </div>
     <div class="main">
-        <h1 class="page-title" data-filename="index.html">Index</h1>
+        <h1 class="page-title" data-filename="module-Dimension.html">Module: Dimension</h1>
         
 
 
+
+<section>
+    
+<header>
+    <h2>
+    Dimension
+    </h2>
+    
+</header>  
+
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+            <div class="description">A Dimension organizes a dataset along a particular property, or variation of a property.
+Defining a dimension with a function of:<pre><code>function(d){ return d.Surname; }</code></pre> will slice a dataset by the distinct values of the Surname property.</div>
+        
+        
+        
+<dl class="details">
+    
+        
+    
+    
     
 
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-todo">TODO</dt>
+    <dd class="tag-todo">
+        <ul>
+            <li>reimplement how Dimensions are created.  Too much is inside ChartGroup at the moment, and ChartGroup is becoming redundant and too mixed</li>
+        
+            <li>display function should be provided by a setter.</li>
+        </ul>
+    </dd>
+    
+</dl>
 
+        
+        
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</article>
 
-
-
+</section>  
 
 
 
@@ -149,7 +188,7 @@
         
 
         <footer>
-            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Jun 12 2014 10:40:10 GMT+0100 (BST)
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Jun 12 2014 09:37:26 GMT+0100 (BST)
         </footer>
     </div>
 </div>
