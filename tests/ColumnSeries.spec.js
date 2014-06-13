@@ -46,7 +46,7 @@ describe("Column Series Tests", function() {
         
         var ndx = crossfilter(dataset);
 
-        var dimension =  chartGroup.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
+        var dimension =  charts.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
         
         var group = new Grouping(dimension);
 
@@ -70,7 +70,7 @@ describe("Column Series Tests", function() {
         
         var ndx = crossfilter(dataset);
 
-        var dimension =  chartGroup.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
+        var dimension =  charts.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
         
         var group = new Grouping(dimension);
 
@@ -96,7 +96,7 @@ describe("Column Series Tests", function() {
         
         var ndx = crossfilter(dataset);
 
-        var dimension =  chartGroup.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
+        var dimension =  charts.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
         
         var group = new Grouping(dimension);
 
@@ -121,7 +121,7 @@ describe("Column Series Tests", function() {
         
         var ndx = crossfilter(dataset);
 
-        var dimension =  chartGroup.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
+        var dimension =  charts.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
         
         var group = new Grouping(dimension).average(['Age']);
 
@@ -167,7 +167,7 @@ describe("Column Series Tests", function() {
         
         var ndx = crossfilter(dataset);
 
-        var dimension =  chartGroup.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
+        var dimension =  charts.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
         
         var group = new Grouping(dimension).average(['Age']);
 

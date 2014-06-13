@@ -82,13 +82,15 @@ DataSet.prototype.getOrderedData = function() {
  * @param {function} dimension - The function used to categorize points within the dimension.
  * @param {dimension} dimension - The crossfilter dimension representing this dimension (TODO: create this inside the constructor - should be invisible)
  * @param {function} dimension - The function used to generate a displayable string for this dimension, to be used as a label or otherwise (TODO: is this the business of this constructor or even object?)
+ * @param {boolean} multi - Whether or not this dimension represents a collection of possible values in each item.
  * @class
  */
-var Dimension = function Dimension(name, func, dimension, displayFunction) {
+var Dimension = function Dimension(name, func, dimension, displayFunction, multi) {
     this.Dimension = dimension;
     this.Name = name;
     this.Filters = [];
     this.Function = func;
+    this.multiple = multi;
 
     this.displayFunction = displayFunction ? displayFunction : function(d) {
         return d;
@@ -332,6 +334,7 @@ function Grouping(dimension) {
 
     /**
      * The count function gets or sets the properties whose value occurences will be counted across this dimension.
+     * If the provided property contains an array of values, each distinct value in that array will be counted.
      * @returns {String[]}
      */
     /**
@@ -416,6 +419,8 @@ Grouping.prototype.unique = function(array) {
 };
 
 
+
+
 /**
  * This method performs the aggregation of the underlying crossfilter dimension, calculating any additional properties during the map-reduce phase.
  * It must be run prior to a group being used
@@ -426,85 +431,178 @@ Grouping.prototype.initialize = function() {
     var propertiesToCount = this.count();
     var propertiesToAverage = this.average();
 
-    var data = this.dimension.Dimension.group()
-        .reduce(
-            function(p, v) {
-                p.Count++;
+    var data = [];
 
-                for (var property in propertiesToSum) {
-                    if (v.hasOwnProperty(propertiesToSum[property])) {
-                        p[propertiesToSum[property]].Sum += v[propertiesToSum[property]];
+    var index = 0;
+    var gIndices = {};
+
+    function reduceAdd(p, v) {
+        for (var prop in propertiesToCount) {
+            var propertyName = propertiesToCount[prop];
+
+            if (v.hasOwnProperty(propertyName)) {
+                for (var val in v[propertyName]) {
+                    if (typeof(gIndices[v[propertyName][val]]) != "undefined") {
+                        var gIndex = gIndices[v[propertyName][val]];
+
+                        p.values[gIndex].value++;
+                    } else {
+                        gIndices[v[propertyName][val]] = index;
+
+
+                        p.values[index] = {
+                            key: v[propertyName][val],
+                            value: 1
+                        };
+
+                        index++;
                     }
                 }
+            }
+        }
+        return p;
+    }
 
-                for (var avProperty in propertiesToAverage) {
-                    if (v.hasOwnProperty(propertiesToAverage[avProperty])) {
-                        p[propertiesToAverage[avProperty]].Average = p[propertiesToAverage[avProperty]].Average + ((v[propertiesToAverage[avProperty]] - p[propertiesToAverage[avProperty]].Average) / p.Count);
-                    }
+    function reduceRemove(p, v) {
+        for (var prop in propertiesToCount) {
+            var propertyName = propertiesToCount[prop];
+
+            if (v.hasOwnProperty(propertyName)) {
+                for (var val in v[propertyName]) {
+
+                    var gIndex = gIndices[v[propertyName][val]];
+
+                    p.values[gIndex].value--;
+
                 }
+            }
+        }
+        return p;
+    }
 
-                for (var countProp in propertiesToCount) {
-                    if (v.hasOwnProperty(propertiesToCount[countProp])) {
-                        p[propertiesToCount[countProp]][v[propertiesToCount[countProp]]] = p[propertiesToCount[countProp]].hasOwnProperty(v[propertiesToCount[countProp]]) ? p[propertiesToCount[countProp]][v[propertiesToCount[countProp]]] + 1 : 1;
-                        p[propertiesToCount[countProp]].Total++;
-                    }
-                }
+    function reduceInitial() {
 
-                return p;
-            },
-            function(p, v) {
-                p.Count--;
+        return {
+            values: []
+        };
+    }
 
-                for (var property in propertiesToSum) {
-                    if (v.hasOwnProperty(propertiesToSum[property])) {
-                        p[propertiesToSum[property]].Sum -= v[propertiesToSum[property]];
-                    }
-                }
+    if (this.dimension.multiple) {
+        data = this.dimension.Dimension.groupAll()
+            .reduce(reduceAdd, reduceRemove, reduceInitial);
 
+        this.orderFunction(function(a, b) {
+            return b.value - a.value;
+        });
 
-                for (var countProp in propertiesToCount) {
-                    if (v.hasOwnProperty(propertiesToCount[countProp])) {
-                        p[propertiesToCount[countProp]][v[propertiesToCount[countProp]]] = p[propertiesToCount[countProp]].hasOwnProperty(v[propertiesToCount[countProp]]) ? p[propertiesToCount[countProp]][v[propertiesToCount[countProp]]] - 1 : 1;
-                        p[propertiesToCount[countProp]].Total--;
-                    }
-                }
+    } else {
+        data = this.dimension.Dimension.group()
+            .reduce(
+                function(p, v) {
+                    p.Count++;
 
-                for (var avProperty in propertiesToAverage) {
-                    if (v.hasOwnProperty(propertiesToAverage[avProperty])) {
-                        var valRemoved = v[propertiesToAverage[avProperty]];
-                        var sum = p[propertiesToAverage[avProperty]].Sum;
-                        p[propertiesToAverage[avProperty]].Average = sum / p.Count;
-
-                        var result = p[propertiesToAverage[avProperty]].Average;
-
-                        if (!isFinite(result)) {
-                            p[propertiesToAverage[avProperty]].Average = 0;
+                    for (var property in propertiesToSum) {
+                        if (v.hasOwnProperty(propertiesToSum[property])) {
+                            p[propertiesToSum[property]].Sum += v[propertiesToSum[property]];
                         }
                     }
-                }
 
-                return p;
-            },
-            function() {
-                var p = {
-                    Count: 0
-                };
+                    for (var avProperty in propertiesToAverage) {
+                        if (v.hasOwnProperty(propertiesToAverage[avProperty])) {
+                            p[propertiesToAverage[avProperty]].Average = p[propertiesToAverage[avProperty]].Average + ((v[propertiesToAverage[avProperty]] - p[propertiesToAverage[avProperty]].Average) / p.Count);
+                        }
+                    }
 
-                for (var property in propertiesToSum) {
-                    p[propertiesToSum[property]] = p[propertiesToSum[property]] ? p[propertiesToSum[property]] : {};
-                    p[propertiesToSum[property]].Sum = 0;
+                    for (var countProp in propertiesToCount) {
+                        if (v.hasOwnProperty(propertiesToCount[countProp])) {
+                            var propertyName = propertiesToCount[countProp];
+                            var propertyValue = v[propertiesToCount[countProp]];
+
+                            if (InsightUtils.isArray(propertyValue)) {
+
+                                for (var subIndex in propertyValue) {
+                                    var subVal = propertyValue[subIndex];
+                                    p[propertyName][subVal] = p[propertyName].hasOwnProperty(subVal) ? p[propertyName][subVal] + 1 : 1;
+                                    p[propertyName].Total++;
+                                }
+
+                            } else {
+                                p[propertyName][propertyValue] = p[propertyName].hasOwnProperty(propertyValue) ? p[propertyName][propertyValue] + 1 : 1;
+                                p[propertyName].Total++;
+                            }
+                        }
+                    }
+
+                    return p;
+                },
+                function(p, v) {
+                    p.Count--;
+
+                    for (var property in propertiesToSum) {
+                        if (v.hasOwnProperty(propertiesToSum[property])) {
+                            p[propertiesToSum[property]].Sum -= v[propertiesToSum[property]];
+                        }
+                    }
+
+
+                    for (var countProp in propertiesToCount) {
+                        if (v.hasOwnProperty(propertiesToCount[countProp])) {
+                            var propertyName = propertiesToCount[countProp];
+                            var propertyValue = v[propertiesToCount[countProp]];
+
+                            if (InsightUtils.isArray(propertyValue)) {
+
+                                for (var subIndex in propertyValue) {
+                                    var subVal = propertyValue[subIndex];
+                                    p[propertyName][subVal] = p[propertyName].hasOwnProperty(subVal) ? p[propertyName][subVal] - 1 : 1;
+                                    p[propertyName].Total--;
+                                }
+
+                            } else {
+                                p[propertyName][propertyValue] = p[propertyName].hasOwnProperty(propertyValue) ? p[propertyName][propertyValue] - 1 : 1;
+                                p[propertyName].Total--;
+                            }
+
+                        }
+                    }
+
+                    for (var avProperty in propertiesToAverage) {
+                        if (v.hasOwnProperty(propertiesToAverage[avProperty])) {
+                            var valRemoved = v[propertiesToAverage[avProperty]];
+                            var sum = p[propertiesToAverage[avProperty]].Sum;
+                            p[propertiesToAverage[avProperty]].Average = sum / p.Count;
+
+                            var result = p[propertiesToAverage[avProperty]].Average;
+
+                            if (!isFinite(result)) {
+                                p[propertiesToAverage[avProperty]].Average = 0;
+                            }
+                        }
+                    }
+
+                    return p;
+                },
+                function() {
+                    var p = {
+                        Count: 0
+                    };
+
+                    for (var property in propertiesToSum) {
+                        p[propertiesToSum[property]] = p[propertiesToSum[property]] ? p[propertiesToSum[property]] : {};
+                        p[propertiesToSum[property]].Sum = 0;
+                    }
+                    for (var avProperty in propertiesToAverage) {
+                        p[propertiesToAverage[avProperty]] = p[propertiesToAverage[avProperty]] ? p[propertiesToAverage[avProperty]] : {};
+                        p[propertiesToAverage[avProperty]].Average = 0;
+                    }
+                    for (var countProp in propertiesToCount) {
+                        p[propertiesToCount[countProp]] = p[propertiesToCount[countProp]] ? p[propertiesToCount[countProp]] : {};
+                        p[propertiesToCount[countProp]].Total = 0;
+                    }
+                    return p;
                 }
-                for (var avProperty in propertiesToAverage) {
-                    p[propertiesToAverage[avProperty]] = p[propertiesToAverage[avProperty]] ? p[propertiesToAverage[avProperty]] : {};
-                    p[propertiesToAverage[avProperty]].Average = 0;
-                }
-                for (var countProp in propertiesToCount) {
-                    p[propertiesToCount[countProp]] = p[propertiesToCount[countProp]] ? p[propertiesToCount[countProp]] : {};
-                    p[propertiesToCount[countProp]].Total = 0;
-                }
-                return p;
-            }
         );
+    }
 
     this._data = data;
 
@@ -515,6 +613,8 @@ Grouping.prototype.initialize = function() {
 
     return this;
 };
+
+
 
 
 /**
@@ -540,7 +640,10 @@ Grouping.prototype.recalculate = function() {
 Grouping.prototype.getData = function() {
     var data;
 
-    if (this._data) {
+    if (this.dimension.multiple) {
+        data = this._data.value()
+            .values;
+    } else {
         data = this._data.all();
     }
 
@@ -557,11 +660,15 @@ Grouping.prototype.getData = function() {
  * @returns {object[]} return - The grouping's data in an object array, with an object per slice of the dimension.
  */
 Grouping.prototype.getOrderedData = function() {
-    var data;
 
-    if (this._data) {
-        data = data = this._data.top(Infinity)
+    var data = [];
+
+    if (!this.dimension.multiple) {
+        data = this._data.top(Infinity)
             .sort(this.orderFunction());
+    } else {
+        data = this._data.value()
+            .values.sort(this.orderFunction());
     }
 
     if (this._filterFunction) {
@@ -704,6 +811,27 @@ Grouping.prototype.calculateTotals = function() {
     exports.ContainerClass = "incontainer";
     exports.ChartSVG = "chartSVG";
     exports.Bubble = "bubble";
+    return exports;
+}());
+
+
+/**
+ * This modules contains some helper functions used throughout the library
+ * @module InsightUtils
+ */
+var InsightUtils = (function() {
+
+    var exports = {};
+
+    /**
+     * This is a utility method used to check if an object is an array or not
+     * @returns {boolean} return - is the object an array
+     * @param {object} input - The object to check
+     */
+    exports.isArray = function(obj) {
+        return Object.prototype.toString.call(obj) === '[object Array]';
+    };
+
     return exports;
 }());
 ;function Series(name, chart, data, x, y, color) {
@@ -1207,8 +1335,8 @@ ChartGroup.prototype.addChart = function(chart) {
     return chart;
 };
 
-ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc) {
-    var dimension = new Dimension(name, func, ndx.dimension(func), displayFunc);
+ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc, multi) {
+    var dimension = new Dimension(name, func, ndx.dimension(func), displayFunc, multi);
 
     this.Dimensions.push(dimension);
 

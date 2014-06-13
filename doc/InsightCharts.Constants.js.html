@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Index</title>
+    <title>Source: charts/InsightCharts.Constants.js</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -122,27 +122,56 @@
     </ul>
 </div>
     <div class="main">
-        <h1 class="page-title" data-filename="index.html">Index</h1>
+        <h1 class="page-title" data-filename="InsightCharts.Constants.js.html">Source: charts/InsightCharts.Constants.js</h1>
         
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>var InsightConstants = (function() {
+    var exports = {};
+
+    exports.Behind = 'behind';
+    exports.Front = 'front';
+    exports.AxisTextClass = 'axis-text';
+    exports.AxisLabelClass = 'axis-label';
+    exports.YAxisClass = 'y-axis';
+    exports.AxisClass = 'in-axis';
+    exports.XAxisClass = 'x-axis';
+    exports.XAxisRotation = "rotate(90)";
+    exports.ToolTipTextClass = "tipValue";
+    exports.ToolTipLabelClass = "tipLabel";
+    exports.BarGroupClass = "bargroup";
+    exports.ContainerClass = "incontainer";
+    exports.ChartSVG = "chartSVG";
+    exports.Bubble = "bubble";
+    return exports;
+}());
 
 
-    <h3> </h3>
+/**
+ * This modules contains some helper functions used throughout the library
+ * @module InsightUtils
+ */
+var InsightUtils = (function() {
 
+    var exports = {};
 
+    /**
+     * This is a utility method used to check if an object is an array or not
+     * @returns {boolean} return - is the object an array
+     * @param {object} input - The object to check
+     */
+    exports.isArray = function(obj) {
+        return Object.prototype.toString.call(obj) === '[object Array]';
+    };
 
-
-
-
-
-
-    
-
-
-
-
+    return exports;
+}());
+</code></pre>
+        </article>
+    </section>
 
 
 
