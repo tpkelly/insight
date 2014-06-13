@@ -216,21 +216,5 @@ describe("Grouping tests", function() {
     });
 
 
-    it("will correctly aggregate a multi dimension", function() {
-        
-        var ndx = crossfilter(dataset);
-
-        var dimension =  chartGroup.addDimension(ndx, 'interests', function(d){return d.Interests;}, null, true);
-        
-        var group = new Grouping(dimension).count(["Interests"]);
-
-        group.initialize();
-
-        var data = group.getData();
-
-        console.log(data);
-        
-    });
-
 })
 

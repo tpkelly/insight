@@ -27,8 +27,8 @@ ChartGroup.prototype.addChart = function(chart) {
     return chart;
 };
 
-ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc, multi) {
-    var dimension = new Dimension(name, func, ndx.dimension(func), displayFunc, multi);
+ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc) {
+    var dimension = new Dimension(name, func, ndx.dimension(func), displayFunc);
 
     this.Dimensions.push(dimension);
 

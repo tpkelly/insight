@@ -11,12 +11,11 @@
  * @param {boolean} multi - Whether or not this dimension represents a collection of possible values in each item.
  * @class
  */
-var Dimension = function Dimension(name, func, dimension, displayFunction, multi) {
+var Dimension = function Dimension(name, func, dimension, displayFunction) {
     this.Dimension = dimension;
     this.Name = name;
     this.Filters = [];
     this.Function = func;
-    this.multiple = multi;
 
     this.displayFunction = displayFunction ? displayFunction : function(d) {
         return d;
