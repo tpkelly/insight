@@ -195,8 +195,9 @@ Grouping.prototype.initialize = function() {
 
             if (v.hasOwnProperty(propertyName)) {
                 for (var val in v[propertyName]) {
+                    var property = v[propertyName][val];
 
-                    var gIndex = gIndices[v[propertyName][val]];
+                    var gIndex = gIndices[property];
 
                     p.values[gIndex].value--;
 
@@ -393,8 +394,8 @@ Grouping.prototype.getOrderedData = function() {
         data = this._data.top(Infinity)
             .sort(this.orderFunction());
     } else {
-        data = this._data.value()
-            .values.sort(this.orderFunction());
+        data = this._data.value();
+        data = data.values.sort(this.orderFunction());
     }
 
     if (this._filterFunction) {
