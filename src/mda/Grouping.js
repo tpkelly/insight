@@ -13,7 +13,7 @@ function Grouping(dimension) {
     var cumulativeProperties = [];
     var averageProperties = [];
     this._compute = null;
-
+    this.gIndices = {};
 
     this._valueAccessor = function(d) {
         return d;
@@ -146,18 +146,17 @@ Grouping.prototype.unique = function(array) {
 
 
 
-
 /**
- * This method performs the aggregation of the underlying crossfilter dimension, calculating any additional properties during the map-reduce phase.
- * It must be run prior to a group being used
- * @todo This should probably be run during the constructor? If not, lazily evaluated by getData() if it hasn't been run already.
+ * This aggregation method is tailored to dimensions that can hold multiple values (in an array), therefore they are counted differently.
+ * For example: a property called supportedDevices : ['iPhone5', 'iPhone4'] where the values inside the array are treated as dimensional slices
+ * @constructor
+ * @returns {object[]} return - the array of dimensional groupings resulting from this dimensional aggregation
  */
-Grouping.prototype.initialize = function() {
+Grouping.prototype.reduceMultiDimension = function() {
+
     var propertiesToSum = this.sum();
     var propertiesToCount = this.count();
     var propertiesToAverage = this.average();
-
-    var data = [];
 
     var index = 0;
     var gIndices = {};
@@ -174,7 +173,6 @@ Grouping.prototype.initialize = function() {
                         p.values[gIndex].value++;
                     } else {
                         gIndices[v[propertyName][val]] = index;
-
 
                         p.values[index] = {
                             key: v[propertyName][val],
@@ -200,7 +198,6 @@ Grouping.prototype.initialize = function() {
                     var gIndex = gIndices[property];
 
                     p.values[gIndex].value--;
-
                 }
             }
         }
@@ -214,14 +211,31 @@ Grouping.prototype.initialize = function() {
         };
     }
 
+    data = this.dimension.Dimension.groupAll()
+        .reduce(reduceAdd, reduceRemove, reduceInitial);
+
+    this.orderFunction(function(a, b) {
+        return b.value - a.value;
+    });
+
+    return data;
+};
+
+
+/**
+ * This method performs the aggregation of the underlying crossfilter dimension, calculating any additional properties during the map-reduce phase.
+ * It must be run prior to a group being used
+ * @todo This should probably be run during the constructor? If not, lazily evaluated by getData() if it hasn't been run already.
+ */
+Grouping.prototype.initialize = function() {
+    var propertiesToSum = this.sum();
+    var propertiesToCount = this.count();
+    var propertiesToAverage = this.average();
+
+    var data = [];
+
     if (this.dimension.multiple) {
-        data = this.dimension.Dimension.groupAll()
-            .reduce(reduceAdd, reduceRemove, reduceInitial);
-
-        this.orderFunction(function(a, b) {
-            return b.value - a.value;
-        });
-
+        data = this.reduceMultiDimension();
     } else {
         data = this.dimension.Dimension.group()
             .reduce(
@@ -330,7 +344,6 @@ Grouping.prototype.initialize = function() {
                 }
         );
     }
-
     this._data = data;
 
     if (this.cumulative()
@@ -394,8 +407,13 @@ Grouping.prototype.getOrderedData = function() {
         data = this._data.top(Infinity)
             .sort(this.orderFunction());
     } else {
-        data = this._data.value();
-        data = data.values.sort(this.orderFunction());
+
+        // take shallow copy of array prior to ordering so that ordering is not done in place, which would break ordering of index map. Must be better way to do this.
+        data = this._data.value()
+            .values
+            .slice(0);
+
+        data = data.sort(this.orderFunction());
     }
 
     if (this._filterFunction) {

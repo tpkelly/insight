@@ -1,4 +1,217 @@
-/**
+var InsightConstants = (function() {
+    var exports = {};
+
+    exports.Behind = 'behind';
+    exports.Front = 'front';
+    exports.AxisTextClass = 'axis-text';
+    exports.AxisLabelClass = 'axis-label';
+    exports.YAxisClass = 'y-axis';
+    exports.AxisClass = 'in-axis';
+    exports.XAxisClass = 'x-axis';
+    exports.XAxisRotation = "rotate(90)";
+    exports.ToolTipTextClass = "tipValue";
+    exports.ToolTipLabelClass = "tipLabel";
+    exports.BarGroupClass = "bargroup";
+    exports.ContainerClass = "incontainer";
+    exports.ChartSVG = "chartSVG";
+    exports.Bubble = "bubble";
+    return exports;
+}());
+;var InsightFormatters = (function(d3) {
+    var exports = {};
+
+
+    exports.moduleProperty = 1;
+
+    exports.currencyFormatter = function(value) {
+        var format = d3.format(",f");
+        return '£' + format(value);
+    };
+
+    exports.dateFormatter = function(value) {
+        var format = d3.time.format("%b %Y");
+        return format(value);
+    };
+
+    exports.percentageFormatter = function(value) {
+        var format = d3.format("%");
+        return format(value);
+    };
+
+    return exports;
+}(d3));
+;/**
+ * This modules contains some helper functions used throughout the library
+ * @module InsightUtils
+ */
+var InsightUtils = (function() {
+
+    var exports = {};
+
+    /**
+     * This is a utility method used to check if an object is an array or not
+     * @returns {boolean} return - is the object an array
+     * @param {object} input - The object to check
+     */
+    exports.isArray = function(obj) {
+        return Object.prototype.toString.call(obj) === '[object Array]';
+    };
+
+
+    exports.isDate = function(obj) {
+        return obj instanceof Date;
+    };
+
+    exports.isNumber = function(obj) {
+        return Object.prototype.toString.call(obj) === '[object Number]';
+    };
+
+    exports.removeMatchesFromArray = function(array, comparer) {
+        var self = this;
+        var matches = array.filter(comparer);
+        matches.forEach(function(match) {
+            self.removeItemFromArray(array, match);
+        });
+    };
+
+    exports.removeItemFromArray = function(array, item) {
+        var index = array.indexOf(item);
+        if (index > -1) {
+            array.splice(index, 1);
+        }
+    };
+
+    return exports;
+}());
+;var Dashboard = function Dashboard(name) {
+    this.Name = name;
+    this.Charts = [];
+    this.Dimensions = [];
+    this.FilteredDimensions = [];
+    this.Groups = [];
+    this.ComputedGroups = [];
+    this.LinkedCharts = [];
+    this.NestedGroups = [];
+};
+
+Dashboard.prototype.initCharts = function() {
+    this.Charts
+        .forEach(
+            function(chart) {
+                chart.init();
+            });
+};
+
+Dashboard.prototype.addChart = function(chart) {
+
+    chart.filterEvent = this.chartFilterHandler.bind(this);
+    chart.triggerRedraw = this.redrawCharts.bind(this);
+
+    this.Charts.push(chart);
+
+    return chart;
+};
+
+Dashboard.prototype.addDimension = function(ndx, name, func, displayFunc, multi) {
+    var dimension = new Dimension(name, func, ndx.dimension(func), displayFunc, multi);
+
+    this.Dimensions.push(dimension);
+
+    return dimension;
+};
+
+Dashboard.prototype.compareFilters = function(filterFunction) {
+    return function(d) {
+        return String(d.name) == String(filterFunction.name);
+    };
+};
+
+Dashboard.prototype.chartFilterHandler = function(dimension, filterFunction) {
+    var self = this;
+
+    if (filterFunction) {
+        var dims = this.Dimensions
+            .filter(dimension.comparer);
+
+        var activeDim = this.FilteredDimensions
+            .filter(dimension.comparer);
+
+        if (!activeDim.length) {
+            this.FilteredDimensions.push(dimension);
+        }
+
+        var comparerFunction = this.compareFilters(filterFunction);
+
+        dims.map(function(dim) {
+
+            var filterExists = dim.Filters
+                .filter(comparerFunction)
+                .length;
+
+            //if the dimension is already filtered by this value, toggle (remove) the filter
+            if (filterExists) {
+                self.removeMatchesFromArray(dim.Filters, comparerFunction);
+
+            } else {
+                // add the provided filter to the list for this dimension
+
+                dim.Filters.push(filterFunction);
+            }
+
+            // reset this dimension if no filters exist, else apply the filter to the dataset.
+            if (dim.Filters.length === 0) {
+
+                self.removeItemFromArray(self.FilteredDimensions, dim);
+                dim.Dimension.filterAll();
+
+            } else {
+                dim.Dimension.filter(function(d) {
+                    var vals = dim.Filters
+                        .map(function(func) {
+                            return func.filterFunction(d);
+                        });
+
+                    return vals.filter(function(result) {
+                            return result;
+                        })
+                        .length;
+                });
+            }
+        });
+
+        this.Groups.forEach(function(group) {
+            group.recalculate();
+
+        });
+
+        // recalculate non standard groups
+        this.NestedGroups
+            .forEach(
+                function(group) {
+                    group.updateNestedData();
+                }
+        );
+
+        this.ComputedGroups
+            .forEach(
+                function(group) {
+                    group.compute();
+                }
+        );
+
+        this.redrawCharts();
+    }
+};
+
+
+
+Dashboard.prototype.redrawCharts = function() {
+    for (var i = 0; i < this.Charts
+        .length; i++) {
+        this.Charts[i].draw();
+    }
+};
+;/**
  * A DataSet is wrapper around a simple object array, but providing some functions that are required by charts to load and filter data.
  * A DataSet should be used with an array of data that is to be charted without being used in a crossfilter or dimensional dataset.
  * @constructor
@@ -287,7 +500,7 @@ function Grouping(dimension) {
     var cumulativeProperties = [];
     var averageProperties = [];
     this._compute = null;
-
+    this.gIndices = {};
 
     this._valueAccessor = function(d) {
         return d;
@@ -420,18 +633,17 @@ Grouping.prototype.unique = function(array) {
 
 
 
-
 /**
- * This method performs the aggregation of the underlying crossfilter dimension, calculating any additional properties during the map-reduce phase.
- * It must be run prior to a group being used
- * @todo This should probably be run during the constructor? If not, lazily evaluated by getData() if it hasn't been run already.
+ * This aggregation method is tailored to dimensions that can hold multiple values (in an array), therefore they are counted differently.
+ * For example: a property called supportedDevices : ['iPhone5', 'iPhone4'] where the values inside the array are treated as dimensional slices
+ * @constructor
+ * @returns {object[]} return - the array of dimensional groupings resulting from this dimensional aggregation
  */
-Grouping.prototype.initialize = function() {
+Grouping.prototype.reduceMultiDimension = function() {
+
     var propertiesToSum = this.sum();
     var propertiesToCount = this.count();
     var propertiesToAverage = this.average();
-
-    var data = [];
 
     var index = 0;
     var gIndices = {};
@@ -448,7 +660,6 @@ Grouping.prototype.initialize = function() {
                         p.values[gIndex].value++;
                     } else {
                         gIndices[v[propertyName][val]] = index;
-
 
                         p.values[index] = {
                             key: v[propertyName][val],
@@ -474,7 +685,6 @@ Grouping.prototype.initialize = function() {
                     var gIndex = gIndices[property];
 
                     p.values[gIndex].value--;
-
                 }
             }
         }
@@ -488,14 +698,31 @@ Grouping.prototype.initialize = function() {
         };
     }
 
+    data = this.dimension.Dimension.groupAll()
+        .reduce(reduceAdd, reduceRemove, reduceInitial);
+
+    this.orderFunction(function(a, b) {
+        return b.value - a.value;
+    });
+
+    return data;
+};
+
+
+/**
+ * This method performs the aggregation of the underlying crossfilter dimension, calculating any additional properties during the map-reduce phase.
+ * It must be run prior to a group being used
+ * @todo This should probably be run during the constructor? If not, lazily evaluated by getData() if it hasn't been run already.
+ */
+Grouping.prototype.initialize = function() {
+    var propertiesToSum = this.sum();
+    var propertiesToCount = this.count();
+    var propertiesToAverage = this.average();
+
+    var data = [];
+
     if (this.dimension.multiple) {
-        data = this.dimension.Dimension.groupAll()
-            .reduce(reduceAdd, reduceRemove, reduceInitial);
-
-        this.orderFunction(function(a, b) {
-            return b.value - a.value;
-        });
-
+        data = this.reduceMultiDimension();
     } else {
         data = this.dimension.Dimension.group()
             .reduce(
@@ -604,7 +831,6 @@ Grouping.prototype.initialize = function() {
                 }
         );
     }
-
     this._data = data;
 
     if (this.cumulative()
@@ -668,8 +894,13 @@ Grouping.prototype.getOrderedData = function() {
         data = this._data.top(Infinity)
             .sort(this.orderFunction());
     } else {
-        data = this._data.value();
-        data = data.values.sort(this.orderFunction());
+
+        // take shallow copy of array prior to ordering so that ordering is not done in place, which would break ordering of index map. Must be better way to do this.
+        data = this._data.value()
+            .values
+            .slice(0);
+
+        data = data.sort(this.orderFunction());
     }
 
     if (this._filterFunction) {
@@ -772,69 +1003,6 @@ Grouping.prototype.calculateTotals = function() {
     }
     return this;
 };
-;var InsightFormatters = (function(d3) {
-    var exports = {};
-
-
-    exports.moduleProperty = 1;
-
-    exports.currencyFormatter = function(value) {
-        var format = d3.format(",f");
-        return '£' + format(value);
-    };
-
-    exports.dateFormatter = function(value) {
-        var format = d3.time.format("%b %Y");
-        return format(value);
-    };
-
-    exports.percentageFormatter = function(value) {
-        var format = d3.format("%");
-        return format(value);
-    };
-
-    return exports;
-}(d3));
-;var InsightConstants = (function() {
-    var exports = {};
-
-    exports.Behind = 'behind';
-    exports.Front = 'front';
-    exports.AxisTextClass = 'axis-text';
-    exports.AxisLabelClass = 'axis-label';
-    exports.YAxisClass = 'y-axis';
-    exports.AxisClass = 'in-axis';
-    exports.XAxisClass = 'x-axis';
-    exports.XAxisRotation = "rotate(90)";
-    exports.ToolTipTextClass = "tipValue";
-    exports.ToolTipLabelClass = "tipLabel";
-    exports.BarGroupClass = "bargroup";
-    exports.ContainerClass = "incontainer";
-    exports.ChartSVG = "chartSVG";
-    exports.Bubble = "bubble";
-    return exports;
-}());
-
-
-/**
- * This modules contains some helper functions used throughout the library
- * @module InsightUtils
- */
-var InsightUtils = (function() {
-
-    var exports = {};
-
-    /**
-     * This is a utility method used to check if an object is an array or not
-     * @returns {boolean} return - is the object an array
-     * @param {object} input - The object to check
-     */
-    exports.isArray = function(obj) {
-        return Object.prototype.toString.call(obj) === '[object Array]';
-    };
-
-    return exports;
-}());
 ;function Series(name, chart, data, x, y, color) {
 
     this.chart = chart;
