@@ -203,7 +203,11 @@ function Chart(name, element, dimension) {
             name: value,
             element: element,
             filterFunction: function(d) {
-                return String(d) == String(value);
+                if (Array.isArray(d)) {
+                    return d.indexOf(value) != -1;
+                } else {
+                    return String(d) == String(value);
+                }
             }
         };
     };

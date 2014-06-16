@@ -179,6 +179,8 @@ describe("Grouping tests", function() {
         
     });
 
+
+
     it("will update the count after a dimensional filter", function() {
         
         var ndx = crossfilter(dataset);
@@ -215,6 +217,86 @@ describe("Grouping tests", function() {
         expect(scotland.value.Interests.Total).toBe(6);
     });
 
+
+    it("will correctly aggregate a multi dimension", function() {
+        
+        var ndx = crossfilter(dataset);
+
+        var dimension =  chartGroup.addDimension(ndx, 'interests', function(d){return d.Interests;}, null, true);
+        var ages =  chartGroup.addDimension(ndx, 'ages', function(d){return d.Age;}, null, false);
+        
+        var group = new Grouping(dimension).count(["Interests"]);
+
+        group.initialize();
+
+        var data = group.getData();
+
+        var ballet = group.getData().filter(function(a){ return a.key=='Ballet'; })[0];
+        var triathlon = group.getData().filter(function(a){ return a.key=='Triathlon'; })[0];
+
+        expect(ballet.value).toBe(1);
+        expect(triathlon.value).toBe(11);        
+
+        ages.Dimension.filter(function(d){ 
+            return d > 10; 
+        });
+
+        var data = group.getData();
+
+        ballet = group.getData().filter(function(a){ return a.key=='Ballet'; })[0];
+        triathlon = group.getData().filter(function(a){ return a.key=='Triathlon'; })[0];
+
+        expect(ballet.value).toBe(0);
+        expect(triathlon.value).toBe(6);        
+
+    });
+
+    it("will correctly aggregate a sorted multi dimension", function() {
+        
+        var ndx = crossfilter(dataset);
+
+        var dimension =  chartGroup.addDimension(ndx, 'interests', function(d){return d.Interests;}, null, true);
+        var ages =  chartGroup.addDimension(ndx, 'ages', function(d){return d.Age;}, null, false);
+        
+        var group = new Grouping(dimension).count(["Interests"]);
+
+        group.initialize();
+
+        var data = group.getOrderedData();
+
+        var ballet = group.getData().filter(function(a){ return a.key=='Ballet'; })[0];
+        var triathlon = group.getData().filter(function(a){ return a.key=='Triathlon'; })[0];
+
+        expect(ballet.value).toBe(1);
+        expect(triathlon.value).toBe(11);        
+
+        var current = data[0].value;
+
+        data.forEach(function(d){
+            expect(d.value <= current).toBe(true);
+            current = d.value;
+        });
+
+        ages.Dimension.filter(function(d){ 
+            return d > 10; 
+        });
+
+        data = group.getOrderedData();
+        
+        ballet = group.getData().filter(function(a){ return a.key=='Ballet'; })[0];
+        triathlon = group.getData().filter(function(a){ return a.key=='Triathlon'; })[0];
+
+        expect(ballet.value).toBe(0);
+        expect(triathlon.value).toBe(6);        
+
+        var current = data[0].value;
+
+        data.forEach(function(d){
+            expect(d.value <= current).toBe(true);
+            current = d.value;
+        });
+
+    });
 
 })
 
