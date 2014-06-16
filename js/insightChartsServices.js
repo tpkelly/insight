@@ -1,4 +1,5 @@
-(function() {
+(function()
+{
     'use strict';
 
     /* Services */
@@ -6,11 +7,16 @@
     var insightChartsServices = angular.module('insightChartsServices', ['ngResource']);
 
     insightChartsServices.factory('Examples', ['$resource',
-        function($resource) {
-            return $resource('pages.json', {}, {
-                query: {
+        function($resource)
+        {
+            return $resource('pages.json',
+            {},
+            {
+                query:
+                {
                     method: 'GET',
-                    params: {},
+                    params:
+                    {},
                     isArray: true
                 }
             });
@@ -20,21 +26,46 @@
 
     insightChartsServices.factory('ExamplePage', ['$http',
 
-        function($http) {
+        function($http)
+        {
 
             var factory = {};
 
-            factory.get = function(input, callback) {
+            factory.get = function(input, callback)
+            {
                 $http.get('pages.json')
-                    .success(function(data) {
-                        var page = data.filter(function(item) {
+                    .success(function(data)
+                    {
+                        var page = data.filter(function(item)
+                        {
                             return item.name == input;
                         });
-                        if (page.length == 1) {
+                        if (page.length == 1)
+                        {
                             callback(page[0]);
                         }
 
                         return [];
+                    });
+            };
+
+            return factory;
+        }
+    ]);
+
+    insightChartsServices.factory('DataSet', ['$http',
+
+        function($http)
+        {
+
+            var factory = {};
+
+            factory.get = function(url, callback)
+            {
+                $http.get(url)
+                    .success(function(data)
+                    {
+                        callback(data);
                     });
             };
 

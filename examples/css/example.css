@@ -1,4 +1,5 @@
 .exampleChart svg {
+    position: relative;
     font-size: 12px;
 }
 
@@ -37,6 +38,7 @@ rect.bar:hover
     fill: #34495e;
 }
 
+
 .axis-label
 {
     color: #34495e;
@@ -54,4 +56,9 @@ rect.bar:hover
 .bubble:hover
 {
     stroke: #222;
+}
+
+#toggle
+{
+    display:inline-block;
 }

@@ -20,44 +20,13 @@
         "pageName": "Stacked & Grouped Bar Chart", 
         "script": "examples/stackedBar.js",
         "imageUrl": "images/stackedBar.PNG",
-        "partial": "examples/partials/example.html",
+        "partial": "examples/partials/stacked.html",
         "partialCSS": "examples/css/example.css"
     },
-    {
-        "name": "rangeTarget",
-        "pageName": "Ranges & Targets", 
-        "script": "examples/rangeTarget.js",
-        "imageUrl": "images/rangeTarget.PNG",
-        "partial": "examples/partials/example.html",
-        "partialCSS": "examples/css/example.css"
-    },
-    {
-        "name": "stackedWithTarget",
-        "pageName": "Stacked Bar with Target", 
-        "script": "examples/targets.js",
-        "imageUrl": "images/stackedTarget.PNG",
-        "partial": "examples/partials/example.html",
-        "partialCSS": "examples/css/example.css"
-    },
-    {
-        "name": "Dataset",
-        "pageName": "Crossfiltered Charts", 
-        "script": "examples/dataset.js",
-        "imageUrl": "images/crossfilter.PNG",
-        "partial": "examples/partials/dataset.html",
-        "partialCSS": "examples/css/example.css"
-    },
-    {
-        "name": "rowchart",
-        "pageName": "Row Charts", 
-        "script": "examples/rowChart.js",
-        "imageUrl": "images/barChart.PNG",
-        "partial": "examples/partials/example.html",
-        "partialCSS": "examples/css/example.css"
-    },
+    
     {
         "name": "newcharts",
-        "pageName": "New Format Charts", 
+        "pageName": "Bars & Lines", 
         "script": "examples/newCharts.js",
         "imageUrl": "images/barChart.PNG",
         "partial": "examples/partials/newCharts.html",
@@ -85,6 +54,13 @@
         "script": "examples/appstore.js",
         "imageUrl": "images/barChart.PNG",
         "partial": "examples/partials/appstore.html",
+        "partialCSS": "examples/css/example.css"
+    },
+    {
+        "name": "connect",
+        "pageName": "Connect Charts", 
+        "script": "examples/connect.js",
+        "partial": "examples/partials/connect.html",
         "partialCSS": "examples/css/example.css"
     }
 ]

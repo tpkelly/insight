@@ -1,32 +1,40 @@
-var data = [{
+var data = [
+{
     key: 'England',
     vote: 'Yes',
     value: 10
-}, {
+},
+{
     key: 'England',
     vote: 'No',
     value: 5
-}, {
+},
+{
     key: 'Scotland',
     vote: 'Yes',
     value: 20
-}, {
+},
+{
     key: 'Scotland',
     vote: 'No',
     value: 2
-}, {
+},
+{
     key: 'Wales',
     vote: 'Yes',
     value: 13
-}, {
+},
+{
     key: 'Wales',
     vote: 'No',
     value: 24
-}, {
+},
+{
     key: 'Ireland',
     vote: 'Yes',
     value: 15
-}, {
+},
+{
     key: 'Ireland',
     vote: 'No',
     value: 17
@@ -38,19 +46,23 @@ var voteColours = {
 };
 
 $(document)
-    .ready(function() {
+    .ready(function()
+    {
 
         var exampleGroup = new ChartGroup("Example Group");
 
         var ndx = crossfilter(data);
 
-        var countryFunc = function(d) {
+        var countryFunc = function(d)
+        {
             return d.key;
         };
-        var voteFunc = function(d) {
+        var voteFunc = function(d)
+        {
             return d.vote;
         };
-        var valueFunc = function(d) {
+        var valueFunc = function(d)
+        {
             return d.value;
         };
 
@@ -62,7 +74,8 @@ $(document)
 
 
 
-        var colourFunc = function(d) {
+        var colourFunc = function(d)
+        {
             var colour = d.key == 'Yes' ? '#33ce74' : '#d35400';
             return colour;
         };
@@ -70,7 +83,8 @@ $(document)
         var barChart = new ColumnChart('a', "#exampleChart", countryDimension, countryGrouping)
             .width(300)
             .height(300)
-            .margin({
+            .margin(
+            {
                 top: 20,
                 left: 50,
                 bottom: 80,
@@ -82,7 +96,8 @@ $(document)
         var voteChart = new ColumnChart('s', "#voteChart", voteDimension, voteGrouping)
             .width(300)
             .height(300)
-            .margin({
+            .margin(
+            {
                 top: 20,
                 left: 50,
                 bottom: 80,

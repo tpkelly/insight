@@ -1,60 +1,58 @@
-var data = [{
+var data = [
+{
     key: 'England',
-    value: 10
-}, {
+    value: 53012456
+},
+{
     key: 'Scotland',
-    value: 20
-}, {
+    value: 5295000
+},
+{
     key: 'Wales',
-    value: 13
-}, {
-    key: 'Ireland',
-    value: 15
+    value: 3063456
+},
+{
+    key: 'Northern Ireland',
+    value: 1810863
 }];
 
 $(document)
-    .ready(function() {
+    .ready(function()
+    {
 
         var exampleGroup = new ChartGroup("Example Group");
 
-        var dataset = new Group(data);
+        var dataset = new DataSet(data);
 
-        var barChart = new ColumnChart('', "#exampleChart", {}, dataset)
-            .width(640)
+        var chart = new Chart('Chart 1', "#exampleChart")
+            .width(450)
             .height(400)
-            .margin({
-                top: 20,
-                left: 50,
-                bottom: 80,
-                right: 0
-            })
-            .tickSize(5)
-            .barColor('#ACC3EE')
-            .tooltipLabel('Value');
-
-
-        exampleGroup.addChart(barChart);
-        exampleGroup.initCharts();
-
-        barChart.chart.selectAll("line.horizontalGrid")
-            .data([2, 6, 14])
-            .enter()
-            .append("line")
-            .attr({
-                "class": "horizontalGrid",
-                "x1": barChart.margin()
-                    .right,
-                "x2": barChart.width(),
-                "y1": function(d) {
-                    return barChart.y(d);
-                },
-                "y2": function(d) {
-                    return barChart.y(d);
-                },
-                "fill": "none",
-                "shape-rendering": "crispEdges",
-                "stroke": "silver",
-                "stroke-width": "1px"
+            .margin(
+            {
+                top: 10,
+                left: 150,
+                right: 40,
+                bottom: 120
             });
 
+        var x = new Scale(chart, '', d3.scale.ordinal(), 'h', 'ordinal');
+        var y = new Scale(chart, 'Population', d3.scale.linear(), 'v', 'linear');
+
+        var series = new ColumnSeries('countryColumn', chart, dataset, x, y, 'silver')
+            .yFunction(function(d)
+            {
+                return d.value;
+            })
+            .tooltipFormat(InsightFormatters.currencyFormatter);
+
+        chart.series([series]);
+
+        var xAxis = new Axis(chart, "x", x, 'bottom')
+            .labelOrientation('tb');
+
+        var yAxis = new Axis(chart, "y", y, 'left')
+            .format(d3.format("0,000"));
+
+        exampleGroup.addChart(chart);
+        exampleGroup.initCharts();
     });

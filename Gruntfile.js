@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-    var sourceFiles = ['src/Group.js', 'src/Dimension.js', 'src/InsightCharts.Formatters.js', 'src/InsightCharts.Constants.js', 'src/ChartGroup.js', 'src/BaseChart.js', 'src/Legend.js', 'src/DataTable.js', 'src/BarChart.js', 'src/MultipleChart.js', 'src/GroupedBarChart.js', 'src/StackedBarChart.js', 'src/Timeline.js', 'src/BaseChart.js', 'src/TimelineChart.js', 'src/RowChart.js', 'src/PartitionChart.js'];
+    var sourceFiles = ['src/Group.js', 'src/Dimension.js', 'src/InsightCharts.Formatters.js', 'src/InsightCharts.Constants.js', 'src/ChartGroup.js', 'src/BaseChart.js', 'src/Legend.js', 'src/DataTable.js', 'src/BarChart.js', 'src/MultipleChart.js', 'src/GroupedBarChart.js', 'src/StackedBarChart.js', 'src/Timeline.js', 'src/BaseChart.js', 'src/TimelineChart.js', 'src/RowChart.js', 'src/PartitionChart.js', 'js/*.js'];
 
 
     var mountFolder = function(connect, dir) {
@@ -45,7 +45,7 @@ module.exports = function(grunt) {
             files: ["./js/*.js", "./examples/*.js", "./**/*.html", "index.html"],
             options: {
                 js: {
-                    braceStyle: 'collapse',
+                    braceStyle: 'expand',
                     indentChart: ' ',
                     indentSize: 4,
                     evalCode: true,

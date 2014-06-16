@@ -1,18 +1,23 @@
 $(document)
-    .ready(function() {
-        d3.json('revenuereport.json', function(data) {
+    .ready(function()
+    {
+        d3.json('revenuereport.json', function(data)
+        {
 
             var exampleGroup = new ChartGroup("Example Group");
 
             var ndx = new crossfilter(data);
 
-            var client = exampleGroup.addDimension(ndx, "Client", function(d) {
+            var client = exampleGroup.addDimension(ndx, "Client", function(d)
+            {
                 return d.Client;
-            }, function(d) {
+            }, function(d)
+            {
                 return d.Client;
             });
 
-            var clientData = exampleGroup.aggregate(client, function(d) {
+            var clientData = exampleGroup.aggregate(client, function(d)
+                {
                     return d.CurrentRevenue;
                 })
                 .cumulative(true);
@@ -21,42 +26,45 @@ $(document)
             computeGroupValues(clientData);
 
             var chart = new Chart('Chart 1', "#chart1")
-                .width(250)
+                .width(500)
                 .height(400)
-                .margin({
+                .margin(
+                {
                     top: 10,
-                    left: 70,
+                    left: 130,
                     right: 45,
                     bottom: 150
                 });
 
-            var x = new Scale(chart, d3.scale.ordinal(), 'h', 'ordinal')
+            var x = new Scale(chart, 'Client', d3.scale.ordinal(), 'h', 'ordinal')
                 .ordered(true);
 
-            var y = new Scale(chart, d3.scale.linear(), 'v', 'linear');
-            var y2 = new Scale(chart, d3.scale.linear(), 'v', 'linear');
+            var y = new Scale(chart, 'Revenue', d3.scale.linear(), 'v', 'linear');
+            var y2 = new Scale(chart, '%', d3.scale.linear(), 'v', 'linear');
 
-            var series = new ColumnSeries('clientColumn', chart, clientData, x, y);
+            var series = new ColumnSeries('clientColumn', chart, clientData, x, y); //.tooltipFormat(InsightFormatters.currencyFormatter);
 
             var line = new LineSeries('percentLine', chart, clientData, x, y2, 'cyan')
                 .tooltipFormat(InsightFormatters.percentageFormatter)
-                .tooltipLabelFormat("Percentage");
+                .yFunction(function(d)
+                {
+                    return d.Cumulative;
+                });
 
-            series.series = [{
+            series.series = [
+            {
                 name: 'value',
-                accessor: function(d) {
+                accessor: function(d)
+                {
                     return d.value;
                 },
-                label: 'Value',
                 color: '#e67e22',
-                tooltipValue: function(d) {
+                tooltipValue: function(d)
+                {
                     return InsightFormatters.currencyFormatter(d.value);
                 }
             }];
 
-            line.valueAccessor = function(d) {
-                return d.Cumulative;
-            };
 
             chart.series([series, line]);
 
@@ -78,26 +86,31 @@ $(document)
     });
 
 
-function computeGroupValues(group) {
-    var aggregateFunction = function() {
+function computeGroupValues(group)
+{
+    var aggregateFunction = function()
+    {
 
         var self = this;
         var total = 0;
 
         this.getData()
-            .forEach(function(d) {
+            .forEach(function(d)
+            {
                 total += d.value;
             });
 
         this.getData()
-            .forEach(function(d) {
+            .forEach(function(d)
+            {
                 d.Percentage = d.value / total;
             });
 
     }.bind(group);
 
     group.computeFunction(aggregateFunction)
-        .valueAccessor(function(d) {
+        .valueAccessor(function(d)
+        {
             return d.Percentage;
         })
 

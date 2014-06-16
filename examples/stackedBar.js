@@ -1,19 +1,23 @@
-var data = [{
+var data = [
+{
     key: 'England',
     wins: 10,
     losses: 4,
     target: 5
-}, {
+},
+{
     key: 'Scotland',
     wins: 13,
     losses: 4,
     target: 7
-}, {
+},
+{
     key: 'Wales',
     wins: 2,
     losses: 11,
     target: 6
-}, {
+},
+{
     key: 'Ireland',
     wins: 6,
     losses: 5,
@@ -21,54 +25,73 @@ var data = [{
 }, ];
 
 $(document)
-    .ready(function() {
+    .ready(function()
+    {
 
         var exampleGroup = new ChartGroup("Example Group");
 
-        var dataset = new Group(data);
+        var dataset = new DataSet(data);
 
-        var stackedSeries = [{
-            name: 'wins',
-            label: 'Wins',
-            calculation: function(d) {
+        var chart = new Chart('Chart 1', "#exampleChart")
+            .width(450)
+            .height(400)
+            .margin(
+            {
+                top: 10,
+                left: 150,
+                right: 40,
+                bottom: 90
+            });
+
+        var x = new Scale(chart, 'Country', d3.scale.ordinal(), 'h', 'ordinal');
+        var y = new Scale(chart, '', d3.scale.linear(), 'v', 'linear');
+
+        var series = new ColumnSeries('countryColumn', chart, dataset, x, y, 'silver');
+
+        series.series = [
+        {
+            name: 'value',
+            accessor: function(d)
+            {
                 return d.wins;
             },
-            color: function(d) {
-                return '#acc3ee';
+            label: 'Wins',
+            color: '#e67e22',
+            tooltipValue: function(d)
+            {
+                return d.wins;
             }
-        }, {
-            name: 'losses',
-            label: 'Losses',
-            calculation: function(d) {
+        },
+        {
+            name: 'value2',
+            accessor: function(d)
+            {
                 return d.losses;
             },
-            color: function(d) {
-                return '#e67e22';
+            label: 'Losses',
+            color: '#2980b9',
+            tooltipValue: function(d)
+            {
+                return d.losses;
             }
         }];
 
-        var barChart = new ColumnChart('', "#exampleChart", {}, dataset)
-            .width(640)
-            .height(400)
-            .margin({
-                top: 20,
-                left: 50,
-                bottom: 80,
-                right: 0
-            })
-            .barColor('#ACC3EE')
-            .stacked(true)
-            .series(stackedSeries);
 
+        chart.series([series]);
 
-        exampleGroup.addChart(barChart);
+        var xAxis = new Axis(chart, "x", x, 'bottom')
+            .labelOrientation('tb');
+
+        var yAxis = new Axis(chart, "y", y, 'left')
+            .format(d3.format("0,000"));
+
+        exampleGroup.addChart(chart);
         exampleGroup.initCharts();
 
-
-        $('h1.exampleTitle')
-            .css('cursor', 'pointer')
-            .click(function(d) {
-                barChart.stacked(!barChart.stacked());
-                barChart.draw();
+        $('#toggle')
+            .click(function(d)
+            {
+                series.stacked(!series.stacked());
+                chart.draw();
             });
     });
