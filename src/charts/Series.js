@@ -18,10 +18,6 @@ function Series(name, chart, data, x, y, color) {
 
     // private functions used internally, set by functions below that are exposed on the object
 
-    var tooltipFormat = function(d) {
-        return d;
-    };
-
     var xFunction = function(d) {
         return d.key;
     };
@@ -30,10 +26,17 @@ function Series(name, chart, data, x, y, color) {
         return d.value;
     };
 
+    var tooltipFormat = function(d) {
+        return d;
+    };
 
-    var tooltipFunction = yFunction;
+    var tooltipAccessor = function(d) {
+        return yFunction(d);
+    };
 
-    var tooltipLabel = d3.functor("Label");
+    var tooltipFunction = function(d) {
+        return tooltipFormat(tooltipAccessor(d));
+    };
 
     this.dataset = function() {
         //won't always be x that determines this (rowcharts, bullets etc.), need concept of ordering by data scale?
@@ -63,8 +66,6 @@ function Series(name, chart, data, x, y, color) {
         return d.key;
     };
 
-    this.matcher = this.keyAccessor;
-
     this.xFunction = function(_) {
         if (!arguments.length) {
             return xFunction;
@@ -78,16 +79,8 @@ function Series(name, chart, data, x, y, color) {
         if (!arguments.length) {
             return yFunction;
         }
-        tooltipFunction = _;
-        yFunction = _;
 
-        //todo - fix this
-        if (this.series) {
-            if (this.series.length == 1) {
-                this.series[0].accessor = _;
-                this.series[0].tooltipValue = _;
-            }
-        }
+        yFunction = _;
 
         return this;
     };
@@ -101,6 +94,15 @@ function Series(name, chart, data, x, y, color) {
         return this;
     };
 
+    this.tooltipFormat = function(_) {
+        if (!arguments.length) {
+            return tooltipFormat;
+        }
+        tooltipFormat = _;
+
+        return this;
+    };
+
     this.tooltipFunction = function(_) {
         if (!arguments.length) {
             return tooltipFunction;
@@ -110,30 +112,7 @@ function Series(name, chart, data, x, y, color) {
         return this;
     };
 
-    this.tooltipValue = function(d) {
-        return tooltipFormat(tooltipFunction(d));
-    };
 
-    this.tooltipLabel = function(d) {
-        return tooltipLabel(d);
-    };
-
-    this.tooltipLabelFormat = function(_) {
-
-        if (!arguments.length) {
-            return tooltipLabel;
-        }
-        tooltipLabel = d3.functor(_);
-        return this;
-    };
-
-    this.tooltipFormat = function(_) {
-        if (!arguments.length) {
-            return tooltipFormat;
-        }
-        tooltipFormat = _;
-        return this;
-    };
 
     this.findMax = function(scale) {
         var self = this;

@@ -110,14 +110,8 @@ function LineSeries(name, chart, data, x, y, color) {
         circles.append('svg:text')
             .attr('class', InsightConstants.ToolTipTextClass);
 
-        circles.append('svg:text')
-            .attr('class', InsightConstants.ToolTipLabelClass);
-
         circles.selectAll("." + InsightConstants.ToolTipTextClass)
-            .text(this.tooltipValue);
-
-        circles.selectAll("." + InsightConstants.ToolTipLabelClass)
-            .text(this.tooltipLabel);
+            .text(this.tooltipFunction());
     };
 
     this.rangeExists = function(rangeSelector) {

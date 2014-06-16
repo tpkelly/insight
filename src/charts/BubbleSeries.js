@@ -88,7 +88,7 @@ function BubbleSeries(name, chart, data, x, y, color) {
             });
 
         var bubbles = this.chart.chart.selectAll('circle.' + self.selector)
-            .data(data, self.matcher);
+            .data(data, self.keyAccessor);
 
         bubbles.enter()
             .append('circle')
@@ -107,14 +107,8 @@ function BubbleSeries(name, chart, data, x, y, color) {
         bubbles.append('svg:text')
             .attr('class', InsightConstants.ToolTipTextClass);
 
-        bubbles.append('svg:text')
-            .attr('class', InsightConstants.ToolTipLabelClass);
-
         bubbles.selectAll("." + InsightConstants.ToolTipTextClass)
-            .text(this.tooltipValue);
-
-        bubbles.selectAll("." + InsightConstants.ToolTipLabelClass)
-            .text(this.tooltipLabel);
+            .text(this.tooltipFunction());
     };
 }
 

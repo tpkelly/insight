@@ -239,7 +239,7 @@ function Chart(name, element, dimension) {
             .attr('class', 'd3-tip')
             .offset([-10, 0])
             .html(function(d) {
-                return "<span class='tiplabel'>" + d.label + ": </span><span class='tipvalue'>" + d.value + "</span>";
+                return "<span class='tipvalue'>" + d + "</span>";
             });
 
         this.chart.call(this.tip);
@@ -249,20 +249,12 @@ function Chart(name, element, dimension) {
 
     this.mouseOver = function(chart, item, d) {
 
-        var tipValue = $(item)
-            .find('.tipValue')
+        var tooltip = $(item)
+            .find('.tooltip')
             .first()
             .text();
 
-        var tipLabel = $(item)
-            .find('.tipLabel')
-            .first()
-            .text();
-
-        this.tip.show({
-            label: tipLabel,
-            value: tipValue
-        });
+        this.tip.show(tooltip);
 
         d3.select(item)
             .classed("active", true);

@@ -34,47 +34,6 @@
     </div>
     <ul class="list">
     
-        <li class="item" data-name="Grouping">
-            <span class="title">
-                <a href="Grouping.html">Grouping</a>
-                
-                <span class="static">static</span>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            <span class="subtitle">Methods</span>
-            
-                <li data-name="Grouping#computeFunction"><a href="Grouping.html#computeFunction">computeFunction</a></li>
-            
-                <li data-name="Grouping#filter"><a href="Grouping.html#filter">filter</a></li>
-            
-                <li data-name="Grouping#getData"><a href="Grouping.html#getData">getData</a></li>
-            
-                <li data-name="Grouping#getOrderedData"><a href="Grouping.html#getOrderedData">getOrderedData</a></li>
-            
-                <li data-name="Grouping#initialize"><a href="Grouping.html#initialize">initialize</a></li>
-            
-                <li data-name="Grouping#ordered"><a href="Grouping.html#ordered">ordered</a></li>
-            
-                <li data-name="Grouping#orderFunction"><a href="Grouping.html#orderFunction">orderFunction</a></li>
-            
-                <li data-name="Grouping#recalculate"><a href="Grouping.html#recalculate">recalculate</a></li>
-            
-                <li data-name="Grouping#unique"><a href="Grouping.html#unique">unique</a></li>
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
         <li class="item" data-name="DataSet">
             <span class="title">
                 <a href="DataSet.html">DataSet</a>
@@ -106,6 +65,74 @@
             
             </ul>
             <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="findMax">
+            <span class="title">
+                <a href="findMax.html">findMax</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Grouping">
+            <span class="title">
+                <a href="Grouping.html">Grouping</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Grouping#average"><a href="Grouping.html#average">average</a></li>
+            
+                <li data-name="Grouping#computeFunction"><a href="Grouping.html#computeFunction">computeFunction</a></li>
+            
+                <li data-name="Grouping#count"><a href="Grouping.html#count">count</a></li>
+            
+                <li data-name="Grouping#cumulative"><a href="Grouping.html#cumulative">cumulative</a></li>
+            
+                <li data-name="Grouping#filter"><a href="Grouping.html#filter">filter</a></li>
+            
+                <li data-name="Grouping#getData"><a href="Grouping.html#getData">getData</a></li>
+            
+                <li data-name="Grouping#getOrderedData"><a href="Grouping.html#getOrderedData">getOrderedData</a></li>
+            
+                <li data-name="Grouping#initialize"><a href="Grouping.html#initialize">initialize</a></li>
+            
+                <li data-name="Grouping#ordered"><a href="Grouping.html#ordered">ordered</a></li>
+            
+                <li data-name="Grouping#orderFunction"><a href="Grouping.html#orderFunction">orderFunction</a></li>
+            
+                <li data-name="Grouping#recalculate"><a href="Grouping.html#recalculate">recalculate</a></li>
+            
+                <li data-name="Grouping#reduceMultiDimension"><a href="Grouping.html#reduceMultiDimension">reduceMultiDimension</a></li>
+            
+                <li data-name="Grouping#sum"><a href="Grouping.html#sum">sum</a></li>
+            
+                <li data-name="Grouping#unique"><a href="Grouping.html#unique">unique</a></li>
             
             </ul>
             <ul class="events itemMembers">
@@ -186,14 +213,14 @@
             
 <dt>
     <div class="nameContainer">
-        <h4 class="name" id="average">
+        <h4 class="name" id="seriesMax">
             
-            average<span class="signature">(properties)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{this}</span>
+            seriesMax<span class="signature">(data)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{Number}</span>
         </h4>
     
         
         <div class="tag-source">
-            <a href="Grouping.js.html">Grouping.js</a>, <a href="Grouping.js.html#line69">line 69</a>
+            <a href="ColumnSeries.js.html">charts/ColumnSeries.js</a>, <a href="ColumnSeries.js.html#line39">line 39</a>
         </div>
         
     </div>
@@ -202,6 +229,11 @@
 </dt>
 <dd>
     
+    
+    <div class="description">
+        Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
+This function is mapped across the entire data array by the findMax method.
+    </div>
     
 
     
@@ -231,13 +263,13 @@
 	
         <tr>
             
-                <td class="name"><code>properties</code></td>
+                <td class="name"><code>data</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">String[]</span>
+<span class="param-type">object</span>
 
 
             
@@ -247,7 +279,7 @@
             
             <td class="description last">
                 
-                An array of property names that will have be averaged during aggregation</td>
+                An item in the object array to query</td>
         </tr>
 	
 	
@@ -293,6 +325,10 @@
     
     
 
+
+<h5>Returns:</h5>
+- Description
+<br />
 
     
     
@@ -303,14 +339,14 @@
             
 <dt>
     <div class="nameContainer">
-        <h4 class="name" id="count">
+        <h4 class="name" id="stacked">
             
-            count<span class="signature">(properties)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{this}</span>
+            stacked<span class="signature">(stack)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{object}</span>
         </h4>
     
         
         <div class="tag-source">
-            <a href="Grouping.js.html">Grouping.js</a>, <a href="Grouping.js.html#line53">line 53</a>
+            <a href="ColumnSeries.js.html">charts/ColumnSeries.js</a>, <a href="ColumnSeries.js.html#line80">line 80</a>
         </div>
         
     </div>
@@ -348,13 +384,13 @@
 	
         <tr>
             
-                <td class="name"><code>properties</code></td>
+                <td class="name"><code>stack</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">String[]</span>
+<span class="param-type">boolean</span>
 
 
             
@@ -364,7 +400,7 @@
             
             <td class="description last">
                 
-                An array of property names that will have their occuring values counted during aggregation</td>
+                To stack or not to stack</td>
         </tr>
 	
 	
@@ -411,122 +447,9 @@
     
 
 
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <div class="nameContainer">
-        <h4 class="name" id="sum">
-            
-            sum<span class="signature">(properties)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{this}</span>
-        </h4>
-    
-        
-        <div class="tag-source">
-            <a href="Grouping.js.html">Grouping.js</a>, <a href="Grouping.js.html#line36">line 36</a>
-        </div>
-        
-    </div>
-
-    
-</dt>
-<dd>
-    
-    
-
-    
-    
-    
-    
-    
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>properties</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String[]</span>
-
-
-            
-            </td>
-            
-            
-            
-            <td class="description last">
-                
-                An array of property names in the dataset that will be summed along this grouping's dimension</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-
+<h5>Returns:</h5>
+- Description
+<br />
 
     
     
@@ -550,7 +473,7 @@
         
 
         <footer>
-            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Jun 12 2014 09:39:15 GMT+0100 (BST)
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Mon Jun 16 2014 17:08:04 GMT+0100 (BST)
         </footer>
     </div>
 </div>

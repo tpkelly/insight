@@ -9,8 +9,7 @@ var InsightConstants = (function() {
     exports.AxisClass = 'in-axis';
     exports.XAxisClass = 'x-axis';
     exports.XAxisRotation = "rotate(90)";
-    exports.ToolTipTextClass = "tipValue";
-    exports.ToolTipLabelClass = "tipLabel";
+    exports.ToolTipTextClass = "tooltip";
     exports.BarGroupClass = "bargroup";
     exports.ContainerClass = "incontainer";
     exports.ChartSVG = "chartSVG";
@@ -636,7 +635,6 @@ Grouping.prototype.unique = function(array) {
 /**
  * This aggregation method is tailored to dimensions that can hold multiple values (in an array), therefore they are counted differently.
  * For example: a property called supportedDevices : ['iPhone5', 'iPhone4'] where the values inside the array are treated as dimensional slices
- * @constructor
  * @returns {object[]} return - the array of dimensional groupings resulting from this dimensional aggregation
  */
 Grouping.prototype.reduceMultiDimension = function() {
@@ -1023,10 +1021,6 @@ Grouping.prototype.calculateTotals = function() {
 
     // private functions used internally, set by functions below that are exposed on the object
 
-    var tooltipFormat = function(d) {
-        return d;
-    };
-
     var xFunction = function(d) {
         return d.key;
     };
@@ -1035,10 +1029,17 @@ Grouping.prototype.calculateTotals = function() {
         return d.value;
     };
 
+    var tooltipFormat = function(d) {
+        return d;
+    };
 
-    var tooltipFunction = yFunction;
+    var tooltipAccessor = function(d) {
+        return yFunction(d);
+    };
 
-    var tooltipLabel = d3.functor("Label");
+    var tooltipFunction = function(d) {
+        return tooltipFormat(tooltipAccessor(d));
+    };
 
     this.dataset = function() {
         //won't always be x that determines this (rowcharts, bullets etc.), need concept of ordering by data scale?
@@ -1068,8 +1069,6 @@ Grouping.prototype.calculateTotals = function() {
         return d.key;
     };
 
-    this.matcher = this.keyAccessor;
-
     this.xFunction = function(_) {
         if (!arguments.length) {
             return xFunction;
@@ -1083,16 +1082,8 @@ Grouping.prototype.calculateTotals = function() {
         if (!arguments.length) {
             return yFunction;
         }
-        tooltipFunction = _;
-        yFunction = _;
 
-        //todo - fix this
-        if (this.series) {
-            if (this.series.length == 1) {
-                this.series[0].accessor = _;
-                this.series[0].tooltipValue = _;
-            }
-        }
+        yFunction = _;
 
         return this;
     };
@@ -1106,6 +1097,15 @@ Grouping.prototype.calculateTotals = function() {
         return this;
     };
 
+    this.tooltipFormat = function(_) {
+        if (!arguments.length) {
+            return tooltipFormat;
+        }
+        tooltipFormat = _;
+
+        return this;
+    };
+
     this.tooltipFunction = function(_) {
         if (!arguments.length) {
             return tooltipFunction;
@@ -1115,30 +1115,7 @@ Grouping.prototype.calculateTotals = function() {
         return this;
     };
 
-    this.tooltipValue = function(d) {
-        return tooltipFormat(tooltipFunction(d));
-    };
 
-    this.tooltipLabel = function(d) {
-        return tooltipLabel(d);
-    };
-
-    this.tooltipLabelFormat = function(_) {
-
-        if (!arguments.length) {
-            return tooltipLabel;
-        }
-        tooltipLabel = d3.functor(_);
-        return this;
-    };
-
-    this.tooltipFormat = function(_) {
-        if (!arguments.length) {
-            return tooltipFormat;
-        }
-        tooltipFormat = _;
-        return this;
-    };
 
     this.findMax = function(scale) {
         var self = this;
@@ -1400,7 +1377,7 @@ Grouping.prototype.calculateTotals = function() {
             .attr('class', 'd3-tip')
             .offset([-10, 0])
             .html(function(d) {
-                return "<span class='tiplabel'>" + d.label + ": </span><span class='tipvalue'>" + d.value + "</span>";
+                return "<span class='tipvalue'>" + d + "</span>";
             });
 
         this.chart.call(this.tip);
@@ -1410,20 +1387,12 @@ Grouping.prototype.calculateTotals = function() {
 
     this.mouseOver = function(chart, item, d) {
 
-        var tipValue = $(item)
-            .find('.tipValue')
+        var tooltip = $(item)
+            .find('.tooltip')
             .first()
             .text();
 
-        var tipLabel = $(item)
-            .find('.tipLabel')
-            .first()
-            .text();
-
-        this.tip.show({
-            label: tipLabel,
-            value: tipValue
-        });
+        this.tip.show(tooltip);
 
         d3.select(item)
             .classed("active", true);
@@ -1849,7 +1818,7 @@ ChartGroup.prototype.removeItemFromArray = function(array, item) {
             });
 
         var bubbles = this.chart.chart.selectAll('circle.' + self.selector)
-            .data(data, self.matcher);
+            .data(data, self.keyAccessor);
 
         bubbles.enter()
             .append('circle')
@@ -1868,14 +1837,8 @@ ChartGroup.prototype.removeItemFromArray = function(array, item) {
         bubbles.append('svg:text')
             .attr('class', InsightConstants.ToolTipTextClass);
 
-        bubbles.append('svg:text')
-            .attr('class', InsightConstants.ToolTipLabelClass);
-
         bubbles.selectAll("." + InsightConstants.ToolTipTextClass)
-            .text(this.tooltipValue);
-
-        bubbles.selectAll("." + InsightConstants.ToolTipLabelClass)
-            .text(this.tooltipLabel);
+            .text(this.tooltipFunction());
     };
 }
 
@@ -2313,14 +2276,8 @@ BubbleSeries.prototype.constructor = BubbleSeries;
         circles.append('svg:text')
             .attr('class', InsightConstants.ToolTipTextClass);
 
-        circles.append('svg:text')
-            .attr('class', InsightConstants.ToolTipLabelClass);
-
         circles.selectAll("." + InsightConstants.ToolTipTextClass)
-            .text(this.tooltipValue);
-
-        circles.selectAll("." + InsightConstants.ToolTipLabelClass)
-            .text(this.tooltipLabel);
+            .text(this.tooltipFunction());
     };
 
     this.rangeExists = function(rangeSelector) {
@@ -2353,17 +2310,22 @@ LineSeries.prototype.constructor = LineSeries;
     this.series = [{
         name: 'default',
         accessor: function(d) {
-            return d.value.Count;
+            return self.yFunction()(d);
         },
         tooltipValue: function(d) {
-            return d.value.Count;
+            return self.tooltipFunction()(d);
         },
         color: d3.functor('silver'),
         label: 'Value'
     }];
 
 
-
+    /**
+     * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
+     * This function is mapped across the entire data array by the findMax method.
+     * @returns {Number} return - Description
+     * @param {object} data - An item in the object array to query
+     */
     this.seriesMax = function(d) {
         var max = 0;
         var seriesMax = 0;
@@ -2383,6 +2345,13 @@ LineSeries.prototype.constructor = LineSeries;
         return max;
     };
 
+
+    /**
+     * This method returns the largest value on the value axis of this ColumnSeries, checking all series functions in the series on all points.
+     * This function is mapped across the entire data array by the findMax method.
+     * @constructor
+     * @returns {Number} return - The largest value on the value scale of this ColumnSeries
+     */
     this.findMax = function() {
         var max = d3.max(this.data.getData(), this.seriesMax);
 
@@ -2390,6 +2359,14 @@ LineSeries.prototype.constructor = LineSeries;
     };
 
 
+    /**
+     * This method gets or sets whether or not the series in this ColumnSeries are to be stacked or not.  This is false by default.
+     * @returns {boolean} - Whether or not the columns are stacked (they are grouped if this returns false)
+     */
+    /**
+     * @returns {object} return - Description
+     * @param {boolean} stack - To stack or not to stack
+     */
     this.stacked = function(_) {
         if (!arguments.length) {
             return stacked();
@@ -2423,7 +2400,9 @@ LineSeries.prototype.constructor = LineSeries;
 
     this.yPosition = function(d) {
 
-        var position = self.stackedBars() ? self.y.scale(self.calculateYPos(self.yFunction(), d)) : self.y.scale(self.yFunction()(d));
+        var func = self.series[self.currentSeries].accessor;
+
+        var position = self.stackedBars() ? self.y.scale(self.calculateYPos(func, d)) : self.y.scale(func(d));
 
         return position;
     };
@@ -2449,9 +2428,11 @@ LineSeries.prototype.constructor = LineSeries;
     };
 
     this.barHeight = function(d) {
+        var func = self.series[self.currentSeries].accessor;
+
         return (self.chart.height() - self.chart.margin()
             .top - self.chart.margin()
-            .bottom) - self.y.scale(self.yFunction()(d));
+            .bottom) - self.y.scale(func(d));
     };
 
     this.stackedBars = function() {
@@ -2470,7 +2451,7 @@ LineSeries.prototype.constructor = LineSeries;
 
         var groups = this.chart.chart
             .selectAll('g.' + InsightConstants.BarGroupClass)
-            .data(this.dataset(), this.matcher)
+            .data(this.dataset(), this.keyAccessor)
             .each(reset);
 
         var newGroups = groups.enter()
@@ -2489,11 +2470,14 @@ LineSeries.prototype.constructor = LineSeries;
 
 
         for (var ser in this.series) {
+
+            this.currentSeries = ser;
+
             var s = this.series[ser];
 
             seriesName = s.name;
 
-            this.yFunction(s.accessor);
+            //this.yFunction(s.accessor);
 
             newBars = newGroups.append('rect')
                 .attr('class', self.className)
@@ -2508,10 +2492,6 @@ LineSeries.prototype.constructor = LineSeries;
             newBars.append('svg:text')
                 .attr('class', InsightConstants.ToolTipTextClass);
 
-            newBars.append('svg:text')
-                .attr('class', InsightConstants.ToolTipLabelClass);
-
-
             var bars = groups.selectAll('.' + seriesName + 'class.bar')
                 .transition()
                 .duration(duration)
@@ -2521,10 +2501,7 @@ LineSeries.prototype.constructor = LineSeries;
                 .attr('height', this.barHeight);
 
             bars.selectAll("." + InsightConstants.ToolTipTextClass)
-                .text(self.tooltipFormat()(s.tooltipValue));
-
-            bars.selectAll("." + InsightConstants.ToolTipLabelClass)
-                .text(s.label);
+                .text(s.tooltipValue);
         }
     };
 
