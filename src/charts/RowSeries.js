@@ -1,11 +1,12 @@
-function ColumnSeries(name, chart, data, x, y, color) {
+function RowSeries(name, chart, data, x, y, color) {
 
     Series.call(this, name, chart, data, x, y, color);
 
     var self = this;
     var stacked = d3.functor(false);
     var seriesName = "";
-    var barWidthFunction = this.x.rangeType;
+    var tooltipExists = false;
+
 
     var mouseOver = function(d, item) {
         self.chart.mouseOver(self, this, d);
@@ -19,7 +20,7 @@ function ColumnSeries(name, chart, data, x, y, color) {
     this.series = [{
         name: 'default',
         accessor: function(d) {
-            return self.yFunction()(d);
+            return self.xFunction()(d);
         },
         tooltipValue: function(d) {
             return self.tooltipFunction()(d);
@@ -27,6 +28,21 @@ function ColumnSeries(name, chart, data, x, y, color) {
         color: d3.functor('silver'),
         label: 'Value'
     }];
+
+
+    /**
+     * RowSeries overrides the standard key function used by most, vertical charts.
+     * @returns {object[]} return - The keys along the domain axis for this row series
+     */
+    this.keys = function() {
+        return self.dataset()
+            .map(self.yFunction());
+    };
+
+
+    this.tooltipFunction(function(d) {
+        return self.tooltipFormat()(self.xFunction()(d));
+    });
 
 
     /**
@@ -84,64 +100,63 @@ function ColumnSeries(name, chart, data, x, y, color) {
         return this;
     };
 
-    this.calculateYPos = function(func, d) {
-        if (!d.yPos) {
-            d.yPos = 0;
+    this.calculateXPos = function(func, d) {
+        if (!d.xPos) {
+            d.xPos = 0;
         }
+        var myPosition = d.xPos;
 
-        d.yPos += func(d);
+        d.xPos += func(d);
 
+        return myPosition;
+    };
+
+    this.yPosition = function(d) {
+        return self.y.scale(self.yFunction()(d));
+    };
+
+    this.calculateYPos = function(thickness, d) {
+        if (!d.yPos) {
+            d.yPos = self.yPosition(d);
+        } else {
+            d.yPos += thickness;
+        }
         return d.yPos;
     };
 
     this.xPosition = function(d) {
-        return self.x.scale(self.xFunction()(d));
-    };
-
-    this.calculateXPos = function(width, d) {
-        if (!d.xPos) {
-            d.xPos = self.xPosition(d);
-        } else {
-            d.xPos += width;
-        }
-        return d.xPos;
-    };
-
-    this.yPosition = function(d) {
 
         var func = self.series[self.currentSeries].accessor;
 
-        var position = self.stackedBars() ? self.y.scale(self.calculateYPos(func, d)) : self.y.scale(func(d));
+        var position = self.stackedBars() ? self.x.scale(self.calculateXPos(func, d)) : 0;
+
+        return position;
+    };
+
+    this.barThickness = function(d) {
+        return self.y.scale.rangeBand(d);
+    };
+
+    this.groupedbarThickness = function(d) {
+
+        var groupThickness = self.barThickness(d);
+
+        var width = self.stackedBars() || (self.series.length == 1) ? groupThickness : groupThickness / self.series.length;
+
+        return width;
+    };
+
+    this.offsetYPosition = function(d) {
+        var thickness = self.groupedbarThickness(d);
+        var position = self.stackedBars() ? self.yPosition(d) : self.calculateYPos(thickness, d);
 
         return position;
     };
 
     this.barWidth = function(d) {
-        return self.x.scale.rangeBand(d);
-    };
-
-    this.groupedBarWidth = function(d) {
-
-        var groupWidth = self.barWidth(d);
-
-        var width = self.stackedBars() || (self.series.length == 1) ? groupWidth : groupWidth / self.series.length;
-
-        return width;
-    };
-
-    this.offsetXPosition = function(d) {
-        var width = self.groupedBarWidth(d);
-        var position = self.stackedBars() ? self.xPosition(d) : self.calculateXPos(width, d);
-
-        return position;
-    };
-
-    this.barHeight = function(d) {
         var func = self.series[self.currentSeries].accessor;
 
-        return (self.chart.height() - self.chart.margin()
-            .top - self.chart.margin()
-            .bottom) - self.y.scale(func(d));
+        return self.x.scale(func(d));
     };
 
     this.stackedBars = function() {
@@ -162,8 +177,6 @@ function ColumnSeries(name, chart, data, x, y, color) {
             .selectAll('g.' + InsightConstants.BarGroupClass)
             .data(this.dataset(), this.keyAccessor)
             .each(reset);
-
-
 
         var newGroups = groups.enter()
             .append('g')
@@ -190,7 +203,6 @@ function ColumnSeries(name, chart, data, x, y, color) {
 
             newBars = newGroups.append('rect')
                 .attr('class', self.className)
-                .attr('y', this.y.bounds[0])
                 .attr('height', 0)
                 .attr('fill', s.color)
                 .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
@@ -198,30 +210,28 @@ function ColumnSeries(name, chart, data, x, y, color) {
                 .on('mouseout', mouseOut)
                 .on('click', click);
 
-            newBars.append('svg:text')
-                .attr('class', InsightConstants.ToolTipTextClass);
+            if (!tooltipExists) {
+                newBars.append('svg:text')
+                    .attr('class', InsightConstants.ToolTipTextClass);
+                tooltipExists = true;
+            }
 
-            var bars = groups.selectAll('.' + seriesName + 'class.bar');
-
-            bars
+            var bars = groups.selectAll('.' + seriesName + 'class.bar')
                 .transition()
                 .duration(duration)
-                .attr('y', this.yPosition)
-                .attr('x', this.offsetXPosition)
-                .attr('width', this.groupedBarWidth)
-                .attr('height', this.barHeight);
+                .attr('y', this.offsetYPosition)
+                .attr('x', this.xPosition)
+                .attr('height', this.groupedbarThickness)
+                .attr('width', this.barWidth);
 
             bars.selectAll("." + InsightConstants.ToolTipTextClass)
                 .text(s.tooltipValue);
-
         }
-
-        groups.exit()
-            .remove();
     };
 
     return this;
 }
 
-ColumnSeries.prototype = Object.create(Series.prototype);
-ColumnSeries.prototype.constructor = ColumnSeries;
+
+RowSeries.prototype = Object.create(Series.prototype);
+RowSeries.prototype.constructor = RowSeries;

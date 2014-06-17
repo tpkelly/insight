@@ -383,7 +383,7 @@ Grouping.prototype.getData = function() {
         data = this._data.value()
             .values;
     } else {
-        data = this._data.all();
+        data = this._data.top(Infinity);
     }
 
     if (this._filterFunction) {
@@ -398,13 +398,18 @@ Grouping.prototype.getData = function() {
  * This method is used to return the group's data, with ordering applied.  It checks if there is any filtering requested and applies the filter to the return array.
  * @returns {object[]} return - The grouping's data in an object array, with an object per slice of the dimension.
  */
-Grouping.prototype.getOrderedData = function() {
+Grouping.prototype.getOrderedData = function(topValues) {
 
     var data = [];
 
     if (!this.dimension.multiple) {
-        data = this._data.top(Infinity)
+        data = this._data.all()
+            .slice(0)
             .sort(this.orderFunction());
+
+        if (topValues) {
+            data = data.slice(0, topValues);
+        }
     } else {
 
         // take shallow copy of array prior to ordering so that ordering is not done in place, which would break ordering of index map. Must be better way to do this.

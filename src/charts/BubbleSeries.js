@@ -6,7 +6,7 @@ function BubbleSeries(name, chart, data, x, y, color) {
     var fillFunction = d3.functor(color);
     var maxRad = d3.functor(50);
     var minRad = d3.functor(7);
-
+    var tooltipExists = false;
     var self = this;
 
     var mouseOver = function(d, item) {
@@ -104,8 +104,11 @@ function BubbleSeries(name, chart, data, x, y, color) {
             .attr('cy', self.rangeY)
             .attr('fill', fillFunction);
 
-        bubbles.append('svg:text')
-            .attr('class', InsightConstants.ToolTipTextClass);
+        if (!tooltipExists) {
+            bubbles.append('svg:text')
+                .attr('class', InsightConstants.ToolTipTextClass);
+            tooltipExists = true;
+        }
 
         bubbles.selectAll("." + InsightConstants.ToolTipTextClass)
             .text(this.tooltipFunction());

@@ -7,6 +7,7 @@ function Series(name, chart, data, x, y, color) {
     this.name = name;
     this.color = d3.functor(color);
     this.animationDuration = 300;
+    this.topValues = null;
 
     x.addSeries(this);
     y.addSeries(this);
@@ -40,7 +41,8 @@ function Series(name, chart, data, x, y, color) {
 
     this.dataset = function() {
         //won't always be x that determines this (rowcharts, bullets etc.), need concept of ordering by data scale?
-        var data = this.x.ordered() ? this.data.getOrderedData() : this.data.getData();
+
+        var data = this.x.ordered() ? this.data.getOrderedData(this.topValues) : this.data.getData();
 
         if (filter) {
             data = data.filter(filter);
@@ -112,6 +114,14 @@ function Series(name, chart, data, x, y, color) {
         return this;
     };
 
+    this.top = function(_) {
+        if (!arguments.length) {
+            return this.topValues;
+        }
+        this.topValues = _;
+
+        return this;
+    };
 
 
     this.findMax = function(scale) {

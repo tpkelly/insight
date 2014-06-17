@@ -77,8 +77,9 @@ function Axis(chart, name, scale, anchor) {
 
     this.tickRotation = function() {
         var offset = self.tickPadding() + (self.tickSize() * 2);
+        offset = self.anchor == 'top' ? 0 - offset : offset;
 
-        var rotation = this.labelOrientation() == 'tb' ? 'rotate(90,0,' + offset + ')' : '';
+        var rotation = this.labelOrientation() == 'tb' ? ' rotate(90,0,' + offset + ')' : '';
 
         return rotation;
     };
@@ -87,9 +88,13 @@ function Axis(chart, name, scale, anchor) {
         var transform = "translate(";
 
         if (self.scale.horizontal()) {
-            transform += '0,' + (self.chart.height() - self.chart.margin()
+            var transX = 0;
+            var transY = self.anchor == 'top' ? 0 : (self.chart.height() - self.chart.margin()
                 .bottom - self.chart.margin()
-                .top) + ')';
+                .top);
+
+            transform += transX + ',' + transY + ')';
+
         } else if (self.scale.vertical()) {
             var xShift = self.anchor == 'left' ? 0 : self.chart.width() - self.chart.margin()
                 .right - self.chart.margin()
@@ -127,12 +132,13 @@ function Axis(chart, name, scale, anchor) {
     this.positionLabels = function(labels) {
 
         if (self.scale.horizontal()) {
+
             labels.style('left', 0)
-                .style('bottom', 0)
+                .style(self.anchor, 0)
                 .style('width', '100%')
                 .style('text-align', 'center');
         } else if (self.scale.vertical()) {
-            labels.style('left', '0')
+            labels.style(self.anchor, '0')
                 .style('top', '35%');
         }
     };

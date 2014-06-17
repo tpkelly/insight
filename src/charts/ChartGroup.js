@@ -89,7 +89,7 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
                     return vals.filter(function(result) {
                             return result;
                         })
-                        .length;
+                        .length > 0;
                 });
             }
         });

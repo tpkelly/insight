@@ -27,6 +27,11 @@ var InsightConstants = (function() {
         return '£' + format(value);
     };
 
+    exports.numberFormatter = function(value) {
+        var format = d3.format("0,000");
+        return format(value);
+    };
+
     exports.dateFormatter = function(value) {
         var format = d3.time.format("%b %Y");
         return format(value);
@@ -869,7 +874,7 @@ Grouping.prototype.getData = function() {
         data = this._data.value()
             .values;
     } else {
-        data = this._data.all();
+        data = this._data.top(Infinity);
     }
 
     if (this._filterFunction) {
@@ -884,13 +889,18 @@ Grouping.prototype.getData = function() {
  * This method is used to return the group's data, with ordering applied.  It checks if there is any filtering requested and applies the filter to the return array.
  * @returns {object[]} return - The grouping's data in an object array, with an object per slice of the dimension.
  */
-Grouping.prototype.getOrderedData = function() {
+Grouping.prototype.getOrderedData = function(topValues) {
 
     var data = [];
 
     if (!this.dimension.multiple) {
-        data = this._data.top(Infinity)
+        data = this._data.all()
+            .slice(0)
             .sort(this.orderFunction());
+
+        if (topValues) {
+            data = data.slice(0, topValues);
+        }
     } else {
 
         // take shallow copy of array prior to ordering so that ordering is not done in place, which would break ordering of index map. Must be better way to do this.
@@ -1010,6 +1020,7 @@ Grouping.prototype.calculateTotals = function() {
     this.name = name;
     this.color = d3.functor(color);
     this.animationDuration = 300;
+    this.topValues = null;
 
     x.addSeries(this);
     y.addSeries(this);
@@ -1043,7 +1054,8 @@ Grouping.prototype.calculateTotals = function() {
 
     this.dataset = function() {
         //won't always be x that determines this (rowcharts, bullets etc.), need concept of ordering by data scale?
-        var data = this.x.ordered() ? this.data.getOrderedData() : this.data.getData();
+
+        var data = this.x.ordered() ? this.data.getOrderedData(this.topValues) : this.data.getData();
 
         if (filter) {
             data = data.filter(filter);
@@ -1115,6 +1127,14 @@ Grouping.prototype.calculateTotals = function() {
         return this;
     };
 
+    this.top = function(_) {
+        if (!arguments.length) {
+            return this.topValues;
+        }
+        this.topValues = _;
+
+        return this;
+    };
 
 
     this.findMax = function(scale) {
@@ -1539,7 +1559,7 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
                     return vals.filter(function(result) {
                             return result;
                         })
-                        .length;
+                        .length > 0;
                 });
             }
         });
@@ -1736,7 +1756,7 @@ ChartGroup.prototype.removeItemFromArray = function(array, item) {
     var fillFunction = d3.functor(color);
     var maxRad = d3.functor(50);
     var minRad = d3.functor(7);
-
+    var tooltipExists = false;
     var self = this;
 
     var mouseOver = function(d, item) {
@@ -1834,8 +1854,11 @@ ChartGroup.prototype.removeItemFromArray = function(array, item) {
             .attr('cy', self.rangeY)
             .attr('fill', fillFunction);
 
-        bubbles.append('svg:text')
-            .attr('class', InsightConstants.ToolTipTextClass);
+        if (!tooltipExists) {
+            bubbles.append('svg:text')
+                .attr('class', InsightConstants.ToolTipTextClass);
+            tooltipExists = true;
+        }
 
         bubbles.selectAll("." + InsightConstants.ToolTipTextClass)
             .text(this.tooltipFunction());
@@ -1844,6 +1867,243 @@ ChartGroup.prototype.removeItemFromArray = function(array, item) {
 
 BubbleSeries.prototype = Object.create(Series.prototype);
 BubbleSeries.prototype.constructor = BubbleSeries;
+;function RowSeries(name, chart, data, x, y, color) {
+
+    Series.call(this, name, chart, data, x, y, color);
+
+    var self = this;
+    var stacked = d3.functor(false);
+    var seriesName = "";
+    var tooltipExists = false;
+
+
+    var mouseOver = function(d, item) {
+        self.chart.mouseOver(self, this, d);
+    };
+
+    var mouseOut = function(d, item) {
+        self.chart.mouseOut(self, this, d);
+    };
+
+
+    this.series = [{
+        name: 'default',
+        accessor: function(d) {
+            return self.xFunction()(d);
+        },
+        tooltipValue: function(d) {
+            return self.tooltipFunction()(d);
+        },
+        color: d3.functor('silver'),
+        label: 'Value'
+    }];
+
+
+    /**
+     * RowSeries overrides the standard key function used by most, vertical charts.
+     * @returns {object[]} return - The keys along the domain axis for this row series
+     */
+    this.keys = function() {
+        return self.dataset()
+            .map(self.yFunction());
+    };
+
+
+    this.tooltipFunction(function(d) {
+        return self.tooltipFormat()(self.xFunction()(d));
+    });
+
+
+    /**
+     * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
+     * This function is mapped across the entire data array by the findMax method.
+     * @returns {Number} return - Description
+     * @param {object} data - An item in the object array to query
+     */
+    this.seriesMax = function(d) {
+        var max = 0;
+        var seriesMax = 0;
+
+        var stacked = self.stacked();
+
+        for (var series in self.series) {
+            var s = self.series[series];
+
+            var seriesValue = s.accessor(d);
+
+            seriesMax = stacked ? seriesMax + seriesValue : seriesValue;
+
+            max = seriesMax > max ? seriesMax : max;
+        }
+
+        return max;
+    };
+
+
+    /**
+     * This method returns the largest value on the value axis of this ColumnSeries, checking all series functions in the series on all points.
+     * This function is mapped across the entire data array by the findMax method.
+     * @constructor
+     * @returns {Number} return - The largest value on the value scale of this ColumnSeries
+     */
+    this.findMax = function() {
+        var max = d3.max(this.data.getData(), this.seriesMax);
+
+        return max;
+    };
+
+
+    /**
+     * This method gets or sets whether or not the series in this ColumnSeries are to be stacked or not.  This is false by default.
+     * @returns {boolean} - Whether or not the columns are stacked (they are grouped if this returns false)
+     */
+    /**
+     * @returns {object} return - Description
+     * @param {boolean} stack - To stack or not to stack
+     */
+    this.stacked = function(_) {
+        if (!arguments.length) {
+            return stacked();
+        }
+        stacked = d3.functor(_);
+        return this;
+    };
+
+    this.calculateXPos = function(func, d) {
+        if (!d.xPos) {
+            d.xPos = 0;
+        }
+        var myPosition = d.xPos;
+
+        d.xPos += func(d);
+
+        return myPosition;
+    };
+
+    this.yPosition = function(d) {
+        return self.y.scale(self.yFunction()(d));
+    };
+
+    this.calculateYPos = function(thickness, d) {
+        if (!d.yPos) {
+            d.yPos = self.yPosition(d);
+        } else {
+            d.yPos += thickness;
+        }
+        return d.yPos;
+    };
+
+    this.xPosition = function(d) {
+
+        var func = self.series[self.currentSeries].accessor;
+
+        var position = self.stackedBars() ? self.x.scale(self.calculateXPos(func, d)) : 0;
+
+        return position;
+    };
+
+    this.barThickness = function(d) {
+        return self.y.scale.rangeBand(d);
+    };
+
+    this.groupedbarThickness = function(d) {
+
+        var groupThickness = self.barThickness(d);
+
+        var width = self.stackedBars() || (self.series.length == 1) ? groupThickness : groupThickness / self.series.length;
+
+        return width;
+    };
+
+    this.offsetYPosition = function(d) {
+        var thickness = self.groupedbarThickness(d);
+        var position = self.stackedBars() ? self.yPosition(d) : self.calculateYPos(thickness, d);
+
+        return position;
+    };
+
+    this.barWidth = function(d) {
+        var func = self.series[self.currentSeries].accessor;
+
+        return self.x.scale(func(d));
+    };
+
+    this.stackedBars = function() {
+        return self.stacked();
+    };
+
+    this.className = function(d) {
+        return seriesName + 'class bar ' + self.chart.dimensionSelector(d);
+    };
+
+    this.draw = function(drag) {
+        var reset = function(d) {
+            d.yPos = 0;
+            d.xPos = 0;
+        };
+
+        var groups = this.chart.chart
+            .selectAll('g.' + InsightConstants.BarGroupClass)
+            .data(this.dataset(), this.keyAccessor)
+            .each(reset);
+
+        var newGroups = groups.enter()
+            .append('g')
+            .attr('class', InsightConstants.BarGroupClass);
+
+        var newBars = newGroups.selectAll('rect.bar');
+
+        var click = function(filter) {
+            return self.chart.filterClick(this, filter);
+        };
+
+        var duration = function(d, i) {
+            return 200 + (i * 20);
+        };
+
+
+        for (var ser in this.series) {
+
+            this.currentSeries = ser;
+
+            var s = this.series[ser];
+
+            seriesName = s.name;
+
+            newBars = newGroups.append('rect')
+                .attr('class', self.className)
+                .attr('height', 0)
+                .attr('fill', s.color)
+                .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
+                .on('mouseover', mouseOver)
+                .on('mouseout', mouseOut)
+                .on('click', click);
+
+            if (!tooltipExists) {
+                newBars.append('svg:text')
+                    .attr('class', InsightConstants.ToolTipTextClass);
+                tooltipExists = true;
+            }
+
+            var bars = groups.selectAll('.' + seriesName + 'class.bar')
+                .transition()
+                .duration(duration)
+                .attr('y', this.offsetYPosition)
+                .attr('x', this.xPosition)
+                .attr('height', this.groupedbarThickness)
+                .attr('width', this.barWidth);
+
+            bars.selectAll("." + InsightConstants.ToolTipTextClass)
+                .text(s.tooltipValue);
+        }
+    };
+
+    return this;
+}
+
+
+RowSeries.prototype = Object.create(Series.prototype);
+RowSeries.prototype.constructor = RowSeries;
 ;function Scale(chart, title, scale, direction, type) {
     var ordered = d3.functor(false);
     var self = this;
@@ -1879,10 +2139,11 @@ BubbleSeries.prototype.constructor = BubbleSeries;
                 .right - self.chart.margin()
                 .left;
         } else if (self.vertical()) {
-            bounds[1] = 0;
             bounds[0] = self.chart.height() - self.chart.margin()
                 .top - self.chart.margin()
                 .bottom;
+            bounds[1] = 0;
+
         }
         return bounds;
     };
@@ -2051,8 +2312,9 @@ BubbleSeries.prototype.constructor = BubbleSeries;
 
     this.tickRotation = function() {
         var offset = self.tickPadding() + (self.tickSize() * 2);
+        offset = self.anchor == 'top' ? 0 - offset : offset;
 
-        var rotation = this.labelOrientation() == 'tb' ? 'rotate(90,0,' + offset + ')' : '';
+        var rotation = this.labelOrientation() == 'tb' ? ' rotate(90,0,' + offset + ')' : '';
 
         return rotation;
     };
@@ -2061,9 +2323,13 @@ BubbleSeries.prototype.constructor = BubbleSeries;
         var transform = "translate(";
 
         if (self.scale.horizontal()) {
-            transform += '0,' + (self.chart.height() - self.chart.margin()
+            var transX = 0;
+            var transY = self.anchor == 'top' ? 0 : (self.chart.height() - self.chart.margin()
                 .bottom - self.chart.margin()
-                .top) + ')';
+                .top);
+
+            transform += transX + ',' + transY + ')';
+
         } else if (self.scale.vertical()) {
             var xShift = self.anchor == 'left' ? 0 : self.chart.width() - self.chart.margin()
                 .right - self.chart.margin()
@@ -2101,12 +2367,13 @@ BubbleSeries.prototype.constructor = BubbleSeries;
     this.positionLabels = function(labels) {
 
         if (self.scale.horizontal()) {
+
             labels.style('left', 0)
-                .style('bottom', 0)
+                .style(self.anchor, 0)
                 .style('width', '100%')
                 .style('text-align', 'center');
         } else if (self.scale.vertical()) {
-            labels.style('left', '0')
+            labels.style(self.anchor, '0')
                 .style('top', '35%');
         }
     };
@@ -2171,6 +2438,7 @@ BubbleSeries.prototype.constructor = BubbleSeries;
     var self = this;
 
     var lineType = 'linear';
+    var tooltipExists = false;
 
     var mouseOver = function(d, item) {
         self.chart.mouseOver(self, this, d);
@@ -2273,8 +2541,12 @@ BubbleSeries.prototype.constructor = BubbleSeries;
             .attr("cy", self.rangeY)
             .attr("r", 2.5);
 
-        circles.append('svg:text')
-            .attr('class', InsightConstants.ToolTipTextClass);
+
+        if (!tooltipExists) {
+            circles.append('svg:text')
+                .attr('class', InsightConstants.ToolTipTextClass);
+            tooltipExists = true;
+        }
 
         circles.selectAll("." + InsightConstants.ToolTipTextClass)
             .text(this.tooltipFunction());
@@ -2295,7 +2567,6 @@ LineSeries.prototype.constructor = LineSeries;
     var self = this;
     var stacked = d3.functor(false);
     var seriesName = "";
-
     var barWidthFunction = this.x.rangeType;
 
     var mouseOver = function(d, item) {
@@ -2454,6 +2725,8 @@ LineSeries.prototype.constructor = LineSeries;
             .data(this.dataset(), this.keyAccessor)
             .each(reset);
 
+
+
         var newGroups = groups.enter()
             .append('g')
             .attr('class', InsightConstants.BarGroupClass);
@@ -2477,8 +2750,6 @@ LineSeries.prototype.constructor = LineSeries;
 
             seriesName = s.name;
 
-            //this.yFunction(s.accessor);
-
             newBars = newGroups.append('rect')
                 .attr('class', self.className)
                 .attr('y', this.y.bounds[0])
@@ -2492,7 +2763,9 @@ LineSeries.prototype.constructor = LineSeries;
             newBars.append('svg:text')
                 .attr('class', InsightConstants.ToolTipTextClass);
 
-            var bars = groups.selectAll('.' + seriesName + 'class.bar')
+            var bars = groups.selectAll('.' + seriesName + 'class.bar');
+
+            bars
                 .transition()
                 .duration(duration)
                 .attr('y', this.yPosition)
@@ -2502,7 +2775,11 @@ LineSeries.prototype.constructor = LineSeries;
 
             bars.selectAll("." + InsightConstants.ToolTipTextClass)
                 .text(s.tooltipValue);
+
         }
+
+        groups.exit()
+            .remove();
     };
 
     return this;

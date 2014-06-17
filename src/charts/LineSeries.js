@@ -5,6 +5,7 @@ function LineSeries(name, chart, data, x, y, color) {
     var self = this;
 
     var lineType = 'linear';
+    var tooltipExists = false;
 
     var mouseOver = function(d, item) {
         self.chart.mouseOver(self, this, d);
@@ -107,8 +108,12 @@ function LineSeries(name, chart, data, x, y, color) {
             .attr("cy", self.rangeY)
             .attr("r", 2.5);
 
-        circles.append('svg:text')
-            .attr('class', InsightConstants.ToolTipTextClass);
+
+        if (!tooltipExists) {
+            circles.append('svg:text')
+                .attr('class', InsightConstants.ToolTipTextClass);
+            tooltipExists = true;
+        }
 
         circles.selectAll("." + InsightConstants.ToolTipTextClass)
             .text(this.tooltipFunction());

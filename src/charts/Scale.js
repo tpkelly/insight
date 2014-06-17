@@ -33,10 +33,11 @@ function Scale(chart, title, scale, direction, type) {
                 .right - self.chart.margin()
                 .left;
         } else if (self.vertical()) {
-            bounds[1] = 0;
             bounds[0] = self.chart.height() - self.chart.margin()
                 .top - self.chart.margin()
                 .bottom;
+            bounds[1] = 0;
+
         }
         return bounds;
     };
