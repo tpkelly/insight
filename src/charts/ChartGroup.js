@@ -19,12 +19,22 @@ ChartGroup.prototype.initCharts = function() {
 
 ChartGroup.prototype.addChart = function(chart) {
 
-    chart.filterEvent = this.chartFilterHandler.bind(this);
     chart.triggerRedraw = this.redrawCharts.bind(this);
 
     this.Charts.push(chart);
 
     return chart;
+};
+
+ChartGroup.prototype.addGroup = function(group) {
+
+    group.preFilter = this.chartFilterHandler.bind(this);
+
+    group.initialize();
+
+    this.Groups.push(group);
+
+    return this;
 };
 
 ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc, multi) {
@@ -35,14 +45,35 @@ ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc, multi
     return dimension;
 };
 
+
+ChartGroup.prototype.filterFunction = function(filter, element) {
+    var value = filter.key ? filter.key : filter;
+
+    return {
+        name: value,
+        filterFunction: function(d) {
+            if (Array.isArray(d)) {
+                return d.indexOf(value) != -1;
+            } else {
+                return String(d) == String(value);
+            }
+        }
+    };
+};
+
+
 ChartGroup.prototype.compareFilters = function(filterFunction) {
     return function(d) {
         return String(d.name) == String(filterFunction.name);
     };
 };
 
-ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
+ChartGroup.prototype.chartFilterHandler = function(chart, value) {
     var self = this;
+
+    var dimension = chart.data.dimension;
+
+    var filterFunction = this.filterFunction(value);
 
     if (filterFunction) {
         var dims = this.Dimensions
@@ -65,7 +96,7 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
 
             //if the dimension is already filtered by this value, toggle (remove) the filter
             if (filterExists) {
-                self.removeMatchesFromArray(dim.Filters, comparerFunction);
+                InsightUtils.removeMatchesFromArray(dim.Filters, comparerFunction);
 
             } else {
                 // add the provided filter to the list for this dimension
@@ -76,7 +107,7 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
             // reset this dimension if no filters exist, else apply the filter to the dataset.
             if (dim.Filters.length === 0) {
 
-                self.removeItemFromArray(self.FilteredDimensions, dim);
+                InsightUtils.removeItemFromArray(self.FilteredDimensions, dim);
                 dim.Dimension.filterAll();
 
             } else {
@@ -171,110 +202,4 @@ ChartGroup.prototype.count = function(dimension, input) {
     }
 
     return group;
-};
-
-
-ChartGroup.prototype.addSumGrouping = function(dimension, func) {
-    var data = dimension.Dimension.group()
-        .reduceSum(func);
-    var group = new Group(data);
-
-    this.Groups.push(group);
-    return group;
-};
-
-ChartGroup.prototype.addCustomGrouping = function(group) {
-    this.Groups.push(group);
-    if (group.cumulative()) {
-        this.CumulativeGroups.push(group);
-    }
-    return group;
-};
-
-ChartGroup.prototype.multiReduceSum = function(dimension, properties) {
-
-    var data = dimension.Dimension.group()
-        .reduce(
-            function(p, v) {
-
-                for (var property in properties) {
-                    if (v.hasOwnProperty(properties[property])) {
-                        p[properties[property]] += v[properties[property]];
-                    }
-                }
-                return p;
-            },
-            function(p, v) {
-                for (var property in properties) {
-                    if (v.hasOwnProperty(properties[property])) {
-                        p[properties[property]] -= v[properties[property]];
-                    }
-                }
-                return p;
-            },
-            function() {
-                var p = {};
-                for (var property in properties) {
-                    p[properties[property]] = 0;
-                }
-                return p;
-            }
-        );
-    var group = new Group(data);
-
-    return group;
-};
-
-ChartGroup.prototype.multiReduceCount = function(dimension, properties) {
-
-    var data = dimension.Dimension.group()
-        .reduce(
-            function(p, v) {
-                for (var property in properties) {
-                    if (v.hasOwnProperty(properties[property])) {
-                        p[properties[property]][v[properties[property]]] = p[properties[property]].hasOwnProperty(v[properties[property]]) ? p[properties[property]][v[properties[property]]] + 1 : 1;
-                        p[properties[property]].Total++;
-                    }
-                }
-                return p;
-            },
-            function(p, v) {
-                for (var property in properties) {
-                    if (v.hasOwnProperty(properties[property])) {
-                        p[properties[property]][v[properties[property]]] = p[properties[property]].hasOwnProperty(v[properties[property]]) ? p[properties[property]][v[properties[property]]] - 1 : 1;
-                        p[properties[property]].Total--;
-                    }
-                }
-                return p;
-            },
-            function() {
-                var p = {};
-                for (var property in properties) {
-                    p[properties[property]] = {
-                        Total: 0
-                    };
-                }
-                return p;
-            }
-        );
-
-    var group = new Group(data);
-    this.Groups.push(group);
-
-    return group;
-};
-
-ChartGroup.prototype.removeMatchesFromArray = function(array, comparer) {
-    var self = this;
-    var matches = array.filter(comparer);
-    matches.forEach(function(match) {
-        self.removeItemFromArray(array, match);
-    });
-};
-ChartGroup.prototype.removeItemFromArray = function(array, item) {
-
-    var index = array.indexOf(item);
-    if (index > -1) {
-        array.splice(index, 1);
-    }
 };

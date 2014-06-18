@@ -61,6 +61,8 @@ function LineSeries(name, chart, data, x, y, color) {
             .y(self.rangeY)
             .interpolate(lineType);
 
+        var data = this.dataset();
+
         var rangeIdentifier = "path." + this.name + ".in-line";
 
         var rangeElement = this.chart.chart.selectAll(rangeIdentifier);

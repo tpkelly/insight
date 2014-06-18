@@ -196,40 +196,26 @@ function Chart(name, element, dimension) {
             .join('_') + "clip";
     };
 
-    this.filterFunction = function(filter, element) {
-        var value = filter.key ? filter.key : filter;
 
-        return {
-            name: value,
-            element: element,
-            filterFunction: function(d) {
-                if (Array.isArray(d)) {
-                    return d.indexOf(value) != -1;
-                } else {
-                    return String(d) == String(value);
-                }
-            }
-        };
-    };
 
     this.dimensionSelector = function(d) {
 
-        var result = self.dimension && d.key.replace ? self.dimension.Name + d.key.replace(/[^A-Z0-9]/ig, "_") : "";
+        var result = d.key.replace ? "in_" + d.key.replace(/[^A-Z0-9]/ig, "_") : "";
 
         return result;
     };
 
-    this.filterClick = function(element, filter) {
+
+
+    this.click = function(element, value) {
         if (this.dimension) {
             var selected = d3.select(element)
                 .classed('selected');
 
-            d3.selectAll('.' + self.dimensionSelector(filter))
+            d3.selectAll('.' + self.dimensionSelector(value))
                 .classed('selected', !selected);
 
-            var filterFunction = this.filterFunction(filter, element);
-
-            this.filterEvent(this.dimension, filterFunction);
+            this.clickEvent(this, value);
         }
     };
 

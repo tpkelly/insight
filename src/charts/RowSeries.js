@@ -185,7 +185,7 @@ function RowSeries(name, chart, data, x, y, color) {
         var newBars = newGroups.selectAll('rect.bar');
 
         var click = function(filter) {
-            return self.chart.filterClick(this, filter);
+            return self.click(this, filter);
         };
 
         var duration = function(d, i) {

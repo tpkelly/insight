@@ -71,7 +71,7 @@ function BubbleSeries(name, chart, data, x, y, color) {
         };
 
         var click = function(filter) {
-            return self.chart.filterClick(this, filter);
+            return self.click(this, filter);
         };
 
 

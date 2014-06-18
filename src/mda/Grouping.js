@@ -12,6 +12,9 @@ function Grouping(dimension) {
     var countProperties = [];
     var cumulativeProperties = [];
     var averageProperties = [];
+
+    var linkedSeries = [];
+
     this._compute = null;
     this.gIndices = {};
 
@@ -22,6 +25,15 @@ function Grouping(dimension) {
 
     this._orderFunction = function(a, b) {
         return b.value.Count - a.value.Count;
+    };
+
+    this.registerSeries = function(series) {
+        linkedSeries.push(series);
+        series.clickEvent = this.preFilter;
+    };
+
+    this.preFilter = function(series, filter) {
+
     };
 
     this._ordered = false;
@@ -43,7 +55,7 @@ function Grouping(dimension) {
     };
 
     /**
-     * The cumulatie function gets or sets the properties whose value occurences will be accumulated across this dimension.
+     * The cumulative function gets or sets the properties whose value occurences will be accumulated across this dimension.
      * @returns {String[]}
      */
     /**
@@ -143,7 +155,6 @@ Grouping.prototype.unique = function(array) {
     }
     return a;
 };
-
 
 
 /**
@@ -383,7 +394,8 @@ Grouping.prototype.getData = function() {
         data = this._data.value()
             .values;
     } else {
-        data = this._data.top(Infinity);
+        data = this._data.all()
+            .slice(0);
     }
 
     if (this._filterFunction) {
@@ -418,6 +430,9 @@ Grouping.prototype.getOrderedData = function(topValues) {
             .slice(0);
 
         data = data.sort(this.orderFunction());
+        if (topValues) {
+            data = data.slice(0, topValues);
+        }
     }
 
     if (this._filterFunction) {

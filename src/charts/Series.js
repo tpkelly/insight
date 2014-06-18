@@ -12,6 +12,10 @@ function Series(name, chart, data, x, y, color) {
     x.addSeries(this);
     y.addSeries(this);
 
+    if (data.registerSeries) {
+        data.registerSeries(this);
+    }
+
     var self = this;
     var cssClass = "";
 
@@ -85,6 +89,27 @@ function Series(name, chart, data, x, y, color) {
         yFunction = _;
 
         return this;
+    };
+
+    this.sliceSelector = function(d) {
+
+        var result = d.key.replace ? "in_" + d.key.replace(/[^A-Z0-9]/ig, "_") : "";
+
+        return result;
+    };
+
+
+
+    this.click = function(element, filter) {
+
+        var selected = d3.select(element)
+            .classed('selected');
+
+        d3.selectAll('.' + self.sliceSelector(filter))
+            .classed('selected', !selected);
+
+        this.clickEvent(this, filter);
+
     };
 
     this.filterFunction = function(_) {

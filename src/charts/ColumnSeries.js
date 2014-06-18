@@ -158,12 +158,12 @@ function ColumnSeries(name, chart, data, x, y, color) {
             d.xPos = 0;
         };
 
+        var d = this.dataset()
+            .forEach(reset);
+
         var groups = this.chart.chart
             .selectAll('g.' + InsightConstants.BarGroupClass)
-            .data(this.dataset(), this.keyAccessor)
-            .each(reset);
-
-
+            .data(this.dataset(), this.keyAccessor);
 
         var newGroups = groups.enter()
             .append('g')
@@ -172,7 +172,7 @@ function ColumnSeries(name, chart, data, x, y, color) {
         var newBars = newGroups.selectAll('rect.bar');
 
         var click = function(filter) {
-            return self.chart.filterClick(this, filter);
+            return self.click(this, filter);
         };
 
         var duration = function(d, i) {
