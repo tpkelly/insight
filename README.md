@@ -1,4 +1,4 @@
 insight
 =======
 
-A Javascript charting library
+A Javascript library for data aggregation and visualization.
