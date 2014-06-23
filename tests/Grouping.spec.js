@@ -31,8 +31,6 @@ describe("Grouping tests", function() {
         var dimension =  chartGroup.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
         
         var group = new Grouping(dimension);
-        
-        group.initialize();
 
         var data = group.getData();
         
@@ -47,8 +45,6 @@ describe("Grouping tests", function() {
         var group = new Grouping(dimension);
         
         group.sum(['IQ']);
-
-        group.initialize();
 
         var data = group.getData();
         
@@ -68,8 +64,6 @@ describe("Grouping tests", function() {
         
         group.sum(['IQ']);
 
-        group.initialize();
-
         var data = group.getData();
         
         var scotland = data.filter(function(country){ return country.key=='Scotland'; })[0];
@@ -88,8 +82,7 @@ describe("Grouping tests", function() {
         
         var group = new Grouping(dimension)
                                         .ordered(true);
-        group.initialize(); 
-
+        
         var data = group.getOrderedData();
         
         expect(data[0].key).toBe('England');
@@ -106,8 +99,7 @@ describe("Grouping tests", function() {
         
         var group = new Grouping(dimension)
                                         .ordered(true);
-        group.initialize(); 
-
+        
         var data = group.getOrderedData();
         
         expect(data[0].key).toBe('England');
@@ -123,10 +115,8 @@ describe("Grouping tests", function() {
         var dimension =  chartGroup.addDimension(ndx, 'age', function(d){return d.Age;}, function(d){return d.Age;});
         
         var group = new Grouping(dimension)
-                        .average(['IQ'])
+                        .mean(['IQ'])
                         .cumulative(['IQ.Sum','IQ.Average']);
-
-        group.initialize();
 
         var data = group.getData();
 
@@ -146,8 +136,6 @@ describe("Grouping tests", function() {
         var group = new Grouping(dimension)
                             .count(["Gender"]);
 
-        group.initialize();
-
         var data = group.getData();
 
         var scotland = data.filter(function(country){ return country.key=='Scotland'; })[0];
@@ -166,8 +154,6 @@ describe("Grouping tests", function() {
         
         var group = new Grouping(dimension)
                             .count(["Interests"]);
-
-        group.initialize();
 
         var data = group.getData();
 
@@ -190,8 +176,6 @@ describe("Grouping tests", function() {
         
         var group = new Grouping(dimension)
                             .count(["Gender", "Interests"]);
-
-        group.initialize();
 
         var data = group.getData();
 
@@ -227,8 +211,6 @@ describe("Grouping tests", function() {
         
         var group = new Grouping(dimension).count(["Interests"]);
 
-        group.initialize();
-
         var data = group.getData();
 
         var ballet = group.getData().filter(function(a){ return a.key=='Ballet'; })[0];
@@ -251,6 +233,8 @@ describe("Grouping tests", function() {
 
     });
 
+
+
     it("will correctly aggregate a sorted multi dimension", function() {
         
         var ndx = crossfilter(dataset);
@@ -259,8 +243,6 @@ describe("Grouping tests", function() {
         var ages =  chartGroup.addDimension(ndx, 'ages', function(d){return d.Age;}, null, false);
         
         var group = new Grouping(dimension).count(["Interests"]);
-
-        group.initialize();
 
         var data = group.getOrderedData();
 

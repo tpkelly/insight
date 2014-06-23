@@ -34,6 +34,31 @@
     </div>
     <ul class="list">
     
+        <li class="item" data-name="Dashboard">
+            <span class="title">
+                <a href="Dashboard.html">Dashboard</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Dashboard#addData"><a href="Dashboard.html#addData">addData</a></li>
+            
+                <li data-name="Dashboard#group"><a href="Dashboard.html#group">group</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
         <li class="item" data-name="DataSet">
             <span class="title">
                 <a href="DataSet.html">DataSet</a>
@@ -125,8 +150,6 @@
             
             <span class="subtitle">Methods</span>
             
-                <li data-name="Grouping#average"><a href="Grouping.html#average">average</a></li>
-            
                 <li data-name="Grouping#computeFunction"><a href="Grouping.html#computeFunction">computeFunction</a></li>
             
                 <li data-name="Grouping#count"><a href="Grouping.html#count">count</a></li>
@@ -140,6 +163,8 @@
                 <li data-name="Grouping#getOrderedData"><a href="Grouping.html#getOrderedData">getOrderedData</a></li>
             
                 <li data-name="Grouping#initialize"><a href="Grouping.html#initialize">initialize</a></li>
+            
+                <li data-name="Grouping#mean"><a href="Grouping.html#mean">mean</a></li>
             
                 <li data-name="Grouping#ordered"><a href="Grouping.html#ordered">ordered</a></li>
             
@@ -232,6 +257,132 @@
             
 <dt>
     <div class="nameContainer">
+        <h4 class="name" id="dimensionSelector">
+            
+            dimensionSelector<span class="signature">(data)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{string}</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line215">line 215</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        This function takes a data point, and creates a class name for insight to identify this particular key
+If the parameter is not an object (just a value in an array) then there is no need for this particular class so blank is returned.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The input point</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+- A class name to identify this point and any other points taking the same value in other charts.
+<br />
+
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
         <h4 class="name" id="keys">
             
             keys<span class="signature">()</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{object[]}</span>
@@ -319,7 +470,7 @@
     
         
         <div class="tag-source">
-            <a href="ColumnSeries.js.html">charts/ColumnSeries.js</a>, <a href="ColumnSeries.js.html#line38">line 38</a>
+            <a href="ColumnSeries.js.html">charts/ColumnSeries.js</a>, <a href="ColumnSeries.js.html#line43">line 43</a>
         </div>
         
     </div>
@@ -571,7 +722,7 @@ This function is mapped across the entire data array by the findMax method.
     
         
         <div class="tag-source">
-            <a href="ColumnSeries.js.html">charts/ColumnSeries.js</a>, <a href="ColumnSeries.js.html#line79">line 79</a>
+            <a href="ColumnSeries.js.html">charts/ColumnSeries.js</a>, <a href="ColumnSeries.js.html#line84">line 84</a>
         </div>
         
     </div>
@@ -819,7 +970,7 @@ This function is mapped across the entire data array by the findMax method.
         
 
         <footer>
-            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jun 18 2014 16:41:25 GMT+0100 (BST)
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Mon Jun 23 2014 16:14:17 GMT+0100 (BST)
         </footer>
     </div>
 </div>

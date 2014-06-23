@@ -8,7 +8,8 @@ function Series(name, chart, data, x, y, color) {
     this.color = d3.functor(color);
     this.animationDuration = 300;
     this.topValues = null;
-
+    this.selectedItems = [];
+    this.dimensionName = data.dimension ? data.dimension.Name + "Dim" : "";
     x.addSeries(this);
     y.addSeries(this);
 
@@ -99,17 +100,41 @@ function Series(name, chart, data, x, y, color) {
     };
 
 
+    this.selectedClassName = function(name) {
+        var selected = "";
+
+        if (self.selectedItems.length) {
+            selected = self.selectedItems.indexOf(name) > -1 ? "selected" : "notselected";
+        }
+
+        return selected;
+    };
+
+    this.highlight = function(selector, value) {
+        var clicked = this.chart.chart.selectAll("." + selector);
+        var alreadySelected = clicked.classed('selected');
+
+        if (alreadySelected) {
+            clicked.classed('selected', false);
+            InsightUtils.removeItemFromArray(self.selectedItems, selector);
+        } else {
+            clicked.classed('selected', true)
+                .classed('notselected', false);
+            self.selectedItems.push(selector);
+        }
+
+        var selected = this.chart.chart.selectAll('.selected');
+        var notselected = this.chart.chart.selectAll('.bar:not(.selected),.bubble:not(.selected)');
+
+        notselected.classed('notselected', selected[0].length > 0);
+    };
+
 
     this.click = function(element, filter) {
 
-        var selected = d3.select(element)
-            .classed('selected');
+        var selector = self.sliceSelector(filter);
 
-        d3.selectAll('.' + self.sliceSelector(filter))
-            .classed('selected', !selected);
-
-        this.clickEvent(this, filter);
-
+        this.clickEvent(this, filter, selector);
     };
 
     this.filterFunction = function(_) {
@@ -146,6 +171,28 @@ function Series(name, chart, data, x, y, color) {
         this.topValues = _;
 
         return this;
+    };
+
+    this.maxLabelDimensions = function(measureCanvas) {
+
+        var sampleText = document.createElement('div');
+        sampleText.setAttribute('class', InsightConstants.AxisTextClass);
+        var style = window.getComputedStyle(sampleText);
+        var ctx = measureCanvas.getContext('2d');
+        ctx.font = style['font-size'] + ' ' + style['font-family'];
+
+        var max = 0;
+
+        this.keys()
+            .forEach(function(key) {
+
+                var width = ctx.measureText(key)
+                    .width;
+
+                max = width > max ? width : max;
+            });
+
+        return max;
     };
 
 

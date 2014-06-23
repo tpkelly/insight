@@ -15,6 +15,11 @@ function ColumnSeries(name, chart, data, x, y, color) {
         self.chart.mouseOut(self, this, d);
     };
 
+    var tooltipFunction = function(d) {
+        var func = self.series[self.currentSeries].accessor;
+        return self.tooltipFormat()(func(d));
+    };
+
 
     this.series = [{
         name: 'default',
@@ -116,6 +121,8 @@ function ColumnSeries(name, chart, data, x, y, color) {
         return position;
     };
 
+
+
     this.barWidth = function(d) {
         return self.x.scale.rangeBand(d);
     };
@@ -148,8 +155,14 @@ function ColumnSeries(name, chart, data, x, y, color) {
         return self.stacked();
     };
 
+
+
     this.className = function(d) {
-        return seriesName + 'class bar ' + self.chart.dimensionSelector(d);
+        var dimension = self.chart.dimensionSelector(d);
+
+        var selected = self.selectedClassName(dimension);
+
+        return seriesName + 'class bar ' + dimension + " " + selected + " " + self.dimensionName;
     };
 
     this.draw = function(drag) {
@@ -212,7 +225,7 @@ function ColumnSeries(name, chart, data, x, y, color) {
                 .attr('height', this.barHeight);
 
             bars.selectAll("." + InsightConstants.ToolTipTextClass)
-                .text(s.tooltipValue);
+                .text(tooltipFunction);
 
         }
 

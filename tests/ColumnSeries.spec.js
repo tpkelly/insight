@@ -123,7 +123,7 @@ describe("Column Series Tests", function() {
 
         var dimension =  charts.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
         
-        var group = new Grouping(dimension).average(['Age']);
+        var group = new Grouping(dimension).mean(['Age']);
 
         group.initialize();
 
@@ -169,7 +169,7 @@ describe("Column Series Tests", function() {
 
         var dimension =  charts.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
         
-        var group = new Grouping(dimension).average(['Age']);
+        var group = new Grouping(dimension).mean(['Age']);
 
         group.initialize();
 

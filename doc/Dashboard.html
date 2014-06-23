@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Class: DataSet</title>
+    <title>Class: Dashboard</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -187,7 +187,7 @@
     </ul>
 </div>
     <div class="main">
-        <h1 class="page-title" data-filename="DataSet.html">Class: DataSet</h1>
+        <h1 class="page-title" data-filename="Dashboard.html">Class: Dashboard</h1>
         
 
 
@@ -196,7 +196,7 @@
     
 <header>
     <h2>
-    DataSet
+    Dashboard
     </h2>
     
 </header>  
@@ -209,14 +209,14 @@
         
 <dt>
     <div class="nameContainer">
-        <h4 class="name" id="DataSet">
+        <h4 class="name" id="Dashboard">
             
-            new DataSet<span class="signature">(data)</span>
+            new Dashboard<span class="signature">(name)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{this}</span>
         </h4>
     
         
         <div class="tag-source">
-            <a href="DataSet.js.html">mda/DataSet.js</a>, <a href="DataSet.js.html#line7">line 7</a>
+            <a href="Dashboard.js.html">Dashboard.js</a>, <a href="Dashboard.js.html#line7">line 7</a>
         </div>
         
     </div>
@@ -227,8 +227,7 @@
     
     
     <div class="description">
-        A DataSet is wrapper around a simple object array, but providing some functions that are required by charts to load and filter data.
-A DataSet should be used with an array of data that is to be charted without being used in a crossfilter or dimensional dataset.
+        This method is called when any post aggregation calculations, provided by the computeFunction() setter, need to be recalculated.
     </div>
     
 
@@ -259,13 +258,13 @@ A DataSet should be used with an array of data that is to be charted without bei
 	
         <tr>
             
-                <td class="name"><code>data</code></td>
+                <td class="name"><code>name</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">object[]</span>
+<span class="param-type">object</span>
 
 
             
@@ -275,7 +274,7 @@ A DataSet should be used with an array of data that is to be charted without bei
             
             <td class="description last">
                 
-                The short name used to identify this dimension, and any linked dimensions sharing the same name</td>
+                Description</td>
         </tr>
 	
 	
@@ -320,6 +319,15 @@ A DataSet should be used with an array of data that is to be charted without bei
     
     
     
+
+
+<h5>Returns:</h5>
+- Description
+<br />
+
+    
+    
+    
 </dd>
 
     
@@ -337,6 +345,329 @@ A DataSet should be used with an array of data that is to be charted without bei
     
     
     
+    
+        <h3 class="subsection-title">Methods</h3>
+        
+        <dl>
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="addData">
+            
+            addData<span class="signature">(data, name)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{object}</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="Dashboard.js.html">Dashboard.js</a>, <a href="Dashboard.js.html#line30">line 30</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        This method loads a JSON data set into the Dashboard, creating a new crossfiltered set and returnign that to the user to reference when creating charts/groupings.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                an array of objects to add to the dashboard</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                an optional name for the dataset if multiple sets are being loaded into the dashboard.</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+- A crossfilter dataset
+<br />
+
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="group">
+            
+            group<span class="signature">(dataset, name, groupFunction)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{object}</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="Dashboard.js.html">Dashboard.js</a>, <a href="Dashboard.js.html#line67">line 67</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        This method takes a dataset, name and grouping function, returning a Grouping with a Dimension created as part of that process.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>dataset</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                A crossfilter, for example, returned by the addData() method</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                A uniquely identifying name for the dimension along which this grouping is created. Used to identify identical dimensions in other datasets.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>groupFunction</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The function used to group the dimension along.  Select the property of the underlying data that the dimension is to be defined on. Rounding or data manipulation can alter the granularity of the dimension</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+- An aggregated Grouping that can be manipulated and have calculations applied to it
+<br />
+
+    
+    
+    
+</dd>
+
+        </dl>
     
     
     

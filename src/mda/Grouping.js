@@ -22,7 +22,6 @@ function Grouping(dimension) {
         return d;
     };
 
-
     this._orderFunction = function(a, b) {
         return b.value.Count - a.value.Count;
     };
@@ -32,7 +31,7 @@ function Grouping(dimension) {
         series.clickEvent = this.preFilter;
     };
 
-    this.preFilter = function(series, filter) {
+    this.preFilter = function(series, filter, dimensionSelector) {
 
     };
 
@@ -95,7 +94,7 @@ function Grouping(dimension) {
      * @param {String[]} properties - An array of property names that will have be averaged during aggregation
      * @returns {this}
      */
-    this.average = function(_) {
+    this.mean = function(_) {
         if (!arguments.length) {
             return averageProperties;
         }
@@ -166,7 +165,7 @@ Grouping.prototype.reduceMultiDimension = function() {
 
     var propertiesToSum = this.sum();
     var propertiesToCount = this.count();
-    var propertiesToAverage = this.average();
+    var propertiesToAverage = this.mean();
 
     var index = 0;
     var gIndices = {};
@@ -240,7 +239,7 @@ Grouping.prototype.reduceMultiDimension = function() {
 Grouping.prototype.initialize = function() {
     var propertiesToSum = this.sum();
     var propertiesToCount = this.count();
-    var propertiesToAverage = this.average();
+    var propertiesToAverage = this.mean();
 
     var data = [];
 
@@ -390,6 +389,10 @@ Grouping.prototype.recalculate = function() {
 Grouping.prototype.getData = function() {
     var data;
 
+    if (!this._data) {
+        this.initialize();
+    }
+
     if (this.dimension.multiple) {
         data = this._data.value()
             .values;
@@ -413,6 +416,10 @@ Grouping.prototype.getData = function() {
 Grouping.prototype.getOrderedData = function(topValues) {
 
     var data = [];
+
+    if (!this._data) {
+        this.initialize();
+    }
 
     if (!this.dimension.multiple) {
         data = this._data.all()
