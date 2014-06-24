@@ -19,47 +19,17 @@ $(document)
 
             var dataset = charts.addData(data);
 
-            var genre = charts.addDimension(ndx, 'genre', function(d)
-            {
-                return d.primaryGenreName;
-            }, function(d)
-            {
-                return d.primaryGenreName;
-            });
-
-            var supportedDevices = charts.addDimension(ndx, 'supportedDevices', function(d)
+            var genres = charts.group(dataset, 'genre', function(d)
                 {
-                    return d.supportedDevices;
-                }, function(d)
-                {
-                    return d.supportedDevices;
-                },
-                true
-            );
-
-            var languages = charts.addDimension(ndx, 'languages', function(d)
-                {
-                    return d.languageCodesISO2A;
-                }, function(d)
-                {
-                    return d.languageCodesISO2A;
-                },
-                true
-            );
-
-
-            var genres = new Grouping(genre)
+                    return d.primaryGenreName;
+                })
                 .count(["supportedDevices"]);
 
-            var devices = new Grouping(supportedDevices)
-                .count(["supportedDevices"]);
-
-            var languageGroup = new Grouping(languages)
+            var languageGroup = charts.group(dataset, 'languages', function(d)
+                {
+                    return d.languageCodesISO2A;
+                }, true)
                 .count(["languageCodesISO2A"]);
-
-            charts.addGroup(genres);
-            charts.addGroup(devices);
-            charts.addGroup(languageGroup);
 
             var chart = new Chart('Chart 1', "#genreCount")
                 .width(800)

@@ -71,7 +71,7 @@ $(document)
                 {
                     return d.key
                 },
-                color: '#3498db',
+                color: 'lightblue',
                 tooltipValue: function(d)
                 {
                     return d.value.Count;
