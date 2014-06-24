@@ -29,7 +29,9 @@ $(document)
                 .yFunction(function(d)
                 {
                     return d.pct;
-                });
+                })
+                .lineType('monotone')
+                .tooltipFormat(InsightFormatters.percentageFormatter);
 
             series.series = [
             {

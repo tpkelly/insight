@@ -7,7 +7,7 @@ $(document)
     .ready(function()
     {
 
-        d3.json('appstore.json', function(data)
+        d3.json('results.json', function(data)
         {
 
             data.forEach(function(d)
@@ -15,31 +15,18 @@ $(document)
                 d.releaseDate = new Date(d.releaseDate);
             });
 
-            var ndx = crossfilter(data);
-
-            var charts = new ChartGroup('AppStore');
-
-            var genre = charts.addDimension(ndx, 'genre', function(d)
-            {
-                return d.primaryGenreName;
-            }, function(d)
-            {
-                return d.primaryGenreName;
-            });
 
 
-            var date = charts.addDimension(ndx, 'date', function(d)
-            {
-                return new Date(d.releaseDate.getFullYear(), d.releaseDate.getMonth(), 1);
-            }, function(d)
-            {
-                return new Date(d.releaseDate.getFullYear(), d.releaseDate.getMonth(), 1);
-            });
+            var charts = new Dashboard('AppStore');
 
+            var dataset = charts.addData(data);
 
-            var genres = new Grouping(genre)
+            var genres = charts.group(dataset, 'genre', function(d)
+                {
+                    return d.primaryGenreName;
+                })
                 .sum(['userRatingCount'])
-                .average(['price', 'averageUserRating', 'userRatingCount', 'fileSizeBytes']);
+                .mean(['price', 'averageUserRating', 'userRatingCount', 'fileSizeBytes']);
 
             var aggregateFunction = function()
             {
@@ -63,19 +50,17 @@ $(document)
 
             genres.computeFunction(aggregateFunction);
 
-            var dates = new Grouping(date)
+            var dates = charts.group(dataset, 'date', function(d)
+                {
+                    return new Date(d.releaseDate.getFullYear(), d.releaseDate.getMonth(), 1);
+                })
                 .cumulative(['Count'])
-                .initialize();
 
-            charts.Groups.push(dates);
-            charts.Groups.push(genres);
-
-            genres.initialize();
             genres.compute();
 
             console.log(genres.getData());
 
-            var chart = new Chart('Chart 1', "#genreCount", genre)
+            var chart = new Chart('Chart 1', "#genreCount")
                 .width(700)
                 .height(350)
                 .margin(
@@ -121,7 +106,7 @@ $(document)
                 .tickSize(5);
 
 
-            var timeChart = new Chart('Chart 2', "#releases", date)
+            var timeChart = new Chart('Chart 2', "#releases")
                 .width(800)
                 .height(350)
                 .margin(
@@ -164,7 +149,7 @@ $(document)
             var yAxis = new Axis(timeChart, "y", yTime, 'left')
                 .tickSize(5);
 
-            var bubbleChart = new Chart('Chart 3', "#bubbleChart", genre)
+            var bubbleChart = new Chart('Chart 3', "#bubbleChart")
                 .width(800)
                 .height(550)
                 .margin(
@@ -194,7 +179,7 @@ $(document)
                 })
                 .tooltipFunction(function(d)
                 {
-                    return d.value.Count;
+                    return d.key;
                 });
 
             var bubbleXAxis = new Axis(bubbleChart, "x", bubbleX, 'bottom')

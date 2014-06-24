@@ -1,19 +1,18 @@
 [
     {
         "name": "simplebar",
-        "pageName": "Simple Bar Chart",     
+        "pageName": "Bar Chart",     
         "script": "examples/barchart.js",
         "imageUrl": "images/barchart.PNG",
         "partial": "examples/partials/example.html",
         "partialCSS": "examples/css/simpleBar.css"
     }, 
     {
-        "name": "zoomableBar",
-        "pageName": "Zoomable Bar Chart", 
-        "script": "examples/zoomableBar.js",
-        "imageUrl": "images/zoomableBar.PNG",
-        "partial": "examples/partials/example.html",
-        "partialCSS": "examples/css/example.css"
+        "name": "row",
+        "pageName": "Row Chart",     
+        "script": "examples/rowchart.js",
+        "partial": "examples/partials/stacked.html",
+        "partialCSS": "examples/css/simpleBar.css"
     },
     {
         "name": "stackedGroupedBar",
@@ -47,6 +46,12 @@
         "imageUrl": "images/barChart.PNG",
         "partial": "examples/partials/newCharts.html",
         "partialCSS": "examples/css/example.css"
+    },{
+        "name": "builder",
+        "pageName": "Chart Builder", 
+        "script": "examples/builder.js",
+        "partial": "examples/partials/example.html",
+        "partialCSS": "examples/css/example.css"
     },
     {
         "name": "appstore",
@@ -60,6 +65,13 @@
         "name": "connect",
         "pageName": "Connect Charts", 
         "script": "examples/connect.js",
+        "partial": "examples/partials/connect.html",
+        "partialCSS": "examples/css/example.css"
+    },
+    {
+        "name": "multidim",
+        "pageName": "Multidimension", 
+        "script": "examples/multidim.js",
         "partial": "examples/partials/connect.html",
         "partialCSS": "examples/css/example.css"
     }

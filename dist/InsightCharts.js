@@ -27,6 +27,11 @@ var InsightConstants = (function() {
         return '£' + format(value);
     };
 
+    exports.numberFormatter = function(value) {
+        var format = d3.format("0,000");
+        return format(value);
+    };
+
     exports.dateFormatter = function(value) {
         var format = d3.time.format("%b %Y");
         return format(value);
@@ -82,134 +87,6 @@ var InsightUtils = (function() {
 
     return exports;
 }());
-;var Dashboard = function Dashboard(name) {
-    this.Name = name;
-    this.Charts = [];
-    this.Dimensions = [];
-    this.FilteredDimensions = [];
-    this.Groups = [];
-    this.ComputedGroups = [];
-    this.LinkedCharts = [];
-    this.NestedGroups = [];
-};
-
-Dashboard.prototype.initCharts = function() {
-    this.Charts
-        .forEach(
-            function(chart) {
-                chart.init();
-            });
-};
-
-Dashboard.prototype.addChart = function(chart) {
-
-    chart.filterEvent = this.chartFilterHandler.bind(this);
-    chart.triggerRedraw = this.redrawCharts.bind(this);
-
-    this.Charts.push(chart);
-
-    return chart;
-};
-
-Dashboard.prototype.addDimension = function(ndx, name, func, displayFunc, multi) {
-    var dimension = new Dimension(name, func, ndx.dimension(func), displayFunc, multi);
-
-    this.Dimensions.push(dimension);
-
-    return dimension;
-};
-
-Dashboard.prototype.compareFilters = function(filterFunction) {
-    return function(d) {
-        return String(d.name) == String(filterFunction.name);
-    };
-};
-
-Dashboard.prototype.chartFilterHandler = function(dimension, filterFunction) {
-    var self = this;
-
-    if (filterFunction) {
-        var dims = this.Dimensions
-            .filter(dimension.comparer);
-
-        var activeDim = this.FilteredDimensions
-            .filter(dimension.comparer);
-
-        if (!activeDim.length) {
-            this.FilteredDimensions.push(dimension);
-        }
-
-        var comparerFunction = this.compareFilters(filterFunction);
-
-        dims.map(function(dim) {
-
-            var filterExists = dim.Filters
-                .filter(comparerFunction)
-                .length;
-
-            //if the dimension is already filtered by this value, toggle (remove) the filter
-            if (filterExists) {
-                self.removeMatchesFromArray(dim.Filters, comparerFunction);
-
-            } else {
-                // add the provided filter to the list for this dimension
-
-                dim.Filters.push(filterFunction);
-            }
-
-            // reset this dimension if no filters exist, else apply the filter to the dataset.
-            if (dim.Filters.length === 0) {
-
-                self.removeItemFromArray(self.FilteredDimensions, dim);
-                dim.Dimension.filterAll();
-
-            } else {
-                dim.Dimension.filter(function(d) {
-                    var vals = dim.Filters
-                        .map(function(func) {
-                            return func.filterFunction(d);
-                        });
-
-                    return vals.filter(function(result) {
-                            return result;
-                        })
-                        .length;
-                });
-            }
-        });
-
-        this.Groups.forEach(function(group) {
-            group.recalculate();
-
-        });
-
-        // recalculate non standard groups
-        this.NestedGroups
-            .forEach(
-                function(group) {
-                    group.updateNestedData();
-                }
-        );
-
-        this.ComputedGroups
-            .forEach(
-                function(group) {
-                    group.compute();
-                }
-        );
-
-        this.redrawCharts();
-    }
-};
-
-
-
-Dashboard.prototype.redrawCharts = function() {
-    for (var i = 0; i < this.Charts
-        .length; i++) {
-        this.Charts[i].draw();
-    }
-};
 ;/**
  * A DataSet is wrapper around a simple object array, but providing some functions that are required by charts to load and filter data.
  * A DataSet should be used with an array of data that is to be charted without being used in a crossfilter or dimensional dataset.
@@ -311,6 +188,8 @@ var Dimension = function Dimension(name, func, dimension, displayFunction, multi
     this.comparer = function(d) {
         return d.Name == this.Name;
     }.bind(this);
+
+
 };
 ;function Group(data) {
     this._data = data;
@@ -498,6 +377,9 @@ function Grouping(dimension) {
     var countProperties = [];
     var cumulativeProperties = [];
     var averageProperties = [];
+
+    var linkedSeries = [];
+
     this._compute = null;
     this.gIndices = {};
 
@@ -505,9 +387,17 @@ function Grouping(dimension) {
         return d;
     };
 
-
     this._orderFunction = function(a, b) {
         return b.value.Count - a.value.Count;
+    };
+
+    this.registerSeries = function(series) {
+        linkedSeries.push(series);
+        series.clickEvent = this.preFilter;
+    };
+
+    this.preFilter = function(series, filter, dimensionSelector) {
+
     };
 
     this._ordered = false;
@@ -529,7 +419,7 @@ function Grouping(dimension) {
     };
 
     /**
-     * The cumulatie function gets or sets the properties whose value occurences will be accumulated across this dimension.
+     * The cumulative function gets or sets the properties whose value occurences will be accumulated across this dimension.
      * @returns {String[]}
      */
     /**
@@ -569,7 +459,7 @@ function Grouping(dimension) {
      * @param {String[]} properties - An array of property names that will have be averaged during aggregation
      * @returns {this}
      */
-    this.average = function(_) {
+    this.mean = function(_) {
         if (!arguments.length) {
             return averageProperties;
         }
@@ -631,7 +521,6 @@ Grouping.prototype.unique = function(array) {
 };
 
 
-
 /**
  * This aggregation method is tailored to dimensions that can hold multiple values (in an array), therefore they are counted differently.
  * For example: a property called supportedDevices : ['iPhone5', 'iPhone4'] where the values inside the array are treated as dimensional slices
@@ -641,7 +530,7 @@ Grouping.prototype.reduceMultiDimension = function() {
 
     var propertiesToSum = this.sum();
     var propertiesToCount = this.count();
-    var propertiesToAverage = this.average();
+    var propertiesToAverage = this.mean();
 
     var index = 0;
     var gIndices = {};
@@ -715,7 +604,7 @@ Grouping.prototype.reduceMultiDimension = function() {
 Grouping.prototype.initialize = function() {
     var propertiesToSum = this.sum();
     var propertiesToCount = this.count();
-    var propertiesToAverage = this.average();
+    var propertiesToAverage = this.mean();
 
     var data = [];
 
@@ -865,11 +754,16 @@ Grouping.prototype.recalculate = function() {
 Grouping.prototype.getData = function() {
     var data;
 
+    if (!this._data) {
+        this.initialize();
+    }
+
     if (this.dimension.multiple) {
         data = this._data.value()
             .values;
     } else {
-        data = this._data.all();
+        data = this._data.all()
+            .slice(0);
     }
 
     if (this._filterFunction) {
@@ -884,13 +778,22 @@ Grouping.prototype.getData = function() {
  * This method is used to return the group's data, with ordering applied.  It checks if there is any filtering requested and applies the filter to the return array.
  * @returns {object[]} return - The grouping's data in an object array, with an object per slice of the dimension.
  */
-Grouping.prototype.getOrderedData = function() {
+Grouping.prototype.getOrderedData = function(topValues) {
 
     var data = [];
 
+    if (!this._data) {
+        this.initialize();
+    }
+
     if (!this.dimension.multiple) {
-        data = this._data.top(Infinity)
+        data = this._data.all()
+            .slice(0)
             .sort(this.orderFunction());
+
+        if (topValues) {
+            data = data.slice(0, topValues);
+        }
     } else {
 
         // take shallow copy of array prior to ordering so that ordering is not done in place, which would break ordering of index map. Must be better way to do this.
@@ -899,6 +802,9 @@ Grouping.prototype.getOrderedData = function() {
             .slice(0);
 
         data = data.sort(this.orderFunction());
+        if (topValues) {
+            data = data.slice(0, topValues);
+        }
     }
 
     if (this._filterFunction) {
@@ -1001,6 +907,211 @@ Grouping.prototype.calculateTotals = function() {
     }
     return this;
 };
+;/**
+ * This method is called when any post aggregation calculations, provided by the computeFunction() setter, need to be recalculated.
+ * @constructor
+ * @returns {this} this - Description
+ * @param {object} name - Description
+ */
+var Dashboard = function Dashboard(name) {
+    this.Name = name;
+    this.Charts = [];
+    this.Dimensions = [];
+    this.FilteredDimensions = [];
+    this.Groups = [];
+    this.ComputedGroups = [];
+    this.DimensionChartMap = {};
+
+    //initialize the crossfilter to be null, populate as load() is called
+    this.DataSets = [];
+    this.ndx = null;
+
+    return this;
+};
+
+
+/**
+ * This method loads a JSON data set into the Dashboard, creating a new crossfiltered set and returnign that to the user to reference when creating charts/groupings.
+ * @returns {object} return - A crossfilter dataset
+ * @param {object} data - an array of objects to add to the dashboard
+ * @param {string} name - an optional name for the dataset if multiple sets are being loaded into the dashboard.
+ */
+Dashboard.prototype.addData = function(data) {
+    //type detection and preprocessing steps here
+
+    var ndx = crossfilter(data);
+
+    this.DataSets.push(ndx);
+
+    return ndx;
+};
+
+Dashboard.prototype.addChart = function(chart) {
+
+    var self = this;
+
+    chart.triggerRedraw = this.redrawCharts.bind(this);
+
+    this.Charts.push(chart);
+    chart.series()
+        .forEach(function(s) {
+            if (s.data.dimension) {
+                if (self.DimensionChartMap[s.data.dimension.Name]) {
+                    self.DimensionChartMap[s.data.dimension.Name].push(s);
+                } else {
+                    self.DimensionChartMap[s.data.dimension.Name] = [s];
+                }
+            }
+        });
+
+    return chart;
+};
+
+
+/**
+ * This method takes a dataset, name and grouping function, returning a Grouping with a Dimension created as part of that process.
+ * @returns {object} Grouping - An aggregated Grouping that can be manipulated and have calculations applied to it
+ * @param {object} dataset - A crossfilter, for example, returned by the addData() method
+ * @param {string} name - A uniquely identifying name for the dimension along which this grouping is created. Used to identify identical dimensions in other datasets.
+ * @param {function} groupFunction - The function used to group the dimension along.  Select the property of the underlying data that the dimension is to be defined on. Rounding or data manipulation can alter the granularity of the dimension
+ */
+Dashboard.prototype.group = function(dataset, name, groupFunction) {
+
+    var dim = new Dimension(name, groupFunction, dataset.dimension(groupFunction), groupFunction, false);
+
+    this.Dimensions.push(dim);
+
+    var group = new Grouping(dim);
+
+    group.preFilter = this.chartFilterHandler.bind(this);
+
+    this.Groups.push(group);
+
+    return group;
+};
+
+
+Dashboard.prototype.filterFunction = function(filter, element) {
+    var value = filter.key ? filter.key : filter;
+
+    return {
+        name: value,
+        filterFunction: function(d) {
+            if (Array.isArray(d)) {
+                return d.indexOf(value) != -1;
+            } else {
+                return String(d) == String(value);
+            }
+        }
+    };
+};
+
+
+Dashboard.prototype.compareFilters = function(filterFunction) {
+    return function(d) {
+        return String(d.name) == String(filterFunction.name);
+    };
+};
+
+
+Dashboard.prototype.applyCSSClasses = function(chart, value, dimensionSelector) {
+    var listeningSeries = this.DimensionChartMap[chart.data.dimension.Name];
+
+    listeningSeries.forEach(function(series) {
+        series.highlight(dimensionSelector, value);
+    });
+};
+
+Dashboard.prototype.chartFilterHandler = function(chart, value, dimensionSelector) {
+    var self = this;
+
+    this.applyCSSClasses(chart, value, dimensionSelector);
+
+    var dimension = chart.data.dimension;
+
+    var filterFunction = this.filterFunction(value);
+
+    if (filterFunction) {
+        var dims = this.Dimensions
+            .filter(dimension.comparer);
+
+        var activeDim = this.FilteredDimensions
+            .filter(dimension.comparer);
+
+        if (!activeDim.length) {
+            this.FilteredDimensions.push(dimension);
+        }
+
+        var comparerFunction = this.compareFilters(filterFunction);
+
+        dims.map(function(dim) {
+
+            var filterExists = dim.Filters
+                .filter(comparerFunction)
+                .length;
+
+            //if the dimension is already filtered by this value, toggle (remove) the filter
+            if (filterExists) {
+                InsightUtils.removeMatchesFromArray(dim.Filters, comparerFunction);
+
+            } else {
+                // add the provided filter to the list for this dimension
+
+                dim.Filters.push(filterFunction);
+            }
+
+            // reset this dimension if no filters exist, else apply the filter to the dataset.
+            if (dim.Filters.length === 0) {
+
+                InsightUtils.removeItemFromArray(self.FilteredDimensions, dim);
+                dim.Dimension.filterAll();
+
+            } else {
+                dim.Dimension.filter(function(d) {
+                    var vals = dim.Filters
+                        .map(function(func) {
+                            return func.filterFunction(d);
+                        });
+
+                    return vals.filter(function(result) {
+                            return result;
+                        })
+                        .length > 0;
+                });
+            }
+        });
+
+        this.Groups.forEach(function(group) {
+            group.recalculate();
+
+        });
+
+        this.ComputedGroups
+            .forEach(
+                function(group) {
+                    group.compute();
+                }
+        );
+
+        this.redrawCharts();
+    }
+};
+
+Dashboard.prototype.initCharts = function() {
+    this.Charts
+        .forEach(
+            function(chart) {
+                chart.init();
+            });
+};
+
+
+Dashboard.prototype.redrawCharts = function() {
+    for (var i = 0; i < this.Charts
+        .length; i++) {
+        this.Charts[i].draw();
+    }
+};
 ;function Series(name, chart, data, x, y, color) {
 
     this.chart = chart;
@@ -1010,9 +1121,18 @@ Grouping.prototype.calculateTotals = function() {
     this.name = name;
     this.color = d3.functor(color);
     this.animationDuration = 300;
-
+    this.topValues = null;
+    this.selectedItems = [];
+    this.dimensionName = data.dimension ? data.dimension.Name + "Dim" : "";
     x.addSeries(this);
     y.addSeries(this);
+
+
+
+
+    if (data.registerSeries) {
+        data.registerSeries(this);
+    }
 
     var self = this;
     var cssClass = "";
@@ -1043,7 +1163,8 @@ Grouping.prototype.calculateTotals = function() {
 
     this.dataset = function() {
         //won't always be x that determines this (rowcharts, bullets etc.), need concept of ordering by data scale?
-        var data = this.x.ordered() ? this.data.getOrderedData() : this.data.getData();
+
+        var data = this.x.ordered() ? this.data.getOrderedData(this.topValues) : this.data.getData();
 
         if (filter) {
             data = data.filter(filter);
@@ -1088,6 +1209,52 @@ Grouping.prototype.calculateTotals = function() {
         return this;
     };
 
+    this.sliceSelector = function(d) {
+
+        var result = d.key.replace ? "in_" + d.key.replace(/[^A-Z0-9]/ig, "_") : "";
+
+        return result;
+    };
+
+
+    this.selectedClassName = function(name) {
+        var selected = "";
+
+        if (self.selectedItems.length) {
+            selected = self.selectedItems.indexOf(name) > -1 ? "selected" : "notselected";
+        }
+
+        return selected;
+    };
+
+    this.highlight = function(selector, value) {
+        var clicked = this.chart.chart.selectAll("." + selector);
+        var alreadySelected = clicked.classed('selected');
+
+        if (alreadySelected) {
+            clicked.classed('selected', false);
+            InsightUtils.removeItemFromArray(self.selectedItems, selector);
+        } else {
+            clicked.classed('selected', true)
+                .classed('notselected', false);
+            self.selectedItems.push(selector);
+        }
+
+        var selected = this.chart.chart.selectAll('.selected');
+        var notselected = this.chart.chart.selectAll('.bar:not(.selected),.bubble:not(.selected)');
+
+        notselected.classed('notselected', selected[0].length > 0);
+    };
+
+
+
+    this.click = function(element, filter) {
+
+        var selector = self.sliceSelector(filter);
+
+        this.clickEvent(this, filter, selector);
+    };
+
     this.filterFunction = function(_) {
         if (!arguments.length) {
             return filter;
@@ -1115,6 +1282,36 @@ Grouping.prototype.calculateTotals = function() {
         return this;
     };
 
+    this.top = function(_) {
+        if (!arguments.length) {
+            return this.topValues;
+        }
+        this.topValues = _;
+
+        return this;
+    };
+
+    this.maxLabelDimensions = function(measureCanvas) {
+
+        var sampleText = document.createElement('div');
+        sampleText.setAttribute('class', InsightConstants.AxisTextClass);
+        var style = window.getComputedStyle(sampleText);
+        var ctx = measureCanvas.getContext('2d');
+        ctx.font = style['font-size'] + ' ' + style['font-family'];
+
+        var max = 0;
+
+        this.keys()
+            .forEach(function(key) {
+
+                var width = ctx.measureText(key)
+                    .width;
+
+                max = width > max ? width : max;
+            });
+
+        return max;
+    };
 
 
     this.findMax = function(scale) {
@@ -1136,6 +1333,15 @@ Grouping.prototype.calculateTotals = function() {
 
     return this;
 }
+
+/* Skeleton event overriden by a Dashboard to subscribe to this series' clicks.
+ * @param {object} series - The series being clicked
+ * @param {object[]} filter - The value of the point selected, used for filtering/highlighting
+ * @param {object[]} selection - The css selection name also used to maintain a list of filtered dimensions (TODO - is this needed anymore?)
+ */
+Series.prototype.clickEvent = function(series, filter, selection) {
+
+};
 ;function Chart(name, element, dimension) {
 
     this.name = name;
@@ -1150,6 +1356,8 @@ Grouping.prototype.calculateTotals = function() {
 
     this.chart = null;
 
+    this.measureCanvas = document.createElement("canvas");
+
     this._margin = {
         top: 0,
         left: 0,
@@ -1162,6 +1370,9 @@ Grouping.prototype.calculateTotals = function() {
     var axes = [];
     var self = this;
     var barPadding = d3.functor(0.1);
+    var title = "";
+    var autoMargin = false;
+
 
     this.addAxis = function(axis) {
         axes.push(axis);
@@ -1170,7 +1381,6 @@ Grouping.prototype.calculateTotals = function() {
     this.axes = function() {
         return axes;
     };
-
 
     this.addClipPath = function() {
         this.chart.append("clipPath")
@@ -1187,6 +1397,11 @@ Grouping.prototype.calculateTotals = function() {
     };
 
     this.init = function(create, container) {
+
+        if (autoMargin) {
+            this.calculateLabelMargin();
+        }
+
         this.container = create ? d3.select(container)
             .append('div') : d3.select(this.element)
             .append('div');
@@ -1217,6 +1432,7 @@ Grouping.prototype.calculateTotals = function() {
 
         axes.map(function(axis) {
             axis.initialize();
+            var a = axis.scale.domain();
         });
 
         if (zoomable) {
@@ -1334,40 +1550,31 @@ Grouping.prototype.calculateTotals = function() {
             .join('_') + "clip";
     };
 
-    this.filterFunction = function(filter, element) {
-        var value = filter.key ? filter.key : filter;
 
-        return {
-            name: value,
-            element: element,
-            filterFunction: function(d) {
-                if (Array.isArray(d)) {
-                    return d.indexOf(value) != -1;
-                } else {
-                    return String(d) == String(value);
-                }
-            }
-        };
-    };
-
+    /**
+     * This function takes a data point, and creates a class name for insight to identify this particular key
+     * If the parameter is not an object (just a value in an array) then there is no need for this particular class so blank is returned.
+     * @returns {string} return - A class name to identify this point and any other points taking the same value in other charts.
+     * @param {object} data - The input point
+     */
     this.dimensionSelector = function(d) {
 
-        var result = self.dimension && d.key.replace ? self.dimension.Name + d.key.replace(/[^A-Z0-9]/ig, "_") : "";
+        var result = d.key.replace ? "in_" + d.key.replace(/[^A-Z0-9]/ig, "_") : "";
 
         return result;
     };
 
-    this.filterClick = function(element, filter) {
+
+
+    this.click = function(element, value) {
         if (this.dimension) {
             var selected = d3.select(element)
                 .classed('selected');
 
-            d3.selectAll('.' + self.dimensionSelector(filter))
+            d3.selectAll('.' + self.dimensionSelector(value))
                 .classed('selected', !selected);
 
-            var filterFunction = this.filterFunction(filter, element);
-
-            this.filterEvent(this.dimension, filterFunction);
+            this.clickEvent(this, value);
         }
     };
 
@@ -1403,6 +1610,15 @@ Grouping.prototype.calculateTotals = function() {
 
         d3.select(item)
             .classed("active", false);
+    };
+
+    this.title = function(_) {
+        if (!arguments.length) {
+            return title;
+        }
+
+        title = _;
+        return this;
     };
 
     this.width = function(_) {
@@ -1447,7 +1663,53 @@ Grouping.prototype.calculateTotals = function() {
         var axis = new Axis(this, scale, 'h', 'left');
     };
 
+
+    this.autoMargin = function(_) {
+        if (!arguments.length) {
+            return autoMargin;
+        }
+        autoMargin = _;
+        return this;
+    };
 }
+
+
+
+Chart.prototype.calculateLabelMargin = function() {
+
+    var canvas = this.measureCanvas;
+    var max = 0;
+
+    this.series()
+        .forEach(function(series) {
+            var m = series.maxLabelDimensions(canvas);
+            max = m > max ? m : max;
+        });
+
+    this.margin()
+        .bottom = max;
+};
+
+
+// Helper functions for adding series without having to create the scales & axes yourself (move to builder class?)
+
+Chart.prototype.addColumnSeries = function(series) {
+
+    var x = new Scale(this, "", d3.scale.ordinal(), 'h', 'ordinal');
+    var y = new Scale(this, "", d3.scale.linear(), 'v', 'linear');
+
+    var stacked = series.stacked ? true : false;
+
+    var s = new ColumnSeries("", this, series.data, x, y, series.color)
+        .stacked(stacked);
+
+    s.series = [series];
+
+    this.series()
+        .push(s);
+
+    return s;
+};
 ;var ChartGroup = function ChartGroup(name) {
     this.Name = name;
     this.Charts = [];
@@ -1457,6 +1719,7 @@ Grouping.prototype.calculateTotals = function() {
     this.ComputedGroups = [];
     this.LinkedCharts = [];
     this.NestedGroups = [];
+    this.DimensionChartMap = {};
 };
 
 ChartGroup.prototype.initCharts = function() {
@@ -1469,12 +1732,34 @@ ChartGroup.prototype.initCharts = function() {
 
 ChartGroup.prototype.addChart = function(chart) {
 
-    chart.filterEvent = this.chartFilterHandler.bind(this);
+    var self = this;
+
     chart.triggerRedraw = this.redrawCharts.bind(this);
 
     this.Charts.push(chart);
+    chart.series()
+        .forEach(function(s) {
+            if (s.data.dimension) {
+                if (self.DimensionChartMap[s.data.dimension.Name]) {
+                    self.DimensionChartMap[s.data.dimension.Name].push(s);
+                } else {
+                    self.DimensionChartMap[s.data.dimension.Name] = [s];
+                }
+            }
+        });
 
     return chart;
+};
+
+ChartGroup.prototype.addGroup = function(group) {
+
+    group.preFilter = this.chartFilterHandler.bind(this);
+
+    group.initialize();
+
+    this.Groups.push(group);
+
+    return this;
 };
 
 ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc, multi) {
@@ -1485,14 +1770,45 @@ ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc, multi
     return dimension;
 };
 
+
+ChartGroup.prototype.filterFunction = function(filter, element) {
+    var value = filter.key ? filter.key : filter;
+
+    return {
+        name: value,
+        filterFunction: function(d) {
+            if (Array.isArray(d)) {
+                return d.indexOf(value) != -1;
+            } else {
+                return String(d) == String(value);
+            }
+        }
+    };
+};
+
+
 ChartGroup.prototype.compareFilters = function(filterFunction) {
     return function(d) {
         return String(d.name) == String(filterFunction.name);
     };
 };
 
-ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
+ChartGroup.prototype.applyCSSClasses = function(chart, value, dimensionSelector) {
+    var listeningSeries = this.DimensionChartMap[chart.data.dimension.Name];
+
+    listeningSeries.forEach(function(series) {
+        series.highlight(dimensionSelector, value);
+    });
+};
+
+ChartGroup.prototype.chartFilterHandler = function(chart, value, dimensionSelector) {
     var self = this;
+
+    this.applyCSSClasses(chart, value, dimensionSelector);
+
+    var dimension = chart.data.dimension;
+
+    var filterFunction = this.filterFunction(value);
 
     if (filterFunction) {
         var dims = this.Dimensions
@@ -1515,7 +1831,7 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
 
             //if the dimension is already filtered by this value, toggle (remove) the filter
             if (filterExists) {
-                self.removeMatchesFromArray(dim.Filters, comparerFunction);
+                InsightUtils.removeMatchesFromArray(dim.Filters, comparerFunction);
 
             } else {
                 // add the provided filter to the list for this dimension
@@ -1526,7 +1842,7 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
             // reset this dimension if no filters exist, else apply the filter to the dataset.
             if (dim.Filters.length === 0) {
 
-                self.removeItemFromArray(self.FilteredDimensions, dim);
+                InsightUtils.removeItemFromArray(self.FilteredDimensions, dim);
                 dim.Dimension.filterAll();
 
             } else {
@@ -1539,7 +1855,7 @@ ChartGroup.prototype.chartFilterHandler = function(dimension, filterFunction) {
                     return vals.filter(function(result) {
                             return result;
                         })
-                        .length;
+                        .length > 0;
                 });
             }
         });
@@ -1622,112 +1938,6 @@ ChartGroup.prototype.count = function(dimension, input) {
 
     return group;
 };
-
-
-ChartGroup.prototype.addSumGrouping = function(dimension, func) {
-    var data = dimension.Dimension.group()
-        .reduceSum(func);
-    var group = new Group(data);
-
-    this.Groups.push(group);
-    return group;
-};
-
-ChartGroup.prototype.addCustomGrouping = function(group) {
-    this.Groups.push(group);
-    if (group.cumulative()) {
-        this.CumulativeGroups.push(group);
-    }
-    return group;
-};
-
-ChartGroup.prototype.multiReduceSum = function(dimension, properties) {
-
-    var data = dimension.Dimension.group()
-        .reduce(
-            function(p, v) {
-
-                for (var property in properties) {
-                    if (v.hasOwnProperty(properties[property])) {
-                        p[properties[property]] += v[properties[property]];
-                    }
-                }
-                return p;
-            },
-            function(p, v) {
-                for (var property in properties) {
-                    if (v.hasOwnProperty(properties[property])) {
-                        p[properties[property]] -= v[properties[property]];
-                    }
-                }
-                return p;
-            },
-            function() {
-                var p = {};
-                for (var property in properties) {
-                    p[properties[property]] = 0;
-                }
-                return p;
-            }
-        );
-    var group = new Group(data);
-
-    return group;
-};
-
-ChartGroup.prototype.multiReduceCount = function(dimension, properties) {
-
-    var data = dimension.Dimension.group()
-        .reduce(
-            function(p, v) {
-                for (var property in properties) {
-                    if (v.hasOwnProperty(properties[property])) {
-                        p[properties[property]][v[properties[property]]] = p[properties[property]].hasOwnProperty(v[properties[property]]) ? p[properties[property]][v[properties[property]]] + 1 : 1;
-                        p[properties[property]].Total++;
-                    }
-                }
-                return p;
-            },
-            function(p, v) {
-                for (var property in properties) {
-                    if (v.hasOwnProperty(properties[property])) {
-                        p[properties[property]][v[properties[property]]] = p[properties[property]].hasOwnProperty(v[properties[property]]) ? p[properties[property]][v[properties[property]]] - 1 : 1;
-                        p[properties[property]].Total--;
-                    }
-                }
-                return p;
-            },
-            function() {
-                var p = {};
-                for (var property in properties) {
-                    p[properties[property]] = {
-                        Total: 0
-                    };
-                }
-                return p;
-            }
-        );
-
-    var group = new Group(data);
-    this.Groups.push(group);
-
-    return group;
-};
-
-ChartGroup.prototype.removeMatchesFromArray = function(array, comparer) {
-    var self = this;
-    var matches = array.filter(comparer);
-    matches.forEach(function(match) {
-        self.removeItemFromArray(array, match);
-    });
-};
-ChartGroup.prototype.removeItemFromArray = function(array, item) {
-
-    var index = array.indexOf(item);
-    if (index > -1) {
-        array.splice(index, 1);
-    }
-};
 ;function BubbleSeries(name, chart, data, x, y, color) {
 
     Series.call(this, name, chart, data, x, y, color);
@@ -1736,7 +1946,7 @@ ChartGroup.prototype.removeItemFromArray = function(array, item) {
     var fillFunction = d3.functor(color);
     var maxRad = d3.functor(50);
     var minRad = d3.functor(7);
-
+    var tooltipExists = false;
     var self = this;
 
     var mouseOver = function(d, item) {
@@ -1783,7 +1993,8 @@ ChartGroup.prototype.removeItemFromArray = function(array, item) {
     this.selector = this.name + InsightConstants.Bubble;
 
     this.className = function(d) {
-        return self.selector + " " + InsightConstants.Bubble + " " + self.chart.dimensionSelector(d);
+
+        return self.selector + " " + InsightConstants.Bubble + " " + self.chart.dimensionSelector(d) + " " + self.dimensionName;
     };
 
     this.draw = function(drag) {
@@ -1801,7 +2012,7 @@ ChartGroup.prototype.removeItemFromArray = function(array, item) {
         };
 
         var click = function(filter) {
-            return self.chart.filterClick(this, filter);
+            return self.click(this, filter);
         };
 
 
@@ -1834,8 +2045,11 @@ ChartGroup.prototype.removeItemFromArray = function(array, item) {
             .attr('cy', self.rangeY)
             .attr('fill', fillFunction);
 
-        bubbles.append('svg:text')
-            .attr('class', InsightConstants.ToolTipTextClass);
+        if (!tooltipExists) {
+            bubbles.append('svg:text')
+                .attr('class', InsightConstants.ToolTipTextClass);
+            tooltipExists = true;
+        }
 
         bubbles.selectAll("." + InsightConstants.ToolTipTextClass)
             .text(this.tooltipFunction());
@@ -1844,6 +2058,243 @@ ChartGroup.prototype.removeItemFromArray = function(array, item) {
 
 BubbleSeries.prototype = Object.create(Series.prototype);
 BubbleSeries.prototype.constructor = BubbleSeries;
+;function RowSeries(name, chart, data, x, y, color) {
+
+    Series.call(this, name, chart, data, x, y, color);
+
+    var self = this;
+    var stacked = d3.functor(false);
+    var seriesName = "";
+    var tooltipExists = false;
+
+
+    var mouseOver = function(d, item) {
+        self.chart.mouseOver(self, this, d);
+    };
+
+    var mouseOut = function(d, item) {
+        self.chart.mouseOut(self, this, d);
+    };
+
+
+    this.series = [{
+        name: 'default',
+        accessor: function(d) {
+            return self.xFunction()(d);
+        },
+        tooltipValue: function(d) {
+            return self.tooltipFunction()(d);
+        },
+        color: d3.functor('silver'),
+        label: 'Value'
+    }];
+
+
+    /**
+     * RowSeries overrides the standard key function used by most, vertical charts.
+     * @returns {object[]} return - The keys along the domain axis for this row series
+     */
+    this.keys = function() {
+        return self.dataset()
+            .map(self.yFunction());
+    };
+
+
+    this.tooltipFunction(function(d) {
+        return self.tooltipFormat()(self.xFunction()(d));
+    });
+
+
+    /**
+     * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
+     * This function is mapped across the entire data array by the findMax method.
+     * @returns {Number} return - Description
+     * @param {object} data - An item in the object array to query
+     */
+    this.seriesMax = function(d) {
+        var max = 0;
+        var seriesMax = 0;
+
+        var stacked = self.stacked();
+
+        for (var series in self.series) {
+            var s = self.series[series];
+
+            var seriesValue = s.accessor(d);
+
+            seriesMax = stacked ? seriesMax + seriesValue : seriesValue;
+
+            max = seriesMax > max ? seriesMax : max;
+        }
+
+        return max;
+    };
+
+
+    /**
+     * This method returns the largest value on the value axis of this ColumnSeries, checking all series functions in the series on all points.
+     * This function is mapped across the entire data array by the findMax method.
+     * @constructor
+     * @returns {Number} return - The largest value on the value scale of this ColumnSeries
+     */
+    this.findMax = function() {
+        var max = d3.max(this.data.getData(), this.seriesMax);
+
+        return max;
+    };
+
+
+    /**
+     * This method gets or sets whether or not the series in this ColumnSeries are to be stacked or not.  This is false by default.
+     * @returns {boolean} - Whether or not the columns are stacked (they are grouped if this returns false)
+     */
+    /**
+     * @returns {object} return - Description
+     * @param {boolean} stack - To stack or not to stack
+     */
+    this.stacked = function(_) {
+        if (!arguments.length) {
+            return stacked();
+        }
+        stacked = d3.functor(_);
+        return this;
+    };
+
+    this.calculateXPos = function(func, d) {
+        if (!d.xPos) {
+            d.xPos = 0;
+        }
+        var myPosition = d.xPos;
+
+        d.xPos += func(d);
+
+        return myPosition;
+    };
+
+    this.yPosition = function(d) {
+        return self.y.scale(self.yFunction()(d));
+    };
+
+    this.calculateYPos = function(thickness, d) {
+        if (!d.yPos) {
+            d.yPos = self.yPosition(d);
+        } else {
+            d.yPos += thickness;
+        }
+        return d.yPos;
+    };
+
+    this.xPosition = function(d) {
+
+        var func = self.series[self.currentSeries].accessor;
+
+        var position = self.stackedBars() ? self.x.scale(self.calculateXPos(func, d)) : 0;
+
+        return position;
+    };
+
+    this.barThickness = function(d) {
+        return self.y.scale.rangeBand(d);
+    };
+
+    this.groupedbarThickness = function(d) {
+
+        var groupThickness = self.barThickness(d);
+
+        var width = self.stackedBars() || (self.series.length == 1) ? groupThickness : groupThickness / self.series.length;
+
+        return width;
+    };
+
+    this.offsetYPosition = function(d) {
+        var thickness = self.groupedbarThickness(d);
+        var position = self.stackedBars() ? self.yPosition(d) : self.calculateYPos(thickness, d);
+
+        return position;
+    };
+
+    this.barWidth = function(d) {
+        var func = self.series[self.currentSeries].accessor;
+
+        return self.x.scale(func(d));
+    };
+
+    this.stackedBars = function() {
+        return self.stacked();
+    };
+
+    this.className = function(d) {
+        return seriesName + 'class bar ' + self.chart.dimensionSelector(d);
+    };
+
+    this.draw = function(drag) {
+        var reset = function(d) {
+            d.yPos = 0;
+            d.xPos = 0;
+        };
+
+        var groups = this.chart.chart
+            .selectAll('g.' + InsightConstants.BarGroupClass)
+            .data(this.dataset(), this.keyAccessor)
+            .each(reset);
+
+        var newGroups = groups.enter()
+            .append('g')
+            .attr('class', InsightConstants.BarGroupClass);
+
+        var newBars = newGroups.selectAll('rect.bar');
+
+        var click = function(filter) {
+            return self.click(this, filter);
+        };
+
+        var duration = function(d, i) {
+            return 200 + (i * 20);
+        };
+
+
+        for (var ser in this.series) {
+
+            this.currentSeries = ser;
+
+            var s = this.series[ser];
+
+            seriesName = s.name;
+
+            newBars = newGroups.append('rect')
+                .attr('class', self.className)
+                .attr('height', 0)
+                .attr('fill', s.color)
+                .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
+                .on('mouseover', mouseOver)
+                .on('mouseout', mouseOut)
+                .on('click', click);
+
+            if (!tooltipExists) {
+                newBars.append('svg:text')
+                    .attr('class', InsightConstants.ToolTipTextClass);
+                tooltipExists = true;
+            }
+
+            var bars = groups.selectAll('.' + seriesName + 'class.bar')
+                .transition()
+                .duration(duration)
+                .attr('y', this.offsetYPosition)
+                .attr('x', this.xPosition)
+                .attr('height', this.groupedbarThickness)
+                .attr('width', this.barWidth);
+
+            bars.selectAll("." + InsightConstants.ToolTipTextClass)
+                .text(s.tooltipValue);
+        }
+    };
+
+    return this;
+}
+
+
+RowSeries.prototype = Object.create(Series.prototype);
+RowSeries.prototype.constructor = RowSeries;
 ;function Scale(chart, title, scale, direction, type) {
     var ordered = d3.functor(false);
     var self = this;
@@ -1879,10 +2330,11 @@ BubbleSeries.prototype.constructor = BubbleSeries;
                 .right - self.chart.margin()
                 .left;
         } else if (self.vertical()) {
-            bounds[1] = 0;
             bounds[0] = self.chart.height() - self.chart.margin()
                 .top - self.chart.margin()
                 .bottom;
+            bounds[1] = 0;
+
         }
         return bounds;
     };
@@ -2051,8 +2503,9 @@ BubbleSeries.prototype.constructor = BubbleSeries;
 
     this.tickRotation = function() {
         var offset = self.tickPadding() + (self.tickSize() * 2);
+        offset = self.anchor == 'top' ? 0 - offset : offset;
 
-        var rotation = this.labelOrientation() == 'tb' ? 'rotate(90,0,' + offset + ')' : '';
+        var rotation = this.labelOrientation() == 'tb' ? ' rotate(90,0,' + offset + ')' : '';
 
         return rotation;
     };
@@ -2061,9 +2514,13 @@ BubbleSeries.prototype.constructor = BubbleSeries;
         var transform = "translate(";
 
         if (self.scale.horizontal()) {
-            transform += '0,' + (self.chart.height() - self.chart.margin()
+            var transX = 0;
+            var transY = self.anchor == 'top' ? 0 : (self.chart.height() - self.chart.margin()
                 .bottom - self.chart.margin()
-                .top) + ')';
+                .top);
+
+            transform += transX + ',' + transY + ')';
+
         } else if (self.scale.vertical()) {
             var xShift = self.anchor == 'left' ? 0 : self.chart.width() - self.chart.margin()
                 .right - self.chart.margin()
@@ -2101,12 +2558,13 @@ BubbleSeries.prototype.constructor = BubbleSeries;
     this.positionLabels = function(labels) {
 
         if (self.scale.horizontal()) {
+
             labels.style('left', 0)
-                .style('bottom', 0)
+                .style(self.anchor, 0)
                 .style('width', '100%')
                 .style('text-align', 'center');
         } else if (self.scale.vertical()) {
-            labels.style('left', '0')
+            labels.style(self.anchor, '0')
                 .style('top', '35%');
         }
     };
@@ -2135,7 +2593,6 @@ BubbleSeries.prototype.constructor = BubbleSeries;
             .text(self.scale.title);
 
         this.positionLabels(labels);
-
     };
 
 
@@ -2171,6 +2628,7 @@ BubbleSeries.prototype.constructor = BubbleSeries;
     var self = this;
 
     var lineType = 'linear';
+    var tooltipExists = false;
 
     var mouseOver = function(d, item) {
         self.chart.mouseOver(self, this, d);
@@ -2226,6 +2684,8 @@ BubbleSeries.prototype.constructor = BubbleSeries;
             .y(self.rangeY)
             .interpolate(lineType);
 
+        var data = this.dataset();
+
         var rangeIdentifier = "path." + this.name + ".in-line";
 
         var rangeElement = this.chart.chart.selectAll(rangeIdentifier);
@@ -2273,8 +2733,12 @@ BubbleSeries.prototype.constructor = BubbleSeries;
             .attr("cy", self.rangeY)
             .attr("r", 2.5);
 
-        circles.append('svg:text')
-            .attr('class', InsightConstants.ToolTipTextClass);
+
+        if (!tooltipExists) {
+            circles.append('svg:text')
+                .attr('class', InsightConstants.ToolTipTextClass);
+            tooltipExists = true;
+        }
 
         circles.selectAll("." + InsightConstants.ToolTipTextClass)
             .text(this.tooltipFunction());
@@ -2295,7 +2759,6 @@ LineSeries.prototype.constructor = LineSeries;
     var self = this;
     var stacked = d3.functor(false);
     var seriesName = "";
-
     var barWidthFunction = this.x.rangeType;
 
     var mouseOver = function(d, item) {
@@ -2304,6 +2767,11 @@ LineSeries.prototype.constructor = LineSeries;
 
     var mouseOut = function(d, item) {
         self.chart.mouseOut(self, this, d);
+    };
+
+    var tooltipFunction = function(d) {
+        var func = self.series[self.currentSeries].accessor;
+        return self.tooltipFormat()(func(d));
     };
 
 
@@ -2407,6 +2875,8 @@ LineSeries.prototype.constructor = LineSeries;
         return position;
     };
 
+
+
     this.barWidth = function(d) {
         return self.x.scale.rangeBand(d);
     };
@@ -2439,8 +2909,14 @@ LineSeries.prototype.constructor = LineSeries;
         return self.stacked();
     };
 
+
+
     this.className = function(d) {
-        return seriesName + 'class bar ' + self.chart.dimensionSelector(d);
+        var dimension = self.chart.dimensionSelector(d);
+
+        var selected = self.selectedClassName(dimension);
+
+        return seriesName + 'class bar ' + dimension + " " + selected + " " + self.dimensionName;
     };
 
     this.draw = function(drag) {
@@ -2449,10 +2925,12 @@ LineSeries.prototype.constructor = LineSeries;
             d.xPos = 0;
         };
 
+        var d = this.dataset()
+            .forEach(reset);
+
         var groups = this.chart.chart
             .selectAll('g.' + InsightConstants.BarGroupClass)
-            .data(this.dataset(), this.keyAccessor)
-            .each(reset);
+            .data(this.dataset(), this.keyAccessor);
 
         var newGroups = groups.enter()
             .append('g')
@@ -2461,7 +2939,7 @@ LineSeries.prototype.constructor = LineSeries;
         var newBars = newGroups.selectAll('rect.bar');
 
         var click = function(filter) {
-            return self.chart.filterClick(this, filter);
+            return self.click(this, filter);
         };
 
         var duration = function(d, i) {
@@ -2477,8 +2955,6 @@ LineSeries.prototype.constructor = LineSeries;
 
             seriesName = s.name;
 
-            //this.yFunction(s.accessor);
-
             newBars = newGroups.append('rect')
                 .attr('class', self.className)
                 .attr('y', this.y.bounds[0])
@@ -2492,7 +2968,9 @@ LineSeries.prototype.constructor = LineSeries;
             newBars.append('svg:text')
                 .attr('class', InsightConstants.ToolTipTextClass);
 
-            var bars = groups.selectAll('.' + seriesName + 'class.bar')
+            var bars = groups.selectAll('.' + seriesName + 'class.bar');
+
+            bars
                 .transition()
                 .duration(duration)
                 .attr('y', this.yPosition)
@@ -2501,8 +2979,12 @@ LineSeries.prototype.constructor = LineSeries;
                 .attr('height', this.barHeight);
 
             bars.selectAll("." + InsightConstants.ToolTipTextClass)
-                .text(s.tooltipValue);
+                .text(tooltipFunction);
+
         }
+
+        groups.exit()
+            .remove();
     };
 
     return this;

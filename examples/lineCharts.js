@@ -4,33 +4,21 @@ $(document)
         d3.json('revenuereport.json', function(data)
         {
 
-            var exampleGroup = new ChartGroup("Example Group");
+            var dashboard = new Dashboard("Example Group");
 
             data.forEach(function(item)
             {
                 item.Date = new Date(item.Date);
             });
 
+            var dataset = dashboard.addData(data);
 
-            var ndx = new crossfilter(data);
-
-            var date = exampleGroup.addDimension(ndx, "Date", function(d)
-            {
-                return d.Date;
-            }, function(d)
-            {
-                return d.Date;
-            });
-
-            var dateData = exampleGroup.aggregate(date, function(d)
-            {
-                return d.CurrentRevenue;
-            });
-
-            dateData = new Grouping(date)
+            var dateData = dashboard.group(dataset, 'date', function(d)
+                {
+                    return d.Date;
+                })
                 .sum(['CurrentRevenue'])
-                .cumulative(['CurrentRevenue.Sum'])
-                .initialize();
+                .cumulative(['CurrentRevenue.Sum']);
 
             var chart = new Chart('Chart 1', "#chart1")
                 .width(650)
@@ -69,8 +57,8 @@ $(document)
                 .tickSize(5)
                 .format(InsightFormatters.currencyFormatter);
 
-            exampleGroup.addChart(chart);
+            dashboard.addChart(chart);
 
-            exampleGroup.initCharts();
+            dashboard.initCharts();
         });
     });

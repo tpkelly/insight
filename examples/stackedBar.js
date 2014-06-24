@@ -28,7 +28,7 @@ $(document)
     .ready(function()
     {
 
-        var exampleGroup = new ChartGroup("Example Group");
+        var exampleGroup = new Dashboard("Example Group");
 
         var dataset = new DataSet(data);
 

@@ -4,26 +4,25 @@ $(document)
         d3.json('revenuereport.json', function(data)
         {
 
-            var exampleGroup = new ChartGroup("Example Group");
+            var dashboard = new Dashboard("Example Group");
 
-            var ndx = new crossfilter(data);
+            var dataset = dashboard.addData(data);
 
-            var client = exampleGroup.addDimension(ndx, "Client", function(d)
-            {
-                return d.Client;
-            }, function(d)
-            {
-                return d.Client;
-            });
-
-            var clientData = exampleGroup.aggregate(client, function(d)
+            var clientData = dashboard.group(dataset, 'clients', function(d)
                 {
-                    return d.CurrentRevenue;
+                    return d.Client;
                 })
-                .cumulative(true);
+                .sum(['CurrentRevenue'])
+                .cumulative(['CurrentRevenue.Sum'])
+                .orderFunction(function(a, b)
+                {
+                    return b.value.CurrentRevenue.Sum - a.value.CurrentRevenue.Sum;
+                });
 
 
             computeGroupValues(clientData);
+
+            console.log(clientData.getData());
 
             var chart = new Chart('Chart 1', "#chart1")
                 .width(500)
@@ -48,7 +47,7 @@ $(document)
                 .tooltipFormat(InsightFormatters.percentageFormatter)
                 .yFunction(function(d)
                 {
-                    return d.Cumulative;
+                    return d.value.Percentage;
                 });
 
             series.series = [
@@ -56,12 +55,12 @@ $(document)
                 name: 'value',
                 accessor: function(d)
                 {
-                    return d.value;
+                    return d.value.CurrentRevenue.Sum;
                 },
-                color: '#e67e22',
+                color: '#e74c3c',
                 tooltipValue: function(d)
                 {
-                    return InsightFormatters.currencyFormatter(d.value);
+                    return InsightFormatters.currencyFormatter(d.value.CurrentRevenue.Sum);
                 }
             }];
 
@@ -79,9 +78,9 @@ $(document)
                 .format(InsightFormatters.percentageFormatter);
 
 
-            exampleGroup.addChart(chart);
+            dashboard.addChart(chart);
 
-            exampleGroup.initCharts();
+            dashboard.initCharts();
         });
     });
 
@@ -97,23 +96,16 @@ function computeGroupValues(group)
         this.getData()
             .forEach(function(d)
             {
-                total += d.value;
+                total += d.value.CurrentRevenue.Sum;
             });
-
         this.getData()
             .forEach(function(d)
             {
-                d.Percentage = d.value / total;
+                d.value.Percentage = d.value.CurrentRevenue.SumCumulative / total;
             });
 
     }.bind(group);
 
-    group.computeFunction(aggregateFunction)
-        .valueAccessor(function(d)
-        {
-            return d.Percentage;
-        })
-
-    group.compute();
-    group.calculateTotals();
+    group.computeFunction(aggregateFunction);
+    group.recalculate();
 }

@@ -15,9 +15,9 @@ $(document)
                 d.releaseDate = new Date(d.releaseDate);
             });
 
-            var ndx = crossfilter(data);
+            var charts = new Dashboard('AppStore');
 
-            var charts = new ChartGroup('AppStore');
+            var dataset = charts.addData(data);
 
             var genre = charts.addDimension(ndx, 'genre', function(d)
             {
@@ -57,18 +57,11 @@ $(document)
             var languageGroup = new Grouping(languages)
                 .count(["languageCodesISO2A"]);
 
-            charts.Groups.push(genres);
-            charts.Groups.push(devices);
-            charts.Groups.push(languageGroup);
+            charts.addGroup(genres);
+            charts.addGroup(devices);
+            charts.addGroup(languageGroup);
 
-            genres.initialize();
-            //devices.initialize();
-            languageGroup.initialize();
-
-            //console.log(devices.getData());
-            console.log(languageGroup.getData());
-
-            var chart = new Chart('Chart 1', "#genreCount", genre)
+            var chart = new Chart('Chart 1', "#genreCount")
                 .width(800)
                 .height(350)
                 .margin(
@@ -89,7 +82,8 @@ $(document)
                 .tooltipFunction(function(d)
                 {
                     return d;
-                });
+                })
+                .top(10);
 
             series.series = [
             {
@@ -122,7 +116,7 @@ $(document)
                 .tickSize(5);
 
 
-            var languageChart = new Chart('Chart 2', "#languages", languages)
+            var languageChart = new Chart('Chart 2', "#languages")
                 .width(1200)
                 .height(400)
                 .margin(
@@ -142,7 +136,8 @@ $(document)
                 .tooltipFunction(function(d)
                 {
                     return d;
-                });
+                })
+                .top(10);
 
             lSeries.series = [
             {
