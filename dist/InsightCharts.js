@@ -955,10 +955,12 @@ Dashboard.prototype.addChart = function(chart) {
     this.Charts.push(chart);
     chart.series()
         .forEach(function(s) {
-            if (self.DimensionChartMap[s.data.dimension.Name]) {
-                self.DimensionChartMap[s.data.dimension.Name].push(s);
-            } else {
-                self.DimensionChartMap[s.data.dimension.Name] = [s];
+            if (s.data.dimension) {
+                if (self.DimensionChartMap[s.data.dimension.Name]) {
+                    self.DimensionChartMap[s.data.dimension.Name].push(s);
+                } else {
+                    self.DimensionChartMap[s.data.dimension.Name] = [s];
+                }
             }
         });
 
@@ -1125,6 +1127,9 @@ Dashboard.prototype.redrawCharts = function() {
     x.addSeries(this);
     y.addSeries(this);
 
+
+
+
     if (data.registerSeries) {
         data.registerSeries(this);
     }
@@ -1242,6 +1247,7 @@ Dashboard.prototype.redrawCharts = function() {
     };
 
 
+
     this.click = function(element, filter) {
 
         var selector = self.sliceSelector(filter);
@@ -1327,6 +1333,15 @@ Dashboard.prototype.redrawCharts = function() {
 
     return this;
 }
+
+/* Skeleton event overriden by a Dashboard to subscribe to this series' clicks.
+ * @param {object} series - The series being clicked
+ * @param {object[]} filter - The value of the point selected, used for filtering/highlighting
+ * @param {object[]} selection - The css selection name also used to maintain a list of filtered dimensions (TODO - is this needed anymore?)
+ */
+Series.prototype.clickEvent = function(series, filter, selection) {
+
+};
 ;function Chart(name, element, dimension) {
 
     this.name = name;
@@ -1417,6 +1432,7 @@ Dashboard.prototype.redrawCharts = function() {
 
         axes.map(function(axis) {
             axis.initialize();
+            var a = axis.scale.domain();
         });
 
         if (zoomable) {
@@ -1723,10 +1739,12 @@ ChartGroup.prototype.addChart = function(chart) {
     this.Charts.push(chart);
     chart.series()
         .forEach(function(s) {
-            if (self.DimensionChartMap[s.data.dimension.Name]) {
-                self.DimensionChartMap[s.data.dimension.Name].push(s);
-            } else {
-                self.DimensionChartMap[s.data.dimension.Name] = [s];
+            if (s.data.dimension) {
+                if (self.DimensionChartMap[s.data.dimension.Name]) {
+                    self.DimensionChartMap[s.data.dimension.Name].push(s);
+                } else {
+                    self.DimensionChartMap[s.data.dimension.Name] = [s];
+                }
             }
         });
 
@@ -2575,7 +2593,6 @@ RowSeries.prototype.constructor = RowSeries;
             .text(self.scale.title);
 
         this.positionLabels(labels);
-
     };
 
 

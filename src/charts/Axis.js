@@ -167,7 +167,6 @@ function Axis(chart, name, scale, anchor) {
             .text(self.scale.title);
 
         this.positionLabels(labels);
-
     };
 
 

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Source: Dashboard.js</title>
+    <title>Source: charts/Series.js</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -187,218 +187,242 @@
     </ul>
 </div>
     <div class="main">
-        <h1 class="page-title" data-filename="Dashboard.js.html">Source: Dashboard.js</h1>
+        <h1 class="page-title" data-filename="Series.js.html">Source: charts/Series.js</h1>
         
 
 
     
     <section>
         <article>
-            <pre class="prettyprint source"><code>/**
- * This method is called when any post aggregation calculations, provided by the computeFunction() setter, need to be recalculated.
- * @constructor
- * @returns {this} this - Description
- * @param {object} name - Description
- */
-var Dashboard = function Dashboard(name) {
-    this.Name = name;
-    this.Charts = [];
-    this.Dimensions = [];
-    this.FilteredDimensions = [];
-    this.Groups = [];
-    this.ComputedGroups = [];
-    this.DimensionChartMap = {};
+            <pre class="prettyprint source"><code>function Series(name, chart, data, x, y, color) {
 
-    //initialize the crossfilter to be null, populate as load() is called
-    this.DataSets = [];
-    this.ndx = null;
+    this.chart = chart;
+    this.data = data;
+    this.x = x;
+    this.y = y;
+    this.name = name;
+    this.color = d3.functor(color);
+    this.animationDuration = 300;
+    this.topValues = null;
+    this.selectedItems = [];
+    this.dimensionName = data.dimension ? data.dimension.Name + "Dim" : "";
+    x.addSeries(this);
+    y.addSeries(this);
+
+
+    /**
+     * Skeleton event overriden by a Dashboard to subscribe to this series' clicks.
+     * @param {object} series - The series being clicked
+     * @param {object[]} filter - The value of the point selected, used for filtering/highlighting
+     * @param {object[]} selection - The css selection name also used to maintain a list of filtered dimensions (TODO - is this needed anymore?)
+     */
+    this.clickEvent = function(series, filter, selection) {
+
+    };
+
+    if (data.registerSeries) {
+        data.registerSeries(this);
+    }
+
+    var self = this;
+    var cssClass = "";
+
+    var filter = null;
+
+    // private functions used internally, set by functions below that are exposed on the object
+
+    var xFunction = function(d) {
+        return d.key;
+    };
+
+    var yFunction = function(d) {
+        return d.value;
+    };
+
+    var tooltipFormat = function(d) {
+        return d;
+    };
+
+    var tooltipAccessor = function(d) {
+        return yFunction(d);
+    };
+
+    var tooltipFunction = function(d) {
+        return tooltipFormat(tooltipAccessor(d));
+    };
+
+    this.dataset = function() {
+        //won't always be x that determines this (rowcharts, bullets etc.), need concept of ordering by data scale?
+
+        var data = this.x.ordered() ? this.data.getOrderedData(this.topValues) : this.data.getData();
+
+        if (filter) {
+            data = data.filter(filter);
+        }
+
+        return data;
+    };
+
+    this.keys = function() {
+        return this.dataset()
+            .map(xFunction);
+    };
+
+    this.cssClass = function(_) {
+        if (!arguments.length) {
+            return cssClass;
+        }
+        cssClass = _;
+        return this;
+    };
+
+    this.keyAccessor = function(d) {
+        return d.key;
+    };
+
+    this.xFunction = function(_) {
+        if (!arguments.length) {
+            return xFunction;
+        }
+        xFunction = _;
+
+        return this;
+    };
+
+    this.yFunction = function(_) {
+        if (!arguments.length) {
+            return yFunction;
+        }
+
+        yFunction = _;
+
+        return this;
+    };
+
+    this.sliceSelector = function(d) {
+
+        var result = d.key.replace ? "in_" + d.key.replace(/[^A-Z0-9]/ig, "_") : "";
+
+        return result;
+    };
+
+
+    this.selectedClassName = function(name) {
+        var selected = "";
+
+        if (self.selectedItems.length) {
+            selected = self.selectedItems.indexOf(name) > -1 ? "selected" : "notselected";
+        }
+
+        return selected;
+    };
+
+    this.highlight = function(selector, value) {
+        var clicked = this.chart.chart.selectAll("." + selector);
+        var alreadySelected = clicked.classed('selected');
+
+        if (alreadySelected) {
+            clicked.classed('selected', false);
+            InsightUtils.removeItemFromArray(self.selectedItems, selector);
+        } else {
+            clicked.classed('selected', true)
+                .classed('notselected', false);
+            self.selectedItems.push(selector);
+        }
+
+        var selected = this.chart.chart.selectAll('.selected');
+        var notselected = this.chart.chart.selectAll('.bar:not(.selected),.bubble:not(.selected)');
+
+        notselected.classed('notselected', selected[0].length > 0);
+    };
+
+
+
+    this.click = function(element, filter) {
+
+        var selector = self.sliceSelector(filter);
+
+        this.clickEvent(this, filter, selector);
+    };
+
+    this.filterFunction = function(_) {
+        if (!arguments.length) {
+            return filter;
+        }
+        filter = _;
+
+        return this;
+    };
+
+    this.tooltipFormat = function(_) {
+        if (!arguments.length) {
+            return tooltipFormat;
+        }
+        tooltipFormat = _;
+
+        return this;
+    };
+
+    this.tooltipFunction = function(_) {
+        if (!arguments.length) {
+            return tooltipFunction;
+        }
+        tooltipFunction = _;
+
+        return this;
+    };
+
+    this.top = function(_) {
+        if (!arguments.length) {
+            return this.topValues;
+        }
+        this.topValues = _;
+
+        return this;
+    };
+
+    this.maxLabelDimensions = function(measureCanvas) {
+
+        var sampleText = document.createElement('div');
+        sampleText.setAttribute('class', InsightConstants.AxisTextClass);
+        var style = window.getComputedStyle(sampleText);
+        var ctx = measureCanvas.getContext('2d');
+        ctx.font = style['font-size'] + ' ' + style['font-family'];
+
+        var max = 0;
+
+        this.keys()
+            .forEach(function(key) {
+
+                var width = ctx.measureText(key)
+                    .width;
+
+                max = width > max ? width : max;
+            });
+
+        return max;
+    };
+
+
+    this.findMax = function(scale) {
+        var self = this;
+
+        var max = 0;
+        var data = this.data.getData();
+
+        var func = scale == self.x ? self.xFunction() : self.yFunction();
+
+        var m = d3.max(data, func);
+
+        max = m > max ? m : max;
+
+        return max;
+    };
+
+    this.draw = function() {};
 
     return this;
-};
-
-
-/**
- * This method loads a JSON data set into the Dashboard, creating a new crossfiltered set and returnign that to the user to reference when creating charts/groupings.
- * @returns {object} return - A crossfilter dataset
- * @param {object} data - an array of objects to add to the dashboard
- * @param {string} name - an optional name for the dataset if multiple sets are being loaded into the dashboard.
- */
-Dashboard.prototype.addData = function(data) {
-    //type detection and preprocessing steps here
-
-    var ndx = crossfilter(data);
-
-    this.DataSets.push(ndx);
-
-    return ndx;
-};
-
-Dashboard.prototype.addChart = function(chart) {
-
-    var self = this;
-
-    chart.triggerRedraw = this.redrawCharts.bind(this);
-
-    this.Charts.push(chart);
-    chart.series()
-        .forEach(function(s) {
-            if (s.data.dimension) {
-                if (self.DimensionChartMap[s.data.dimension.Name]) {
-                    self.DimensionChartMap[s.data.dimension.Name].push(s);
-                } else {
-                    self.DimensionChartMap[s.data.dimension.Name] = [s];
-                }
-            }
-        });
-
-    return chart;
-};
-
-
-/**
- * This method takes a dataset, name and grouping function, returning a Grouping with a Dimension created as part of that process.
- * @returns {object} Grouping - An aggregated Grouping that can be manipulated and have calculations applied to it
- * @param {object} dataset - A crossfilter, for example, returned by the addData() method
- * @param {string} name - A uniquely identifying name for the dimension along which this grouping is created. Used to identify identical dimensions in other datasets.
- * @param {function} groupFunction - The function used to group the dimension along.  Select the property of the underlying data that the dimension is to be defined on. Rounding or data manipulation can alter the granularity of the dimension
- */
-Dashboard.prototype.group = function(dataset, name, groupFunction) {
-
-    var dim = new Dimension(name, groupFunction, dataset.dimension(groupFunction), groupFunction, false);
-
-    this.Dimensions.push(dim);
-
-    var group = new Grouping(dim);
-
-    group.preFilter = this.chartFilterHandler.bind(this);
-
-    this.Groups.push(group);
-
-    return group;
-};
-
-
-Dashboard.prototype.filterFunction = function(filter, element) {
-    var value = filter.key ? filter.key : filter;
-
-    return {
-        name: value,
-        filterFunction: function(d) {
-            if (Array.isArray(d)) {
-                return d.indexOf(value) != -1;
-            } else {
-                return String(d) == String(value);
-            }
-        }
-    };
-};
-
-
-Dashboard.prototype.compareFilters = function(filterFunction) {
-    return function(d) {
-        return String(d.name) == String(filterFunction.name);
-    };
-};
-
-
-Dashboard.prototype.applyCSSClasses = function(chart, value, dimensionSelector) {
-    var listeningSeries = this.DimensionChartMap[chart.data.dimension.Name];
-
-    listeningSeries.forEach(function(series) {
-        series.highlight(dimensionSelector, value);
-    });
-};
-
-Dashboard.prototype.chartFilterHandler = function(chart, value, dimensionSelector) {
-    var self = this;
-
-    this.applyCSSClasses(chart, value, dimensionSelector);
-
-    var dimension = chart.data.dimension;
-
-    var filterFunction = this.filterFunction(value);
-
-    if (filterFunction) {
-        var dims = this.Dimensions
-            .filter(dimension.comparer);
-
-        var activeDim = this.FilteredDimensions
-            .filter(dimension.comparer);
-
-        if (!activeDim.length) {
-            this.FilteredDimensions.push(dimension);
-        }
-
-        var comparerFunction = this.compareFilters(filterFunction);
-
-        dims.map(function(dim) {
-
-            var filterExists = dim.Filters
-                .filter(comparerFunction)
-                .length;
-
-            //if the dimension is already filtered by this value, toggle (remove) the filter
-            if (filterExists) {
-                InsightUtils.removeMatchesFromArray(dim.Filters, comparerFunction);
-
-            } else {
-                // add the provided filter to the list for this dimension
-
-                dim.Filters.push(filterFunction);
-            }
-
-            // reset this dimension if no filters exist, else apply the filter to the dataset.
-            if (dim.Filters.length === 0) {
-
-                InsightUtils.removeItemFromArray(self.FilteredDimensions, dim);
-                dim.Dimension.filterAll();
-
-            } else {
-                dim.Dimension.filter(function(d) {
-                    var vals = dim.Filters
-                        .map(function(func) {
-                            return func.filterFunction(d);
-                        });
-
-                    return vals.filter(function(result) {
-                            return result;
-                        })
-                        .length > 0;
-                });
-            }
-        });
-
-        this.Groups.forEach(function(group) {
-            group.recalculate();
-
-        });
-
-        this.ComputedGroups
-            .forEach(
-                function(group) {
-                    group.compute();
-                }
-        );
-
-        this.redrawCharts();
-    }
-};
-
-Dashboard.prototype.initCharts = function() {
-    this.Charts
-        .forEach(
-            function(chart) {
-                chart.init();
-            });
-};
-
-
-Dashboard.prototype.redrawCharts = function() {
-    for (var i = 0; i &lt; this.Charts
-        .length; i++) {
-        this.Charts[i].draw();
-    }
-};
+}
 </code></pre>
         </article>
     </section>
@@ -410,7 +434,7 @@ Dashboard.prototype.redrawCharts = function() {
         
 
         <footer>
-            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Jun 24 2014 09:52:19 GMT+0100 (BST)
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Jun 24 2014 09:51:34 GMT+0100 (BST)
         </footer>
     </div>
 </div>

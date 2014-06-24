@@ -88,6 +88,7 @@ function Chart(name, element, dimension) {
 
         axes.map(function(axis) {
             axis.initialize();
+            var a = axis.scale.domain();
         });
 
         if (zoomable) {

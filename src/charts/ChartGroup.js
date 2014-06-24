@@ -27,10 +27,12 @@ ChartGroup.prototype.addChart = function(chart) {
     this.Charts.push(chart);
     chart.series()
         .forEach(function(s) {
-            if (self.DimensionChartMap[s.data.dimension.Name]) {
-                self.DimensionChartMap[s.data.dimension.Name].push(s);
-            } else {
-                self.DimensionChartMap[s.data.dimension.Name] = [s];
+            if (s.data.dimension) {
+                if (self.DimensionChartMap[s.data.dimension.Name]) {
+                    self.DimensionChartMap[s.data.dimension.Name].push(s);
+                } else {
+                    self.DimensionChartMap[s.data.dimension.Name] = [s];
+                }
             }
         });
 
