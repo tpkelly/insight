@@ -5,50 +5,48 @@ var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
 
 
 $(document)
-    .ready(function() {
+    .ready(function()
+    {
 
-        
-        d3.json('appstore.json', function(data) {
 
-            data.forEach(function(d) {
+        d3.json('appstore.json', function(data)
+        {
+
+            data.forEach(function(d)
+            {
                 d.releaseDate = new Date(d.releaseDate);
             });
 
             console.log(data);
 
-            var ndx = crossfilter(data);
+            var charts = new Dashboard('AppStore');
 
-            var charts = new ChartGroup('AppStore');
+            var dataset = charts.addData(data);
 
-            var genre = charts.addDimension(ndx, 'genre', function(d) {
-                return d.primaryGenreName;
-            }, function(d) {
-                return d.primaryGenreName;
-            });
-
-
-            var date = charts.addDimension(ndx, 'date', function(d) {
-                return new Date(d.releaseDate.getFullYear(), d.releaseDate.getMonth(), 1);
-            }, function(d) {
-                return new Date(d.releaseDate.getFullYear(), d.releaseDate.getMonth(), 1);
-            });
-
-
-            var genres = new Grouping(genre)
+            var genres = charts.group(dataset, 'genre', function(d)
+                {
+                    return d.primaryGenreName;
+                })
                 .sum(['userRatingCount'])
-                .average(['price', 'averageUserRating', 'userRatingCount', 'fileSizeBytes']);
+                .mean(['price', 'averageUserRating', 'userRatingCount', 'fileSizeBytes']);
 
-            var dates = new Grouping(date);
+            var dates = charts.group(dataset, 'date', function(d)
+                {
+                    return new Date(d.releaseDate.getFullYear(), d.releaseDate.getMonth(), 1);
+                })
+                .cumulative(['Count'])
+                .filter(function(d)
+                {
+                    return d.key < new Date(2014, 0, 1);
+                });
 
-            dates.initialize();
-            genres.initialize();
+            console.log(dates.getData());
 
-            console.log(genres.getData());
-
-            var chart = new Chart('Chart 1', "#genreCount", genre)
+            var chart = new Chart('Chart 1', "#genreCount")
                 .width(700)
                 .height(350)
-                .margin({
+                .margin(
+                {
                     top: 10,
                     left: 100,
                     right: 40,
@@ -56,21 +54,26 @@ $(document)
                 })
                 .barPadding(0.3);
 
-            var xScale = new Scale(chart, "Genre", d3.scale.ordinal(), 'h', 'ordinal');
+            var xScale = new Scale(chart, "Genre", d3.scale.ordinal(), 'h', 'ordinal')
+                .ordered(true);
             var yScale = new Scale(chart, "# Apps", d3.scale.linear(), 'v', 'linear');
 
             var series = new ColumnSeries('genre', chart, genres, xScale, yScale, 'silver');
 
-            series.series = [{
+            series.series = [
+            {
                 name: 'genre',
-                accessor: function(d) {
+                accessor: function(d)
+                {
                     return d.value.Count;
                 },
-                label: function(d) {
+                label: function(d)
+                {
                     return d.key
                 },
-                color: '#2980b9',
-                tooltipValue: function(d) {
+                color: '#3498db',
+                tooltipValue: function(d)
+                {
                     return d.value.Count;
                 }
             }];
@@ -87,10 +90,11 @@ $(document)
                 .tickSize(5);
 
 
-            var timeChart = new Chart('Chart 2', "#releases", date)
+            var timeChart = new Chart('Chart 2', "#releases")
                 .width(800)
                 .height(350)
-                .margin({
+                .margin(
+                {
                     top: 10,
                     left: 100,
                     right: 40,
@@ -101,10 +105,12 @@ $(document)
             var yTime = new Scale(timeChart, "New Apps", d3.scale.linear(), 'v', 'linear');
 
             var line = new LineSeries('valueLine', timeChart, dates, xTime, yTime, 'cyan')
-                .yFunction(function(d) {
-                    return d.value.Count;
+                .yFunction(function(d)
+                {
+                    return d.value.CountCumulative;
                 })
-                .xFunction(function(d) {
+                .xFunction(function(d)
+                {
                     return d.key;
                 });
 
@@ -123,10 +129,11 @@ $(document)
             var yAxis = new Axis(timeChart, "y", yTime, 'left')
                 .tickSize(5);
 
-            var bubbleChart = new Chart('Chart 3', "#bubbleChart", genre)
+            var bubbleChart = new Chart('Chart 3', "#bubbleChart")
                 .width(800)
                 .height(550)
-                .margin({
+                .margin(
+                {
                     top: 10,
                     left: 120,
                     right: 40,
@@ -138,20 +145,21 @@ $(document)
             var bubbleY = new Scale(bubbleChart, 'Average Price', d3.scale.linear(), 'v', 'linear');
 
             var bubbles = new BubbleSeries('bubbles', bubbleChart, genres, bubbleX, bubbleY, 'cyan')
-                .xFunction(function(d) {
+                .xFunction(function(d)
+                {
                     return d.value.userRatingCount.Average;
                 })
-                .yFunction(function(d) {
+                .yFunction(function(d)
+                {
                     return d.value.price.Average;
                 })
-                .tooltipLabelFormat(function(d) {
+                .radiusFunction(function(d)
+                {
+                    return d.value.Count;
+                })
+                .tooltipFunction(function(d)
+                {
                     return d.key;
-                })
-                .radiusFunction(function(d) {
-                    return d.value.Count;
-                })
-                .tooltipFunction(function(d) {
-                    return d.value.Count;
                 });
 
             var bubbleXAxis = new Axis(bubbleChart, "x", bubbleX, 'bottom')
@@ -177,7 +185,8 @@ $(document)
                 .button()
 
             $('#yavgrating')
-                .click(function() {
+                .click(function()
+                {
                     var ind = bubbleChart.scales()
                         .indexOf(bubbleY);
                     bubbleChart.scales()
@@ -187,7 +196,8 @@ $(document)
                     var newScale = new Scale(bubbleChart, 'Average Rating', d3.scale.linear(), 'v', 'linear');
 
                     bubbles.y = newScale;
-                    bubbles.yFunction(function(d) {
+                    bubbles.yFunction(function(d)
+                    {
                         return d.value.averageUserRating.Average;
                     });
 
@@ -201,7 +211,8 @@ $(document)
                 });
 
             $('#yavgratings')
-                .click(function() {
+                .click(function()
+                {
                     var ind = bubbleChart.scales()
                         .indexOf(bubbleY);
                     bubbleChart.scales()
@@ -211,7 +222,8 @@ $(document)
                     var newScale = new Scale(bubbleChart, 'Average Rating', d3.scale.linear(), 'v', 'linear');
 
                     bubbles.y = newScale;
-                    bubbles.yFunction(function(d) {
+                    bubbles.yFunction(function(d)
+                    {
                         return d.value.userRatingCount.Average;
                     });
 
@@ -224,8 +236,31 @@ $(document)
                     charts.redrawCharts();
                 });
 
+            $('#timecumulative')
+                .click(function()
+                {
+                    line.yFunction(function(d)
+                    {
+                        return d.value.CountCumulative;
+                    });
+
+                    charts.redrawCharts();
+                });
+
+            $('#timemonthly')
+                .click(function()
+                {
+                    line.yFunction(function(d)
+                    {
+                        return d.value.Count;
+                    });
+
+                    charts.redrawCharts();
+                });
+
             $('#yavgprice')
-                .click(function() {
+                .click(function()
+                {
                     var ind = bubbleChart.scales()
                         .indexOf(bubbleY);
                     bubbleChart.scales()
@@ -235,7 +270,8 @@ $(document)
                     var newScale = new Scale(bubbleChart, 'Average Price', d3.scale.linear(), 'v', 'linear');
 
                     bubbles.y = newScale;
-                    bubbles.yFunction(function(d) {
+                    bubbles.yFunction(function(d)
+                    {
                         return d.value.price.Average;
                     });
 
@@ -249,7 +285,8 @@ $(document)
                 });
 
             $('#xsumrating')
-                .click(function() {
+                .click(function()
+                {
 
                     var ind = bubbleChart.scales()
                         .indexOf(bubbleX);
@@ -260,7 +297,8 @@ $(document)
                     var newScale = new Scale(bubbleChart, 'Total Number of Ratings', d3.scale.linear(), 'h', 'linear');
 
                     bubbles.x = newScale;
-                    bubbles.xFunction(function(d) {
+                    bubbles.xFunction(function(d)
+                    {
                         return d.value.userRatingCount.Sum;
                     });
 
@@ -274,7 +312,8 @@ $(document)
                 });
 
             $('#xavgrating')
-                .click(function() {
+                .click(function()
+                {
 
                     var ind = bubbleChart.scales()
                         .indexOf(bubbleX);
@@ -286,7 +325,8 @@ $(document)
 
                     bubbles.x = newScale;
 
-                    bubbles.xFunction(function(d) {
+                    bubbles.xFunction(function(d)
+                    {
                         return d.value.userRatingCount.Average;
                     });
 
@@ -300,7 +340,8 @@ $(document)
                 });
 
             $('#xavgsize')
-                .click(function() {
+                .click(function()
+                {
 
                     var ind = bubbleChart.scales()
                         .indexOf(bubbleX);
@@ -312,7 +353,8 @@ $(document)
 
                     bubbles.x = newScale;
 
-                    bubbles.xFunction(function(d) {
+                    bubbles.xFunction(function(d)
+                    {
                         return d.value.fileSizeBytes.Average / 1024 / 1024;
                     });
 
@@ -326,18 +368,22 @@ $(document)
                 });
 
             $('#radprice')
-                .click(function() {
+                .click(function()
+                {
 
-                    bubbles.radiusFunction(function(d) {
+                    bubbles.radiusFunction(function(d)
+                    {
                         return d.value.price.Average;
                     });
 
                     charts.redrawCharts();
                 });
             $('#radcount')
-                .click(function() {
+                .click(function()
+                {
 
-                    bubbles.radiusFunction(function(d) {
+                    bubbles.radiusFunction(function(d)
+                    {
                         return d.value.Count;
                     });
 
@@ -345,9 +391,11 @@ $(document)
                 });
 
             $('#radsize')
-                .click(function() {
+                .click(function()
+                {
 
-                    bubbles.radiusFunction(function(d) {
+                    bubbles.radiusFunction(function(d)
+                    {
                         return d.value.fileSizeBytes.Average;
                     });
 
