@@ -24,4 +24,6 @@ var Dimension = function Dimension(name, func, dimension, displayFunction) {
     this.comparer = function(d) {
         return d.Name == this.Name;
     }.bind(this);
+
+
 };

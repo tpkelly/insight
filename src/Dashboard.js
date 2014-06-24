@@ -1,24 +1,43 @@
-var ChartGroup = function ChartGroup(name) {
+/**
+ * This method is called when any post aggregation calculations, provided by the computeFunction() setter, need to be recalculated.
+ * @constructor
+ * @returns {this} this - Description
+ * @param {object} name - Description
+ */
+var Dashboard = function Dashboard(name) {
     this.Name = name;
     this.Charts = [];
     this.Dimensions = [];
     this.FilteredDimensions = [];
     this.Groups = [];
     this.ComputedGroups = [];
-    this.LinkedCharts = [];
-    this.NestedGroups = [];
     this.DimensionChartMap = {};
+
+    //initialize the crossfilter to be null, populate as load() is called
+    this.DataSets = [];
+    this.ndx = null;
+
+    return this;
 };
 
-ChartGroup.prototype.initCharts = function() {
-    this.Charts
-        .forEach(
-            function(chart) {
-                chart.init();
-            });
+
+/**
+ * This method loads a JSON data set into the Dashboard, creating a new crossfiltered set and returnign that to the user to reference when creating charts/groupings.
+ * @returns {object} return - A crossfilter dataset
+ * @param {object} data - an array of objects to add to the dashboard
+ * @param {string} name - an optional name for the dataset if multiple sets are being loaded into the dashboard.
+ */
+Dashboard.prototype.addData = function(data) {
+    //type detection and preprocessing steps here
+
+    var ndx = crossfilter(data);
+
+    this.DataSets.push(ndx);
+
+    return ndx;
 };
 
-ChartGroup.prototype.addChart = function(chart) {
+Dashboard.prototype.addChart = function(chart) {
 
     var self = this;
 
@@ -39,27 +58,31 @@ ChartGroup.prototype.addChart = function(chart) {
     return chart;
 };
 
-ChartGroup.prototype.addGroup = function(group) {
+
+/**
+ * This method takes a dataset, name and grouping function, returning a Grouping with a Dimension created as part of that process.
+ * @returns {object} Grouping - An aggregated Grouping that can be manipulated and have calculations applied to it
+ * @param {object} dataset - A crossfilter, for example, returned by the addData() method
+ * @param {string} name - A uniquely identifying name for the dimension along which this grouping is created. Used to identify identical dimensions in other datasets.
+ * @param {function} groupFunction - The function used to group the dimension along.  Select the property of the underlying data that the dimension is to be defined on. Rounding or data manipulation can alter the granularity of the dimension
+ */
+Dashboard.prototype.group = function(dataset, name, groupFunction) {
+
+    var dim = new Dimension(name, groupFunction, dataset.dimension(groupFunction), groupFunction, false);
+
+    this.Dimensions.push(dim);
+
+    var group = new Grouping(dim);
 
     group.preFilter = this.chartFilterHandler.bind(this);
 
-    group.initialize();
-
     this.Groups.push(group);
 
-    return this;
-};
-
-ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc, multi) {
-    var dimension = new Dimension(name, func, ndx.dimension(func), displayFunc, multi);
-
-    this.Dimensions.push(dimension);
-
-    return dimension;
+    return group;
 };
 
 
-ChartGroup.prototype.filterFunction = function(filter, element) {
+Dashboard.prototype.filterFunction = function(filter, element) {
     var value = filter.key ? filter.key : filter;
 
     return {
@@ -75,13 +98,14 @@ ChartGroup.prototype.filterFunction = function(filter, element) {
 };
 
 
-ChartGroup.prototype.compareFilters = function(filterFunction) {
+Dashboard.prototype.compareFilters = function(filterFunction) {
     return function(d) {
         return String(d.name) == String(filterFunction.name);
     };
 };
 
-ChartGroup.prototype.applyCSSClasses = function(chart, value, dimensionSelector) {
+
+Dashboard.prototype.applyCSSClasses = function(chart, value, dimensionSelector) {
     var listeningSeries = this.DimensionChartMap[chart.data.dimension.Name];
 
     listeningSeries.forEach(function(series) {
@@ -89,7 +113,7 @@ ChartGroup.prototype.applyCSSClasses = function(chart, value, dimensionSelector)
     });
 };
 
-ChartGroup.prototype.chartFilterHandler = function(chart, value, dimensionSelector) {
+Dashboard.prototype.chartFilterHandler = function(chart, value, dimensionSelector) {
     var self = this;
 
     this.applyCSSClasses(chart, value, dimensionSelector);
@@ -153,14 +177,6 @@ ChartGroup.prototype.chartFilterHandler = function(chart, value, dimensionSelect
 
         });
 
-        // recalculate non standard groups
-        this.NestedGroups
-            .forEach(
-                function(group) {
-                    group.updateNestedData();
-                }
-        );
-
         this.ComputedGroups
             .forEach(
                 function(group) {
@@ -172,57 +188,18 @@ ChartGroup.prototype.chartFilterHandler = function(chart, value, dimensionSelect
     }
 };
 
+Dashboard.prototype.initCharts = function() {
+    this.Charts
+        .forEach(
+            function(chart) {
+                chart.init();
+            });
+};
 
 
-ChartGroup.prototype.redrawCharts = function() {
+Dashboard.prototype.redrawCharts = function() {
     for (var i = 0; i < this.Charts
         .length; i++) {
         this.Charts[i].draw();
     }
-};
-
-
-ChartGroup.prototype.aggregate = function(dimension, input) {
-
-    var group;
-
-    if (input instanceof Array) {
-
-        group = this.multiReduceSum(dimension, input);
-
-        this.Groups.push(group);
-
-    } else {
-
-        var data = dimension.Dimension.group()
-            .reduceSum(input);
-
-        group = new Group(data);
-
-        this.Groups.push(group);
-    }
-
-    return group;
-};
-
-ChartGroup.prototype.count = function(dimension, input) {
-
-    var group;
-
-    if (input instanceof Array) {
-
-        group = this.multiReduceCount(dimension, input);
-
-        this.Groups.push(group);
-
-    } else {
-        var data = dimension.Dimension.group()
-            .reduceCount(input);
-
-        group = new Group(data);
-
-        this.Groups.push(group);
-    }
-
-    return group;
 };

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Global</title>
+    <title>Class: Dashboard</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -187,7 +187,7 @@
     </ul>
 </div>
     <div class="main">
-        <h1 class="page-title" data-filename="global.html">Global</h1>
+        <h1 class="page-title" data-filename="Dashboard.html">Class: Dashboard</h1>
         
 
 
@@ -196,7 +196,7 @@
     
 <header>
     <h2>
-    
+    Dashboard
     </h2>
     
 </header>  
@@ -207,8 +207,82 @@
     
     
         
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="Dashboard">
+            
+            new Dashboard<span class="signature">(name)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{this}</span>
+        </h4>
+    
         
+        <div class="tag-source">
+            <a href="Dashboard.js.html">Dashboard.js</a>, <a href="Dashboard.js.html#line7">line 7</a>
+        </div>
         
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        This method is called when any post aggregation calculations, provided by the computeFunction() setter, need to be recalculated.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                Description</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
 <dl class="details">
     
         
@@ -233,8 +307,29 @@
     
 </dl>
 
-        
-        
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+- Description
+<br />
+
+    
+    
+    
+</dd>
+
     
     </div>
     
@@ -257,14 +352,14 @@
             
 <dt>
     <div class="nameContainer">
-        <h4 class="name" id="dimensionSelector">
+        <h4 class="name" id="addData">
             
-            dimensionSelector<span class="signature">(data)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{string}</span>
+            addData<span class="signature">(data, name)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{object}</span>
         </h4>
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line216">line 216</a>
+            <a href="Dashboard.js.html">Dashboard.js</a>, <a href="Dashboard.js.html#line30">line 30</a>
         </div>
         
     </div>
@@ -275,8 +370,7 @@
     
     
     <div class="description">
-        This function takes a data point, and creates a class name for insight to identify this particular key
-If the parameter is not an object (just a value in an array) then there is no need for this particular class so blank is returned.
+        This method loads a JSON data set into the Dashboard, creating a new crossfiltered set and returnign that to the user to reference when creating charts/groupings.
     </div>
     
 
@@ -323,7 +417,30 @@ If the parameter is not an object (just a value in an array) then there is no ne
             
             <td class="description last">
                 
-                The input point</td>
+                an array of objects to add to the dashboard</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                an optional name for the dataset if multiple sets are being loaded into the dashboard.</td>
         </tr>
 	
 	
@@ -371,7 +488,7 @@ If the parameter is not an object (just a value in an array) then there is no ne
 
 
 <h5>Returns:</h5>
-- A class name to identify this point and any other points taking the same value in other charts.
+- A crossfilter dataset
 <br />
 
     
@@ -383,14 +500,14 @@ If the parameter is not an object (just a value in an array) then there is no ne
             
 <dt>
     <div class="nameContainer">
-        <h4 class="name" id="keys">
+        <h4 class="name" id="group">
             
-            keys<span class="signature">()</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{object[]}</span>
+            group<span class="signature">(dataset, name, groupFunction)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{object}</span>
         </h4>
     
         
         <div class="tag-source">
-            <a href="RowSeries.js.html">charts/RowSeries.js</a>, <a href="RowSeries.js.html#line37">line 37</a>
+            <a href="Dashboard.js.html">Dashboard.js</a>, <a href="Dashboard.js.html#line69">line 69</a>
         </div>
         
     </div>
@@ -401,88 +518,7 @@ If the parameter is not an object (just a value in an array) then there is no ne
     
     
     <div class="description">
-        RowSeries overrides the standard key function used by most, vertical charts.
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-
-
-<h5>Returns:</h5>
-- The keys along the domain axis for this row series
-<br />
-
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <div class="nameContainer">
-        <h4 class="name" id="seriesMax">
-            
-            seriesMax<span class="signature">(data)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{Number}</span>
-        </h4>
-    
-        
-        <div class="tag-source">
-            <a href="ColumnSeries.js.html">charts/ColumnSeries.js</a>, <a href="ColumnSeries.js.html#line43">line 43</a>
-        </div>
-        
-    </div>
-
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
-This function is mapped across the entire data array by the findMax method.
+        This method takes a dataset, name and grouping function, returning a Grouping with a Dimension created as part of that process.
     </div>
     
 
@@ -513,7 +549,7 @@ This function is mapped across the entire data array by the findMax method.
 	
         <tr>
             
-                <td class="name"><code>data</code></td>
+                <td class="name"><code>dataset</code></td>
             
             
             <td class="type">
@@ -529,123 +565,20 @@ This function is mapped across the entire data array by the findMax method.
             
             <td class="description last">
                 
-                An item in the object array to query</td>
+                A crossfilter, for example, returned by the addData() method</td>
         </tr>
 	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-
-
-<h5>Returns:</h5>
-- Description
-<br />
-
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <div class="nameContainer">
-        <h4 class="name" id="seriesMax">
-            
-            seriesMax<span class="signature">(data)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{Number}</span>
-        </h4>
-    
-        
-        <div class="tag-source">
-            <a href="RowSeries.js.html">charts/RowSeries.js</a>, <a href="RowSeries.js.html#line54">line 54</a>
-        </div>
-        
-    </div>
-
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
-This function is mapped across the entire data array by the findMax method.
-    </div>
-    
-
-    
-    
-    
-    
-    
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
 	
 	
         <tr>
             
-                <td class="name"><code>data</code></td>
+                <td class="name"><code>name</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">string</span>
 
 
             
@@ -655,118 +588,20 @@ This function is mapped across the entire data array by the findMax method.
             
             <td class="description last">
                 
-                An item in the object array to query</td>
+                A uniquely identifying name for the dimension along which this grouping is created. Used to identify identical dimensions in other datasets.</td>
         </tr>
 	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-
-
-<h5>Returns:</h5>
-- Description
-<br />
-
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <div class="nameContainer">
-        <h4 class="name" id="stacked">
-            
-            stacked<span class="signature">(stack)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{object}</span>
-        </h4>
-    
-        
-        <div class="tag-source">
-            <a href="ColumnSeries.js.html">charts/ColumnSeries.js</a>, <a href="ColumnSeries.js.html#line84">line 84</a>
-        </div>
-        
-    </div>
-
-    
-</dt>
-<dd>
-    
-    
-
-    
-    
-    
-    
-    
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
 	
 	
         <tr>
             
-                <td class="name"><code>stack</code></td>
+                <td class="name"><code>groupFunction</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">boolean</span>
+<span class="param-type">function</span>
 
 
             
@@ -776,7 +611,7 @@ This function is mapped across the entire data array by the findMax method.
             
             <td class="description last">
                 
-                To stack or not to stack</td>
+                The function used to group the dimension along.  Select the property of the underlying data that the dimension is to be defined on. Rounding or data manipulation can alter the granularity of the dimension</td>
         </tr>
 	
 	
@@ -824,128 +659,7 @@ This function is mapped across the entire data array by the findMax method.
 
 
 <h5>Returns:</h5>
-- Description
-<br />
-
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <div class="nameContainer">
-        <h4 class="name" id="stacked">
-            
-            stacked<span class="signature">(stack)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{object}</span>
-        </h4>
-    
-        
-        <div class="tag-source">
-            <a href="RowSeries.js.html">charts/RowSeries.js</a>, <a href="RowSeries.js.html#line95">line 95</a>
-        </div>
-        
-    </div>
-
-    
-</dt>
-<dd>
-    
-    
-
-    
-    
-    
-    
-    
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>stack</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-            
-            
-            
-            <td class="description last">
-                
-                To stack or not to stack</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-
-
-<h5>Returns:</h5>
-- Description
+- An aggregated Grouping that can be manipulated and have calculations applied to it
 <br />
 
     

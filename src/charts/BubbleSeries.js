@@ -6,7 +6,7 @@ function BubbleSeries(name, chart, data, x, y, color) {
     var fillFunction = d3.functor(color);
     var maxRad = d3.functor(50);
     var minRad = d3.functor(7);
-
+    var tooltipExists = false;
     var self = this;
 
     var mouseOver = function(d, item) {
@@ -53,7 +53,8 @@ function BubbleSeries(name, chart, data, x, y, color) {
     this.selector = this.name + InsightConstants.Bubble;
 
     this.className = function(d) {
-        return self.selector + " " + InsightConstants.Bubble + " " + self.chart.dimensionSelector(d);
+
+        return self.selector + " " + InsightConstants.Bubble + " " + self.chart.dimensionSelector(d) + " " + self.dimensionName;
     };
 
     this.draw = function(drag) {
@@ -71,7 +72,7 @@ function BubbleSeries(name, chart, data, x, y, color) {
         };
 
         var click = function(filter) {
-            return self.chart.filterClick(this, filter);
+            return self.click(this, filter);
         };
 
 
@@ -88,7 +89,7 @@ function BubbleSeries(name, chart, data, x, y, color) {
             });
 
         var bubbles = this.chart.chart.selectAll('circle.' + self.selector)
-            .data(data, self.matcher);
+            .data(data, self.keyAccessor);
 
         bubbles.enter()
             .append('circle')
@@ -104,17 +105,14 @@ function BubbleSeries(name, chart, data, x, y, color) {
             .attr('cy', self.rangeY)
             .attr('fill', fillFunction);
 
-        bubbles.append('svg:text')
-            .attr('class', InsightConstants.ToolTipTextClass);
-
-        bubbles.append('svg:text')
-            .attr('class', InsightConstants.ToolTipLabelClass);
+        if (!tooltipExists) {
+            bubbles.append('svg:text')
+                .attr('class', InsightConstants.ToolTipTextClass);
+            tooltipExists = true;
+        }
 
         bubbles.selectAll("." + InsightConstants.ToolTipTextClass)
-            .text(this.tooltipValue);
-
-        bubbles.selectAll("." + InsightConstants.ToolTipLabelClass)
-            .text(this.tooltipLabel);
+            .text(this.tooltipFunction());
     };
 }
 

@@ -12,6 +12,9 @@ function Grouping(dimension) {
     var countProperties = [];
     var cumulativeProperties = [];
     var averageProperties = [];
+
+    var linkedSeries = [];
+
     this._compute = null;
     this.gIndices = {};
 
@@ -19,9 +22,17 @@ function Grouping(dimension) {
         return d;
     };
 
-
     this._orderFunction = function(a, b) {
         return b.value.Count - a.value.Count;
+    };
+
+    this.registerSeries = function(series) {
+        linkedSeries.push(series);
+        series.clickEvent = this.preFilter;
+    };
+
+    this.preFilter = function(series, filter, dimensionSelector) {
+
     };
 
     this._ordered = false;
@@ -43,7 +54,7 @@ function Grouping(dimension) {
     };
 
     /**
-     * The cumulatie function gets or sets the properties whose value occurences will be accumulated across this dimension.
+     * The cumulative function gets or sets the properties whose value occurences will be accumulated across this dimension.
      * @returns {String[]}
      */
     /**
@@ -83,7 +94,7 @@ function Grouping(dimension) {
      * @param {String[]} properties - An array of property names that will have be averaged during aggregation
      * @returns {this}
      */
-    this.average = function(_) {
+    this.mean = function(_) {
         if (!arguments.length) {
             return averageProperties;
         }
@@ -145,18 +156,16 @@ Grouping.prototype.unique = function(array) {
 };
 
 
-
 /**
  * This aggregation method is tailored to dimensions that can hold multiple values (in an array), therefore they are counted differently.
  * For example: a property called supportedDevices : ['iPhone5', 'iPhone4'] where the values inside the array are treated as dimensional slices
- * @constructor
  * @returns {object[]} return - the array of dimensional groupings resulting from this dimensional aggregation
  */
 Grouping.prototype.reduceMultiDimension = function() {
 
     var propertiesToSum = this.sum();
     var propertiesToCount = this.count();
-    var propertiesToAverage = this.average();
+    var propertiesToAverage = this.mean();
 
     var index = 0;
     var gIndices = {};
@@ -230,7 +239,7 @@ Grouping.prototype.reduceMultiDimension = function() {
 Grouping.prototype.initialize = function() {
     var propertiesToSum = this.sum();
     var propertiesToCount = this.count();
-    var propertiesToAverage = this.average();
+    var propertiesToAverage = this.mean();
 
     var data = [];
 
@@ -380,11 +389,16 @@ Grouping.prototype.recalculate = function() {
 Grouping.prototype.getData = function() {
     var data;
 
+    if (!this._data) {
+        this.initialize();
+    }
+
     if (this.dimension.multiple) {
         data = this._data.value()
             .values;
     } else {
-        data = this._data.all();
+        data = this._data.all()
+            .slice(0);
     }
 
     if (this._filterFunction) {
@@ -399,13 +413,22 @@ Grouping.prototype.getData = function() {
  * This method is used to return the group's data, with ordering applied.  It checks if there is any filtering requested and applies the filter to the return array.
  * @returns {object[]} return - The grouping's data in an object array, with an object per slice of the dimension.
  */
-Grouping.prototype.getOrderedData = function() {
+Grouping.prototype.getOrderedData = function(topValues) {
 
     var data = [];
 
+    if (!this._data) {
+        this.initialize();
+    }
+
     if (!this.dimension.multiple) {
-        data = this._data.top(Infinity)
+        data = this._data.all()
+            .slice(0)
             .sort(this.orderFunction());
+
+        if (topValues) {
+            data = data.slice(0, topValues);
+        }
     } else {
 
         // take shallow copy of array prior to ordering so that ordering is not done in place, which would break ordering of index map. Must be better way to do this.
@@ -414,6 +437,9 @@ Grouping.prototype.getOrderedData = function() {
             .slice(0);
 
         data = data.sort(this.orderFunction());
+        if (topValues) {
+            data = data.slice(0, topValues);
+        }
     }
 
     if (this._filterFunction) {

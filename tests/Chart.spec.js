@@ -80,6 +80,8 @@ describe("Base Chart Tests", function() {
         
         var chart = new Chart("asda", "asdads", "ada");
 
+        chart.title("Test Chart");
+        expect(chart.title()).toBe("Test Chart");
     });
 
 });

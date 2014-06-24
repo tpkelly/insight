@@ -5,6 +5,7 @@ function LineSeries(name, chart, data, x, y, color) {
     var self = this;
 
     var lineType = 'linear';
+    var tooltipExists = false;
 
     var mouseOver = function(d, item) {
         self.chart.mouseOver(self, this, d);
@@ -60,6 +61,8 @@ function LineSeries(name, chart, data, x, y, color) {
             .y(self.rangeY)
             .interpolate(lineType);
 
+        var data = this.dataset();
+
         var rangeIdentifier = "path." + this.name + ".in-line";
 
         var rangeElement = this.chart.chart.selectAll(rangeIdentifier);
@@ -107,17 +110,15 @@ function LineSeries(name, chart, data, x, y, color) {
             .attr("cy", self.rangeY)
             .attr("r", 2.5);
 
-        circles.append('svg:text')
-            .attr('class', InsightConstants.ToolTipTextClass);
 
-        circles.append('svg:text')
-            .attr('class', InsightConstants.ToolTipLabelClass);
+        if (!tooltipExists) {
+            circles.append('svg:text')
+                .attr('class', InsightConstants.ToolTipTextClass);
+            tooltipExists = true;
+        }
 
         circles.selectAll("." + InsightConstants.ToolTipTextClass)
-            .text(this.tooltipValue);
-
-        circles.selectAll("." + InsightConstants.ToolTipLabelClass)
-            .text(this.tooltipLabel);
+            .text(this.tooltipFunction());
     };
 
     this.rangeExists = function(rangeSelector) {

@@ -9,6 +9,11 @@ var InsightFormatters = (function(d3) {
         return '£' + format(value);
     };
 
+    exports.numberFormatter = function(value) {
+        var format = d3.format("0,000");
+        return format(value);
+    };
+
     exports.dateFormatter = function(value) {
         var format = d3.time.format("%b %Y");
         return format(value);
