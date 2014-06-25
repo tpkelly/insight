@@ -1131,7 +1131,6 @@ Dashboard.prototype.redrawCharts = function() {
     this.color = d3.functor(color);
     this.animationDuration = 300;
     this.topValues = null;
-    this.selectedItems = [];
     this.dimensionName = data.dimension ? data.dimension.Name + "Dim" : "";
     x.addSeries(this);
     y.addSeries(this);
