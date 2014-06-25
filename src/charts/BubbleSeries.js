@@ -54,7 +54,7 @@ function BubbleSeries(name, chart, data, x, y, color) {
 
     this.className = function(d) {
 
-        return self.selector + " " + InsightConstants.Bubble + " " + self.chart.dimensionSelector(d) + " " + self.dimensionName;
+        return self.selector + " " + InsightConstants.Bubble + " " + self.sliceSelector(d) + " " + self.dimensionName;
     };
 
     this.draw = function(drag) {

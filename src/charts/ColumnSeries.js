@@ -158,7 +158,7 @@ function ColumnSeries(name, chart, data, x, y, color) {
 
 
     this.className = function(d) {
-        var dimension = self.chart.dimensionSelector(d);
+        var dimension = self.sliceSelector(d);
 
         var selected = self.selectedClassName(dimension);
 

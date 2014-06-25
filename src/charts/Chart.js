@@ -3,6 +3,7 @@ function Chart(name, element, dimension) {
     this.name = name;
     this.element = element;
     this.dimension = dimension;
+    this.selectedItems = [];
 
     var height = d3.functor(300);
     var width = d3.functor(300);
@@ -207,34 +208,7 @@ function Chart(name, element, dimension) {
     };
 
 
-    /**
-     * This function takes a data point, and creates a class name for insight to identify this particular key
-     * If the parameter is not an object (just a value in an array) then there is no need for this particular class so blank is returned.
-     * @returns {string} return - A class name to identify this point and any other points taking the same value in other charts.
-     * @param {object} data - The input point
-     */
-    this.dimensionSelector = function(d) {
 
-        var str = d.key.toString();
-
-        var result = "in_" + str.replace(/[^A-Z0-9]/ig, "_");
-
-        return result;
-    };
-
-
-
-    this.click = function(element, value) {
-        if (this.dimension) {
-            var selected = d3.select(element)
-                .classed('selected');
-
-            d3.selectAll('.' + self.dimensionSelector(value))
-                .classed('selected', !selected);
-
-            this.clickEvent(this, value);
-        }
-    };
 
     this.tooltip = function() {
 
@@ -329,6 +303,28 @@ function Chart(name, element, dimension) {
         autoMargin = _;
         return this;
     };
+
+
+    this.highlight = function(selector, value) {
+
+
+        var clicked = this.chart.selectAll("." + selector);
+        var alreadySelected = clicked.classed('selected');
+
+        if (alreadySelected) {
+            clicked.classed('selected', false);
+            InsightUtils.removeItemFromArray(self.selectedItems, selector);
+        } else {
+            clicked.classed('selected', true)
+                .classed('notselected', false);
+            self.selectedItems.push(selector);
+        }
+
+        var selected = this.chart.selectAll('.selected');
+        var notselected = this.chart.selectAll('.bar:not(.selected),.bubble:not(.selected)');
+
+        notselected.classed('notselected', selected[0].length > 0);
+    };
 }
 
 
@@ -358,10 +354,25 @@ Chart.prototype.addColumnSeries = function(series) {
 
     var stacked = series.stacked ? true : false;
 
-    var s = new ColumnSeries("", this, series.data, x, y, series.color)
+    var s = new ColumnSeries(series.name, this, series.data, x, y, series.color)
         .stacked(stacked);
 
     s.series = [series];
+
+    this.series()
+        .push(s);
+
+    return s;
+};
+
+
+Chart.prototype.addLineSeries = function(series) {
+
+    var x = new Scale(this, "", d3.scale.ordinal(), 'h', 'ordinal');
+    var y = new Scale(this, "", d3.scale.linear(), 'v', 'linear');
+
+    var s = new LineSeries(series.name, this, series.data, x, y, series.color)
+        .yFunction(series.accessor);
 
     this.series()
         .push(s);

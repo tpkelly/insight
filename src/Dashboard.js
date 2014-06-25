@@ -48,9 +48,11 @@ Dashboard.prototype.addChart = function(chart) {
         .forEach(function(s) {
             if (s.data.dimension) {
                 if (self.DimensionChartMap[s.data.dimension.Name]) {
-                    self.DimensionChartMap[s.data.dimension.Name].push(s);
+                    if (self.DimensionChartMap[s.data.dimension.Name].indexOf(chart) == -1) {
+                        self.DimensionChartMap[s.data.dimension.Name].push(chart);
+                    }
                 } else {
-                    self.DimensionChartMap[s.data.dimension.Name] = [s];
+                    self.DimensionChartMap[s.data.dimension.Name] = [chart];
                 }
             }
         });
@@ -107,8 +109,11 @@ Dashboard.prototype.compareFilters = function(filterFunction) {
 Dashboard.prototype.applyCSSClasses = function(chart, value, dimensionSelector) {
     var listeningSeries = this.DimensionChartMap[chart.data.dimension.Name];
 
-    listeningSeries.forEach(function(series) {
-        series.highlight(dimensionSelector, value);
+    listeningSeries.forEach(function(chart) {
+
+        chart.highlight(dimensionSelector, value);
+
+
     });
 };
 

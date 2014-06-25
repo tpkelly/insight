@@ -962,9 +962,11 @@ Dashboard.prototype.addChart = function(chart) {
         .forEach(function(s) {
             if (s.data.dimension) {
                 if (self.DimensionChartMap[s.data.dimension.Name]) {
-                    self.DimensionChartMap[s.data.dimension.Name].push(s);
+                    if (self.DimensionChartMap[s.data.dimension.Name].indexOf(chart) == -1) {
+                        self.DimensionChartMap[s.data.dimension.Name].push(chart);
+                    }
                 } else {
-                    self.DimensionChartMap[s.data.dimension.Name] = [s];
+                    self.DimensionChartMap[s.data.dimension.Name] = [chart];
                 }
             }
         });
@@ -1021,8 +1023,11 @@ Dashboard.prototype.compareFilters = function(filterFunction) {
 Dashboard.prototype.applyCSSClasses = function(chart, value, dimensionSelector) {
     var listeningSeries = this.DimensionChartMap[chart.data.dimension.Name];
 
-    listeningSeries.forEach(function(series) {
-        series.highlight(dimensionSelector, value);
+    listeningSeries.forEach(function(chart) {
+
+        chart.highlight(dimensionSelector, value);
+
+
     });
 };
 
@@ -1229,32 +1234,12 @@ Dashboard.prototype.redrawCharts = function() {
     this.selectedClassName = function(name) {
         var selected = "";
 
-        if (self.selectedItems.length) {
-            selected = self.selectedItems.indexOf(name) > -1 ? "selected" : "notselected";
+        if (self.chart.selectedItems.length) {
+            selected = self.chart.selectedItems.indexOf(name) > -1 ? "selected" : "notselected";
         }
 
         return selected;
     };
-
-    this.highlight = function(selector, value) {
-        var clicked = this.chart.chart.selectAll("." + selector);
-        var alreadySelected = clicked.classed('selected');
-
-        if (alreadySelected) {
-            clicked.classed('selected', false);
-            InsightUtils.removeItemFromArray(self.selectedItems, selector);
-        } else {
-            clicked.classed('selected', true)
-                .classed('notselected', false);
-            self.selectedItems.push(selector);
-        }
-
-        var selected = this.chart.chart.selectAll('.selected');
-        var notselected = this.chart.chart.selectAll('.bar:not(.selected),.bubble:not(.selected)');
-
-        notselected.classed('notselected', selected[0].length > 0);
-    };
-
 
 
     this.click = function(element, filter) {
@@ -1356,6 +1341,7 @@ Series.prototype.clickEvent = function(series, filter, selection) {
     this.name = name;
     this.element = element;
     this.dimension = dimension;
+    this.selectedItems = [];
 
     var height = d3.functor(300);
     var width = d3.functor(300);
@@ -1560,34 +1546,7 @@ Series.prototype.clickEvent = function(series, filter, selection) {
     };
 
 
-    /**
-     * This function takes a data point, and creates a class name for insight to identify this particular key
-     * If the parameter is not an object (just a value in an array) then there is no need for this particular class so blank is returned.
-     * @returns {string} return - A class name to identify this point and any other points taking the same value in other charts.
-     * @param {object} data - The input point
-     */
-    this.dimensionSelector = function(d) {
 
-        var str = d.key.toString();
-
-        var result = "in_" + str.replace(/[^A-Z0-9]/ig, "_");
-
-        return result;
-    };
-
-
-
-    this.click = function(element, value) {
-        if (this.dimension) {
-            var selected = d3.select(element)
-                .classed('selected');
-
-            d3.selectAll('.' + self.dimensionSelector(value))
-                .classed('selected', !selected);
-
-            this.clickEvent(this, value);
-        }
-    };
 
     this.tooltip = function() {
 
@@ -1682,6 +1641,28 @@ Series.prototype.clickEvent = function(series, filter, selection) {
         autoMargin = _;
         return this;
     };
+
+
+    this.highlight = function(selector, value) {
+
+
+        var clicked = this.chart.selectAll("." + selector);
+        var alreadySelected = clicked.classed('selected');
+
+        if (alreadySelected) {
+            clicked.classed('selected', false);
+            InsightUtils.removeItemFromArray(self.selectedItems, selector);
+        } else {
+            clicked.classed('selected', true)
+                .classed('notselected', false);
+            self.selectedItems.push(selector);
+        }
+
+        var selected = this.chart.selectAll('.selected');
+        var notselected = this.chart.selectAll('.bar:not(.selected),.bubble:not(.selected)');
+
+        notselected.classed('notselected', selected[0].length > 0);
+    };
 }
 
 
@@ -1711,10 +1692,25 @@ Chart.prototype.addColumnSeries = function(series) {
 
     var stacked = series.stacked ? true : false;
 
-    var s = new ColumnSeries("", this, series.data, x, y, series.color)
+    var s = new ColumnSeries(series.name, this, series.data, x, y, series.color)
         .stacked(stacked);
 
     s.series = [series];
+
+    this.series()
+        .push(s);
+
+    return s;
+};
+
+
+Chart.prototype.addLineSeries = function(series) {
+
+    var x = new Scale(this, "", d3.scale.ordinal(), 'h', 'ordinal');
+    var y = new Scale(this, "", d3.scale.linear(), 'v', 'linear');
+
+    var s = new LineSeries(series.name, this, series.data, x, y, series.color)
+        .yFunction(series.accessor);
 
     this.series()
         .push(s);
@@ -2005,7 +2001,7 @@ ChartGroup.prototype.count = function(dimension, input) {
 
     this.className = function(d) {
 
-        return self.selector + " " + InsightConstants.Bubble + " " + self.chart.dimensionSelector(d) + " " + self.dimensionName;
+        return self.selector + " " + InsightConstants.Bubble + " " + self.sliceSelector(d) + " " + self.dimensionName;
     };
 
     this.draw = function(drag) {
@@ -2981,7 +2977,7 @@ LineSeries.prototype.constructor = LineSeries;
 
 
     this.className = function(d) {
-        var dimension = self.chart.dimensionSelector(d);
+        var dimension = self.sliceSelector(d);
 
         var selected = self.selectedClassName(dimension);
 
