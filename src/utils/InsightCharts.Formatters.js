@@ -5,7 +5,12 @@ var InsightFormatters = (function(d3) {
     exports.moduleProperty = 1;
 
     exports.currencyFormatter = function(value) {
-        var format = d3.format(",f");
+        var format = d3.format("0,000");
+        return '£' + format(value);
+    };
+
+    exports.decimalCurrencyFormatter = function(value) {
+        var format = d3.format("0.2f");
         return '£' + format(value);
     };
 

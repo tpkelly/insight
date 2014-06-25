@@ -66,9 +66,9 @@ Dashboard.prototype.addChart = function(chart) {
  * @param {string} name - A uniquely identifying name for the dimension along which this grouping is created. Used to identify identical dimensions in other datasets.
  * @param {function} groupFunction - The function used to group the dimension along.  Select the property of the underlying data that the dimension is to be defined on. Rounding or data manipulation can alter the granularity of the dimension
  */
-Dashboard.prototype.group = function(dataset, name, groupFunction) {
+Dashboard.prototype.group = function(dataset, name, groupFunction, multi) {
 
-    var dim = new Dimension(name, groupFunction, dataset.dimension(groupFunction), groupFunction, false);
+    var dim = new Dimension(name, groupFunction, dataset.dimension(groupFunction), groupFunction, multi);
 
     this.Dimensions.push(dim);
 
@@ -80,7 +80,6 @@ Dashboard.prototype.group = function(dataset, name, groupFunction) {
 
     return group;
 };
-
 
 Dashboard.prototype.filterFunction = function(filter, element) {
     var value = filter.key ? filter.key : filter;

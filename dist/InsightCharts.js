@@ -23,7 +23,12 @@ var InsightConstants = (function() {
     exports.moduleProperty = 1;
 
     exports.currencyFormatter = function(value) {
-        var format = d3.format(",f");
+        var format = d3.format("0,000");
+        return '£' + format(value);
+    };
+
+    exports.decimalCurrencyFormatter = function(value) {
+        var format = d3.format("0.2f");
         return '£' + format(value);
     };
 
@@ -975,9 +980,9 @@ Dashboard.prototype.addChart = function(chart) {
  * @param {string} name - A uniquely identifying name for the dimension along which this grouping is created. Used to identify identical dimensions in other datasets.
  * @param {function} groupFunction - The function used to group the dimension along.  Select the property of the underlying data that the dimension is to be defined on. Rounding or data manipulation can alter the granularity of the dimension
  */
-Dashboard.prototype.group = function(dataset, name, groupFunction) {
+Dashboard.prototype.group = function(dataset, name, groupFunction, multi) {
 
-    var dim = new Dimension(name, groupFunction, dataset.dimension(groupFunction), groupFunction, false);
+    var dim = new Dimension(name, groupFunction, dataset.dimension(groupFunction), groupFunction, multi);
 
     this.Dimensions.push(dim);
 
@@ -989,7 +994,6 @@ Dashboard.prototype.group = function(dataset, name, groupFunction) {
 
     return group;
 };
-
 
 Dashboard.prototype.filterFunction = function(filter, element) {
     var value = filter.key ? filter.key : filter;
@@ -1127,9 +1131,6 @@ Dashboard.prototype.redrawCharts = function() {
     x.addSeries(this);
     y.addSeries(this);
 
-
-
-
     if (data.registerSeries) {
         data.registerSeries(this);
     }
@@ -1209,9 +1210,17 @@ Dashboard.prototype.redrawCharts = function() {
         return this;
     };
 
+    /**
+     * This function takes a data point, and creates a class name for insight to identify this particular key
+     * If the parameter is not an object (just a value in an array) then there is no need for this particular class so blank is returned.
+     * @returns {string} return - A class name to identify this point and any other points taking the same value in other charts.
+     * @param {object} data - The input point
+     */
     this.sliceSelector = function(d) {
 
-        var result = d.key.replace ? "in_" + d.key.replace(/[^A-Z0-9]/ig, "_") : "";
+        var str = d.key.toString();
+
+        var result = "in_" + str.replace(/[^A-Z0-9]/ig, "_");
 
         return result;
     };
@@ -1559,7 +1568,9 @@ Series.prototype.clickEvent = function(series, filter, selection) {
      */
     this.dimensionSelector = function(d) {
 
-        var result = d.key.replace ? "in_" + d.key.replace(/[^A-Z0-9]/ig, "_") : "";
+        var str = d.key.toString();
+
+        var result = "in_" + str.replace(/[^A-Z0-9]/ig, "_");
 
         return result;
     };
@@ -2434,9 +2445,12 @@ RowSeries.prototype.constructor = RowSeries;
 
     var tickSize = d3.functor(0);
     var tickPadding = d3.functor(10);
+    var labelRotation = "90";
     var labelOrientation = d3.functor("lr");
     var orientation = scale.horizontal() ? d3.functor(this.anchor) : d3.functor(this.anchor);
     var textAnchor;
+    var showGridLines = false;
+    var gridlines = [];
 
     if (scale.vertical()) {
         textAnchor = this.anchor == 'left' ? 'end' : 'start';
@@ -2451,7 +2465,7 @@ RowSeries.prototype.constructor = RowSeries;
 
     this.chart.addAxis(this);
 
-    this.format = function(_) {
+    this.labelFormat = function(_) {
         if (!arguments.length) {
             return format;
         }
@@ -2464,6 +2478,14 @@ RowSeries.prototype.constructor = RowSeries;
             return orientation();
         }
         orientation = d3.functor(_);
+        return this;
+    };
+
+    this.labelRotation = function(_) {
+        if (!arguments.length) {
+            return labelRotation;
+        }
+        labelRotation = _;
         return this;
     };
 
@@ -2501,11 +2523,17 @@ RowSeries.prototype.constructor = RowSeries;
         return this;
     };
 
+    /**
+     * This method gets/sets the rotation angle used for horizontal axis labels.  Defaults to 90 degrees
+     * @constructor
+     * @returns {object} return - Description
+     * @param {object[]} data - Description
+     */
     this.tickRotation = function() {
         var offset = self.tickPadding() + (self.tickSize() * 2);
         offset = self.anchor == 'top' ? 0 - offset : offset;
 
-        var rotation = this.labelOrientation() == 'tb' ? ' rotate(90,0,' + offset + ')' : '';
+        var rotation = this.labelOrientation() == 'tb' ? ' rotate(' + self.labelRotation() + ',0,' + offset + ')' : '';
 
         return rotation;
     };
@@ -2569,13 +2597,50 @@ RowSeries.prototype.constructor = RowSeries;
         }
     };
 
+    this.gridlines = function(_) {
+        if (!arguments.length) {
+            return gridlines();
+        }
+        showGridLines = true;
+        gridlines = _;
+
+        return this;
+    };
+
+
+    this.drawGridLines = function() {
+
+        var ticks = this.scale.scale.ticks(5);
+
+        this.chart.chart.selectAll("line.horizontalGrid")
+            .data(ticks)
+            .enter()
+            .append("line")
+            .attr({
+                "class": "horizontalGrid",
+                "x1": 0,
+                "x2": chart.width(),
+                "y1": function(d) {
+                    return self.scale(d);
+                },
+                "y2": function(d) {
+                    return self.scale(d);
+                },
+                "fill": "none",
+                "shape-rendering": "crispEdges",
+                "stroke": "silver",
+                "stroke-width": "1px"
+            });
+
+    };
+
     this.initialize = function() {
         this.axis = d3.svg.axis()
             .scale(this.scale.scale)
             .orient(self.orientation())
             .tickSize(self.tickSize())
             .tickPadding(self.tickPadding())
-            .tickFormat(self.format());
+            .tickFormat(self.labelFormat());
 
         this.chart.chart.append('g')
             .attr('class', self.name + ' ' + InsightConstants.AxisClass)
@@ -2603,7 +2668,7 @@ RowSeries.prototype.constructor = RowSeries;
             .orient(self.orientation())
             .tickSize(self.tickSize())
             .tickPadding(self.tickPadding())
-            .tickFormat(self.format());
+            .tickFormat(self.labelFormat());
 
         var axis = this.chart.chart.selectAll('g.' + self.name + '.' + InsightConstants.AxisClass)
             .transition()
@@ -2619,6 +2684,10 @@ RowSeries.prototype.constructor = RowSeries;
         d3.select(this.chart.element)
             .select('div.' + self.name + InsightConstants.AxisLabelClass)
             .text(self.scale.title);
+
+        if (showGridLines) {
+            //this.drawGridLines();
+        }
     };
 }
 ;function LineSeries(name, chart, data, x, y, color) {

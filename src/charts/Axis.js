@@ -8,9 +8,12 @@ function Axis(chart, name, scale, anchor) {
 
     var tickSize = d3.functor(0);
     var tickPadding = d3.functor(10);
+    var labelRotation = "90";
     var labelOrientation = d3.functor("lr");
     var orientation = scale.horizontal() ? d3.functor(this.anchor) : d3.functor(this.anchor);
     var textAnchor;
+    var showGridLines = false;
+    var gridlines = [];
 
     if (scale.vertical()) {
         textAnchor = this.anchor == 'left' ? 'end' : 'start';
@@ -25,7 +28,7 @@ function Axis(chart, name, scale, anchor) {
 
     this.chart.addAxis(this);
 
-    this.format = function(_) {
+    this.labelFormat = function(_) {
         if (!arguments.length) {
             return format;
         }
@@ -38,6 +41,14 @@ function Axis(chart, name, scale, anchor) {
             return orientation();
         }
         orientation = d3.functor(_);
+        return this;
+    };
+
+    this.labelRotation = function(_) {
+        if (!arguments.length) {
+            return labelRotation;
+        }
+        labelRotation = _;
         return this;
     };
 
@@ -75,11 +86,17 @@ function Axis(chart, name, scale, anchor) {
         return this;
     };
 
+    /**
+     * This method gets/sets the rotation angle used for horizontal axis labels.  Defaults to 90 degrees
+     * @constructor
+     * @returns {object} return - Description
+     * @param {object[]} data - Description
+     */
     this.tickRotation = function() {
         var offset = self.tickPadding() + (self.tickSize() * 2);
         offset = self.anchor == 'top' ? 0 - offset : offset;
 
-        var rotation = this.labelOrientation() == 'tb' ? ' rotate(90,0,' + offset + ')' : '';
+        var rotation = this.labelOrientation() == 'tb' ? ' rotate(' + self.labelRotation() + ',0,' + offset + ')' : '';
 
         return rotation;
     };
@@ -143,13 +160,50 @@ function Axis(chart, name, scale, anchor) {
         }
     };
 
+    this.gridlines = function(_) {
+        if (!arguments.length) {
+            return gridlines();
+        }
+        showGridLines = true;
+        gridlines = _;
+
+        return this;
+    };
+
+
+    this.drawGridLines = function() {
+
+        var ticks = this.scale.scale.ticks(5);
+
+        this.chart.chart.selectAll("line.horizontalGrid")
+            .data(ticks)
+            .enter()
+            .append("line")
+            .attr({
+                "class": "horizontalGrid",
+                "x1": 0,
+                "x2": chart.width(),
+                "y1": function(d) {
+                    return self.scale(d);
+                },
+                "y2": function(d) {
+                    return self.scale(d);
+                },
+                "fill": "none",
+                "shape-rendering": "crispEdges",
+                "stroke": "silver",
+                "stroke-width": "1px"
+            });
+
+    };
+
     this.initialize = function() {
         this.axis = d3.svg.axis()
             .scale(this.scale.scale)
             .orient(self.orientation())
             .tickSize(self.tickSize())
             .tickPadding(self.tickPadding())
-            .tickFormat(self.format());
+            .tickFormat(self.labelFormat());
 
         this.chart.chart.append('g')
             .attr('class', self.name + ' ' + InsightConstants.AxisClass)
@@ -177,7 +231,7 @@ function Axis(chart, name, scale, anchor) {
             .orient(self.orientation())
             .tickSize(self.tickSize())
             .tickPadding(self.tickPadding())
-            .tickFormat(self.format());
+            .tickFormat(self.labelFormat());
 
         var axis = this.chart.chart.selectAll('g.' + self.name + '.' + InsightConstants.AxisClass)
             .transition()
@@ -193,5 +247,9 @@ function Axis(chart, name, scale, anchor) {
         d3.select(this.chart.element)
             .select('div.' + self.name + InsightConstants.AxisLabelClass)
             .text(self.scale.title);
+
+        if (showGridLines) {
+            //this.drawGridLines();
+        }
     };
 }

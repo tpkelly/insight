@@ -215,7 +215,9 @@ function Chart(name, element, dimension) {
      */
     this.dimensionSelector = function(d) {
 
-        var result = d.key.replace ? "in_" + d.key.replace(/[^A-Z0-9]/ig, "_") : "";
+        var str = d.key.toString();
+
+        var result = "in_" + str.replace(/[^A-Z0-9]/ig, "_");
 
         return result;
     };

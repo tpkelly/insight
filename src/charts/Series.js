@@ -92,9 +92,17 @@ function Series(name, chart, data, x, y, color) {
         return this;
     };
 
+    /**
+     * This function takes a data point, and creates a class name for insight to identify this particular key
+     * If the parameter is not an object (just a value in an array) then there is no need for this particular class so blank is returned.
+     * @returns {string} return - A class name to identify this point and any other points taking the same value in other charts.
+     * @param {object} data - The input point
+     */
     this.sliceSelector = function(d) {
 
-        var result = d.key.replace ? "in_" + d.key.replace(/[^A-Z0-9]/ig, "_") : "";
+        var str = d.key.toString();
+
+        var result = "in_" + str.replace(/[^A-Z0-9]/ig, "_");
 
         return result;
     };
