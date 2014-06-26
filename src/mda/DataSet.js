@@ -9,13 +9,17 @@ insight.DataSet = (function(insight) {
 
         this._data = data;
 
+        this.Dimensions = [];
+        this.Groups = [];
+
+        this.ndx = null;
+
         this._orderFunction = function(a, b) {
             return b.value - a.value;
         };
 
         this._filterFunction = null;
     }
-
 
     DataSet.prototype.initialize = function() {
 
@@ -61,7 +65,6 @@ insight.DataSet = (function(insight) {
         return this;
     };
 
-
     DataSet.prototype.getOrderedData = function() {
         var data;
 
@@ -72,6 +75,25 @@ insight.DataSet = (function(insight) {
         }
 
         return data;
+    };
+
+
+    DataSet.prototype.group = function(name, groupFunction) {
+
+        var multi = false; //todo - check if the property is an array
+
+        this.ndx = !this.ndx ? crossfilter(this._data) : this.ndx;
+
+        var dim = new insight.Dimension(name, groupFunction, this.ndx.dimension(groupFunction), groupFunction, multi);
+
+        var group = new insight.Grouping(dim);
+
+        insight.Dimensions.push(dim);
+        insight.Groups.push(group);
+
+        group.preFilter = insight.chartFilterHandler.bind(insight);
+
+        return group;
     };
 
     return DataSet;

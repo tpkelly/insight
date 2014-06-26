@@ -107,7 +107,6 @@ insight.Dashboard = (function(insight) {
         };
     };
 
-
     Dashboard.prototype.applyCSSClasses = function(chart, value, dimensionSelector) {
         var listeningSeries = this.DimensionChartMap[chart.data.dimension.Name];
 
