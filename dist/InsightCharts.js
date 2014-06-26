@@ -1214,6 +1214,14 @@ Dashboard.prototype.redrawCharts = function() {
         return this;
     };
 
+    this.mouseOver = function(d, item) {
+        self.chart.mouseOver(self, this, d);
+    };
+
+    this.mouseOut = function(d, item) {
+        self.chart.mouseOut(self, this, d);
+    };
+
     /**
      * This function takes a data point, and creates a class name for insight to identify this particular key
      * If the parameter is not an object (just a value in an array) then there is no need for this particular class so blank is returned.
@@ -1716,6 +1724,44 @@ Chart.prototype.addLineSeries = function(series) {
 
     return s;
 };
+
+
+Chart.prototype.addBulletChart = function(options) {
+
+    var x = new Scale(this, options.name + "x", d3.scale.linear(), 'h', 'linear');
+    var y = new Scale(this, options.name + "y", d3.scale.ordinal(), 'v', 'ordinal');
+
+    // Create the areas as stacked bars
+    var s = new RowSeries(options.name, this, options.ranges[0].data, x, y, 'blue')
+        .stacked(true);
+
+    // empty the hover function
+    s.mouseOver = function(d) {};
+
+    s.series = options.ranges;
+
+    this.series()
+        .push(s);
+
+    // Create the main bar
+
+    var row = new RowSeries(options.value.name, this, options.value.data, x, y, options.value.color);
+
+    row.barThickness = function(d) {
+        return this.y.scale.rangeBand(d) * (1 / 3);
+    }.bind(row);
+
+    row.yPosition = function(d) {
+        return this.y.scale(this.yFunction()(d)) + (this.y.scale.rangeBand(d) / 3);
+    }.bind(row);
+
+    row.series = [options.value];
+
+    this.series()
+        .push(row);
+
+    return s;
+};
 ;var ChartGroup = function ChartGroup(name) {
     this.Name = name;
     this.Charts = [];
@@ -1802,8 +1848,8 @@ ChartGroup.prototype.compareFilters = function(filterFunction) {
 ChartGroup.prototype.applyCSSClasses = function(chart, value, dimensionSelector) {
     var listeningSeries = this.DimensionChartMap[chart.data.dimension.Name];
 
-    listeningSeries.forEach(function(series) {
-        series.highlight(dimensionSelector, value);
+    listeningSeries.forEach(function(chart) {
+        chart.highlight(dimensionSelector, value);
     });
 };
 
@@ -2073,13 +2119,13 @@ BubbleSeries.prototype.constructor = BubbleSeries;
     var seriesName = "";
     var tooltipExists = false;
 
+    this.yFunction(function(d) {
+        return d.key;
+    });
 
-    var mouseOver = function(d, item) {
-        self.chart.mouseOver(self, this, d);
-    };
-
-    var mouseOut = function(d, item) {
-        self.chart.mouseOut(self, this, d);
+    var tooltipFunction = function(d) {
+        var func = self.series[self.currentSeries].accessor;
+        return self.tooltipFormat()(func(d));
     };
 
 
@@ -2104,11 +2150,6 @@ BubbleSeries.prototype.constructor = BubbleSeries;
         return self.dataset()
             .map(self.yFunction());
     };
-
-
-    this.tooltipFunction(function(d) {
-        return self.tooltipFormat()(self.xFunction()(d));
-    });
 
 
     /**
@@ -2230,7 +2271,7 @@ BubbleSeries.prototype.constructor = BubbleSeries;
     };
 
     this.className = function(d) {
-        return seriesName + 'class bar ' + self.chart.dimensionSelector(d);
+        return seriesName + 'class bar ' + self.sliceSelector(d);
     };
 
     this.draw = function(drag) {
@@ -2240,13 +2281,13 @@ BubbleSeries.prototype.constructor = BubbleSeries;
         };
 
         var groups = this.chart.chart
-            .selectAll('g.' + InsightConstants.BarGroupClass)
+            .selectAll('g.' + InsightConstants.BarGroupClass + "." + this.name)
             .data(this.dataset(), this.keyAccessor)
             .each(reset);
 
         var newGroups = groups.enter()
             .append('g')
-            .attr('class', InsightConstants.BarGroupClass);
+            .attr('class', InsightConstants.BarGroupClass + " " + this.name);
 
         var newBars = newGroups.selectAll('rect.bar');
 
@@ -2257,7 +2298,6 @@ BubbleSeries.prototype.constructor = BubbleSeries;
         var duration = function(d, i) {
             return 200 + (i * 20);
         };
-
 
         for (var ser in this.series) {
 
@@ -2272,15 +2312,13 @@ BubbleSeries.prototype.constructor = BubbleSeries;
                 .attr('height', 0)
                 .attr('fill', s.color)
                 .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
-                .on('mouseover', mouseOver)
-                .on('mouseout', mouseOut)
+                .on('mouseover', this.mouseOver)
+                .on('mouseout', this.mouseOut)
                 .on('click', click);
 
-            if (!tooltipExists) {
-                newBars.append('svg:text')
-                    .attr('class', InsightConstants.ToolTipTextClass);
-                tooltipExists = true;
-            }
+
+            newBars.append('svg:text')
+                .attr('class', InsightConstants.ToolTipTextClass);
 
             var bars = groups.selectAll('.' + seriesName + 'class.bar')
                 .transition()
@@ -2291,7 +2329,7 @@ BubbleSeries.prototype.constructor = BubbleSeries;
                 .attr('width', this.barWidth);
 
             bars.selectAll("." + InsightConstants.ToolTipTextClass)
-                .text(s.tooltipValue);
+                .text(tooltipFunction);
         }
     };
 
@@ -2436,6 +2474,7 @@ RowSeries.prototype.constructor = RowSeries;
     this.anchor = anchor ? anchor : 'left';
     this.name = name;
 
+    var label = scale.title;
     var self = this;
 
     var tickSize = d3.functor(0);
@@ -2459,6 +2498,14 @@ RowSeries.prototype.constructor = RowSeries;
     };
 
     this.chart.addAxis(this);
+
+    this.label = function(_) {
+        if (!arguments.length) {
+            return label;
+        }
+        label = _;
+        return this;
+    };
 
     this.labelFormat = function(_) {
         if (!arguments.length) {
@@ -2646,11 +2693,13 @@ RowSeries.prototype.constructor = RowSeries;
             .style('text-anchor', self.textAnchor())
             .style('transform', self.tickRotation());
 
+
+
         var labels = this.chart.container
             .append('div')
             .attr('class', self.name + InsightConstants.AxisLabelClass)
             .style('position', 'absolute')
-            .text(self.scale.title);
+            .text(this.label());
 
         this.positionLabels(labels);
     };
@@ -2678,7 +2727,7 @@ RowSeries.prototype.constructor = RowSeries;
 
         d3.select(this.chart.element)
             .select('div.' + self.name + InsightConstants.AxisLabelClass)
-            .text(self.scale.title);
+            .text(this.label());
 
         if (showGridLines) {
             //this.drawGridLines();
@@ -2825,13 +2874,7 @@ LineSeries.prototype.constructor = LineSeries;
     var seriesName = "";
     var barWidthFunction = this.x.rangeType;
 
-    var mouseOver = function(d, item) {
-        self.chart.mouseOver(self, this, d);
-    };
 
-    var mouseOut = function(d, item) {
-        self.chart.mouseOut(self, this, d);
-    };
 
     var tooltipFunction = function(d) {
         var func = self.series[self.currentSeries].accessor;
@@ -2984,6 +3027,7 @@ LineSeries.prototype.constructor = LineSeries;
     };
 
     this.draw = function(drag) {
+
         var reset = function(d) {
             d.yPos = 0;
             d.xPos = 0;
@@ -3010,7 +3054,6 @@ LineSeries.prototype.constructor = LineSeries;
             return 200 + (i * 20);
         };
 
-
         for (var ser in this.series) {
 
             this.currentSeries = ser;
@@ -3024,9 +3067,9 @@ LineSeries.prototype.constructor = LineSeries;
                 .attr('y', this.y.bounds[0])
                 .attr('height', 0)
                 .attr('fill', s.color)
-                .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
-                .on('mouseover', mouseOver)
-                .on('mouseout', mouseOut)
+                .attr('clip-path', 'url(#' + this.chart.clipPath() + ')')
+                .on('mouseover', this.mouseOver)
+                .on('mouseout', this.mouseOut)
                 .on('click', click);
 
             newBars.append('svg:text')
@@ -3042,7 +3085,7 @@ LineSeries.prototype.constructor = LineSeries;
                 .attr('width', this.groupedBarWidth)
                 .attr('height', this.barHeight);
 
-            bars.selectAll("." + InsightConstants.ToolTipTextClass)
+            bars.selectAll('.' + InsightConstants.ToolTipTextClass)
                 .text(tooltipFunction);
 
         }

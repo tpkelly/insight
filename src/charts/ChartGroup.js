@@ -84,8 +84,8 @@ ChartGroup.prototype.compareFilters = function(filterFunction) {
 ChartGroup.prototype.applyCSSClasses = function(chart, value, dimensionSelector) {
     var listeningSeries = this.DimensionChartMap[chart.data.dimension.Name];
 
-    listeningSeries.forEach(function(series) {
-        series.highlight(dimensionSelector, value);
+    listeningSeries.forEach(function(chart) {
+        chart.highlight(dimensionSelector, value);
     });
 };
 

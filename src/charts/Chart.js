@@ -234,7 +234,8 @@ function Chart(name, element, dimension) {
         this.tip.show(tooltip);
 
         d3.select(item)
-            .classed("active", true);
+            .classed("rtopt475
+                ", true);
     };
 
     this.mouseOut = function(chart, item, d) {
@@ -376,6 +377,44 @@ Chart.prototype.addLineSeries = function(series) {
 
     this.series()
         .push(s);
+
+    return s;
+};
+
+
+Chart.prototype.addBulletChart = function(options) {
+
+    var x = new Scale(this, options.name + "x", d3.scale.linear(), 'h', 'linear');
+    var y = new Scale(this, options.name + "y", d3.scale.ordinal(), 'v', 'ordinal');
+
+    // Create the areas as stacked bars
+    var s = new RowSeries(options.name, this, options.ranges[0].data, x, y, 'blue')
+        .stacked(true);
+
+    // empty the hover function
+    s.mouseOver = function(d) {};
+
+    s.series = options.ranges;
+
+    this.series()
+        .push(s);
+
+    // Create the main bar
+
+    var row = new RowSeries(options.value.name, this, options.value.data, x, y, options.value.color);
+
+    row.barThickness = function(d) {
+        return this.y.scale.rangeBand(d) * (1 / 3);
+    }.bind(row);
+
+    row.yPosition = function(d) {
+        return this.y.scale(this.yFunction()(d)) + (this.y.scale.rangeBand(d) / 3);
+    }.bind(row);
+
+    row.series = [options.value];
+
+    this.series()
+        .push(row);
 
     return s;
 };

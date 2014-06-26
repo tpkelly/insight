@@ -91,6 +91,14 @@ function Series(name, chart, data, x, y, color) {
         return this;
     };
 
+    this.mouseOver = function(d, item) {
+        self.chart.mouseOver(self, this, d);
+    };
+
+    this.mouseOut = function(d, item) {
+        self.chart.mouseOut(self, this, d);
+    };
+
     /**
      * This function takes a data point, and creates a class name for insight to identify this particular key
      * If the parameter is not an object (just a value in an array) then there is no need for this particular class so blank is returned.

@@ -24,6 +24,31 @@ var rowdata =
 
 describe("Row Series Tests", function() {
     
+    it("can identify a dimensional slice", function(){
+        var charts = new ChartGroup('charts');
+
+        var chart = new Chart('Chart 1', "#chart1");
+        
+        var ndx = crossfilter(dataset);
+
+        var dimension =  charts.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
+        
+        var group = new Grouping(dimension);
+
+        group.initialize();
+
+        var xScale = new Scale(chart, '', d3.scale.ordinal(), 'h', 'ordinal');
+        var yScale = new Scale(chart, '', d3.scale.linear(), 'v', 'linear');
+
+        var series = new RowSeries('countryColumn', chart, group, xScale, yScale, 'silver')
+                            .yFunction(function(d){return d.key;}).xFunction(function(d){return d.value.Count;});
+        
+        var scotland = group.getData().filter(function(country){ return country.key=='Scotland'; })[0]; 
+
+        expect(series.sliceSelector(scotland)).toBe('in_Scotland');
+
+    });
+
     it("correctly places a single row series", function() {
         
         var charts = new ChartGroup('charts');

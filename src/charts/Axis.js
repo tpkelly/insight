@@ -4,6 +4,7 @@ function Axis(chart, name, scale, anchor) {
     this.anchor = anchor ? anchor : 'left';
     this.name = name;
 
+    var label = scale.title;
     var self = this;
 
     var tickSize = d3.functor(0);
@@ -27,6 +28,14 @@ function Axis(chart, name, scale, anchor) {
     };
 
     this.chart.addAxis(this);
+
+    this.label = function(_) {
+        if (!arguments.length) {
+            return label;
+        }
+        label = _;
+        return this;
+    };
 
     this.labelFormat = function(_) {
         if (!arguments.length) {
@@ -214,11 +223,13 @@ function Axis(chart, name, scale, anchor) {
             .style('text-anchor', self.textAnchor())
             .style('transform', self.tickRotation());
 
+
+
         var labels = this.chart.container
             .append('div')
             .attr('class', self.name + InsightConstants.AxisLabelClass)
             .style('position', 'absolute')
-            .text(self.scale.title);
+            .text(this.label());
 
         this.positionLabels(labels);
     };
@@ -246,7 +257,7 @@ function Axis(chart, name, scale, anchor) {
 
         d3.select(this.chart.element)
             .select('div.' + self.name + InsightConstants.AxisLabelClass)
-            .text(self.scale.title);
+            .text(this.label());
 
         if (showGridLines) {
             //this.drawGridLines();

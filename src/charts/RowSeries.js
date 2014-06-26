@@ -7,13 +7,13 @@ function RowSeries(name, chart, data, x, y, color) {
     var seriesName = "";
     var tooltipExists = false;
 
+    this.yFunction(function(d) {
+        return d.key;
+    });
 
-    var mouseOver = function(d, item) {
-        self.chart.mouseOver(self, this, d);
-    };
-
-    var mouseOut = function(d, item) {
-        self.chart.mouseOut(self, this, d);
+    var tooltipFunction = function(d) {
+        var func = self.series[self.currentSeries].accessor;
+        return self.tooltipFormat()(func(d));
     };
 
 
@@ -38,11 +38,6 @@ function RowSeries(name, chart, data, x, y, color) {
         return self.dataset()
             .map(self.yFunction());
     };
-
-
-    this.tooltipFunction(function(d) {
-        return self.tooltipFormat()(self.xFunction()(d));
-    });
 
 
     /**
@@ -164,7 +159,7 @@ function RowSeries(name, chart, data, x, y, color) {
     };
 
     this.className = function(d) {
-        return seriesName + 'class bar ' + self.chart.dimensionSelector(d);
+        return seriesName + 'class bar ' + self.sliceSelector(d);
     };
 
     this.draw = function(drag) {
@@ -174,13 +169,13 @@ function RowSeries(name, chart, data, x, y, color) {
         };
 
         var groups = this.chart.chart
-            .selectAll('g.' + InsightConstants.BarGroupClass)
+            .selectAll('g.' + InsightConstants.BarGroupClass + "." + this.name)
             .data(this.dataset(), this.keyAccessor)
             .each(reset);
 
         var newGroups = groups.enter()
             .append('g')
-            .attr('class', InsightConstants.BarGroupClass);
+            .attr('class', InsightConstants.BarGroupClass + " " + this.name);
 
         var newBars = newGroups.selectAll('rect.bar');
 
@@ -191,7 +186,6 @@ function RowSeries(name, chart, data, x, y, color) {
         var duration = function(d, i) {
             return 200 + (i * 20);
         };
-
 
         for (var ser in this.series) {
 
@@ -206,15 +200,13 @@ function RowSeries(name, chart, data, x, y, color) {
                 .attr('height', 0)
                 .attr('fill', s.color)
                 .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
-                .on('mouseover', mouseOver)
-                .on('mouseout', mouseOut)
+                .on('mouseover', this.mouseOver)
+                .on('mouseout', this.mouseOut)
                 .on('click', click);
 
-            if (!tooltipExists) {
-                newBars.append('svg:text')
-                    .attr('class', InsightConstants.ToolTipTextClass);
-                tooltipExists = true;
-            }
+
+            newBars.append('svg:text')
+                .attr('class', InsightConstants.ToolTipTextClass);
 
             var bars = groups.selectAll('.' + seriesName + 'class.bar')
                 .transition()
@@ -225,7 +217,7 @@ function RowSeries(name, chart, data, x, y, color) {
                 .attr('width', this.barWidth);
 
             bars.selectAll("." + InsightConstants.ToolTipTextClass)
-                .text(s.tooltipValue);
+                .text(tooltipFunction);
         }
     };
 

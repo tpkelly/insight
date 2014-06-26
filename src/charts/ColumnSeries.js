@@ -7,13 +7,7 @@ function ColumnSeries(name, chart, data, x, y, color) {
     var seriesName = "";
     var barWidthFunction = this.x.rangeType;
 
-    var mouseOver = function(d, item) {
-        self.chart.mouseOver(self, this, d);
-    };
 
-    var mouseOut = function(d, item) {
-        self.chart.mouseOut(self, this, d);
-    };
 
     var tooltipFunction = function(d) {
         var func = self.series[self.currentSeries].accessor;
@@ -166,6 +160,7 @@ function ColumnSeries(name, chart, data, x, y, color) {
     };
 
     this.draw = function(drag) {
+
         var reset = function(d) {
             d.yPos = 0;
             d.xPos = 0;
@@ -192,7 +187,6 @@ function ColumnSeries(name, chart, data, x, y, color) {
             return 200 + (i * 20);
         };
 
-
         for (var ser in this.series) {
 
             this.currentSeries = ser;
@@ -206,9 +200,9 @@ function ColumnSeries(name, chart, data, x, y, color) {
                 .attr('y', this.y.bounds[0])
                 .attr('height', 0)
                 .attr('fill', s.color)
-                .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
-                .on('mouseover', mouseOver)
-                .on('mouseout', mouseOut)
+                .attr('clip-path', 'url(#' + this.chart.clipPath() + ')')
+                .on('mouseover', this.mouseOver)
+                .on('mouseout', this.mouseOut)
                 .on('click', click);
 
             newBars.append('svg:text')
@@ -224,7 +218,7 @@ function ColumnSeries(name, chart, data, x, y, color) {
                 .attr('width', this.groupedBarWidth)
                 .attr('height', this.barHeight);
 
-            bars.selectAll("." + InsightConstants.ToolTipTextClass)
+            bars.selectAll('.' + InsightConstants.ToolTipTextClass)
                 .text(tooltipFunction);
 
         }
