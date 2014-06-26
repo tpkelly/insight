@@ -40,22 +40,18 @@ describe("Column Series Tests", function() {
     
     it("filtering works with a single item", function() {
         
-        var charts = new ChartGroup('charts');
+        var charts = new insight.Dashboard('charts');
 
-        var chart = new Chart('Chart 1', "#chart1");
+        var chart = new insight.Chart('Chart 1', "#chart1");
         
-        var ndx = crossfilter(dataset);
-
-        var dimension =  charts.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
+        var ndx = charts.addData(dataset);
         
-        var group = new Grouping(dimension);
+        var group =  charts.group(ndx, 'country',function(d){return d.Country;});
+        
+        var xScale = new insight.Scale(chart, '', d3.scale.ordinal(), 'h', 'ordinal');
+        var yScale = new insight.Scale(chart, '', d3.scale.linear(), 'v', 'linear');
 
-        group.initialize();
-
-        var xScale = new Scale(chart, '', d3.scale.ordinal(), 'h', 'ordinal');
-        var yScale = new Scale(chart, '', d3.scale.linear(), 'v', 'linear');
-
-        var series = new ColumnSeries('countryColumn', chart, group, xScale, yScale, 'silver').filterFunction(function(d){return d.key=='Scotland';});
+        var series = new insight.ColumnSeries('countryColumn', chart, group, xScale, yScale, 'silver').filterFunction(function(d){return d.key=='Scotland';});
         
 
         var data = series.dataset();
@@ -64,22 +60,18 @@ describe("Column Series Tests", function() {
 
     it("filtering works with multiple items", function() {
         
-        var charts = new ChartGroup('charts');
+        var charts = new insight.Dashboard('charts');
 
-        var chart = new Chart('Chart 1', "#chart1");
+        var chart = new insight.Chart('Chart 1', "#chart1");
         
-        var ndx = crossfilter(dataset);
-
-        var dimension =  charts.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
+        var ndx = charts.addData(dataset);
         
-        var group = new Grouping(dimension);
+        var group =  charts.group(ndx, 'country',function(d){return d.Country;});
 
-        group.initialize();
+        var xScale = new insight.Scale(chart, '', d3.scale.ordinal(), 'h', 'ordinal');
+        var yScale = new insight.Scale(chart, '', d3.scale.linear(), 'v', 'linear');
 
-        var xScale = new Scale(chart, '', d3.scale.ordinal(), 'h', 'ordinal');
-        var yScale = new Scale(chart, '', d3.scale.linear(), 'v', 'linear');
-
-        var series = new ColumnSeries('countryColumn', chart, group, xScale, yScale, 'silver')
+        var series = new insight.ColumnSeries('countryColumn', chart, group, xScale, yScale, 'silver')
                             .filterFunction(function(d){return d.key=='Scotland' || d.key=='England';});
         
 
@@ -90,22 +82,18 @@ describe("Column Series Tests", function() {
 
     it("calculates max with normal series", function() {
         
-        var charts = new ChartGroup('charts');
+        var charts = new insight.Dashboard('charts');
 
-        var chart = new Chart('Chart 1', "#chart1");
+        var chart = new insight.Chart('Chart 1', "#chart1");
         
-        var ndx = crossfilter(dataset);
-
-        var dimension =  charts.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
+        var ndx = charts.addData(dataset);
         
-        var group = new Grouping(dimension);
+        var group =  charts.group(ndx, 'country',function(d){return d.Country;});
 
-        group.initialize();
+        var xScale = new insight.Scale(chart, '', d3.scale.ordinal(), 'h', 'ordinal');
+        var yScale = new insight.Scale(chart, '', d3.scale.linear(), 'v', 'linear');
 
-        var xScale = new Scale(chart, '', d3.scale.ordinal(), 'h', 'ordinal');
-        var yScale = new Scale(chart, '', d3.scale.linear(), 'v', 'linear');
-
-        var series = new ColumnSeries('countryColumn', chart, group, xScale, yScale, 'silver')
+        var series = new insight.ColumnSeries('countryColumn', chart, group, xScale, yScale, 'silver')
                             .yFunction(function(d){return d.value.Count;});
         
         var max = series.findMax(yScale);
@@ -115,22 +103,18 @@ describe("Column Series Tests", function() {
 
     it("calculates max with grouped series", function() {
         
-        var charts = new ChartGroup('charts');
+        var charts = new insight.Dashboard('charts');
 
-        var chart = new Chart('Chart 1', "#chart1");
+        var chart = new insight.Chart('Chart 1', "#chart1");
         
-        var ndx = crossfilter(dataset);
-
-        var dimension =  charts.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
+        var ndx = charts.addData(dataset);
         
-        var group = new Grouping(dimension).mean(['Age']);
+        var group =  charts.group(ndx, 'country',function(d){return d.Country;}).mean(['Age']);
 
-        group.initialize();
+        var xScale = new insight.Scale(chart, '', d3.scale.ordinal(), 'h', 'ordinal');
+        var yScale = new insight.Scale(chart, '', d3.scale.linear(), 'v', 'linear');
 
-        var xScale = new Scale(chart, '', d3.scale.ordinal(), 'h', 'ordinal');
-        var yScale = new Scale(chart, '', d3.scale.linear(), 'v', 'linear');
-
-        var series = new ColumnSeries('countryColumn', chart, group, xScale, yScale, 'silver');
+        var series = new insight.ColumnSeries('countryColumn', chart, group, xScale, yScale, 'silver');
 
         series.series = [
         {
@@ -161,22 +145,19 @@ describe("Column Series Tests", function() {
 
     it("calculates max with a stacked series", function() {
         
-        var charts = new ChartGroup('charts');
+        var charts = new insight.Dashboard('charts');
 
-        var chart = new Chart('Chart 1', "#chart1");
+        var chart = new insight.Chart('Chart 1', "#chart1");
         
-        var ndx = crossfilter(dataset);
-
-        var dimension =  charts.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
+        var ndx = charts.addData(dataset);
         
-        var group = new Grouping(dimension).mean(['Age']);
+        var group =  charts.group(ndx, 'country',function(d){return d.Country;}).mean(['Age']);
 
-        group.initialize();
 
-        var xScale = new Scale(chart, '', d3.scale.ordinal(), 'h', 'ordinal');
-        var yScale = new Scale(chart, '', d3.scale.linear(), 'v', 'linear');
+        var xScale = new insight.Scale(chart, '', d3.scale.ordinal(), 'h', 'ordinal');
+        var yScale = new insight.Scale(chart, '', d3.scale.linear(), 'v', 'linear');
 
-        var series = new ColumnSeries('countryColumn', chart, group, xScale, yScale, 'silver').stacked(true);
+        var series = new insight.ColumnSeries('countryColumn', chart, group, xScale, yScale, 'silver').stacked(true);
 
         series.series = [
         {

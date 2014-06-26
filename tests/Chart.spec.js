@@ -58,8 +58,6 @@ var series = [
         }
     ];
 
-var group = new Grouping(dataset);
-
 
 var div = document.createElement("div");
 div.id  = 'testChart';
@@ -78,7 +76,7 @@ describe("Base Chart Tests", function() {
     
     it("will initialize with a name", function() {
         
-        var chart = new Chart("asda", "asdads", "ada");
+        var chart = new insight.Chart("asda", "asdads", "ada");
 
         chart.title("Test Chart");
         expect(chart.title()).toBe("Test Chart");

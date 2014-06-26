@@ -1,4 +1,4 @@
-function Scale(chart, title, scale, direction, type) {
+insight.Scale = function Scale(chart, title, scale, direction, type) {
     var ordered = d3.functor(false);
     var self = this;
     this.scale = scale;
@@ -126,4 +126,4 @@ function Scale(chart, title, scale, direction, type) {
         ordered = d3.functor(_);
         return this;
     };
-}
+};

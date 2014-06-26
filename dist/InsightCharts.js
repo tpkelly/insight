@@ -1,4 +1,11 @@
-var InsightConstants = (function() {
+var insight = (function() {
+
+    return {
+
+    };
+
+})();
+;var InsightConstants = (function() {
     var exports = {};
 
     exports.Behind = 'behind';
@@ -92,1036 +99,885 @@ var InsightUtils = (function() {
 
     return exports;
 }());
-;/**
- * A DataSet is wrapper around a simple object array, but providing some functions that are required by charts to load and filter data.
- * A DataSet should be used with an array of data that is to be charted without being used in a crossfilter or dimensional dataset.
- * @constructor
- * @param {object[]} data - The short name used to identify this dimension, and any linked dimensions sharing the same name
- */
-function DataSet(data) {
-
-    this._data = data;
-
-    this._orderFunction = function(a, b) {
-        return b.value - a.value;
-    };
-
-    this._filterFunction = null;
-}
-
-
-DataSet.prototype.initialize = function() {
-
-};
-
-DataSet.prototype.filterFunction = function(f) {
-    if (!arguments.length) {
-        return this._filterFunction;
-    }
-    this._filterFunction = f;
-    return this;
-};
-
-DataSet.prototype.getData = function() {
-    var data;
-    if (this._data.all) {
-        data = this._data.all();
-    } else {
-        //not a crossfilter set
-        data = this._data;
-    }
-
-    if (this._filterFunction) {
-        data = data.filter(this._filterFunction);
-    }
-
-    return data;
-};
-
-DataSet.prototype.orderFunction = function(o) {
-    if (!arguments.length) {
-        return this._orderFunction;
-    }
-    this._orderFunction = o;
-    return this;
-};
-
-DataSet.prototype.filterFunction = function(f) {
-    if (!arguments.length) {
-        return this._filterFunction;
-    }
-    this._filterFunction = f;
-    return this;
-};
-
-
-DataSet.prototype.getOrderedData = function() {
-    var data;
-
-    data = this._data.sort(this._orderFunction);
-
-    if (this._filterFunction) {
-        data = data.filter(this._filterFunction);
-    }
-
-    return data;
-};
-;/**
- * A Dimension organizes a dataset along a particular property, or variation of a property.
- * Defining a dimension with a function of:<pre><code>function(d){ return d.Surname; }</code></pre> will slice a dataset by the distinct values of the Surname property.
- * @constructor
- * @todo reimplement how Dimensions are created.  Too much is inside ChartGroup at the moment, and ChartGroup is becoming redundant and too mixed
- * @todo display function should be provided by a setter.
- * @param {String} name - The short name used to identify this dimension, and any linked dimensions sharing the same name
- * @param {function} dimension - The function used to categorize points within the dimension.
- * @param {dimension} dimension - The crossfilter dimension representing this dimension (TODO: create this inside the constructor - should be invisible)
- * @param {function} dimension - The function used to generate a displayable string for this dimension, to be used as a label or otherwise (TODO: is this the business of this constructor or even object?)
- * @param {boolean} multi - Whether or not this dimension represents a collection of possible values in each item.
- * @class
- */
-var Dimension = function Dimension(name, func, dimension, displayFunction, multi) {
-    this.Dimension = dimension;
-    this.Name = name;
-    this.Filters = [];
-    this.Function = func;
-    this.multiple = multi;
-
-    this.displayFunction = displayFunction ? displayFunction : function(d) {
-        return d;
-    };
-
-    this.comparer = function(d) {
-        return d.Name == this.Name;
-    }.bind(this);
-
-
-};
-;function Group(data) {
-    this._data = data;
-    this._cumulative = false;
-
-    this._valueAccessor = function(d) {
-        return d;
-    };
-
-    this._orderFunction = function(a, b) {
-        return b.value - a.value;
-    };
-
-    this._ordered = false;
-}
-
-Group.prototype.filterFunction = function(f) {
-    if (!arguments.length) {
-        return this._filterFunction;
-    }
-    this._filterFunction = f;
-    return this;
-};
-
-Group.prototype.cumulative = function(c) {
-    if (!arguments.length) {
-        return this._cumulative;
-    }
-    this._cumulative = c;
-    return this;
-};
-
-Group.prototype.getData = function() {
-    var data;
-    if (this._data.all) {
-        data = this._data.all();
-    } else {
-        //not a crossfilter set
-        data = this._data;
-    }
-
-    if (this._filterFunction) {
-        data = data.filter(this._filterFunction);
-    }
-
-    return data;
-};
-
-Group.prototype.getOrderedData = function() {
-    var data;
-
-    if (this._data.all) {
-        data = data = this._data.top(Infinity)
-            .sort(this.orderFunction());
-    } else {
-        data = this._data.sort(this.orderFunction());
-    }
-
-    if (this._filterFunction) {
-        data = data.filter(this._filterFunction);
-    }
-
-    return data;
-};
-
-
-Group.prototype.computeFunction = function(c) {
-    this._ordered = true;
-    if (!arguments.length) {
-        return this._compute;
-    }
-    this._compute = c;
-    return this;
-};
-
-
-Group.prototype.orderFunction = function(o) {
-    if (!arguments.length) {
-        return this._orderFunction;
-    }
-    this._orderFunction = o;
-    return this;
-};
-
-Group.prototype.compute = function() {
-    this._compute();
-};
-
-Group.prototype.valueAccessor = function(v) {
-    if (!arguments.length) {
-        return this._valueAccessor;
-    }
-    this._valueAccessor = v;
-    return this;
-};
-
-
-Group.prototype.calculateTotals = function() {
-    if (this._cumulative) {
-        var totals = {};
-        var total = 0;
-        var self = this;
-        var data = this._ordered ? this.getOrderedData() : this.getData();
-
-        data
-            .forEach(function(d, i) {
-
-                var value = self._valueAccessor(d);
-
-                if (typeof(value) != "object") {
-                    total += value;
-                    d.Cumulative = total;
-                } else {
-                    for (var property in value) {
-                        var totalName = property + 'Cumulative';
-
-                        if (totals[totalName]) {
-                            totals[totalName] += value[property];
-                            value[totalName] = totals[totalName];
-                        } else {
-                            totals[totalName] = value[property];
-                            value[totalName] = totals[totalName];
-                        }
-                    }
-                }
-            });
-    }
-    return this;
-};
-
-
-function SimpleGroup(data) {
-    this._data = data;
-    this._orderFunction = function(a, b) {
-        return b.values - a.values;
-    };
-}
-SimpleGroup.prototype = Object.create(Group.prototype);
-SimpleGroup.prototype.constructor = SimpleGroup;
-
-SimpleGroup.prototype.getOrderedData = function() {
-    return this._data.sort(this._orderFunction);
-};
-
-SimpleGroup.prototype.getData = function() {
-    return this._data;
-};
-
-function NestedGroup(dimension, nestFunction) {
-    this._dimension = dimension;
-    this._data = dimension.Dimension.bottom(Infinity);
-    this._nestFunction = nestFunction;
-    this._nestedData = nestFunction.entries(this._data);
-}
-
-
-NestedGroup.prototype = Object.create(Group.prototype);
-NestedGroup.prototype.constructor = NestedGroup;
-
-
-NestedGroup.prototype.getData = function() {
-    return this._nestedData;
-};
-
-NestedGroup.prototype.updateNestedData = function() {
-    this._data = this._dimension.Dimension.bottom(Infinity);
-    this._nestedData = this._nestFunction.entries(this._data);
-};
-
-
-NestedGroup.prototype.getOrderedData = function() {
-    return this._nestedData;
-};
-;/**
- * A Grouping is generated on a dimension, to reduce the items in the data set into groups along the provided dimension
- * @constructor
- * @param {Dimension} dimension - The dimension to group
- * @class
- */
-function Grouping(dimension) {
-
-    this.dimension = dimension;
-
-    var sumProperties = [];
-    var countProperties = [];
-    var cumulativeProperties = [];
-    var averageProperties = [];
-
-    var linkedSeries = [];
-
-    this._compute = null;
-    this.gIndices = {};
-
-    this._valueAccessor = function(d) {
-        return d;
-    };
-
-    this._orderFunction = function(a, b) {
-        return b.value.Count - a.value.Count;
-    };
-
-    this.registerSeries = function(series) {
-        linkedSeries.push(series);
-        series.clickEvent = this.preFilter;
-    };
-
-    this.preFilter = function(series, filter, dimensionSelector) {
-
-    };
-
-    this._ordered = false;
-
+;insight.DataSet = (function(insight) {
     /**
-     * The sum function gets or sets the properties that this group will sum across.
-     * @returns {String[]}
+     * A DataSet is wrapper around a simple object array, but providing some functions that are required by charts to load and filter data.
+     * A DataSet should be used with an array of data that is to be charted without being used in a crossfilter or dimensional dataset.
+     * @constructor
+     * @param {object[]} data - The short name used to identify this dimension, and any linked dimensions sharing the same name
      */
-    /**
-     * @param {String[]} properties - An array of property names in the dataset that will be summed along this grouping's dimension
-     * @returns {this}
-     */
-    this.sum = function(_) {
-        if (!arguments.length) {
-            return sumProperties;
-        }
-        sumProperties = _;
-        return this;
-    };
+    function DataSet(data) {
 
-    /**
-     * The cumulative function gets or sets the properties whose value occurences will be accumulated across this dimension.
-     * @returns {String[]}
-     */
-    /**
-     * @param {String[]} properties - An array of property names that will have their occuring values accumulated after aggregation
-     * @returns {this}
-     */
-    this.cumulative = function(_) {
-        if (!arguments.length) {
-            return cumulativeProperties;
-        }
-        cumulativeProperties = _;
-        return this;
-    };
+        this._data = data;
 
-    /**
-     * The count function gets or sets the properties whose value occurences will be counted across this dimension.
-     * If the provided property contains an array of values, each distinct value in that array will be counted.
-     * @returns {String[]}
-     */
-    /**
-     * @param {String[]} properties - An array of property names that will have their occuring values counted during aggregation
-     * @returns {this}
-     */
-    this.count = function(_) {
-        if (!arguments.length) {
-            return countProperties;
-        }
-        countProperties = _;
-        return this;
-    };
-
-    /**
-     * The average function gets or sets the properties whose values will be averaged for across this grouped dimension
-     * @returns {String[]}
-     */
-    /**
-     * @param {String[]} properties - An array of property names that will have be averaged during aggregation
-     * @returns {this}
-     */
-    this.mean = function(_) {
-        if (!arguments.length) {
-            return averageProperties;
-        }
-        averageProperties = _;
-
-        sumProperties = this.unique(sumProperties.concat(averageProperties));
-
-        return this;
-    };
-
-    return this;
-}
-
-
-/**
- * Gets or sets whether the group's data is ordered.
- * @returns {String[]}
- */
-/**
- * @param {boolean} order - a boolean for whether to order the group's values
- * @returns {this}
- */
-Grouping.prototype.ordered = function(_) {
-    if (!arguments.length) {
-        return this._ordered;
-    }
-    this._ordered = _;
-
-    return this;
-};
-
-/**
- * The filter method gets or sets the function used to filter the results returned by this grouping.
- * @param {function} filterFunction - A function taking a parameter representing an object in the list.  The function must return true or false as per <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter">Array Filter</a>.
- */
-Grouping.prototype.filter = function(f) {
-    if (!arguments.length) {
-        return this._filterFunction;
-    }
-    this._filterFunction = f;
-    return this;
-};
-
-
-/**
- * A Helper function to to return the distinct elements in an array.  Used when properties to be averaged are defined, as they must also be added to the sum properties list without duplicating them.
- * @returns {array} - The input array filtered to only contain unique items
- * @param {object[]} data - An array from which to remove duplicate values
- */
-Grouping.prototype.unique = function(array) {
-    var a = array.concat();
-    for (var i = 0; i < a.length; ++i) {
-        for (var j = i + 1; j < a.length; ++j) {
-            if (a[i] === a[j])
-                a.splice(j--, 1);
-        }
-    }
-    return a;
-};
-
-
-/**
- * This aggregation method is tailored to dimensions that can hold multiple values (in an array), therefore they are counted differently.
- * For example: a property called supportedDevices : ['iPhone5', 'iPhone4'] where the values inside the array are treated as dimensional slices
- * @returns {object[]} return - the array of dimensional groupings resulting from this dimensional aggregation
- */
-Grouping.prototype.reduceMultiDimension = function() {
-
-    var propertiesToSum = this.sum();
-    var propertiesToCount = this.count();
-    var propertiesToAverage = this.mean();
-
-    var index = 0;
-    var gIndices = {};
-
-    function reduceAdd(p, v) {
-        for (var prop in propertiesToCount) {
-            var propertyName = propertiesToCount[prop];
-
-            if (v.hasOwnProperty(propertyName)) {
-                for (var val in v[propertyName]) {
-                    if (typeof(gIndices[v[propertyName][val]]) != "undefined") {
-                        var gIndex = gIndices[v[propertyName][val]];
-
-                        p.values[gIndex].value++;
-                    } else {
-                        gIndices[v[propertyName][val]] = index;
-
-                        p.values[index] = {
-                            key: v[propertyName][val],
-                            value: 1
-                        };
-
-                        index++;
-                    }
-                }
-            }
-        }
-        return p;
-    }
-
-    function reduceRemove(p, v) {
-        for (var prop in propertiesToCount) {
-            var propertyName = propertiesToCount[prop];
-
-            if (v.hasOwnProperty(propertyName)) {
-                for (var val in v[propertyName]) {
-                    var property = v[propertyName][val];
-
-                    var gIndex = gIndices[property];
-
-                    p.values[gIndex].value--;
-                }
-            }
-        }
-        return p;
-    }
-
-    function reduceInitial() {
-
-        return {
-            values: []
+        this._orderFunction = function(a, b) {
+            return b.value - a.value;
         };
+
+        this._filterFunction = null;
     }
 
-    data = this.dimension.Dimension.groupAll()
-        .reduce(reduceAdd, reduceRemove, reduceInitial);
 
-    this.orderFunction(function(a, b) {
-        return b.value - a.value;
-    });
+    DataSet.prototype.initialize = function() {
 
-    return data;
-};
+    };
+
+    DataSet.prototype.filterFunction = function(f) {
+        if (!arguments.length) {
+            return this._filterFunction;
+        }
+        this._filterFunction = f;
+        return this;
+    };
+
+    DataSet.prototype.getData = function() {
+        var data;
+        if (this._data.all) {
+            data = this._data.all();
+        } else {
+            //not a crossfilter set
+            data = this._data;
+        }
+
+        if (this._filterFunction) {
+            data = data.filter(this._filterFunction);
+        }
+
+        return data;
+    };
+
+    DataSet.prototype.orderFunction = function(o) {
+        if (!arguments.length) {
+            return this._orderFunction;
+        }
+        this._orderFunction = o;
+        return this;
+    };
+
+    DataSet.prototype.filterFunction = function(f) {
+        if (!arguments.length) {
+            return this._filterFunction;
+        }
+        this._filterFunction = f;
+        return this;
+    };
 
 
-/**
- * This method performs the aggregation of the underlying crossfilter dimension, calculating any additional properties during the map-reduce phase.
- * It must be run prior to a group being used
- * @todo This should probably be run during the constructor? If not, lazily evaluated by getData() if it hasn't been run already.
- */
-Grouping.prototype.initialize = function() {
-    var propertiesToSum = this.sum();
-    var propertiesToCount = this.count();
-    var propertiesToAverage = this.mean();
+    DataSet.prototype.getOrderedData = function() {
+        var data;
 
-    var data = [];
+        data = this._data.sort(this._orderFunction);
 
-    if (this.dimension.multiple) {
-        data = this.reduceMultiDimension();
-    } else {
-        data = this.dimension.Dimension.group()
-            .reduce(
-                function(p, v) {
-                    p.Count++;
+        if (this._filterFunction) {
+            data = data.filter(this._filterFunction);
+        }
 
-                    for (var property in propertiesToSum) {
-                        if (v.hasOwnProperty(propertiesToSum[property])) {
-                            p[propertiesToSum[property]].Sum += v[propertiesToSum[property]];
+        return data;
+    };
+
+    return DataSet;
+
+})(insight);
+;insight.Dimension = (function(insight) {
+    /**
+     * A Dimension organizes a dataset along a particular property, or variation of a property.
+     * Defining a dimension with a function of:<pre><code>function(d){ return d.Surname; }</code></pre> will slice a dataset by the distinct values of the Surname property.
+     * @constructor
+     * @todo reimplement how Dimensions are created.  Too much is inside ChartGroup at the moment, and ChartGroup is becoming redundant and too mixed
+     * @todo display function should be provided by a setter.
+     * @param {String} name - The short name used to identify this dimension, and any linked dimensions sharing the same name
+     * @param {function} dimension - The function used to categorize points within the dimension.
+     * @param {dimension} dimension - The crossfilter dimension representing this dimension (TODO: create this inside the constructor - should be invisible)
+     * @param {function} dimension - The function used to generate a displayable string for this dimension, to be used as a label or otherwise (TODO: is this the business of this constructor or even object?)
+     * @param {boolean} multi - Whether or not this dimension represents a collection of possible values in each item.
+     * @class
+     */
+    var Dimension = function Dimension(name, func, dimension, displayFunction, multi) {
+        this.Dimension = dimension;
+        this.Name = name;
+        this.Filters = [];
+        this.Function = func;
+        this.multiple = multi;
+
+        this.displayFunction = displayFunction ? displayFunction : function(d) {
+            return d;
+        };
+
+        this.comparer = function(d) {
+            return d.Name == this.Name;
+        }.bind(this);
+
+
+    };
+
+    return Dimension;
+
+})(insight);
+;insight.Grouping = (function(insight) {
+
+    /**
+     * A Grouping is generated on a dimension, to reduce the items in the data set into groups along the provided dimension
+     * @constructor
+     * @param {Dimension} dimension - The dimension to group
+     * @class
+     */
+    function Grouping(dimension) {
+
+        this.dimension = dimension;
+
+        var sumProperties = [];
+        var countProperties = [];
+        var cumulativeProperties = [];
+        var averageProperties = [];
+
+        var linkedSeries = [];
+
+        this._compute = null;
+        this.gIndices = {};
+
+        this._valueAccessor = function(d) {
+            return d;
+        };
+
+        this._orderFunction = function(a, b) {
+            return b.value.Count - a.value.Count;
+        };
+
+        this.registerSeries = function(series) {
+            linkedSeries.push(series);
+            series.clickEvent = this.preFilter;
+        };
+
+        this.preFilter = function(series, filter, dimensionSelector) {
+
+        };
+
+        this._ordered = false;
+
+        /**
+         * The sum function gets or sets the properties that this group will sum across.
+         * @returns {String[]}
+         */
+        /**
+         * @param {String[]} properties - An array of property names in the dataset that will be summed along this grouping's dimension
+         * @returns {this}
+         */
+        this.sum = function(_) {
+            if (!arguments.length) {
+                return sumProperties;
+            }
+            sumProperties = _;
+            return this;
+        };
+
+        /**
+         * The cumulative function gets or sets the properties whose value occurences will be accumulated across this dimension.
+         * @returns {String[]}
+         */
+        /**
+         * @param {String[]} properties - An array of property names that will have their occuring values accumulated after aggregation
+         * @returns {this}
+         */
+        this.cumulative = function(_) {
+            if (!arguments.length) {
+                return cumulativeProperties;
+            }
+            cumulativeProperties = _;
+            return this;
+        };
+
+        /**
+         * The count function gets or sets the properties whose value occurences will be counted across this dimension.
+         * If the provided property contains an array of values, each distinct value in that array will be counted.
+         * @returns {String[]}
+         */
+        /**
+         * @param {String[]} properties - An array of property names that will have their occuring values counted during aggregation
+         * @returns {this}
+         */
+        this.count = function(_) {
+            if (!arguments.length) {
+                return countProperties;
+            }
+            countProperties = _;
+            return this;
+        };
+
+        /**
+         * The average function gets or sets the properties whose values will be averaged for across this grouped dimension
+         * @returns {String[]}
+         */
+        /**
+         * @param {String[]} properties - An array of property names that will have be averaged during aggregation
+         * @returns {this}
+         */
+        this.mean = function(_) {
+            if (!arguments.length) {
+                return averageProperties;
+            }
+            averageProperties = _;
+
+            sumProperties = this.unique(sumProperties.concat(averageProperties));
+
+            return this;
+        };
+
+        return this;
+    }
+
+
+    /**
+     * Gets or sets whether the group's data is ordered.
+     * @returns {String[]}
+     */
+    /**
+     * @param {boolean} order - a boolean for whether to order the group's values
+     * @returns {this}
+     */
+    Grouping.prototype.ordered = function(_) {
+        if (!arguments.length) {
+            return this._ordered;
+        }
+        this._ordered = _;
+
+        return this;
+    };
+
+    /**
+     * The filter method gets or sets the function used to filter the results returned by this grouping.
+     * @param {function} filterFunction - A function taking a parameter representing an object in the list.  The function must return true or false as per <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter">Array Filter</a>.
+     */
+    Grouping.prototype.filter = function(f) {
+        if (!arguments.length) {
+            return this._filterFunction;
+        }
+        this._filterFunction = f;
+        return this;
+    };
+
+
+    /**
+     * A Helper function to to return the distinct elements in an array.  Used when properties to be averaged are defined, as they must also be added to the sum properties list without duplicating them.
+     * @returns {array} - The input array filtered to only contain unique items
+     * @param {object[]} data - An array from which to remove duplicate values
+     */
+    Grouping.prototype.unique = function(array) {
+        var a = array.concat();
+        for (var i = 0; i < a.length; ++i) {
+            for (var j = i + 1; j < a.length; ++j) {
+                if (a[i] === a[j])
+                    a.splice(j--, 1);
+            }
+        }
+        return a;
+    };
+
+
+    /**
+     * This aggregation method is tailored to dimensions that can hold multiple values (in an array), therefore they are counted differently.
+     * For example: a property called supportedDevices : ['iPhone5', 'iPhone4'] where the values inside the array are treated as dimensional slices
+     * @returns {object[]} return - the array of dimensional groupings resulting from this dimensional aggregation
+     */
+    Grouping.prototype.reduceMultiDimension = function() {
+
+        var propertiesToSum = this.sum();
+        var propertiesToCount = this.count();
+        var propertiesToAverage = this.mean();
+
+        var index = 0;
+        var gIndices = {};
+
+        function reduceAdd(p, v) {
+            for (var prop in propertiesToCount) {
+                var propertyName = propertiesToCount[prop];
+
+                if (v.hasOwnProperty(propertyName)) {
+                    for (var val in v[propertyName]) {
+                        if (typeof(gIndices[v[propertyName][val]]) != "undefined") {
+                            var gIndex = gIndices[v[propertyName][val]];
+
+                            p.values[gIndex].value++;
+                        } else {
+                            gIndices[v[propertyName][val]] = index;
+
+                            p.values[index] = {
+                                key: v[propertyName][val],
+                                value: 1
+                            };
+
+                            index++;
                         }
                     }
+                }
+            }
+            return p;
+        }
 
-                    for (var avProperty in propertiesToAverage) {
-                        if (v.hasOwnProperty(propertiesToAverage[avProperty])) {
-                            p[propertiesToAverage[avProperty]].Average = p[propertiesToAverage[avProperty]].Average + ((v[propertiesToAverage[avProperty]] - p[propertiesToAverage[avProperty]].Average) / p.Count);
-                        }
+        function reduceRemove(p, v) {
+            for (var prop in propertiesToCount) {
+                var propertyName = propertiesToCount[prop];
+
+                if (v.hasOwnProperty(propertyName)) {
+                    for (var val in v[propertyName]) {
+                        var property = v[propertyName][val];
+
+                        var gIndex = gIndices[property];
+
+                        p.values[gIndex].value--;
                     }
+                }
+            }
+            return p;
+        }
 
-                    for (var countProp in propertiesToCount) {
-                        if (v.hasOwnProperty(propertiesToCount[countProp])) {
-                            var propertyName = propertiesToCount[countProp];
-                            var propertyValue = v[propertiesToCount[countProp]];
+        function reduceInitial() {
 
-                            if (InsightUtils.isArray(propertyValue)) {
+            return {
+                values: []
+            };
+        }
 
-                                for (var subIndex in propertyValue) {
-                                    var subVal = propertyValue[subIndex];
-                                    p[propertyName][subVal] = p[propertyName].hasOwnProperty(subVal) ? p[propertyName][subVal] + 1 : 1;
-                                    p[propertyName].Total++;
-                                }
+        data = this.dimension.Dimension.groupAll()
+            .reduce(reduceAdd, reduceRemove, reduceInitial);
 
-                            } else {
-                                p[propertyName][propertyValue] = p[propertyName].hasOwnProperty(propertyValue) ? p[propertyName][propertyValue] + 1 : 1;
-                                p[propertyName].Total++;
+        this.orderFunction(function(a, b) {
+            return b.value - a.value;
+        });
+
+        return data;
+    };
+
+
+    /**
+     * This method performs the aggregation of the underlying crossfilter dimension, calculating any additional properties during the map-reduce phase.
+     * It must be run prior to a group being used
+     * @todo This should probably be run during the constructor? If not, lazily evaluated by getData() if it hasn't been run already.
+     */
+    Grouping.prototype.initialize = function() {
+        var propertiesToSum = this.sum();
+        var propertiesToCount = this.count();
+        var propertiesToAverage = this.mean();
+
+        var data = [];
+
+        if (this.dimension.multiple) {
+            data = this.reduceMultiDimension();
+        } else {
+            data = this.dimension.Dimension.group()
+                .reduce(
+                    function(p, v) {
+                        p.Count++;
+
+                        for (var property in propertiesToSum) {
+                            if (v.hasOwnProperty(propertiesToSum[property])) {
+                                p[propertiesToSum[property]].Sum += v[propertiesToSum[property]];
                             }
                         }
-                    }
 
-                    return p;
-                },
-                function(p, v) {
-                    p.Count--;
-
-                    for (var property in propertiesToSum) {
-                        if (v.hasOwnProperty(propertiesToSum[property])) {
-                            p[propertiesToSum[property]].Sum -= v[propertiesToSum[property]];
+                        for (var avProperty in propertiesToAverage) {
+                            if (v.hasOwnProperty(propertiesToAverage[avProperty])) {
+                                p[propertiesToAverage[avProperty]].Average = p[propertiesToAverage[avProperty]].Average + ((v[propertiesToAverage[avProperty]] - p[propertiesToAverage[avProperty]].Average) / p.Count);
+                            }
                         }
-                    }
+
+                        for (var countProp in propertiesToCount) {
+                            if (v.hasOwnProperty(propertiesToCount[countProp])) {
+                                var propertyName = propertiesToCount[countProp];
+                                var propertyValue = v[propertiesToCount[countProp]];
+
+                                if (InsightUtils.isArray(propertyValue)) {
+
+                                    for (var subIndex in propertyValue) {
+                                        var subVal = propertyValue[subIndex];
+                                        p[propertyName][subVal] = p[propertyName].hasOwnProperty(subVal) ? p[propertyName][subVal] + 1 : 1;
+                                        p[propertyName].Total++;
+                                    }
+
+                                } else {
+                                    p[propertyName][propertyValue] = p[propertyName].hasOwnProperty(propertyValue) ? p[propertyName][propertyValue] + 1 : 1;
+                                    p[propertyName].Total++;
+                                }
+                            }
+                        }
+
+                        return p;
+                    },
+                    function(p, v) {
+                        p.Count--;
+
+                        for (var property in propertiesToSum) {
+                            if (v.hasOwnProperty(propertiesToSum[property])) {
+                                p[propertiesToSum[property]].Sum -= v[propertiesToSum[property]];
+                            }
+                        }
 
 
-                    for (var countProp in propertiesToCount) {
-                        if (v.hasOwnProperty(propertiesToCount[countProp])) {
-                            var propertyName = propertiesToCount[countProp];
-                            var propertyValue = v[propertiesToCount[countProp]];
+                        for (var countProp in propertiesToCount) {
+                            if (v.hasOwnProperty(propertiesToCount[countProp])) {
+                                var propertyName = propertiesToCount[countProp];
+                                var propertyValue = v[propertiesToCount[countProp]];
 
-                            if (InsightUtils.isArray(propertyValue)) {
+                                if (InsightUtils.isArray(propertyValue)) {
 
-                                for (var subIndex in propertyValue) {
-                                    var subVal = propertyValue[subIndex];
-                                    p[propertyName][subVal] = p[propertyName].hasOwnProperty(subVal) ? p[propertyName][subVal] - 1 : 1;
+                                    for (var subIndex in propertyValue) {
+                                        var subVal = propertyValue[subIndex];
+                                        p[propertyName][subVal] = p[propertyName].hasOwnProperty(subVal) ? p[propertyName][subVal] - 1 : 1;
+                                        p[propertyName].Total--;
+                                    }
+
+                                } else {
+                                    p[propertyName][propertyValue] = p[propertyName].hasOwnProperty(propertyValue) ? p[propertyName][propertyValue] - 1 : 1;
                                     p[propertyName].Total--;
                                 }
 
-                            } else {
-                                p[propertyName][propertyValue] = p[propertyName].hasOwnProperty(propertyValue) ? p[propertyName][propertyValue] - 1 : 1;
-                                p[propertyName].Total--;
-                            }
-
-                        }
-                    }
-
-                    for (var avProperty in propertiesToAverage) {
-                        if (v.hasOwnProperty(propertiesToAverage[avProperty])) {
-                            var valRemoved = v[propertiesToAverage[avProperty]];
-                            var sum = p[propertiesToAverage[avProperty]].Sum;
-                            p[propertiesToAverage[avProperty]].Average = sum / p.Count;
-
-                            var result = p[propertiesToAverage[avProperty]].Average;
-
-                            if (!isFinite(result)) {
-                                p[propertiesToAverage[avProperty]].Average = 0;
                             }
                         }
+
+                        for (var avProperty in propertiesToAverage) {
+                            if (v.hasOwnProperty(propertiesToAverage[avProperty])) {
+                                var valRemoved = v[propertiesToAverage[avProperty]];
+                                var sum = p[propertiesToAverage[avProperty]].Sum;
+                                p[propertiesToAverage[avProperty]].Average = sum / p.Count;
+
+                                var result = p[propertiesToAverage[avProperty]].Average;
+
+                                if (!isFinite(result)) {
+                                    p[propertiesToAverage[avProperty]].Average = 0;
+                                }
+                            }
+                        }
+
+                        return p;
+                    },
+                    function() {
+                        var p = {
+                            Count: 0
+                        };
+
+                        for (var property in propertiesToSum) {
+                            p[propertiesToSum[property]] = p[propertiesToSum[property]] ? p[propertiesToSum[property]] : {};
+                            p[propertiesToSum[property]].Sum = 0;
+                        }
+                        for (var avProperty in propertiesToAverage) {
+                            p[propertiesToAverage[avProperty]] = p[propertiesToAverage[avProperty]] ? p[propertiesToAverage[avProperty]] : {};
+                            p[propertiesToAverage[avProperty]].Average = 0;
+                        }
+                        for (var countProp in propertiesToCount) {
+                            p[propertiesToCount[countProp]] = p[propertiesToCount[countProp]] ? p[propertiesToCount[countProp]] : {};
+                            p[propertiesToCount[countProp]].Total = 0;
+                        }
+                        return p;
                     }
+            );
+        }
+        this._data = data;
 
-                    return p;
-                },
-                function() {
-                    var p = {
-                        Count: 0
-                    };
+        if (this.cumulative()
+            .length) {
+            this.calculateTotals();
+        }
 
-                    for (var property in propertiesToSum) {
-                        p[propertiesToSum[property]] = p[propertiesToSum[property]] ? p[propertiesToSum[property]] : {};
-                        p[propertiesToSum[property]].Sum = 0;
-                    }
-                    for (var avProperty in propertiesToAverage) {
-                        p[propertiesToAverage[avProperty]] = p[propertiesToAverage[avProperty]] ? p[propertiesToAverage[avProperty]] : {};
-                        p[propertiesToAverage[avProperty]].Average = 0;
-                    }
-                    for (var countProp in propertiesToCount) {
-                        p[propertiesToCount[countProp]] = p[propertiesToCount[countProp]] ? p[propertiesToCount[countProp]] : {};
-                        p[propertiesToCount[countProp]].Total = 0;
-                    }
-                    return p;
-                }
-        );
-    }
-    this._data = data;
-
-    if (this.cumulative()
-        .length) {
-        this.calculateTotals();
-    }
-
-    return this;
-};
+        return this;
+    };
 
 
 
 
-/**
- * This method is called when any post aggregation calculations, provided by the computeFunction() setter, need to be recalculated.
- * For example, calculating group percentages after totals have been created during map-reduce.
- * @param {object[]} data - The short name used to identify this dimension, and any linked dimensions sharing the same name
- */
-Grouping.prototype.recalculate = function() {
-    if (this.cumulative()
-        .length) {
-        this.calculateTotals();
-    }
-    if (this._compute) {
+    /**
+     * This method is called when any post aggregation calculations, provided by the computeFunction() setter, need to be recalculated.
+     * For example, calculating group percentages after totals have been created during map-reduce.
+     * @param {object[]} data - The short name used to identify this dimension, and any linked dimensions sharing the same name
+     */
+    Grouping.prototype.recalculate = function() {
+        if (this.cumulative()
+            .length) {
+            this.calculateTotals();
+        }
+        if (this._compute) {
+            this._compute();
+        }
+    };
+
+
+    /**
+     * This method is used to return the group's data, without ordering.  It checks if there is any filtering requested and applies the filter to the return array.
+     * @returns {object[]} return - The grouping's data in an object array, with an object per slice of the dimension.
+     */
+    Grouping.prototype.getData = function() {
+        var data;
+
+        if (!this._data) {
+            this.initialize();
+        }
+
+        if (this.dimension.multiple) {
+            data = this._data.value()
+                .values;
+        } else {
+            data = this._data.all()
+                .slice(0);
+        }
+
+        if (this._filterFunction) {
+            data = data.filter(this._filterFunction);
+        }
+
+        return data;
+    };
+
+
+    /**
+     * This method is used to return the group's data, with ordering applied.  It checks if there is any filtering requested and applies the filter to the return array.
+     * @returns {object[]} return - The grouping's data in an object array, with an object per slice of the dimension.
+     */
+    Grouping.prototype.getOrderedData = function(topValues) {
+
+        var data = [];
+
+        if (!this._data) {
+            this.initialize();
+        }
+
+        if (!this.dimension.multiple) {
+            data = this._data.all()
+                .slice(0)
+                .sort(this.orderFunction());
+
+            if (topValues) {
+                data = data.slice(0, topValues);
+            }
+        } else {
+
+            // take shallow copy of array prior to ordering so that ordering is not done in place, which would break ordering of index map. Must be better way to do this.
+            data = this._data.value()
+                .values
+                .slice(0);
+
+            data = data.sort(this.orderFunction());
+            if (topValues) {
+                data = data.slice(0, topValues);
+            }
+        }
+
+        if (this._filterFunction) {
+            data = data.filter(this._filterFunction);
+        }
+
+        return data;
+    };
+
+
+    /**
+     * This getter/setter defines the post aggregation function that will be run once dimension map-reduce has been performed.  Used for any calculations that require the outputs of the map-reduce stage.
+     * @returns {function}
+     */
+    /**
+     * @param {function} compareFunction - A function taking two parameters, that compares them and returns a value greater than 0 then the second parameter will be lower in the ordering than the first.
+     * @returns {this}
+     */
+    Grouping.prototype.computeFunction = function(c) {
+        this._ordered = true;
+        if (!arguments.length) {
+            return this._compute;
+        }
+        this._compute = c.bind(this);
+        return this;
+    };
+
+
+    /**
+     * This method gets or sets the function used to compare the elements in this grouping if sorting is requested.  See <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">MDN</a> for examples of comparison functions.
+     * @returns {this}
+     * @param {function} function - The function to be run once once map-reduce has been performed.
+     * @todo Auto-bind to this inside the setter?
+     */
+    Grouping.prototype.orderFunction = function(o) {
+        if (!arguments.length) {
+            return this._orderFunction;
+        }
+        this._orderFunction = o;
+        return this;
+    };
+
+    Grouping.prototype.compute = function() {
         this._compute();
-    }
-};
-
-
-/**
- * This method is used to return the group's data, without ordering.  It checks if there is any filtering requested and applies the filter to the return array.
- * @returns {object[]} return - The grouping's data in an object array, with an object per slice of the dimension.
- */
-Grouping.prototype.getData = function() {
-    var data;
-
-    if (!this._data) {
-        this.initialize();
-    }
-
-    if (this.dimension.multiple) {
-        data = this._data.value()
-            .values;
-    } else {
-        data = this._data.all()
-            .slice(0);
-    }
-
-    if (this._filterFunction) {
-        data = data.filter(this._filterFunction);
-    }
-
-    return data;
-};
-
-
-/**
- * This method is used to return the group's data, with ordering applied.  It checks if there is any filtering requested and applies the filter to the return array.
- * @returns {object[]} return - The grouping's data in an object array, with an object per slice of the dimension.
- */
-Grouping.prototype.getOrderedData = function(topValues) {
-
-    var data = [];
-
-    if (!this._data) {
-        this.initialize();
-    }
-
-    if (!this.dimension.multiple) {
-        data = this._data.all()
-            .slice(0)
-            .sort(this.orderFunction());
-
-        if (topValues) {
-            data = data.slice(0, topValues);
-        }
-    } else {
-
-        // take shallow copy of array prior to ordering so that ordering is not done in place, which would break ordering of index map. Must be better way to do this.
-        data = this._data.value()
-            .values
-            .slice(0);
-
-        data = data.sort(this.orderFunction());
-        if (topValues) {
-            data = data.slice(0, topValues);
-        }
-    }
-
-    if (this._filterFunction) {
-        data = data.filter(this._filterFunction);
-    }
-
-    return data;
-};
-
-
-/**
- * This getter/setter defines the post aggregation function that will be run once dimension map-reduce has been performed.  Used for any calculations that require the outputs of the map-reduce stage.
- * @returns {function}
- */
-/**
- * @param {function} compareFunction - A function taking two parameters, that compares them and returns a value greater than 0 then the second parameter will be lower in the ordering than the first.
- * @returns {this}
- */
-Grouping.prototype.computeFunction = function(c) {
-    this._ordered = true;
-    if (!arguments.length) {
-        return this._compute;
-    }
-    this._compute = c.bind(this);
-    return this;
-};
-
-
-/**
- * This method gets or sets the function used to compare the elements in this grouping if sorting is requested.  See <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">MDN</a> for examples of comparison functions.
- * @returns {this}
- * @param {function} function - The function to be run once once map-reduce has been performed.
- * @todo Auto-bind to this inside the setter?
- */
-Grouping.prototype.orderFunction = function(o) {
-    if (!arguments.length) {
-        return this._orderFunction;
-    }
-    this._orderFunction = o;
-    return this;
-};
-
-Grouping.prototype.compute = function() {
-    this._compute();
-};
-
-Grouping.prototype.valueAccessor = function(v) {
-    if (!arguments.length) {
-        return this._valueAccessor;
-    }
-    this._valueAccessor = v;
-    return this;
-};
-
-
-Grouping.prototype.getDescendant = function(obj, desc) {
-    var arr = desc.split(".");
-    var name = desc;
-    var container = null;
-
-    while (arr.length) {
-        name = arr.shift();
-        container = obj;
-        obj = obj[name];
-    }
-    return {
-        container: container,
-        value: obj,
-        propertyName: name
     };
-};
 
-Grouping.prototype.calculateTotals = function() {
+    Grouping.prototype.valueAccessor = function(v) {
+        if (!arguments.length) {
+            return this._valueAccessor;
+        }
+        this._valueAccessor = v;
+        return this;
+    };
 
-    var self = this;
 
-    var cumulativeProperties = this.cumulative();
+    Grouping.prototype.getDescendant = function(obj, desc) {
+        var arr = desc.split(".");
+        var name = desc;
+        var container = null;
 
-    if (cumulativeProperties.length) {
-        var totals = {};
+        while (arr.length) {
+            name = arr.shift();
+            container = obj;
+            obj = obj[name];
+        }
+        return {
+            container: container,
+            value: obj,
+            propertyName: name
+        };
+    };
 
-        var data = this._ordered ? this.getOrderedData() : this.getData();
+    Grouping.prototype.calculateTotals = function() {
 
-        data
-            .forEach(function(d, i) {
+        var self = this;
 
-                cumulativeProperties.map(function(propertyName) {
+        var cumulativeProperties = this.cumulative();
 
-                    var desc = self.getDescendant(d.value, propertyName);
+        if (cumulativeProperties.length) {
+            var totals = {};
 
-                    var totalName = desc.propertyName + 'Cumulative';
+            var data = this._ordered ? this.getOrderedData() : this.getData();
 
-                    totals[totalName] = totals[totalName] ? totals[totalName] + desc.value : desc.value;
+            data
+                .forEach(function(d, i) {
 
-                    desc.container[totalName] = totals[totalName];
+                    cumulativeProperties.map(function(propertyName) {
+
+                        var desc = self.getDescendant(d.value, propertyName);
+
+                        var totalName = desc.propertyName + 'Cumulative';
+
+                        totals[totalName] = totals[totalName] ? totals[totalName] + desc.value : desc.value;
+
+                        desc.container[totalName] = totals[totalName];
+
+                    });
 
                 });
+        }
+        return this;
+    };
 
-            });
-    }
-    return this;
-};
-;/**
- * This method is called when any post aggregation calculations, provided by the computeFunction() setter, need to be recalculated.
- * @constructor
- * @returns {this} this - Description
- * @param {object} name - Description
- */
-var Dashboard = function Dashboard(name) {
-    this.Name = name;
-    this.Charts = [];
-    this.Dimensions = [];
-    this.FilteredDimensions = [];
-    this.Groups = [];
-    this.ComputedGroups = [];
-    this.DimensionChartMap = {};
+    return Grouping;
 
-    //initialize the crossfilter to be null, populate as load() is called
-    this.DataSets = [];
-    this.ndx = null;
+})(insight);
+;insight.Dashboard = (function(insight) {
 
-    return this;
-};
+    /**
+     * This method is called when any post aggregation calculations, provided by the computeFunction() setter, need to be recalculated.
+     * @constructor
+     * @returns {this} this - Description
+     * @param {object} name - Description
+     */
+    var Dashboard = function Dashboard(name) {
+        this.Name = name;
+        this.Charts = [];
+        this.Dimensions = [];
+        this.FilteredDimensions = [];
+        this.Groups = [];
+        this.ComputedGroups = [];
+        this.DimensionChartMap = {};
+
+        //initialize the crossfilter to be null, populate as load() is called
+        this.DataSets = [];
+        this.ndx = null;
+
+        return this;
+    };
 
 
-/**
- * This method loads a JSON data set into the Dashboard, creating a new crossfiltered set and returnign that to the user to reference when creating charts/groupings.
- * @returns {object} return - A crossfilter dataset
- * @param {object} data - an array of objects to add to the dashboard
- * @param {string} name - an optional name for the dataset if multiple sets are being loaded into the dashboard.
- */
-Dashboard.prototype.addData = function(data) {
-    //type detection and preprocessing steps here
+    /**
+     * This method loads a JSON data set into the Dashboard, creating a new crossfiltered set and returnign that to the user to reference when creating charts/groupings.
+     * @returns {object} return - A crossfilter dataset
+     * @param {object} data - an array of objects to add to the dashboard
+     * @param {string} name - an optional name for the dataset if multiple sets are being loaded into the dashboard.
+     */
+    Dashboard.prototype.addData = function(data) {
+        //type detection and preprocessing steps here
 
-    var ndx = crossfilter(data);
+        var ndx = crossfilter(data);
 
-    this.DataSets.push(ndx);
+        this.DataSets.push(ndx);
 
-    return ndx;
-};
+        return ndx;
+    };
 
-Dashboard.prototype.addChart = function(chart) {
+    Dashboard.prototype.addChart = function(chart) {
 
-    var self = this;
+        var self = this;
 
-    chart.triggerRedraw = this.redrawCharts.bind(this);
+        chart.triggerRedraw = this.redrawCharts.bind(this);
 
-    this.Charts.push(chart);
-    chart.series()
-        .forEach(function(s) {
-            if (s.data.dimension) {
-                if (self.DimensionChartMap[s.data.dimension.Name]) {
-                    if (self.DimensionChartMap[s.data.dimension.Name].indexOf(chart) == -1) {
-                        self.DimensionChartMap[s.data.dimension.Name].push(chart);
+        this.Charts.push(chart);
+        chart.series()
+            .forEach(function(s) {
+                if (s.data.dimension) {
+                    if (self.DimensionChartMap[s.data.dimension.Name]) {
+                        if (self.DimensionChartMap[s.data.dimension.Name].indexOf(chart) == -1) {
+                            self.DimensionChartMap[s.data.dimension.Name].push(chart);
+                        }
+                    } else {
+                        self.DimensionChartMap[s.data.dimension.Name] = [chart];
                     }
-                } else {
-                    self.DimensionChartMap[s.data.dimension.Name] = [chart];
                 }
-            }
-        });
-
-    return chart;
-};
-
-
-/**
- * This method takes a dataset, name and grouping function, returning a Grouping with a Dimension created as part of that process.
- * @returns {object} Grouping - An aggregated Grouping that can be manipulated and have calculations applied to it
- * @param {object} dataset - A crossfilter, for example, returned by the addData() method
- * @param {string} name - A uniquely identifying name for the dimension along which this grouping is created. Used to identify identical dimensions in other datasets.
- * @param {function} groupFunction - The function used to group the dimension along.  Select the property of the underlying data that the dimension is to be defined on. Rounding or data manipulation can alter the granularity of the dimension
- */
-Dashboard.prototype.group = function(dataset, name, groupFunction, multi) {
-
-    var dim = new Dimension(name, groupFunction, dataset.dimension(groupFunction), groupFunction, multi);
-
-    this.Dimensions.push(dim);
-
-    var group = new Grouping(dim);
-
-    group.preFilter = this.chartFilterHandler.bind(this);
-
-    this.Groups.push(group);
-
-    return group;
-};
-
-Dashboard.prototype.filterFunction = function(filter, element) {
-    var value = filter.key ? filter.key : filter;
-
-    return {
-        name: value,
-        filterFunction: function(d) {
-            if (Array.isArray(d)) {
-                return d.indexOf(value) != -1;
-            } else {
-                return String(d) == String(value);
-            }
-        }
-    };
-};
-
-
-Dashboard.prototype.compareFilters = function(filterFunction) {
-    return function(d) {
-        return String(d.name) == String(filterFunction.name);
-    };
-};
-
-
-Dashboard.prototype.applyCSSClasses = function(chart, value, dimensionSelector) {
-    var listeningSeries = this.DimensionChartMap[chart.data.dimension.Name];
-
-    listeningSeries.forEach(function(chart) {
-
-        chart.highlight(dimensionSelector, value);
-
-
-    });
-};
-
-Dashboard.prototype.chartFilterHandler = function(chart, value, dimensionSelector) {
-    var self = this;
-
-    this.applyCSSClasses(chart, value, dimensionSelector);
-
-    var dimension = chart.data.dimension;
-
-    var filterFunction = this.filterFunction(value);
-
-    if (filterFunction) {
-        var dims = this.Dimensions
-            .filter(dimension.comparer);
-
-        var activeDim = this.FilteredDimensions
-            .filter(dimension.comparer);
-
-        if (!activeDim.length) {
-            this.FilteredDimensions.push(dimension);
-        }
-
-        var comparerFunction = this.compareFilters(filterFunction);
-
-        dims.map(function(dim) {
-
-            var filterExists = dim.Filters
-                .filter(comparerFunction)
-                .length;
-
-            //if the dimension is already filtered by this value, toggle (remove) the filter
-            if (filterExists) {
-                InsightUtils.removeMatchesFromArray(dim.Filters, comparerFunction);
-
-            } else {
-                // add the provided filter to the list for this dimension
-
-                dim.Filters.push(filterFunction);
-            }
-
-            // reset this dimension if no filters exist, else apply the filter to the dataset.
-            if (dim.Filters.length === 0) {
-
-                InsightUtils.removeItemFromArray(self.FilteredDimensions, dim);
-                dim.Dimension.filterAll();
-
-            } else {
-                dim.Dimension.filter(function(d) {
-                    var vals = dim.Filters
-                        .map(function(func) {
-                            return func.filterFunction(d);
-                        });
-
-                    return vals.filter(function(result) {
-                            return result;
-                        })
-                        .length > 0;
-                });
-            }
-        });
-
-        this.Groups.forEach(function(group) {
-            group.recalculate();
-
-        });
-
-        this.ComputedGroups
-            .forEach(
-                function(group) {
-                    group.compute();
-                }
-        );
-
-        this.redrawCharts();
-    }
-};
-
-Dashboard.prototype.initCharts = function() {
-    this.Charts
-        .forEach(
-            function(chart) {
-                chart.init();
             });
-};
+
+        return chart;
+    };
 
 
-Dashboard.prototype.redrawCharts = function() {
-    for (var i = 0; i < this.Charts
-        .length; i++) {
-        this.Charts[i].draw();
-    }
-};
-;function Series(name, chart, data, x, y, color) {
+    /**
+     * This method takes a dataset, name and grouping function, returning a Grouping with a Dimension created as part of that process.
+     * @returns {object} Grouping - An aggregated Grouping that can be manipulated and have calculations applied to it
+     * @param {object} dataset - A crossfilter, for example, returned by the addData() method
+     * @param {string} name - A uniquely identifying name for the dimension along which this grouping is created. Used to identify identical dimensions in other datasets.
+     * @param {function} groupFunction - The function used to group the dimension along.  Select the property of the underlying data that the dimension is to be defined on. Rounding or data manipulation can alter the granularity of the dimension
+     */
+    Dashboard.prototype.group = function(dataset, name, groupFunction, multi) {
+
+        var dim = new insight.Dimension(name, groupFunction, dataset.dimension(groupFunction), groupFunction, multi);
+
+        this.Dimensions.push(dim);
+
+        var group = new insight.Grouping(dim);
+
+        group.preFilter = this.chartFilterHandler.bind(this);
+
+        this.Groups.push(group);
+
+        return group;
+    };
+
+    Dashboard.prototype.filterFunction = function(filter, element) {
+        var value = filter.key ? filter.key : filter;
+
+        return {
+            name: value,
+            filterFunction: function(d) {
+                if (Array.isArray(d)) {
+                    return d.indexOf(value) != -1;
+                } else {
+                    return String(d) == String(value);
+                }
+            }
+        };
+    };
+
+
+    Dashboard.prototype.compareFilters = function(filterFunction) {
+        return function(d) {
+            return String(d.name) == String(filterFunction.name);
+        };
+    };
+
+
+    Dashboard.prototype.applyCSSClasses = function(chart, value, dimensionSelector) {
+        var listeningSeries = this.DimensionChartMap[chart.data.dimension.Name];
+
+        listeningSeries.forEach(function(chart) {
+
+            chart.highlight(dimensionSelector, value);
+
+
+        });
+    };
+
+    Dashboard.prototype.chartFilterHandler = function(chart, value, dimensionSelector) {
+        var self = this;
+
+        this.applyCSSClasses(chart, value, dimensionSelector);
+
+        var dimension = chart.data.dimension;
+
+        var filterFunction = this.filterFunction(value);
+
+        if (filterFunction) {
+            var dims = this.Dimensions
+                .filter(dimension.comparer);
+
+            var activeDim = this.FilteredDimensions
+                .filter(dimension.comparer);
+
+            if (!activeDim.length) {
+                this.FilteredDimensions.push(dimension);
+            }
+
+            var comparerFunction = this.compareFilters(filterFunction);
+
+            dims.map(function(dim) {
+
+                var filterExists = dim.Filters
+                    .filter(comparerFunction)
+                    .length;
+
+                //if the dimension is already filtered by this value, toggle (remove) the filter
+                if (filterExists) {
+                    InsightUtils.removeMatchesFromArray(dim.Filters, comparerFunction);
+
+                } else {
+                    // add the provided filter to the list for this dimension
+
+                    dim.Filters.push(filterFunction);
+                }
+
+                // reset this dimension if no filters exist, else apply the filter to the dataset.
+                if (dim.Filters.length === 0) {
+
+                    InsightUtils.removeItemFromArray(self.FilteredDimensions, dim);
+                    dim.Dimension.filterAll();
+
+                } else {
+                    dim.Dimension.filter(function(d) {
+                        var vals = dim.Filters
+                            .map(function(func) {
+                                return func.filterFunction(d);
+                            });
+
+                        return vals.filter(function(result) {
+                                return result;
+                            })
+                            .length > 0;
+                    });
+                }
+            });
+
+            this.Groups.forEach(function(group) {
+                group.recalculate();
+
+            });
+
+            this.ComputedGroups
+                .forEach(
+                    function(group) {
+                        group.compute();
+                    }
+            );
+
+            this.redrawCharts();
+        }
+    };
+
+    Dashboard.prototype.initCharts = function() {
+        this.Charts
+            .forEach(
+                function(chart) {
+                    chart.init();
+                });
+    };
+
+
+    Dashboard.prototype.redrawCharts = function() {
+        for (var i = 0; i < this.Charts
+            .length; i++) {
+            this.Charts[i].draw();
+        }
+    };
+
+    return Dashboard;
+})(insight);
+;insight.Series = function Series(name, chart, data, x, y, color) {
 
     this.chart = chart;
     this.data = data;
@@ -1333,666 +1189,447 @@ Dashboard.prototype.redrawCharts = function() {
     this.draw = function() {};
 
     return this;
-}
+};
 
 /* Skeleton event overriden by a Dashboard to subscribe to this series' clicks.
  * @param {object} series - The series being clicked
  * @param {object[]} filter - The value of the point selected, used for filtering/highlighting
  * @param {object[]} selection - The css selection name also used to maintain a list of filtered dimensions (TODO - is this needed anymore?)
  */
-Series.prototype.clickEvent = function(series, filter, selection) {
+insight.Series.prototype.clickEvent = function(series, filter, selection) {
 
 };
-;function Chart(name, element, dimension) {
-
-    this.name = name;
-    this.element = element;
-    this.dimension = dimension;
-    this.selectedItems = [];
-
-    var height = d3.functor(300);
-    var width = d3.functor(300);
-    var zoomable = false;
-    var zoomScale = null;
-    this.container = null;
-
-    this.chart = null;
-
-    this.measureCanvas = document.createElement("canvas");
-
-    this._margin = {
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0
-    };
-
-    var series = [];
-    var scales = [];
-    var axes = [];
-    var self = this;
-    var barPadding = d3.functor(0.1);
-    var title = "";
-    var autoMargin = false;
-
-
-    this.addAxis = function(axis) {
-        axes.push(axis);
-    };
-
-    this.axes = function() {
-        return axes;
-    };
-
-    this.addClipPath = function() {
-        this.chart.append("clipPath")
-            .attr("id", this.clipPath())
-            .append("rect")
-            .attr("x", 1)
-            .attr("y", 0)
-            .attr("width", this.width() - this.margin()
-                .left - this.margin()
-                .right)
-            .attr("height", this.height() - this.margin()
-                .top - this.margin()
-                .bottom);
-    };
-
-    this.init = function(create, container) {
-
-        if (autoMargin) {
-            this.calculateLabelMargin();
-        }
-
-        this.container = create ? d3.select(container)
-            .append('div') : d3.select(this.element)
-            .append('div');
-
-        this.container
-            .attr('class', InsightConstants.ContainerClass)
-            .style('width', this.width() + 'px')
-            .style('position', 'relative')
-            .style('display', 'inline-block');
-
-        this.chartSVG = this.container
-            .append("svg")
-            .attr("class", InsightConstants.ChartSVG)
-            .attr("width", this.width())
-            .attr("height", this.height());
-
-        this.chart = this.chartSVG.append("g")
-            .attr('class', InsightConstants.Chart)
-            .attr("transform", "translate(" + this.margin()
-                .left + "," + this.margin()
-                .top + ")");
-
-        this.addClipPath();
-
-        scales.map(function(scale) {
-            scale.initialize();
-        });
-
-        axes.map(function(axis) {
-            axis.initialize();
-            var a = axis.scale.domain();
-        });
-
-        if (zoomable) {
-            this.initZoom();
-        }
-
-        this.tooltip();
-
-        this.draw(false);
-    };
-
-    this.resizeChart = function() {
-        this.container.style('width', this.width() + "px");
-
-        this.chartSVG
-            .attr("width", this.width())
-            .attr("height", this.height());
-
-        this.chart = this.chart
-            .attr("transform", "translate(" + this.margin()
-                .left + "," + this.margin()
-                .top + ")");
-
-        this.chart.select("#" + this.clipPath())
-            .append("rect")
-            .attr("x", 1)
-            .attr("y", 0)
-            .attr("width", this.width() - this.margin()
-                .left - this.margin()
-                .right)
-            .attr("height", this.height() - this.margin()
-                .top - this.margin()
-                .bottom);
-    };
-
-    this.draw = function(dragging) {
-        this.resizeChart();
-
-        this.recalculateScales();
-
-        axes.map(function(axis) {
-            axis.draw(dragging);
-        });
-
-        this.series()
-            .map(function(series) {
-                series.draw(dragging);
-            });
-    };
-
-    this.recalculateScales = function() {
-        scales.map(function(scale) {
-            var zx = zoomScale != scale;
-            if (zx) {
-                scale.initialize();
-            }
-        });
-    };
-
-    this.zoomable = function(scale) {
-        zoomable = true;
-        zoomScale = scale;
-        return this;
-    };
-
-    this.initZoom = function() {
-        this.zoom = d3.behavior.zoom()
-            .on("zoom", self.dragging.bind(self));
-
-        this.zoom.x(zoomScale.scale);
-
-        if (!this.zoomExists()) {
-            this.chart.append("rect")
-                .attr("class", "zoompane")
-                .attr("width", this.width())
-                .attr("height", this.height() - this.margin()
-                    .top - this.margin()
-                    .bottom)
-                .style("fill", "none")
-                .style("pointer-events", "all");
-        }
-
-        this.chart.select('.zoompane')
-            .call(this.zoom);
-    };
-
-    this.zoomExists = function() {
-        var z = this.chart.selectAll('.zoompane');
-        return z[0].length;
-    };
-
-    this.dragging = function() {
-        self.draw(true);
-    };
-
-    this.barPadding = function(_) {
-        if (!arguments.length) {
-            return barPadding();
-        }
-        barPadding = d3.functor(_);
-        return this;
-    };
-
-    this.margin = function(_) {
-        if (!arguments.length) {
-            return this._margin;
-        }
-        this._margin = _;
-        return this;
-    };
-
-    this.clipPath = function() {
-
-        return this.name.split(' ')
-            .join('_') + "clip";
-    };
-
-
-
-
-    this.tooltip = function() {
-
-        this.tip = d3.tip()
-            .attr('class', 'd3-tip')
-            .offset([-10, 0])
-            .html(function(d) {
-                return "<span class='tipvalue'>" + d + "</span>";
-            });
-
-        this.chart.call(this.tip);
-
-        return this;
-    };
-
-    this.mouseOver = function(chart, item, d) {
-
-        var tooltip = $(item)
-            .find('.tooltip')
-            .first()
-            .text();
-
-        this.tip.show(tooltip);
-
-        d3.select(item)
-            .classed("active", true);
-    };
-
-    this.mouseOut = function(chart, item, d) {
-        this.tip.hide(d);
-
-        d3.select(item)
-            .classed("active", false);
-    };
-
-    this.title = function(_) {
-        if (!arguments.length) {
-            return title;
-        }
-
-        title = _;
-        return this;
-    };
-
-    this.width = function(_) {
-        if (!arguments.length) {
-            return width();
-        }
-
-        width = d3.functor(_);
-        return this;
-    };
-
-    this.height = function(_) {
-        if (!arguments.length) {
-            return height();
-        }
-        height = d3.functor(_);
-        return this;
-    };
-
-    this.series = function(_) {
-        if (!arguments.length) {
-            return series;
-        }
-        series = _;
-    };
-
-
-    this.scales = function(_) {
-        if (!arguments.length) {
-            return scales;
-        }
-        scales = _;
-    };
-
-
-    this.addHorizontalScale = function(type, typeString, direction) {
-        var scale = new Scale(this, type, direction, typeString);
-    };
-
-
-    this.addHorizontalAxis = function(scale) {
-        var axis = new Axis(this, scale, 'h', 'left');
-    };
-
-
-    this.autoMargin = function(_) {
-        if (!arguments.length) {
-            return autoMargin;
-        }
-        autoMargin = _;
-        return this;
-    };
-
-
-    this.highlight = function(selector, value) {
-
-
-        var clicked = this.chart.selectAll("." + selector);
-        var alreadySelected = clicked.classed('selected');
-
-        if (alreadySelected) {
-            clicked.classed('selected', false);
-            InsightUtils.removeItemFromArray(self.selectedItems, selector);
-        } else {
-            clicked.classed('selected', true)
-                .classed('notselected', false);
-            self.selectedItems.push(selector);
-        }
-
-        var selected = this.chart.selectAll('.selected');
-        var notselected = this.chart.selectAll('.bar:not(.selected),.bubble:not(.selected)');
-
-        notselected.classed('notselected', selected[0].length > 0);
-    };
-}
-
-
-
-Chart.prototype.calculateLabelMargin = function() {
-
-    var canvas = this.measureCanvas;
-    var max = 0;
-
-    this.series()
-        .forEach(function(series) {
-            var m = series.maxLabelDimensions(canvas);
-            max = m > max ? m : max;
-        });
-
-    this.margin()
-        .bottom = max;
-};
-
-
-// Helper functions for adding series without having to create the scales & axes yourself (move to builder class?)
-
-Chart.prototype.addColumnSeries = function(series) {
-
-    var x = new Scale(this, "", d3.scale.ordinal(), 'h', 'ordinal');
-    var y = new Scale(this, "", d3.scale.linear(), 'v', 'linear');
-
-    var stacked = series.stacked ? true : false;
-
-    var s = new ColumnSeries(series.name, this, series.data, x, y, series.color)
-        .stacked(stacked);
-
-    s.series = [series];
-
-    this.series()
-        .push(s);
-
-    return s;
-};
-
-
-Chart.prototype.addLineSeries = function(series) {
-
-    var x = new Scale(this, "", d3.scale.ordinal(), 'h', 'ordinal');
-    var y = new Scale(this, "", d3.scale.linear(), 'v', 'linear');
-
-    var s = new LineSeries(series.name, this, series.data, x, y, series.color)
-        .yFunction(series.accessor);
-
-    this.series()
-        .push(s);
-
-    return s;
-};
-
-
-Chart.prototype.addBulletChart = function(options) {
-
-    var x = new Scale(this, options.name + "x", d3.scale.linear(), 'h', 'linear');
-    var y = new Scale(this, options.name + "y", d3.scale.ordinal(), 'v', 'ordinal');
-
-    // Create the areas as stacked bars
-    var s = new RowSeries(options.name, this, options.ranges[0].data, x, y, 'blue')
-        .stacked(true);
-
-    // empty the hover function
-    s.mouseOver = function(d) {};
-
-    s.series = options.ranges;
-
-    this.series()
-        .push(s);
-
-    // Create the main bar
-
-    var row = new RowSeries(options.value.name, this, options.value.data, x, y, options.value.color);
-
-    row.barThickness = function(d) {
-        return this.y.scale.rangeBand(d) * (1 / 3);
-    }.bind(row);
-
-    row.yPosition = function(d) {
-        return this.y.scale(this.yFunction()(d)) + (this.y.scale.rangeBand(d) / 3);
-    }.bind(row);
-
-    row.series = [options.value];
-
-    this.series()
-        .push(row);
-
-    return s;
-};
-;var ChartGroup = function ChartGroup(name) {
-    this.Name = name;
-    this.Charts = [];
-    this.Dimensions = [];
-    this.FilteredDimensions = [];
-    this.Groups = [];
-    this.ComputedGroups = [];
-    this.LinkedCharts = [];
-    this.NestedGroups = [];
-    this.DimensionChartMap = {};
-};
-
-ChartGroup.prototype.initCharts = function() {
-    this.Charts
-        .forEach(
-            function(chart) {
-                chart.init();
-            });
-};
-
-ChartGroup.prototype.addChart = function(chart) {
-
-    var self = this;
-
-    chart.triggerRedraw = this.redrawCharts.bind(this);
-
-    this.Charts.push(chart);
-    chart.series()
-        .forEach(function(s) {
-            if (s.data.dimension) {
-                if (self.DimensionChartMap[s.data.dimension.Name]) {
-                    self.DimensionChartMap[s.data.dimension.Name].push(s);
-                } else {
-                    self.DimensionChartMap[s.data.dimension.Name] = [s];
+;(function(insight) {
+
+    insight.Chart = (function(insight) {
+
+        function Chart(name, element, dimension) {
+
+            this.name = name;
+            this.element = element;
+            this.dimension = dimension;
+            this.selectedItems = [];
+
+            var height = d3.functor(300);
+            var width = d3.functor(300);
+            var zoomable = false;
+            var zoomScale = null;
+            this.container = null;
+
+            this.chart = null;
+
+            this.measureCanvas = document.createElement("canvas");
+
+            this._margin = {
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            };
+
+            var series = [];
+            var scales = [];
+            var axes = [];
+            var self = this;
+            var barPadding = d3.functor(0.1);
+            var title = "";
+            var autoMargin = false;
+
+
+            this.addAxis = function(axis) {
+                axes.push(axis);
+            };
+
+            this.axes = function() {
+                return axes;
+            };
+
+            this.addClipPath = function() {
+                this.chart.append("clipPath")
+                    .attr("id", this.clipPath())
+                    .append("rect")
+                    .attr("x", 1)
+                    .attr("y", 0)
+                    .attr("width", this.width() - this.margin()
+                        .left - this.margin()
+                        .right)
+                    .attr("height", this.height() - this.margin()
+                        .top - this.margin()
+                        .bottom);
+            };
+
+            this.init = function(create, container) {
+
+                if (autoMargin) {
+                    this.calculateLabelMargin();
                 }
-            }
-        });
 
-    return chart;
-};
+                this.container = create ? d3.select(container)
+                    .append('div') : d3.select(this.element)
+                    .append('div');
 
-ChartGroup.prototype.addGroup = function(group) {
+                this.container
+                    .attr('class', InsightConstants.ContainerClass)
+                    .style('width', this.width() + 'px')
+                    .style('position', 'relative')
+                    .style('display', 'inline-block');
 
-    group.preFilter = this.chartFilterHandler.bind(this);
+                this.chartSVG = this.container
+                    .append("svg")
+                    .attr("class", InsightConstants.ChartSVG)
+                    .attr("width", this.width())
+                    .attr("height", this.height());
 
-    group.initialize();
+                this.chart = this.chartSVG.append("g")
+                    .attr('class', InsightConstants.Chart)
+                    .attr("transform", "translate(" + this.margin()
+                        .left + "," + this.margin()
+                        .top + ")");
 
-    this.Groups.push(group);
+                this.addClipPath();
 
-    return this;
-};
-
-ChartGroup.prototype.addDimension = function(ndx, name, func, displayFunc, multi) {
-    var dimension = new Dimension(name, func, ndx.dimension(func), displayFunc, multi);
-
-    this.Dimensions.push(dimension);
-
-    return dimension;
-};
-
-
-ChartGroup.prototype.filterFunction = function(filter, element) {
-    var value = filter.key ? filter.key : filter;
-
-    return {
-        name: value,
-        filterFunction: function(d) {
-            if (Array.isArray(d)) {
-                return d.indexOf(value) != -1;
-            } else {
-                return String(d) == String(value);
-            }
-        }
-    };
-};
-
-
-ChartGroup.prototype.compareFilters = function(filterFunction) {
-    return function(d) {
-        return String(d.name) == String(filterFunction.name);
-    };
-};
-
-ChartGroup.prototype.applyCSSClasses = function(chart, value, dimensionSelector) {
-    var listeningSeries = this.DimensionChartMap[chart.data.dimension.Name];
-
-    listeningSeries.forEach(function(chart) {
-        chart.highlight(dimensionSelector, value);
-    });
-};
-
-ChartGroup.prototype.chartFilterHandler = function(chart, value, dimensionSelector) {
-    var self = this;
-
-    this.applyCSSClasses(chart, value, dimensionSelector);
-
-    var dimension = chart.data.dimension;
-
-    var filterFunction = this.filterFunction(value);
-
-    if (filterFunction) {
-        var dims = this.Dimensions
-            .filter(dimension.comparer);
-
-        var activeDim = this.FilteredDimensions
-            .filter(dimension.comparer);
-
-        if (!activeDim.length) {
-            this.FilteredDimensions.push(dimension);
-        }
-
-        var comparerFunction = this.compareFilters(filterFunction);
-
-        dims.map(function(dim) {
-
-            var filterExists = dim.Filters
-                .filter(comparerFunction)
-                .length;
-
-            //if the dimension is already filtered by this value, toggle (remove) the filter
-            if (filterExists) {
-                InsightUtils.removeMatchesFromArray(dim.Filters, comparerFunction);
-
-            } else {
-                // add the provided filter to the list for this dimension
-
-                dim.Filters.push(filterFunction);
-            }
-
-            // reset this dimension if no filters exist, else apply the filter to the dataset.
-            if (dim.Filters.length === 0) {
-
-                InsightUtils.removeItemFromArray(self.FilteredDimensions, dim);
-                dim.Dimension.filterAll();
-
-            } else {
-                dim.Dimension.filter(function(d) {
-                    var vals = dim.Filters
-                        .map(function(func) {
-                            return func.filterFunction(d);
-                        });
-
-                    return vals.filter(function(result) {
-                            return result;
-                        })
-                        .length > 0;
+                scales.map(function(scale) {
+                    scale.initialize();
                 });
-            }
-        });
 
-        this.Groups.forEach(function(group) {
-            group.recalculate();
+                axes.map(function(axis) {
+                    axis.initialize();
+                    var a = axis.scale.domain();
+                });
 
-        });
-
-        // recalculate non standard groups
-        this.NestedGroups
-            .forEach(
-                function(group) {
-                    group.updateNestedData();
+                if (zoomable) {
+                    this.initZoom();
                 }
-        );
 
-        this.ComputedGroups
-            .forEach(
-                function(group) {
-                    group.compute();
+                this.tooltip();
+
+                this.draw(false);
+            };
+
+            this.resizeChart = function() {
+                this.container.style('width', this.width() + "px");
+
+                this.chartSVG
+                    .attr("width", this.width())
+                    .attr("height", this.height());
+
+                this.chart = this.chart
+                    .attr("transform", "translate(" + this.margin()
+                        .left + "," + this.margin()
+                        .top + ")");
+
+                this.chart.select("#" + this.clipPath())
+                    .append("rect")
+                    .attr("x", 1)
+                    .attr("y", 0)
+                    .attr("width", this.width() - this.margin()
+                        .left - this.margin()
+                        .right)
+                    .attr("height", this.height() - this.margin()
+                        .top - this.margin()
+                        .bottom);
+            };
+
+            this.draw = function(dragging) {
+                this.resizeChart();
+
+                this.recalculateScales();
+
+                axes.map(function(axis) {
+                    axis.draw(dragging);
+                });
+
+                this.series()
+                    .map(function(series) {
+                        series.draw(dragging);
+                    });
+            };
+
+            this.recalculateScales = function() {
+                scales.map(function(scale) {
+                    var zx = zoomScale != scale;
+                    if (zx) {
+                        scale.initialize();
+                    }
+                });
+            };
+
+            this.zoomable = function(scale) {
+                zoomable = true;
+                zoomScale = scale;
+                return this;
+            };
+
+            this.initZoom = function() {
+                this.zoom = d3.behavior.zoom()
+                    .on("zoom", self.dragging.bind(self));
+
+                this.zoom.x(zoomScale.scale);
+
+                if (!this.zoomExists()) {
+                    this.chart.append("rect")
+                        .attr("class", "zoompane")
+                        .attr("width", this.width())
+                        .attr("height", this.height() - this.margin()
+                            .top - this.margin()
+                            .bottom)
+                        .style("fill", "none")
+                        .style("pointer-events", "all");
                 }
-        );
 
-        this.redrawCharts();
-    }
-};
+                this.chart.select('.zoompane')
+                    .call(this.zoom);
+            };
+
+            this.zoomExists = function() {
+                var z = this.chart.selectAll('.zoompane');
+                return z[0].length;
+            };
+
+            this.dragging = function() {
+                self.draw(true);
+            };
+
+            this.barPadding = function(_) {
+                if (!arguments.length) {
+                    return barPadding();
+                }
+                barPadding = d3.functor(_);
+                return this;
+            };
+
+            this.margin = function(_) {
+                if (!arguments.length) {
+                    return this._margin;
+                }
+                this._margin = _;
+                return this;
+            };
+
+            this.clipPath = function() {
+
+                return this.name.split(' ')
+                    .join('_') + "clip";
+            };
 
 
 
-ChartGroup.prototype.redrawCharts = function() {
-    for (var i = 0; i < this.Charts
-        .length; i++) {
-        this.Charts[i].draw();
-    }
-};
+
+            this.tooltip = function() {
+
+                this.tip = d3.tip()
+                    .attr('class', 'd3-tip')
+                    .offset([-10, 0])
+                    .html(function(d) {
+                        return "<span class='tipvalue'>" + d + "</span>";
+                    });
+
+                this.chart.call(this.tip);
+
+                return this;
+            };
+
+            this.mouseOver = function(chart, item, d) {
+
+                var tooltip = $(item)
+                    .find('.tooltip')
+                    .first()
+                    .text();
+
+                this.tip.show(tooltip);
+
+                d3.select(item)
+                    .classed("active", true);
+            };
+
+            this.mouseOut = function(chart, item, d) {
+                this.tip.hide(d);
+
+                d3.select(item)
+                    .classed("active", false);
+            };
+
+            this.title = function(_) {
+                if (!arguments.length) {
+                    return title;
+                }
+
+                title = _;
+                return this;
+            };
+
+            this.width = function(_) {
+                if (!arguments.length) {
+                    return width();
+                }
+
+                width = d3.functor(_);
+                return this;
+            };
+
+            this.height = function(_) {
+                if (!arguments.length) {
+                    return height();
+                }
+                height = d3.functor(_);
+                return this;
+            };
+
+            this.series = function(_) {
+                if (!arguments.length) {
+                    return series;
+                }
+                series = _;
+            };
 
 
-ChartGroup.prototype.aggregate = function(dimension, input) {
+            this.scales = function(_) {
+                if (!arguments.length) {
+                    return scales;
+                }
+                scales = _;
+            };
 
-    var group;
 
-    if (input instanceof Array) {
+            this.addHorizontalScale = function(type, typeString, direction) {
+                var scale = new Scale(this, type, direction, typeString);
+            };
 
-        group = this.multiReduceSum(dimension, input);
 
-        this.Groups.push(group);
+            this.addHorizontalAxis = function(scale) {
+                var axis = new Axis(this, scale, 'h', 'left');
+            };
 
-    } else {
 
-        var data = dimension.Dimension.group()
-            .reduceSum(input);
+            this.autoMargin = function(_) {
+                if (!arguments.length) {
+                    return autoMargin;
+                }
+                autoMargin = _;
+                return this;
+            };
 
-        group = new Group(data);
 
-        this.Groups.push(group);
-    }
+            this.highlight = function(selector, value) {
 
-    return group;
-};
 
-ChartGroup.prototype.count = function(dimension, input) {
+                var clicked = this.chart.selectAll("." + selector);
+                var alreadySelected = clicked.classed('selected');
 
-    var group;
+                if (alreadySelected) {
+                    clicked.classed('selected', false);
+                    InsightUtils.removeItemFromArray(self.selectedItems, selector);
+                } else {
+                    clicked.classed('selected', true)
+                        .classed('notselected', false);
+                    self.selectedItems.push(selector);
+                }
 
-    if (input instanceof Array) {
+                var selected = this.chart.selectAll('.selected');
+                var notselected = this.chart.selectAll('.bar:not(.selected),.bubble:not(.selected)');
 
-        group = this.multiReduceCount(dimension, input);
+                notselected.classed('notselected', selected[0].length > 0);
+            };
+        }
 
-        this.Groups.push(group);
 
-    } else {
-        var data = dimension.Dimension.group()
-            .reduceCount(input);
 
-        group = new Group(data);
+        Chart.prototype.calculateLabelMargin = function() {
 
-        this.Groups.push(group);
-    }
+            var canvas = this.measureCanvas;
+            var max = 0;
 
-    return group;
-};
-;function BubbleSeries(name, chart, data, x, y, color) {
+            this.series()
+                .forEach(function(series) {
+                    var m = series.maxLabelDimensions(canvas);
+                    max = m > max ? m : max;
+                });
 
-    Series.call(this, name, chart, data, x, y, color);
+            this.margin()
+                .bottom = max;
+        };
+
+
+        // Helper functions for adding series without having to create the scales & axes yourself (move to builder class?)
+
+        Chart.prototype.addColumnSeries = function(series) {
+
+            var x = new insight.Scale(this, "", d3.scale.ordinal(), 'h', 'ordinal');
+            var y = new insight.Scale(this, "", d3.scale.linear(), 'v', 'linear');
+
+            var stacked = series.stacked ? true : false;
+
+            var s = new insight.ColumnSeries(series.name, this, series.data, x, y, series.color)
+                .stacked(stacked);
+
+            s.series = [series];
+
+            this.series()
+                .push(s);
+
+            return s;
+        };
+
+
+        Chart.prototype.addLineSeries = function(series) {
+
+            var x = new insight.Scale(this, "", d3.scale.ordinal(), 'h', 'ordinal');
+            var y = new insight.Scale(this, "", d3.scale.linear(), 'v', 'linear');
+
+            var s = new insight.LineSeries(series.name, this, series.data, x, y, series.color)
+                .yFunction(series.accessor);
+
+            this.series()
+                .push(s);
+
+            return s;
+        };
+
+
+        Chart.prototype.addBulletChart = function(options) {
+
+            var x = new insight.Scale(this, options.name + "x", d3.scale.linear(), 'h', 'linear');
+            var y = new insight.Scale(this, options.name + "y", d3.scale.ordinal(), 'v', 'ordinal');
+
+            // Create the areas as stacked bars
+            var s = new insight.RowSeries(options.name, this, options.ranges[0].data, x, y, 'blue')
+                .stacked(true);
+
+            // empty the hover function
+            s.mouseOver = function(d) {};
+
+            s.series = options.ranges;
+
+            this.series()
+                .push(s);
+
+            // Create the main bar
+
+            var row = new insight.RowSeries(options.value.name, this, options.value.data, x, y, options.value.color);
+
+            row.barThickness = function(d) {
+                return this.y.scale.rangeBand(d) * (1 / 3);
+            }.bind(row);
+
+            row.yPosition = function(d) {
+                return this.y.scale(this.yFunction()(d)) + (this.y.scale.rangeBand(d) / 3);
+            }.bind(row);
+
+            row.series = [options.value];
+
+            this.series()
+                .push(row);
+
+            return s;
+        };
+
+        return Chart;
+
+    })(insight);
+})(insight);
+;insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
+
+    insight.Series.call(this, name, chart, data, x, y, color);
 
     var radiusFunction = d3.functor(10);
     var fillFunction = d3.functor(color);
@@ -2106,13 +1743,13 @@ ChartGroup.prototype.count = function(dimension, input) {
         bubbles.selectAll("." + InsightConstants.ToolTipTextClass)
             .text(this.tooltipFunction());
     };
-}
+};
 
-BubbleSeries.prototype = Object.create(Series.prototype);
-BubbleSeries.prototype.constructor = BubbleSeries;
-;function RowSeries(name, chart, data, x, y, color) {
+insight.BubbleSeries.prototype = Object.create(insight.Series.prototype);
+insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
+;insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
 
-    Series.call(this, name, chart, data, x, y, color);
+    insight.Series.call(this, name, chart, data, x, y, color);
 
     var self = this;
     var stacked = d3.functor(false);
@@ -2334,12 +1971,12 @@ BubbleSeries.prototype.constructor = BubbleSeries;
     };
 
     return this;
-}
+};
 
 
-RowSeries.prototype = Object.create(Series.prototype);
-RowSeries.prototype.constructor = RowSeries;
-;function Scale(chart, title, scale, direction, type) {
+insight.RowSeries.prototype = Object.create(insight.Series.prototype);
+insight.RowSeries.prototype.constructor = insight.RowSeries;
+;insight.Scale = function Scale(chart, title, scale, direction, type) {
     var ordered = d3.functor(false);
     var self = this;
     this.scale = scale;
@@ -2467,8 +2104,8 @@ RowSeries.prototype.constructor = RowSeries;
         ordered = d3.functor(_);
         return this;
     };
-}
-;function Axis(chart, name, scale, anchor) {
+};
+;insight.Axis = function Axis(chart, name, scale, anchor) {
     this.chart = chart;
     this.scale = scale;
     this.anchor = anchor ? anchor : 'left';
@@ -2733,10 +2370,10 @@ RowSeries.prototype.constructor = RowSeries;
             //this.drawGridLines();
         }
     };
-}
-;function LineSeries(name, chart, data, x, y, color) {
+};
+;insight.LineSeries = function LineSeries(name, chart, data, x, y, color) {
 
-    Series.call(this, name, chart, data, x, y, color);
+    insight.Series.call(this, name, chart, data, x, y, color);
 
     var self = this;
 
@@ -2861,13 +2498,13 @@ RowSeries.prototype.constructor = RowSeries;
 
         return rangeSelector[0].length;
     };
-}
+};
 
-LineSeries.prototype = Object.create(Series.prototype);
-LineSeries.prototype.constructor = LineSeries;
-;function ColumnSeries(name, chart, data, x, y, color) {
+insight.LineSeries.prototype = Object.create(insight.Series.prototype);
+insight.LineSeries.prototype.constructor = insight.LineSeries;
+;insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
 
-    Series.call(this, name, chart, data, x, y, color);
+    insight.Series.call(this, name, chart, data, x, y, color);
 
     var self = this;
     var stacked = d3.functor(false);
@@ -3095,7 +2732,7 @@ LineSeries.prototype.constructor = LineSeries;
     };
 
     return this;
-}
+};
 
-ColumnSeries.prototype = Object.create(Series.prototype);
-ColumnSeries.prototype.constructor = ColumnSeries;
+insight.ColumnSeries.prototype = Object.create(insight.Series.prototype);
+insight.ColumnSeries.prototype.constructor = insight.ColumnSeries;

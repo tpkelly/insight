@@ -1,6 +1,6 @@
-function ColumnSeries(name, chart, data, x, y, color) {
+insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
 
-    Series.call(this, name, chart, data, x, y, color);
+    insight.Series.call(this, name, chart, data, x, y, color);
 
     var self = this;
     var stacked = d3.functor(false);
@@ -228,7 +228,7 @@ function ColumnSeries(name, chart, data, x, y, color) {
     };
 
     return this;
-}
+};
 
-ColumnSeries.prototype = Object.create(Series.prototype);
-ColumnSeries.prototype.constructor = ColumnSeries;
+insight.ColumnSeries.prototype = Object.create(insight.Series.prototype);
+insight.ColumnSeries.prototype.constructor = insight.ColumnSeries;

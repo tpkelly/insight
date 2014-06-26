@@ -25,7 +25,7 @@ describe("Dashboard tests", function() {
 
     it("will initialize with a data set", function() {
         
-        var dashboard = new Dashboard('Test');
+        var dashboard = new insight.Dashboard('Test');
         var data = dashboard.addData(dataset);
 
         expect(data.size()).toBe(20);
@@ -33,7 +33,7 @@ describe("Dashboard tests", function() {
 
     it("can add a group", function() {
         
-        var dashboard = new Dashboard('Test');
+        var dashboard = new insight.Dashboard('Test');
         var data = dashboard.addData(dataset);
 
         var countries = dashboard.group(data, 'country', function(d){return d.Country;});
@@ -46,7 +46,7 @@ describe("Dashboard tests", function() {
 
     it("can add a group with extra calculated values", function() {
         
-        var dashboard = new Dashboard('Test');
+        var dashboard = new insight.Dashboard('Test');
         var data = dashboard.addData(dataset);
 
         var countries = dashboard.group(data, 'country', function(d){return d.Country;})

@@ -1,4 +1,4 @@
-function Series(name, chart, data, x, y, color) {
+insight.Series = function Series(name, chart, data, x, y, color) {
 
     this.chart = chart;
     this.data = data;
@@ -210,13 +210,13 @@ function Series(name, chart, data, x, y, color) {
     this.draw = function() {};
 
     return this;
-}
+};
 
 /* Skeleton event overriden by a Dashboard to subscribe to this series' clicks.
  * @param {object} series - The series being clicked
  * @param {object[]} filter - The value of the point selected, used for filtering/highlighting
  * @param {object[]} selection - The css selection name also used to maintain a list of filtered dimensions (TODO - is this needed anymore?)
  */
-Series.prototype.clickEvent = function(series, filter, selection) {
+insight.Series.prototype.clickEvent = function(series, filter, selection) {
 
 };

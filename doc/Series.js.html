@@ -34,34 +34,9 @@
     </div>
     <ul class="list">
     
-        <li class="item" data-name="Dashboard">
+        <li class="item" data-name="insight#findMax">
             <span class="title">
-                <a href="Dashboard.html">Dashboard</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            <span class="subtitle">Methods</span>
-            
-                <li data-name="Dashboard#addData"><a href="Dashboard.html#addData">addData</a></li>
-            
-                <li data-name="Dashboard#group"><a href="Dashboard.html#group">group</a></li>
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="DataSet">
-            <span class="title">
-                <a href="DataSet.html">DataSet</a>
+                <a href="insight_findMax.html">insight#findMax</a>
                 
             </span>
             <ul class="members itemMembers">
@@ -78,9 +53,9 @@
             </ul>
         </li>
     
-        <li class="item" data-name="Dimension">
+        <li class="item" data-name="insight#findMax">
             <span class="title">
-                <a href="Dimension.html">Dimension</a>
+                <a href="insight_findMax.html">insight#findMax</a>
                 
             </span>
             <ul class="members itemMembers">
@@ -97,96 +72,9 @@
             </ul>
         </li>
     
-        <li class="item" data-name="findMax">
+        <li class="item" data-name="insight#tickRotation">
             <span class="title">
-                <a href="findMax.html">findMax</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="findMax">
-            <span class="title">
-                <a href="findMax.html">findMax</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="Grouping">
-            <span class="title">
-                <a href="Grouping.html">Grouping</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            <span class="subtitle">Methods</span>
-            
-                <li data-name="Grouping#computeFunction"><a href="Grouping.html#computeFunction">computeFunction</a></li>
-            
-                <li data-name="Grouping#count"><a href="Grouping.html#count">count</a></li>
-            
-                <li data-name="Grouping#cumulative"><a href="Grouping.html#cumulative">cumulative</a></li>
-            
-                <li data-name="Grouping#filter"><a href="Grouping.html#filter">filter</a></li>
-            
-                <li data-name="Grouping#getData"><a href="Grouping.html#getData">getData</a></li>
-            
-                <li data-name="Grouping#getOrderedData"><a href="Grouping.html#getOrderedData">getOrderedData</a></li>
-            
-                <li data-name="Grouping#initialize"><a href="Grouping.html#initialize">initialize</a></li>
-            
-                <li data-name="Grouping#mean"><a href="Grouping.html#mean">mean</a></li>
-            
-                <li data-name="Grouping#ordered"><a href="Grouping.html#ordered">ordered</a></li>
-            
-                <li data-name="Grouping#orderFunction"><a href="Grouping.html#orderFunction">orderFunction</a></li>
-            
-                <li data-name="Grouping#recalculate"><a href="Grouping.html#recalculate">recalculate</a></li>
-            
-                <li data-name="Grouping#reduceMultiDimension"><a href="Grouping.html#reduceMultiDimension">reduceMultiDimension</a></li>
-            
-                <li data-name="Grouping#sum"><a href="Grouping.html#sum">sum</a></li>
-            
-                <li data-name="Grouping#unique"><a href="Grouping.html#unique">unique</a></li>
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="tickRotation">
-            <span class="title">
-                <a href="tickRotation.html">tickRotation</a>
+                <a href="insight_tickRotation.html">insight#tickRotation</a>
                 
             </span>
             <ul class="members itemMembers">
@@ -213,7 +101,7 @@
     
     <section>
         <article>
-            <pre class="prettyprint source"><code>function Series(name, chart, data, x, y, color) {
+            <pre class="prettyprint source"><code>insight.Series = function Series(name, chart, data, x, y, color) {
 
     this.chart = chart;
     this.data = data;
@@ -425,14 +313,14 @@
     this.draw = function() {};
 
     return this;
-}
+};
 
 /* Skeleton event overriden by a Dashboard to subscribe to this series' clicks.
  * @param {object} series - The series being clicked
  * @param {object[]} filter - The value of the point selected, used for filtering/highlighting
  * @param {object[]} selection - The css selection name also used to maintain a list of filtered dimensions (TODO - is this needed anymore?)
  */
-Series.prototype.clickEvent = function(series, filter, selection) {
+insight.Series.prototype.clickEvent = function(series, filter, selection) {
 
 };
 </code></pre>
@@ -446,7 +334,7 @@ Series.prototype.clickEvent = function(series, filter, selection) {
         
 
         <footer>
-            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jun 25 2014 16:53:06 GMT+0100 (BST)
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Jun 26 2014 13:59:17 GMT+0100 (BST)
         </footer>
     </div>
 </div>

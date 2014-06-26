@@ -21,16 +21,14 @@ var dataset =
 {"Id":20,"Forename":"Frances","Surname":"Lawson","Country":"Northern Ireland","DisplayColour":"#e739c9","Age":14,"IQ":71, "Interests":["Triathlon", "Music", "Mountain Biking"], "Gender":'Female'}];
 
 
-var chartGroup = new ChartGroup('Testing');
+var chartGroup = new insight.Dashboard('Testing');
 
 describe("Grouping tests", function() {
 
     it("will initialize without error", function() {
-        var ndx = crossfilter(dataset);
+        var ndx = chartGroup.addData(dataset);
 
-        var dimension =  chartGroup.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
-        
-        var group = new Grouping(dimension);
+        var group =  chartGroup.group(ndx, 'country', function(d){return d.Country;});
 
         var data = group.getData();
         
@@ -38,11 +36,9 @@ describe("Grouping tests", function() {
     });
 
     it("will correctly sum a property", function() {
-        var ndx = crossfilter(dataset);
+        var ndx = chartGroup.addData(dataset);
 
-        var dimension =  chartGroup.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
-        
-        var group = new Grouping(dimension);
+        var group =  chartGroup.group(ndx, 'country', function(d){return d.Country;});
         
         group.sum(['IQ']);
 
@@ -56,11 +52,9 @@ describe("Grouping tests", function() {
     });
 
     it("will correctly average a property", function() {
-        var ndx = crossfilter(dataset);
+        var ndx = chartGroup.addData(dataset);
 
-        var dimension =  chartGroup.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
-        
-        var group = new Grouping(dimension);
+        var group =  chartGroup.group(ndx, 'country', function(d){return d.Country;});
         
         group.sum(['IQ']);
 
@@ -76,12 +70,10 @@ describe("Grouping tests", function() {
 
     it("will order data correctly, using the count by default", function() {
         
-        var ndx = crossfilter(dataset);
+        var ndx = chartGroup.addData(dataset);
 
-        var dimension =  chartGroup.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
-        
-        var group = new Grouping(dimension)
-                                        .ordered(true);
+        var group =  chartGroup.group(ndx, 'country', function(d){return d.Country;})
+                        .ordered(true);
         
         var data = group.getOrderedData();
         
@@ -95,10 +87,9 @@ describe("Grouping tests", function() {
 
         var ndx = crossfilter(dataset);
 
-        var dimension =  chartGroup.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
-        
-        var group = new Grouping(dimension)
-                                        .ordered(true);
+        var ndx = chartGroup.addData(dataset);
+
+        var group =  chartGroup.group(ndx, 'country', function(d){return d.Country;}).ordered(true);
         
         var data = group.getOrderedData();
         
@@ -110,17 +101,17 @@ describe("Grouping tests", function() {
     
     it("will calculate a cumulative property", function() {
         
-        var ndx = crossfilter(dataset);
+        var ndx = chartGroup.addData(dataset);
 
-        var dimension =  chartGroup.addDimension(ndx, 'age', function(d){return d.Age;}, function(d){return d.Age;});
-        
-        var group = new Grouping(dimension)
-                        .mean(['IQ'])
-                        .cumulative(['IQ.Sum','IQ.Average']);
+        var group =  chartGroup.group(ndx, 'age', function(d){return d.Age;});
+
+        group
+            .mean(['IQ'])
+            .cumulative(['IQ.Sum','IQ.Average']);
 
         var data = group.getData();
 
-        
+        console.log(data);
         expect(data[data.length-1].value.IQ.AverageCumulative).toBe(1203);
         expect(data[data.length-1].value.IQ.SumCumulative).toBe(1616);
 
@@ -129,11 +120,9 @@ describe("Grouping tests", function() {
     
     it("will correctly count the values in an value property", function() {
         
-        var ndx = crossfilter(dataset);
+        var ndx = chartGroup.addData(dataset);
 
-        var dimension =  chartGroup.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
-        
-        var group = new Grouping(dimension)
+        var group =  chartGroup.group(ndx, 'country', function(d){return d.Country;})
                             .count(["Gender"]);
 
         var data = group.getData();
@@ -148,12 +137,9 @@ describe("Grouping tests", function() {
 
     it("will correctly count the values in an array property", function() {
         
-        var ndx = crossfilter(dataset);
+        var ndx = chartGroup.addData(dataset);
 
-        var dimension =  chartGroup.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
-        
-        var group = new Grouping(dimension)
-                            .count(["Interests"]);
+        var group =  chartGroup.group(ndx, 'country', function(d){return d.Country;}).count(["Interests"]);
 
         var data = group.getData();
 
@@ -169,12 +155,13 @@ describe("Grouping tests", function() {
 
     it("will update the count after a dimensional filter", function() {
         
-        var ndx = crossfilter(dataset);
+        var ndx = chartGroup.addData(dataset);
 
-        var dimension =  chartGroup.addDimension(ndx, 'country', function(d){return d.Country;}, function(d){return d.Country;});
-        var age =  chartGroup.addDimension(ndx, 'age', function(d){return d.Age;}, function(d){return d.Age;});
         
-        var group = new Grouping(dimension)
+        var age =  chartGroup.group(ndx, 'age', function(d){return d.Age;});
+        
+
+        var group =  chartGroup.group(ndx, 'country', function(d){return d.Country;}).count(["Interests"])
                             .count(["Gender", "Interests"]);
 
         var data = group.getData();
@@ -188,7 +175,7 @@ describe("Grouping tests", function() {
         expect(scotland.value.Interests.Total).toBe(9);
 
         //filter age by people older than 10, to remove an entry from the scotland group and hopefully trigger a recalculation of the property counts
-        age.Dimension.filter(function(d){
+        age.dimension.Dimension.filter(function(d){
             return d > 10;
         });
 
@@ -204,12 +191,14 @@ describe("Grouping tests", function() {
 
     it("will correctly aggregate a multi dimension", function() {
         
-        var ndx = crossfilter(dataset);
+        var ndx = chartGroup.addData(dataset);
 
-        var dimension =  chartGroup.addDimension(ndx, 'interests', function(d){return d.Interests;}, null, true);
-        var ages =  chartGroup.addDimension(ndx, 'ages', function(d){return d.Age;}, null, false);
+        var group =  chartGroup.group(ndx, 'interests', function(d){return d.Interests;}, true)
+                            .count(["Interests"]);
         
-        var group = new Grouping(dimension).count(["Interests"]);
+        var age =  chartGroup.group(ndx, 'age', function(d){return d.Age;});
+        
+
 
         var data = group.getData();
 
@@ -219,7 +208,7 @@ describe("Grouping tests", function() {
         expect(ballet.value).toBe(1);
         expect(triathlon.value).toBe(11);        
 
-        ages.Dimension.filter(function(d){ 
+        age.dimension.Dimension.filter(function(d){ 
             return d > 10; 
         });
 
@@ -234,16 +223,16 @@ describe("Grouping tests", function() {
     });
 
 
-
     it("will correctly aggregate a sorted multi dimension", function() {
         
-        var ndx = crossfilter(dataset);
+        var ndx = chartGroup.addData(dataset);
 
-        var dimension =  chartGroup.addDimension(ndx, 'interests', function(d){return d.Interests;}, null, true);
-        var ages =  chartGroup.addDimension(ndx, 'ages', function(d){return d.Age;}, null, false);
+        var group =  chartGroup.group(ndx, 'interests', function(d){return d.Interests;}, true)
+                            .count(["Interests"]);
         
-        var group = new Grouping(dimension).count(["Interests"]);
-
+        var age =  chartGroup.group(ndx, 'age', function(d){return d.Age;});
+        
+        
         var data = group.getOrderedData();
 
         var ballet = group.getData().filter(function(a){ return a.key=='Ballet'; })[0];
@@ -259,7 +248,7 @@ describe("Grouping tests", function() {
             current = d.value;
         });
 
-        ages.Dimension.filter(function(d){ 
+        age.dimension.Dimension.filter(function(d){ 
             return d > 10; 
         });
 

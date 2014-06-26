@@ -34,34 +34,9 @@
     </div>
     <ul class="list">
     
-        <li class="item" data-name="Dashboard">
+        <li class="item" data-name="insight#findMax">
             <span class="title">
-                <a href="Dashboard.html">Dashboard</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            <span class="subtitle">Methods</span>
-            
-                <li data-name="Dashboard#addData"><a href="Dashboard.html#addData">addData</a></li>
-            
-                <li data-name="Dashboard#group"><a href="Dashboard.html#group">group</a></li>
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="DataSet">
-            <span class="title">
-                <a href="DataSet.html">DataSet</a>
+                <a href="insight_findMax.html">insight#findMax</a>
                 
             </span>
             <ul class="members itemMembers">
@@ -78,9 +53,9 @@
             </ul>
         </li>
     
-        <li class="item" data-name="Dimension">
+        <li class="item" data-name="insight#findMax">
             <span class="title">
-                <a href="Dimension.html">Dimension</a>
+                <a href="insight_findMax.html">insight#findMax</a>
                 
             </span>
             <ul class="members itemMembers">
@@ -97,96 +72,9 @@
             </ul>
         </li>
     
-        <li class="item" data-name="findMax">
+        <li class="item" data-name="insight#tickRotation">
             <span class="title">
-                <a href="findMax.html">findMax</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="findMax">
-            <span class="title">
-                <a href="findMax.html">findMax</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="Grouping">
-            <span class="title">
-                <a href="Grouping.html">Grouping</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            <span class="subtitle">Methods</span>
-            
-                <li data-name="Grouping#computeFunction"><a href="Grouping.html#computeFunction">computeFunction</a></li>
-            
-                <li data-name="Grouping#count"><a href="Grouping.html#count">count</a></li>
-            
-                <li data-name="Grouping#cumulative"><a href="Grouping.html#cumulative">cumulative</a></li>
-            
-                <li data-name="Grouping#filter"><a href="Grouping.html#filter">filter</a></li>
-            
-                <li data-name="Grouping#getData"><a href="Grouping.html#getData">getData</a></li>
-            
-                <li data-name="Grouping#getOrderedData"><a href="Grouping.html#getOrderedData">getOrderedData</a></li>
-            
-                <li data-name="Grouping#initialize"><a href="Grouping.html#initialize">initialize</a></li>
-            
-                <li data-name="Grouping#mean"><a href="Grouping.html#mean">mean</a></li>
-            
-                <li data-name="Grouping#ordered"><a href="Grouping.html#ordered">ordered</a></li>
-            
-                <li data-name="Grouping#orderFunction"><a href="Grouping.html#orderFunction">orderFunction</a></li>
-            
-                <li data-name="Grouping#recalculate"><a href="Grouping.html#recalculate">recalculate</a></li>
-            
-                <li data-name="Grouping#reduceMultiDimension"><a href="Grouping.html#reduceMultiDimension">reduceMultiDimension</a></li>
-            
-                <li data-name="Grouping#sum"><a href="Grouping.html#sum">sum</a></li>
-            
-                <li data-name="Grouping#unique"><a href="Grouping.html#unique">unique</a></li>
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="tickRotation">
-            <span class="title">
-                <a href="tickRotation.html">tickRotation</a>
+                <a href="insight_tickRotation.html">insight#tickRotation</a>
                 
             </span>
             <ul class="members itemMembers">
@@ -213,215 +101,220 @@
     
     <section>
         <article>
-            <pre class="prettyprint source"><code>/**
- * This method is called when any post aggregation calculations, provided by the computeFunction() setter, need to be recalculated.
- * @constructor
- * @returns {this} this - Description
- * @param {object} name - Description
- */
-var Dashboard = function Dashboard(name) {
-    this.Name = name;
-    this.Charts = [];
-    this.Dimensions = [];
-    this.FilteredDimensions = [];
-    this.Groups = [];
-    this.ComputedGroups = [];
-    this.DimensionChartMap = {};
+            <pre class="prettyprint source"><code>insight.Dashboard = (function(insight) {
 
-    //initialize the crossfilter to be null, populate as load() is called
-    this.DataSets = [];
-    this.ndx = null;
+    /**
+     * This method is called when any post aggregation calculations, provided by the computeFunction() setter, need to be recalculated.
+     * @constructor
+     * @returns {this} this - Description
+     * @param {object} name - Description
+     */
+    var Dashboard = function Dashboard(name) {
+        this.Name = name;
+        this.Charts = [];
+        this.Dimensions = [];
+        this.FilteredDimensions = [];
+        this.Groups = [];
+        this.ComputedGroups = [];
+        this.DimensionChartMap = {};
 
-    return this;
-};
+        //initialize the crossfilter to be null, populate as load() is called
+        this.DataSets = [];
+        this.ndx = null;
+
+        return this;
+    };
 
 
-/**
- * This method loads a JSON data set into the Dashboard, creating a new crossfiltered set and returnign that to the user to reference when creating charts/groupings.
- * @returns {object} return - A crossfilter dataset
- * @param {object} data - an array of objects to add to the dashboard
- * @param {string} name - an optional name for the dataset if multiple sets are being loaded into the dashboard.
- */
-Dashboard.prototype.addData = function(data) {
-    //type detection and preprocessing steps here
+    /**
+     * This method loads a JSON data set into the Dashboard, creating a new crossfiltered set and returnign that to the user to reference when creating charts/groupings.
+     * @returns {object} return - A crossfilter dataset
+     * @param {object} data - an array of objects to add to the dashboard
+     * @param {string} name - an optional name for the dataset if multiple sets are being loaded into the dashboard.
+     */
+    Dashboard.prototype.addData = function(data) {
+        //type detection and preprocessing steps here
 
-    var ndx = crossfilter(data);
+        var ndx = crossfilter(data);
 
-    this.DataSets.push(ndx);
+        this.DataSets.push(ndx);
 
-    return ndx;
-};
+        return ndx;
+    };
 
-Dashboard.prototype.addChart = function(chart) {
+    Dashboard.prototype.addChart = function(chart) {
 
-    var self = this;
+        var self = this;
 
-    chart.triggerRedraw = this.redrawCharts.bind(this);
+        chart.triggerRedraw = this.redrawCharts.bind(this);
 
-    this.Charts.push(chart);
-    chart.series()
-        .forEach(function(s) {
-            if (s.data.dimension) {
-                if (self.DimensionChartMap[s.data.dimension.Name]) {
-                    if (self.DimensionChartMap[s.data.dimension.Name].indexOf(chart) == -1) {
-                        self.DimensionChartMap[s.data.dimension.Name].push(chart);
+        this.Charts.push(chart);
+        chart.series()
+            .forEach(function(s) {
+                if (s.data.dimension) {
+                    if (self.DimensionChartMap[s.data.dimension.Name]) {
+                        if (self.DimensionChartMap[s.data.dimension.Name].indexOf(chart) == -1) {
+                            self.DimensionChartMap[s.data.dimension.Name].push(chart);
+                        }
+                    } else {
+                        self.DimensionChartMap[s.data.dimension.Name] = [chart];
                     }
-                } else {
-                    self.DimensionChartMap[s.data.dimension.Name] = [chart];
                 }
-            }
-        });
-
-    return chart;
-};
-
-
-/**
- * This method takes a dataset, name and grouping function, returning a Grouping with a Dimension created as part of that process.
- * @returns {object} Grouping - An aggregated Grouping that can be manipulated and have calculations applied to it
- * @param {object} dataset - A crossfilter, for example, returned by the addData() method
- * @param {string} name - A uniquely identifying name for the dimension along which this grouping is created. Used to identify identical dimensions in other datasets.
- * @param {function} groupFunction - The function used to group the dimension along.  Select the property of the underlying data that the dimension is to be defined on. Rounding or data manipulation can alter the granularity of the dimension
- */
-Dashboard.prototype.group = function(dataset, name, groupFunction, multi) {
-
-    var dim = new Dimension(name, groupFunction, dataset.dimension(groupFunction), groupFunction, multi);
-
-    this.Dimensions.push(dim);
-
-    var group = new Grouping(dim);
-
-    group.preFilter = this.chartFilterHandler.bind(this);
-
-    this.Groups.push(group);
-
-    return group;
-};
-
-Dashboard.prototype.filterFunction = function(filter, element) {
-    var value = filter.key ? filter.key : filter;
-
-    return {
-        name: value,
-        filterFunction: function(d) {
-            if (Array.isArray(d)) {
-                return d.indexOf(value) != -1;
-            } else {
-                return String(d) == String(value);
-            }
-        }
-    };
-};
-
-
-Dashboard.prototype.compareFilters = function(filterFunction) {
-    return function(d) {
-        return String(d.name) == String(filterFunction.name);
-    };
-};
-
-
-Dashboard.prototype.applyCSSClasses = function(chart, value, dimensionSelector) {
-    var listeningSeries = this.DimensionChartMap[chart.data.dimension.Name];
-
-    listeningSeries.forEach(function(chart) {
-
-        chart.highlight(dimensionSelector, value);
-
-
-    });
-};
-
-Dashboard.prototype.chartFilterHandler = function(chart, value, dimensionSelector) {
-    var self = this;
-
-    this.applyCSSClasses(chart, value, dimensionSelector);
-
-    var dimension = chart.data.dimension;
-
-    var filterFunction = this.filterFunction(value);
-
-    if (filterFunction) {
-        var dims = this.Dimensions
-            .filter(dimension.comparer);
-
-        var activeDim = this.FilteredDimensions
-            .filter(dimension.comparer);
-
-        if (!activeDim.length) {
-            this.FilteredDimensions.push(dimension);
-        }
-
-        var comparerFunction = this.compareFilters(filterFunction);
-
-        dims.map(function(dim) {
-
-            var filterExists = dim.Filters
-                .filter(comparerFunction)
-                .length;
-
-            //if the dimension is already filtered by this value, toggle (remove) the filter
-            if (filterExists) {
-                InsightUtils.removeMatchesFromArray(dim.Filters, comparerFunction);
-
-            } else {
-                // add the provided filter to the list for this dimension
-
-                dim.Filters.push(filterFunction);
-            }
-
-            // reset this dimension if no filters exist, else apply the filter to the dataset.
-            if (dim.Filters.length === 0) {
-
-                InsightUtils.removeItemFromArray(self.FilteredDimensions, dim);
-                dim.Dimension.filterAll();
-
-            } else {
-                dim.Dimension.filter(function(d) {
-                    var vals = dim.Filters
-                        .map(function(func) {
-                            return func.filterFunction(d);
-                        });
-
-                    return vals.filter(function(result) {
-                            return result;
-                        })
-                        .length > 0;
-                });
-            }
-        });
-
-        this.Groups.forEach(function(group) {
-            group.recalculate();
-
-        });
-
-        this.ComputedGroups
-            .forEach(
-                function(group) {
-                    group.compute();
-                }
-        );
-
-        this.redrawCharts();
-    }
-};
-
-Dashboard.prototype.initCharts = function() {
-    this.Charts
-        .forEach(
-            function(chart) {
-                chart.init();
             });
-};
+
+        return chart;
+    };
 
 
-Dashboard.prototype.redrawCharts = function() {
-    for (var i = 0; i &lt; this.Charts
-        .length; i++) {
-        this.Charts[i].draw();
-    }
-};
+    /**
+     * This method takes a dataset, name and grouping function, returning a Grouping with a Dimension created as part of that process.
+     * @returns {object} Grouping - An aggregated Grouping that can be manipulated and have calculations applied to it
+     * @param {object} dataset - A crossfilter, for example, returned by the addData() method
+     * @param {string} name - A uniquely identifying name for the dimension along which this grouping is created. Used to identify identical dimensions in other datasets.
+     * @param {function} groupFunction - The function used to group the dimension along.  Select the property of the underlying data that the dimension is to be defined on. Rounding or data manipulation can alter the granularity of the dimension
+     */
+    Dashboard.prototype.group = function(dataset, name, groupFunction, multi) {
+
+        var dim = new insight.Dimension(name, groupFunction, dataset.dimension(groupFunction), groupFunction, multi);
+
+        this.Dimensions.push(dim);
+
+        var group = new insight.Grouping(dim);
+
+        group.preFilter = this.chartFilterHandler.bind(this);
+
+        this.Groups.push(group);
+
+        return group;
+    };
+
+    Dashboard.prototype.filterFunction = function(filter, element) {
+        var value = filter.key ? filter.key : filter;
+
+        return {
+            name: value,
+            filterFunction: function(d) {
+                if (Array.isArray(d)) {
+                    return d.indexOf(value) != -1;
+                } else {
+                    return String(d) == String(value);
+                }
+            }
+        };
+    };
+
+
+    Dashboard.prototype.compareFilters = function(filterFunction) {
+        return function(d) {
+            return String(d.name) == String(filterFunction.name);
+        };
+    };
+
+
+    Dashboard.prototype.applyCSSClasses = function(chart, value, dimensionSelector) {
+        var listeningSeries = this.DimensionChartMap[chart.data.dimension.Name];
+
+        listeningSeries.forEach(function(chart) {
+
+            chart.highlight(dimensionSelector, value);
+
+
+        });
+    };
+
+    Dashboard.prototype.chartFilterHandler = function(chart, value, dimensionSelector) {
+        var self = this;
+
+        this.applyCSSClasses(chart, value, dimensionSelector);
+
+        var dimension = chart.data.dimension;
+
+        var filterFunction = this.filterFunction(value);
+
+        if (filterFunction) {
+            var dims = this.Dimensions
+                .filter(dimension.comparer);
+
+            var activeDim = this.FilteredDimensions
+                .filter(dimension.comparer);
+
+            if (!activeDim.length) {
+                this.FilteredDimensions.push(dimension);
+            }
+
+            var comparerFunction = this.compareFilters(filterFunction);
+
+            dims.map(function(dim) {
+
+                var filterExists = dim.Filters
+                    .filter(comparerFunction)
+                    .length;
+
+                //if the dimension is already filtered by this value, toggle (remove) the filter
+                if (filterExists) {
+                    InsightUtils.removeMatchesFromArray(dim.Filters, comparerFunction);
+
+                } else {
+                    // add the provided filter to the list for this dimension
+
+                    dim.Filters.push(filterFunction);
+                }
+
+                // reset this dimension if no filters exist, else apply the filter to the dataset.
+                if (dim.Filters.length === 0) {
+
+                    InsightUtils.removeItemFromArray(self.FilteredDimensions, dim);
+                    dim.Dimension.filterAll();
+
+                } else {
+                    dim.Dimension.filter(function(d) {
+                        var vals = dim.Filters
+                            .map(function(func) {
+                                return func.filterFunction(d);
+                            });
+
+                        return vals.filter(function(result) {
+                                return result;
+                            })
+                            .length > 0;
+                    });
+                }
+            });
+
+            this.Groups.forEach(function(group) {
+                group.recalculate();
+
+            });
+
+            this.ComputedGroups
+                .forEach(
+                    function(group) {
+                        group.compute();
+                    }
+            );
+
+            this.redrawCharts();
+        }
+    };
+
+    Dashboard.prototype.initCharts = function() {
+        this.Charts
+            .forEach(
+                function(chart) {
+                    chart.init();
+                });
+    };
+
+
+    Dashboard.prototype.redrawCharts = function() {
+        for (var i = 0; i &lt; this.Charts
+            .length; i++) {
+            this.Charts[i].draw();
+        }
+    };
+
+    return Dashboard;
+})(insight);
 </code></pre>
         </article>
     </section>
@@ -433,7 +326,7 @@ Dashboard.prototype.redrawCharts = function() {
         
 
         <footer>
-            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jun 25 2014 16:53:06 GMT+0100 (BST)
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Jun 26 2014 13:59:17 GMT+0100 (BST)
         </footer>
     </div>
 </div>

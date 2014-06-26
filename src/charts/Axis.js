@@ -1,4 +1,4 @@
-function Axis(chart, name, scale, anchor) {
+insight.Axis = function Axis(chart, name, scale, anchor) {
     this.chart = chart;
     this.scale = scale;
     this.anchor = anchor ? anchor : 'left';
@@ -263,4 +263,4 @@ function Axis(chart, name, scale, anchor) {
             //this.drawGridLines();
         }
     };
-}
+};

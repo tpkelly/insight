@@ -1,6 +1,6 @@
-function LineSeries(name, chart, data, x, y, color) {
+insight.LineSeries = function LineSeries(name, chart, data, x, y, color) {
 
-    Series.call(this, name, chart, data, x, y, color);
+    insight.Series.call(this, name, chart, data, x, y, color);
 
     var self = this;
 
@@ -125,7 +125,7 @@ function LineSeries(name, chart, data, x, y, color) {
 
         return rangeSelector[0].length;
     };
-}
+};
 
-LineSeries.prototype = Object.create(Series.prototype);
-LineSeries.prototype.constructor = LineSeries;
+insight.LineSeries.prototype = Object.create(insight.Series.prototype);
+insight.LineSeries.prototype.constructor = insight.LineSeries;

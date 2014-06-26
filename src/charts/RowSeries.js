@@ -1,6 +1,6 @@
-function RowSeries(name, chart, data, x, y, color) {
+insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
 
-    Series.call(this, name, chart, data, x, y, color);
+    insight.Series.call(this, name, chart, data, x, y, color);
 
     var self = this;
     var stacked = d3.functor(false);
@@ -222,8 +222,8 @@ function RowSeries(name, chart, data, x, y, color) {
     };
 
     return this;
-}
+};
 
 
-RowSeries.prototype = Object.create(Series.prototype);
-RowSeries.prototype.constructor = RowSeries;
+insight.RowSeries.prototype = Object.create(insight.Series.prototype);
+insight.RowSeries.prototype.constructor = insight.RowSeries;

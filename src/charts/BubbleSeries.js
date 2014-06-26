@@ -1,6 +1,6 @@
-function BubbleSeries(name, chart, data, x, y, color) {
+insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
 
-    Series.call(this, name, chart, data, x, y, color);
+    insight.Series.call(this, name, chart, data, x, y, color);
 
     var radiusFunction = d3.functor(10);
     var fillFunction = d3.functor(color);
@@ -114,7 +114,7 @@ function BubbleSeries(name, chart, data, x, y, color) {
         bubbles.selectAll("." + InsightConstants.ToolTipTextClass)
             .text(this.tooltipFunction());
     };
-}
+};
 
-BubbleSeries.prototype = Object.create(Series.prototype);
-BubbleSeries.prototype.constructor = BubbleSeries;
+insight.BubbleSeries.prototype = Object.create(insight.Series.prototype);
+insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;

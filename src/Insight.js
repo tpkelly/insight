@@ -1,0 +1,7 @@
+var insight = (function() {
+
+    return {
+
+    };
+
+})();
