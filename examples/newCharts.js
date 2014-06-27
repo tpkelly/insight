@@ -3,12 +3,9 @@ $(document)
     {
         d3.json('countries.json', function(data)
         {
+            var dataset = new insight.DataSet(data);
 
-            var exampleGroup = new ChartGroup("Example Group");
-
-            var dataset = new Group(data);
-
-            var chart = new Chart('Chart 1', "#chart1")
+            var chart = new insight.Chart('Chart 1', "#chart1")
                 .width(600)
                 .height(300)
                 .margin(
@@ -19,14 +16,14 @@ $(document)
                     bottom: 40
                 });
 
-            var xScale = new Scale(chart, '', d3.scale.ordinal(), 'h', 'ordinal');
-            var yScale = new Scale(chart, '', d3.scale.linear(), 'v', 'linear');
+            var xScale = new insight.Scale(chart, '', 'h', Scales.Ordinal);
+            var yScale = new insight.Scale(chart, '', 'v', Scales.Linear);
 
-            var yScale2 = new Scale(chart, '', d3.scale.linear(), 'v', 'linear');
+            var yScale2 = new insight.Scale(chart, '', 'v', Scales.Linear);
 
-            var series = new ColumnSeries('countryColumn', chart, dataset, xScale, yScale, 'silver');
-            var line = new LineSeries('valueLine', chart, dataset, xScale, yScale2, 'cyan')
-                .yFunction(function(d)
+            var series = new insight.ColumnSeries('countryColumn', chart, dataset, xScale, yScale, 'silver');
+            var line = new insight.LineSeries('valueLine', chart, dataset, xScale, yScale2, 'cyan')
+                .valueFunction(function(d)
                 {
                     return d.pct;
                 })
@@ -64,15 +61,13 @@ $(document)
 
             chart.series([series, line]);
 
-            var xAxis = new Axis(chart, "x", xScale, 'bottom')
+            var xAxis = new insight.Axis(chart, "x", xScale, 'bottom')
                 .textAnchor('middle');
 
-            var yAxis = new Axis(chart, "y", yScale, 'left');
-            var yAxis2 = new Axis(chart, "y2", yScale2, 'right')
-                .format(InsightFormatters.percentageFormatter);
+            var yAxis = new insight.Axis(chart, "y", yScale, 'left');
+            var yAxis2 = new insight.Axis(chart, "y2", yScale2, 'right')
+                .labelFormat(InsightFormatters.percentageFormatter);
 
-            exampleGroup.addChart(chart);
-
-            exampleGroup.initCharts();
+            insight.drawCharts();
         });
     });

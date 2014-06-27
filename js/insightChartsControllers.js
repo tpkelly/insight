@@ -66,6 +66,9 @@
                     dataType: 'html',
                     success: function(result)
                     {
+
+                        insight.init();
+
                         $('#source')
                             .text(result);
 

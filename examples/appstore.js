@@ -17,20 +17,16 @@ $(document)
                 d.releaseDate = new Date(d.releaseDate);
             });
 
-            console.log(data);
+            var dataset = new insight.DataSet(data);
 
-            var charts = new Dashboard('AppStore');
-
-            var dataset = charts.addData(data);
-
-            var genres = charts.group(dataset, 'genre', function(d)
+            var genres = dataset.group('genre', function(d)
                 {
                     return d.primaryGenreName;
                 })
                 .sum(['userRatingCount'])
                 .mean(['price', 'averageUserRating', 'userRatingCount', 'fileSizeBytes']);
 
-            var dates = charts.group(dataset, 'date', function(d)
+            var dates = dataset.group('date', function(d)
                 {
                     return new Date(d.releaseDate.getFullYear(), d.releaseDate.getMonth(), 1);
                 })
@@ -40,9 +36,7 @@ $(document)
                     return d.key < new Date(2014, 0, 1);
                 });
 
-            console.log(dates.getData());
-
-            var chart = new Chart('Chart 1', "#genreCount")
+            var chart = new insight.Chart('Chart 1', "#genreCount")
                 .width(700)
                 .height(350)
                 .margin(
@@ -54,11 +48,11 @@ $(document)
                 })
                 .barPadding(0.3);
 
-            var xScale = new Scale(chart, "Genre", d3.scale.ordinal(), 'h', 'ordinal')
+            var xScale = new insight.Scale(chart, "Genre", 'h', Scales.Ordinal)
                 .ordered(true);
-            var yScale = new Scale(chart, "# Apps", d3.scale.linear(), 'v', 'linear');
+            var yScale = new insight.Scale(chart, "# Apps", 'v', Scales.Linear);
 
-            var series = new ColumnSeries('genre', chart, genres, xScale, yScale, 'silver');
+            var series = new insight.ColumnSeries('genre', chart, genres, xScale, yScale, 'silver');
 
             series.series = [
             {
@@ -80,17 +74,17 @@ $(document)
 
             chart.series([series]);
 
-            var xAxis = new Axis(chart, "x", xScale, 'bottom')
+            var xAxis = new insight.Axis(chart, "x", xScale, 'bottom')
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .labelOrientation('tb');
 
-            var yAxis = new Axis(chart, "y", yScale, 'left')
+            var yAxis = new insight.Axis(chart, "y", yScale, 'left')
                 .tickSize(5);
 
 
-            var timeChart = new Chart('Chart 2', "#releases")
+            var timeChart = new insight.Chart('Chart 2', "#releases")
                 .width(800)
                 .height(350)
                 .margin(
@@ -101,17 +95,13 @@ $(document)
                     bottom: 100
                 });
 
-            var xTime = new Scale(timeChart, "Month", d3.time.scale(), 'h', 'time');
-            var yTime = new Scale(timeChart, "New Apps", d3.scale.linear(), 'v', 'linear');
+            var xTime = new insight.Scale(timeChart, "Month", 'h', Scales.Time);
+            var yTime = new insight.Scale(timeChart, "New Apps", 'v', Scales.Linear);
 
-            var line = new LineSeries('valueLine', timeChart, dates, xTime, yTime, 'cyan')
-                .yFunction(function(d)
+            var line = new insight.LineSeries('valueLine', timeChart, dates, xTime, yTime, 'cyan')
+                .valueFunction(function(d)
                 {
                     return d.value.CountCumulative;
-                })
-                .xFunction(function(d)
-                {
-                    return d.key;
                 });
 
 
@@ -120,16 +110,16 @@ $(document)
 
             timeChart.zoomable(xTime);
 
-            var xAxis = new Axis(timeChart, "x", xTime, 'bottom')
+            var xAxis = new insight.Axis(timeChart, "x", xTime, 'bottom')
                 .labelOrientation('tb')
                 .tickSize(5)
                 .textAnchor('start')
-                .format(InsightFormatters.dateFormatter);
+                .labelFormat(InsightFormatters.dateFormatter);
 
-            var yAxis = new Axis(timeChart, "y", yTime, 'left')
+            var yAxis = new insight.Axis(timeChart, "y", yTime, 'left')
                 .tickSize(5);
 
-            var bubbleChart = new Chart('Chart 3', "#bubbleChart")
+            var bubbleChart = new insight.Chart('Chart 3', "#bubbleChart")
                 .width(800)
                 .height(550)
                 .margin(
@@ -140,11 +130,11 @@ $(document)
                     bottom: 100
                 });
 
-            var bubbleX = new Scale(bubbleChart, 'Average Number of Ratings', d3.scale.linear(), 'h', 'linear');
+            var bubbleX = new insight.Scale(bubbleChart, 'Average Number of Ratings', 'h', Scales.Linear);
 
-            var bubbleY = new Scale(bubbleChart, 'Average Price', d3.scale.linear(), 'v', 'linear');
+            var bubbleY = new insight.Scale(bubbleChart, 'Average Price', 'v', Scales.Linear);
 
-            var bubbles = new BubbleSeries('bubbles', bubbleChart, genres, bubbleX, bubbleY, 'cyan')
+            var bubbles = new insight.BubbleSeries('bubbles', bubbleChart, genres, bubbleX, bubbleY, 'cyan')
                 .xFunction(function(d)
                 {
                     return d.value.userRatingCount.Average;
@@ -162,25 +152,21 @@ $(document)
                     return d.key;
                 });
 
-            var bubbleXAxis = new Axis(bubbleChart, "x", bubbleX, 'bottom')
+            var bubbleXAxis = new insight.Axis(bubbleChart, "x", bubbleX, 'bottom')
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .labelOrientation('tb');
 
-            var bubbleYAxis = new Axis(bubbleChart, "y", bubbleY, 'left')
+            var bubbleYAxis = new insight.Axis(bubbleChart, "y", bubbleY, 'left')
                 .tickSize(5);
 
 
             bubbleChart.series([bubbles]);
 
-            charts.addChart(bubbleChart);
+            insight.drawCharts();
 
-            charts.addChart(timeChart);
 
-            charts.addChart(chart);
-
-            charts.initCharts();
             $('.btn')
                 .button()
 
@@ -193,7 +179,7 @@ $(document)
                         .splice(ind, 1);
                     var f = bubbleChart.scales();
 
-                    var newScale = new Scale(bubbleChart, 'Average Rating', d3.scale.linear(), 'v', 'linear');
+                    var newScale = new insight.Scale(bubbleChart, 'Average Rating', 'v', Scales.Linear);
 
                     bubbles.y = newScale;
                     bubbles.yFunction(function(d)
@@ -207,7 +193,7 @@ $(document)
 
                     newScale.initialize();
 
-                    charts.redrawCharts();
+                    insight.redrawCharts();
                 });
 
             $('#yavgratings')
@@ -219,7 +205,7 @@ $(document)
                         .splice(ind, 1);
                     var f = bubbleChart.scales();
 
-                    var newScale = new Scale(bubbleChart, 'Average Rating', d3.scale.linear(), 'v', 'linear');
+                    var newScale = new insight.Scale(bubbleChart, 'Average Rating', 'v', Scales.Linear);
 
                     bubbles.y = newScale;
                     bubbles.yFunction(function(d)
@@ -233,29 +219,29 @@ $(document)
 
                     newScale.initialize();
 
-                    charts.redrawCharts();
+                    insight.redrawCharts();
                 });
 
             $('#timecumulative')
                 .click(function()
                 {
-                    line.yFunction(function(d)
+                    line.valueFunction(function(d)
                     {
                         return d.value.CountCumulative;
                     });
 
-                    charts.redrawCharts();
+                    insight.redrawCharts();
                 });
 
             $('#timemonthly')
                 .click(function()
                 {
-                    line.yFunction(function(d)
+                    line.valueFunction(function(d)
                     {
                         return d.value.Count;
                     });
 
-                    charts.redrawCharts();
+                    insight.redrawCharts();
                 });
 
             $('#yavgprice')
@@ -267,7 +253,7 @@ $(document)
                         .splice(ind, 1);
                     var f = bubbleChart.scales();
 
-                    var newScale = new Scale(bubbleChart, 'Average Price', d3.scale.linear(), 'v', 'linear');
+                    var newScale = new insight.Scale(bubbleChart, 'Average Price', 'v', Scales.Linear);
 
                     bubbles.y = newScale;
                     bubbles.yFunction(function(d)
@@ -281,7 +267,7 @@ $(document)
 
                     newScale.initialize();
 
-                    charts.redrawCharts();
+                    insight.redrawCharts();
                 });
 
             $('#xsumrating')
@@ -294,7 +280,7 @@ $(document)
                         .splice(ind, 1);
                     var f = bubbleChart.scales();
 
-                    var newScale = new Scale(bubbleChart, 'Total Number of Ratings', d3.scale.linear(), 'h', 'linear');
+                    var newScale = new insight.Scale(bubbleChart, 'Total Number of Ratings', 'h', Scales.Linear);
 
                     bubbles.x = newScale;
                     bubbles.xFunction(function(d)
@@ -308,7 +294,7 @@ $(document)
 
                     newScale.initialize();
 
-                    charts.redrawCharts();
+                    insight.redrawCharts();
                 });
 
             $('#xavgrating')
@@ -321,7 +307,7 @@ $(document)
                         .splice(ind, 1);
                     var f = bubbleChart.scales();
 
-                    var newScale = new Scale(bubbleChart, 'Average Number of Ratings', d3.scale.linear(), 'h', 'linear');
+                    var newScale = new insight.Scale(bubbleChart, 'Average Number of Ratings', 'h', Scales.Linear);
 
                     bubbles.x = newScale;
 
@@ -336,7 +322,7 @@ $(document)
 
                     newScale.initialize();
 
-                    charts.redrawCharts();
+                    insight.redrawCharts();
                 });
 
             $('#xavgsize')
@@ -349,7 +335,7 @@ $(document)
                         .splice(ind, 1);
                     var f = bubbleChart.scales();
 
-                    var newScale = new Scale(bubbleChart, 'Average File Size (Mb)', d3.scale.linear(), 'h', 'linear');
+                    var newScale = new insight.Scale(bubbleChart, 'Average File Size (Mb)', 'h', Scales.Linear);
 
                     bubbles.x = newScale;
 
@@ -364,7 +350,7 @@ $(document)
 
                     newScale.initialize();
 
-                    charts.redrawCharts();
+                    insight.redrawCharts();
                 });
 
             $('#radprice')
@@ -376,7 +362,7 @@ $(document)
                         return d.value.price.Average;
                     });
 
-                    charts.redrawCharts();
+                    insight.redrawCharts();
                 });
             $('#radcount')
                 .click(function()
@@ -387,7 +373,7 @@ $(document)
                         return d.value.Count;
                     });
 
-                    charts.redrawCharts();
+                    insight.redrawCharts();
                 });
 
             $('#radsize')
@@ -399,7 +385,7 @@ $(document)
                         return d.value.fileSizeBytes.Average;
                     });
 
-                    charts.redrawCharts();
+                    insight.redrawCharts();
                 });
         });
 

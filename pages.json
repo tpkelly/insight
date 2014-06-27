@@ -32,11 +32,34 @@
         "partialCSS": "examples/css/example.css"
     },
     {
+        "name": "markers",
+        "pageName": "Targets & Markers", 
+        "script": "examples/markers.js",
+        "imageUrl": "images/barChart.PNG",
+        "partial": "examples/partials/example.html",
+        "partialCSS": "examples/css/example.css"
+    },
+    {
         "name": "timeaxis",
         "pageName": "Time Chart", 
         "script": "examples/lineCharts.js",
         "imageUrl": "images/barChart.PNG",
         "partial": "examples/partials/newCharts.html",
+        "partialCSS": "examples/css/example.css"
+    },
+    {
+        "name": "dataset",
+        "pageName": "Dataset", 
+        "script": "examples/dashboard.js",
+        "imageUrl": "images/barChart.PNG",
+        "partial": "examples/partials/newCharts.html",
+        "partialCSS": "examples/css/example.css"
+    },
+    {
+        "name": "datebar",
+        "pageName": "Yearly Bars", 
+        "script": "examples/datebar.js",
+        "partial": "examples/partials/example.html",
         "partialCSS": "examples/css/example.css"
     },
     {
@@ -50,6 +73,12 @@
         "name": "builder",
         "pageName": "Chart Builder", 
         "script": "examples/builder.js",
+        "partial": "examples/partials/newCharts.html",
+        "partialCSS": "examples/css/example.css"
+    },{
+        "name": "bullet",
+        "pageName": "Bullet Chart", 
+        "script": "examples/bulletchart.js",
         "partial": "examples/partials/example.html",
         "partialCSS": "examples/css/example.css"
     },
@@ -65,13 +94,6 @@
         "name": "connect",
         "pageName": "Connect Charts", 
         "script": "examples/connect.js",
-        "partial": "examples/partials/connect.html",
-        "partialCSS": "examples/css/example.css"
-    },
-    {
-        "name": "multidim",
-        "pageName": "Multidimension", 
-        "script": "examples/multidim.js",
         "partial": "examples/partials/connect.html",
         "partialCSS": "examples/css/example.css"
     }

@@ -4,11 +4,9 @@ $(document)
         d3.json('revenuereport.json', function(data)
         {
 
-            var dashboard = new Dashboard("Example Group");
+            var dataset = new insight.DataSet(data);
 
-            var dataset = dashboard.addData(data);
-
-            var clientData = dashboard.group(dataset, 'clients', function(d)
+            var clientData = dataset.group('clients', function(d)
                 {
                     return d.Client;
                 })
@@ -22,9 +20,7 @@ $(document)
 
             computeGroupValues(clientData);
 
-            console.log(clientData.getData());
-
-            var chart = new Chart('Chart 1', "#chart1")
+            var chart = new insight.Chart('Chart 1', "#chart1")
                 .width(500)
                 .height(400)
                 .margin(
@@ -35,17 +31,17 @@ $(document)
                     bottom: 150
                 });
 
-            var x = new Scale(chart, 'Client', d3.scale.ordinal(), 'h', 'ordinal')
+            var x = new insight.Scale(chart, 'Client', 'h', Scales.Ordinal)
                 .ordered(true);
 
-            var y = new Scale(chart, 'Revenue', d3.scale.linear(), 'v', 'linear');
-            var y2 = new Scale(chart, '%', d3.scale.linear(), 'v', 'linear');
+            var y = new insight.Scale(chart, 'Revenue', 'v', Scales.Linear);
+            var y2 = new insight.Scale(chart, '%', 'v', Scales.Linear);
 
-            var series = new ColumnSeries('clientColumn', chart, clientData, x, y); //.tooltipFormat(InsightFormatters.currencyFormatter);
+            var series = new insight.ColumnSeries('clientColumn', chart, clientData, x, y); //.tooltipFormat(InsightFormatters.currencyFormatter);
 
-            var line = new LineSeries('percentLine', chart, clientData, x, y2, 'cyan')
+            var line = new insight.LineSeries('percentLine', chart, clientData, x, y2, 'cyan')
                 .tooltipFormat(InsightFormatters.percentageFormatter)
-                .yFunction(function(d)
+                .valueFunction(function(d)
                 {
                     return d.value.Percentage;
                 });
@@ -67,20 +63,17 @@ $(document)
 
             chart.series([series, line]);
 
-            var xAxis = new Axis(chart, "x", x, 'bottom')
+            var xAxis = new insight.Axis(chart, "x", x, 'bottom')
                 .textAnchor('start')
                 .labelOrientation('tb');
 
-            var yAxis = new Axis(chart, "y", y, 'left')
-                .format(InsightFormatters.currencyFormatter);
+            var yAxis = new insight.Axis(chart, "y", y, 'left')
+                .labelFormat(InsightFormatters.currencyFormatter);
 
-            var yAxis2 = new Axis(chart, "y2", y2, 'right')
-                .format(InsightFormatters.percentageFormatter);
+            var yAxis2 = new insight.Axis(chart, "y2", y2, 'right')
+                .labelFormat(InsightFormatters.percentageFormatter);
 
-
-            dashboard.addChart(chart);
-
-            dashboard.initCharts();
+            insight.drawCharts();
         });
     });
 

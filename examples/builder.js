@@ -8,18 +8,20 @@ $(document)
                 d.releaseDate = new Date(d.releaseDate);
             });
 
+            var appstore = new insight.DataSet(data);
 
-            var dashboard = new Dashboard("#container");
-
-            var appstore = dashboard.addData(data);
-
-            var genre = dashboard.group(appstore, 'genre', function(d)
+            var genre = appstore.group('genre', function(d)
             {
                 return d.primaryGenreName;
             });
 
+            var yearly = appstore.group('years', function(item)
+                {
+                    return item.releaseDate.getFullYear();
+                })
+                .mean(['price']);
 
-            var chart = new Chart('Genres', '#exampleChart')
+            var chart = new insight.Chart('Genres', '#chart1')
                 .width(400)
                 .height(350)
                 .title('Genres')
@@ -38,14 +40,54 @@ $(document)
 
             columns.x.ordered(true);
 
-            var xAxis = new Axis(chart, "x", columns.x, 'bottom')
+            var xAxis = new insight.Axis(chart, "x", columns.x, 'bottom')
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .labelOrientation('tb');
 
+            var chart2 = new insight.Chart('Years', '#chart2')
+                .width(400)
+                .height(350)
+                .title('Years')
+                .margin(
+                {
+                    top: 0,
+                    left: 0,
+                    bottom: 60,
+                    right: 0
+                });
 
-            dashboard.addChart(chart);
-            dashboard.initCharts();
+            var columns2 = chart2.addColumnSeries(
+                {
+                    name: 'Year',
+                    data: yearly,
+                    accessor: function(d)
+                    {
+                        return d.value.price.Average;
+                    },
+                    color: '#ACC3EE'
+                })
+                .tooltipFormat(InsightFormatters.decimalCurrencyFormatter);
+
+            chart2.addLineSeries(
+            {
+                name: 'Revenue',
+                data: yearly,
+                accessor: function(d)
+                {
+                    return d.value.price.Sum;
+                },
+                color: '#95a5a6'
+            });
+
+            var xAxis2 = new insight.Axis(chart2, "x", columns2.x, 'bottom')
+                .textAnchor('start')
+                .tickSize(5)
+                .tickPadding(5)
+                .labelOrientation('tb')
+                .labelRotation(45);
+
+            insight.drawCharts();
         });
     });

@@ -3,24 +3,21 @@ $(document)
     {
         d3.json('revenuereport.json', function(data)
         {
-
-            var dashboard = new Dashboard("Example Group");
-
             data.forEach(function(item)
             {
                 item.Date = new Date(item.Date);
             });
 
-            var dataset = dashboard.addData(data);
+            var dataset = new insight.DataSet(data);
 
-            var dateData = dashboard.group(dataset, 'date', function(d)
+            var dateData = dataset.group('date', function(d)
                 {
                     return d.Date;
                 })
                 .sum(['CurrentRevenue'])
                 .cumulative(['CurrentRevenue.Sum']);
 
-            var chart = new Chart('Chart 1', "#chart1")
+            var chart = new insight.Chart('Chart 1', "#chart1")
                 .width(650)
                 .height(350)
                 .margin(
@@ -31,13 +28,13 @@ $(document)
                     bottom: 100
                 });
 
-            var xScale = new Scale(chart, 'Time', d3.time.scale(), 'h', 'time');
-            var yScale = new Scale(chart, 'Revenue', d3.scale.linear(), 'v', 'linear');
+            var xScale = new insight.Scale(chart, 'Time', 'h', Scales.Time);
+            var yScale = new insight.Scale(chart, 'Revenue', 'v', Scales.Linear);
 
-            var line = new LineSeries('valueLine', chart, dateData, xScale, yScale, 'cyan')
+            var line = new insight.LineSeries('valueLine', chart, dateData, xScale, yScale, 'cyan')
                 .tooltipFormat(InsightFormatters.currencyFormatter)
                 .lineType('monotone')
-                .yFunction(function(d)
+                .valueFunction(function(d)
                 {
                     return d.value.CurrentRevenue.SumCumulative;
                 });
@@ -47,18 +44,16 @@ $(document)
 
             chart.zoomable(xScale);
 
-            var xAxis = new Axis(chart, "x", xScale, 'bottom')
+            var xAxis = new insight.Axis(chart, "x", xScale, 'bottom')
                 .labelOrientation('tb')
                 .tickSize(5)
                 .textAnchor('start')
-                .format(InsightFormatters.dateFormatter);
+                .labelFormat(InsightFormatters.dateFormatter);
 
-            var yAxis = new Axis(chart, "y", yScale, 'left')
+            var yAxis = new insight.Axis(chart, "y", yScale, 'left')
                 .tickSize(5)
-                .format(InsightFormatters.currencyFormatter);
+                .labelFormat(InsightFormatters.currencyFormatter);
 
-            dashboard.addChart(chart);
-
-            dashboard.initCharts();
+            insight.drawCharts();
         });
     });

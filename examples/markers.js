@@ -1,26 +1,28 @@
 var data = [
 {
     key: 'England',
-    value: 53012456
+    value: 53012456,
+    target: 64012456
 },
 {
     key: 'Scotland',
-    value: 5295000
+    value: 5295000,
+    target: 13195000
 },
 {
     key: 'Wales',
-    value: 3063456
+    value: 3063456,
+    target: 43076456
 },
 {
     key: 'Northern Ireland',
-    value: 1810863
+    value: 1810863,
+    target: 9012456
 }];
 
 $(document)
     .ready(function()
     {
-
-
         var dataset = new insight.DataSet(data);
 
         var chart = new insight.Chart('Chart 1', "#exampleChart")
@@ -41,10 +43,17 @@ $(document)
             .valueFunction(function(d)
             {
                 return d.value;
-            })
-            .tooltipFormat(InsightFormatters.currencyFormatter);
+            });
 
-        chart.series([series]);
+
+        var targets = new insight.MarkerSeries('targets', chart, dataset, x, y, '#333')
+            .valueFunction(function(d)
+            {
+                return d.target;
+            })
+            .widthFactor(0.3);
+
+        chart.series([series, targets]);
 
         var xAxis = new insight.Axis(chart, "x", x, 'bottom')
             .labelOrientation('tb')

@@ -24,11 +24,9 @@ $(document)
     .ready(function()
     {
 
-        var exampleGroup = new Dashboard("Example Group");
+        var dataset = new insight.DataSet(data);
 
-        var dataset = new DataSet(data);
-
-        var chart = new Chart('Chart 1', "#exampleChart")
+        var chart = new insight.Chart('Chart 1', "#exampleChart")
             .width(450)
             .height(400)
             .margin(
@@ -39,18 +37,10 @@ $(document)
                 bottom: 0
             });
 
-        var y = new Scale(chart, '', d3.scale.ordinal(), 'v', 'ordinal');
-        var x = new Scale(chart, 'Population', d3.scale.linear(), 'h', 'linear');
+        var y = new insight.Scale(chart, '', 'v', Scales.Ordinal);
+        var x = new insight.Scale(chart, 'Population', 'h', Scales.Linear);
 
-        var series = new RowSeries('countryColumn', chart, dataset, x, y, 'silver')
-            .yFunction(function(d)
-            {
-                return d.key;
-            })
-            .xFunction(function(d)
-            {
-                return d.value;
-            })
+        var series = new insight.RowSeries('countryColumn', chart, dataset, x, y, 'silver')
             .tooltipFormat(InsightFormatters.numberFormatter);
 
 
@@ -84,16 +74,15 @@ $(document)
 
         chart.series([series]);
 
-        var xAxis = new Axis(chart, "x", x, 'top')
+        var xAxis = new insight.Axis(chart, "x", x, 'top')
             .textAnchor('end')
             .tickSize(5)
             .tickPadding(0)
             .labelOrientation('tb');
 
-        var yAxis = new Axis(chart, "y", y, 'left');
+        var yAxis = new insight.Axis(chart, "y", y, 'left');
 
-        exampleGroup.addChart(chart);
-        exampleGroup.initCharts();
+        insight.drawCharts();
 
         $('#toggle')
             .click(function(d)

@@ -9,29 +9,26 @@ $(document)
 
         d3.json('appstore.json', function(data)
         {
-
             data.forEach(function(d)
             {
                 d.releaseDate = new Date(d.releaseDate);
             });
 
-            var charts = new Dashboard('AppStore');
+            var dataset = new insight.DataSet(data);
 
-            var dataset = charts.addData(data);
-
-            var genres = charts.group(dataset, 'genre', function(d)
+            var genres = dataset.group('genre', function(d)
                 {
                     return d.primaryGenreName;
                 })
                 .count(["supportedDevices"]);
 
-            var languageGroup = charts.group(dataset, 'languages', function(d)
+            var languageGroup = dataset.group('languages', function(d)
                 {
                     return d.languageCodesISO2A;
                 }, true)
                 .count(["languageCodesISO2A"]);
 
-            var chart = new Chart('Chart 1', "#genreCount")
+            var chart = new insight.Chart('Chart 1', "#genreCount")
                 .width(800)
                 .height(350)
                 .margin(
@@ -43,12 +40,12 @@ $(document)
                 })
                 .barPadding(0.3);
 
-            var xScale = new Scale(chart, "Genre", d3.scale.ordinal(), 'h', 'ordinal')
+            var xScale = new insight.Scale(chart, "Genre", 'h', Scales.Ordinal)
                 .ordered(true);
 
-            var yScale = new Scale(chart, "# Apps", d3.scale.linear(), 'v', 'linear');
+            var yScale = new insight.Scale(chart, "# Apps", 'v', Scales.Linear);
 
-            var series = new ColumnSeries('genre', chart, genres, xScale, yScale, 'silver')
+            var series = new insight.ColumnSeries('genre', chart, genres, xScale, yScale, 'silver')
                 .tooltipFunction(function(d)
                 {
                     return d;
@@ -76,17 +73,17 @@ $(document)
 
             chart.series([series]);
 
-            var xAxis = new Axis(chart, "x", xScale, 'bottom')
+            var xAxis = new insight.Axis(chart, "x", xScale, 'bottom')
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .labelOrientation('tb');
 
-            var yAxis = new Axis(chart, "y", yScale, 'left')
+            var yAxis = new insight.Axis(chart, "y", yScale, 'left')
                 .tickSize(5);
 
 
-            var languageChart = new Chart('Chart 2', "#languages")
+            var languageChart = new insight.Chart('Chart 2', "#languages")
                 .width(1200)
                 .height(400)
                 .margin(
@@ -97,12 +94,12 @@ $(document)
                     bottom: 50
                 });
 
-            var lxScale = new Scale(languageChart, "Language", d3.scale.ordinal(), 'h', 'ordinal')
+            var lxScale = new insight.Scale(languageChart, "Language", 'h', Scales.Ordinal)
                 .ordered(true);
 
-            var lyScale = new Scale(languageChart, "# Apps Supported", d3.scale.linear(), 'v', 'linear');
+            var lyScale = new insight.Scale(languageChart, "# Apps Supported", 'v', Scales.Linear);
 
-            var lSeries = new ColumnSeries('languages', languageChart, languageGroup, lxScale, lyScale, 'silver')
+            var lSeries = new insight.ColumnSeries('languages', languageChart, languageGroup, lxScale, lyScale, 'silver')
                 .tooltipFunction(function(d)
                 {
                     return d;
@@ -130,20 +127,16 @@ $(document)
 
             languageChart.series([lSeries]);
 
-            var xAxis = new Axis(languageChart, "x", lxScale, 'bottom')
+            var xAxis = new insight.Axis(languageChart, "x", lxScale, 'bottom')
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .labelOrientation('tb');
 
-            var yAxis = new Axis(languageChart, "y", lyScale, 'left')
+            var yAxis = new insight.Axis(languageChart, "y", lyScale, 'left')
                 .tickSize(5);
 
-
-            charts.addChart(chart);
-            charts.addChart(languageChart);
-
-            charts.initCharts();
+            insight.drawCharts();
 
         });
     });
