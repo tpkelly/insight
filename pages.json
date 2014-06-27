@@ -10,7 +10,7 @@
     {
         "name": "row",
         "pageName": "Row Chart",     
-        "script": "examples/rowchart.js",
+        "script": "examples/rowChart.js",
         "partial": "examples/partials/stacked.html",
         "partialCSS": "examples/css/simpleBar.css"
     },
@@ -78,7 +78,7 @@
     },{
         "name": "bullet",
         "pageName": "Bullet Chart", 
-        "script": "examples/bulletchart.js",
+        "script": "examples/bulletChart.js",
         "partial": "examples/partials/example.html",
         "partialCSS": "examples/css/example.css"
     },
