@@ -356,8 +356,8 @@
 
         Chart.prototype.addColumnSeries = function(series) {
 
-            var x = new insight.Scale(this, "", d3.scale.ordinal(), 'h', 'ordinal');
-            var y = new insight.Scale(this, "", d3.scale.linear(), 'v', 'linear');
+            var x = new insight.Scale(this, "", 'h', Scales.Ordinal);
+            var y = new insight.Scale(this, "", 'v', Scales.Linear);
 
             var stacked = series.stacked ? true : false;
 
@@ -375,11 +375,11 @@
 
         Chart.prototype.addLineSeries = function(series) {
 
-            var x = new insight.Scale(this, "", d3.scale.ordinal(), 'h', 'ordinal');
-            var y = new insight.Scale(this, "", d3.scale.linear(), 'v', 'linear');
+            var x = new insight.Scale(this, "", 'h', Scales.Ordinal);
+            var y = new insight.Scale(this, "", 'v', Scales.Linear);
 
             var s = new insight.LineSeries(series.name, this, series.data, x, y, series.color)
-                .yFunction(series.accessor);
+                .valueFunction(series.accessor);
 
             this.series()
                 .push(s);
@@ -390,8 +390,8 @@
 
         Chart.prototype.addBulletChart = function(options) {
 
-            var x = new insight.Scale(this, options.name + "x", d3.scale.linear(), 'h', 'linear');
-            var y = new insight.Scale(this, options.name + "y", d3.scale.ordinal(), 'v', 'ordinal');
+            var x = new insight.Scale(this, options.name + "x", 'h', Scales.Linear);
+            var y = new insight.Scale(this, options.name + "y", 'v', Scales.Ordinal);
 
             // Create the areas as stacked bars
             var s = new insight.RowSeries(options.name, this, options.ranges[0].data, x, y, 'blue')
@@ -414,7 +414,7 @@
             }.bind(row);
 
             row.yPosition = function(d) {
-                return this.y.scale(this.yFunction()(d)) + (this.y.scale.rangeBand(d) / 3);
+                return this.y.scale(this.keyFunction()(d)) + (this.y.scale.rangeBand(d) / 3);
             }.bind(row);
 
             row.series = [options.value];

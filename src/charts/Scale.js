@@ -1,8 +1,11 @@
-insight.Scale = function Scale(chart, title, scale, direction, type) {
+insight.Scale = function Scale(chart, title, direction, type) {
     var ordered = d3.functor(false);
     var self = this;
-    this.scale = scale;
+
+    this.scale = type.scale();
+
     this.rangeType = this.scale.rangeRoundBands ? this.scale.rangeRoundBands : this.scale.rangeRound;
+
     this.series = [];
     this.title = title;
     this.chart = chart;
@@ -14,12 +17,12 @@ insight.Scale = function Scale(chart, title, scale, direction, type) {
         .push(this);
 
     this.domain = function() {
-        if (this.type == 'linear') {
+        if (type.name == Scales.Linear.name) {
             return [0, this.findMax()];
-        } else if (this.type == 'ordinal') {
+        } else if (type.name == Scales.Ordinal.name) {
             return this.findOrdinalValues();
         }
-        if (this.type == 'time') {
+        if (type.name == Scales.Time.name) {
             return [this.minTime(), this.maxTime()];
         }
     };

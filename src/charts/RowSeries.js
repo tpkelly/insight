@@ -7,10 +7,6 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
     var seriesName = "";
     var tooltipExists = false;
 
-    this.yFunction(function(d) {
-        return d.key;
-    });
-
     var tooltipFunction = function(d) {
         var func = self.series[self.currentSeries].accessor;
         return self.tooltipFormat()(func(d));
@@ -20,7 +16,7 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
     this.series = [{
         name: 'default',
         accessor: function(d) {
-            return self.xFunction()(d);
+            return self.valueFunction()(d);
         },
         tooltipValue: function(d) {
             return self.tooltipFunction()(d);
@@ -36,7 +32,7 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
      */
     this.keys = function() {
         return self.dataset()
-            .map(self.yFunction());
+            .map(self.keyFunction());
     };
 
 
@@ -107,7 +103,7 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
     };
 
     this.yPosition = function(d) {
-        return self.y.scale(self.yFunction()(d));
+        return self.y.scale(self.keyFunction()(d));
     };
 
     this.calculateYPos = function(thickness, d) {

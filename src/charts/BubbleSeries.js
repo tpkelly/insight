@@ -9,6 +9,10 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
     var tooltipExists = false;
     var self = this;
 
+    var xFunction = function(d) {};
+    var yFunction = function(d) {};
+
+
     var mouseOver = function(d, item) {
         self.chart.mouseOver(self, this, d);
 
@@ -18,6 +22,43 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
 
     var mouseOut = function(d, item) {
         self.chart.mouseOut(self, this, d);
+    };
+
+
+    this.findMax = function(scale) {
+        var self = this;
+
+        var max = 0;
+        var data = this.data.getData();
+
+        var func = scale == self.x ? self.xFunction() : self.yFunction();
+
+        var m = d3.max(data, func);
+
+        max = m > max ? m : max;
+
+        return max;
+    };
+
+    this.yFunction = function(_) {
+        if (!arguments.length) {
+            return yFunction;
+        }
+        yFunction = _;
+
+        return this;
+
+    };
+
+
+    this.xFunction = function(_) {
+        if (!arguments.length) {
+            return xFunction;
+        }
+        xFunction = _;
+
+        return this;
+
     };
 
     this.rangeY = function(d) {

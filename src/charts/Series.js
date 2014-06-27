@@ -35,9 +35,6 @@ insight.Series = function Series(name, chart, data, x, y, color) {
         return d.key;
     };
 
-    var yFunction = function(d) {
-        return d.value;
-    };
 
     var tooltipFormat = function(d) {
         return d;
@@ -107,17 +104,6 @@ insight.Series = function Series(name, chart, data, x, y, color) {
         return this;
     };
 
-
-
-    this.yFunction = function(_) {
-        if (!arguments.length) {
-            return yFunction;
-        }
-
-        yFunction = _;
-
-        return this;
-    };
 
     this.mouseOver = function(d, item) {
         self.chart.mouseOver(self, this, d);

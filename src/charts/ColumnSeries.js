@@ -8,7 +8,6 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
     var barWidthFunction = this.x.rangeType;
 
 
-
     var tooltipFunction = function(d) {
         var func = self.series[self.currentSeries].accessor;
         return self.tooltipFormat()(func(d));
@@ -18,7 +17,7 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
     this.series = [{
         name: 'default',
         accessor: function(d) {
-            return self.yFunction()(d);
+            return self.valueFunction()(d);
         },
         tooltipValue: function(d) {
             return self.tooltipFunction()(d);
@@ -94,7 +93,7 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
     };
 
     this.xPosition = function(d) {
-        return self.x.scale(self.xFunction()(d));
+        return self.x.scale(self.keyFunction()(d));
     };
 
     this.calculateXPos = function(width, d) {

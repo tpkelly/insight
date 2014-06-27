@@ -173,6 +173,26 @@ var insight = (function() {
     exports.ContainerClass = "incontainer";
     exports.ChartSVG = "chartSVG";
     exports.Bubble = "bubble";
+
+    return exports;
+}());
+
+
+var Scales = (function() {
+    var exports = {};
+
+    exports.Ordinal = {
+        name: "ordinal",
+        scale: d3.scale.ordinal
+    };
+    exports.Linear = {
+        name: "linear",
+        scale: d3.scale.linear
+    };
+    exports.Time = {
+        name: "time",
+        scale: d3.time.scale
+    };
     return exports;
 }());
 ;var InsightFormatters = (function(d3) {
@@ -1185,9 +1205,6 @@ var InsightUtils = (function() {
         return d.key;
     };
 
-    var yFunction = function(d) {
-        return d.value;
-    };
 
     var tooltipFormat = function(d) {
         return d;
@@ -1257,17 +1274,6 @@ var InsightUtils = (function() {
         return this;
     };
 
-
-
-    this.yFunction = function(_) {
-        if (!arguments.length) {
-            return yFunction;
-        }
-
-        yFunction = _;
-
-        return this;
-    };
 
     this.mouseOver = function(d, item) {
         self.chart.mouseOver(self, this, d);
@@ -1756,8 +1762,8 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
 
         Chart.prototype.addColumnSeries = function(series) {
 
-            var x = new insight.Scale(this, "", d3.scale.ordinal(), 'h', 'ordinal');
-            var y = new insight.Scale(this, "", d3.scale.linear(), 'v', 'linear');
+            var x = new insight.Scale(this, "", 'h', Scales.Ordinal);
+            var y = new insight.Scale(this, "", 'v', Scales.Linear);
 
             var stacked = series.stacked ? true : false;
 
@@ -1775,11 +1781,11 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
 
         Chart.prototype.addLineSeries = function(series) {
 
-            var x = new insight.Scale(this, "", d3.scale.ordinal(), 'h', 'ordinal');
-            var y = new insight.Scale(this, "", d3.scale.linear(), 'v', 'linear');
+            var x = new insight.Scale(this, "", 'h', Scales.Ordinal);
+            var y = new insight.Scale(this, "", 'v', Scales.Linear);
 
             var s = new insight.LineSeries(series.name, this, series.data, x, y, series.color)
-                .yFunction(series.accessor);
+                .valueFunction(series.accessor);
 
             this.series()
                 .push(s);
@@ -1790,8 +1796,8 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
 
         Chart.prototype.addBulletChart = function(options) {
 
-            var x = new insight.Scale(this, options.name + "x", d3.scale.linear(), 'h', 'linear');
-            var y = new insight.Scale(this, options.name + "y", d3.scale.ordinal(), 'v', 'ordinal');
+            var x = new insight.Scale(this, options.name + "x", 'h', Scales.Linear);
+            var y = new insight.Scale(this, options.name + "y", 'v', Scales.Ordinal);
 
             // Create the areas as stacked bars
             var s = new insight.RowSeries(options.name, this, options.ranges[0].data, x, y, 'blue')
@@ -1814,7 +1820,7 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
             }.bind(row);
 
             row.yPosition = function(d) {
-                return this.y.scale(this.yFunction()(d)) + (this.y.scale.rangeBand(d) / 3);
+                return this.y.scale(this.keyFunction()(d)) + (this.y.scale.rangeBand(d) / 3);
             }.bind(row);
 
             row.series = [options.value];
@@ -2036,6 +2042,10 @@ insight.MarkerSeries.prototype.constructor = insight.MarkerSeries;
     var tooltipExists = false;
     var self = this;
 
+    var xFunction = function(d) {};
+    var yFunction = function(d) {};
+
+
     var mouseOver = function(d, item) {
         self.chart.mouseOver(self, this, d);
 
@@ -2045,6 +2055,43 @@ insight.MarkerSeries.prototype.constructor = insight.MarkerSeries;
 
     var mouseOut = function(d, item) {
         self.chart.mouseOut(self, this, d);
+    };
+
+
+    this.findMax = function(scale) {
+        var self = this;
+
+        var max = 0;
+        var data = this.data.getData();
+
+        var func = scale == self.x ? self.xFunction() : self.yFunction();
+
+        var m = d3.max(data, func);
+
+        max = m > max ? m : max;
+
+        return max;
+    };
+
+    this.yFunction = function(_) {
+        if (!arguments.length) {
+            return yFunction;
+        }
+        yFunction = _;
+
+        return this;
+
+    };
+
+
+    this.xFunction = function(_) {
+        if (!arguments.length) {
+            return xFunction;
+        }
+        xFunction = _;
+
+        return this;
+
     };
 
     this.rangeY = function(d) {
@@ -2154,10 +2201,6 @@ insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
     var seriesName = "";
     var tooltipExists = false;
 
-    this.yFunction(function(d) {
-        return d.key;
-    });
-
     var tooltipFunction = function(d) {
         var func = self.series[self.currentSeries].accessor;
         return self.tooltipFormat()(func(d));
@@ -2167,7 +2210,7 @@ insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
     this.series = [{
         name: 'default',
         accessor: function(d) {
-            return self.xFunction()(d);
+            return self.valueFunction()(d);
         },
         tooltipValue: function(d) {
             return self.tooltipFunction()(d);
@@ -2183,7 +2226,7 @@ insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
      */
     this.keys = function() {
         return self.dataset()
-            .map(self.yFunction());
+            .map(self.keyFunction());
     };
 
 
@@ -2254,7 +2297,7 @@ insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
     };
 
     this.yPosition = function(d) {
-        return self.y.scale(self.yFunction()(d));
+        return self.y.scale(self.keyFunction()(d));
     };
 
     this.calculateYPos = function(thickness, d) {
@@ -2374,11 +2417,14 @@ insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
 
 insight.RowSeries.prototype = Object.create(insight.Series.prototype);
 insight.RowSeries.prototype.constructor = insight.RowSeries;
-;insight.Scale = function Scale(chart, title, scale, direction, type) {
+;insight.Scale = function Scale(chart, title, direction, type) {
     var ordered = d3.functor(false);
     var self = this;
-    this.scale = scale;
+
+    this.scale = type.scale();
+
     this.rangeType = this.scale.rangeRoundBands ? this.scale.rangeRoundBands : this.scale.rangeRound;
+
     this.series = [];
     this.title = title;
     this.chart = chart;
@@ -2390,12 +2436,12 @@ insight.RowSeries.prototype.constructor = insight.RowSeries;
         .push(this);
 
     this.domain = function() {
-        if (this.type == 'linear') {
+        if (type.name == Scales.Linear.name) {
             return [0, this.findMax()];
-        } else if (this.type == 'ordinal') {
+        } else if (type.name == Scales.Ordinal.name) {
             return this.findOrdinalValues();
         }
-        if (this.type == 'time') {
+        if (type.name == Scales.Time.name) {
             return [this.minTime(), this.maxTime()];
         }
     };
@@ -2800,17 +2846,17 @@ insight.RowSeries.prototype.constructor = insight.RowSeries;
     };
 
     this.rangeY = function(d) {
-        return self.y.scale(self.yFunction()(d));
+        return self.y.scale(self.valueFunction()(d));
     };
 
     this.rangeX = function(d, i) {
         var val = 0;
 
         if (self.x.scale.rangeBand) {
-            val = self.x.scale(self.xFunction()(d)) + (self.x.scale.rangeBand() / 2);
+            val = self.x.scale(self.keyFunction()(d)) + (self.x.scale.rangeBand() / 2);
         } else {
 
-            val = self.x.scale(self.xFunction()(d));
+            val = self.x.scale(self.keyFunction()(d));
         }
 
         return val;
@@ -2908,7 +2954,6 @@ insight.LineSeries.prototype.constructor = insight.LineSeries;
     var barWidthFunction = this.x.rangeType;
 
 
-
     var tooltipFunction = function(d) {
         var func = self.series[self.currentSeries].accessor;
         return self.tooltipFormat()(func(d));
@@ -2918,7 +2963,7 @@ insight.LineSeries.prototype.constructor = insight.LineSeries;
     this.series = [{
         name: 'default',
         accessor: function(d) {
-            return self.yFunction()(d);
+            return self.valueFunction()(d);
         },
         tooltipValue: function(d) {
             return self.tooltipFunction()(d);
@@ -2994,7 +3039,7 @@ insight.LineSeries.prototype.constructor = insight.LineSeries;
     };
 
     this.xPosition = function(d) {
-        return self.x.scale(self.xFunction()(d));
+        return self.x.scale(self.keyFunction()(d));
     };
 
     this.calculateXPos = function(width, d) {

@@ -33,11 +33,11 @@ describe("Row Series Tests", function() {
         
         var group =  charts.group(ndx, 'country',function(d){return d.Country;});
 
-        var xScale = new insight.Scale(chart, '', d3.scale.ordinal(), 'h', 'ordinal');
-        var yScale = new insight.Scale(chart, '', d3.scale.linear(), 'v', 'linear');
+        var xScale = new insight.Scale(chart, '', 'h', Scales.Ordinal);
+        var yScale = new insight.Scale(chart, '', 'v', Scales.Linear);
 
         var series = new insight.RowSeries('countryColumn', chart, group, xScale, yScale, 'silver')
-                            .yFunction(function(d){return d.key;}).xFunction(function(d){return d.value.Count;});
+                            .valueFunction(function(d){return d.value.Count;});
         
         var scotland = group.getData().filter(function(country){ return country.key=='Scotland'; })[0]; 
 
@@ -57,11 +57,11 @@ describe("Row Series Tests", function() {
 
         group.initialize();
 
-        var xScale = new insight.Scale(chart, '', d3.scale.ordinal(), 'h', 'ordinal');
-        var yScale = new insight.Scale(chart, '', d3.scale.linear(), 'v', 'linear');
+        var xScale = new insight.Scale(chart, '', 'h', Scales.Ordinal);
+        var yScale = new insight.Scale(chart, '', 'v', Scales.Linear);
 
         var series = new insight.RowSeries('countryColumn', chart, group, xScale, yScale, 'silver')
-                            .yFunction(function(d){return d.key;}).xFunction(function(d){return d.value.Count;});
+                            .valueFunction(function(d){return d.value.Count;});
         
 
         var data = series.dataset();

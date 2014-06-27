@@ -31,17 +31,17 @@ insight.LineSeries = function LineSeries(name, chart, data, x, y, color) {
     };
 
     this.rangeY = function(d) {
-        return self.y.scale(self.yFunction()(d));
+        return self.y.scale(self.valueFunction()(d));
     };
 
     this.rangeX = function(d, i) {
         var val = 0;
 
         if (self.x.scale.rangeBand) {
-            val = self.x.scale(self.xFunction()(d)) + (self.x.scale.rangeBand() / 2);
+            val = self.x.scale(self.keyFunction()(d)) + (self.x.scale.rangeBand() / 2);
         } else {
 
-            val = self.x.scale(self.xFunction()(d));
+            val = self.x.scale(self.keyFunction()(d));
         }
 
         return val;
