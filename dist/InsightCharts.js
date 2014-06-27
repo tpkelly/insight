@@ -1831,8 +1831,8 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
 
             var target = new insight.MarkerSeries(options.target.name, this, options.target.data, x, y, options.target.color)
                 .valueFunction(options.target.accessor)
-                .horizontal()
-                .widthFactor(0.5);
+                .widthFactor(0.3)
+                .horizontal();
 
             this.series()
                 .push(target);
@@ -1850,8 +1850,6 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
     insight.Series.call(this, name, chart, data, x, y, color);
 
     var self = this;
-    var stacked = d3.functor(false);
-    var barWidthFunction = this.x.rangeType;
     var thickness = 5;
 
     var widthFactor = 1;
@@ -1890,7 +1888,7 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
 
     this.calculateOffset = function(d) {
 
-        var thickness = self.barWidth(d);
+        var thickness = horizontal ? self.markerHeight(d) : self.markerWidth(d);
         var scalePos = horizontal ? self.y.scale.rangeBand(d) : self.x.scale.rangeBand(d);
 
         return (scalePos - thickness) * 0.5;
@@ -1931,18 +1929,26 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
 
     this.widthFactor = function(_) {
 
-        if (!arguments) {
+        if (!arguments.length) {
             return widthFactor;
         }
         widthFactor = _;
         return this;
     };
 
-    this.barWidth = function(d) {
+    this.thickness = function(_) {
+        if (!arguments.length) {
+            return thickness;
+        }
+        thickness = _;
+        return this;
+    };
+
+    this.markerWidth = function(d) {
         var w = 0;
 
         if (horizontal) {
-            w = self.y.scale.rangeBand(d) * widthFactor;
+            w = self.thickness();
         } else {
             w = self.x.scale.rangeBand(d) * widthFactor;
         }
@@ -1950,13 +1956,19 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
         return w;
     };
 
-    this.thickness = function(_) {
-        if (!arguments) {
-            return thickness;
+    this.markerHeight = function(d) {
+        var h = 0;
+
+        if (horizontal) {
+            h = self.y.scale.rangeBand(d) * widthFactor;
+        } else {
+            h = self.thickness();
         }
-        thickness = _;
-        return this;
+
+        return h;
     };
+
+
 
     this.className = function(d) {
         var dimension = self.sliceSelector(d);
@@ -2016,8 +2028,8 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
             .duration(duration)
             .attr('y', this.yPosition)
             .attr('x', this.xPosition)
-            .attr('width', this.barWidth)
-            .attr('height', thickness);
+            .attr('width', this.markerWidth)
+            .attr('height', this.markerHeight);
 
         bars.selectAll('.' + InsightConstants.ToolTipTextClass)
             .text(this.tooltipFunction());

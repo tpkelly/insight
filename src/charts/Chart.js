@@ -425,8 +425,8 @@
 
             var target = new insight.MarkerSeries(options.target.name, this, options.target.data, x, y, options.target.color)
                 .valueFunction(options.target.accessor)
-                .horizontal()
-                .widthFactor(0.5);
+                .widthFactor(0.3)
+                .horizontal();
 
             this.series()
                 .push(target);
