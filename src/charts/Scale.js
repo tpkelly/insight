@@ -64,7 +64,6 @@ insight.Scale = function Scale(chart, title, scale, direction, type) {
         return maxTime;
     };
 
-
     this.findOrdinalValues = function() {
         var vals = [];
 
@@ -82,7 +81,6 @@ insight.Scale = function Scale(chart, title, scale, direction, type) {
     this.vertical = function() {
         return this.direction == 'v';
     };
-
 
     this.findMax = function() {
         var max = 0;

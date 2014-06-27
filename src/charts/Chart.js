@@ -329,6 +329,9 @@
 
                 notselected.classed('notselected', selected[0].length > 0);
             };
+
+
+            insight.addChart(this);
         }
 
 
@@ -419,8 +422,18 @@
             this.series()
                 .push(row);
 
+
+            var target = new insight.MarkerSeries(options.target.name, this, options.target.data, x, y, options.target.color)
+                .valueFunction(options.target.accessor)
+                .horizontal()
+                .widthFactor(0.5);
+
+            this.series()
+                .push(target);
+
             return s;
         };
+
 
         return Chart;
 

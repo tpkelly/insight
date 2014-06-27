@@ -78,9 +78,7 @@ insight.DataSet = (function(insight) {
     };
 
 
-    DataSet.prototype.group = function(name, groupFunction) {
-
-        var multi = false; //todo - check if the property is an array
+    DataSet.prototype.group = function(name, groupFunction, multi) {
 
         this.ndx = !this.ndx ? crossfilter(this._data) : this.ndx;
 

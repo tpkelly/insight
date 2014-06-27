@@ -1,0 +1,186 @@
+insight.MarkerSeries = function MarkerSeries(name, chart, data, x, y, color) {
+
+    insight.Series.call(this, name, chart, data, x, y, color);
+
+    var self = this;
+    var stacked = d3.functor(false);
+    var barWidthFunction = this.x.rangeType;
+    var thickness = 5;
+
+    var widthFactor = 1;
+    var offset = 0;
+
+    var horizontal = false;
+    var vertical = true;
+
+    this.xPosition = function(d) {
+        var pos = 0;
+
+        if (vertical) {
+            pos = self.x.scale(self.keyFunction()(d));
+
+            if (!offset) {
+                offset = self.calculateOffset(d);
+            }
+
+            pos = widthFactor != 1 ? pos + offset : pos;
+        } else {
+            pos = self.x.scale(self.valueFunction()(d));
+
+        }
+
+        return pos;
+    };
+
+
+    this.keys = function() {
+
+        var f = self.keyFunction();
+
+        return self.dataset()
+            .map(f);
+    };
+
+    this.calculateOffset = function(d) {
+
+        var thickness = self.barWidth(d);
+        var scalePos = horizontal ? self.y.scale.rangeBand(d) : self.x.scale.rangeBand(d);
+
+        return (scalePos - thickness) * 0.5;
+    };
+
+    this.yPosition = function(d) {
+
+        var position = 0;
+
+        if (horizontal) {
+            position = self.y.scale(self.keyFunction()(d));
+
+            if (!offset) {
+                offset = self.calculateOffset(d);
+            }
+
+            position = widthFactor != 1 ? position + offset : position;
+
+        } else {
+            position = self.y.scale(self.valueFunction()(d));
+        }
+
+        return position;
+    };
+
+    this.horizontal = function() {
+        horizontal = true;
+        vertical = false;
+
+        return this;
+    };
+
+    this.vertical = function() {
+        vertical = true;
+        horizontal = false;
+        return this;
+    };
+
+    this.widthFactor = function(_) {
+
+        if (!arguments) {
+            return widthFactor;
+        }
+        widthFactor = _;
+        return this;
+    };
+
+    this.barWidth = function(d) {
+        var w = 0;
+
+        if (horizontal) {
+            w = self.y.scale.rangeBand(d) * widthFactor;
+        } else {
+            w = self.x.scale.rangeBand(d) * widthFactor;
+        }
+
+        return w;
+    };
+
+    this.thickness = function(_) {
+        if (!arguments) {
+            return thickness;
+        }
+        thickness = _;
+        return this;
+    };
+
+    this.className = function(d) {
+        var dimension = self.sliceSelector(d);
+
+        var selected = self.selectedClassName(dimension);
+
+        return self.name + 'class bar ' + dimension + " " + selected + " " + self.dimensionName;
+    };
+
+
+
+    this.draw = function(drag) {
+
+        var reset = function(d) {
+            d.yPos = 0;
+            d.xPos = 0;
+        };
+
+        var d = this.dataset()
+            .forEach(reset);
+
+        var groups = this.chart.chart
+            .selectAll('g.' + InsightConstants.BarGroupClass + "." + this.name)
+            .data(this.dataset(), this.keyAccessor);
+
+        var newGroups = groups.enter()
+            .append('g')
+            .attr('class', InsightConstants.BarGroupClass + " " + this.name);
+
+        var newBars = newGroups.selectAll('rect.bar');
+
+        var click = function(filter) {
+            return self.click(this, filter);
+        };
+
+        var duration = function(d, i) {
+            return 200 + (i * 20);
+        };
+
+        newBars = newGroups.append('rect')
+            .attr('class', self.className)
+            .attr('y', this.y.bounds[0])
+            .attr('height', 0)
+            .attr('fill', this.color)
+            .attr('clip-path', 'url(#' + this.chart.clipPath() + ')')
+            .on('mouseover', this.mouseOver)
+            .on('mouseout', this.mouseOut)
+            .on('click', click);
+
+        newBars.append('svg:text')
+            .attr('class', InsightConstants.ToolTipTextClass);
+
+        var bars = groups.selectAll('.' + this.name + 'class.bar');
+
+        bars
+            .transition()
+            .duration(duration)
+            .attr('y', this.yPosition)
+            .attr('x', this.xPosition)
+            .attr('width', this.barWidth)
+            .attr('height', thickness);
+
+        bars.selectAll('.' + InsightConstants.ToolTipTextClass)
+            .text(this.tooltipFunction());
+
+        groups.exit()
+            .remove();
+    };
+
+    return this;
+};
+
+insight.MarkerSeries.prototype = Object.create(insight.Series.prototype);
+insight.MarkerSeries.prototype.constructor = insight.MarkerSeries;

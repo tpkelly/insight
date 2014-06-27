@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Source: charts/RowSeries.js</title>
+    <title>Source: charts/MarkerSeries.js</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -72,6 +72,25 @@
             </ul>
         </li>
     
+        <li class="item" data-name="insight#findMax">
+            <span class="title">
+                <a href="insight_findMax.html">insight#findMax</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
         <li class="item" data-name="insight#tickRotation">
             <span class="title">
                 <a href="insight_tickRotation.html">insight#tickRotation</a>
@@ -94,25 +113,23 @@
     </ul>
 </div>
     <div class="main">
-        <h1 class="page-title" data-filename="RowSeries.js.html">Source: charts/RowSeries.js</h1>
+        <h1 class="page-title" data-filename="MarkerSeries.js.html">Source: charts/MarkerSeries.js</h1>
         
 
 
     
     <section>
         <article>
-            <pre class="prettyprint source"><code>insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
+            <pre class="prettyprint source"><code>insight.MarkerSeries = function MarkerSeries(name, chart, data, x, y, color) {
 
     insight.Series.call(this, name, chart, data, x, y, color);
 
     var self = this;
     var stacked = d3.functor(false);
     var seriesName = "";
-    var tooltipExists = false;
+    var barWidthFunction = this.x.rangeType;
 
-    this.yFunction(function(d) {
-        return d.key;
-    });
+
 
     var tooltipFunction = function(d) {
         var func = self.series[self.currentSeries].accessor;
@@ -123,7 +140,7 @@
     this.series = [{
         name: 'default',
         accessor: function(d) {
-            return self.xFunction()(d);
+            return self.yFunction()(d);
         },
         tooltipValue: function(d) {
             return self.tooltipFunction()(d);
@@ -131,16 +148,6 @@
         color: d3.functor('silver'),
         label: 'Value'
     }];
-
-
-    /**
-     * RowSeries overrides the standard key function used by most, vertical charts.
-     * @returns {object[]} return - The keys along the domain axis for this row series
-     */
-    this.keys = function() {
-        return self.dataset()
-            .map(self.yFunction());
-    };
 
 
     /**
@@ -198,87 +205,99 @@
         return this;
     };
 
-    this.calculateXPos = function(func, d) {
-        if (!d.xPos) {
-            d.xPos = 0;
-        }
-        var myPosition = d.xPos;
-
-        d.xPos += func(d);
-
-        return myPosition;
-    };
-
-    this.yPosition = function(d) {
-        return self.y.scale(self.yFunction()(d));
-    };
-
-    this.calculateYPos = function(thickness, d) {
+    this.calculateYPos = function(func, d) {
         if (!d.yPos) {
-            d.yPos = self.yPosition(d);
-        } else {
-            d.yPos += thickness;
+            d.yPos = 0;
         }
+
+        d.yPos += func(d);
+
         return d.yPos;
     };
 
     this.xPosition = function(d) {
+        return self.x.scale(self.xFunction()(d));
+    };
+
+    this.calculateXPos = function(width, d) {
+        if (!d.xPos) {
+            d.xPos = self.xPosition(d);
+        } else {
+            d.xPos += width;
+        }
+        return d.xPos;
+    };
+
+    this.yPosition = function(d) {
 
         var func = self.series[self.currentSeries].accessor;
 
-        var position = self.stackedBars() ? self.x.scale(self.calculateXPos(func, d)) : 0;
+        var position = self.stackedBars() ? self.y.scale(self.calculateYPos(func, d)) : self.y.scale(func(d));
 
         return position;
     };
 
-    this.barThickness = function(d) {
-        return self.y.scale.rangeBand(d);
+
+
+    this.barWidth = function(d) {
+        return self.x.scale.rangeBand(d);
     };
 
-    this.groupedbarThickness = function(d) {
+    this.groupedBarWidth = function(d) {
 
-        var groupThickness = self.barThickness(d);
+        var groupWidth = self.barWidth(d);
 
-        var width = self.stackedBars() || (self.series.length == 1) ? groupThickness : groupThickness / self.series.length;
+        var width = self.stackedBars() || (self.series.length == 1) ? groupWidth : groupWidth / self.series.length;
 
         return width;
     };
 
-    this.offsetYPosition = function(d) {
-        var thickness = self.groupedbarThickness(d);
-        var position = self.stackedBars() ? self.yPosition(d) : self.calculateYPos(thickness, d);
+    this.offsetXPosition = function(d) {
+        var width = self.groupedBarWidth(d);
+        var position = self.stackedBars() ? self.xPosition(d) : self.calculateXPos(width, d);
 
         return position;
     };
 
-    this.barWidth = function(d) {
+    this.barHeight = function(d) {
         var func = self.series[self.currentSeries].accessor;
 
-        return self.x.scale(func(d));
+        return (self.chart.height() - self.chart.margin()
+            .top - self.chart.margin()
+            .bottom) - self.y.scale(func(d));
     };
 
     this.stackedBars = function() {
         return self.stacked();
     };
 
+
+
     this.className = function(d) {
-        return seriesName + 'class bar ' + self.sliceSelector(d);
+        var dimension = self.sliceSelector(d);
+
+        var selected = self.selectedClassName(dimension);
+
+        return seriesName + 'class bar ' + dimension + " " + selected + " " + self.dimensionName;
     };
 
     this.draw = function(drag) {
+
         var reset = function(d) {
             d.yPos = 0;
             d.xPos = 0;
         };
 
+        var d = this.dataset()
+            .forEach(reset);
+
         var groups = this.chart.chart
-            .selectAll('g.' + InsightConstants.BarGroupClass + "." + this.name)
-            .data(this.dataset(), this.keyAccessor)
-            .each(reset);
+            .selectAll('g.' + InsightConstants.BarGroupClass)
+            .data(this.dataset(), this.keyAccessor);
 
         var newGroups = groups.enter()
             .append('g')
-            .attr('class', InsightConstants.BarGroupClass + " " + this.name);
+            .attr('class', InsightConstants.BarGroupClass);
 
         var newBars = newGroups.selectAll('rect.bar');
 
@@ -300,36 +319,41 @@
 
             newBars = newGroups.append('rect')
                 .attr('class', self.className)
+                .attr('y', this.y.bounds[0])
                 .attr('height', 0)
                 .attr('fill', s.color)
-                .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
+                .attr('clip-path', 'url(#' + this.chart.clipPath() + ')')
                 .on('mouseover', this.mouseOver)
                 .on('mouseout', this.mouseOut)
                 .on('click', click);
 
-
             newBars.append('svg:text')
                 .attr('class', InsightConstants.ToolTipTextClass);
 
-            var bars = groups.selectAll('.' + seriesName + 'class.bar')
+            var bars = groups.selectAll('.' + seriesName + 'class.bar');
+
+            bars
                 .transition()
                 .duration(duration)
-                .attr('y', this.offsetYPosition)
-                .attr('x', this.xPosition)
-                .attr('height', this.groupedbarThickness)
-                .attr('width', this.barWidth);
+                .attr('y', this.yPosition)
+                .attr('x', this.offsetXPosition)
+                .attr('width', this.groupedBarWidth)
+                .attr('height', this.barHeight);
 
-            bars.selectAll("." + InsightConstants.ToolTipTextClass)
+            bars.selectAll('.' + InsightConstants.ToolTipTextClass)
                 .text(tooltipFunction);
+
         }
+
+        groups.exit()
+            .remove();
     };
 
     return this;
 };
 
-
-insight.RowSeries.prototype = Object.create(insight.Series.prototype);
-insight.RowSeries.prototype.constructor = insight.RowSeries;
+insight.ColumnSeries.prototype = Object.create(insight.Series.prototype);
+insight.ColumnSeries.prototype.constructor = insight.ColumnSeries;
 </code></pre>
         </article>
     </section>
@@ -341,7 +365,7 @@ insight.RowSeries.prototype.constructor = insight.RowSeries;
         
 
         <footer>
-            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Fri Jun 27 2014 14:18:30 GMT+0100 (BST)
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Fri Jun 27 2014 11:14:37 GMT+0100 (BST)
         </footer>
     </div>
 </div>

@@ -24,7 +24,7 @@ insight.Dashboard = (function(insight) {
 
 
     /**
-     * This method loads a JSON data set into the Dashboard, creating a new crossfiltered set and returnign that to the user to reference when creating charts/groupings.
+     * This method loads a JSON data set into the Dashboard, creating a new crossfiltered set and returning that to the user to reference when creating charts/groupings.
      * @returns {object} return - A crossfilter dataset
      * @param {object} data - an array of objects to add to the dashboard
      * @param {string} name - an optional name for the dataset if multiple sets are being loaded into the dashboard.

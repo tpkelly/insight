@@ -5,8 +5,13 @@ var insight = (function() {
         Groups: [],
         Dimensions: [],
         FilteredDimensions: [],
-        ComputedGroups: [],
         DimensionChartMap: {},
+        init: function() {
+            this.Charts = [];
+            this.Groups = [];
+            this.FilteredDimensions = [];
+            this.DimensionChartMap = {};
+        },
         redrawCharts: function() {
             for (var i = 0; i < this.Charts
                 .length; i++) {
@@ -20,18 +25,6 @@ var insight = (function() {
             chart.triggerRedraw = this.redrawCharts.bind(this);
 
             this.Charts.push(chart);
-            chart.series()
-                .forEach(function(s) {
-                    if (s.data.dimension) {
-                        if (self.DimensionChartMap[s.data.dimension.Name]) {
-                            if (self.DimensionChartMap[s.data.dimension.Name].indexOf(chart) == -1) {
-                                self.DimensionChartMap[s.data.dimension.Name].push(chart);
-                            }
-                        } else {
-                            self.DimensionChartMap[s.data.dimension.Name] = [chart];
-                        }
-                    }
-                });
 
             return chart;
         },
@@ -66,9 +59,25 @@ var insight = (function() {
         },
         drawCharts: function() {
 
+            var self = this;
+
             this.Charts
                 .forEach(
                     function(chart) {
+
+                        chart.series()
+                            .forEach(function(s) {
+                                if (s.data.dimension) {
+                                    if (self.DimensionChartMap[s.data.dimension.Name]) {
+                                        if (self.DimensionChartMap[s.data.dimension.Name].indexOf(chart) == -1) {
+                                            self.DimensionChartMap[s.data.dimension.Name].push(chart);
+                                        }
+                                    } else {
+                                        self.DimensionChartMap[s.data.dimension.Name] = [chart];
+                                    }
+                                }
+                            });
+
                         chart.init();
                     });
 
@@ -141,13 +150,6 @@ var insight = (function() {
                     group.recalculate();
 
                 });
-
-                this.ComputedGroups
-                    .forEach(
-                        function(group) {
-                            group.compute();
-                        }
-                );
 
                 this.redrawCharts();
             }

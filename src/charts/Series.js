@@ -23,6 +23,14 @@ insight.Series = function Series(name, chart, data, x, y, color) {
 
     // private functions used internally, set by functions below that are exposed on the object
 
+    var keyFunction = function(d) {
+        return d.key;
+    };
+
+    var valueFunction = function(d) {
+        return d.value;
+    };
+
     var xFunction = function(d) {
         return d.key;
     };
@@ -36,11 +44,29 @@ insight.Series = function Series(name, chart, data, x, y, color) {
     };
 
     var tooltipAccessor = function(d) {
-        return yFunction(d);
+        return valueFunction(d);
     };
 
     var tooltipFunction = function(d) {
         return tooltipFormat(tooltipAccessor(d));
+    };
+
+    this.keyFunction = function(_) {
+        if (!arguments.length) {
+            return keyFunction;
+        }
+        keyFunction = _;
+
+        return this;
+    };
+
+    this.valueFunction = function(_) {
+        if (!arguments.length) {
+            return valueFunction;
+        }
+        valueFunction = _;
+
+        return this;
     };
 
     this.dataset = function() {
@@ -57,7 +83,7 @@ insight.Series = function Series(name, chart, data, x, y, color) {
 
     this.keys = function() {
         return this.dataset()
-            .map(xFunction);
+            .map(self.xFunction());
     };
 
     this.cssClass = function(_) {
@@ -80,6 +106,8 @@ insight.Series = function Series(name, chart, data, x, y, color) {
 
         return this;
     };
+
+
 
     this.yFunction = function(_) {
         if (!arguments.length) {
@@ -198,7 +226,7 @@ insight.Series = function Series(name, chart, data, x, y, color) {
         var max = 0;
         var data = this.data.getData();
 
-        var func = scale == self.x ? self.xFunction() : self.yFunction();
+        var func = scale == self.x ? self.keyFunction() : self.valueFunction();
 
         var m = d3.max(data, func);
 
