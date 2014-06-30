@@ -10,7 +10,9 @@ InsightJS requires the following libraries:
 - [d3-tip.js](https://github.com/Caged/d3-tip)
 - [crossfilter](https://github.com/square/crossfilter/)
 
-Include the required libraries and InsightJS. Start analyzing!
+Include the required libraries and InsightJS. Include an optional stylesheet theme, or create your own.
+
+Load a dataset and start analyzing and creating charts!
 
 ```
 <script src="lib/crossfilter.js"></script>
