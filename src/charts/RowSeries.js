@@ -163,7 +163,7 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
             d.yPos = 0;
             d.xPos = 0;
         };
-
+        
         var groups = this.chart.chart
             .selectAll('g.' + insight.Constants.BarGroupClass + "." + this.name)
             .data(this.dataset(), this.keyAccessor)
