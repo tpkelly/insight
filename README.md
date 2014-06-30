@@ -7,8 +7,49 @@ InsightJS is a JavaScript data aggregation and visualization library that allows
 
 InsightJS requires the following libraries:
 - [d3.js](https://github.com/mbostock/d3)
+- [d3-tip.js](https://github.com/Caged/d3-tip)
 - [crossfilter](https://github.com/square/crossfilter/)
 
+Include the required libraries and InsightJS. Start analyzing!
+
+```
+<script src="lib/crossfilter.js"></script>
+<script src="lib/d3.js"></script>
+<script src="lib/d3.tip.js" data-manual></script>
+<script type="text/javascript" src="./dist/insightjs.min.js"></script>
+```
+
+```javascript
+d3.json("appstore.json", function(data)
+  {
+    var dataset = new insight.DataSet(data);
+    
+    var country = dataset.group("genre", function(d)
+    {
+        return d.Country;
+    }).mean(['price'];
+    
+    var chart = new insight.Chart("AppGenres", "#chart")
+        .width(400)
+        .height(350)
+        .title("Genres")
+        .autoMargin(true);
+        
+    var columns = chart.addColumnSeries(
+    {
+        name: "AveragePrice",
+        data: genre,
+        accessor: function(d)
+        {
+            return d.value.price.Average;
+        },
+        color: "#ACC3EE"
+    });
+    
+    insight.drawCharts();
+});
+
+```
 ### Information
 
 - View some examples at [InsightJS](http://scottlogic.github.io/insight/)
