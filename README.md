@@ -5,12 +5,13 @@ InsightJS is a JavaScript data aggregation and visualization library that allows
 
 ### Getting Started
 
-InsightJS requires the following libraries:
+Using InsightJS requires the following libraries:
 - [d3.js](https://github.com/mbostock/d3)
 - [d3-tip.js](https://github.com/Caged/d3-tip)
 - [crossfilter](https://github.com/square/crossfilter/)
 
 Include the required libraries and InsightJS. Include an optional stylesheet theme, or create your own.
+
 
 Load a dataset and start analyzing and creating charts!
 
@@ -18,7 +19,7 @@ Load a dataset and start analyzing and creating charts!
 <script src="lib/crossfilter.js"></script>
 <script src="lib/d3.js"></script>
 <script src="lib/d3.tip.js"></script>
-<script type="text/javascript" src="./dist/insight.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/insightjs/0.1.0/insight.min.js"></script>
 ```
 
 ```javascript
