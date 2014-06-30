@@ -1,4 +1,4 @@
-var InsightConstants = (function() {
+insight.Constants = (function() {
     var exports = {};
 
     exports.Behind = 'behind';
@@ -19,7 +19,7 @@ var InsightConstants = (function() {
 }());
 
 
-var Scales = (function() {
+insight.Scales = (function() {
     var exports = {};
 
     exports.Ordinal = {

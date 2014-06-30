@@ -186,7 +186,7 @@ insight.Series = function Series(name, chart, data, x, y, color) {
     this.maxLabelDimensions = function(measureCanvas) {
 
         var sampleText = document.createElement('div');
-        sampleText.setAttribute('class', InsightConstants.AxisTextClass);
+        sampleText.setAttribute('class', insight.Constants.AxisTextClass);
         var style = window.getComputedStyle(sampleText);
         var ctx = measureCanvas.getContext('2d');
         ctx.font = style['font-size'] + ' ' + style['font-family'];

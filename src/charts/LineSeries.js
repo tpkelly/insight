@@ -113,11 +113,11 @@ insight.LineSeries = function LineSeries(name, chart, data, x, y, color) {
 
         if (!tooltipExists) {
             circles.append('svg:text')
-                .attr('class', InsightConstants.ToolTipTextClass);
+                .attr('class', insight.Constants.ToolTipTextClass);
             tooltipExists = true;
         }
 
-        circles.selectAll("." + InsightConstants.ToolTipTextClass)
+        circles.selectAll("." + insight.Constants.ToolTipTextClass)
             .text(this.tooltipFunction());
     };
 

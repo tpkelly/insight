@@ -144,12 +144,12 @@ insight.MarkerSeries = function MarkerSeries(name, chart, data, x, y, color) {
             .forEach(reset);
 
         var groups = this.chart.chart
-            .selectAll('g.' + InsightConstants.BarGroupClass + "." + this.name)
+            .selectAll('g.' + insight.Constants.BarGroupClass + "." + this.name)
             .data(this.dataset(), this.keyAccessor);
 
         var newGroups = groups.enter()
             .append('g')
-            .attr('class', InsightConstants.BarGroupClass + " " + this.name);
+            .attr('class', insight.Constants.BarGroupClass + " " + this.name);
 
         var newBars = newGroups.selectAll('rect.bar');
 
@@ -172,7 +172,7 @@ insight.MarkerSeries = function MarkerSeries(name, chart, data, x, y, color) {
             .on('click', click);
 
         newBars.append('svg:text')
-            .attr('class', InsightConstants.ToolTipTextClass);
+            .attr('class', insight.Constants.ToolTipTextClass);
 
         var bars = groups.selectAll('.' + this.name + 'class.bar');
 
@@ -184,7 +184,7 @@ insight.MarkerSeries = function MarkerSeries(name, chart, data, x, y, color) {
             .attr('width', this.markerWidth)
             .attr('height', this.markerHeight);
 
-        bars.selectAll('.' + InsightConstants.ToolTipTextClass)
+        bars.selectAll('.' + insight.Constants.ToolTipTextClass)
             .text(this.tooltipFunction());
 
         groups.exit()

@@ -91,11 +91,11 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
         return this;
     };
 
-    this.selector = this.name + InsightConstants.Bubble;
+    this.selector = this.name + insight.Constants.Bubble;
 
     this.className = function(d) {
 
-        return self.selector + " " + InsightConstants.Bubble + " " + self.sliceSelector(d) + " " + self.dimensionName;
+        return self.selector + " " + insight.Constants.Bubble + " " + self.sliceSelector(d) + " " + self.dimensionName;
     };
 
     this.draw = function(drag) {
@@ -148,11 +148,11 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
 
         if (!tooltipExists) {
             bubbles.append('svg:text')
-                .attr('class', InsightConstants.ToolTipTextClass);
+                .attr('class', insight.Constants.ToolTipTextClass);
             tooltipExists = true;
         }
 
-        bubbles.selectAll("." + InsightConstants.ToolTipTextClass)
+        bubbles.selectAll("." + insight.Constants.ToolTipTextClass)
             .text(this.tooltipFunction());
     };
 };

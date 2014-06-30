@@ -17,12 +17,11 @@ insight.Scale = function Scale(chart, title, direction, type) {
         .push(this);
 
     this.domain = function() {
-        if (type.name == Scales.Linear.name) {
+        if (type.name == insight.Scales.Linear.name) {
             return [0, this.findMax()];
-        } else if (type.name == Scales.Ordinal.name) {
+        } else if (type.name == insight.Scales.Ordinal.name) {
             return this.findOrdinalValues();
-        }
-        if (type.name == Scales.Time.name) {
+        } else if (type.name == insight.Scales.Time.name) {
             return [this.minTime(), this.maxTime()];
         }
     };

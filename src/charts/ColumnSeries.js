@@ -169,12 +169,12 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
             .forEach(reset);
 
         var groups = this.chart.chart
-            .selectAll('g.' + InsightConstants.BarGroupClass)
+            .selectAll('g.' + insight.Constants.BarGroupClass)
             .data(this.dataset(), this.keyAccessor);
 
         var newGroups = groups.enter()
             .append('g')
-            .attr('class', InsightConstants.BarGroupClass);
+            .attr('class', insight.Constants.BarGroupClass);
 
         var newBars = newGroups.selectAll('rect.bar');
 
@@ -205,7 +205,7 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
                 .on('click', click);
 
             newBars.append('svg:text')
-                .attr('class', InsightConstants.ToolTipTextClass);
+                .attr('class', insight.Constants.ToolTipTextClass);
 
             var bars = groups.selectAll('.' + seriesName + 'class.bar');
 
@@ -217,7 +217,7 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
                 .attr('width', this.groupedBarWidth)
                 .attr('height', this.barHeight);
 
-            bars.selectAll('.' + InsightConstants.ToolTipTextClass)
+            bars.selectAll('.' + insight.Constants.ToolTipTextClass)
                 .text(tooltipFunction);
 
         }

@@ -69,6 +69,15 @@ module.exports = function(grunt) {
             }
         }
     },
+    cssmin: {
+      minify: {
+        expand: true,
+        cwd: 'themes/',
+        src: ['*.css', '!*.min.css'],
+        dest: 'dist/',
+        ext: '.min.css'
+      }
+    },
     connect: {
             server: {
                 options: {
@@ -109,6 +118,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-open');
@@ -116,6 +126,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jsbeautifier');
   grunt.loadNpmTasks('grunt-jsdoc');
 
-  grunt.registerTask('default', ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'jsdoc', 'connect:server','open','watch']);
-  grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'concat', 'uglify']);
+  grunt.registerTask('default', ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'cssmin', 'jsdoc', 'connect:server','open','watch']);
+  grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'concat', 'uglify', 'cssmin']);
 };

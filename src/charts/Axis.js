@@ -215,11 +215,11 @@ insight.Axis = function Axis(chart, name, scale, anchor) {
             .tickFormat(self.labelFormat());
 
         this.chart.chart.append('g')
-            .attr('class', self.name + ' ' + InsightConstants.AxisClass)
+            .attr('class', self.name + ' ' + insight.Constants.AxisClass)
             .attr('transform', self.transform())
             .call(this.axis)
             .selectAll('text')
-            .attr('class', self.name + ' ' + InsightConstants.AxisTextClass)
+            .attr('class', self.name + ' ' + insight.Constants.AxisTextClass)
             .style('text-anchor', self.textAnchor())
             .style('transform', self.tickRotation());
 
@@ -227,7 +227,7 @@ insight.Axis = function Axis(chart, name, scale, anchor) {
 
         var labels = this.chart.container
             .append('div')
-            .attr('class', self.name + InsightConstants.AxisLabelClass)
+            .attr('class', self.name + insight.Constants.AxisLabelClass)
             .style('position', 'absolute')
             .text(this.label());
 
@@ -244,7 +244,7 @@ insight.Axis = function Axis(chart, name, scale, anchor) {
             .tickPadding(self.tickPadding())
             .tickFormat(self.labelFormat());
 
-        var axis = this.chart.chart.selectAll('g.' + self.name + '.' + InsightConstants.AxisClass)
+        var axis = this.chart.chart.selectAll('g.' + self.name + '.' + insight.Constants.AxisClass)
             .transition()
             .duration(500)
             .attr('transform', self.transform())
@@ -256,7 +256,7 @@ insight.Axis = function Axis(chart, name, scale, anchor) {
             .style('text-anchor', self.textAnchor());
 
         d3.select(this.chart.element)
-            .select('div.' + self.name + InsightConstants.AxisLabelClass)
+            .select('div.' + self.name + insight.Constants.AxisLabelClass)
             .text(this.label());
 
         if (showGridLines) {

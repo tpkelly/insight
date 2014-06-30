@@ -68,19 +68,19 @@
                     .append('div');
 
                 this.container
-                    .attr('class', InsightConstants.ContainerClass)
+                    .attr('class', insight.Constants.ContainerClass)
                     .style('width', this.width() + 'px')
                     .style('position', 'relative')
                     .style('display', 'inline-block');
 
                 this.chartSVG = this.container
                     .append("svg")
-                    .attr("class", InsightConstants.ChartSVG)
+                    .attr("class", insight.Constants.ChartSVG)
                     .attr("width", this.width())
                     .attr("height", this.height());
 
                 this.chart = this.chartSVG.append("g")
-                    .attr('class', InsightConstants.Chart)
+                    .attr('class', insight.Constants.Chart)
                     .attr("transform", "translate(" + this.margin()
                         .left + "," + this.margin()
                         .top + ")");
@@ -356,8 +356,8 @@
 
         Chart.prototype.addColumnSeries = function(series) {
 
-            var x = new insight.Scale(this, "", 'h', Scales.Ordinal);
-            var y = new insight.Scale(this, "", 'v', Scales.Linear);
+            var x = new insight.Scale(this, "", 'h', insight.Scales.Ordinal);
+            var y = new insight.Scale(this, "", 'v', insight.Scales.Linear);
 
             var stacked = series.stacked ? true : false;
 
@@ -375,8 +375,8 @@
 
         Chart.prototype.addLineSeries = function(series) {
 
-            var x = new insight.Scale(this, "", 'h', Scales.Ordinal);
-            var y = new insight.Scale(this, "", 'v', Scales.Linear);
+            var x = new insight.Scale(this, "", 'h', insight.Scales.Ordinal);
+            var y = new insight.Scale(this, "", 'v', insight.Scales.Linear);
 
             var s = new insight.LineSeries(series.name, this, series.data, x, y, series.color)
                 .valueFunction(series.accessor);
@@ -390,8 +390,8 @@
 
         Chart.prototype.addBulletChart = function(options) {
 
-            var x = new insight.Scale(this, options.name + "x", 'h', Scales.Linear);
-            var y = new insight.Scale(this, options.name + "y", 'v', Scales.Ordinal);
+            var x = new insight.Scale(this, options.name + "x", 'h', insight.Scales.Linear);
+            var y = new insight.Scale(this, options.name + "y", 'v', insight.Scales.Ordinal);
 
             // Create the areas as stacked bars
             var s = new insight.RowSeries(options.name, this, options.ranges[0].data, x, y, 'blue')

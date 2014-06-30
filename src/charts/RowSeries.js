@@ -165,13 +165,13 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
         };
 
         var groups = this.chart.chart
-            .selectAll('g.' + InsightConstants.BarGroupClass + "." + this.name)
+            .selectAll('g.' + insight.Constants.BarGroupClass + "." + this.name)
             .data(this.dataset(), this.keyAccessor)
             .each(reset);
 
         var newGroups = groups.enter()
             .append('g')
-            .attr('class', InsightConstants.BarGroupClass + " " + this.name);
+            .attr('class', insight.Constants.BarGroupClass + " " + this.name);
 
         var newBars = newGroups.selectAll('rect.bar');
 
@@ -202,7 +202,7 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
 
 
             newBars.append('svg:text')
-                .attr('class', InsightConstants.ToolTipTextClass);
+                .attr('class', insight.Constants.ToolTipTextClass);
 
             var bars = groups.selectAll('.' + seriesName + 'class.bar')
                 .transition()
@@ -212,7 +212,7 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
                 .attr('height', this.groupedbarThickness)
                 .attr('width', this.barWidth);
 
-            bars.selectAll("." + InsightConstants.ToolTipTextClass)
+            bars.selectAll("." + insight.Constants.ToolTipTextClass)
                 .text(tooltipFunction);
         }
     };

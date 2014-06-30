@@ -157,7 +157,7 @@ var insight = (function() {
     };
 
 })();
-;var InsightConstants = (function() {
+;insight.Constants = (function() {
     var exports = {};
 
     exports.Behind = 'behind';
@@ -178,7 +178,7 @@ var insight = (function() {
 }());
 
 
-var Scales = (function() {
+insight.Scales = (function() {
     var exports = {};
 
     exports.Ordinal = {
@@ -1356,7 +1356,7 @@ var InsightUtils = (function() {
     this.maxLabelDimensions = function(measureCanvas) {
 
         var sampleText = document.createElement('div');
-        sampleText.setAttribute('class', InsightConstants.AxisTextClass);
+        sampleText.setAttribute('class', insight.Constants.AxisTextClass);
         var style = window.getComputedStyle(sampleText);
         var ctx = measureCanvas.getContext('2d');
         ctx.font = style['font-size'] + ' ' + style['font-family'];
@@ -1474,19 +1474,19 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
                     .append('div');
 
                 this.container
-                    .attr('class', InsightConstants.ContainerClass)
+                    .attr('class', insight.Constants.ContainerClass)
                     .style('width', this.width() + 'px')
                     .style('position', 'relative')
                     .style('display', 'inline-block');
 
                 this.chartSVG = this.container
                     .append("svg")
-                    .attr("class", InsightConstants.ChartSVG)
+                    .attr("class", insight.Constants.ChartSVG)
                     .attr("width", this.width())
                     .attr("height", this.height());
 
                 this.chart = this.chartSVG.append("g")
-                    .attr('class', InsightConstants.Chart)
+                    .attr('class', insight.Constants.Chart)
                     .attr("transform", "translate(" + this.margin()
                         .left + "," + this.margin()
                         .top + ")");
@@ -1762,8 +1762,8 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
 
         Chart.prototype.addColumnSeries = function(series) {
 
-            var x = new insight.Scale(this, "", 'h', Scales.Ordinal);
-            var y = new insight.Scale(this, "", 'v', Scales.Linear);
+            var x = new insight.Scale(this, "", 'h', insight.Scales.Ordinal);
+            var y = new insight.Scale(this, "", 'v', insight.Scales.Linear);
 
             var stacked = series.stacked ? true : false;
 
@@ -1781,8 +1781,8 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
 
         Chart.prototype.addLineSeries = function(series) {
 
-            var x = new insight.Scale(this, "", 'h', Scales.Ordinal);
-            var y = new insight.Scale(this, "", 'v', Scales.Linear);
+            var x = new insight.Scale(this, "", 'h', insight.Scales.Ordinal);
+            var y = new insight.Scale(this, "", 'v', insight.Scales.Linear);
 
             var s = new insight.LineSeries(series.name, this, series.data, x, y, series.color)
                 .valueFunction(series.accessor);
@@ -1796,8 +1796,8 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
 
         Chart.prototype.addBulletChart = function(options) {
 
-            var x = new insight.Scale(this, options.name + "x", 'h', Scales.Linear);
-            var y = new insight.Scale(this, options.name + "y", 'v', Scales.Ordinal);
+            var x = new insight.Scale(this, options.name + "x", 'h', insight.Scales.Linear);
+            var y = new insight.Scale(this, options.name + "y", 'v', insight.Scales.Ordinal);
 
             // Create the areas as stacked bars
             var s = new insight.RowSeries(options.name, this, options.ranges[0].data, x, y, 'blue')
@@ -1991,12 +1991,12 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
             .forEach(reset);
 
         var groups = this.chart.chart
-            .selectAll('g.' + InsightConstants.BarGroupClass + "." + this.name)
+            .selectAll('g.' + insight.Constants.BarGroupClass + "." + this.name)
             .data(this.dataset(), this.keyAccessor);
 
         var newGroups = groups.enter()
             .append('g')
-            .attr('class', InsightConstants.BarGroupClass + " " + this.name);
+            .attr('class', insight.Constants.BarGroupClass + " " + this.name);
 
         var newBars = newGroups.selectAll('rect.bar');
 
@@ -2019,7 +2019,7 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
             .on('click', click);
 
         newBars.append('svg:text')
-            .attr('class', InsightConstants.ToolTipTextClass);
+            .attr('class', insight.Constants.ToolTipTextClass);
 
         var bars = groups.selectAll('.' + this.name + 'class.bar');
 
@@ -2031,7 +2031,7 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
             .attr('width', this.markerWidth)
             .attr('height', this.markerHeight);
 
-        bars.selectAll('.' + InsightConstants.ToolTipTextClass)
+        bars.selectAll('.' + insight.Constants.ToolTipTextClass)
             .text(this.tooltipFunction());
 
         groups.exit()
@@ -2136,11 +2136,11 @@ insight.MarkerSeries.prototype.constructor = insight.MarkerSeries;
         return this;
     };
 
-    this.selector = this.name + InsightConstants.Bubble;
+    this.selector = this.name + insight.Constants.Bubble;
 
     this.className = function(d) {
 
-        return self.selector + " " + InsightConstants.Bubble + " " + self.sliceSelector(d) + " " + self.dimensionName;
+        return self.selector + " " + insight.Constants.Bubble + " " + self.sliceSelector(d) + " " + self.dimensionName;
     };
 
     this.draw = function(drag) {
@@ -2193,11 +2193,11 @@ insight.MarkerSeries.prototype.constructor = insight.MarkerSeries;
 
         if (!tooltipExists) {
             bubbles.append('svg:text')
-                .attr('class', InsightConstants.ToolTipTextClass);
+                .attr('class', insight.Constants.ToolTipTextClass);
             tooltipExists = true;
         }
 
-        bubbles.selectAll("." + InsightConstants.ToolTipTextClass)
+        bubbles.selectAll("." + insight.Constants.ToolTipTextClass)
             .text(this.tooltipFunction());
     };
 };
@@ -2371,13 +2371,13 @@ insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
         };
 
         var groups = this.chart.chart
-            .selectAll('g.' + InsightConstants.BarGroupClass + "." + this.name)
+            .selectAll('g.' + insight.Constants.BarGroupClass + "." + this.name)
             .data(this.dataset(), this.keyAccessor)
             .each(reset);
 
         var newGroups = groups.enter()
             .append('g')
-            .attr('class', InsightConstants.BarGroupClass + " " + this.name);
+            .attr('class', insight.Constants.BarGroupClass + " " + this.name);
 
         var newBars = newGroups.selectAll('rect.bar');
 
@@ -2408,7 +2408,7 @@ insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
 
 
             newBars.append('svg:text')
-                .attr('class', InsightConstants.ToolTipTextClass);
+                .attr('class', insight.Constants.ToolTipTextClass);
 
             var bars = groups.selectAll('.' + seriesName + 'class.bar')
                 .transition()
@@ -2418,7 +2418,7 @@ insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
                 .attr('height', this.groupedbarThickness)
                 .attr('width', this.barWidth);
 
-            bars.selectAll("." + InsightConstants.ToolTipTextClass)
+            bars.selectAll("." + insight.Constants.ToolTipTextClass)
                 .text(tooltipFunction);
         }
     };
@@ -2448,12 +2448,11 @@ insight.RowSeries.prototype.constructor = insight.RowSeries;
         .push(this);
 
     this.domain = function() {
-        if (type.name == Scales.Linear.name) {
+        if (type.name == insight.Scales.Linear.name) {
             return [0, this.findMax()];
-        } else if (type.name == Scales.Ordinal.name) {
+        } else if (type.name == insight.Scales.Ordinal.name) {
             return this.findOrdinalValues();
-        }
-        if (type.name == Scales.Time.name) {
+        } else if (type.name == insight.Scales.Time.name) {
             return [this.minTime(), this.maxTime()];
         }
     };
@@ -2776,11 +2775,11 @@ insight.RowSeries.prototype.constructor = insight.RowSeries;
             .tickFormat(self.labelFormat());
 
         this.chart.chart.append('g')
-            .attr('class', self.name + ' ' + InsightConstants.AxisClass)
+            .attr('class', self.name + ' ' + insight.Constants.AxisClass)
             .attr('transform', self.transform())
             .call(this.axis)
             .selectAll('text')
-            .attr('class', self.name + ' ' + InsightConstants.AxisTextClass)
+            .attr('class', self.name + ' ' + insight.Constants.AxisTextClass)
             .style('text-anchor', self.textAnchor())
             .style('transform', self.tickRotation());
 
@@ -2788,7 +2787,7 @@ insight.RowSeries.prototype.constructor = insight.RowSeries;
 
         var labels = this.chart.container
             .append('div')
-            .attr('class', self.name + InsightConstants.AxisLabelClass)
+            .attr('class', self.name + insight.Constants.AxisLabelClass)
             .style('position', 'absolute')
             .text(this.label());
 
@@ -2805,7 +2804,7 @@ insight.RowSeries.prototype.constructor = insight.RowSeries;
             .tickPadding(self.tickPadding())
             .tickFormat(self.labelFormat());
 
-        var axis = this.chart.chart.selectAll('g.' + self.name + '.' + InsightConstants.AxisClass)
+        var axis = this.chart.chart.selectAll('g.' + self.name + '.' + insight.Constants.AxisClass)
             .transition()
             .duration(500)
             .attr('transform', self.transform())
@@ -2817,7 +2816,7 @@ insight.RowSeries.prototype.constructor = insight.RowSeries;
             .style('text-anchor', self.textAnchor());
 
         d3.select(this.chart.element)
-            .select('div.' + self.name + InsightConstants.AxisLabelClass)
+            .select('div.' + self.name + insight.Constants.AxisLabelClass)
             .text(this.label());
 
         if (showGridLines) {
@@ -2940,11 +2939,11 @@ insight.RowSeries.prototype.constructor = insight.RowSeries;
 
         if (!tooltipExists) {
             circles.append('svg:text')
-                .attr('class', InsightConstants.ToolTipTextClass);
+                .attr('class', insight.Constants.ToolTipTextClass);
             tooltipExists = true;
         }
 
-        circles.selectAll("." + InsightConstants.ToolTipTextClass)
+        circles.selectAll("." + insight.Constants.ToolTipTextClass)
             .text(this.tooltipFunction());
     };
 
@@ -3127,12 +3126,12 @@ insight.LineSeries.prototype.constructor = insight.LineSeries;
             .forEach(reset);
 
         var groups = this.chart.chart
-            .selectAll('g.' + InsightConstants.BarGroupClass)
+            .selectAll('g.' + insight.Constants.BarGroupClass)
             .data(this.dataset(), this.keyAccessor);
 
         var newGroups = groups.enter()
             .append('g')
-            .attr('class', InsightConstants.BarGroupClass);
+            .attr('class', insight.Constants.BarGroupClass);
 
         var newBars = newGroups.selectAll('rect.bar');
 
@@ -3163,7 +3162,7 @@ insight.LineSeries.prototype.constructor = insight.LineSeries;
                 .on('click', click);
 
             newBars.append('svg:text')
-                .attr('class', InsightConstants.ToolTipTextClass);
+                .attr('class', insight.Constants.ToolTipTextClass);
 
             var bars = groups.selectAll('.' + seriesName + 'class.bar');
 
@@ -3175,7 +3174,7 @@ insight.LineSeries.prototype.constructor = insight.LineSeries;
                 .attr('width', this.groupedBarWidth)
                 .attr('height', this.barHeight);
 
-            bars.selectAll('.' + InsightConstants.ToolTipTextClass)
+            bars.selectAll('.' + insight.Constants.ToolTipTextClass)
                 .text(tooltipFunction);
 
         }
