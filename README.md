@@ -8,3 +8,9 @@ InsightJS is a JavaScript data aggregation and visualization library that allows
 InsightJS requires the following libraries:
 - [d3.js](https://github.com/mbostock/d3)
 - [crossfilter](https://github.com/square/crossfilter/)
+
+### Information
+
+- View some examples at [InsightJS](http://scottlogic.github.io/insight/)
+- Find out more at our [Wiki Page](https://github.com/ScottLogic/insight/wiki)
+- Ask us questions in our [Google Group](https://groups.google.com/forum/#!forum/insightjs/)
