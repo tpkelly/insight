@@ -17,8 +17,8 @@ Load a dataset and start analyzing and creating charts!
 ```
 <script src="lib/crossfilter.js"></script>
 <script src="lib/d3.js"></script>
-<script src="lib/d3.tip.js" data-manual></script>
-<script type="text/javascript" src="./dist/insightjs.min.js"></script>
+<script src="lib/d3.tip.js"></script>
+<script type="text/javascript" src="./dist/insight.min.js"></script>
 ```
 
 ```javascript
@@ -28,7 +28,7 @@ d3.json("appstore.json", function(data)
     
     var country = dataset.group("genre", function(d)
     {
-        return d.Country;
+        return d.primaryGenreName;
     }).mean(['price'];
     
     var chart = new insight.Chart("AppGenres", "#chart")
