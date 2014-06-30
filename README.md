@@ -55,3 +55,6 @@ d3.json("appstore.json", function(data)
 - View some examples at [InsightJS](http://scottlogic.github.io/insight/)
 - Find out more at our [Wiki Page](https://github.com/ScottLogic/insight/wiki)
 - Ask us questions in our [Google Group](https://groups.google.com/forum/#!forum/insightjs/)
+
+### License
+InsightJS is licensed under the [MIT License](http://opensource.org/licenses/MIT)
