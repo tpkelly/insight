@@ -17,7 +17,7 @@ Load a dataset and start analyzing and creating charts!
 ```
 <script src="lib/crossfilter.js"></script>
 <script src="lib/d3.js"></script>
-<script src="lib/d3.tip.js" data-manual></script>
+<script src="lib/d3.tip.js"></script>
 <script type="text/javascript" src="./dist/insightjs.min.js"></script>
 ```
 
