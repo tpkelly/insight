@@ -28,7 +28,7 @@ d3.json("appstore.json", function(data)
     
     var country = dataset.group("genre", function(d)
     {
-        return d.Country;
+        return d.primaryGenreName;
     }).mean(['price'];
     
     var chart = new insight.Chart("AppGenres", "#chart")
