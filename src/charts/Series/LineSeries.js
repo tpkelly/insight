@@ -1,3 +1,7 @@
+/**
+ * The RowSeries class extends the Series class and draws horizontal bars on a Chart
+ * @class insight.RowSeries
+ */
 insight.LineSeries = function LineSeries(name, chart, data, x, y, color) {
 
     insight.Series.call(this, name, chart, data, x, y, color);

@@ -1,3 +1,7 @@
+/**
+ * This is the global namespace that also handles some global events and filtering logic (the logic could be moved into a specific class as it gets larger)
+ * @namespace insight
+ */
 var insight = (function() {
 
     return {

@@ -1,9 +1,13 @@
-
+# Grunt files
 .grunt
-.git-rewrite
-bower_components
-.grunt/
-.git-rewrite/
-node_modules/
-.git-rewrite/
 _SpecRunner.html
+
+# Bower files
+bower_components
+
+# Node files
+node_modules
+
+# WebStorm files
+.idea
+

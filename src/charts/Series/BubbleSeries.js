@@ -8,6 +8,7 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
     var minRad = d3.functor(7);
     var tooltipExists = false;
     var self = this;
+    var selector = this.name + insight.Constants.Bubble;
 
     var xFunction = function(d) {};
     var yFunction = function(d) {};
@@ -23,6 +24,8 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
     var mouseOut = function(d, item) {
         self.chart.mouseOut(self, this, d);
     };
+
+
 
 
     this.findMax = function(scale) {
@@ -82,6 +85,11 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
     };
 
 
+    var className = function(d) {
+
+        return selector + " " + insight.Constants.Bubble + " " + self.sliceSelector(d) + " " + self.dimensionName;
+    };
+
     this.fillFunction = function(_) {
         if (!arguments.length) {
             return fillFunction;
@@ -91,12 +99,7 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
         return this;
     };
 
-    this.selector = this.name + insight.Constants.Bubble;
 
-    this.className = function(d) {
-
-        return self.selector + " " + insight.Constants.Bubble + " " + self.sliceSelector(d) + " " + self.dimensionName;
-    };
 
     this.draw = function(drag) {
         var duration = drag ? 0 : function(d, i) {
@@ -116,25 +119,25 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
             return self.click(this, filter);
         };
 
-
+        // create radius for each item
         data.forEach(function(d) {
             var radiusInput = radiusFunction(d);
 
             d.radius = minRad() + (((radiusInput - min) * (maxRad() - minRad())) / (max - min));
         });
 
-        //this sort ensures that smaller bubbles are on top of larger ones, so that they are always selectable.  Without changing original array
+        //this sort ensures that smaller bubbles are on top of larger ones, so that they are always selectable.  Without changing original array (hence concat which creates a copy)
         data = data.concat()
             .sort(function(a, b) {
                 return d3.descending(rad(a), rad(b));
             });
 
-        var bubbles = this.chart.chart.selectAll('circle.' + self.selector)
+        var bubbles = this.chart.chart.selectAll('circle.' + selector)
             .data(data, self.keyAccessor);
 
         bubbles.enter()
             .append('circle')
-            .attr('class', self.className)
+            .attr('class', className)
             .on('mouseover', mouseOver)
             .on('mouseout', mouseOut)
             .on('click', click);

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Class: isArray</title>
+    <title>Class: findMax</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -34,47 +34,11 @@
     </div>
     <ul class="list">
     
-        <li class="item" data-name="DataSet">
+        <li class="item" data-name="insight">
             <span class="title">
-                <a href="DataSet.html">DataSet</a>
+                <a href="insight.html">insight</a>
                 
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="Dimension">
-            <span class="title">
-                <a href="Dimension.html">Dimension</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="Grouping">
-            <span class="title">
-                <a href="Grouping.html">Grouping</a>
+                <span class="static">static</span>
                 
             </span>
             <ul class="members itemMembers">
@@ -87,31 +51,35 @@
             
             <span class="subtitle">Methods</span>
             
-                <li data-name="Grouping#average"><a href="Grouping.html#average">average</a></li>
+                <li data-name="insight#calculateBounds"><a href="insight.html#calculateBounds">calculateBounds</a></li>
             
-                <li data-name="Grouping#computeFunction"><a href="Grouping.html#computeFunction">computeFunction</a></li>
+                <li data-name="insight#domain"><a href="insight.html#domain">domain</a></li>
             
-                <li data-name="Grouping#count"><a href="Grouping.html#count">count</a></li>
+                <li data-name="insight#findMax"><a href="insight.html#findMax">findMax</a></li>
             
-                <li data-name="Grouping#cumulative"><a href="Grouping.html#cumulative">cumulative</a></li>
+                <li data-name="insight#findMax"><a href="insight.html#findMax">findMax</a></li>
             
-                <li data-name="Grouping#filter"><a href="Grouping.html#filter">filter</a></li>
+                <li data-name="insight#findOrdinalValues"><a href="insight.html#findOrdinalValues">findOrdinalValues</a></li>
             
-                <li data-name="Grouping#getData"><a href="Grouping.html#getData">getData</a></li>
+                <li data-name="insight#keys"><a href="insight.html#keys">keys</a></li>
             
-                <li data-name="Grouping#getOrderedData"><a href="Grouping.html#getOrderedData">getOrderedData</a></li>
+                <li data-name="insight#maxTime"><a href="insight.html#maxTime">maxTime</a></li>
             
-                <li data-name="Grouping#initialize"><a href="Grouping.html#initialize">initialize</a></li>
+                <li data-name="insight#minTime"><a href="insight.html#minTime">minTime</a></li>
             
-                <li data-name="Grouping#ordered"><a href="Grouping.html#ordered">ordered</a></li>
+                <li data-name="insight#positionLabel"><a href="insight.html#positionLabel">positionLabel</a></li>
             
-                <li data-name="Grouping#orderFunction"><a href="Grouping.html#orderFunction">orderFunction</a></li>
+                <li data-name="insight#seriesMax"><a href="insight.html#seriesMax">seriesMax</a></li>
             
-                <li data-name="Grouping#recalculate"><a href="Grouping.html#recalculate">recalculate</a></li>
+                <li data-name="insight#seriesMax"><a href="insight.html#seriesMax">seriesMax</a></li>
             
-                <li data-name="Grouping#sum"><a href="Grouping.html#sum">sum</a></li>
+                <li data-name="insight#sliceSelector"><a href="insight.html#sliceSelector">sliceSelector</a></li>
             
-                <li data-name="Grouping#unique"><a href="Grouping.html#unique">unique</a></li>
+                <li data-name="insight#stacked"><a href="insight.html#stacked">stacked</a></li>
+            
+                <li data-name="insight#stacked"><a href="insight.html#stacked">stacked</a></li>
+            
+                <li data-name="insight#tickRotation"><a href="insight.html#tickRotation">tickRotation</a></li>
             
             </ul>
             <ul class="events itemMembers">
@@ -119,9 +87,32 @@
             </ul>
         </li>
     
-        <li class="item" data-name="module:InsightUtils.isArray">
+        <li class="item" data-name="insight.Axis">
             <span class="title">
-                <a href="module-InsightUtils.isArray.html">module:InsightUtils.isArray</a>
+                <a href="insight.Axis.html">insight.Axis</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.Axis~applyScaleRange"><a href="insight.Axis.html#applyScaleRange">applyScaleRange</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.ColumnSeries">
+            <span class="title">
+                <a href="insight.ColumnSeries.html">insight.ColumnSeries</a>
                 
             </span>
             <ul class="members itemMembers">
@@ -138,9 +129,47 @@
             </ul>
         </li>
     
-        <li class="item" data-name="module:InsightUtils.somethingElse">
+        <li class="item" data-name="insight.RowSeries">
             <span class="title">
-                <a href="module-InsightUtils.somethingElse.html">module:InsightUtils.somethingElse</a>
+                <a href="insight.RowSeries.html">insight.RowSeries</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.Series">
+            <span class="title">
+                <a href="insight.Series.html">insight.Series</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight#findMax">
+            <span class="title">
+                <a href="insight.html#findMax">insight#findMax</a>
                 
             </span>
             <ul class="members itemMembers">
@@ -160,7 +189,7 @@
     </ul>
 </div>
     <div class="main">
-        <h1 class="page-title" data-filename="module-InsightUtils.isArray.html">Class: isArray</h1>
+        <h1 class="page-title" data-filename="insight.html#findMax">Class: findMax</h1>
         
 
 
@@ -169,9 +198,9 @@
     
 <header>
     <h2>
-        <span class="ancestors"><a href="module-InsightUtils.html">InsightUtils</a>.</span>
+        <span class="ancestors"><a href="insight.html">insight</a>#</span>
     
-    isArray
+    findMax
     </h2>
     
 </header>  
@@ -184,14 +213,14 @@
         
 <dt>
     <div class="nameContainer">
-        <h4 class="name" id="isArray">
+        <h4 class="name" id="findMax">
             
-            new module:InsightUtils.isArray<span class="signature">(input)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{boolean}</span>
+            new findMax<span class="signature">()</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{Number}</span>
         </h4>
     
         
         <div class="tag-source">
-            <a href="InsightCharts.Constants.js.html">charts/InsightCharts.Constants.js</a>, <a href="InsightCharts.Constants.js.html#line36">line 36</a>
+            <a href="RowSeries.js.html">charts/Series/RowSeries.js</a>, <a href="RowSeries.js.html#line75">line 75</a>
         </div>
         
     </div>
@@ -202,7 +231,8 @@
     
     
     <div class="description">
-        This is a utility method used to check if an object is an array or not
+        This method returns the largest value on the value axis of this ColumnSeries, checking all series functions in the series on all points.
+This function is mapped across the entire data array by the findMax method.
     </div>
     
 
@@ -210,51 +240,6 @@
     
     
     
-    
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>input</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-            
-            
-            
-            <td class="description last">
-                
-                The object to check</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
     
     
     
@@ -297,7 +282,7 @@
 
 
 <h5>Returns:</h5>
-- is the object an array
+- The largest value on the value scale of this ColumnSeries
 <br />
 
     
@@ -336,7 +321,7 @@
         
 
         <footer>
-            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Fri Jun 13 2014 08:55:29 GMT+0100 (BST)
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>.
         </footer>
     </div>
 </div>

@@ -1,126 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Source: charts/MarkerSeries.js</title>
-    
-    
-    <script src="scripts/prettify/prettify.js"></script>
-    <script src="scripts/prettify/lang-css.js"></script>
-    <script src="scripts/jquery.min.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
-    <link type="text/css" rel="stylesheet" href="styles/jaguar.css">
-    
-    
-    <script>
-    var config = {"monospaceLinks":false,"cleverLinks":false,"default":{"outputSourceFiles":true}};
-    </script>
-    
-
-    
-</head>
-<body>
-<div id="wrap" class="clearfix">
-    
-<div class="navigation">
-    <h3 class="applicationName"><a href="index.html"></a></h3>
-
-    <div class="search">
-        <input id="search" type="text" class="form-control input-sm" placeholder="Search Documentations">
-    </div>
-    <ul class="list">
-    
-        <li class="item" data-name="insight#findMax">
-            <span class="title">
-                <a href="insight_findMax.html">insight#findMax</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="insight#findMax">
-            <span class="title">
-                <a href="insight_findMax.html">insight#findMax</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="insight#findMax">
-            <span class="title">
-                <a href="insight_findMax.html">insight#findMax</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="insight#tickRotation">
-            <span class="title">
-                <a href="insight_tickRotation.html">insight#tickRotation</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-    </ul>
-</div>
-    <div class="main">
-        <h1 class="page-title" data-filename="MarkerSeries.js.html">Source: charts/MarkerSeries.js</h1>
-        
-
-
-    
-    <section>
-        <article>
-            <pre class="prettyprint source"><code>insight.MarkerSeries = function MarkerSeries(name, chart, data, x, y, color) {
+/**
+ * The ColumnSeries class extends the Series class and draws vertical bars on a Chart
+ * @class insight.ColumnSeries
+ */
+insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
 
     insight.Series.call(this, name, chart, data, x, y, color);
 
@@ -128,7 +10,6 @@
     var stacked = d3.functor(false);
     var seriesName = "";
     var barWidthFunction = this.x.rangeType;
-
 
 
     var tooltipFunction = function(d) {
@@ -140,7 +21,7 @@
     this.series = [{
         name: 'default',
         accessor: function(d) {
-            return self.yFunction()(d);
+            return self.valueFunction()(d);
         },
         tooltipValue: function(d) {
             return self.tooltipFunction()(d);
@@ -179,7 +60,6 @@
     /**
      * This method returns the largest value on the value axis of this ColumnSeries, checking all series functions in the series on all points.
      * This function is mapped across the entire data array by the findMax method.
-     * @constructor
      * @returns {Number} return - The largest value on the value scale of this ColumnSeries
      */
     this.findMax = function() {
@@ -216,7 +96,7 @@
     };
 
     this.xPosition = function(d) {
-        return self.x.scale(self.xFunction()(d));
+        return self.x.scale(self.keyFunction()(d));
     };
 
     this.calculateXPos = function(width, d) {
@@ -240,6 +120,8 @@
 
 
     this.barWidth = function(d) {
+        // comment for tom, this is the bit that is currently breaking the linear x axis, because d3 linear scales don't support the rangeBand() function, whereas ordinal ones do.
+        // in js, you can separate the scale and range function using rangeBandFunction.call(self.x.scale, d), where rangeBandFunction can point to the appropriate function for the type of scale being used.
         return self.x.scale.rangeBand(d);
     };
 
@@ -281,6 +163,14 @@
         return seriesName + 'class bar ' + dimension + " " + selected + " " + self.dimensionName;
     };
 
+    var click = function(filter) {
+        return self.click(this, filter);
+    };
+
+    var duration = function(d, i) {
+        return 200 + (i * 20);
+    };
+
     this.draw = function(drag) {
 
         var reset = function(d) {
@@ -292,22 +182,14 @@
             .forEach(reset);
 
         var groups = this.chart.chart
-            .selectAll('g.' + InsightConstants.BarGroupClass)
+            .selectAll('g.' + insight.Constants.BarGroupClass)
             .data(this.dataset(), this.keyAccessor);
 
         var newGroups = groups.enter()
             .append('g')
-            .attr('class', InsightConstants.BarGroupClass);
+            .attr('class', insight.Constants.BarGroupClass);
 
         var newBars = newGroups.selectAll('rect.bar');
-
-        var click = function(filter) {
-            return self.click(this, filter);
-        };
-
-        var duration = function(d, i) {
-            return 200 + (i * 20);
-        };
 
         for (var ser in this.series) {
 
@@ -328,7 +210,7 @@
                 .on('click', click);
 
             newBars.append('svg:text')
-                .attr('class', InsightConstants.ToolTipTextClass);
+                .attr('class', insight.Constants.ToolTipTextClass);
 
             var bars = groups.selectAll('.' + seriesName + 'class.bar');
 
@@ -340,7 +222,7 @@
                 .attr('width', this.groupedBarWidth)
                 .attr('height', this.barHeight);
 
-            bars.selectAll('.' + InsightConstants.ToolTipTextClass)
+            bars.selectAll('.' + insight.Constants.ToolTipTextClass)
                 .text(tooltipFunction);
 
         }
@@ -354,23 +236,3 @@
 
 insight.ColumnSeries.prototype = Object.create(insight.Series.prototype);
 insight.ColumnSeries.prototype.constructor = insight.ColumnSeries;
-</code></pre>
-        </article>
-    </section>
-
-
-
-
-
-        
-
-        <footer>
-            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Fri Jun 27 2014 11:14:37 GMT+0100 (BST)
-        </footer>
-    </div>
-</div>
-<script>prettyPrint();</script>
-<script src="scripts/linenumber.js"></script>
-<script src="scripts/main.js"></script>
-</body>
-</html>

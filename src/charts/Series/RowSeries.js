@@ -1,12 +1,15 @@
-insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
+/**
+ * The RowSeries class extends the Series class and draws horizontal bars on a Chart
+ * @class RowSeries
+ */
+insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
 
     insight.Series.call(this, name, chart, data, x, y, color);
 
     var self = this;
     var stacked = d3.functor(false);
     var seriesName = "";
-    var barWidthFunction = this.x.rangeType;
-
+    var tooltipExists = false;
 
     var tooltipFunction = function(d) {
         var func = self.series[self.currentSeries].accessor;
@@ -25,6 +28,16 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
         color: d3.functor('silver'),
         label: 'Value'
     }];
+
+
+    /**
+     * RowSeries overrides the standard key function used by most, vertical charts.
+     * @returns {object[]} return - The keys along the domain axis for this row series
+     */
+    this.keys = function() {
+        return self.dataset()
+            .map(self.keyFunction());
+    };
 
 
     /**
@@ -56,7 +69,6 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
     /**
      * This method returns the largest value on the value axis of this ColumnSeries, checking all series functions in the series on all points.
      * This function is mapped across the entire data array by the findMax method.
-     * @constructor
      * @returns {Number} return - The largest value on the value scale of this ColumnSeries
      */
     this.findMax = function() {
@@ -82,99 +94,83 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
         return this;
     };
 
-    this.calculateYPos = function(func, d) {
-        if (!d.yPos) {
-            d.yPos = 0;
+    this.calculateXPos = function(func, d) {
+        if (!d.xPos) {
+            d.xPos = 0;
         }
+        var myPosition = d.xPos;
 
-        d.yPos += func(d);
+        d.xPos += func(d);
 
+        return myPosition;
+    };
+
+    this.yPosition = function(d) {
+        return self.y.scale(self.keyFunction()(d));
+    };
+
+    this.calculateYPos = function(thickness, d) {
+        if (!d.yPos) {
+            d.yPos = self.yPosition(d);
+        } else {
+            d.yPos += thickness;
+        }
         return d.yPos;
     };
 
     this.xPosition = function(d) {
-        return self.x.scale(self.keyFunction()(d));
-    };
-
-    this.calculateXPos = function(width, d) {
-        if (!d.xPos) {
-            d.xPos = self.xPosition(d);
-        } else {
-            d.xPos += width;
-        }
-        return d.xPos;
-    };
-
-    this.yPosition = function(d) {
 
         var func = self.series[self.currentSeries].accessor;
 
-        var position = self.stackedBars() ? self.y.scale(self.calculateYPos(func, d)) : self.y.scale(func(d));
+        var position = self.stacked() ? self.x.scale(self.calculateXPos(func, d)) : 0;
 
         return position;
     };
 
-
-
-    this.barWidth = function(d) {
-        return self.x.scale.rangeBand(d);
+    this.barThickness = function(d) {
+        return self.y.scale.rangeBand(d);
     };
 
-    this.groupedBarWidth = function(d) {
+    this.groupedbarThickness = function(d) {
 
-        var groupWidth = self.barWidth(d);
+        var groupThickness = self.barThickness(d);
 
-        var width = self.stackedBars() || (self.series.length == 1) ? groupWidth : groupWidth / self.series.length;
+        var width = self.stacked() || (self.series.length == 1) ? groupThickness : groupThickness / self.series.length;
 
         return width;
     };
 
-    this.offsetXPosition = function(d) {
-        var width = self.groupedBarWidth(d);
-        var position = self.stackedBars() ? self.xPosition(d) : self.calculateXPos(width, d);
+    this.offsetYPosition = function(d) {
+        var thickness = self.groupedbarThickness(d);
+        var position = self.stacked() ? self.yPosition(d) : self.calculateYPos(thickness, d);
 
         return position;
     };
 
-    this.barHeight = function(d) {
+    this.barWidth = function(d) {
         var func = self.series[self.currentSeries].accessor;
 
-        return (self.chart.height() - self.chart.margin()
-            .top - self.chart.margin()
-            .bottom) - self.y.scale(func(d));
+        return self.x.scale(func(d));
     };
-
-    this.stackedBars = function() {
-        return self.stacked();
-    };
-
-
 
     this.className = function(d) {
-        var dimension = self.sliceSelector(d);
-
-        var selected = self.selectedClassName(dimension);
-
-        return seriesName + 'class bar ' + dimension + " " + selected + " " + self.dimensionName;
+        return seriesName + 'class bar ' + self.sliceSelector(d);
     };
 
     this.draw = function(drag) {
-
         var reset = function(d) {
             d.yPos = 0;
             d.xPos = 0;
         };
 
-        var d = this.dataset()
-            .forEach(reset);
-
         var groups = this.chart.chart
-            .selectAll('g.' + insight.Constants.BarGroupClass)
-            .data(this.dataset(), this.keyAccessor);
+            .selectAll('g.' + insight.Constants.BarGroupClass + "." + this.name)
+            .data(this.dataset(), this.keyAccessor)
+            .each(reset);
 
         var newGroups = groups.enter()
             .append('g')
-            .attr('class', insight.Constants.BarGroupClass);
+            .attr('class', insight.Constants.BarGroupClass + " " + this.name);
 
         var newBars = newGroups.selectAll('rect.bar');
 
@@ -196,38 +192,33 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
 
             newBars = newGroups.append('rect')
                 .attr('class', self.className)
-                .attr('y', this.y.bounds[0])
                 .attr('height', 0)
                 .attr('fill', s.color)
-                .attr('clip-path', 'url(#' + this.chart.clipPath() + ')')
+                .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
                 .on('mouseover', this.mouseOver)
                 .on('mouseout', this.mouseOut)
                 .on('click', click);
 
+
             newBars.append('svg:text')
                 .attr('class', insight.Constants.ToolTipTextClass);
 
-            var bars = groups.selectAll('.' + seriesName + 'class.bar');
-
-            bars
+            var bars = groups.selectAll('.' + seriesName + 'class.bar')
                 .transition()
                 .duration(duration)
-                .attr('y', this.yPosition)
-                .attr('x', this.offsetXPosition)
-                .attr('width', this.groupedBarWidth)
-                .attr('height', this.barHeight);
+                .attr('y', this.offsetYPosition)
+                .attr('x', this.xPosition)
+                .attr('height', this.groupedbarThickness)
+                .attr('width', this.barWidth);
 
-            bars.selectAll('.' + insight.Constants.ToolTipTextClass)
+            bars.selectAll("." + insight.Constants.ToolTipTextClass)
                 .text(tooltipFunction);
-
         }
-
-        groups.exit()
-            .remove();
     };
 
     return this;
 };
 
-insight.ColumnSeries.prototype = Object.create(insight.Series.prototype);
-insight.ColumnSeries.prototype.constructor = insight.ColumnSeries;
+
+insight.RowSeries.prototype = Object.create(insight.Series.prototype);
+insight.RowSeries.prototype.constructor = insight.RowSeries;

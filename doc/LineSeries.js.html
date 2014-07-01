@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Source: utils/InsightCharts.Utils.js</title>
+    <title>Source: charts/Series/LineSeries.js</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -193,7 +193,7 @@
     </ul>
 </div>
     <div class="main">
-        <h1 class="page-title" data-filename="InsightCharts.Utils.js.html">Source: utils/InsightCharts.Utils.js</h1>
+        <h1 class="page-title" data-filename="LineSeries.js.html">Source: charts/Series/LineSeries.js</h1>
         
 
 
@@ -201,53 +201,140 @@
     <section>
         <article>
             <pre class="prettyprint source"><code>/**
- * This modules contains some helper functions used throughout the library
- * @module InsightUtils
+ * The RowSeries class extends the Series class and draws horizontal bars on a Chart
+ * @class insight.RowSeries
  */
-insight.Utils = (function() {
+insight.LineSeries = function LineSeries(name, chart, data, x, y, color) {
 
-    var exports = {};
+    insight.Series.call(this, name, chart, data, x, y, color);
 
-    /**
-     * This is a utility method used to check if an object is an array or not
-     * @returns {boolean} return - is the object an array
-     * @param {object} input - The object to check
-     */
-    exports.isArray = function(obj) {
-        return Object.prototype.toString.call(obj) === '[object Array]';
+    var self = this;
+
+    var lineType = 'linear';
+    var tooltipExists = false;
+
+    var mouseOver = function(d, item) {
+        self.chart.mouseOver(self, this, d);
+
+        d3.select(this)
+            .classed("hover", true);
     };
 
-
-    exports.isDate = function(obj) {
-        return obj instanceof Date;
+    var mouseOut = function(d, item) {
+        self.chart.mouseOut(self, this, d);
     };
 
-    exports.isNumber = function(obj) {
-        return Object.prototype.toString.call(obj) === '[object Number]';
+    var lineOver = function(d, item) {
+
     };
 
-    exports.removeMatchesFromArray = function(array, comparer) {
-        var self = this;
-        var matches = array.filter(comparer);
-        matches.forEach(function(match) {
-            self.removeItemFromArray(array, match);
-        });
+    var lineOut = function(d, item) {
+
     };
 
-    exports.removeItemFromArray = function(array, item) {
-        var index = array.indexOf(item);
-        if (index > -1) {
-            array.splice(index, 1);
+    var lineClick = function(d, item) {
+
+    };
+
+    this.rangeY = function(d) {
+        return self.y.scale(self.valueFunction()(d));
+    };
+
+    this.rangeX = function(d, i) {
+        var val = 0;
+
+        if (self.x.scale.rangeBand) {
+            val = self.x.scale(self.keyFunction()(d)) + (self.x.scale.rangeBand() / 2);
+        } else {
+
+            val = self.x.scale(self.keyFunction()(d));
         }
+
+        return val;
     };
 
-    exports.safeString = function(input) {
-        return input.split(' ')
-            .join('_');
+    this.lineType = function(_) {
+        if (!arguments.length) {
+            return lineType;
+        }
+        lineType = _;
+        return this;
     };
 
-    return exports;
-}());
+    this.draw = function(dragging) {
+        var transform = d3.svg.line()
+            .x(self.rangeX)
+            .y(self.rangeY)
+            .interpolate(lineType);
+
+        var data = this.dataset();
+
+        var rangeIdentifier = "path." + this.name + ".in-line";
+
+        var rangeElement = this.chart.chart.selectAll(rangeIdentifier);
+
+        if (!this.rangeExists(rangeElement)) {
+            this.chart.chart.append("path")
+                .attr("class", this.name + " in-line")
+                .attr("stroke", this.color)
+                .attr("fill", "none")
+                .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
+                .on('mouseover', lineOver)
+                .on('mouseout', lineOut)
+                .on('click', lineClick);
+        }
+
+        var duration = dragging ? 0 : function(d, i) {
+            return 300 + i * 20;
+        };
+
+        this.chart.chart.selectAll(rangeIdentifier)
+            .datum(this.dataset(), this.matcher)
+            .transition()
+            .duration(duration)
+            .attr("d", transform);
+
+        var circles = this.chart.chart.selectAll("circle")
+            .data(this.dataset());
+
+        circles.enter()
+            .append('circle')
+            .attr('class', 'target-point')
+            .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
+            .attr("cx", self.rangeX)
+            .attr("cy", self.chart.height() - self.chart.margin()
+                .bottom - self.chart.margin()
+                .top)
+            .on('mouseover', mouseOver)
+            .on('mouseout', mouseOut);
+
+
+        circles
+            .transition()
+            .duration(duration)
+            .attr("cx", self.rangeX)
+            .attr("cy", self.rangeY)
+            .attr("r", 2.5);
+
+
+        if (!tooltipExists) {
+            circles.append('svg:text')
+                .attr('class', insight.Constants.ToolTipTextClass);
+            tooltipExists = true;
+        }
+
+        circles.selectAll("." + insight.Constants.ToolTipTextClass)
+            .text(this.tooltipFunction());
+    };
+
+    this.rangeExists = function(rangeSelector) {
+
+        return rangeSelector[0].length;
+    };
+};
+
+insight.LineSeries.prototype = Object.create(insight.Series.prototype);
+insight.LineSeries.prototype.constructor = insight.LineSeries;
 </code></pre>
         </article>
     </section>

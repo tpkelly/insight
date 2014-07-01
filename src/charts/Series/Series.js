@@ -1,3 +1,7 @@
+/**
+ * The Series base class provides some base functions that are used by any specific types of series that derive from this class
+ * @class insight.Series
+ */
 insight.Series = function Series(name, chart, data, x, y, color) {
 
     this.chart = chart;
@@ -80,7 +84,7 @@ insight.Series = function Series(name, chart, data, x, y, color) {
 
     this.keys = function() {
         return this.dataset()
-            .map(self.xFunction());
+            .map(self.keyFunction());
     };
 
     this.cssClass = function(_) {

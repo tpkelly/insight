@@ -1,119 +1,294 @@
-insight.Axis = function Axis(chart, name, scale, anchor) {
+/**
+ * The Axis class coordinates the domain of the series data and draws axes on the chart in the required orientation and position.
+ * @class insight.Axis
+ */
+insight.Axis = function Axis(chart, name, direction, scale, anchor) {
+
     this.chart = chart;
-    this.scale = scale;
+    this.scaleType = scale.name;
+    this.scale = scale.scale();
     this.anchor = anchor ? anchor : 'left';
-    this.name = name;
+    this.rangeType = this.scale.rangeRoundBands ? this.scale.rangeRoundBands : this.scale.rangeRound;
+    this.bounds = [];
+    this.direction = direction;
+    this.series = [];
 
-    var label = scale.title;
     var self = this;
-
+    var label = name;
+    var ordered = d3.functor(false);
     var tickSize = d3.functor(0);
     var tickPadding = d3.functor(10);
-    var labelRotation = "90";
-    var labelOrientation = d3.functor("lr");
-    var orientation = scale.horizontal() ? d3.functor(this.anchor) : d3.functor(this.anchor);
+    var labelRotation = '90';
+    var tickOrientation = d3.functor('lr');
+    var orientation = direction == 'h' ? d3.functor(this.anchor) : d3.functor(this.anchor);
     var textAnchor;
     var showGridLines = false;
     var gridlines = [];
 
-    if (scale.vertical()) {
+    this.chart.addAxis(this);
+
+    if (direction == 'v') {
         textAnchor = this.anchor == 'left' ? 'end' : 'start';
     }
-    if (scale.horizontal()) {
+    if (direction == 'h') {
         textAnchor = 'start';
     }
 
+    // private functions
+
+    /**
+     * The default axis tick format, just returns the input
+     * @returns {object} tickPoint - The axis data for a particular tick
+     * @param {object} ticklabel - The output string to be displayed
+     */
     var format = function(d) {
         return d;
     };
 
-    this.chart.addAxis(this);
+    /**
+     * This method calculates the scale ranges for this axis, given a range type function and using the calculated output bounds for this axis.
+     * @param {rangeType} rangeType - a d3 range function, which can either be in bands (for columns) or a continuous range
+     */
+    var applyScaleRange = function(rangeType) {
+        self.bounds = self.calculateBounds();
 
-    this.label = function(_) {
-        if (!arguments.length) {
-            return label;
-        }
-        label = _;
-        return this;
-    };
-
-    this.labelFormat = function(_) {
-        if (!arguments.length) {
-            return format;
-        }
-        format = _;
-        return this;
-    };
-
-    this.orientation = function(_) {
-        if (!arguments.length) {
-            return orientation();
-        }
-        orientation = d3.functor(_);
-        return this;
-    };
-
-    this.labelRotation = function(_) {
-        if (!arguments.length) {
-            return labelRotation;
-        }
-        labelRotation = _;
-        return this;
-    };
-
-    this.tickSize = function(_) {
-        if (!arguments.length) {
-            return tickSize();
-        }
-        tickSize = d3.functor(_);
-        return this;
-    };
-
-    this.tickPadding = function(_) {
-        if (!arguments.length) {
-            return tickPadding();
-        }
-        tickPadding = d3.functor(_);
-        return this;
-    };
-
-    this.textAnchor = function(_) {
-        if (!arguments.length) {
-            return textAnchor;
-        }
-        textAnchor = _;
-        return this;
-    };
-
-    this.labelOrientation = function(_) {
-        if (!arguments.length) {
-            return labelOrientation();
-        }
-
-        labelOrientation = d3.functor(_);
-
-        return this;
+        rangeType.apply(this, [
+            self.bounds, self.chart.barPadding()
+        ]);
     };
 
     /**
+     * For an ordinal/categorical axis, this method queries all series that use this axis to get the list of available values
+     * TODO - currently just checks the first as I've not had a scenario where different series on the same axis had different ordinal keys.
+     * @returns {object[]} values - the values for this ordinal axis
+     */
+    var findOrdinalValues = function() {
+        var vals = [];
+
+        self.series.map(function(series) {
+            vals = series.keys();
+        });
+
+        return vals;
+    };
+
+    /**
+     * For linear series, this method is used to calculate the maximum value to be used in this axis.
+     * @returns {Date} max - The largest value in the datasets that use this axis
+     */
+    var findMax = function() {
+        var max = 0;
+
+        self.series.map(function(series) {
+            var m = series.findMax(self);
+
+            max = m > max ? m : max;
+        });
+
+        return max;
+    };
+
+
+    /**
+     * For time series, this method is used to calculate the minimum value to be used in this axis.
+     * @returns {Date} minTime - The smallest time in the datasets that use this axis
+     */
+    var minTime = function() {
+        // start at the largest time, and work back from there to find the minimum
+        var minTime = new Date(8640000000000000);
+
+        self.series.map(function(series) {
+            var cMin = d3.min(series.keys());
+            minTime = cMin < minTime ? cMin : minTime;
+        });
+        return minTime;
+    };
+
+
+    /**
+     * For time series, this method is used to calculate the maximum value to be used in this axis.
+     * @returns {Date} minTime - The largest time in the datasets that use this axis
+     */
+    var maxTime = function() {
+        // start at the smallest time, and work back from there to find the minimum
+        var maxTime = new Date(-8640000000000000);
+
+        self.series.map(function(series) {
+            var cMax = d3.max(series.keys());
+            maxTime = cMax > maxTime ? cMax : maxTime;
+        });
+
+        return maxTime;
+    };
+
+
+    // public functions 
+
+
+    this.horizontal = function() {
+        return this.direction == 'h';
+    };
+
+    this.vertical = function() {
+        return this.direction == 'v';
+    };
+
+    this.ordered = function(value) {
+        if (!arguments.length) {
+            return ordered();
+        }
+        ordered = d3.functor(value);
+        return this;
+    };
+
+
+    this.addSeries = function(series) {
+        this.series.push(series);
+    };
+
+
+    // scale domain and output range methods
+
+
+    /**
+     * This method calculates the domain of values that this axis has, from a minimum to a maximum.
+     * @returns {object[]} bounds - An array with two items, for the lower and upper range of this axis
+     */
+    this.domain = function() {
+        var domain = [];
+
+        if (this.scaleType == insight.Scales.Linear.name) {
+            domain = [0, findMax()];
+        } else if (this.scaleType == insight.Scales.Ordinal.name) {
+            domain = findOrdinalValues();
+        } else if (this.scaleType == insight.Scales.Time.name) {
+            domain = [minTime(), maxTime()];
+        }
+
+        return domain;
+    };
+
+
+    /**
+     * This method calculates the output range bound of this axis, taking into account the size and margins of the chart.
+     * @returns {int[]} bounds - An array with two items, for the lower and upper bound of this axis
+     */
+    this.calculateBounds = function() {
+        var bounds = [];
+
+        if (self.horizontal()) {
+            bounds[0] = 0;
+            bounds[1] = self.chart.width() - self.chart.margin()
+                .right - self.chart.margin()
+                .left;
+        } else if (self.vertical()) {
+            bounds[0] = self.chart.height() - self.chart.margin()
+                .top - self.chart.margin()
+                .bottom;
+            bounds[1] = 0;
+
+        }
+        return bounds;
+    };
+
+
+
+    // label and axis tick methods
+
+    this.label = function(value) {
+        if (!arguments.length) {
+            return label;
+        }
+        label = value;
+        return this;
+    };
+
+
+    this.labelFormat = function(value) {
+        if (!arguments.length) {
+            return format;
+        }
+        format = value;
+        return this;
+    };
+
+
+    this.orientation = function(value) {
+        if (!arguments.length) {
+            return orientation();
+        }
+        orientation = d3.functor(value);
+        return this;
+    };
+
+
+    this.tickRotation = function(value) {
+        if (!arguments.length) {
+            return labelRotation;
+        }
+        labelRotation = value;
+        return this;
+    };
+
+
+    this.tickSize = function(value) {
+        if (!arguments.length) {
+            return tickSize();
+        }
+        tickSize = d3.functor(value);
+        return this;
+    };
+
+
+    this.tickPadding = function(value) {
+        if (!arguments.length) {
+            return tickPadding();
+        }
+        tickPadding = d3.functor(value);
+        return this;
+    };
+
+
+    this.textAnchor = function(value) {
+        if (!arguments.length) {
+            return textAnchor;
+        }
+        textAnchor = value;
+        return this;
+    };
+
+
+
+    this.tickOrientation = function(value) {
+        if (!arguments.length) {
+            return tickOrientation();
+        }
+
+        tickOrientation = d3.functor(value);
+
+        return this;
+    };
+
+
+    /**
      * This method gets/sets the rotation angle used for horizontal axis labels.  Defaults to 90 degrees
-     * @constructor
      * @returns {object} return - Description
      * @param {object[]} data - Description
      */
-    this.tickRotation = function() {
+    this.tickRotationTransform = function() {
         var offset = self.tickPadding() + (self.tickSize() * 2);
         offset = self.anchor == 'top' ? 0 - offset : offset;
 
-        var rotation = this.labelOrientation() == 'tb' ? ' rotate(' + self.labelRotation() + ',0,' + offset + ')' : '';
+        var rotation = this.tickOrientation() == 'tb' ? ' rotate(' + self.tickRotation() + ',0,' + offset + ')' : '';
 
         return rotation;
     };
 
-    this.transform = function() {
-        var transform = "translate(";
 
-        if (self.scale.horizontal()) {
+    this.axisPosition = function() {
+        var transform = 'translate(';
+
+        if (self.horizontal()) {
             var transX = 0;
             var transY = self.anchor == 'top' ? 0 : (self.chart.height() - self.chart.margin()
                 .bottom - self.chart.margin()
@@ -121,60 +296,40 @@ insight.Axis = function Axis(chart, name, scale, anchor) {
 
             transform += transX + ',' + transY + ')';
 
-        } else if (self.scale.vertical()) {
+        } else if (self.vertical()) {
             var xShift = self.anchor == 'left' ? 0 : self.chart.width() - self.chart.margin()
                 .right - self.chart.margin()
                 .left;
-            transform += xShift + ",0)";
+            transform += xShift + ',0)';
         }
 
         return transform;
     };
 
-    this.labelHorizontalPosition = function() {
-        var pos = "";
 
-        if (self.scale.horizontal()) {
+    /**
+     * This method positions the text label for the axis (not the tick labels)
+     */
+    this.positionLabel = function() {
 
-        } else if (self.scale.vertical()) {
-
-        }
-
-        return pos;
-    };
-
-    this.labelVerticalPosition = function() {
-        var pos = "";
-
-        if (self.scale.horizontal()) {
-
-        } else if (self.scale.vertical()) {
-
-        }
-
-        return pos;
-    };
-
-    this.positionLabels = function(labels) {
-
-        if (self.scale.horizontal()) {
-
-            labels.style('left', 0)
+        if (self.horizontal()) {
+            this.labelElement.style('left', 0)
                 .style(self.anchor, 0)
                 .style('width', '100%')
                 .style('text-align', 'center');
-        } else if (self.scale.vertical()) {
-            labels.style(self.anchor, '0')
+        } else if (self.vertical()) {
+            this.labelElement.style(self.anchor, '0')
                 .style('top', '35%');
         }
     };
 
-    this.gridlines = function(_) {
+
+    this.gridlines = function(value) {
         if (!arguments.length) {
             return gridlines();
         }
         showGridLines = true;
-        gridlines = _;
+        gridlines = value;
 
         return this;
     };
@@ -182,85 +337,96 @@ insight.Axis = function Axis(chart, name, scale, anchor) {
 
     this.drawGridLines = function() {
 
-        var ticks = this.scale.scale.ticks(5);
+        var ticks = this.scale.ticks(5);
 
-        this.chart.chart.selectAll("line.horizontalGrid")
+        this.chart.chart.selectAll('line.horizontalGrid')
             .data(ticks)
             .enter()
-            .append("line")
+            .append('line')
             .attr({
-                "class": "horizontalGrid",
-                "x1": 0,
-                "x2": chart.width(),
-                "y1": function(d) {
-                    return self.scale(d);
+                'class': 'horizontalGrid',
+                'x1': 0,
+                'x2': chart.width(),
+                'y1': function(d) {
+                    return self.scale.scale(d);
                 },
-                "y2": function(d) {
-                    return self.scale(d);
+                'y2': function(d) {
+                    return self.scale.scale(d);
                 },
-                "fill": "none",
-                "shape-rendering": "crispEdges",
-                "stroke": "silver",
-                "stroke-width": "1px"
+                'fill': 'none',
+                'shape-rendering': 'crispEdges',
+                'stroke': 'silver',
+                'stroke-width': '1px'
             });
 
     };
 
+
+    this.initializeScale = function() {
+        applyScaleRange.call(this.scale.domain(this.domain()), this.rangeType);
+
+    };
+
+
     this.initialize = function() {
+
+        this.initializeScale();
+
         this.axis = d3.svg.axis()
-            .scale(this.scale.scale)
+            .scale(this.scale)
             .orient(self.orientation())
             .tickSize(self.tickSize())
             .tickPadding(self.tickPadding())
             .tickFormat(self.labelFormat());
 
-        this.chart.chart.append('g')
-            .attr('class', self.name + ' ' + insight.Constants.AxisClass)
-            .attr('transform', self.transform())
+        this.axisElement = this.chart.chart.append('g');
+
+        this.axisElement
+            .attr('class', insight.Constants.AxisClass)
+            .attr('transform', self.axisPosition())
             .call(this.axis)
             .selectAll('text')
-            .attr('class', self.name + ' ' + insight.Constants.AxisTextClass)
+            .attr('class', insight.Constants.AxisTextClass)
             .style('text-anchor', self.textAnchor())
-            .style('transform', self.tickRotation());
+            .style('transform', self.tickRotationTransform());
 
-
-
-        var labels = this.chart.container
+        this.labelElement = this.chart.container
             .append('div')
-            .attr('class', self.name + insight.Constants.AxisLabelClass)
+            .attr('class', insight.Constants.AxisLabelClass)
             .style('position', 'absolute')
             .text(this.label());
 
-        this.positionLabels(labels);
+        this.positionLabel();
     };
 
 
 
     this.draw = function(dragging) {
+
         this.axis = d3.svg.axis()
-            .scale(this.scale.scale)
+            .scale(this.scale)
             .orient(self.orientation())
             .tickSize(self.tickSize())
             .tickPadding(self.tickPadding())
             .tickFormat(self.labelFormat());
 
-        var axis = this.chart.chart.selectAll('g.' + self.name + '.' + insight.Constants.AxisClass)
+        this.axisElement
             .transition()
             .duration(500)
-            .attr('transform', self.transform())
+            .attr('transform', self.axisPosition())
             .call(this.axis);
 
-        axis
-            .selectAll("text")
-            .attr('transform', self.tickRotation())
+        this.axisElement
+            .selectAll('text')
+            .attr('transform', self.tickRotationTransform())
             .style('text-anchor', self.textAnchor());
 
-        d3.select(this.chart.element)
-            .select('div.' + self.name + insight.Constants.AxisLabelClass)
+        this.labelElement
             .text(this.label());
 
         if (showGridLines) {
-            //this.drawGridLines();
+            // commented out as it's not quite working yet but should just need tweaking
+            //this.drawGridLines(); 
         }
     };
 };
