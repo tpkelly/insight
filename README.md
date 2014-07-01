@@ -16,9 +16,9 @@ Include the required libraries and InsightJS. Include an optional stylesheet the
 Load a dataset and start analyzing and creating charts!
 
 ```
-<script src="lib/crossfilter.js"></script>
-<script src="lib/d3.js"></script>
-<script src="lib/d3.tip.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.7/crossfilter.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.9/d3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/d3-tip/0.6.3/d3-tip.min.js"></script>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/insightjs/0.1.0/insight.min.js"></script>
 ```
 
