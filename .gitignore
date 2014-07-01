@@ -6,3 +6,4 @@ bower_components
 .git-rewrite/
 node_modules/
 .git-rewrite/
+_SpecRunner.html
