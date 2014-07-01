@@ -1,4 +1,4 @@
-InsightJS ![Travis Results](https://travis-ci.org/tpkelly/insight.svg?branch=master)
+InsightJS [![Travis Results](https://travis-ci.org/tpkelly/insight.svg?branch=master)](https://travis-ci.org/ScottLogic/insight)
 =======
 
 InsightJS is a JavaScript data aggregation and visualization library that allows you to quickly load and find patterns in datasets.  Given a data set, InsightJS can group the records across the dimensions of the data to quickly aggregate and provide statistics on the data.
