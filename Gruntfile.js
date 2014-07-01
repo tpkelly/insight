@@ -126,6 +126,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jsbeautifier');
   grunt.loadNpmTasks('grunt-jsdoc');
 
-  grunt.registerTask('default', ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'cssmin', 'jsdoc', 'connect:server','open','watch']);
-  grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'concat', 'uglify', 'cssmin']);
+  grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'cssmin', 'jsdoc']);
+  grunt.registerTask('default', ['deploy', 'connect:server','open','watch']);
 };
