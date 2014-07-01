@@ -1,9 +1,13 @@
+# Grunt files
+.grunt
+_SpecRunner.html
 
-.grunt
-.git-rewrite
+# Bower files
 bower_components
-.grunt
-.git-rewrite/
-node_modules/
-.git-rewrite/
-*.sublime-*
+
+# Node files
+node_modules
+
+# WebStorm files
+.idea
+
