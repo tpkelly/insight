@@ -1316,6 +1316,7 @@ insight.Utils = (function() {
 })(insight);
 ;/**
  * The Axis class coordinates the domain of the series data and draws axes on the chart in the required orientation and position.
+ * @class insight.Axis
  * @param {Chart} chart - The parent chart object
  * @param {string} name - A uniquely identifying name for this chart
  * @param {string} orientation - horizontal 'h' or vertical 'v'
@@ -2801,7 +2802,7 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
     /**
      * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
      * This function is mapped across the entire data array by the findMax method.
-     * @memberof insight.ColumnSeries
+     * @public
      * @returns {Number} return - Description
      * @param {object} data - An item in the object array to query
      */

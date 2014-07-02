@@ -49,6 +49,10 @@
             </ul>
             <ul class="methods itemMembers">
             
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight#seriesMax"><a href="insight.html#seriesMax">seriesMax</a></li>
+            
             </ul>
             <ul class="events itemMembers">
             
@@ -115,6 +119,25 @@
             </ul>
         </li>
     
+        <li class="item" data-name="insight.Chart">
+            <span class="title">
+                <a href="insight.Chart.html">insight.Chart</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
         <li class="item" data-name="insight.ColumnSeries">
             <span class="title">
                 <a href="insight.ColumnSeries.html">insight.ColumnSeries</a>
@@ -132,8 +155,6 @@
             
                 <li data-name="insight.ColumnSeries.this.findMax"><a href="insight.ColumnSeries.html#this.findMax">this.findMax</a></li>
             
-                <li data-name="insight.ColumnSeries.this.seriesMax"><a href="insight.ColumnSeries.html#this.seriesMax">this.seriesMax</a></li>
-            
                 <li data-name="insight.ColumnSeries.this.stacked"><a href="insight.ColumnSeries.html#this.stacked">this.stacked</a></li>
             
             </ul>
@@ -145,6 +166,25 @@
         <li class="item" data-name="insight.LineSeries">
             <span class="title">
                 <a href="insight.LineSeries.html">insight.LineSeries</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.MarkerSeries">
+            <span class="title">
+                <a href="insight.MarkerSeries.html">insight.MarkerSeries</a>
                 
             </span>
             <ul class="members itemMembers">
@@ -226,6 +266,11 @@
             <pre class="prettyprint source"><code>/**
  * The Axis class coordinates the domain of the series data and draws axes on the chart in the required orientation and position.
  * @class insight.Axis
+ * @param {Chart} chart - The parent chart object
+ * @param {string} name - A uniquely identifying name for this chart
+ * @param {string} orientation - horizontal 'h' or vertical 'v'
+ * @param {insight.Scales.Scale} scale - insight.Scale.Linear for example
+ * @param {string} anchor - 'left/right/top/bottom'
  */
 insight.Axis = function Axis(chart, name, direction, scale, anchor) {
 

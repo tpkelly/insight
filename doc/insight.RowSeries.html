@@ -49,6 +49,10 @@
             </ul>
             <ul class="methods itemMembers">
             
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight#seriesMax"><a href="insight.html#seriesMax">seriesMax</a></li>
+            
             </ul>
             <ul class="events itemMembers">
             
@@ -115,6 +119,25 @@
             </ul>
         </li>
     
+        <li class="item" data-name="insight.Chart">
+            <span class="title">
+                <a href="insight.Chart.html">insight.Chart</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
         <li class="item" data-name="insight.ColumnSeries">
             <span class="title">
                 <a href="insight.ColumnSeries.html">insight.ColumnSeries</a>
@@ -132,8 +155,6 @@
             
                 <li data-name="insight.ColumnSeries.this.findMax"><a href="insight.ColumnSeries.html#this.findMax">this.findMax</a></li>
             
-                <li data-name="insight.ColumnSeries.this.seriesMax"><a href="insight.ColumnSeries.html#this.seriesMax">this.seriesMax</a></li>
-            
                 <li data-name="insight.ColumnSeries.this.stacked"><a href="insight.ColumnSeries.html#this.stacked">this.stacked</a></li>
             
             </ul>
@@ -145,6 +166,25 @@
         <li class="item" data-name="insight.LineSeries">
             <span class="title">
                 <a href="insight.LineSeries.html">insight.LineSeries</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.MarkerSeries">
+            <span class="title">
+                <a href="insight.MarkerSeries.html">insight.MarkerSeries</a>
                 
             </span>
             <ul class="members itemMembers">
@@ -242,7 +282,7 @@
     <div class="nameContainer">
         <h4 class="name" id="RowSeries">
             
-            new insight.RowSeries<span class="signature">()</span>
+            new insight.RowSeries<span class="signature">(name, chart, data, x, y, color)</span>
         </h4>
     
         
@@ -266,6 +306,166 @@
     
     
     
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                A uniquely identifying name for this chart</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>chart</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Chart</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The parent chart object</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">DataSet</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The DataSet containing this series' data</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">insight.Scales.Scale</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                the x axis</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>y</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">insight.Scales.Scale</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                the y axis</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>color</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                a string or function that defines the color to be used for the items in this series</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
     
     
     
@@ -336,7 +536,7 @@
     
         
         <div class="tag-source">
-            <a href="RowSeries.js.html">charts/Series/RowSeries.js</a>, <a href="RowSeries.js.html#line77">line 77</a>
+            <a href="RowSeries.js.html">charts/Series/RowSeries.js</a>, <a href="RowSeries.js.html#line83">line 83</a>
         </div>
         
     </div>
@@ -417,7 +617,7 @@ This function is mapped across the entire data array by the findMax method.
     
         
         <div class="tag-source">
-            <a href="RowSeries.js.html">charts/Series/RowSeries.js</a>, <a href="RowSeries.js.html#line38">line 38</a>
+            <a href="RowSeries.js.html">charts/Series/RowSeries.js</a>, <a href="RowSeries.js.html#line44">line 44</a>
         </div>
         
     </div>
@@ -497,7 +697,7 @@ This function is mapped across the entire data array by the findMax method.
     
         
         <div class="tag-source">
-            <a href="RowSeries.js.html">charts/Series/RowSeries.js</a>, <a href="RowSeries.js.html#line51">line 51</a>
+            <a href="RowSeries.js.html">charts/Series/RowSeries.js</a>, <a href="RowSeries.js.html#line57">line 57</a>
         </div>
         
     </div>
@@ -623,7 +823,7 @@ This function is mapped across the entire data array by the findMax method.
     
         
         <div class="tag-source">
-            <a href="RowSeries.js.html">charts/Series/RowSeries.js</a>, <a href="RowSeries.js.html#line94">line 94</a>
+            <a href="RowSeries.js.html">charts/Series/RowSeries.js</a>, <a href="RowSeries.js.html#line100">line 100</a>
         </div>
         
     </div>

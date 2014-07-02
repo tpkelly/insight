@@ -40,7 +40,7 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
     /**
      * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
      * This function is mapped across the entire data array by the findMax method.
-     * @memberof insight.ColumnSeries
+     * @public
      * @returns {Number} return - Description
      * @param {object} data - An item in the object array to query
      */
