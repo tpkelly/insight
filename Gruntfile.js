@@ -111,7 +111,8 @@ module.exports = function(grunt) {
                 template: 'doctemplate'
             }
         }
-    }
+    },
+    clean: ["doc/"]
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -125,7 +126,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-jsbeautifier');
   grunt.loadNpmTasks('grunt-jsdoc');
+  grunt.loadNpmTasks('grunt-contrib-clean');
 
-  grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'cssmin', 'jsdoc']);
+  grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'cssmin', 'clean', 'jsdoc']);
   grunt.registerTask('default', ['deploy', 'connect:server','open','watch']);
 };

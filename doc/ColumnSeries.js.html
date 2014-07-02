@@ -57,8 +57,6 @@
             
                 <li data-name="insight#findMax"><a href="insight.html#findMax">findMax</a></li>
             
-                <li data-name="insight#findMax"><a href="insight.html#findMax">findMax</a></li>
-            
                 <li data-name="insight#keys"><a href="insight.html#keys">keys</a></li>
             
                 <li data-name="insight#positionLabel"><a href="insight.html#positionLabel">positionLabel</a></li>
@@ -127,15 +125,19 @@
             </ul>
             <ul class="methods itemMembers">
             
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.ColumnSeries.this.findMax"><a href="insight.ColumnSeries.html#this.findMax">this.findMax</a></li>
+            
             </ul>
             <ul class="events itemMembers">
             
             </ul>
         </li>
     
-        <li class="item" data-name="insight.RowSeries">
+        <li class="item" data-name="insight.LineSeries">
             <span class="title">
-                <a href="insight.RowSeries.html">insight.RowSeries</a>
+                <a href="insight.LineSeries.html">insight.LineSeries</a>
                 
             </span>
             <ul class="members itemMembers">
@@ -262,6 +264,7 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
     /**
      * This method returns the largest value on the value axis of this ColumnSeries, checking all series functions in the series on all points.
      * This function is mapped across the entire data array by the findMax method.
+     * @memberof insight.ColumnSeries
      * @returns {Number} return - The largest value on the value scale of this ColumnSeries
      */
     this.findMax = function() {
