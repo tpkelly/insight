@@ -2417,7 +2417,7 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
         tooltipValue: function(d) {
             return self.tooltipFunction()(d);
         },
-        color: d3.functor('silver'),
+        color: d3.functor(color),
         label: 'Value'
     }];
 
@@ -2794,7 +2794,7 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
         tooltipValue: function(d) {
             return self.tooltipFunction()(d);
         },
-        color: d3.functor('silver'),
+        color: d3.functor(color),
         label: 'Value'
     }];
 
