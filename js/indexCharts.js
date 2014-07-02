@@ -147,6 +147,7 @@
         chart.series([series]);
     }
 
+    insight.init();
     drawLineChart();
     drawColumnChart();
     drawBubbleChart();
