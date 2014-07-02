@@ -19,11 +19,9 @@ var data = [
 $(document)
     .ready(function()
     {
-
-
         var dataset = new insight.DataSet(data);
 
-        var chart = new insight.Chart('Chart 1', "#exampleChart")
+        var chart = new insight.Chart('Chart 1', '#exampleChart')
             .width(450)
             .height(400)
             .margin(
@@ -34,10 +32,14 @@ $(document)
                 bottom: 120
             });
 
-        var x = new insight.Scale(chart, '', 'h', Scales.Ordinal);
-        var y = new insight.Scale(chart, 'Population', 'v', Scales.Linear);
+        var x = new insight.Axis(chart, 'Country', 'h', insight.Scales.Ordinal, 'bottom')
+            .tickOrientation('tb');
 
-        var series = new insight.ColumnSeries('countryColumn', chart, dataset, x, y, 'silver')
+        var y = new insight.Axis(chart, 'Population', 'v', insight.Scales.Linear, 'left')
+            .tickSize(5)
+            .labelFormat(d3.format('0,000'));
+
+        var series = new insight.ColumnSeries('countryColumn', chart, dataset, x, y, '#3498db')
             .valueFunction(function(d)
             {
                 return d.value;
@@ -45,15 +47,6 @@ $(document)
             .tooltipFormat(InsightFormatters.currencyFormatter);
 
         chart.series([series]);
-
-        var xAxis = new insight.Axis(chart, "x", x, 'bottom')
-            .labelOrientation('tb')
-            .labelRotation(45)
-            .tickSize(5)
-            .gridlines(4);
-
-        var yAxis = new insight.Axis(chart, "y", y, 'left')
-            .labelFormat(d3.format("0,000"));
 
         insight.drawCharts();
     });

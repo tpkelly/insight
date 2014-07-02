@@ -18,36 +18,35 @@ $(document)
                 .mean(['price']);
 
             var chart = new insight.Chart('Years', '#exampleChart')
-                .width(400)
+                .width(500)
                 .height(350)
                 .title('Years')
                 .margin(
                 {
                     top: 0,
-                    left: 0,
+                    left: 180,
                     bottom: 60,
                     right: 0
                 });
-
-            var columns = chart.addColumnSeries(
-                {
-                    name: 'Year',
-                    data: yearly,
-                    accessor: function(d)
-                    {
-                        return d.value.price.Average;
-                    },
-                    color: '#ACC3EE'
-                })
-                .tooltipFormat(InsightFormatters.decimalCurrencyFormatter);
-
-            var xAxis = new insight.Axis(chart, "x", columns.x, 'bottom')
+            var x = new insight.Axis(chart, 'Country', 'h', insight.Scales.Ordinal, 'bottom')
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(5)
-                .labelOrientation('tb')
-                .labelRotation(45)
-                .labelFormat(d3.time.format("%Y"));
+                .tickOrientation('tb')
+                .tickRotation(45)
+                .labelFormat(d3.time.format('%Y'));
+
+            var y = new insight.Axis(chart, 'Avg App Price (£)', 'v', insight.Scales.Linear, 'left')
+                .labelFormat(d3.format('0,000'));
+
+            var columns = new insight.ColumnSeries('Year', chart, yearly, x, y, '#ACC3EE')
+                .valueFunction(function(d)
+                {
+                    return d.value.price.Average;
+                })
+                .tooltipFormat(InsightFormatters.currencyFormatter);
+
+            chart.series([columns]);
 
             insight.drawCharts();
 

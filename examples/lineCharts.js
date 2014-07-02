@@ -28,8 +28,12 @@ $(document)
                     bottom: 100
                 });
 
-            var xScale = new insight.Scale(chart, 'Time', 'h', Scales.Time);
-            var yScale = new insight.Scale(chart, 'Revenue', 'v', Scales.Linear);
+            var xScale = new insight.Axis(chart, 'Time', 'h', insight.Scales.Time, 'bottom')
+                .tickRotation(90)
+                .tickOrientation('tb')
+                .labelFormat(InsightFormatters.dateFormatter);
+
+            var yScale = new insight.Axis(chart, 'Revenue', 'v', insight.Scales.Linear, 'left');
 
             var line = new insight.LineSeries('valueLine', chart, dateData, xScale, yScale, 'cyan')
                 .tooltipFormat(InsightFormatters.currencyFormatter)
@@ -43,16 +47,6 @@ $(document)
                 .push(line);
 
             chart.zoomable(xScale);
-
-            var xAxis = new insight.Axis(chart, "x", xScale, 'bottom')
-                .labelOrientation('tb')
-                .tickSize(5)
-                .textAnchor('start')
-                .labelFormat(InsightFormatters.dateFormatter);
-
-            var yAxis = new insight.Axis(chart, "y", yScale, 'left')
-                .tickSize(5)
-                .labelFormat(InsightFormatters.currencyFormatter);
 
             insight.drawCharts();
         });
