@@ -189,3 +189,24 @@ path.in-line:hover
 
 }
 
+.chartcontainer
+{
+  width:200px;
+  height:250px;
+  float:left;
+  margin-right:50px;
+}
+
+.chartbox
+{
+  width:100%;
+  height:200px;
+}
+
+.chartcaption
+{
+  width:100%;
+  height:50px;
+  text-align:center;
+  font-size:10pt;
+}
