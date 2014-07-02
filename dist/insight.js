@@ -966,13 +966,18 @@ insight.Utils = (function() {
 })(insight);
 ;(function(insight) {
 
+    /**
+     * The Chart class is the element in which series and axes are drawn
+     * @class insight.Chart
+     * @param {string} name - A uniquely identifying name for this chart
+     * @param {string} element - The css selector identifying the div container that the chart will be drawn in. '#columnChart' for example.
+     */
     insight.Chart = (function(insight) {
 
-        function Chart(name, element, dimension) {
+        function Chart(name, element) {
 
             this.name = name;
             this.element = element;
-            this.dimension = dimension;
             this.selectedItems = [];
 
             var zoomAxis = null;
@@ -1311,7 +1316,11 @@ insight.Utils = (function() {
 })(insight);
 ;/**
  * The Axis class coordinates the domain of the series data and draws axes on the chart in the required orientation and position.
- * @class insight.Axis
+ * @param {Chart} chart - The parent chart object
+ * @param {string} name - A uniquely identifying name for this chart
+ * @param {string} orientation - horizontal 'h' or vertical 'v'
+ * @param {insight.Scales.Scale} scale - insight.Scale.Linear for example
+ * @param {string} anchor - 'left/right/top/bottom'
  */
 insight.Axis = function Axis(chart, name, direction, scale, anchor) {
 
@@ -1748,6 +1757,12 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
 ;/**
  * The Series base class provides some base functions that are used by any specific types of series that derive from this class
  * @class insight.Series
+ * @param {string} name - A uniquely identifying name for this chart
+ * @param {Chart} chart - The parent chart object
+ * @param {DataSet} data - The DataSet containing this series' data
+ * @param {insight.Scales.Scale} x - the x axis
+ * @param {insight.Scales.Scale} y - the y axis
+ * @param {object} color - a string or function that defines the color to be used for the items in this series
  */
 insight.Series = function Series(name, chart, data, x, y, color) {
 
@@ -1986,7 +2001,17 @@ insight.Series = function Series(name, chart, data, x, y, color) {
 insight.Series.prototype.clickEvent = function(series, filter, selection) {
 
 };
-;insight.MarkerSeries = function MarkerSeries(name, chart, data, x, y, color) {
+;/**
+ * The MarkerSeries class extends the Series class and draws markers/targets on a chart
+ * @class insight.MarkerSeries
+ * @param {string} name - A uniquely identifying name for this chart
+ * @param {Chart} chart - The parent chart object
+ * @param {DataSet} data - The DataSet containing this series' data
+ * @param {insight.Scales.Scale} x - the x axis
+ * @param {insight.Scales.Scale} y - the y axis
+ * @param {object} color - a string or function that defines the color to be used for the items in this series
+ */
+insight.MarkerSeries = function MarkerSeries(name, chart, data, x, y, color) {
 
     insight.Series.call(this, name, chart, data, x, y, color);
 
@@ -2187,6 +2212,12 @@ insight.MarkerSeries.prototype.constructor = insight.MarkerSeries;
 ;/**
  * The BubbleSeries class extends the Series class
  * @class insight.BubbleSeries
+ * @param {string} name - A uniquely identifying name for this chart
+ * @param {Chart} chart - The parent chart object
+ * @param {DataSet} data - The DataSet containing this series' data
+ * @param {insight.Scales.Scale} x - the x axis
+ * @param {insight.Scales.Scale} y - the y axis
+ * @param {object} color - a string or function that defines the color to be used for the items in this series
  */
 insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
 
@@ -2355,6 +2386,12 @@ insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
 ;/**
  * The RowSeries class extends the Series class and draws horizontal bars on a Chart
  * @class insight.RowSeries
+ * @param {string} name - A uniquely identifying name for this chart
+ * @param {Chart} chart - The parent chart object
+ * @param {DataSet} data - The DataSet containing this series' data
+ * @param {insight.Scales.Scale} x - the x axis
+ * @param {insight.Scales.Scale} y - the y axis
+ * @param {object} color - a string or function that defines the color to be used for the items in this series
  */
 insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
 
@@ -2584,6 +2621,12 @@ insight.RowSeries.prototype.constructor = insight.RowSeries;
 ;/**
  * The LineSeries class extends the Series class and draws horizontal bars on a Chart
  * @class insight.LineSeries
+ * @param {string} name - A uniquely identifying name for this chart
+ * @param {Chart} chart - The parent chart object
+ * @param {DataSet} data - The DataSet containing this series' data
+ * @param {insight.Scales.Scale} x - the x axis
+ * @param {insight.Scales.Scale} y - the y axis
+ * @param {object} color - a string or function that defines the color to be used for the items in this series
  */
 insight.LineSeries = function LineSeries(name, chart, data, x, y, color) {
 
@@ -2719,6 +2762,12 @@ insight.LineSeries.prototype.constructor = insight.LineSeries;
 ;/**
  * The ColumnSeries class extends the Series class and draws vertical bars on a Chart
  * @class insight.ColumnSeries
+ * @param {string} name - A uniquely identifying name for this chart
+ * @param {Chart} chart - The parent chart object
+ * @param {DataSet} data - The DataSet containing this series' data
+ * @param {insight.Scales.Scale} x - the x axis
+ * @param {insight.Scales.Scale} y - the y axis
+ * @param {object} color - a string or function that defines the color to be used for the items in this series
  */
 insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
 

@@ -1,6 +1,10 @@
 /**
  * The Axis class coordinates the domain of the series data and draws axes on the chart in the required orientation and position.
- * @class insight.Axis
+ * @param {Chart} chart - The parent chart object
+ * @param {string} name - A uniquely identifying name for this chart
+ * @param {string} orientation - horizontal 'h' or vertical 'v'
+ * @param {insight.Scales.Scale} scale - insight.Scale.Linear for example
+ * @param {string} anchor - 'left/right/top/bottom'
  */
 insight.Axis = function Axis(chart, name, direction, scale, anchor) {
 

@@ -1,6 +1,12 @@
 /**
  * The Series base class provides some base functions that are used by any specific types of series that derive from this class
  * @class insight.Series
+ * @param {string} name - A uniquely identifying name for this chart
+ * @param {Chart} chart - The parent chart object
+ * @param {DataSet} data - The DataSet containing this series' data
+ * @param {insight.Scales.Scale} x - the x axis
+ * @param {insight.Scales.Scale} y - the y axis
+ * @param {object} color - a string or function that defines the color to be used for the items in this series
  */
 insight.Series = function Series(name, chart, data, x, y, color) {
 

@@ -1,12 +1,17 @@
 (function(insight) {
 
+    /**
+     * The Chart class is the element in which series and axes are drawn
+     * @class insight.Chart
+     * @param {string} name - A uniquely identifying name for this chart
+     * @param {string} element - The css selector identifying the div container that the chart will be drawn in. '#columnChart' for example.
+     */
     insight.Chart = (function(insight) {
 
-        function Chart(name, element, dimension) {
+        function Chart(name, element) {
 
             this.name = name;
             this.element = element;
-            this.dimension = dimension;
             this.selectedItems = [];
 
             var zoomAxis = null;
