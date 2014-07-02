@@ -11,3 +11,7 @@ node_modules
 # WebStorm files
 .idea
 
+# Generated files
+dist
+doc
+
