@@ -152,6 +152,7 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
 
     /**
      * This method calculates the domain of values that this axis has, from a minimum to a maximum.
+     * @memberof insight.Axis
      * @returns {object[]} bounds - An array with two items, for the lower and upper range of this axis
      */
     this.domain = function() {
@@ -171,6 +172,7 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
 
     /**
      * This method calculates the output range bound of this axis, taking into account the size and margins of the chart.
+     * @memberof insight.Axis
      * @returns {int[]} bounds - An array with two items, for the lower and upper bound of this axis
      */
     this.calculateBounds = function() {
@@ -272,6 +274,7 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
 
     /**
      * This method gets/sets the rotation angle used for horizontal axis labels.  Defaults to 90 degrees
+     * @memberof insight.Axis
      * @returns {object} return - Description
      * @param {object[]} data - Description
      */
@@ -309,6 +312,7 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
 
     /**
      * This method positions the text label for the axis (not the tick labels)
+     * @memberof insight.Axis
      */
     this.positionLabel = function() {
 

@@ -120,6 +120,7 @@ insight.Series = function Series(name, chart, data, x, y, color) {
     /**
      * This function takes a data point, and creates a class name for insight to identify this particular key
      * If the parameter is not an object (just a value in an array) then there is no need for this particular class so blank is returned.
+     * @memberof insight.Series
      * @returns {string} return - A class name to identify this point and any other points taking the same value in other charts.
      * @param {object} data - The input point
      */

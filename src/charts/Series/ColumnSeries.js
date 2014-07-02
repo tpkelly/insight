@@ -34,6 +34,7 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
     /**
      * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
      * This function is mapped across the entire data array by the findMax method.
+     * @memberof insight.ColumnSeries
      * @returns {Number} return - Description
      * @param {object} data - An item in the object array to query
      */
@@ -72,9 +73,11 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
 
     /**
      * This method gets or sets whether or not the series in this ColumnSeries are to be stacked or not.  This is false by default.
+     * @memberof insight.ColumnSeries
      * @returns {boolean} - Whether or not the columns are stacked (they are grouped if this returns false)
      */
     /**
+     * @memberof insight.ColumnSeries
      * @returns {object} return - Description
      * @param {boolean} stack - To stack or not to stack
      */

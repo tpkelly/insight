@@ -98,7 +98,7 @@ module.exports = function(grunt) {
     },
     watch: {
       files: ['<%= jshint.files %>', 'tests/*.spec.js'],
-      tasks: ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'jsdoc'],
+      tasks: ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'clean', 'jsdoc'],
       options: {
           livereload: true
       }

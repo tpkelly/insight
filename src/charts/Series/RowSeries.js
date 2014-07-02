@@ -1,6 +1,6 @@
 /**
  * The RowSeries class extends the Series class and draws horizontal bars on a Chart
- * @class RowSeries
+ * @class insight.RowSeries
  */
 insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
 
@@ -32,6 +32,7 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
 
     /**
      * RowSeries overrides the standard key function used by most, vertical charts.
+     * @memberof insight.RowSeries
      * @returns {object[]} return - The keys along the domain axis for this row series
      */
     this.keys = function() {
@@ -43,6 +44,7 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
     /**
      * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
      * This function is mapped across the entire data array by the findMax method.
+     * @memberof insight.RowSeries
      * @returns {Number} return - Description
      * @param {object} data - An item in the object array to query
      */
@@ -69,6 +71,7 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
     /**
      * This method returns the largest value on the value axis of this ColumnSeries, checking all series functions in the series on all points.
      * This function is mapped across the entire data array by the findMax method.
+     * @memberof insight.RowSeries
      * @returns {Number} return - The largest value on the value scale of this ColumnSeries
      */
     this.findMax = function() {
@@ -80,9 +83,11 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
 
     /**
      * This method gets or sets whether or not the series in this ColumnSeries are to be stacked or not.  This is false by default.
+     * @memberof insight.RowSeries
      * @returns {boolean} - Whether or not the columns are stacked (they are grouped if this returns false)
      */
     /**
+     * @memberof insight.RowSeries
      * @returns {object} return - Description
      * @param {boolean} stack - To stack or not to stack
      */

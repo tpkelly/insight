@@ -1,3 +1,7 @@
+/**
+ * The BubbleSeries class extends the Series class
+ * @class insight.BubbleSeries
+ */
 insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
 
     insight.Series.call(this, name, chart, data, x, y, color);

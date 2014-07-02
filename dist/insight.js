@@ -1463,6 +1463,7 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
 
     /**
      * This method calculates the domain of values that this axis has, from a minimum to a maximum.
+     * @memberof insight.Axis
      * @returns {object[]} bounds - An array with two items, for the lower and upper range of this axis
      */
     this.domain = function() {
@@ -1482,6 +1483,7 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
 
     /**
      * This method calculates the output range bound of this axis, taking into account the size and margins of the chart.
+     * @memberof insight.Axis
      * @returns {int[]} bounds - An array with two items, for the lower and upper bound of this axis
      */
     this.calculateBounds = function() {
@@ -1583,6 +1585,7 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
 
     /**
      * This method gets/sets the rotation angle used for horizontal axis labels.  Defaults to 90 degrees
+     * @memberof insight.Axis
      * @returns {object} return - Description
      * @param {object[]} data - Description
      */
@@ -1620,6 +1623,7 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
 
     /**
      * This method positions the text label for the axis (not the tick labels)
+     * @memberof insight.Axis
      */
     this.positionLabel = function() {
 
@@ -1863,6 +1867,7 @@ insight.Series = function Series(name, chart, data, x, y, color) {
     /**
      * This function takes a data point, and creates a class name for insight to identify this particular key
      * If the parameter is not an object (just a value in an array) then there is no need for this particular class so blank is returned.
+     * @memberof insight.Series
      * @returns {string} return - A class name to identify this point and any other points taking the same value in other charts.
      * @param {object} data - The input point
      */
@@ -2179,7 +2184,11 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
 
 insight.MarkerSeries.prototype = Object.create(insight.Series.prototype);
 insight.MarkerSeries.prototype.constructor = insight.MarkerSeries;
-;insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
+;/**
+ * The BubbleSeries class extends the Series class
+ * @class insight.BubbleSeries
+ */
+insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
 
     insight.Series.call(this, name, chart, data, x, y, color);
 
@@ -2345,7 +2354,7 @@ insight.BubbleSeries.prototype = Object.create(insight.Series.prototype);
 insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
 ;/**
  * The RowSeries class extends the Series class and draws horizontal bars on a Chart
- * @class RowSeries
+ * @class insight.RowSeries
  */
 insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
 
@@ -2377,6 +2386,7 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
 
     /**
      * RowSeries overrides the standard key function used by most, vertical charts.
+     * @memberof insight.RowSeries
      * @returns {object[]} return - The keys along the domain axis for this row series
      */
     this.keys = function() {
@@ -2388,6 +2398,7 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
     /**
      * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
      * This function is mapped across the entire data array by the findMax method.
+     * @memberof insight.RowSeries
      * @returns {Number} return - Description
      * @param {object} data - An item in the object array to query
      */
@@ -2414,6 +2425,7 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
     /**
      * This method returns the largest value on the value axis of this ColumnSeries, checking all series functions in the series on all points.
      * This function is mapped across the entire data array by the findMax method.
+     * @memberof insight.RowSeries
      * @returns {Number} return - The largest value on the value scale of this ColumnSeries
      */
     this.findMax = function() {
@@ -2425,9 +2437,11 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
 
     /**
      * This method gets or sets whether or not the series in this ColumnSeries are to be stacked or not.  This is false by default.
+     * @memberof insight.RowSeries
      * @returns {boolean} - Whether or not the columns are stacked (they are grouped if this returns false)
      */
     /**
+     * @memberof insight.RowSeries
      * @returns {object} return - Description
      * @param {boolean} stack - To stack or not to stack
      */
@@ -2738,6 +2752,7 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
     /**
      * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
      * This function is mapped across the entire data array by the findMax method.
+     * @memberof insight.ColumnSeries
      * @returns {Number} return - Description
      * @param {object} data - An item in the object array to query
      */
@@ -2776,9 +2791,11 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
 
     /**
      * This method gets or sets whether or not the series in this ColumnSeries are to be stacked or not.  This is false by default.
+     * @memberof insight.ColumnSeries
      * @returns {boolean} - Whether or not the columns are stacked (they are grouped if this returns false)
      */
     /**
+     * @memberof insight.ColumnSeries
      * @returns {object} return - Description
      * @param {boolean} stack - To stack or not to stack
      */
