@@ -1,3 +1,7 @@
+/**
+ * This is the global namespace that also handles some global events and filtering logic (the logic could be moved into a specific class as it gets larger)
+ * @namespace insight
+ */
 var insight = (function() {
 
     return {
@@ -157,7 +161,7 @@ var insight = (function() {
     };
 
 })();
-;var InsightConstants = (function() {
+;insight.Constants = (function() {
     var exports = {};
 
     exports.Behind = 'behind';
@@ -178,7 +182,7 @@ var insight = (function() {
 }());
 
 
-var Scales = (function() {
+insight.Scales = (function() {
     var exports = {};
 
     exports.Ordinal = {
@@ -232,7 +236,7 @@ var Scales = (function() {
  * This modules contains some helper functions used throughout the library
  * @module InsightUtils
  */
-var InsightUtils = (function() {
+insight.Utils = (function() {
 
     var exports = {};
 
@@ -267,6 +271,11 @@ var InsightUtils = (function() {
         if (index > -1) {
             array.splice(index, 1);
         }
+    };
+
+    exports.safeString = function(input) {
+        return input.split(' ')
+            .join('_');
     };
 
     return exports;
@@ -677,7 +686,7 @@ var InsightUtils = (function() {
                                 var propertyName = propertiesToCount[countProp];
                                 var propertyValue = v[propertiesToCount[countProp]];
 
-                                if (InsightUtils.isArray(propertyValue)) {
+                                if (insight.Utils.isArray(propertyValue)) {
 
                                     for (var subIndex in propertyValue) {
                                         var subVal = propertyValue[subIndex];
@@ -709,7 +718,7 @@ var InsightUtils = (function() {
                                 var propertyName = propertiesToCount[countProp];
                                 var propertyValue = v[propertiesToCount[countProp]];
 
-                                if (InsightUtils.isArray(propertyValue)) {
+                                if (insight.Utils.isArray(propertyValue)) {
 
                                     for (var subIndex in propertyValue) {
                                         var subVal = propertyValue[subIndex];
@@ -955,220 +964,788 @@ var InsightUtils = (function() {
     return Grouping;
 
 })(insight);
-;insight.Dashboard = (function(insight) {
+;(function(insight) {
+
+    insight.Chart = (function(insight) {
+
+        function Chart(name, element, dimension) {
+
+            this.name = name;
+            this.element = element;
+            this.dimension = dimension;
+            this.selectedItems = [];
+
+            var zoomAxis = null;
+            this.container = null;
+            this.chart = null;
+            this.measureCanvas = document.createElement('canvas');
+
+            this._margin = {
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            };
+
+            var height = d3.functor(300);
+            var width = d3.functor(300);
+            var zoomable = false;
+            var series = [];
+            var axes = [];
+            var self = this;
+            var barPadding = d3.functor(0.1);
+            var title = '';
+            var autoMargin = false;
+
+
+            this.init = function(create, container) {
+
+                if (autoMargin) {
+                    this.calculateLabelMargin();
+                }
+
+                this.container = create ? d3.select(container)
+                    .append('div') : d3.select(this.element)
+                    .append('div');
+
+                this.container
+                    .attr('class', insight.Constants.ContainerClass)
+                    .style('width', this.width() + 'px')
+                    .style('position', 'relative')
+                    .style('display', 'inline-block');
+
+                this.chartSVG = this.container
+                    .append('svg')
+                    .attr('class', insight.Constants.ChartSVG)
+                    .attr('width', this.width())
+                    .attr('height', this.height());
+
+                this.chart = this.chartSVG.append('g')
+                    .attr('class', insight.Constants.Chart)
+                    .attr('transform', 'translate(' + this.margin()
+                        .left + ',' + this.margin()
+                        .top + ')');
+
+                this.addClipPath();
+
+                axes.map(function(axis) {
+                    axis.initialize();
+                });
+
+                if (zoomable) {
+                    this.initZoom();
+                }
+
+                this.tooltip();
+
+                this.draw(false);
+            };
+
+
+            this.draw = function(dragging) {
+                this.resizeChart();
+
+                axes.map(function(axis) {
+                    var isZoom = zoomAxis == axis;
+
+                    if (!isZoom) {
+                        axis.initializeScale();
+                    }
+
+                    axis.draw(dragging);
+                });
+
+                this.series()
+                    .map(function(series) {
+                        series.draw(dragging);
+                    });
+            };
+
+            this.addAxis = function(axis) {
+                axes.push(axis);
+            };
+
+            this.axes = function() {
+                return axes;
+            };
+
+            this.addClipPath = function() {
+                this.chart.append('clipPath')
+                    .attr('id', this.clipPath())
+                    .append('rect')
+                    .attr('x', 1)
+                    .attr('y', 0)
+                    .attr('width', this.width() - this.margin()
+                        .left - this.margin()
+                        .right)
+                    .attr('height', this.height() - this.margin()
+                        .top - this.margin()
+                        .bottom);
+            };
+
+
+            this.resizeChart = function() {
+                this.container.style('width', this.width() + 'px');
+
+                this.chartSVG
+                    .attr('width', this.width())
+                    .attr('height', this.height());
+
+                this.chart = this.chart
+                    .attr('transform', 'translate(' + this.margin()
+                        .left + ',' + this.margin()
+                        .top + ')');
+
+                this.chart.select('#' + this.clipPath())
+                    .append('rect')
+                    .attr('x', 1)
+                    .attr('y', 0)
+                    .attr('width', this.width() - this.margin()
+                        .left - this.margin()
+                        .right)
+                    .attr('height', this.height() - this.margin()
+                        .top - this.margin()
+                        .bottom);
+            };
+
+
+
+            this.recalculateScales = function() {
+                scales.map(function(scale) {
+                    // don't resize the scale that is being dragged/zoomed, it is done automatically by d3
+                    var notZoomScale = zoomAxis != scale;
+
+                    if (notZoomScale) {
+                        scale.initialize();
+                    }
+                });
+            };
+
+            this.zoomable = function(scale) {
+                zoomable = true;
+                zoomAxis = scale;
+                return this;
+            };
+
+            this.initZoom = function() {
+                this.zoom = d3.behavior.zoom()
+                    .on('zoom', self.dragging.bind(self));
+
+                this.zoom.x(zoomAxis.scale);
+
+                if (!this.zoomExists()) {
+                    this.chart.append('rect')
+                        .attr('class', 'zoompane')
+                        .attr('width', this.width())
+                        .attr('height', this.height() - this.margin()
+                            .top - this.margin()
+                            .bottom)
+                        .style('fill', 'none')
+                        .style('pointer-events', 'all');
+                }
+
+                this.chart.select('.zoompane')
+                    .call(this.zoom);
+            };
+
+            this.zoomExists = function() {
+                var z = this.chart.selectAll('.zoompane');
+                return z[0].length;
+            };
+
+            this.dragging = function() {
+                self.draw(true);
+            };
+
+            this.barPadding = function(_) {
+                if (!arguments.length) {
+                    return barPadding();
+                }
+                barPadding = d3.functor(_);
+                return this;
+            };
+
+            this.margin = function(_) {
+                if (!arguments.length) {
+                    return this._margin;
+                }
+                this._margin = _;
+                return this;
+            };
+
+            this.clipPath = function() {
+
+                return insight.Utils.safeString(this.name) + 'clip';
+            };
+
+            this.tooltip = function() {
+
+                this.tip = d3.tip()
+                    .attr('class', 'd3-tip')
+                    .offset([-10, 0])
+                    .html(function(d) {
+                        return '<span class="tipvalue">' + d + '</span>';
+                    });
+
+                this.chart.call(this.tip);
+
+                return this;
+            };
+
+            this.mouseOver = function(chart, item, d) {
+
+                var tooltip = $(item)
+                    .find('.tooltip')
+                    .first()
+                    .text();
+
+                this.tip.show(tooltip);
+
+                d3.select(item)
+                    .classed('active', true);
+            };
+
+            this.mouseOut = function(chart, item, d) {
+                this.tip.hide(d);
+
+                d3.select(item)
+                    .classed('active', false);
+            };
+
+            this.title = function(_) {
+                if (!arguments.length) {
+                    return title;
+                }
+
+                title = _;
+                return this;
+            };
+
+            this.width = function(_) {
+                if (!arguments.length) {
+                    return width();
+                }
+
+                width = d3.functor(_);
+                return this;
+            };
+
+            this.height = function(_) {
+                if (!arguments.length) {
+                    return height();
+                }
+                height = d3.functor(_);
+                return this;
+            };
+
+            this.series = function(_) {
+                if (!arguments.length) {
+                    return series;
+                }
+                series = _;
+            };
+
+
+            this.addHorizontalScale = function(type, typeString, direction) {
+                var scale = new Scale(this, type, direction, typeString);
+            };
+
+
+            this.addHorizontalAxis = function(scale) {
+                var axis = new Axis(this, scale, 'h', 'left');
+            };
+
+
+            this.autoMargin = function(_) {
+                if (!arguments.length) {
+                    return autoMargin;
+                }
+                autoMargin = _;
+                return this;
+            };
+
+
+            this.highlight = function(selector, value) {
+
+                var clicked = this.chart.selectAll('.' + selector);
+                var alreadySelected = clicked.classed('selected');
+
+                if (alreadySelected) {
+                    clicked.classed('selected', false);
+                    insight.Utils.removeItemFromArray(self.selectedItems, selector);
+                } else {
+                    clicked.classed('selected', true)
+                        .classed('notselected', false);
+                    self.selectedItems.push(selector);
+                }
+
+                var selected = this.chart.selectAll('.selected');
+                var notselected = this.chart.selectAll('.bar:not(.selected),.bubble:not(.selected)');
+
+                notselected.classed('notselected', selected[0].length > 0);
+            };
+
+            insight.addChart(this);
+        }
+
+
+
+        Chart.prototype.calculateLabelMargin = function() {
+
+            var canvas = this.measureCanvas;
+            var max = 0;
+
+            this.series()
+                .forEach(function(series) {
+                    var m = series.maxLabelDimensions(canvas);
+                    max = m > max ? m : max;
+                });
+
+            this.margin()
+                .bottom = max;
+        };
+
+        return Chart;
+
+    })(insight);
+})(insight);
+;/**
+ * The Axis class coordinates the domain of the series data and draws axes on the chart in the required orientation and position.
+ * @class insight.Axis
+ */
+insight.Axis = function Axis(chart, name, direction, scale, anchor) {
+
+    this.chart = chart;
+    this.scaleType = scale.name;
+    this.scale = scale.scale();
+    this.anchor = anchor ? anchor : 'left';
+    this.rangeType = this.scale.rangeRoundBands ? this.scale.rangeRoundBands : this.scale.rangeRound;
+    this.bounds = [];
+    this.direction = direction;
+    this.series = [];
+
+    var self = this;
+    var label = name;
+    var ordered = d3.functor(false);
+    var tickSize = d3.functor(0);
+    var tickPadding = d3.functor(10);
+    var labelRotation = '90';
+    var tickOrientation = d3.functor('lr');
+    var orientation = direction == 'h' ? d3.functor(this.anchor) : d3.functor(this.anchor);
+    var textAnchor;
+    var showGridLines = false;
+    var gridlines = [];
+
+    this.chart.addAxis(this);
+
+    if (direction == 'v') {
+        textAnchor = this.anchor == 'left' ? 'end' : 'start';
+    }
+    if (direction == 'h') {
+        textAnchor = 'start';
+    }
+
+    // private functions
 
     /**
-     * This method is called when any post aggregation calculations, provided by the computeFunction() setter, need to be recalculated.
-     * @constructor
-     * @returns {this} this - Description
-     * @param {object} name - Description
+     * The default axis tick format, just returns the input
+     * @returns {object} tickPoint - The axis data for a particular tick
+     * @param {object} ticklabel - The output string to be displayed
      */
-    var Dashboard = function Dashboard(name) {
-        this.Name = name;
-        this.Charts = [];
-        this.Dimensions = [];
-        this.FilteredDimensions = [];
-        this.Groups = [];
-        this.ComputedGroups = [];
-        this.DimensionChartMap = {};
+    var format = function(d) {
+        return d;
+    };
 
-        //initialize the crossfilter to be null, populate as load() is called
-        this.DataSets = [];
-        this.ndx = null;
+    /**
+     * This method calculates the scale ranges for this axis, given a range type function and using the calculated output bounds for this axis.
+     * @param {rangeType} rangeType - a d3 range function, which can either be in bands (for columns) or a continuous range
+     */
+    var applyScaleRange = function(rangeType) {
+        self.bounds = self.calculateBounds();
+
+        rangeType.apply(this, [
+            self.bounds, self.chart.barPadding()
+        ]);
+    };
+
+    /**
+     * For an ordinal/categorical axis, this method queries all series that use this axis to get the list of available values
+     * TODO - currently just checks the first as I've not had a scenario where different series on the same axis had different ordinal keys.
+     * @returns {object[]} values - the values for this ordinal axis
+     */
+    var findOrdinalValues = function() {
+        var vals = [];
+
+        self.series.map(function(series) {
+            vals = series.keys();
+        });
+
+        return vals;
+    };
+
+    /**
+     * For linear series, this method is used to calculate the maximum value to be used in this axis.
+     * @returns {Date} max - The largest value in the datasets that use this axis
+     */
+    var findMax = function() {
+        var max = 0;
+
+        self.series.map(function(series) {
+            var m = series.findMax(self);
+
+            max = m > max ? m : max;
+        });
+
+        return max;
+    };
+
+
+    /**
+     * For time series, this method is used to calculate the minimum value to be used in this axis.
+     * @returns {Date} minTime - The smallest time in the datasets that use this axis
+     */
+    var minTime = function() {
+        // start at the largest time, and work back from there to find the minimum
+        var minTime = new Date(8640000000000000);
+
+        self.series.map(function(series) {
+            var cMin = d3.min(series.keys());
+            minTime = cMin < minTime ? cMin : minTime;
+        });
+        return minTime;
+    };
+
+
+    /**
+     * For time series, this method is used to calculate the maximum value to be used in this axis.
+     * @returns {Date} minTime - The largest time in the datasets that use this axis
+     */
+    var maxTime = function() {
+        // start at the smallest time, and work back from there to find the minimum
+        var maxTime = new Date(-8640000000000000);
+
+        self.series.map(function(series) {
+            var cMax = d3.max(series.keys());
+            maxTime = cMax > maxTime ? cMax : maxTime;
+        });
+
+        return maxTime;
+    };
+
+
+    // public functions 
+
+
+    this.horizontal = function() {
+        return this.direction == 'h';
+    };
+
+    this.vertical = function() {
+        return this.direction == 'v';
+    };
+
+    this.ordered = function(value) {
+        if (!arguments.length) {
+            return ordered();
+        }
+        ordered = d3.functor(value);
+        return this;
+    };
+
+
+    this.addSeries = function(series) {
+        this.series.push(series);
+    };
+
+
+    // scale domain and output range methods
+
+
+    /**
+     * This method calculates the domain of values that this axis has, from a minimum to a maximum.
+     * @returns {object[]} bounds - An array with two items, for the lower and upper range of this axis
+     */
+    this.domain = function() {
+        var domain = [];
+
+        if (this.scaleType == insight.Scales.Linear.name) {
+            domain = [0, findMax()];
+        } else if (this.scaleType == insight.Scales.Ordinal.name) {
+            domain = findOrdinalValues();
+        } else if (this.scaleType == insight.Scales.Time.name) {
+            domain = [minTime(), maxTime()];
+        }
+
+        return domain;
+    };
+
+
+    /**
+     * This method calculates the output range bound of this axis, taking into account the size and margins of the chart.
+     * @returns {int[]} bounds - An array with two items, for the lower and upper bound of this axis
+     */
+    this.calculateBounds = function() {
+        var bounds = [];
+
+        if (self.horizontal()) {
+            bounds[0] = 0;
+            bounds[1] = self.chart.width() - self.chart.margin()
+                .right - self.chart.margin()
+                .left;
+        } else if (self.vertical()) {
+            bounds[0] = self.chart.height() - self.chart.margin()
+                .top - self.chart.margin()
+                .bottom;
+            bounds[1] = 0;
+
+        }
+        return bounds;
+    };
+
+
+
+    // label and axis tick methods
+
+    this.label = function(value) {
+        if (!arguments.length) {
+            return label;
+        }
+        label = value;
+        return this;
+    };
+
+
+    this.labelFormat = function(value) {
+        if (!arguments.length) {
+            return format;
+        }
+        format = value;
+        return this;
+    };
+
+
+    this.orientation = function(value) {
+        if (!arguments.length) {
+            return orientation();
+        }
+        orientation = d3.functor(value);
+        return this;
+    };
+
+
+    this.tickRotation = function(value) {
+        if (!arguments.length) {
+            return labelRotation;
+        }
+        labelRotation = value;
+        return this;
+    };
+
+
+    this.tickSize = function(value) {
+        if (!arguments.length) {
+            return tickSize();
+        }
+        tickSize = d3.functor(value);
+        return this;
+    };
+
+
+    this.tickPadding = function(value) {
+        if (!arguments.length) {
+            return tickPadding();
+        }
+        tickPadding = d3.functor(value);
+        return this;
+    };
+
+
+    this.textAnchor = function(value) {
+        if (!arguments.length) {
+            return textAnchor;
+        }
+        textAnchor = value;
+        return this;
+    };
+
+
+
+    this.tickOrientation = function(value) {
+        if (!arguments.length) {
+            return tickOrientation();
+        }
+
+        tickOrientation = d3.functor(value);
 
         return this;
     };
 
 
     /**
-     * This method loads a JSON data set into the Dashboard, creating a new crossfiltered set and returning that to the user to reference when creating charts/groupings.
-     * @returns {object} return - A crossfilter dataset
-     * @param {object} data - an array of objects to add to the dashboard
-     * @param {string} name - an optional name for the dataset if multiple sets are being loaded into the dashboard.
+     * This method gets/sets the rotation angle used for horizontal axis labels.  Defaults to 90 degrees
+     * @returns {object} return - Description
+     * @param {object[]} data - Description
      */
-    Dashboard.prototype.addData = function(data) {
-        //type detection and preprocessing steps here
+    this.tickRotationTransform = function() {
+        var offset = self.tickPadding() + (self.tickSize() * 2);
+        offset = self.anchor == 'top' ? 0 - offset : offset;
 
-        var ndx = crossfilter(data);
+        var rotation = this.tickOrientation() == 'tb' ? ' rotate(' + self.tickRotation() + ',0,' + offset + ')' : '';
 
-        this.DataSets.push(ndx);
-
-        return ndx;
+        return rotation;
     };
 
-    Dashboard.prototype.addChart = function(chart) {
 
-        var self = this;
+    this.axisPosition = function() {
+        var transform = 'translate(';
 
-        chart.triggerRedraw = this.redrawCharts.bind(this);
+        if (self.horizontal()) {
+            var transX = 0;
+            var transY = self.anchor == 'top' ? 0 : (self.chart.height() - self.chart.margin()
+                .bottom - self.chart.margin()
+                .top);
 
-        this.Charts.push(chart);
-        chart.series()
-            .forEach(function(s) {
-                if (s.data.dimension) {
-                    if (self.DimensionChartMap[s.data.dimension.Name]) {
-                        if (self.DimensionChartMap[s.data.dimension.Name].indexOf(chart) == -1) {
-                            self.DimensionChartMap[s.data.dimension.Name].push(chart);
-                        }
-                    } else {
-                        self.DimensionChartMap[s.data.dimension.Name] = [chart];
-                    }
-                }
-            });
+            transform += transX + ',' + transY + ')';
 
-        return chart;
+        } else if (self.vertical()) {
+            var xShift = self.anchor == 'left' ? 0 : self.chart.width() - self.chart.margin()
+                .right - self.chart.margin()
+                .left;
+            transform += xShift + ',0)';
+        }
+
+        return transform;
     };
 
 
     /**
-     * This method takes a dataset, name and grouping function, returning a Grouping with a Dimension created as part of that process.
-     * @returns {object} Grouping - An aggregated Grouping that can be manipulated and have calculations applied to it
-     * @param {object} dataset - A crossfilter, for example, returned by the addData() method
-     * @param {string} name - A uniquely identifying name for the dimension along which this grouping is created. Used to identify identical dimensions in other datasets.
-     * @param {function} groupFunction - The function used to group the dimension along.  Select the property of the underlying data that the dimension is to be defined on. Rounding or data manipulation can alter the granularity of the dimension
+     * This method positions the text label for the axis (not the tick labels)
      */
-    Dashboard.prototype.group = function(dataset, name, groupFunction, multi) {
+    this.positionLabel = function() {
 
-        var dim = new insight.Dimension(name, groupFunction, dataset.dimension(groupFunction), groupFunction, multi);
-
-        this.Dimensions.push(dim);
-
-        var group = new insight.Grouping(dim);
-
-        group.preFilter = this.chartFilterHandler.bind(this);
-
-        this.Groups.push(group);
-
-        return group;
-    };
-
-    Dashboard.prototype.filterFunction = function(filter, element) {
-        var value = filter.key ? filter.key : filter;
-
-        return {
-            name: value,
-            filterFunction: function(d) {
-                if (Array.isArray(d)) {
-                    return d.indexOf(value) != -1;
-                } else {
-                    return String(d) == String(value);
-                }
-            }
-        };
-    };
-
-
-    Dashboard.prototype.compareFilters = function(filterFunction) {
-        return function(d) {
-            return String(d.name) == String(filterFunction.name);
-        };
-    };
-
-    Dashboard.prototype.applyCSSClasses = function(chart, value, dimensionSelector) {
-        var listeningSeries = this.DimensionChartMap[chart.data.dimension.Name];
-
-        listeningSeries.forEach(function(chart) {
-
-            chart.highlight(dimensionSelector, value);
-
-
-        });
-    };
-
-    Dashboard.prototype.chartFilterHandler = function(chart, value, dimensionSelector) {
-        var self = this;
-
-        this.applyCSSClasses(chart, value, dimensionSelector);
-
-        var dimension = chart.data.dimension;
-
-        var filterFunction = this.filterFunction(value);
-
-        if (filterFunction) {
-            var dims = this.Dimensions
-                .filter(dimension.comparer);
-
-            var activeDim = this.FilteredDimensions
-                .filter(dimension.comparer);
-
-            if (!activeDim.length) {
-                this.FilteredDimensions.push(dimension);
-            }
-
-            var comparerFunction = this.compareFilters(filterFunction);
-
-            dims.map(function(dim) {
-
-                var filterExists = dim.Filters
-                    .filter(comparerFunction)
-                    .length;
-
-                //if the dimension is already filtered by this value, toggle (remove) the filter
-                if (filterExists) {
-                    InsightUtils.removeMatchesFromArray(dim.Filters, comparerFunction);
-
-                } else {
-                    // add the provided filter to the list for this dimension
-
-                    dim.Filters.push(filterFunction);
-                }
-
-                // reset this dimension if no filters exist, else apply the filter to the dataset.
-                if (dim.Filters.length === 0) {
-
-                    InsightUtils.removeItemFromArray(self.FilteredDimensions, dim);
-                    dim.Dimension.filterAll();
-
-                } else {
-                    dim.Dimension.filter(function(d) {
-                        var vals = dim.Filters
-                            .map(function(func) {
-                                return func.filterFunction(d);
-                            });
-
-                        return vals.filter(function(result) {
-                                return result;
-                            })
-                            .length > 0;
-                    });
-                }
-            });
-
-            this.Groups.forEach(function(group) {
-                group.recalculate();
-
-            });
-
-            this.ComputedGroups
-                .forEach(
-                    function(group) {
-                        group.compute();
-                    }
-            );
-
-            this.redrawCharts();
+        if (self.horizontal()) {
+            this.labelElement.style('left', 0)
+                .style(self.anchor, 0)
+                .style('width', '100%')
+                .style('text-align', 'center');
+        } else if (self.vertical()) {
+            this.labelElement.style(self.anchor, '0')
+                .style('top', '35%');
         }
     };
 
-    Dashboard.prototype.initCharts = function() {
-        this.Charts
-            .forEach(
-                function(chart) {
-                    chart.init();
-                });
+
+    this.gridlines = function(value) {
+        if (!arguments.length) {
+            return gridlines();
+        }
+        showGridLines = true;
+        gridlines = value;
+
+        return this;
     };
 
 
-    Dashboard.prototype.redrawCharts = function() {
-        for (var i = 0; i < this.Charts
-            .length; i++) {
-            this.Charts[i].draw();
+    this.drawGridLines = function() {
+
+        var ticks = this.scale.ticks(5);
+
+        this.chart.chart.selectAll('line.horizontalGrid')
+            .data(ticks)
+            .enter()
+            .append('line')
+            .attr({
+                'class': 'horizontalGrid',
+                'x1': 0,
+                'x2': chart.width(),
+                'y1': function(d) {
+                    return self.scale.scale(d);
+                },
+                'y2': function(d) {
+                    return self.scale.scale(d);
+                },
+                'fill': 'none',
+                'shape-rendering': 'crispEdges',
+                'stroke': 'silver',
+                'stroke-width': '1px'
+            });
+
+    };
+
+
+    this.initializeScale = function() {
+        applyScaleRange.call(this.scale.domain(this.domain()), this.rangeType);
+
+    };
+
+
+    this.initialize = function() {
+
+        this.initializeScale();
+
+        this.axis = d3.svg.axis()
+            .scale(this.scale)
+            .orient(self.orientation())
+            .tickSize(self.tickSize())
+            .tickPadding(self.tickPadding())
+            .tickFormat(self.labelFormat());
+
+        this.axisElement = this.chart.chart.append('g');
+
+        this.axisElement
+            .attr('class', insight.Constants.AxisClass)
+            .attr('transform', self.axisPosition())
+            .call(this.axis)
+            .selectAll('text')
+            .attr('class', insight.Constants.AxisTextClass)
+            .style('text-anchor', self.textAnchor())
+            .style('transform', self.tickRotationTransform());
+
+        this.labelElement = this.chart.container
+            .append('div')
+            .attr('class', insight.Constants.AxisLabelClass)
+            .style('position', 'absolute')
+            .text(this.label());
+
+        this.positionLabel();
+    };
+
+
+
+    this.draw = function(dragging) {
+
+        this.axis = d3.svg.axis()
+            .scale(this.scale)
+            .orient(self.orientation())
+            .tickSize(self.tickSize())
+            .tickPadding(self.tickPadding())
+            .tickFormat(self.labelFormat());
+
+        this.axisElement
+            .transition()
+            .duration(500)
+            .attr('transform', self.axisPosition())
+            .call(this.axis);
+
+        this.axisElement
+            .selectAll('text')
+            .attr('transform', self.tickRotationTransform())
+            .style('text-anchor', self.textAnchor());
+
+        this.labelElement
+            .text(this.label());
+
+        if (showGridLines) {
+            // commented out as it's not quite working yet but should just need tweaking
+            //this.drawGridLines(); 
         }
     };
-
-    return Dashboard;
-})(insight);
-;insight.Series = function Series(name, chart, data, x, y, color) {
+};
+;/**
+ * The Series base class provides some base functions that are used by any specific types of series that derive from this class
+ * @class insight.Series
+ */
+insight.Series = function Series(name, chart, data, x, y, color) {
 
     this.chart = chart;
     this.data = data;
@@ -1250,7 +1827,7 @@ var InsightUtils = (function() {
 
     this.keys = function() {
         return this.dataset()
-            .map(self.xFunction());
+            .map(self.keyFunction());
     };
 
     this.cssClass = function(_) {
@@ -1356,7 +1933,7 @@ var InsightUtils = (function() {
     this.maxLabelDimensions = function(measureCanvas) {
 
         var sampleText = document.createElement('div');
-        sampleText.setAttribute('class', InsightConstants.AxisTextClass);
+        sampleText.setAttribute('class', insight.Constants.AxisTextClass);
         var style = window.getComputedStyle(sampleText);
         var ctx = measureCanvas.getContext('2d');
         ctx.font = style['font-size'] + ' ' + style['font-family'];
@@ -1404,447 +1981,6 @@ var InsightUtils = (function() {
 insight.Series.prototype.clickEvent = function(series, filter, selection) {
 
 };
-;(function(insight) {
-
-    insight.Chart = (function(insight) {
-
-        function Chart(name, element, dimension) {
-
-            this.name = name;
-            this.element = element;
-            this.dimension = dimension;
-            this.selectedItems = [];
-
-            var height = d3.functor(300);
-            var width = d3.functor(300);
-            var zoomable = false;
-            var zoomScale = null;
-            this.container = null;
-
-            this.chart = null;
-
-            this.measureCanvas = document.createElement("canvas");
-
-            this._margin = {
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0
-            };
-
-            var series = [];
-            var scales = [];
-            var axes = [];
-            var self = this;
-            var barPadding = d3.functor(0.1);
-            var title = "";
-            var autoMargin = false;
-
-
-            this.addAxis = function(axis) {
-                axes.push(axis);
-            };
-
-            this.axes = function() {
-                return axes;
-            };
-
-            this.addClipPath = function() {
-                this.chart.append("clipPath")
-                    .attr("id", this.clipPath())
-                    .append("rect")
-                    .attr("x", 1)
-                    .attr("y", 0)
-                    .attr("width", this.width() - this.margin()
-                        .left - this.margin()
-                        .right)
-                    .attr("height", this.height() - this.margin()
-                        .top - this.margin()
-                        .bottom);
-            };
-
-            this.init = function(create, container) {
-
-                if (autoMargin) {
-                    this.calculateLabelMargin();
-                }
-
-                this.container = create ? d3.select(container)
-                    .append('div') : d3.select(this.element)
-                    .append('div');
-
-                this.container
-                    .attr('class', InsightConstants.ContainerClass)
-                    .style('width', this.width() + 'px')
-                    .style('position', 'relative')
-                    .style('display', 'inline-block');
-
-                this.chartSVG = this.container
-                    .append("svg")
-                    .attr("class", InsightConstants.ChartSVG)
-                    .attr("width", this.width())
-                    .attr("height", this.height());
-
-                this.chart = this.chartSVG.append("g")
-                    .attr('class', InsightConstants.Chart)
-                    .attr("transform", "translate(" + this.margin()
-                        .left + "," + this.margin()
-                        .top + ")");
-
-                this.addClipPath();
-
-                scales.map(function(scale) {
-                    scale.initialize();
-                });
-
-                axes.map(function(axis) {
-                    axis.initialize();
-                    var a = axis.scale.domain();
-                });
-
-                if (zoomable) {
-                    this.initZoom();
-                }
-
-                this.tooltip();
-
-                this.draw(false);
-            };
-
-            this.resizeChart = function() {
-                this.container.style('width', this.width() + "px");
-
-                this.chartSVG
-                    .attr("width", this.width())
-                    .attr("height", this.height());
-
-                this.chart = this.chart
-                    .attr("transform", "translate(" + this.margin()
-                        .left + "," + this.margin()
-                        .top + ")");
-
-                this.chart.select("#" + this.clipPath())
-                    .append("rect")
-                    .attr("x", 1)
-                    .attr("y", 0)
-                    .attr("width", this.width() - this.margin()
-                        .left - this.margin()
-                        .right)
-                    .attr("height", this.height() - this.margin()
-                        .top - this.margin()
-                        .bottom);
-            };
-
-            this.draw = function(dragging) {
-                this.resizeChart();
-
-                this.recalculateScales();
-
-                axes.map(function(axis) {
-                    axis.draw(dragging);
-                });
-
-                this.series()
-                    .map(function(series) {
-                        series.draw(dragging);
-                    });
-            };
-
-            this.recalculateScales = function() {
-                scales.map(function(scale) {
-                    var zx = zoomScale != scale;
-                    if (zx) {
-                        scale.initialize();
-                    }
-                });
-            };
-
-            this.zoomable = function(scale) {
-                zoomable = true;
-                zoomScale = scale;
-                return this;
-            };
-
-            this.initZoom = function() {
-                this.zoom = d3.behavior.zoom()
-                    .on("zoom", self.dragging.bind(self));
-
-                this.zoom.x(zoomScale.scale);
-
-                if (!this.zoomExists()) {
-                    this.chart.append("rect")
-                        .attr("class", "zoompane")
-                        .attr("width", this.width())
-                        .attr("height", this.height() - this.margin()
-                            .top - this.margin()
-                            .bottom)
-                        .style("fill", "none")
-                        .style("pointer-events", "all");
-                }
-
-                this.chart.select('.zoompane')
-                    .call(this.zoom);
-            };
-
-            this.zoomExists = function() {
-                var z = this.chart.selectAll('.zoompane');
-                return z[0].length;
-            };
-
-            this.dragging = function() {
-                self.draw(true);
-            };
-
-            this.barPadding = function(_) {
-                if (!arguments.length) {
-                    return barPadding();
-                }
-                barPadding = d3.functor(_);
-                return this;
-            };
-
-            this.margin = function(_) {
-                if (!arguments.length) {
-                    return this._margin;
-                }
-                this._margin = _;
-                return this;
-            };
-
-            this.clipPath = function() {
-
-                return this.name.split(' ')
-                    .join('_') + "clip";
-            };
-
-
-
-
-            this.tooltip = function() {
-
-                this.tip = d3.tip()
-                    .attr('class', 'd3-tip')
-                    .offset([-10, 0])
-                    .html(function(d) {
-                        return "<span class='tipvalue'>" + d + "</span>";
-                    });
-
-                this.chart.call(this.tip);
-
-                return this;
-            };
-
-            this.mouseOver = function(chart, item, d) {
-
-                var tooltip = $(item)
-                    .find('.tooltip')
-                    .first()
-                    .text();
-
-                this.tip.show(tooltip);
-
-                d3.select(item)
-                    .classed("active", true);
-            };
-
-            this.mouseOut = function(chart, item, d) {
-                this.tip.hide(d);
-
-                d3.select(item)
-                    .classed("active", false);
-            };
-
-            this.title = function(_) {
-                if (!arguments.length) {
-                    return title;
-                }
-
-                title = _;
-                return this;
-            };
-
-            this.width = function(_) {
-                if (!arguments.length) {
-                    return width();
-                }
-
-                width = d3.functor(_);
-                return this;
-            };
-
-            this.height = function(_) {
-                if (!arguments.length) {
-                    return height();
-                }
-                height = d3.functor(_);
-                return this;
-            };
-
-            this.series = function(_) {
-                if (!arguments.length) {
-                    return series;
-                }
-                series = _;
-            };
-
-
-            this.scales = function(_) {
-                if (!arguments.length) {
-                    return scales;
-                }
-                scales = _;
-            };
-
-
-            this.addHorizontalScale = function(type, typeString, direction) {
-                var scale = new Scale(this, type, direction, typeString);
-            };
-
-
-            this.addHorizontalAxis = function(scale) {
-                var axis = new Axis(this, scale, 'h', 'left');
-            };
-
-
-            this.autoMargin = function(_) {
-                if (!arguments.length) {
-                    return autoMargin;
-                }
-                autoMargin = _;
-                return this;
-            };
-
-
-            this.highlight = function(selector, value) {
-
-
-                var clicked = this.chart.selectAll("." + selector);
-                var alreadySelected = clicked.classed('selected');
-
-                if (alreadySelected) {
-                    clicked.classed('selected', false);
-                    InsightUtils.removeItemFromArray(self.selectedItems, selector);
-                } else {
-                    clicked.classed('selected', true)
-                        .classed('notselected', false);
-                    self.selectedItems.push(selector);
-                }
-
-                var selected = this.chart.selectAll('.selected');
-                var notselected = this.chart.selectAll('.bar:not(.selected),.bubble:not(.selected)');
-
-                notselected.classed('notselected', selected[0].length > 0);
-            };
-
-
-            insight.addChart(this);
-        }
-
-
-
-        Chart.prototype.calculateLabelMargin = function() {
-
-            var canvas = this.measureCanvas;
-            var max = 0;
-
-            this.series()
-                .forEach(function(series) {
-                    var m = series.maxLabelDimensions(canvas);
-                    max = m > max ? m : max;
-                });
-
-            this.margin()
-                .bottom = max;
-        };
-
-
-        // Helper functions for adding series without having to create the scales & axes yourself (move to builder class?)
-
-        Chart.prototype.addColumnSeries = function(series) {
-
-            var x = new insight.Scale(this, "", 'h', Scales.Ordinal);
-            var y = new insight.Scale(this, "", 'v', Scales.Linear);
-
-            var stacked = series.stacked ? true : false;
-
-            var s = new insight.ColumnSeries(series.name, this, series.data, x, y, series.color)
-                .stacked(stacked);
-
-            s.series = [series];
-
-            this.series()
-                .push(s);
-
-            return s;
-        };
-
-
-        Chart.prototype.addLineSeries = function(series) {
-
-            var x = new insight.Scale(this, "", 'h', Scales.Ordinal);
-            var y = new insight.Scale(this, "", 'v', Scales.Linear);
-
-            var s = new insight.LineSeries(series.name, this, series.data, x, y, series.color)
-                .valueFunction(series.accessor);
-
-            this.series()
-                .push(s);
-
-            return s;
-        };
-
-
-        Chart.prototype.addBulletChart = function(options) {
-
-            var x = new insight.Scale(this, options.name + "x", 'h', Scales.Linear);
-            var y = new insight.Scale(this, options.name + "y", 'v', Scales.Ordinal);
-
-            // Create the areas as stacked bars
-            var s = new insight.RowSeries(options.name, this, options.ranges[0].data, x, y, 'blue')
-                .stacked(true);
-
-            // empty the hover function
-            s.mouseOver = function(d) {};
-
-            s.series = options.ranges;
-
-            this.series()
-                .push(s);
-
-            // Create the main bar
-
-            var row = new insight.RowSeries(options.value.name, this, options.value.data, x, y, options.value.color);
-
-            row.barThickness = function(d) {
-                return this.y.scale.rangeBand(d) * (1 / 3);
-            }.bind(row);
-
-            row.yPosition = function(d) {
-                return this.y.scale(this.keyFunction()(d)) + (this.y.scale.rangeBand(d) / 3);
-            }.bind(row);
-
-            row.series = [options.value];
-
-            this.series()
-                .push(row);
-
-
-            var target = new insight.MarkerSeries(options.target.name, this, options.target.data, x, y, options.target.color)
-                .valueFunction(options.target.accessor)
-                .widthFactor(0.3)
-                .horizontal();
-
-            this.series()
-                .push(target);
-
-            return s;
-        };
-
-
-        return Chart;
-
-    })(insight);
-})(insight);
 ;insight.MarkerSeries = function MarkerSeries(name, chart, data, x, y, color) {
 
     insight.Series.call(this, name, chart, data, x, y, color);
@@ -1991,12 +2127,12 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
             .forEach(reset);
 
         var groups = this.chart.chart
-            .selectAll('g.' + InsightConstants.BarGroupClass + "." + this.name)
+            .selectAll('g.' + insight.Constants.BarGroupClass + "." + this.name)
             .data(this.dataset(), this.keyAccessor);
 
         var newGroups = groups.enter()
             .append('g')
-            .attr('class', InsightConstants.BarGroupClass + " " + this.name);
+            .attr('class', insight.Constants.BarGroupClass + " " + this.name);
 
         var newBars = newGroups.selectAll('rect.bar');
 
@@ -2019,7 +2155,7 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
             .on('click', click);
 
         newBars.append('svg:text')
-            .attr('class', InsightConstants.ToolTipTextClass);
+            .attr('class', insight.Constants.ToolTipTextClass);
 
         var bars = groups.selectAll('.' + this.name + 'class.bar');
 
@@ -2031,7 +2167,7 @@ insight.Series.prototype.clickEvent = function(series, filter, selection) {
             .attr('width', this.markerWidth)
             .attr('height', this.markerHeight);
 
-        bars.selectAll('.' + InsightConstants.ToolTipTextClass)
+        bars.selectAll('.' + insight.Constants.ToolTipTextClass)
             .text(this.tooltipFunction());
 
         groups.exit()
@@ -2053,6 +2189,7 @@ insight.MarkerSeries.prototype.constructor = insight.MarkerSeries;
     var minRad = d3.functor(7);
     var tooltipExists = false;
     var self = this;
+    var selector = this.name + insight.Constants.Bubble;
 
     var xFunction = function(d) {};
     var yFunction = function(d) {};
@@ -2068,6 +2205,8 @@ insight.MarkerSeries.prototype.constructor = insight.MarkerSeries;
     var mouseOut = function(d, item) {
         self.chart.mouseOut(self, this, d);
     };
+
+
 
 
     this.findMax = function(scale) {
@@ -2127,6 +2266,11 @@ insight.MarkerSeries.prototype.constructor = insight.MarkerSeries;
     };
 
 
+    var className = function(d) {
+
+        return selector + " " + insight.Constants.Bubble + " " + self.sliceSelector(d) + " " + self.dimensionName;
+    };
+
     this.fillFunction = function(_) {
         if (!arguments.length) {
             return fillFunction;
@@ -2136,12 +2280,7 @@ insight.MarkerSeries.prototype.constructor = insight.MarkerSeries;
         return this;
     };
 
-    this.selector = this.name + InsightConstants.Bubble;
 
-    this.className = function(d) {
-
-        return self.selector + " " + InsightConstants.Bubble + " " + self.sliceSelector(d) + " " + self.dimensionName;
-    };
 
     this.draw = function(drag) {
         var duration = drag ? 0 : function(d, i) {
@@ -2161,25 +2300,25 @@ insight.MarkerSeries.prototype.constructor = insight.MarkerSeries;
             return self.click(this, filter);
         };
 
-
+        // create radius for each item
         data.forEach(function(d) {
             var radiusInput = radiusFunction(d);
 
             d.radius = minRad() + (((radiusInput - min) * (maxRad() - minRad())) / (max - min));
         });
 
-        //this sort ensures that smaller bubbles are on top of larger ones, so that they are always selectable.  Without changing original array
+        //this sort ensures that smaller bubbles are on top of larger ones, so that they are always selectable.  Without changing original array (hence concat which creates a copy)
         data = data.concat()
             .sort(function(a, b) {
                 return d3.descending(rad(a), rad(b));
             });
 
-        var bubbles = this.chart.chart.selectAll('circle.' + self.selector)
+        var bubbles = this.chart.chart.selectAll('circle.' + selector)
             .data(data, self.keyAccessor);
 
         bubbles.enter()
             .append('circle')
-            .attr('class', self.className)
+            .attr('class', className)
             .on('mouseover', mouseOver)
             .on('mouseout', mouseOut)
             .on('click', click);
@@ -2193,18 +2332,22 @@ insight.MarkerSeries.prototype.constructor = insight.MarkerSeries;
 
         if (!tooltipExists) {
             bubbles.append('svg:text')
-                .attr('class', InsightConstants.ToolTipTextClass);
+                .attr('class', insight.Constants.ToolTipTextClass);
             tooltipExists = true;
         }
 
-        bubbles.selectAll("." + InsightConstants.ToolTipTextClass)
+        bubbles.selectAll("." + insight.Constants.ToolTipTextClass)
             .text(this.tooltipFunction());
     };
 };
 
 insight.BubbleSeries.prototype = Object.create(insight.Series.prototype);
 insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
-;insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
+;/**
+ * The RowSeries class extends the Series class and draws horizontal bars on a Chart
+ * @class RowSeries
+ */
+insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
 
     insight.Series.call(this, name, chart, data, x, y, color);
 
@@ -2271,7 +2414,6 @@ insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
     /**
      * This method returns the largest value on the value axis of this ColumnSeries, checking all series functions in the series on all points.
      * This function is mapped across the entire data array by the findMax method.
-     * @constructor
      * @returns {Number} return - The largest value on the value scale of this ColumnSeries
      */
     this.findMax = function() {
@@ -2325,7 +2467,7 @@ insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
 
         var func = self.series[self.currentSeries].accessor;
 
-        var position = self.stackedBars() ? self.x.scale(self.calculateXPos(func, d)) : 0;
+        var position = self.stacked() ? self.x.scale(self.calculateXPos(func, d)) : 0;
 
         return position;
     };
@@ -2338,14 +2480,14 @@ insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
 
         var groupThickness = self.barThickness(d);
 
-        var width = self.stackedBars() || (self.series.length == 1) ? groupThickness : groupThickness / self.series.length;
+        var width = self.stacked() || (self.series.length == 1) ? groupThickness : groupThickness / self.series.length;
 
         return width;
     };
 
     this.offsetYPosition = function(d) {
         var thickness = self.groupedbarThickness(d);
-        var position = self.stackedBars() ? self.yPosition(d) : self.calculateYPos(thickness, d);
+        var position = self.stacked() ? self.yPosition(d) : self.calculateYPos(thickness, d);
 
         return position;
     };
@@ -2354,10 +2496,6 @@ insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
         var func = self.series[self.currentSeries].accessor;
 
         return self.x.scale(func(d));
-    };
-
-    this.stackedBars = function() {
-        return self.stacked();
     };
 
     this.className = function(d) {
@@ -2371,13 +2509,13 @@ insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
         };
 
         var groups = this.chart.chart
-            .selectAll('g.' + InsightConstants.BarGroupClass + "." + this.name)
+            .selectAll('g.' + insight.Constants.BarGroupClass + "." + this.name)
             .data(this.dataset(), this.keyAccessor)
             .each(reset);
 
         var newGroups = groups.enter()
             .append('g')
-            .attr('class', InsightConstants.BarGroupClass + " " + this.name);
+            .attr('class', insight.Constants.BarGroupClass + " " + this.name);
 
         var newBars = newGroups.selectAll('rect.bar');
 
@@ -2408,7 +2546,7 @@ insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
 
 
             newBars.append('svg:text')
-                .attr('class', InsightConstants.ToolTipTextClass);
+                .attr('class', insight.Constants.ToolTipTextClass);
 
             var bars = groups.selectAll('.' + seriesName + 'class.bar')
                 .transition()
@@ -2418,7 +2556,7 @@ insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
                 .attr('height', this.groupedbarThickness)
                 .attr('width', this.barWidth);
 
-            bars.selectAll("." + InsightConstants.ToolTipTextClass)
+            bars.selectAll("." + insight.Constants.ToolTipTextClass)
                 .text(tooltipFunction);
         }
     };
@@ -2429,403 +2567,11 @@ insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
 
 insight.RowSeries.prototype = Object.create(insight.Series.prototype);
 insight.RowSeries.prototype.constructor = insight.RowSeries;
-;insight.Scale = function Scale(chart, title, direction, type) {
-    var ordered = d3.functor(false);
-    var self = this;
-
-    this.scale = type.scale();
-
-    this.rangeType = this.scale.rangeRoundBands ? this.scale.rangeRoundBands : this.scale.rangeRound;
-
-    this.series = [];
-    this.title = title;
-    this.chart = chart;
-    this.type = type;
-    this.direction = direction;
-    this.bounds = [];
-
-    chart.scales()
-        .push(this);
-
-    this.domain = function() {
-        if (type.name == Scales.Linear.name) {
-            return [0, this.findMax()];
-        } else if (type.name == Scales.Ordinal.name) {
-            return this.findOrdinalValues();
-        }
-        if (type.name == Scales.Time.name) {
-            return [this.minTime(), this.maxTime()];
-        }
-    };
-
-    this.calculateBounds = function() {
-        var bounds = [];
-
-        if (self.horizontal()) {
-            bounds[0] = 0;
-            bounds[1] = self.chart.width() - self.chart.margin()
-                .right - self.chart.margin()
-                .left;
-        } else if (self.vertical()) {
-            bounds[0] = self.chart.height() - self.chart.margin()
-                .top - self.chart.margin()
-                .bottom;
-            bounds[1] = 0;
-
-        }
-        return bounds;
-    };
-
-    this.minTime = function() {
-        var minTime = new Date(8640000000000000);
-
-        this.series.map(function(series) {
-            var cMin = d3.min(series.keys());
-            minTime = cMin < minTime ? cMin : minTime;
-        });
-        return minTime;
-    };
-
-
-    this.maxTime = function() {
-        var maxTime = new Date(-8640000000000000);
-
-        this.series.map(function(series) {
-            var cMax = d3.max(series.keys());
-            maxTime = cMax > maxTime ? cMax : maxTime;
-        });
-
-        return maxTime;
-    };
-
-    this.findOrdinalValues = function() {
-        var vals = [];
-
-        this.series.map(function(series) {
-            vals = series.keys();
-        });
-
-        return vals;
-    };
-
-    this.horizontal = function() {
-        return this.direction == 'h';
-    };
-
-    this.vertical = function() {
-        return this.direction == 'v';
-    };
-
-    this.findMax = function() {
-        var max = 0;
-
-        this.series.map(function(series) {
-            var m = series.findMax(self);
-
-            max = m > max ? m : max;
-        });
-
-        return max;
-    };
-
-    this.addSeries = function(series) {
-        this.series.push(series);
-    };
-
-
-    this.initialize = function() {
-        this.applyScaleRange.call(this.scale.domain(this.domain()), this.rangeType);
-    };
-
-    this.calculateRange = function() {
-        this.scale.domain(this.domain());
-    };
-
-    this.applyScaleRange = function(rangeType) {
-        var bounds = self.calculateBounds();
-
-        self.bounds = bounds;
-
-        rangeType.apply(this, [
-            bounds, self.chart.barPadding()
-        ]);
-    };
-
-    this.ordered = function(_) {
-        if (!arguments.length) {
-            return ordered();
-        }
-        ordered = d3.functor(_);
-        return this;
-    };
-};
-;insight.Axis = function Axis(chart, name, scale, anchor) {
-    this.chart = chart;
-    this.scale = scale;
-    this.anchor = anchor ? anchor : 'left';
-    this.name = name;
-
-    var label = scale.title;
-    var self = this;
-
-    var tickSize = d3.functor(0);
-    var tickPadding = d3.functor(10);
-    var labelRotation = "90";
-    var labelOrientation = d3.functor("lr");
-    var orientation = scale.horizontal() ? d3.functor(this.anchor) : d3.functor(this.anchor);
-    var textAnchor;
-    var showGridLines = false;
-    var gridlines = [];
-
-    if (scale.vertical()) {
-        textAnchor = this.anchor == 'left' ? 'end' : 'start';
-    }
-    if (scale.horizontal()) {
-        textAnchor = 'start';
-    }
-
-    var format = function(d) {
-        return d;
-    };
-
-    this.chart.addAxis(this);
-
-    this.label = function(_) {
-        if (!arguments.length) {
-            return label;
-        }
-        label = _;
-        return this;
-    };
-
-    this.labelFormat = function(_) {
-        if (!arguments.length) {
-            return format;
-        }
-        format = _;
-        return this;
-    };
-
-    this.orientation = function(_) {
-        if (!arguments.length) {
-            return orientation();
-        }
-        orientation = d3.functor(_);
-        return this;
-    };
-
-    this.labelRotation = function(_) {
-        if (!arguments.length) {
-            return labelRotation;
-        }
-        labelRotation = _;
-        return this;
-    };
-
-    this.tickSize = function(_) {
-        if (!arguments.length) {
-            return tickSize();
-        }
-        tickSize = d3.functor(_);
-        return this;
-    };
-
-    this.tickPadding = function(_) {
-        if (!arguments.length) {
-            return tickPadding();
-        }
-        tickPadding = d3.functor(_);
-        return this;
-    };
-
-    this.textAnchor = function(_) {
-        if (!arguments.length) {
-            return textAnchor;
-        }
-        textAnchor = _;
-        return this;
-    };
-
-    this.labelOrientation = function(_) {
-        if (!arguments.length) {
-            return labelOrientation();
-        }
-
-        labelOrientation = d3.functor(_);
-
-        return this;
-    };
-
-    /**
-     * This method gets/sets the rotation angle used for horizontal axis labels.  Defaults to 90 degrees
-     * @constructor
-     * @returns {object} return - Description
-     * @param {object[]} data - Description
-     */
-    this.tickRotation = function() {
-        var offset = self.tickPadding() + (self.tickSize() * 2);
-        offset = self.anchor == 'top' ? 0 - offset : offset;
-
-        var rotation = this.labelOrientation() == 'tb' ? ' rotate(' + self.labelRotation() + ',0,' + offset + ')' : '';
-
-        return rotation;
-    };
-
-    this.transform = function() {
-        var transform = "translate(";
-
-        if (self.scale.horizontal()) {
-            var transX = 0;
-            var transY = self.anchor == 'top' ? 0 : (self.chart.height() - self.chart.margin()
-                .bottom - self.chart.margin()
-                .top);
-
-            transform += transX + ',' + transY + ')';
-
-        } else if (self.scale.vertical()) {
-            var xShift = self.anchor == 'left' ? 0 : self.chart.width() - self.chart.margin()
-                .right - self.chart.margin()
-                .left;
-            transform += xShift + ",0)";
-        }
-
-        return transform;
-    };
-
-    this.labelHorizontalPosition = function() {
-        var pos = "";
-
-        if (self.scale.horizontal()) {
-
-        } else if (self.scale.vertical()) {
-
-        }
-
-        return pos;
-    };
-
-    this.labelVerticalPosition = function() {
-        var pos = "";
-
-        if (self.scale.horizontal()) {
-
-        } else if (self.scale.vertical()) {
-
-        }
-
-        return pos;
-    };
-
-    this.positionLabels = function(labels) {
-
-        if (self.scale.horizontal()) {
-
-            labels.style('left', 0)
-                .style(self.anchor, 0)
-                .style('width', '100%')
-                .style('text-align', 'center');
-        } else if (self.scale.vertical()) {
-            labels.style(self.anchor, '0')
-                .style('top', '35%');
-        }
-    };
-
-    this.gridlines = function(_) {
-        if (!arguments.length) {
-            return gridlines();
-        }
-        showGridLines = true;
-        gridlines = _;
-
-        return this;
-    };
-
-
-    this.drawGridLines = function() {
-
-        var ticks = this.scale.scale.ticks(5);
-
-        this.chart.chart.selectAll("line.horizontalGrid")
-            .data(ticks)
-            .enter()
-            .append("line")
-            .attr({
-                "class": "horizontalGrid",
-                "x1": 0,
-                "x2": chart.width(),
-                "y1": function(d) {
-                    return self.scale(d);
-                },
-                "y2": function(d) {
-                    return self.scale(d);
-                },
-                "fill": "none",
-                "shape-rendering": "crispEdges",
-                "stroke": "silver",
-                "stroke-width": "1px"
-            });
-
-    };
-
-    this.initialize = function() {
-        this.axis = d3.svg.axis()
-            .scale(this.scale.scale)
-            .orient(self.orientation())
-            .tickSize(self.tickSize())
-            .tickPadding(self.tickPadding())
-            .tickFormat(self.labelFormat());
-
-        this.chart.chart.append('g')
-            .attr('class', self.name + ' ' + InsightConstants.AxisClass)
-            .attr('transform', self.transform())
-            .call(this.axis)
-            .selectAll('text')
-            .attr('class', self.name + ' ' + InsightConstants.AxisTextClass)
-            .style('text-anchor', self.textAnchor())
-            .style('transform', self.tickRotation());
-
-
-
-        var labels = this.chart.container
-            .append('div')
-            .attr('class', self.name + InsightConstants.AxisLabelClass)
-            .style('position', 'absolute')
-            .text(this.label());
-
-        this.positionLabels(labels);
-    };
-
-
-
-    this.draw = function(dragging) {
-        this.axis = d3.svg.axis()
-            .scale(this.scale.scale)
-            .orient(self.orientation())
-            .tickSize(self.tickSize())
-            .tickPadding(self.tickPadding())
-            .tickFormat(self.labelFormat());
-
-        var axis = this.chart.chart.selectAll('g.' + self.name + '.' + InsightConstants.AxisClass)
-            .transition()
-            .duration(500)
-            .attr('transform', self.transform())
-            .call(this.axis);
-
-        axis
-            .selectAll("text")
-            .attr('transform', self.tickRotation())
-            .style('text-anchor', self.textAnchor());
-
-        d3.select(this.chart.element)
-            .select('div.' + self.name + InsightConstants.AxisLabelClass)
-            .text(this.label());
-
-        if (showGridLines) {
-            //this.drawGridLines();
-        }
-    };
-};
-;insight.LineSeries = function LineSeries(name, chart, data, x, y, color) {
+;/**
+ * The RowSeries class extends the Series class and draws horizontal bars on a Chart
+ * @class insight.RowSeries
+ */
+insight.LineSeries = function LineSeries(name, chart, data, x, y, color) {
 
     insight.Series.call(this, name, chart, data, x, y, color);
 
@@ -2940,11 +2686,11 @@ insight.RowSeries.prototype.constructor = insight.RowSeries;
 
         if (!tooltipExists) {
             circles.append('svg:text')
-                .attr('class', InsightConstants.ToolTipTextClass);
+                .attr('class', insight.Constants.ToolTipTextClass);
             tooltipExists = true;
         }
 
-        circles.selectAll("." + InsightConstants.ToolTipTextClass)
+        circles.selectAll("." + insight.Constants.ToolTipTextClass)
             .text(this.tooltipFunction());
     };
 
@@ -2956,7 +2702,11 @@ insight.RowSeries.prototype.constructor = insight.RowSeries;
 
 insight.LineSeries.prototype = Object.create(insight.Series.prototype);
 insight.LineSeries.prototype.constructor = insight.LineSeries;
-;insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
+;/**
+ * The ColumnSeries class extends the Series class and draws vertical bars on a Chart
+ * @class insight.ColumnSeries
+ */
+insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
 
     insight.Series.call(this, name, chart, data, x, y, color);
 
@@ -3014,7 +2764,6 @@ insight.LineSeries.prototype.constructor = insight.LineSeries;
     /**
      * This method returns the largest value on the value axis of this ColumnSeries, checking all series functions in the series on all points.
      * This function is mapped across the entire data array by the findMax method.
-     * @constructor
      * @returns {Number} return - The largest value on the value scale of this ColumnSeries
      */
     this.findMax = function() {
@@ -3075,6 +2824,8 @@ insight.LineSeries.prototype.constructor = insight.LineSeries;
 
 
     this.barWidth = function(d) {
+        // comment for tom, this is the bit that is currently breaking the linear x axis, because d3 linear scales don't support the rangeBand() function, whereas ordinal ones do.
+        // in js, you can separate the scale and range function using rangeBandFunction.call(self.x.scale, d), where rangeBandFunction can point to the appropriate function for the type of scale being used.
         return self.x.scale.rangeBand(d);
     };
 
@@ -3116,6 +2867,14 @@ insight.LineSeries.prototype.constructor = insight.LineSeries;
         return seriesName + 'class bar ' + dimension + " " + selected + " " + self.dimensionName;
     };
 
+    var click = function(filter) {
+        return self.click(this, filter);
+    };
+
+    var duration = function(d, i) {
+        return 200 + (i * 20);
+    };
+
     this.draw = function(drag) {
 
         var reset = function(d) {
@@ -3127,22 +2886,14 @@ insight.LineSeries.prototype.constructor = insight.LineSeries;
             .forEach(reset);
 
         var groups = this.chart.chart
-            .selectAll('g.' + InsightConstants.BarGroupClass)
+            .selectAll('g.' + insight.Constants.BarGroupClass)
             .data(this.dataset(), this.keyAccessor);
 
         var newGroups = groups.enter()
             .append('g')
-            .attr('class', InsightConstants.BarGroupClass);
+            .attr('class', insight.Constants.BarGroupClass);
 
         var newBars = newGroups.selectAll('rect.bar');
-
-        var click = function(filter) {
-            return self.click(this, filter);
-        };
-
-        var duration = function(d, i) {
-            return 200 + (i * 20);
-        };
 
         for (var ser in this.series) {
 
@@ -3163,7 +2914,7 @@ insight.LineSeries.prototype.constructor = insight.LineSeries;
                 .on('click', click);
 
             newBars.append('svg:text')
-                .attr('class', InsightConstants.ToolTipTextClass);
+                .attr('class', insight.Constants.ToolTipTextClass);
 
             var bars = groups.selectAll('.' + seriesName + 'class.bar');
 
@@ -3175,7 +2926,7 @@ insight.LineSeries.prototype.constructor = insight.LineSeries;
                 .attr('width', this.groupedBarWidth)
                 .attr('height', this.barHeight);
 
-            bars.selectAll('.' + InsightConstants.ToolTipTextClass)
+            bars.selectAll('.' + insight.Constants.ToolTipTextClass)
                 .text(tooltipFunction);
 
         }
