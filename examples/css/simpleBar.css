@@ -22,3 +22,18 @@
     shape-rendering: crispEdges;
     fill: none;
 }
+
+
+.active
+{
+    fill: #34495e;
+}
+rect.bar
+{
+    transition: 0.2s ease all;
+}
+.notselected
+{
+    fill: silver !important;
+    opacity: 0.5 !important;
+}

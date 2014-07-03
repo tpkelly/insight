@@ -40,8 +40,11 @@ $(document)
                 bottom: 90
             });
 
-        var x = new insight.Scale(chart, 'Country', 'h', Scales.Ordinal);
-        var y = new insight.Scale(chart, '', 'v', Scales.Linear);
+        var x = new insight.Axis(chart, 'Country', 'h', insight.Scales.Ordinal, 'bottom')
+            .tickOrientation('tb');
+
+        var y = new insight.Axis(chart, 'Value', 'v', insight.Scales.Linear, 'left')
+            .labelFormat(d3.format("0,000"));
 
         var series = new insight.ColumnSeries('countryColumn', chart, dataset, x, y, 'silver');
 
@@ -76,11 +79,6 @@ $(document)
 
         chart.series([series]);
 
-        var xAxis = new insight.Axis(chart, "x", x, 'bottom')
-            .labelOrientation('tb');
-
-        var yAxis = new insight.Axis(chart, "y", y, 'left')
-            .labelFormat(d3.format("0,000"));
 
         insight.drawCharts();
 

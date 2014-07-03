@@ -3,7 +3,6 @@ $(document)
     {
         d3.json('revenuereport.json', function(data)
         {
-
             var dataset = new insight.DataSet(data);
 
             var clientData = dataset.group('clients', function(d)
@@ -31,13 +30,18 @@ $(document)
                     bottom: 150
                 });
 
-            var x = new insight.Scale(chart, 'Client', 'h', Scales.Ordinal)
+            var x = new insight.Axis(chart, 'Client', 'h', insight.Scales.Ordinal, 'bottom')
+                .textAnchor('start')
+                .tickOrientation('tb')
                 .ordered(true);
 
-            var y = new insight.Scale(chart, 'Revenue', 'v', Scales.Linear);
-            var y2 = new insight.Scale(chart, '%', 'v', Scales.Linear);
+            var y = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'left')
+                .labelFormat(InsightFormatters.currencyFormatter);
 
-            var series = new insight.ColumnSeries('clientColumn', chart, clientData, x, y); //.tooltipFormat(InsightFormatters.currencyFormatter);
+            var y2 = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'right')
+                .labelFormat(InsightFormatters.percentageFormatter);
+
+            var series = new insight.ColumnSeries('clientColumn', chart, clientData, x, y);
 
             var line = new insight.LineSeries('percentLine', chart, clientData, x, y2, 'cyan')
                 .tooltipFormat(InsightFormatters.percentageFormatter)
@@ -62,16 +66,6 @@ $(document)
 
 
             chart.series([series, line]);
-
-            var xAxis = new insight.Axis(chart, "x", x, 'bottom')
-                .textAnchor('start')
-                .labelOrientation('tb');
-
-            var yAxis = new insight.Axis(chart, "y", y, 'left')
-                .labelFormat(InsightFormatters.currencyFormatter);
-
-            var yAxis2 = new insight.Axis(chart, "y2", y2, 'right')
-                .labelFormat(InsightFormatters.percentageFormatter);
 
             insight.drawCharts();
         });

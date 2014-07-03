@@ -21,8 +21,7 @@
         "imageUrl": "images/stackedBar.PNG",
         "partial": "examples/partials/stacked.html",
         "partialCSS": "examples/css/example.css"
-    },
-    
+    },    
     {
         "name": "newcharts",
         "pageName": "Bars & Lines", 
@@ -48,14 +47,6 @@
         "partialCSS": "examples/css/example.css"
     },
     {
-        "name": "dataset",
-        "pageName": "Dataset", 
-        "script": "examples/dashboard.js",
-        "imageUrl": "images/barChart.PNG",
-        "partial": "examples/partials/newCharts.html",
-        "partialCSS": "examples/css/example.css"
-    },
-    {
         "name": "datebar",
         "pageName": "Yearly Bars", 
         "script": "examples/datebar.js",
@@ -68,18 +59,6 @@
         "script": "examples/pareto.js",
         "imageUrl": "images/barChart.PNG",
         "partial": "examples/partials/newCharts.html",
-        "partialCSS": "examples/css/example.css"
-    },{
-        "name": "builder",
-        "pageName": "Chart Builder", 
-        "script": "examples/builder.js",
-        "partial": "examples/partials/newCharts.html",
-        "partialCSS": "examples/css/example.css"
-    },{
-        "name": "bullet",
-        "pageName": "Bullet Chart", 
-        "script": "examples/bulletChart.js",
-        "partial": "examples/partials/example.html",
         "partialCSS": "examples/css/example.css"
     },
     {

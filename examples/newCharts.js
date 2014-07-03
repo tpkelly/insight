@@ -6,20 +6,23 @@ $(document)
             var dataset = new insight.DataSet(data);
 
             var chart = new insight.Chart('Chart 1', "#chart1")
-                .width(600)
+                .width(700)
                 .height(300)
                 .margin(
                 {
                     top: 10,
-                    left: 50,
-                    right: 40,
+                    left: 90,
+                    right: 140,
                     bottom: 40
                 });
 
-            var xScale = new insight.Scale(chart, '', 'h', Scales.Ordinal);
-            var yScale = new insight.Scale(chart, '', 'v', Scales.Linear);
+            var xScale = new insight.Axis(chart, 'Country', 'h', insight.Scales.Ordinal, 'bottom')
+                .textAnchor('middle');;
+            var yScale = new insight.Axis(chart, 'Value', 'v', insight.Scales.Linear, 'left');
 
-            var yScale2 = new insight.Scale(chart, '', 'v', Scales.Linear);
+            var yScale2 = new insight.Axis(chart, 'Percentage', 'v', insight.Scales.Linear, 'right')
+                .labelFormat(InsightFormatters.percentageFormatter);;
+
 
             var series = new insight.ColumnSeries('countryColumn', chart, dataset, xScale, yScale, 'silver');
             var line = new insight.LineSeries('valueLine', chart, dataset, xScale, yScale2, 'cyan')
@@ -60,13 +63,6 @@ $(document)
 
 
             chart.series([series, line]);
-
-            var xAxis = new insight.Axis(chart, "x", xScale, 'bottom')
-                .textAnchor('middle');
-
-            var yAxis = new insight.Axis(chart, "y", yScale, 'left');
-            var yAxis2 = new insight.Axis(chart, "y2", yScale2, 'right')
-                .labelFormat(InsightFormatters.percentageFormatter);
 
             insight.drawCharts();
         });

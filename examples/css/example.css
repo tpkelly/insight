@@ -14,6 +14,7 @@
     -webkit-border-radius: 2px;
     -border-radius: 2px;
     -moz-border-radius: 2px;
+
 }
 
 /* Creates a small triangle extender for the tooltip */
@@ -44,6 +45,15 @@
     fill: none;
 }
 
+
+
+/*Line Styles*/
+
+path.in-line
+{
+    stroke-width: 3;
+}
+
 circle.target-point 
 {
     stroke: #fff;
@@ -51,16 +61,14 @@ circle.target-point
     stroke-width: 1;
 }
 
-rect.bar
-{
-    transition: 0.2s ease all;
-}
-
 .active
 {
     fill: #34495e;
 }
-
+rect.bar
+{
+    transition: 0.2s ease all;
+}
 .notselected
 {
     fill: silver !important;
@@ -87,7 +95,14 @@ rect.bar
     stroke: #222;
 }
 
+
+
 #toggle
 {
     display:inline-block;
+}
+
+rect.bar
+{
+    transition: 0.2s ease all;
 }
