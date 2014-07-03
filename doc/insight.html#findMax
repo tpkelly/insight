@@ -55,6 +55,10 @@
             
                 <li data-name="insight#domain"><a href="insight.html#domain">domain</a></li>
             
+                <li data-name="insight#findMax"><a href="insight.html#findMax">findMax</a></li>
+            
+                <li data-name="insight#findMax"><a href="insight.html#findMax">findMax</a></li>
+            
                 <li data-name="insight#findOrdinalValues"><a href="insight.html#findOrdinalValues">findOrdinalValues</a></li>
             
                 <li data-name="insight#keys"><a href="insight.html#keys">keys</a></li>
@@ -97,8 +101,6 @@
             <ul class="methods itemMembers">
             
             <span class="subtitle">Methods</span>
-            
-                <li data-name="insight.Axis.this.findMax"><a href="insight.Axis.html#this.findMax">this.findMax</a></li>
             
                 <li data-name="insight.Axis~applyScaleRange"><a href="insight.Axis.html#applyScaleRange">applyScaleRange</a></li>
             
@@ -167,26 +169,7 @@
     
         <li class="item" data-name="insight#findMax">
             <span class="title">
-                <a href="insight_findMax.html">insight#findMax</a>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="insight#findMax">
-            <span class="title">
-                <a href="insight_findMax.html">insight#findMax</a>
+                <a href="insight.html#findMax">insight#findMax</a>
                 
             </span>
             <ul class="members itemMembers">
@@ -206,133 +189,8 @@
     </ul>
 </div>
     <div class="main">
-        <h1 class="page-title" data-filename="insight_findMax.html">Class: findMax</h1>
+        <h1 class="page-title" data-filename="insight.html#findMax">Class: findMax</h1>
         
-
-
-
-<section>
-    
-<header>
-    <h2>
-        <span class="ancestors"><a href="insight.html">insight</a>#</span>
-    
-    findMax
-    </h2>
-    
-</header>  
-
-<article>
-    <div class="container-overview">
-    
-    
-    
-        
-<dt>
-    <div class="nameContainer">
-        <h4 class="name" id="findMax">
-            
-            new findMax<span class="signature">()</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{Number}</span>
-        </h4>
-    
-        
-        <div class="tag-source">
-            <a href="ColumnSeries.js.html">charts/Series/ColumnSeries.js</a>, <a href="ColumnSeries.js.html#line66">line 66</a>
-        </div>
-        
-    </div>
-
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        This method returns the largest value on the value axis of this ColumnSeries, checking all series functions in the series on all points.
-This function is mapped across the entire data array by the findMax method.
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-
-
-<h5>Returns:</h5>
-- The largest value on the value scale of this ColumnSeries
-<br />
-
-    
-    
-    
-</dd>
-
-    
-    </div>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-</article>
-
-</section>  
-
-
-
 
 
 

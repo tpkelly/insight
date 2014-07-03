@@ -100,7 +100,6 @@ describe('Chart', function() {
             expect(chart.title()).toBe('');
 
         });
-
     });
 
     describe('gets and sets', function() {

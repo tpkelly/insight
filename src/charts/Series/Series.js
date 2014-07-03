@@ -1,3 +1,13 @@
+/**
+ * The Series base class provides some base functions that are used by any specific types of series that derive from this class
+ * @class insight.Series
+ * @param {string} name - A uniquely identifying name for this chart
+ * @param {Chart} chart - The parent chart object
+ * @param {DataSet} data - The DataSet containing this series' data
+ * @param {insight.Scales.Scale} x - the x axis
+ * @param {insight.Scales.Scale} y - the y axis
+ * @param {object} color - a string or function that defines the color to be used for the items in this series
+ */
 insight.Series = function Series(name, chart, data, x, y, color) {
 
     this.chart = chart;
@@ -80,7 +90,7 @@ insight.Series = function Series(name, chart, data, x, y, color) {
 
     this.keys = function() {
         return this.dataset()
-            .map(self.xFunction());
+            .map(self.keyFunction());
     };
 
     this.cssClass = function(_) {
@@ -116,6 +126,7 @@ insight.Series = function Series(name, chart, data, x, y, color) {
     /**
      * This function takes a data point, and creates a class name for insight to identify this particular key
      * If the parameter is not an object (just a value in an array) then there is no need for this particular class so blank is returned.
+     * @memberof insight.Series
      * @returns {string} return - A class name to identify this point and any other points taking the same value in other charts.
      * @param {object} data - The input point
      */

@@ -1,3 +1,13 @@
+/**
+ * The RowSeries class extends the Series class and draws horizontal bars on a Chart
+ * @class insight.RowSeries
+ * @param {string} name - A uniquely identifying name for this chart
+ * @param {Chart} chart - The parent chart object
+ * @param {DataSet} data - The DataSet containing this series' data
+ * @param {insight.Scales.Scale} x - the x axis
+ * @param {insight.Scales.Scale} y - the y axis
+ * @param {object} color - a string or function that defines the color to be used for the items in this series
+ */
 insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
 
     insight.Series.call(this, name, chart, data, x, y, color);
@@ -21,13 +31,14 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
         tooltipValue: function(d) {
             return self.tooltipFunction()(d);
         },
-        color: d3.functor('silver'),
+        color: d3.functor(color),
         label: 'Value'
     }];
 
 
     /**
      * RowSeries overrides the standard key function used by most, vertical charts.
+     * @memberof insight.RowSeries
      * @returns {object[]} return - The keys along the domain axis for this row series
      */
     this.keys = function() {
@@ -39,6 +50,7 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
     /**
      * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
      * This function is mapped across the entire data array by the findMax method.
+     * @memberof insight.RowSeries
      * @returns {Number} return - Description
      * @param {object} data - An item in the object array to query
      */
@@ -65,7 +77,7 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
     /**
      * This method returns the largest value on the value axis of this ColumnSeries, checking all series functions in the series on all points.
      * This function is mapped across the entire data array by the findMax method.
-     * @constructor
+     * @memberof insight.RowSeries
      * @returns {Number} return - The largest value on the value scale of this ColumnSeries
      */
     this.findMax = function() {
@@ -77,9 +89,11 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
 
     /**
      * This method gets or sets whether or not the series in this ColumnSeries are to be stacked or not.  This is false by default.
+     * @memberof insight.RowSeries
      * @returns {boolean} - Whether or not the columns are stacked (they are grouped if this returns false)
      */
     /**
+     * @memberof insight.RowSeries
      * @returns {object} return - Description
      * @param {boolean} stack - To stack or not to stack
      */
@@ -119,7 +133,7 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
 
         var func = self.series[self.currentSeries].accessor;
 
-        var position = self.stackedBars() ? self.x.scale(self.calculateXPos(func, d)) : 0;
+        var position = self.stacked() ? self.x.scale(self.calculateXPos(func, d)) : 0;
 
         return position;
     };
@@ -132,14 +146,14 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
 
         var groupThickness = self.barThickness(d);
 
-        var width = self.stackedBars() || (self.series.length == 1) ? groupThickness : groupThickness / self.series.length;
+        var width = self.stacked() || (self.series.length == 1) ? groupThickness : groupThickness / self.series.length;
 
         return width;
     };
 
     this.offsetYPosition = function(d) {
         var thickness = self.groupedbarThickness(d);
-        var position = self.stackedBars() ? self.yPosition(d) : self.calculateYPos(thickness, d);
+        var position = self.stacked() ? self.yPosition(d) : self.calculateYPos(thickness, d);
 
         return position;
     };
@@ -148,10 +162,6 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
         var func = self.series[self.currentSeries].accessor;
 
         return self.x.scale(func(d));
-    };
-
-    this.stackedBars = function() {
-        return self.stacked();
     };
 
     this.className = function(d) {

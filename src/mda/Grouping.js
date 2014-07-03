@@ -270,7 +270,7 @@ insight.Grouping = (function(insight) {
                                 var propertyName = propertiesToCount[countProp];
                                 var propertyValue = v[propertiesToCount[countProp]];
 
-                                if (InsightUtils.isArray(propertyValue)) {
+                                if (insight.Utils.isArray(propertyValue)) {
 
                                     for (var subIndex in propertyValue) {
                                         var subVal = propertyValue[subIndex];
@@ -302,7 +302,7 @@ insight.Grouping = (function(insight) {
                                 var propertyName = propertiesToCount[countProp];
                                 var propertyValue = v[propertiesToCount[countProp]];
 
-                                if (InsightUtils.isArray(propertyValue)) {
+                                if (insight.Utils.isArray(propertyValue)) {
 
                                     for (var subIndex in propertyValue) {
                                         var subVal = propertyValue[subIndex];

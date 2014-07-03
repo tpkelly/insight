@@ -2,7 +2,7 @@
  * This modules contains some helper functions used throughout the library
  * @module InsightUtils
  */
-var InsightUtils = (function() {
+insight.Utils = (function() {
 
     var exports = {};
 
@@ -37,6 +37,11 @@ var InsightUtils = (function() {
         if (index > -1) {
             array.splice(index, 1);
         }
+    };
+
+    exports.safeString = function(input) {
+        return input.split(' ')
+            .join('_');
     };
 
     return exports;
