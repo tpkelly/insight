@@ -15,7 +15,6 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
     var radiusFunction = d3.functor(10);
     var fillFunction = d3.functor(color);
     var maxRad = d3.functor(50);
-    var minRad = d3.functor(7);
     var tooltipExists = false;
     var self = this;
     var selector = this.name + insight.Constants.Bubble;
@@ -109,31 +108,21 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
         return this;
     };
 
-
-
-    this.draw = function(drag) {
-        var duration = drag ? 0 : function(d, i) {
-            return 200 + (i * 20);
-        };
-
-        var data = this.dataset();
-
-        var min = d3.min(data, radiusFunction);
+    this.bubbleData = function(data) {
         var max = d3.max(data, radiusFunction);
 
         var rad = function(d) {
             return d.radius;
         };
 
-        var click = function(filter) {
-            return self.click(this, filter);
-        };
-
         // create radius for each item
         data.forEach(function(d) {
             var radiusInput = radiusFunction(d);
 
-            d.radius = minRad() + (((radiusInput - min) * (maxRad() - minRad())) / (max - min));
+            if (radiusInput === 0)
+                d.radius = 0;
+            else
+                d.radius = (radiusInput * maxRad()) / max;
         });
 
         //this sort ensures that smaller bubbles are on top of larger ones, so that they are always selectable.  Without changing original array (hence concat which creates a copy)
@@ -142,8 +131,22 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
                 return d3.descending(rad(a), rad(b));
             });
 
+        return data;
+    };
+
+    this.draw = function(drag) {
+        var duration = drag ? 0 : function(d, i) {
+            return 200 + (i * 20);
+        };
+
+        var click = function(filter) {
+            return self.click(this, filter);
+        };
+
+        var bubbleData = this.bubbleData(this.dataset());
+
         var bubbles = this.chart.chart.selectAll('circle.' + selector)
-            .data(data, self.keyAccessor);
+            .data(bubbleData, self.keyAccessor);
 
         bubbles.enter()
             .append('circle')
@@ -151,6 +154,11 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
             .on('mouseover', mouseOver)
             .on('mouseout', mouseOut)
             .on('click', click);
+
+
+        var rad = function(d) {
+            return d.radius;
+        };
 
         bubbles.transition()
             .duration(duration)
