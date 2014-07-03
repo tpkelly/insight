@@ -26,7 +26,7 @@ $(document)
 
         var dataset = new insight.DataSet(data);
 
-        var chart = new insight.Chart('Chart 1', "#exampleChart")
+        var chart = new insight.Chart('Chart 1', '#exampleChart')
             .width(450)
             .height(400)
             .margin(
@@ -37,12 +37,16 @@ $(document)
                 bottom: 0
             });
 
-        var y = new insight.Scale(chart, '', 'v', Scales.Ordinal);
-        var x = new insight.Scale(chart, 'Population', 'h', Scales.Linear);
+        var x = new insight.Axis(chart, 'Population', 'h', insight.Scales.Linear, 'top')
+            .textAnchor('end')
+            .tickSize(5)
+            .tickOrientation('tb')
+            .tickRotation('45');
+
+        var y = new insight.Axis(chart, '', 'v', insight.Scales.Ordinal, 'left');
 
         var series = new insight.RowSeries('countryColumn', chart, dataset, x, y, 'silver')
             .tooltipFormat(InsightFormatters.numberFormatter);
-
 
         series.series = [
         {
@@ -73,14 +77,6 @@ $(document)
         }];
 
         chart.series([series]);
-
-        var xAxis = new insight.Axis(chart, "x", x, 'top')
-            .textAnchor('end')
-            .tickSize(5)
-            .tickPadding(0)
-            .labelOrientation('tb');
-
-        var yAxis = new insight.Axis(chart, "y", y, 'left');
 
         insight.drawCharts();
 
