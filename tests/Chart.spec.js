@@ -18,14 +18,6 @@ describe('Chart', function() {
 
         });
 
-        it('sets dimension', function() {
-
-            var chart = new insight.Chart('somename', 'somelement', 'somedimension');
-
-            expect(chart.dimension).toBe('somedimension');
-
-        });
-
     });
 
     describe('defaults', function() {
@@ -74,12 +66,6 @@ describe('Chart', function() {
         it('series empty', function() {
 
             expect(chart.series()).toEqual([]);
-
-        });
-
-        it('scales empty', function() {
-
-            expect(chart.scales()).toEqual([]);
 
         });
 

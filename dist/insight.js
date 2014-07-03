@@ -1248,6 +1248,7 @@ insight.Utils = (function() {
                     return series;
                 }
                 series = _;
+                return this;
             };
 
 
