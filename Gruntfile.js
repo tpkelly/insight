@@ -95,7 +95,7 @@ module.exports = function(grunt) {
     },
     watch: {
       files: ['<%= jshint.files %>', 'tests/*.spec.js'],
-      tasks: ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'jsdoc'],
+      tasks: ['deploy'],
       options: {
           livereload: true
       }
@@ -104,9 +104,18 @@ module.exports = function(grunt) {
         dist : {
             src: ['src/**/*.js'], 
             options: {
-                destination: 'doc',
+                destination: 'dist/docs',
                 template: 'doctemplate'
             }
+        }
+    },
+    compress: {
+        foo: {
+            options: {
+                archive: './insight.js.zip',
+                mode: 'zip'
+            },
+            files: [{ src: './dist/**' }]
         }
     }
   });
@@ -118,11 +127,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-open');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-jsbeautifier');
   grunt.loadNpmTasks('grunt-jsdoc');
 
-  grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'cssmin', 'jsdoc']);
+  grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'cssmin', 'jsdoc', 'compress']);
   grunt.registerTask('default', ['deploy', 'connect:server','open','watch']);
 };
