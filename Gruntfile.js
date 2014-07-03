@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-  var sourceFiles = ['src/Insight.js', 'src/utils/*.js', 'src/mda/*.js', 'src/Dashboard.js', 'src/charts/Series.js', 'src/charts/Chart.js','src/charts/MarkerSeries.js', 'src/charts/BubbleSeries.js', 'src/charts/RowSeries.js',  'src/charts/Scale.js','src/charts/Axis.js', 'src/charts/LineSeries.js','src/charts/ColumnSeries.js'];
+  var sourceFiles = ['src/Insight.js', 'src/utils/*.js', 'src/mda/*.js', 'src/charts/Chart.js','src/charts/Axis.js', 'src/charts/Series/Series.js','src/charts/Series/MarkerSeries.js', 'src/charts/Series/BubbleSeries.js', 'src/charts/Series/RowSeries.js',  'src/charts/Series/LineSeries.js','src/charts/Series/ColumnSeries.js'];
    
   var LIVERELOAD_PORT = 35729;
   var lrSnippet = require('connect-livereload')({
@@ -63,7 +63,7 @@ module.exports = function(grunt) {
         dev: {
             src: sourceFiles,
             options: {
-                specs: 'tests/*spec.js',
+                specs: 'tests/**/*spec.js',
                 vendor: ['./bower_components/jquery/jquery.js', './bower_components/d3/d3.js', './bower_components/crossfilter/crossfilter.js', './lib/d3.tip.js'],
                 keepRunner: true
             }
@@ -98,7 +98,7 @@ module.exports = function(grunt) {
     },
     watch: {
       files: ['<%= jshint.files %>', 'tests/*.spec.js'],
-      tasks: ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'jsdoc'],
+      tasks: ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'clean', 'jsdoc'],
       options: {
           livereload: true
       }
@@ -111,7 +111,8 @@ module.exports = function(grunt) {
                 template: 'doctemplate'
             }
         }
-    }
+    },
+    clean: ["doc/"]
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -125,7 +126,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-jsbeautifier');
   grunt.loadNpmTasks('grunt-jsdoc');
+  grunt.loadNpmTasks('grunt-contrib-clean');
 
-  grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'cssmin', 'jsdoc']);
+  grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'cssmin', 'clean', 'jsdoc']);
   grunt.registerTask('default', ['deploy', 'connect:server','open','watch']);
 };

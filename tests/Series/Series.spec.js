@@ -6,8 +6,8 @@ describe("Series Tests", function(){
    it("Dataset is empty when no data given", function(){
        //Given:
        var chart = new insight.Chart('Chart', '#chart');
-       var xScale = new insight.Scale(chart, 'x-axis', 'h', insight.Scales.Linear);
-       var yScale = new insight.Scale(chart, 'y-axis', 'v', insight.Scales.Linear);
+       var xScale = new insight.Axis(chart, 'x-axis', 'h', insight.Scales.Linear, 'bottom');
+       var yScale = new insight.Axis(chart, 'y-axis', 'v', insight.Scales.Linear, 'left');
 
        var data = new insight.DataSet([]);
        var series = new insight.Series('Test series', chart, data, xScale, yScale, 'red');
@@ -21,8 +21,8 @@ describe("Series Tests", function(){
     it("Dataset is not ordered by default", function(){
         //Given:
         var chart = new insight.Chart('Chart', '#chart');
-        var xScale = new insight.Scale(chart, 'x-axis', 'h', insight.Scales.Linear);
-        var yScale = new insight.Scale(chart, 'y-axis', 'v', insight.Scales.Linear);
+        var xScale = new insight.Axis(chart, 'x-axis', 'h', insight.Scales.Linear, 'bottom');
+        var yScale = new insight.Axis(chart, 'y-axis', 'v', insight.Scales.Linear, 'left');
 
         var data = new insight.DataSet([3, 1, 5, 1, 4, 6]);
         var series = new insight.Series('Test series', chart, data, xScale, yScale, 'red');
@@ -36,8 +36,8 @@ describe("Series Tests", function(){
     it("Dataset can be ordered", function(){
         //Given:
         var chart = new insight.Chart('Chart', '#chart');
-        var xScale = new insight.Scale(chart, 'x-axis', 'h', insight.Scales.Linear).ordered(true);
-        var yScale = new insight.Scale(chart, 'y-axis', 'v', insight.Scales.Linear);
+        var xScale = new insight.Axis(chart, 'x-axis', 'h', insight.Scales.Linear, 'bottom').ordered(true);
+        var yScale = new insight.Axis(chart, 'y-axis', 'v', insight.Scales.Linear, 'left');
 
         var data = new insight.DataSet([3, 1, 5, 1, 4, 6]);
         var series = new insight.Series('Test series', chart, data, xScale, yScale, 'red');
@@ -51,8 +51,8 @@ describe("Series Tests", function(){
     it("Dataset can be filtered", function(){
         //Given:
         var chart = new insight.Chart('Chart', '#chart');
-        var xScale = new insight.Scale(chart, 'x-axis', 'h', insight.Scales.Linear);
-        var yScale = new insight.Scale(chart, 'y-axis', 'v', insight.Scales.Linear);
+        var xScale = new insight.Axis(chart, 'x-axis', 'h', insight.Scales.Linear, 'bottom');
+        var yScale = new insight.Axis(chart, 'y-axis', 'v', insight.Scales.Linear, 'left');
 
         var data = new insight.DataSet([3, 1, 5, 1, 4, 6]);
         var series = new insight.Series('Test series', chart, data, xScale, yScale, 'red').filterFunction(function(d){return d > 3});
@@ -66,8 +66,8 @@ describe("Series Tests", function(){
     it("All values can be filtered", function(){
         //Given:
         var chart = new insight.Chart('Chart', '#chart');
-        var xScale = new insight.Scale(chart, 'x-axis', 'h', insight.Scales.Linear);
-        var yScale = new insight.Scale(chart, 'y-axis', 'v', insight.Scales.Linear);
+        var xScale = new insight.Axis(chart, 'x-axis', 'h', insight.Scales.Linear, 'bottom');
+        var yScale = new insight.Axis(chart, 'y-axis', 'v', insight.Scales.Linear, 'left');
 
         var data = new insight.DataSet([3, 1, 5, 1, 4, 6]);
         var series = new insight.Series('Test series', chart, data, xScale, yScale, 'red').filterFunction(function(d){return d > 6});
