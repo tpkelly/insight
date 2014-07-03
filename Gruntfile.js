@@ -111,7 +111,7 @@ module.exports = function(grunt) {
     },
     clean: ["dist/docs/"],
     compress: {
-        foo: {
+        zip: {
             options: {
                 archive: './insight.js.zip',
                 mode: 'zip'
