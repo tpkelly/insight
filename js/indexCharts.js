@@ -125,7 +125,7 @@
         var xAxis = new insight.Axis(chart, '', 'h', insight.Scales.Linear, 'left');
         var yAxis = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'bottom');
 
-        var series = new insight.BubbleSeries('Lines', chart, dataset, xAxis, yAxis, 'black')
+        var series = new insight.BubbleSeries('Bubbles', chart, dataset, xAxis, yAxis, 'black')
             .yFunction(function(d)
             {
                 return d.value;
@@ -167,8 +167,24 @@
             key: 3,
             value: 6,
             area: 1
+        },
+        {
+            key: 4,
+            value: 8,
+            area: 1
+        },
+        {
+            key: 6,
+            value: 9,
+            area: 1
+        },
+        {
+            key: 7,
+            value: 11,
+            area: 1
         }];
 
+        // Bubbles
         var dataset = new insight.DataSet(data);
         var chart = new insight.Chart('CorrelationChart', '#correlation')
             .width(200)
@@ -184,7 +200,7 @@
         var xAxis = new insight.Axis(chart, '', 'h', insight.Scales.Linear, 'left');
         var yAxis = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'bottom');
 
-        var series = new insight.BubbleSeries('Lines', chart, dataset, xAxis, yAxis, 'black')
+        var bubbleSeries = new insight.BubbleSeries('Bubbles', chart, dataset, xAxis, yAxis, 'black')
             .yFunction(function(d)
             {
                 return d.value;
@@ -201,7 +217,22 @@
             {
                 return d.area;
             });
-        chart.series([series]);
+
+        // Line of best fit
+        var bestFitData = [
+        {
+            key: 0,
+            value: 1
+        },
+        {
+            key: 6.58,
+            value: 11.7
+        }];
+
+        var bestFitDataset = new insight.DataSet(bestFitData);
+        var bestFitLine = new insight.LineSeries('BestFit', chart, bestFitDataset, xAxis, yAxis, 'black');
+
+        chart.series([bestFitLine, bubbleSeries]);
     }
 
     function drawMarkerChart()
