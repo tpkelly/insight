@@ -178,7 +178,7 @@ describe('Chart', function() {
     describe('init', function() {
 
         describe('with no arguments', function() {
-            var chart, chartDiv, chartElement;
+            var chart, reald3;
 
             var testInit = function(setup) {
 
@@ -186,76 +186,205 @@ describe('Chart', function() {
                     setup();
                 }
                 
+                d3 = new D3Mocks();
+
+                // prevent calling through to functions that are not being tested
+                spyOn(chart, 'tooltip');
+                spyOn(chart, 'draw');
+                spyOn(chart, 'addClipPath');
+
                 chart.init();
-                chartDiv = chartElement.firstChild;
 
             };
 
             beforeEach(function(){
 
-                chartElement = document.createElement("div");
-                chartElement.id  = 'testChart';
+                reald3 = d3;  
 
-                document.body.appendChild(chartElement);   
-
-                chart = new insight.Chart('ChartName', chartElement);                
+                chart = new insight.Chart('ChartName');                
 
             });
 
-            // afterEach(function() {
+            afterEach(function() {
 
-            //     document.body.removeChild(chartElement);
+                d3 = reald3;
 
-            // });
+            });
 
-            it('sets chart div width', function() {
+            describe('sets chart div', function() {
 
-                testInit(function() {
-                    chart.width(12345);
+                it('class', function() {
+
+                    testInit();
+
+                    expect(d3.elements['div'].attrs['class']).toEqual(insight.Constants.ContainerClass);
+
                 });
 
-                expect(chartDiv.style.width).toEqual('12345px');
+                it('width', function() {
+
+                    testInit(function() {
+                        chart.width(12345);
+                    });
+
+                    expect(d3.elements['div'].styles['width']).toEqual('12345px');
+
+                });
+
+                it('position', function() {
+
+                    testInit();
+
+                    expect(d3.elements['div'].styles['position']).toEqual('relative');
+
+                });
+
+                it('display', function() {
+
+                    testInit();
+
+                    expect(d3.elements['div'].styles['display']).toEqual('inline-block');
+
+                });
 
             });
 
-            xit('sets chart div width mocks', function() {
+            describe('sets chart svg', function() {
 
-                var append = {};
-                var attr = {};
-                var style = {};
+                it('class', function() {
 
-                var D3Match = function() { };
+                    testInit();
 
-                D3Match.prototype.append = function(el) {
-                    append[el] = el;
-                    return this;
-                };
+                    expect(d3.elements['svg'].attrs['class']).toEqual(insight.Constants.ChartSVG);
 
-                D3Match.prototype.attr = function(name, value) {
-                    attr[name] = value;
-                    return this;
-                };
+                });
 
-                D3Match.prototype.style = function(name, value) {
-                    style[name] = value;
-                    return this;
-                };
+                it('width', function() {
 
-                var match = new D3Match();
+                    testInit(function() {
+                        chart.width(345);
+                    });
 
-                d3 = {
-                    select: function(el) {
-                        return match;
-                    }
-                };
+                    expect(d3.elements['svg'].attrs['width']).toEqual(345);
 
+                });
 
-                spyOn(chart, 'tooltip');
-                spyOn(chart, 'draw');
+                it('height', function() {
 
-                chart.init();
+                    testInit(function() {
+                        chart.height(999);
+                    });
 
-                expect(attr['class']).toBeDefined();
+                    expect(d3.elements['svg'].attrs['height']).toEqual(999);
+
+                });
+
+            });
+
+            describe('sets chart g', function() {
+
+                it('class', function() {
+
+                    testInit();
+
+                    expect(d3.elements['g'].attrs['class']).toEqual(insight.Constants.Chart);
+
+                });
+
+                it('transform', function() {
+
+                    testInit(function() {
+                        chart.margin({
+                            left: 1,
+                            right: 2,
+                            top: 3,
+                            bottom: 4
+                        });
+                    });
+
+                    expect(d3.elements['g'].attrs['transform']).toEqual('translate(1,3)');
+
+                });
+
+            });
+
+            describe('calls', function() {
+
+                it('addClipPath', function() {
+
+                    testInit();
+
+                    expect(chart.addClipPath).toHaveBeenCalled();
+
+                });
+
+                it('tooltip', function() {
+
+                    testInit();
+
+                    expect(chart.tooltip).toHaveBeenCalled();
+
+                });
+
+                it('draw', function() {
+
+                    testInit();
+
+                    expect(chart.draw).toHaveBeenCalledWith(false);
+
+                });
+
+                it('initialize on all axes', function() {
+
+                    var axes = [
+                        { initialize: function () {} },
+                        { initialize: function () {} },
+                        { initialize: function () {} }
+                    ];
+
+                    testInit(function() {
+
+                        axes.forEach(function(axis) {
+
+                            chart.addAxis(axis);
+                            spyOn(axis, 'initialize');
+
+                        });
+
+                    });
+
+                    axes.forEach(function(axis) {
+
+                        expect(axis.initialize).toHaveBeenCalled();
+
+                    });
+
+                });
+
+                it('initZoom if zoomable', function() {
+
+                    testInit(function() {
+
+                        chart.zoomable(2);
+                        spyOn(chart, 'initZoom');
+
+                    });
+
+                    expect(chart.initZoom).toHaveBeenCalled();
+
+                });
+
+                it('no initZoom if not zoomable', function() {
+
+                    testInit(function() {
+
+                        spyOn(chart, 'initZoom');
+
+                    });
+
+                    expect(chart.initZoom).not.toHaveBeenCalled();
+
+                });
 
             });
         });
