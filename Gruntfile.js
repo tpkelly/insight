@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-  var sourceFiles = ['src/Insight.js', 'src/utils/*.js', 'src/mda/*.js', 'src/charts/Chart.js','src/charts/Axis.js', 'src/charts/Series/Series.js','src/charts/Series/MarkerSeries.js', 'src/charts/Series/BubbleSeries.js', 'src/charts/Series/RowSeries.js',  'src/charts/Series/LineSeries.js','src/charts/Series/ColumnSeries.js'];
+  var sourceFiles = ['src/Insight.js', 'src/utils/*.js', 'src/mda/*.js', 'src/charts/Chart.js','src/charts/Axis.js', 'src/charts/Series/Series.js','src/charts/Series/MarkerSeries.js', 'src/charts/Series/BubbleSeries.js', 'src/charts/Series/RowSeries.js',  'src/charts/Series/LineSeries.js','src/charts/Series/ColumnSeries.js', 'src/insight-amd.js'];
    
   var LIVERELOAD_PORT = 35729;
   var lrSnippet = require('connect-livereload')({
