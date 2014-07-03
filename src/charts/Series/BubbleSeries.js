@@ -14,13 +14,16 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
 
     var radiusFunction = d3.functor(10);
     var fillFunction = d3.functor(color);
-    var maxRad = d3.functor(50);
     var tooltipExists = false;
     var self = this;
     var selector = this.name + insight.Constants.Bubble;
 
-    var xFunction = function(d) {};
-    var yFunction = function(d) {};
+    var xFunction = function(d) {
+        return d.x;
+    };
+    var yFunction = function(d) {
+        return d.y;
+    };
 
 
     var mouseOver = function(d, item) {
@@ -115,6 +118,13 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
             return d.radius;
         };
 
+        //Minimum of pixels-per-axis-unit
+        var xValues = data.map(xFunction);
+        var yValues = data.map(yFunction);
+        var xBounds = this.x.calculateBounds()[1];
+        var yBounds = this.y.calculateBounds()[0];
+        var maxRad = Math.min(xBounds / d3.max(xValues), yBounds / d3.max(yValues));
+
         // create radius for each item
         data.forEach(function(d) {
             var radiusInput = radiusFunction(d);
@@ -122,7 +132,7 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
             if (radiusInput === 0)
                 d.radius = 0;
             else
-                d.radius = (radiusInput * maxRad()) / max;
+                d.radius = (radiusInput * maxRad) / max;
         });
 
         //this sort ensures that smaller bubbles are on top of larger ones, so that they are always selectable.  Without changing original array (hence concat which creates a copy)

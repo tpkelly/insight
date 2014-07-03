@@ -11,7 +11,9 @@ describe('Bubble Series Tests', function() {
                     {x:3, y:5, radius:2}];
         var dataset = new insight.DataSet(data);
 
-        var chart = new insight.Chart('Bubble Chart', '#chart');
+        var chart = new insight.Chart('Bubble Chart', '#chart')
+            .width(250)
+            .height(250);
 
         var xAxis = new insight.Axis(chart, '', 'h', insight.Scales.Linear);
         var yAxis = new insight.Axis(chart, '', 'v', insight.Scales.Linear);
@@ -29,6 +31,8 @@ describe('Bubble Series Tests', function() {
         var radii = bubbleData.map(function(d) {
             return d.radius;
         })
+
+        // Max pixel radius = 50 (width:250 / maxX:5)
         // Radius = 50 (max pixel radius) * 2 (current radius) / 2 (max radius in set)
         expect(radii).toEqual([50, 50, 50]);
     });
@@ -40,7 +44,9 @@ describe('Bubble Series Tests', function() {
                     {x:3, y:5, radius:0}];
         var dataset = new insight.DataSet(data);
 
-        var chart = new insight.Chart('Bubble Chart', '#chart');
+        var chart = new insight.Chart('Bubble Chart', '#chart')
+            .width(250)
+            .height(250);
 
         var xAxis = new insight.Axis(chart, '', 'h', insight.Scales.Linear);
         var yAxis = new insight.Axis(chart, '', 'v', insight.Scales.Linear);
@@ -68,7 +74,9 @@ describe('Bubble Series Tests', function() {
                     {x:3, y:5, radius:2}];
         var dataset = new insight.DataSet(data);
 
-        var chart = new insight.Chart('Bubble Chart', '#chart');
+        var chart = new insight.Chart('Bubble Chart', '#chart')
+            .width(250)
+            .height(250);
 
         var xAxis = new insight.Axis(chart, '', 'h', insight.Scales.Linear);
         var yAxis = new insight.Axis(chart, '', 'v', insight.Scales.Linear);
