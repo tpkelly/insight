@@ -63,27 +63,27 @@ module.exports = function(grunt) {
                 }
             }
         },
-        copy: {
-          main: {
-            files: [
-              {flatten: true, expand: true, src: ['../insight/dist/*'], dest: './dist/', filter: 'isFile'}
-            ]
-          }
-        },
         watch: {
             files: ['<%= jshint.files %>', '../insight/dist/*.js', '**/examples/*', './**/*.html', 'tests/*.spec.js'],
-            tasks: ['copy', 'jsbeautifier', 'jshint']
-        }        
+            tasks: ['deploy']
+        },
+        unzip: {
+            catalog: {
+                src: 'insight.js.zip',
+                dest: '.'
+            }
+        }
     });
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-open');
     grunt.loadNpmTasks('grunt-jsbeautifier');
+    grunt.loadNpmTasks('grunt-zip');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-copy');
 
-
-    grunt.registerTask('default', ['jsbeautifier', 'jshint', 'connect:server', 'open:dev', 'watch']);
+    grunt.registerTask('deploy', ['jsbeautifier', 'jshint']);
+    grunt.registerTask('default', ['deploy', 'unzip', 'connect:server', 'open:dev', 'watch']);
 
 };
