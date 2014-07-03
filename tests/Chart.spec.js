@@ -72,14 +72,14 @@ var removeChartElement = function(){
 };
 
 
-describe("Base Chart Tests", function() {
+describe('Base Chart Tests', function() {
     
-    it("will initialize with a name", function() {
+    it('will initialize with a name', function() {
         
-        var chart = new insight.Chart("asda", "asdads", "ada");
+        var chart = new insight.Chart('asda', 'asdads', 'ada');
 
-        chart.title("Test Chart");
-        expect(chart.title()).toBe("Test Chart");
+        chart.title('Test Chart');
+        expect(chart.title()).toBe('Test Chart');
     });
 
 });

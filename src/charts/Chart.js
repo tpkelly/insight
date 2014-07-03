@@ -1,23 +1,23 @@
 (function(insight) {
 
+    /**
+     * The Chart class is the element in which series and axes are drawn
+     * @class insight.Chart
+     * @param {string} name - A uniquely identifying name for this chart
+     * @param {string} element - The css selector identifying the div container that the chart will be drawn in. '#columnChart' for example.
+     */
     insight.Chart = (function(insight) {
 
-        function Chart(name, element, dimension) {
+        function Chart(name, element) {
 
             this.name = name;
             this.element = element;
-            this.dimension = dimension;
             this.selectedItems = [];
 
-            var height = d3.functor(300);
-            var width = d3.functor(300);
-            var zoomable = false;
-            var zoomScale = null;
+            var zoomAxis = null;
             this.container = null;
-
             this.chart = null;
-
-            this.measureCanvas = document.createElement("canvas");
+            this.measureCanvas = document.createElement('canvas');
 
             this._margin = {
                 top: 0,
@@ -26,36 +26,16 @@
                 bottom: 0
             };
 
+            var height = d3.functor(300);
+            var width = d3.functor(300);
+            var zoomable = false;
             var series = [];
-            var scales = [];
             var axes = [];
             var self = this;
             var barPadding = d3.functor(0.1);
-            var title = "";
+            var title = '';
             var autoMargin = false;
 
-
-            this.addAxis = function(axis) {
-                axes.push(axis);
-            };
-
-            this.axes = function() {
-                return axes;
-            };
-
-            this.addClipPath = function() {
-                this.chart.append("clipPath")
-                    .attr("id", this.clipPath())
-                    .append("rect")
-                    .attr("x", 1)
-                    .attr("y", 0)
-                    .attr("width", this.width() - this.margin()
-                        .left - this.margin()
-                        .right)
-                    .attr("height", this.height() - this.margin()
-                        .top - this.margin()
-                        .bottom);
-            };
 
             this.init = function(create, container) {
 
@@ -74,26 +54,21 @@
                     .style('display', 'inline-block');
 
                 this.chartSVG = this.container
-                    .append("svg")
-                    .attr("class", insight.Constants.ChartSVG)
-                    .attr("width", this.width())
-                    .attr("height", this.height());
+                    .append('svg')
+                    .attr('class', insight.Constants.ChartSVG)
+                    .attr('width', this.width())
+                    .attr('height', this.height());
 
-                this.chart = this.chartSVG.append("g")
+                this.chart = this.chartSVG.append('g')
                     .attr('class', insight.Constants.Chart)
-                    .attr("transform", "translate(" + this.margin()
-                        .left + "," + this.margin()
-                        .top + ")");
+                    .attr('transform', 'translate(' + this.margin()
+                        .left + ',' + this.margin()
+                        .top + ')');
 
                 this.addClipPath();
 
-                scales.map(function(scale) {
-                    scale.initialize();
-                });
-
                 axes.map(function(axis) {
                     axis.initialize();
-                    var a = axis.scale.domain();
                 });
 
                 if (zoomable) {
@@ -105,36 +80,17 @@
                 this.draw(false);
             };
 
-            this.resizeChart = function() {
-                this.container.style('width', this.width() + "px");
-
-                this.chartSVG
-                    .attr("width", this.width())
-                    .attr("height", this.height());
-
-                this.chart = this.chart
-                    .attr("transform", "translate(" + this.margin()
-                        .left + "," + this.margin()
-                        .top + ")");
-
-                this.chart.select("#" + this.clipPath())
-                    .append("rect")
-                    .attr("x", 1)
-                    .attr("y", 0)
-                    .attr("width", this.width() - this.margin()
-                        .left - this.margin()
-                        .right)
-                    .attr("height", this.height() - this.margin()
-                        .top - this.margin()
-                        .bottom);
-            };
 
             this.draw = function(dragging) {
                 this.resizeChart();
 
-                this.recalculateScales();
-
                 axes.map(function(axis) {
+                    var isZoom = zoomAxis == axis;
+
+                    if (!isZoom) {
+                        axis.initializeScale();
+                    }
+
                     axis.draw(dragging);
                 });
 
@@ -144,10 +100,61 @@
                     });
             };
 
+            this.addAxis = function(axis) {
+                axes.push(axis);
+            };
+
+            this.axes = function() {
+                return axes;
+            };
+
+            this.addClipPath = function() {
+                this.chart.append('clipPath')
+                    .attr('id', this.clipPath())
+                    .append('rect')
+                    .attr('x', 1)
+                    .attr('y', 0)
+                    .attr('width', this.width() - this.margin()
+                        .left - this.margin()
+                        .right)
+                    .attr('height', this.height() - this.margin()
+                        .top - this.margin()
+                        .bottom);
+            };
+
+
+            this.resizeChart = function() {
+                this.container.style('width', this.width() + 'px');
+
+                this.chartSVG
+                    .attr('width', this.width())
+                    .attr('height', this.height());
+
+                this.chart = this.chart
+                    .attr('transform', 'translate(' + this.margin()
+                        .left + ',' + this.margin()
+                        .top + ')');
+
+                this.chart.select('#' + this.clipPath())
+                    .append('rect')
+                    .attr('x', 1)
+                    .attr('y', 0)
+                    .attr('width', this.width() - this.margin()
+                        .left - this.margin()
+                        .right)
+                    .attr('height', this.height() - this.margin()
+                        .top - this.margin()
+                        .bottom);
+            };
+
+
+
             this.recalculateScales = function() {
                 scales.map(function(scale) {
-                    var zx = zoomScale != scale;
-                    if (zx) {
+                    // don't resize the scale that is being dragged/zoomed, it is done automatically by d3
+                    var notZoomScale = zoomAxis != scale;
+
+                    if (notZoomScale) {
                         scale.initialize();
                     }
                 });
@@ -155,25 +162,25 @@
 
             this.zoomable = function(scale) {
                 zoomable = true;
-                zoomScale = scale;
+                zoomAxis = scale;
                 return this;
             };
 
             this.initZoom = function() {
                 this.zoom = d3.behavior.zoom()
-                    .on("zoom", self.dragging.bind(self));
+                    .on('zoom', self.dragging.bind(self));
 
-                this.zoom.x(zoomScale.scale);
+                this.zoom.x(zoomAxis.scale);
 
                 if (!this.zoomExists()) {
-                    this.chart.append("rect")
-                        .attr("class", "zoompane")
-                        .attr("width", this.width())
-                        .attr("height", this.height() - this.margin()
+                    this.chart.append('rect')
+                        .attr('class', 'zoompane')
+                        .attr('width', this.width())
+                        .attr('height', this.height() - this.margin()
                             .top - this.margin()
                             .bottom)
-                        .style("fill", "none")
-                        .style("pointer-events", "all");
+                        .style('fill', 'none')
+                        .style('pointer-events', 'all');
                 }
 
                 this.chart.select('.zoompane')
@@ -207,12 +214,8 @@
 
             this.clipPath = function() {
 
-                return this.name.split(' ')
-                    .join('_') + "clip";
+                return insight.Utils.safeString(this.name) + 'clip';
             };
-
-
-
 
             this.tooltip = function() {
 
@@ -220,7 +223,7 @@
                     .attr('class', 'd3-tip')
                     .offset([-10, 0])
                     .html(function(d) {
-                        return "<span class='tipvalue'>" + d + "</span>";
+                        return '<span class="tipvalue">' + d + '</span>';
                     });
 
                 this.chart.call(this.tip);
@@ -238,14 +241,14 @@
                 this.tip.show(tooltip);
 
                 d3.select(item)
-                    .classed("active", true);
+                    .classed('active', true);
             };
 
             this.mouseOut = function(chart, item, d) {
                 this.tip.hide(d);
 
                 d3.select(item)
-                    .classed("active", false);
+                    .classed('active', false);
             };
 
             this.title = function(_) {
@@ -282,14 +285,6 @@
             };
 
 
-            this.scales = function(_) {
-                if (!arguments.length) {
-                    return scales;
-                }
-                scales = _;
-            };
-
-
             this.addHorizontalScale = function(type, typeString, direction) {
                 var scale = new Scale(this, type, direction, typeString);
             };
@@ -311,13 +306,12 @@
 
             this.highlight = function(selector, value) {
 
-
-                var clicked = this.chart.selectAll("." + selector);
+                var clicked = this.chart.selectAll('.' + selector);
                 var alreadySelected = clicked.classed('selected');
 
                 if (alreadySelected) {
                     clicked.classed('selected', false);
-                    InsightUtils.removeItemFromArray(self.selectedItems, selector);
+                    insight.Utils.removeItemFromArray(self.selectedItems, selector);
                 } else {
                     clicked.classed('selected', true)
                         .classed('notselected', false);
@@ -329,7 +323,6 @@
 
                 notselected.classed('notselected', selected[0].length > 0);
             };
-
 
             insight.addChart(this);
         }
@@ -350,90 +343,6 @@
             this.margin()
                 .bottom = max;
         };
-
-
-        // Helper functions for adding series without having to create the scales & axes yourself (move to builder class?)
-
-        Chart.prototype.addColumnSeries = function(series) {
-
-            var x = new insight.Scale(this, "", 'h', insight.Scales.Ordinal);
-            var y = new insight.Scale(this, "", 'v', insight.Scales.Linear);
-
-            var stacked = series.stacked ? true : false;
-
-            var s = new insight.ColumnSeries(series.name, this, series.data, x, y, series.color)
-                .stacked(stacked);
-
-            s.series = [series];
-
-            this.series()
-                .push(s);
-
-            return s;
-        };
-
-
-        Chart.prototype.addLineSeries = function(series) {
-
-            var x = new insight.Scale(this, "", 'h', insight.Scales.Ordinal);
-            var y = new insight.Scale(this, "", 'v', insight.Scales.Linear);
-
-            var s = new insight.LineSeries(series.name, this, series.data, x, y, series.color)
-                .valueFunction(series.accessor);
-
-            this.series()
-                .push(s);
-
-            return s;
-        };
-
-
-        Chart.prototype.addBulletChart = function(options) {
-
-            var x = new insight.Scale(this, options.name + "x", 'h', insight.Scales.Linear);
-            var y = new insight.Scale(this, options.name + "y", 'v', insight.Scales.Ordinal);
-
-            // Create the areas as stacked bars
-            var s = new insight.RowSeries(options.name, this, options.ranges[0].data, x, y, 'blue')
-                .stacked(true);
-
-            // empty the hover function
-            s.mouseOver = function(d) {};
-
-            s.series = options.ranges;
-
-            this.series()
-                .push(s);
-
-            // Create the main bar
-
-            var row = new insight.RowSeries(options.value.name, this, options.value.data, x, y, options.value.color);
-
-            row.barThickness = function(d) {
-                return this.y.scale.rangeBand(d) * (1 / 3);
-            }.bind(row);
-
-            row.yPosition = function(d) {
-                return this.y.scale(this.keyFunction()(d)) + (this.y.scale.rangeBand(d) / 3);
-            }.bind(row);
-
-            row.series = [options.value];
-
-            this.series()
-                .push(row);
-
-
-            var target = new insight.MarkerSeries(options.target.name, this, options.target.data, x, y, options.target.color)
-                .valueFunction(options.target.accessor)
-                .widthFactor(0.3)
-                .horizontal();
-
-            this.series()
-                .push(target);
-
-            return s;
-        };
-
 
         return Chart;
 
