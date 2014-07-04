@@ -122,7 +122,7 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
         var yValues = data.map(yFunction);
         var xBounds = this.x.calculateBounds()[1];
         var yBounds = this.y.calculateBounds()[0];
-        var maxRad = Math.min(xBounds / d3.max(xValues), yBounds / d3.max(yValues));
+        var maxRad = Math.min(xBounds / 10, yBounds / 10);
 
         // create radius for each item
         data.forEach(function(d) {
