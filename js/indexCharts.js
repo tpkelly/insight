@@ -4,18 +4,65 @@
 
 (function()
 {
+    var areaData = [
+    {
+        key: 0,
+        value: 1,
+        area: 1,
+        columnKey: 0
+    },
+    {
+        key: 1,
+        value: 4,
+        area: 3,
+        columnKey: 1
+    },
+    {
+        key: 2,
+        value: 2,
+        area: 4,
+        columnKey: 0
+    },
+    {
+        key: 3,
+        value: 6,
+        area: 2,
+        columnKey: 1
+    },
+    {
+        key: 4,
+        value: 8,
+        area: 2,
+        columnKey: 0
+    },
+    {
+        key: 6,
+        value: 7,
+        area: 3,
+        columnKey: 1
+    },
+    {
+        key: 7,
+        value: 11,
+        area: 1,
+        columnKey: 0
+    }];
+
+    var columnData = [
+    {
+        key: 0,
+        value: 5,
+        target: 8
+    },
+    {
+        key: 1,
+        value: 8,
+        target: 9
+    }];
+
     function drawColumnChart()
     {
-        var data = [
-        {
-            key: 0,
-            value: 5
-        },
-        {
-            key: 1,
-            value: 8
-        }];
-        var dataset = new insight.DataSet(data);
+        var dataset = new insight.DataSet(columnData);
         var chart = new insight.Chart('Columnchart', '#column-chart')
             .width(200)
             .height(200)
@@ -41,24 +88,7 @@
 
     function drawLineChart()
     {
-        var data = [
-        {
-            key: 0,
-            value: 1
-        },
-        {
-            key: 1,
-            value: 4
-        },
-        {
-            key: 2,
-            value: 2
-        },
-        {
-            key: 3,
-            value: 6
-        }];
-        var dataset = new insight.DataSet(data);
+        var dataset = new insight.DataSet(areaData);
         var chart = new insight.Chart('LineChart', '#line-chart')
             .width(200)
             .height(200)
@@ -88,29 +118,7 @@
 
     function drawBubbleChart()
     {
-        var data = [
-        {
-            key: 0,
-            value: 1,
-            area: 1
-        },
-        {
-            key: 1,
-            value: 4,
-            area: 3
-        },
-        {
-            key: 2,
-            value: 2,
-            area: 4
-        },
-        {
-            key: 3,
-            value: 6,
-            area: 2
-        }];
-
-        var dataset = new insight.DataSet(data);
+        var dataset = new insight.DataSet(areaData);
         var chart = new insight.Chart('BubbleSeries', '#bubble-chart')
             .width(200)
             .height(200)
@@ -147,45 +155,8 @@
 
     function drawCorrelationChart()
     {
-        var data = [
-        {
-            key: 0,
-            value: 1,
-            area: 1
-        },
-        {
-            key: 1,
-            value: 4,
-            area: 1
-        },
-        {
-            key: 2,
-            value: 2,
-            area: 1
-        },
-        {
-            key: 3,
-            value: 6,
-            area: 1
-        },
-        {
-            key: 4,
-            value: 8,
-            area: 1
-        },
-        {
-            key: 6,
-            value: 9,
-            area: 1
-        },
-        {
-            key: 7,
-            value: 11,
-            area: 1
-        }];
-
         // Bubbles
-        var dataset = new insight.DataSet(data);
+        var dataset = new insight.DataSet(areaData);
         var chart = new insight.Chart('CorrelationChart', '#correlation')
             .width(200)
             .height(200)
@@ -211,7 +182,7 @@
             })
             .radiusFunction(function(d)
             {
-                return Math.sqrt(d.area);
+                return 1;
             })
             .valueFunction(function(d)
             {
@@ -221,12 +192,12 @@
         // Line of best fit
         var bestFitData = [
         {
-            key: 0,
+            key: -0.5,
             value: 1
         },
         {
-            key: 6.58,
-            value: 11.7
+            key: 7.5,
+            value: 11
         }];
 
         var bestFitDataset = new insight.DataSet(bestFitData);
@@ -237,18 +208,7 @@
 
     function drawMarkerChart()
     {
-        var data = [
-        {
-            key: 0,
-            value: 5,
-            target: 8
-        },
-        {
-            key: 1,
-            value: 8,
-            target: 9
-        }];
-        var dataset = new insight.DataSet(data);
+        var dataset = new insight.DataSet(columnData);
         var chart = new insight.Chart('MarkerChart', '#targets')
             .width(200)
             .height(200)
@@ -282,16 +242,7 @@
     function drawLinkedChart()
     {
         //Add the linker chart
-        var data = [
-        {
-            key: 0,
-            value: 5
-        },
-        {
-            key: 1,
-            value: 8
-        }];
-        var dataset = new insight.DataSet(data);
+        var dataset = new insight.DataSet(columnData);
         var chart = new insight.Chart('LinkedColumns', '#drill-down')
             .width(200)
             .height(100)
@@ -315,24 +266,7 @@
         chart.series([series]);
 
         //Add the linked chart
-        var lineData = [
-        {
-            key: 0,
-            value: 1
-        },
-        {
-            key: 1,
-            value: 4
-        },
-        {
-            key: 2,
-            value: 2
-        },
-        {
-            key: 3,
-            value: 6
-        }];
-        var linedataset = new insight.DataSet(lineData);
+        var linedataset = new insight.DataSet(areaData);
         var linechart = new insight.Chart('LineChart', '#drill-down')
             .width(200)
             .height(100)
