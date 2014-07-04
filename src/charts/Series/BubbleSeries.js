@@ -13,7 +13,6 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
     insight.Series.call(this, name, chart, data, x, y, color);
 
     var radiusFunction = d3.functor(10);
-    var fillFunction = d3.functor(color);
     var tooltipExists = false;
     var self = this;
     var selector = this.name + insight.Constants.Bubble;
@@ -175,7 +174,8 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
             .attr('r', rad)
             .attr('cx', self.rangeX)
             .attr('cy', self.rangeY)
-            .attr('fill', fillFunction);
+            .attr('opacity', 0.5)
+            .attr('fill', this.color);
 
         if (!tooltipExists) {
             bubbles.append('svg:text')
