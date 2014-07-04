@@ -1,8 +1,3 @@
-var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-];
-
-
 $(document)
     .ready(function()
     {

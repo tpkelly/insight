@@ -61,25 +61,12 @@ img
     fill: none;
 }
 
-.x-axis, .y-axis, .in-axis
-{
-    stroke: #999;
-    stroke-width: 1;
-    shape-rendering: crispEdges;
-    fill: none;
-}
-
 path.in-line
 {
     stroke-width: 3;
     transition: 0.25s ease all;
     -webkit-transition: 0.25s ease all;
     -moz-transition: 0.25s ease all;
-}
-
-.in-axis text
-{
-    stroke: #777;
 }
 
 path.in-line:hover

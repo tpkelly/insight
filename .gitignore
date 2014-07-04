@@ -12,6 +12,7 @@ node_modules
 .idea
 
 # Generated files
-dist
+dist/*
 doc
-
+# Make an exception for the min file
+!insight.min.js
