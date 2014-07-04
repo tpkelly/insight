@@ -37,28 +37,11 @@
   left: 0;
 }
 
-.x-axis, .y-axis, .in-axis
-{
-    stroke: #B1CBE6;
-    stroke-width: 1;
-    shape-rendering: crispEdges;
-    fill: none;
-}
-
-
-
 /*Line Styles*/
 
 path.in-line
 {
     stroke-width: 3;
-}
-
-circle.target-point 
-{
-    stroke: #fff;
-    fill: cyan;
-    stroke-width: 1;
 }
 
 .active
@@ -94,8 +77,6 @@ rect.bar
 {
     stroke: #222;
 }
-
-
 
 #toggle
 {
