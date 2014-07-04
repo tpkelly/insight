@@ -43,7 +43,7 @@ $(document)
 
             var series = new insight.ColumnSeries('clientColumn', chart, clientData, x, y);
 
-            var line = new insight.LineSeries('percentLine', chart, clientData, x, y2, 'cyan')
+            var line = new insight.LineSeries('percentLine', chart, clientData, x, y2, '#aae')
                 .tooltipFormat(InsightFormatters.percentageFormatter)
                 .valueFunction(function(d)
                 {
