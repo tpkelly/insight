@@ -82,19 +82,11 @@ path.in-line
     stroke: #777;
 }
 
-circle.target-point 
-{
-    stroke: #33485d;
-    fill: #fff;
-    stroke-width: 2;
-}
-
 path.in-line:hover
 {
     stroke: darkblue;
 
 }
-
 
 #wrapper {
   padding-left: 350px;
@@ -155,15 +147,6 @@ path.in-line:hover
 .charticon
 {
   cursor: pointer;
-}
-
-.bubble
-{
-  opacity: 0.5;
-  stroke: #FFF;
-  stroke-width: 2;
-  transition: 0.3s ease all;
-  fill: rgb(44, 44, 85);
 }
 
 @media (max-width:767px) {

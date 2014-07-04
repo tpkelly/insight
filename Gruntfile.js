@@ -64,8 +64,14 @@ module.exports = function(grunt) {
             }
         },
         watch: {
-            files: ['<%= jshint.files %>', '../insight/dist/*.js', '**/examples/*', './**/*.html', 'tests/*.spec.js'],
-            tasks: ['deploy']
+            development : {
+                files: ['<%= jshint.files %>', '../insight/dist/*.js', '**/examples/*', './**/*.html', 'tests/*.spec.js'],
+                tasks: ['deploy']
+            },
+            deployment: {
+                files: ['insight.js.zip'],
+                tasks: ['unzip']
+            }
         },
         unzip: {
             catalog: {
