@@ -118,7 +118,8 @@ insight.LineSeries = function LineSeries(name, chart, data, x, y, color) {
             .duration(duration)
             .attr("cx", self.rangeX)
             .attr("cy", self.rangeY)
-            .attr("r", 2.5);
+            .attr("r", 3)
+            .attr("fill", this.color);
 
 
         if (!tooltipExists) {

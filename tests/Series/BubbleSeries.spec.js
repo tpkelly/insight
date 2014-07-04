@@ -32,9 +32,9 @@ describe('Bubble Series Tests', function() {
             return d.radius;
         })
 
-        // Max pixel radius = 50 (width:250 / maxX:5)
-        // Radius = 50 (max pixel radius) * 2 (current radius) / 2 (max radius in set)
-        expect(radii).toEqual([50, 50, 50]);
+        // Max pixel radius = 25 (width:250 / 10)
+        // Radius = 25 (max pixel radius) * 2 (current radius) / 2 (max radius in set)
+        expect(radii).toEqual([25, 25, 25]);
     });
 
     it('Points with 0 radius have radius of 0', function () {
@@ -95,8 +95,8 @@ describe('Bubble Series Tests', function() {
             return d.radius;
         })
 
-        //Largest is 50px, the rest are proportional to the size of the largest
+        //Largest is 25px, the rest are proportional to the size of the largest
         //Also returned in descending order, to display the smallest points on top.
-        expect(radii).toEqual([50, 20, 10]);
+        expect(radii).toEqual([25, 10, 5]);
     });
 });
