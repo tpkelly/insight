@@ -77,7 +77,7 @@
         var xAxis = new insight.Axis(chart, '', 'h', insight.Scales.Ordinal, 'left');
         var yAxis = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'bottom');
 
-        var series = new insight.ColumnSeries('Columns', chart, dataset, xAxis, yAxis, 'black')
+        var series = new insight.ColumnSeries('Columns', chart, dataset, xAxis, yAxis, '#bbe')
             .valueFunction(function(d)
             {
                 return d.value;
@@ -103,7 +103,7 @@
         var xAxis = new insight.Axis(chart, '', 'h', insight.Scales.Linear, 'left');
         var yAxis = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'bottom');
 
-        var series = new insight.LineSeries('Lines', chart, dataset, xAxis, yAxis, 'black')
+        var series = new insight.LineSeries('Lines', chart, dataset, xAxis, yAxis, '#bbe')
             .valueFunction(function(d)
             {
                 return d.value;
@@ -133,7 +133,7 @@
         var xAxis = new insight.Axis(chart, '', 'h', insight.Scales.Linear, 'left');
         var yAxis = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'bottom');
 
-        var series = new insight.BubbleSeries('Bubbles', chart, dataset, xAxis, yAxis, 'black')
+        var series = new insight.BubbleSeries('Bubbles', chart, dataset, xAxis, yAxis, '#bbe')
             .yFunction(function(d)
             {
                 return d.value;
@@ -171,7 +171,7 @@
         var xAxis = new insight.Axis(chart, '', 'h', insight.Scales.Linear, 'left');
         var yAxis = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'bottom');
 
-        var bubbleSeries = new insight.BubbleSeries('Bubbles', chart, dataset, xAxis, yAxis, 'black')
+        var bubbleSeries = new insight.BubbleSeries('Bubbles', chart, dataset, xAxis, yAxis, '#bbe')
             .yFunction(function(d)
             {
                 return d.value;
@@ -201,7 +201,7 @@
         }];
 
         var bestFitDataset = new insight.DataSet(bestFitData);
-        var bestFitLine = new insight.LineSeries('BestFit', chart, bestFitDataset, xAxis, yAxis, 'black');
+        var bestFitLine = new insight.LineSeries('BestFit', chart, bestFitDataset, xAxis, yAxis, '#888');
 
         chart.series([bestFitLine, bubbleSeries]);
     }
@@ -223,13 +223,13 @@
         var xAxis = new insight.Axis(chart, '', 'h', insight.Scales.Ordinal, 'left');
         var yAxis = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'bottom');
 
-        var columnSeries = new insight.ColumnSeries('Columns', chart, dataset, xAxis, yAxis, 'black')
+        var columnSeries = new insight.ColumnSeries('Columns', chart, dataset, xAxis, yAxis, '#bbe')
             .valueFunction(function(d)
             {
                 return d.value;
             });
 
-        var targetSeries = new insight.MarkerSeries('Targets', chart, dataset, xAxis, yAxis, '#333')
+        var targetSeries = new insight.MarkerSeries('Targets', chart, dataset, xAxis, yAxis, '#888')
             .valueFunction(function(d)
             {
                 return d.target;
@@ -257,7 +257,7 @@
         var xAxis = new insight.Axis(chart, '', 'h', insight.Scales.Ordinal, 'left');
         var yAxis = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'bottom');
 
-        var series = new insight.ColumnSeries('Columns', chart, dataset, xAxis, yAxis, 'black')
+        var series = new insight.ColumnSeries('Columns', chart, dataset, xAxis, yAxis, '#bbe')
             .valueFunction(function(d)
             {
                 return d.value;
@@ -281,7 +281,7 @@
         var xAxisLine = new insight.Axis(linechart, '', 'h', insight.Scales.Linear, 'left');
         var yAxisLine = new insight.Axis(linechart, '', 'v', insight.Scales.Linear, 'bottom');
 
-        var lineSeries = new insight.LineSeries('Lines', linechart, linedataset, xAxisLine, yAxisLine, 'black')
+        var lineSeries = new insight.LineSeries('Lines', linechart, linedataset, xAxisLine, yAxisLine, '#bbe')
             .valueFunction(function(d)
             {
                 return d.value;
