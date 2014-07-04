@@ -243,7 +243,7 @@
         var bestFitDataset = new insight.DataSet(bestFitData);
         var bestFitLine = new insight.LineSeries('BestFit', chart, bestFitDataset, xAxis, yAxis, '#888');
 
-        chart.series([bestFitLine, bubbleSeries]);
+        chart.series([bubbleSeries, bestFitLine]);
     }
 
     function drawMarkerChart()
