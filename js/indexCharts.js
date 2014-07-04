@@ -75,9 +75,17 @@
             });
 
         var xAxis = new insight.Axis(chart, '', 'h', insight.Scales.Ordinal, 'left')
-            .tickSize(0);
+            .tickSize(0)
+            .labelFormat(function(d)
+            {
+                return '';
+            });
         var yAxis = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'bottom')
-            .tickSize(0);
+            .tickSize(0)
+            .labelFormat(function(d)
+            {
+                return '';
+            });
 
         var series = new insight.ColumnSeries('Columns', chart, dataset, xAxis, yAxis, '#bbe')
             .valueFunction(function(d)
@@ -103,9 +111,17 @@
             });
 
         var xAxis = new insight.Axis(chart, '', 'h', insight.Scales.Ordinal, 'left')
-            .tickSize(0);
+            .tickSize(0)
+            .labelFormat(function(d)
+            {
+                return '';
+            });
         var yAxis = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'bottom')
-            .tickSize(0);
+            .tickSize(0)
+            .labelFormat(function(d)
+            {
+                return '';
+            });
 
         var series = new insight.LineSeries('Lines', chart, dataset, xAxis, yAxis, '#bbe')
             .valueFunction(function(d)
@@ -135,9 +151,17 @@
             });
 
         var xAxis = new insight.Axis(chart, '', 'h', insight.Scales.Ordinal, 'left')
-            .tickSize(0);
+            .tickSize(0)
+            .labelFormat(function(d)
+            {
+                return '';
+            });
         var yAxis = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'bottom')
-            .tickSize(0);
+            .tickSize(0)
+            .labelFormat(function(d)
+            {
+                return '';
+            });
 
         var series = new insight.BubbleSeries('Bubbles', chart, dataset, xAxis, yAxis, '#bbe')
             .yFunction(function(d)
@@ -175,9 +199,17 @@
             });
 
         var xAxis = new insight.Axis(chart, '', 'h', insight.Scales.Linear, 'left')
-            .tickSize(0);
+            .tickSize(0)
+            .labelFormat(function(d)
+            {
+                return '';
+            });
         var yAxis = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'bottom')
-            .tickSize(0);
+            .tickSize(0)
+            .labelFormat(function(d)
+            {
+                return '';
+            });
 
         var bubbleSeries = new insight.BubbleSeries('Bubbles', chart, dataset, xAxis, yAxis, '#bbe')
             .yFunction(function(d)
@@ -229,9 +261,17 @@
             });
 
         var xAxis = new insight.Axis(chart, '', 'h', insight.Scales.Ordinal, 'left')
-            .tickSize(0);
+            .tickSize(0)
+            .labelFormat(function(d)
+            {
+                return '';
+            });
         var yAxis = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'bottom')
-            .tickSize(0);
+            .tickSize(0)
+            .labelFormat(function(d)
+            {
+                return '';
+            });
 
         var columnSeries = new insight.ColumnSeries('Columns', chart, dataset, xAxis, yAxis, '#bbe')
             .valueFunction(function(d)
@@ -265,9 +305,17 @@
             });
 
         var xAxis = new insight.Axis(chart, '', 'h', insight.Scales.Ordinal, 'left')
-            .tickSize(0);
+            .tickSize(0)
+            .labelFormat(function(d)
+            {
+                return '';
+            });
         var yAxis = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'bottom')
-            .tickSize(0);
+            .tickSize(0)
+            .labelFormat(function(d)
+            {
+                return '';
+            });
 
         var series = new insight.ColumnSeries('Columns', chart, dataset, xAxis, yAxis, '#bbe')
             .valueFunction(function(d)
@@ -291,9 +339,17 @@
             });
 
         var xAxisLine = new insight.Axis(chart, '', 'h', insight.Scales.Ordinal, 'left')
-            .tickSize(0);
+            .tickSize(0)
+            .labelFormat(function(d)
+            {
+                return '';
+            });
         var yAxisLine = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'bottom')
-            .tickSize(0);
+            .tickSize(0)
+            .labelFormat(function(d)
+            {
+                return '';
+            });
 
         var lineSeries = new insight.LineSeries('Lines', linechart, linedataset, xAxisLine, yAxisLine, '#bbe')
             .valueFunction(function(d)
