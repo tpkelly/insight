@@ -372,7 +372,8 @@ describe('Axis Tests', function() {
                                .margin({top:0, left:10, right: 40, bottom:0});
 
         var y = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Linear, 'bottom')
-                           .tickOrientation('tb');
+                           .tickOrientation('tb')
+                           .tickSize(0);
         
         //Then:
         var observedResult = y.tickRotationTransform();
