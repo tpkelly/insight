@@ -25,7 +25,7 @@ $(document)
 
 
             var series = new insight.ColumnSeries('countryColumn', chart, dataset, xScale, yScale, 'silver');
-            var line = new insight.LineSeries('valueLine', chart, dataset, xScale, yScale2, 'cyan')
+            var line = new insight.LineSeries('valueLine', chart, dataset, xScale, yScale2, '#e44')
                 .valueFunction(function(d)
                 {
                     return d.pct;

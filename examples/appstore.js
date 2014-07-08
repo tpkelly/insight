@@ -57,7 +57,7 @@ $(document)
 
             var yScale = new insight.Axis(chart, 'Apps', 'v', insight.Scales.Linear, 'left');
 
-            var series = new insight.ColumnSeries('genre', chart, genres, xScale, yScale, 'silver');
+            var series = new insight.ColumnSeries('genre', chart, genres, xScale, yScale, '#aae');
 
             series.series = [
             {
@@ -99,7 +99,7 @@ $(document)
             var yTime = new insight.Axis(timeChart, 'New Apps', 'v', insight.Scales.Linear, 'left')
                 .tickSize(5);;
 
-            var line = new insight.LineSeries('valueLine', timeChart, dates, xTime, yTime, 'cyan')
+            var line = new insight.LineSeries('valueLine', timeChart, dates, xTime, yTime, '#aae')
                 .valueFunction(function(d)
                 {
                     return d.value.CountCumulative;
@@ -132,7 +132,7 @@ $(document)
             var bubbleY = new insight.Axis(bubbleChart, 'Average Price', 'v', insight.Scales.Linear, 'left')
                 .tickSize(5);
 
-            var bubbles = new insight.BubbleSeries('bubbles', bubbleChart, genres, bubbleX, bubbleY, 'cyan')
+            var bubbles = new insight.BubbleSeries('bubbles', bubbleChart, genres, bubbleX, bubbleY, '#aae')
                 .xFunction(function(d)
                 {
                     return d.value.userRatingCount.Average;

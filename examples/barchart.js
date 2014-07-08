@@ -39,7 +39,7 @@ $(document)
             .tickSize(5)
             .labelFormat(d3.format('0,000'));
 
-        var series = new insight.ColumnSeries('countryColumn', chart, dataset, x, y, '#3498db')
+        var series = new insight.ColumnSeries('countryColumn', chart, dataset, x, y, '#aae')
             .valueFunction(function(d)
             {
                 return d.value;

@@ -105,6 +105,13 @@ path.in-line:hover
   padding: 0;
 }
 
+#exampleChart, .exampleChart
+{
+  stroke: #B1CBE6;
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+  fill: none;
+}
 
 
 #fields li .badge, .measureButton
@@ -130,6 +137,10 @@ path.in-line:hover
     
 }
 
+.bubble:hover
+{
+  opacity:1;
+}
 
 .charticon
 {

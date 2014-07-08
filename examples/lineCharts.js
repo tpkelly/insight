@@ -35,7 +35,7 @@ $(document)
 
             var yScale = new insight.Axis(chart, 'Revenue', 'v', insight.Scales.Linear, 'left');
 
-            var line = new insight.LineSeries('valueLine', chart, dateData, xScale, yScale, 'cyan')
+            var line = new insight.LineSeries('valueLine', chart, dateData, xScale, yScale, '#aae')
                 .tooltipFormat(InsightFormatters.currencyFormatter)
                 .lineType('monotone')
                 .valueFunction(function(d)
