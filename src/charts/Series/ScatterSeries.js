@@ -12,7 +12,7 @@ insight.ScatterSeries = function ScatterSeries(name, chart, data, x, y, color) {
 
     insight.Series.call(this, name, chart, data, x, y, color);
 
-    var radiusFunction = d3.functor(1);
+    var radiusFunction = d3.functor(3);
     var tooltipExists = false;
     var self = this;
     var selector = this.name + insight.Constants.Scatter;

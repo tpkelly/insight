@@ -26,7 +26,7 @@ describe('ScatterSeries', function() {
 
     });
 
-    it('Radius of all points defaults to 1', function () {
+    it('Radius of all points defaults to 3', function () {
 
         //When:
         var scatterData = series.scatterData(series.dataset());
@@ -36,7 +36,7 @@ describe('ScatterSeries', function() {
             return d.radius;
         })
 
-        expect(radii).toEqual([1, 1, 1]);
+        expect(radii).toEqual([3, 3, 3]);
     });
 
     it('Radius of all points can be set', function () {
