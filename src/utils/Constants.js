@@ -14,6 +14,7 @@ insight.Constants = (function() {
     exports.ContainerClass = "incontainer";
     exports.ChartSVG = "chartSVG";
     exports.Bubble = "bubble";
+    exports.Scatter = "scatter";
 
     return exports;
 }());

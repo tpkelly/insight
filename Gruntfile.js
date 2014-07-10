@@ -1,5 +1,19 @@
 module.exports = function(grunt) {
-  var sourceFiles = ['src/insight-dependencies.js', 'src/Insight.js', 'src/utils/*.js', 'src/mda/*.js', 'src/charts/Chart.js','src/charts/Axis.js', 'src/charts/Series/Series.js','src/charts/Series/MarkerSeries.js', 'src/charts/Series/BubbleSeries.js', 'src/charts/Series/RowSeries.js',  'src/charts/Series/LineSeries.js','src/charts/Series/ColumnSeries.js', 'src/insight-amd.js'];
+  var sourceFiles = [
+    'src/insight-dependencies.js', 
+    'src/Insight.js', 
+    'src/utils/*.js', 
+    'src/mda/*.js', 
+    'src/charts/Chart.js',
+    'src/charts/Axis.js', 
+    'src/charts/Series/Series.js',
+    'src/charts/Series/MarkerSeries.js', 
+    'src/charts/Series/BubbleSeries.js', 
+    'src/charts/Series/ScatterSeries.js', 
+    'src/charts/Series/RowSeries.js',  
+    'src/charts/Series/LineSeries.js',
+    'src/charts/Series/ColumnSeries.js', 
+    'src/insight-amd.js'];
    
   var LIVERELOAD_PORT = 35729;
   var lrSnippet = require('connect-livereload')({
@@ -95,7 +109,7 @@ module.exports = function(grunt) {
         }
     },
     watch: {
-      files: ['<%= jshint.files %>', 'tests/*.spec.js'],
+      files: ['<%= jshint.files %>', 'tests/**/*.spec.js'],
       tasks: ['deploy'],
       options: {
           livereload: true
