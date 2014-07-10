@@ -151,12 +151,10 @@ insight.ScatterSeries = function ScatterSeries(name, chart, data, x, y, color) {
             .on('mouseout', mouseOut)
             .on('click', click);
 
-        points.transition()
-            .duration(duration)
+        points
             .attr('r', radiusFunction)
             .attr('cx', self.rangeX)
             .attr('cy', self.rangeY)
-            .attr('opacity', 0.5)
             .attr('fill', this.color);
 
         if (!tooltipExists) {
