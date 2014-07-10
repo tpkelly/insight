@@ -220,6 +220,7 @@
             {
                 return d.key;
             })
+            .pointOpacity(1)
             .tooltipFunction(function(d)
             {
                 return '(' + d.key + ', ' + d.value + ')';
