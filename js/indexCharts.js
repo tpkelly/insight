@@ -211,7 +211,7 @@
                 return '';
             });
 
-        var bubbleSeries = new insight.BubbleSeries('Bubbles', chart, dataset, xAxis, yAxis, '#bbe')
+        var bubbleSeries = new insight.ScatterSeries('Points', chart, dataset, xAxis, yAxis, '#bbe')
             .yFunction(function(d)
             {
                 return d.value;
@@ -220,13 +220,9 @@
             {
                 return d.key;
             })
-            .radiusFunction(function(d)
+            .tooltipFunction(function(d)
             {
-                return 1;
-            })
-            .valueFunction(function(d)
-            {
-                return d.area;
+                return '(' + d.key + ', ' + d.value + ')';
             });
 
         // Line of best fit
