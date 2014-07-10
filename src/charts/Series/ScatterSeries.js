@@ -13,6 +13,7 @@ insight.ScatterSeries = function ScatterSeries(name, chart, data, x, y, color) {
     insight.Series.call(this, name, chart, data, x, y, color);
 
     var radiusFunction = d3.functor(3);
+    var opacityFunction = d3.functor(1);
     var tooltipExists = false;
     var self = this;
     var selector = this.name + insight.Constants.Scatter;
@@ -99,6 +100,15 @@ insight.ScatterSeries = function ScatterSeries(name, chart, data, x, y, color) {
         return this;
     };
 
+    this.pointOpacity = function(_) {
+        if (!arguments.length) {
+            return opacityFunction();
+        }
+        opacityFunction = d3.functor(_);
+
+        return this;
+    };
+
     var className = function(d) {
 
         return selector + " " + insight.Constants.Scatter + " " + self.dimensionName;
@@ -155,6 +165,7 @@ insight.ScatterSeries = function ScatterSeries(name, chart, data, x, y, color) {
             .attr('r', radiusFunction)
             .attr('cx', self.rangeX)
             .attr('cy', self.rangeY)
+            .attr('opacity', opacityFunction)
             .attr('fill', this.color);
 
         if (!tooltipExists) {
