@@ -9,6 +9,7 @@
     <link href="css/prism.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="//bootswatch.com/yeti/bootstrap.min.css">
+    <link rel="stylesheet" href="dist/insight.min.css">
     <link rel="stylesheet" href="//bootswatch.com/assets/css/bootswatch.min.css">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
@@ -45,14 +46,14 @@
             <!-- Weirdly enough, the items defined here are displayed right-to-left -->
             <div id="navbar-main" class="navbar-collapse collapse">
                 <!-- Twitter link -->
-                <div style="float:right; margin:11px; margin-left:50px;">
+                <div id="twitter">
                     <a href="https://twitter.com/insight_js">
-                        <img height="22px" src="images/twitter-icon.png" />
+                        <img src="images/twitter-icon.png" />
                     </a>
                 </div>
                 <!-- Download button -->
-                <div style="float:right; margin:13px; margin-left:50px;">
-                    <a href="insight.js.zip" download="insight.js.zip" style="color:white">Download</a>
+                <div id="download">
+                    <a href="insight.js.zip" download="insight.js.zip">Download</a>
                 </div>
                 <!-- Examples pages -->
                 <ul class="nav navbar-nav navbar-right">
@@ -71,7 +72,6 @@
     <div ng-view class="view-frame"></div>
 
     <script src="lib/jquery.js"></script>
-    <script src="bower_components/jquery-ui/ui/minified/jquery-ui.min.js"></script>
     <script src="lib/angular.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
     <script src="lib/ui-bootstrap-0.11.0.min.js"></script>
@@ -79,9 +79,9 @@
     <script src="lib/d3.js"></script>
     <script src="lib/angular-route.js"></script>
     <script src="lib/angular-resource.js"></script>
-    <script type="text/javascript" src="./dist/insight.min.js"></script>
     <script src="lib/prism.js" data-manual></script>
     <script src="lib/d3.tip.js" data-manual></script>
+    <script type="text/javascript" src="./dist/insight.js"></script>
     <script src="js/app.js"></script>
     <script src="js/insightChartsControllers.js"></script>
     <script src="js/insightChartsServices.js"></script>

@@ -1,7 +1,7 @@
 $(document)
     .ready(function()
     {
-        d3.json('revenuereport.json', function(data)
+        d3.json('datasets/revenuereport.json', function(data)
         {
             data.forEach(function(item)
             {
@@ -28,14 +28,17 @@ $(document)
                     bottom: 100
                 });
 
-            var xScale = new insight.Axis(chart, 'Time', 'h', insight.Scales.Time, 'bottom')
+            var x = new insight.Axis(chart, 'Time', 'h', insight.Scales.Time, 'bottom')
                 .tickRotation(90)
                 .tickOrientation('tb')
-                .labelFormat(InsightFormatters.dateFormatter);
+                .labelFormat(InsightFormatters.dateFormatter)
+                .showGridlines(true);
 
-            var yScale = new insight.Axis(chart, 'Revenue', 'v', insight.Scales.Linear, 'left');
+            var y = new insight.Axis(chart, 'Revenue', 'v', insight.Scales.Linear, 'left')
+                .showGridlines(true);
 
-            var line = new insight.LineSeries('valueLine', chart, dateData, xScale, yScale, 'cyan')
+
+            var line = new insight.LineSeries('valueLine', chart, dateData, x, y, '#aae')
                 .tooltipFormat(InsightFormatters.currencyFormatter)
                 .lineType('monotone')
                 .valueFunction(function(d)
@@ -46,7 +49,7 @@ $(document)
             chart.series()
                 .push(line);
 
-            chart.zoomable(xScale);
+            chart.zoomable(x);
 
             insight.drawCharts();
         });

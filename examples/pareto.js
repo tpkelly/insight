@@ -1,7 +1,7 @@
 $(document)
     .ready(function()
     {
-        d3.json('revenuereport.json', function(data)
+        d3.json('datasets/revenuereport.json', function(data)
         {
             var dataset = new insight.DataSet(data);
 
@@ -41,7 +41,15 @@ $(document)
             var y2 = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'right')
                 .labelFormat(InsightFormatters.percentageFormatter);
 
-            var series = new insight.ColumnSeries('clientColumn', chart, clientData, x, y);
+            var series = new insight.ColumnSeries('clientColumn', chart, clientData, x, y, '#e74c3c')
+                .valueFunction(function(d)
+                {
+                    return d.value.CurrentRevenue.Sum;
+                })
+                .tooltipFunction(function(d)
+                {
+                    return InsightFormatters.currencyFormatter(d.value.CurrentRevenue.Sum);
+                });
 
             var line = new insight.LineSeries('percentLine', chart, clientData, x, y2, 'cyan')
                 .tooltipFormat(InsightFormatters.percentageFormatter)
@@ -49,21 +57,6 @@ $(document)
                 {
                     return d.value.Percentage;
                 });
-
-            series.series = [
-            {
-                name: 'value',
-                accessor: function(d)
-                {
-                    return d.value.CurrentRevenue.Sum;
-                },
-                color: '#e74c3c',
-                tooltipValue: function(d)
-                {
-                    return InsightFormatters.currencyFormatter(d.value.CurrentRevenue.Sum);
-                }
-            }];
-
 
             chart.series([series, line]);
 

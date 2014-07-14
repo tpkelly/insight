@@ -54,6 +54,13 @@
         "partialCSS": "examples/css/example.css"
     },
     {
+        "name": "flightdelay",
+        "pageName": "Real Time Line Chart", 
+        "script": "examples/flightdelay.js",
+        "partial": "examples/partials/newCharts.html",
+        "partialCSS": "examples/css/example.css"
+    },
+    {
         "name": "pareto",
         "pageName": "Pareto Chart", 
         "script": "examples/pareto.js",

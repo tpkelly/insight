@@ -1,7 +1,5 @@
 module.exports = function(grunt) {
-    var sourceFiles = ['src/Group.js', 'src/Dimension.js', 'src/InsightCharts.Formatters.js', 'src/InsightCharts.Constants.js', 'src/ChartGroup.js', 'src/BaseChart.js', 'src/Legend.js', 'src/DataTable.js', 'src/BarChart.js', 'src/MultipleChart.js', 'src/GroupedBarChart.js', 'src/StackedBarChart.js', 'src/Timeline.js', 'src/BaseChart.js', 'src/TimelineChart.js', 'src/RowChart.js', 'src/PartitionChart.js', 'js/*.js'];
-
-
+    
     var mountFolder = function(connect, dir) {
         return connect.static(require('path')
             .resolve(dir));
@@ -10,7 +8,12 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-
+        concat: {
+          dist: {
+              src: 'js/controllers/*.js',
+              dest: 'js/insightChartsControllers.js'
+          }
+        },
         connect: {
             server: {
                 options: {
@@ -42,7 +45,7 @@ module.exports = function(grunt) {
             }
         },
         "jsbeautifier": {
-            files: ["./js/*.js", "./examples/*.js", "./**/*.html", "index.html"],
+            files: ["./js/*.js", "./examples/*.js", "./partials/*.html", "./examples/partials/*.html", "index.html"],
             options: {
                 js: {
                     braceStyle: 'expand',
@@ -65,7 +68,7 @@ module.exports = function(grunt) {
         },
         watch: {
             development : {
-                files: ['<%= jshint.files %>', '../insight/dist/*.js', '**/examples/*', './**/*.html', 'tests/*.spec.js'],
+                files: ['<%= jshint.files %>', '**/examples/*', './**/*.html', 'tests/*.spec.js'],
                 tasks: ['deploy']
             },
             deployment: {
@@ -88,8 +91,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-zip');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-concat');
 
-    grunt.registerTask('deploy', ['jsbeautifier', 'jshint']);
+    grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'concat']);
     grunt.registerTask('default', ['deploy', 'unzip', 'connect:server', 'open:dev', 'watch']);
 
 };

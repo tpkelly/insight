@@ -9,9 +9,8 @@ $(document)
     {
 
 
-        d3.json('appstore.json', function(data)
+        d3.json('datasets/appstore.json', function(data)
         {
-
             data.forEach(function(d)
             {
                 d.releaseDate = new Date(d.releaseDate);
@@ -57,25 +56,11 @@ $(document)
 
             var yScale = new insight.Axis(chart, 'Apps', 'v', insight.Scales.Linear, 'left');
 
-            var series = new insight.ColumnSeries('genre', chart, genres, xScale, yScale, 'silver');
-
-            series.series = [
-            {
-                name: 'genre',
-                accessor: function(d)
+            var series = new insight.ColumnSeries('genre', chart, genres, xScale, yScale, 'lightblue')
+                .valueFunction(function(d)
                 {
                     return d.value.Count;
-                },
-                label: function(d)
-                {
-                    return d.key
-                },
-                color: 'lightblue',
-                tooltipValue: function(d)
-                {
-                    return d.value.Count;
-                }
-            }];
+                });
 
             chart.series([series]);
 
@@ -99,7 +84,7 @@ $(document)
             var yTime = new insight.Axis(timeChart, 'New Apps', 'v', insight.Scales.Linear, 'left')
                 .tickSize(5);;
 
-            var line = new insight.LineSeries('valueLine', timeChart, dates, xTime, yTime, 'cyan')
+            var line = new insight.LineSeries('valueLine', timeChart, dates, xTime, yTime, '#aae')
                 .valueFunction(function(d)
                 {
                     return d.value.CountCumulative;
@@ -132,7 +117,7 @@ $(document)
             var bubbleY = new insight.Axis(bubbleChart, 'Average Price', 'v', insight.Scales.Linear, 'left')
                 .tickSize(5);
 
-            var bubbles = new insight.BubbleSeries('bubbles', bubbleChart, genres, bubbleX, bubbleY, 'cyan')
+            var bubbles = new insight.BubbleSeries('bubbles', bubbleChart, genres, bubbleX, bubbleY, '#aae')
                 .xFunction(function(d)
                 {
                     return d.value.userRatingCount.Average;
@@ -232,9 +217,9 @@ $(document)
                 {
                     bubbles.xFunction(function(d)
                     {
-                        return d.value.userRatingCount.Average;
+                        return d.value.averageUserRating.Average;
                     });
-                    bubbleX.label('Average # Ratings');
+                    bubbleX.label('Average Rating');
 
                     insight.redrawCharts();
                 });

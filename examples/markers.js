@@ -39,8 +39,7 @@ $(document)
         var x = new insight.Axis(chart, 'Country', 'h', insight.Scales.Ordinal, 'bottom')
             .tickOrientation('tb')
             .tickRotation(45)
-            .tickSize(5)
-            .gridlines(4);
+            .tickSize(5);
 
         var y = new insight.Axis(chart, 'Population', 'v', insight.Scales.Linear, 'left')
             .labelFormat(d3.format("0,000"));

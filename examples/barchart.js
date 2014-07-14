@@ -27,7 +27,7 @@ $(document)
             .margin(
             {
                 top: 10,
-                left: 150,
+                left: 160,
                 right: 40,
                 bottom: 120
             });

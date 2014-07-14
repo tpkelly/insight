@@ -2,7 +2,7 @@ $(document)
     .ready(function()
     {
 
-        d3.json('appstore.json', function(data)
+        d3.json('datasets/appstore.json', function(data)
         {
             data.forEach(function(d)
             {
@@ -46,31 +46,20 @@ $(document)
                 .tickSize(5);
 
 
-            var series = new insight.ColumnSeries('genre', chart, genres, xScale, yScale, 'silver')
+            var series = new insight.ColumnSeries('genre', chart, genres, xScale, yScale, '#ACC3EE')
                 .tooltipFunction(function(d)
                 {
                     return d;
                 })
-                .top(10);
-
-            series.series = [
-            {
-                name: 'genre',
-                accessor: function(d)
+                .valueFunction(function(d)
                 {
                     return d.value.Count;
-                },
-                label: function(d)
+                })
+                .tooltipFunction(function(d)
                 {
-                    return '';
-                },
-                color: '#ACC3EE',
-                tooltipValue: function(d)
-                {
-                    return d.value.Count + ' Apps';
-
-                }
-            }];
+                    return d.value.Count + " Apps";
+                })
+                .top(10);
 
             chart.series([series]);
 
@@ -121,8 +110,6 @@ $(document)
             }];
 
             languageChart.series([lSeries]);
-
-
 
             insight.drawCharts();
 
