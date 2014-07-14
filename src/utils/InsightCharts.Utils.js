@@ -1,5 +1,5 @@
 /**
- * This modules contains some helper functions used throughout the library
+ * This module contains some helper functions used throughout the library
  * @module InsightUtils
  */
 insight.Utils = (function() {
