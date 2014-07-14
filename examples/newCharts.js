@@ -1,7 +1,7 @@
 $(document)
     .ready(function()
     {
-        d3.json('countries.json', function(data)
+        d3.json('datasets/countries.json', function(data)
         {
             var dataset = new insight.DataSet(data);
 

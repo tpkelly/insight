@@ -2,7 +2,7 @@ $(document)
     .ready(function()
     {
 
-        d3.json('appstore.json', function(data)
+        d3.json('datasets/appstore.json', function(data)
         {
             data.forEach(function(d)
             {
