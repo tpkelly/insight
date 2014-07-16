@@ -59,7 +59,6 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
         yFunction = _;
 
         return this;
-
     };
 
 
@@ -70,7 +69,6 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
         xFunction = _;
 
         return this;
-
     };
 
     this.rangeY = function(d) {

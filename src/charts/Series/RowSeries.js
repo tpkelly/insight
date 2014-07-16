@@ -18,7 +18,7 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
     var tooltipExists = false;
 
     var tooltipFunction = function(d) {
-        var func = self.series[self.currentSeries].accessor;
+        var func = self.currentSeries.accessor;
         return self.tooltipFormat()(func(d));
     };
 
@@ -131,7 +131,7 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
 
     this.xPosition = function(d) {
 
-        var func = self.series[self.currentSeries].accessor;
+        var func = self.currentSeries.accessor;
 
         var position = self.stacked() ? self.x.scale(self.calculateXPos(func, d)) : 0;
 
@@ -159,7 +159,7 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
     };
 
     this.barWidth = function(d) {
-        var func = self.series[self.currentSeries].accessor;
+        var func = self.currentSeries.accessor;
 
         return self.x.scale(func(d));
     };
@@ -193,18 +193,16 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
             return 200 + (i * 20);
         };
 
-        for (var ser in this.series) {
+        for (var seriesIndex in this.series) {
 
-            this.currentSeries = ser;
+            this.currentSeries = this.series[seriesIndex];
 
-            var s = this.series[ser];
-
-            seriesName = s.name;
+            seriesName = this.currentSeries.name;
 
             newBars = newGroups.append('rect')
-                .attr('class', self.className)
+                .attr('class', this.className)
                 .attr('height', 0)
-                .attr('fill', s.color)
+                .attr('fill', this.currentSeries.color)
                 .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
                 .on('mouseover', this.mouseOver)
                 .on('mouseout', this.mouseOut)
