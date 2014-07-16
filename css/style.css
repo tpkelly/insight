@@ -107,9 +107,6 @@ path.in-line:hover
 
 #exampleChart, .exampleChart
 {
-  stroke: #B1CBE6;
-  stroke-width: 1;
-  shape-rendering: crispEdges;
   fill: none;
 }
 
