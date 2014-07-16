@@ -193,9 +193,9 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
             return 200 + (i * 20);
         };
 
-        for (var series in this.series) {
+        for (var seriesIndex in this.series) {
 
-            this.currentSeries = this.series[series];
+            this.currentSeries = this.series[seriesIndex];
 
             seriesName = this.currentSeries.name;
 

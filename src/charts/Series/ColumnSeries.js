@@ -201,9 +201,9 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
 
         var newBars = newGroups.selectAll('rect.bar');
 
-        for (var series in this.series) {
+        for (var seriesIndex in this.series) {
 
-            this.currentSeries = this.series[series];
+            this.currentSeries = this.series[seriesIndex];
 
             seriesName = this.currentSeries.name;
 
