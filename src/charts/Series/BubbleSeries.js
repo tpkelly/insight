@@ -37,8 +37,6 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
     };
 
 
-
-
     this.findMax = function(scale) {
         var self = this;
 
@@ -99,15 +97,6 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
     var className = function(d) {
 
         return selector + " " + insight.Constants.Bubble + " " + self.sliceSelector(d) + " " + self.dimensionName;
-    };
-
-    this.fillFunction = function(_) {
-        if (!arguments.length) {
-            return fillFunction;
-        }
-        fillFunction = _;
-
-        return this;
     };
 
     this.bubbleData = function(data) {

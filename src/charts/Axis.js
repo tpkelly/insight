@@ -29,6 +29,8 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
     var textAnchor;
     var showGridLines = false;
     var gridlines = [];
+    var colorFunction = d3.functor('#777');
+    var display = true;
 
     this.chart.addAxis(this);
 
@@ -200,6 +202,23 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
 
 
 
+    /**
+     * This getter/setter defines whether or not the axis should be drawn on the chart (lines and labels)
+     * @returns {function}
+     */
+    /**
+     * @param {boolean} value - When used as a setter, this function takes a boolean value that will define whether this axis will be drawn
+     * @returns {this}
+     */
+    this.display = function(value) {
+        if (!arguments.length) {
+            return display;
+        }
+        display = value;
+        return this;
+    };
+
+
     // label and axis tick methods
 
     this.label = function(value) {
@@ -216,6 +235,22 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
             return format;
         }
         format = value;
+        return this;
+    };
+
+    /**
+     * This getter/setter defines the color used by the axis labels and lines
+     * @returns {function}
+     */
+    /**
+     * @param {object} color - When used as a setter, this function can take a string color (hex, named or "rgb(r,g,b)") or a function that returns the color of the axis.
+     * @returns {this}
+     */
+    this.color = function(color) {
+        if (!arguments.length) {
+            return colorFunction;
+        }
+        colorFunction = d3.functor(color);
         return this;
     };
 
@@ -236,6 +271,7 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
         labelRotation = value;
         return this;
     };
+
 
 
     this.tickSize = function(value) {
@@ -381,61 +417,67 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
 
         this.initializeScale();
 
-        this.axis = d3.svg.axis()
-            .scale(this.scale)
-            .orient(self.orientation())
-            .tickSize(self.tickSize())
-            .tickPadding(self.tickPadding())
-            .tickFormat(self.labelFormat());
+        if (this.display()) {
+            this.axis = d3.svg.axis()
+                .scale(this.scale)
+                .orient(self.orientation())
+                .tickSize(self.tickSize())
+                .tickPadding(self.tickPadding())
+                .tickFormat(self.labelFormat());
 
-        this.axisElement = this.chart.chart.append('g');
+            this.axisElement = this.chart.chart.append('g');
 
-        this.axisElement
-            .attr('class', insight.Constants.AxisClass)
-            .attr('transform', self.axisPosition())
-            .call(this.axis)
-            .selectAll('text')
-            .attr('class', insight.Constants.AxisTextClass)
-            .style('text-anchor', self.textAnchor())
-            .style('transform', self.tickRotationTransform());
+            this.axisElement
+                .attr('class', insight.Constants.AxisClass)
+                .attr('transform', self.axisPosition())
+                .call(this.axis)
+                .selectAll('text')
+                .attr('class', insight.Constants.AxisTextClass)
+                .style('text-anchor', self.textAnchor())
+                .style('transform', self.tickRotationTransform());
 
-        this.labelElement = this.chart.container
-            .append('div')
-            .attr('class', insight.Constants.AxisLabelClass)
-            .style('position', 'absolute')
-            .text(this.label());
+            this.labelElement = this.chart.container
+                .append('div')
+                .attr('class', insight.Constants.AxisLabelClass)
+                .style('position', 'absolute')
+                .text(this.label());
 
-        this.positionLabel();
+            this.positionLabel();
+        }
     };
 
 
 
     this.draw = function(dragging) {
 
-        this.axis = d3.svg.axis()
-            .scale(this.scale)
-            .orient(self.orientation())
-            .tickSize(self.tickSize())
-            .tickPadding(self.tickPadding())
-            .tickFormat(self.labelFormat());
+        if (this.display()) {
 
-        this.axisElement
-            .transition()
-            .duration(500)
-            .attr('transform', self.axisPosition())
-            .call(this.axis);
+            this.axis = d3.svg.axis()
+                .scale(this.scale)
+                .orient(self.orientation())
+                .tickSize(self.tickSize())
+                .tickPadding(self.tickPadding())
+                .tickFormat(self.labelFormat());
 
-        this.axisElement
-            .selectAll('text')
-            .attr('transform', self.tickRotationTransform())
-            .style('text-anchor', self.textAnchor());
+            this.axisElement
+                .transition()
+                .duration(500)
+                .attr('transform', self.axisPosition())
+                .style('stroke', self.color())
+                .call(this.axis);
 
-        this.labelElement
-            .text(this.label());
+            this.axisElement
+                .selectAll('text')
+                .attr('transform', self.tickRotationTransform())
+                .style('text-anchor', self.textAnchor());
 
-        if (showGridLines) {
-            // commented out as it's not quite working yet but should just need tweaking
-            //this.drawGridLines(); 
+            this.labelElement
+                .text(this.label());
+
+            if (showGridLines) {
+                // commented out as it's not quite working yet but should just need tweaking
+                //this.drawGridLines(); 
+            }
         }
     };
 };

@@ -121,7 +121,7 @@ var insight = (function() {
 
                     //if the dimension is already filtered by this value, toggle (remove) the filter
                     if (filterExists) {
-                        InsightUtils.removeMatchesFromArray(dim.Filters, comparerFunction);
+                        insight.Utils.removeMatchesFromArray(dim.Filters, comparerFunction);
 
                     } else {
                         // add the provided filter to the list for this dimension
@@ -132,7 +132,7 @@ var insight = (function() {
                     // reset this dimension if no filters exist, else apply the filter to the dataset.
                     if (dim.Filters.length === 0) {
 
-                        InsightUtils.removeItemFromArray(self.FilteredDimensions, dim);
+                        insight.Utils.removeItemFromArray(self.FilteredDimensions, dim);
                         dim.Dimension.filterAll();
 
                     } else {

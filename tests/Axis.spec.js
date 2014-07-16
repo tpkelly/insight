@@ -48,6 +48,31 @@ describe('Axis Tests', function() {
         expect(observedResult).toBe(expectedResult);
     });
 
+    it('will be displayed by default', function() {
+        
+        //Given:
+        var chart = new insight.Chart('test', '#test', 'ada');
+        var axis = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Linear, 'bottom');
+
+        //Then:
+        var observedResult = axis.display();
+        var expectedResult = true;
+        expect(observedResult).toBe(expectedResult);
+    });
+
+    it('can be set to not be displayed', function() {
+        
+        //Given:
+        var chart = new insight.Chart('test', '#test', 'ada');
+        var axis = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Linear, 'bottom')
+                              .display(false);
+
+        //Then:
+        var observedResult = axis.display();
+        var expectedResult = false;
+        expect(observedResult).toBe(expectedResult);
+    });
+
     it('not ordered by default', function() {
         
         //Given:
