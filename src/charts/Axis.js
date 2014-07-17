@@ -28,7 +28,6 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
     var orientation = direction == 'h' ? d3.functor(this.anchor) : d3.functor(this.anchor);
     var textAnchor;
     var showGridLines = false;
-    var gridlines = [];
     var colorFunction = d3.functor('#777');
     var display = true;
 
@@ -184,16 +183,13 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
      */
     this.calculateBounds = function() {
         var bounds = [];
+        var margin = self.chart.margin();
 
         if (self.horizontal()) {
             bounds[0] = 0;
-            bounds[1] = self.chart.width() - self.chart.margin()
-                .right - self.chart.margin()
-                .left;
+            bounds[1] = self.chart.width() - margin.right - margin.left;
         } else if (self.vertical()) {
-            bounds[0] = self.chart.height() - self.chart.margin()
-                .top - self.chart.margin()
-                .bottom;
+            bounds[0] = self.chart.height() - margin.top - margin.bottom;
             bounds[1] = 0;
 
         }
@@ -368,13 +364,19 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
         }
     };
 
-
-    this.gridlines = function(value) {
+    /**
+     * This getter/setter defines whether gridlines are displayed for the axis.
+     * @returns {function}
+     */
+    /**
+     * @param {object} showLines - When used as a setter, this function can take a boolean of whether to display the gridlines (true) or hide them (false).
+     * @returns {this}
+     */
+    this.gridlines = function(showLines) {
         if (!arguments.length) {
-            return gridlines();
+            return showGridLines;
         }
-        showGridLines = true;
-        gridlines = value;
+        showGridLines = showLines;
 
         return this;
     };
@@ -382,27 +384,50 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
 
     this.drawGridLines = function() {
 
-        var ticks = this.scale.ticks(5);
+        var ticks = this.scale.ticks();
 
-        this.chart.chart.selectAll('line.horizontalGrid')
-            .data(ticks)
+        var attributes = {
+            'class': label,
+            'fill': 'none',
+            'shape-rendering': 'crispEdges',
+            'stroke': 'silver',
+            'stroke-width': '1px'
+        };
+        var chartMargin = self.chart.margin();
+        var margin = self.chart.margin();
+        var valueFunction = function(d) {
+            return self.scale(d);
+        };
+
+        if (self.horizontal()) {
+            attributes.x1 = valueFunction;
+            attributes.x2 = valueFunction;
+            attributes.y1 = 0;
+            attributes.y2 = self.chart.height() - chartMargin.top - chartMargin.bottom;
+        } else {
+            attributes.x1 = 0;
+            attributes.x2 = self.chart.width() - chartMargin.left - chartMargin.right;
+            attributes.y1 = valueFunction;
+            attributes.y2 = valueFunction;
+        }
+
+        var gridLineIdentifier = 'line.' + label;
+
+        //Get all lines, and add new datapoints.
+        var gridLines = this.chart.chart.selectAll(gridLineIdentifier)
+            .data(ticks);
+
+        //Add lines for all new datapoints
+        gridLines
             .enter()
-            .append('line')
-            .attr({
-                'class': 'horizontalGrid',
-                'x1': 0,
-                'x2': chart.width(),
-                'y1': function(d) {
-                    return self.scale.scale(d);
-                },
-                'y2': function(d) {
-                    return self.scale.scale(d);
-                },
-                'fill': 'none',
-                'shape-rendering': 'crispEdges',
-                'stroke': 'silver',
-                'stroke-width': '1px'
-            });
+            .append('line');
+
+        //Update position of all lines
+        gridLines.attr(attributes);
+
+        //Remove any lines which are no longer in the data
+        gridLines.exit()
+            .remove();
 
     };
 
@@ -460,8 +485,6 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
                 .tickFormat(self.labelFormat());
 
             this.axisElement
-                .transition()
-                .duration(500)
                 .attr('transform', self.axisPosition())
                 .style('stroke', self.color())
                 .call(this.axis);
@@ -476,7 +499,7 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
 
             if (showGridLines) {
                 // commented out as it's not quite working yet but should just need tweaking
-                //this.drawGridLines(); 
+                this.drawGridLines();
             }
         }
     };
