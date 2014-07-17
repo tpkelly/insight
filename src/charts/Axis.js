@@ -372,13 +372,20 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
      * @param {object} showLines - When used as a setter, this function can take a boolean of whether to display the gridlines (true) or hide them (false).
      * @returns {this}
      */
-    this.gridlines = function(showLines) {
+    this.showGridlines = function(showLines) {
         if (!arguments.length) {
             return showGridLines;
         }
         showGridLines = showLines;
 
         return this;
+    };
+
+    /** Returns the array of all gridlines for this axis. */
+    this.gridlines = function() {
+        var gridLineIdentifier = 'line.' + label;
+
+        return this.chart.chart.selectAll(gridLineIdentifier);
     };
 
 
@@ -411,10 +418,8 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
             attributes.y2 = valueFunction;
         }
 
-        var gridLineIdentifier = 'line.' + label;
-
         //Get all lines, and add new datapoints.
-        var gridLines = this.chart.chart.selectAll(gridLineIdentifier)
+        var gridLines = this.gridlines()
             .data(ticks);
 
         //Add lines for all new datapoints
