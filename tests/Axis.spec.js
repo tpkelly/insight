@@ -7,6 +7,7 @@ var data = [
     {key:'e', value:13, date: new Date(2013,4,15)}
 ];
 
+
 describe('Axis Tests', function() {
     
     it('label getter works after initialization', function() {
@@ -407,4 +408,116 @@ describe('Axis Tests', function() {
         expect(observedResult).toEqual(expectedResult);
     });
 
+    describe('Gridlines', function() {
+
+        var div = document.createElement('div');
+        div.id  = 'testChart';
+
+        var createChartElement = function(){
+
+            document.body.appendChild(div);
+        };
+
+        var removeChartElement = function(){
+            document.body.removeChild(div);
+        };
+
+
+        it('gridlines hidden by default', function () {
+            //Given:
+            var chart = new insight.Chart('test', '#test', 'ada')
+                .width(400)
+                .height(300)
+                .margin({top: 0, left: 10, right: 40, bottom: 0});
+
+            var y = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Linear, 'bottom')
+                .tickOrientation('tb')
+                .tickSize(0);
+
+            //Then:
+            var gridlinesVisible = y.showGridlines();
+            expect(gridlinesVisible).toBe(false);
+        });
+
+        it('no gridlines when gridlines are hidden', function () {
+            //Given:
+            insight.init();
+            createChartElement();
+
+            var chart = new insight.Chart('test', '#testChart')
+                .width(650)
+                .height(350)
+                .margin(
+                {
+                    top: 0,
+                    left: 130,
+                    right: 40,
+                    bottom: 100
+                });
+
+            var x = new insight.Axis(chart, 'ValueAxis', 'h', insight.Scales.Linear, 'bottom')
+                .tickOrientation('lr');
+
+            var y = new insight.Axis(chart, 'KeyAxis', 'v', insight.Scales.Linear, 'left')
+                .tickOrientation('lr')
+                .showGridlines(false);
+
+            var data = new insight.DataSet([
+                {"key": 1, "value": 1},
+                {"key": 2, "value": 2},
+                {"key": 3, "value": 3}
+            ]);
+            var lineSeries = new insight.LineSeries('line', chart, data, x, y);
+            chart.series([lineSeries]);
+
+            insight.drawCharts();
+
+            //Then:
+            // One per tickmark, between 0 and 3 by 0.5 steps (inclusive).
+            expect(y.gridlines()).toBeCloseTo([]);
+
+            removeChartElement();
+        });
+
+        it('multiple gridlines when gridlines are visible', function () {
+            //Given:
+            insight.init();
+            createChartElement();
+
+            var chart = new insight.Chart('test', '#testChart')
+                .width(650)
+                .height(350)
+                .margin(
+                {
+                    top: 0,
+                    left: 130,
+                    right: 40,
+                    bottom: 100
+                });
+
+            var x = new insight.Axis(chart, 'ValueAxis', 'h', insight.Scales.Linear, 'bottom')
+                .tickOrientation('lr');
+
+            var y = new insight.Axis(chart, 'KeyAxis', 'v', insight.Scales.Linear, 'left')
+                .tickOrientation('lr')
+                .showGridlines(true);
+
+            var data = new insight.DataSet([
+                {"key": 1, "value": 1},
+                {"key": 2, "value": 2},
+                {"key": 3, "value": 3}
+            ]);
+            var lineSeries = new insight.LineSeries('line', chart, data, x, y);
+            chart.series([lineSeries]);
+
+            insight.drawCharts();
+
+            //Then:
+            // One per tickmark, between 0 and 3 by 0.5 steps (inclusive).
+            expect(y.gridlines()[0].length).toEqual(7);
+
+            removeChartElement();
+        });
+
+    });
 });
