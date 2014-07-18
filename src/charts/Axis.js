@@ -502,7 +502,6 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
                 .text(this.label());
 
             if (showGridLines) {
-                // commented out as it's not quite working yet but should just need tweaking
                 this.drawGridLines();
             }
         }
