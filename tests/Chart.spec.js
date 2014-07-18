@@ -417,7 +417,7 @@ describe('Chart', function() {
 
         it('margins are 0 when series has no data', function() {
             //Given:
-            var series = new insight.Series('testSeries', chart, new insight.DataSet([]), xAxis, yAxis, 'silver');
+            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
             chart.series([series]);
 
             //When:
@@ -429,7 +429,7 @@ describe('Chart', function() {
 
         it('bottom margins are expanded when x-axis has labels', function() {
             //Given:
-            var series = new insight.Series('testSeries', chart, new insight.DataSet([]), xAxis, yAxis, 'silver');
+            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
             series.maxLabelDimensions = function() {
                 return maxDimensions = {
                     "maxKeyWidth": 5,
@@ -448,7 +448,7 @@ describe('Chart', function() {
 
         it('left margins are expanded when y-axis has labels', function() {
             //Given:
-            var series = new insight.Series('testSeries', chart, new insight.DataSet([]), xAxis, yAxis, 'silver');
+            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
             series.maxLabelDimensions = function() {
                 return maxDimensions = {
                     "maxKeyWidth": 0,
@@ -468,7 +468,7 @@ describe('Chart', function() {
         it('right margins are expanded when y-axis is reversed', function() {
             //Given:
             yAxis = new insight.Axis(chart, 'yAxis', 'v', insight.Scales.Linear, 'right');
-            var series = new insight.Series('testSeries', chart, new insight.DataSet([]), xAxis, yAxis, 'silver');
+            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
             series.maxLabelDimensions = function() {
                 return maxDimensions = {
                     "maxKeyWidth": 0,
@@ -488,7 +488,7 @@ describe('Chart', function() {
         it('top margins are expanded when x-axis is reversed', function() {
             //Given:
             xAxis = new insight.Axis(chart, 'xAxis', 'h', insight.Scales.Linear, 'top');
-            var series = new insight.Series('testSeries', chart, new insight.DataSet([]), xAxis, yAxis, 'silver');
+            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
             series.maxLabelDimensions = function() {
                 return maxDimensions = {
                     "maxKeyWidth": 5,

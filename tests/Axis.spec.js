@@ -113,7 +113,7 @@ describe('Axis Tests', function() {
         var x = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Ordinal, 'left');
         var y = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Linear, 'left');
 
-        var series = new insight.ColumnSeries('chart', chart, dataset, x, y, 'blue')
+        var series = new insight.ColumnSeries('chart', dataset, x, y, 'blue')
                                 .valueFunction(function(d){return d.value;});
 
         //Then:
@@ -135,7 +135,7 @@ describe('Axis Tests', function() {
         var x = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Ordinal, 'left');
         var y = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Linear, 'left');
 
-        var series = new insight.ColumnSeries('chart', chart, dataset, x, y, 'blue')
+        var series = new insight.ColumnSeries('chart', dataset, x, y, 'blue')
                                 .valueFunction(function(d){return d.value;});
 
         //Then:
@@ -157,7 +157,7 @@ describe('Axis Tests', function() {
         var x = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Time, 'left');
         var y = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Linear, 'left');
 
-        var series = new insight.ColumnSeries('chart', chart, dataset, x, y, 'blue')
+        var series = new insight.ColumnSeries('chart', dataset, x, y, 'blue')
                                 .keyFunction(function(d){return d.date;});
 
         //Then:
@@ -180,7 +180,7 @@ describe('Axis Tests', function() {
         var x = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Ordinal, 'left');
         var y = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Linear, 'left');
 
-        var series = new insight.ColumnSeries('chart', chart, dataset, x, y, 'blue');
+        var series = new insight.ColumnSeries('chart', dataset, x, y, 'blue');
 
         //Then: (origin of SVG is top left, hence starting at the height of the chart)
         var observedResult = y.calculateBounds();
@@ -201,7 +201,7 @@ describe('Axis Tests', function() {
         var x = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Ordinal, 'left');
         var y = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Linear, 'left');
 
-        var series = new insight.ColumnSeries('chart', chart, dataset, x, y, 'blue');
+        var series = new insight.ColumnSeries('chart', dataset, x, y, 'blue');
 
         //Then:
         var observedResult = y.calculateBounds();
@@ -222,7 +222,7 @@ describe('Axis Tests', function() {
         var x = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Linear, 'left');
         var y = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Ordinal, 'left');
 
-        var series = new insight.RowSeries('chart', chart, dataset, x, y, 'blue');
+        var series = new insight.RowSeries('chart', dataset, x, y, 'blue');
 
         //Then:
         var observedResult = x.calculateBounds();
@@ -243,7 +243,7 @@ describe('Axis Tests', function() {
         var x = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Linear, 'left');
         var y = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Ordinal, 'left');
 
-        var series = new insight.RowSeries('chart', chart, dataset, x, y, 'blue');
+        var series = new insight.RowSeries('chart', dataset, x, y, 'blue');
 
         //Then:
         var observedResult = x.calculateBounds();
@@ -467,7 +467,7 @@ describe('Axis Tests', function() {
                 {"key": 2, "value": 2},
                 {"key": 3, "value": 3}
             ]);
-            var lineSeries = new insight.LineSeries('line', chart, data, x, y);
+            var lineSeries = new insight.LineSeries('line', data, x, y);
             chart.series([lineSeries]);
 
             insight.drawCharts();
@@ -507,7 +507,7 @@ describe('Axis Tests', function() {
                 {"key": 2, "value": 2},
                 {"key": 3, "value": 3}
             ]);
-            var lineSeries = new insight.LineSeries('line', chart, data, x, y);
+            var lineSeries = new insight.LineSeries('line', data, x, y);
             chart.series([lineSeries]);
 
             insight.drawCharts();

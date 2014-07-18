@@ -2,15 +2,14 @@
  * The LineSeries class extends the Series class and draws horizontal bars on a Chart
  * @class insight.LineSeries
  * @param {string} name - A uniquely identifying name for this chart
- * @param {Chart} chart - The parent chart object
  * @param {DataSet} data - The DataSet containing this series' data
  * @param {insight.Scales.Scale} x - the x axis
  * @param {insight.Scales.Scale} y - the y axis
  * @param {object} color - a string or function that defines the color to be used for the items in this series
  */
-insight.LineSeries = function LineSeries(name, chart, data, x, y, color) {
+insight.LineSeries = function LineSeries(name, data, x, y, color) {
 
-    insight.Series.call(this, name, chart, data, x, y, color);
+    insight.Series.call(this, name, data, x, y, color);
 
     var self = this;
 
@@ -65,7 +64,7 @@ insight.LineSeries = function LineSeries(name, chart, data, x, y, color) {
         return this;
     };
 
-    this.draw = function(dragging) {
+    this.draw = function(chart, dragging) {
         var transform = d3.svg.line()
             .x(self.rangeX)
             .y(self.rangeY)
@@ -75,14 +74,14 @@ insight.LineSeries = function LineSeries(name, chart, data, x, y, color) {
 
         var rangeIdentifier = "path." + this.name + ".in-line";
 
-        var rangeElement = this.chart.chart.selectAll(rangeIdentifier);
+        var rangeElement = chart.chart.selectAll(rangeIdentifier);
 
         if (!this.rangeExists(rangeElement)) {
-            this.chart.chart.append("path")
+            chart.chart.append("path")
                 .attr("class", this.name + " in-line")
                 .attr("stroke", this.color)
                 .attr("fill", "none")
-                .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
+                .attr("clip-path", "url(#" + chart.clipPath() + ")")
                 .on('mouseover', lineOver)
                 .on('mouseout', lineOut)
                 .on('click', lineClick);
@@ -92,22 +91,22 @@ insight.LineSeries = function LineSeries(name, chart, data, x, y, color) {
             return 300 + i * 20;
         };
 
-        this.chart.chart.selectAll(rangeIdentifier)
+        chart.chart.selectAll(rangeIdentifier)
             .datum(this.dataset(), this.matcher)
             .transition()
             .duration(duration)
             .attr("d", transform);
 
-        var circles = this.chart.chart.selectAll("circle")
+        var circles = chart.chart.selectAll("circle")
             .data(this.dataset());
 
         circles.enter()
             .append('circle')
             .attr('class', 'target-point')
-            .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
+            .attr("clip-path", "url(#" + chart.clipPath() + ")")
             .attr("cx", self.rangeX)
-            .attr("cy", self.chart.height() - self.chart.margin()
-                .bottom - self.chart.margin()
+            .attr("cy", chart.height() - chart.margin()
+                .bottom - chart.margin()
                 .top)
             .on('mouseover', mouseOver)
             .on('mouseout', mouseOut);

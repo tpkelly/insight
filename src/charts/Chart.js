@@ -96,7 +96,7 @@
 
                 this.series()
                     .map(function(series) {
-                        series.draw(dragging);
+                        series.draw(self, dragging);
                     });
             };
 

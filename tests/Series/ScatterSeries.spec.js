@@ -21,7 +21,7 @@ describe('ScatterSeries', function() {
         var xAxis = new insight.Axis(chart, '', 'h', insight.Scales.Linear);
         var yAxis = new insight.Axis(chart, '', 'v', insight.Scales.Linear);
 
-        series = new insight.ScatterSeries('ScatterSeries', chart, dataset, xAxis, yAxis, 'silver');
+        series = new insight.ScatterSeries('ScatterSeries', dataset, xAxis, yAxis, 'silver');
         chart.series([series]);
 
     });

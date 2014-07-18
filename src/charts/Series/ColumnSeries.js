@@ -2,15 +2,14 @@
  * The ColumnSeries class extends the Series class and draws vertical bars on a Chart
  * @class insight.ColumnSeries
  * @param {string} name - A uniquely identifying name for this chart
- * @param {Chart} chart - The parent chart object
  * @param {DataSet} data - The DataSet containing this series' data
  * @param {insight.Scales.Scale} x - the x axis
  * @param {insight.Scales.Scale} y - the y axis
  * @param {object} color - a string or function that defines the color to be used for the items in this series
  */
-insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
+insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
-    insight.Series.call(this, name, chart, data, x, y, color);
+    insight.Series.call(this, name, data, x, y, color);
 
     var self = this;
     var stacked = d3.functor(false);
@@ -151,14 +150,6 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
         return position;
     };
 
-    this.barHeight = function(d) {
-        var func = self.currentSeries.accessor;
-
-        return (self.chart.height() - self.chart.margin()
-            .top - self.chart.margin()
-            .bottom) - self.y.scale(func(d));
-    };
-
     this.stackedBars = function() {
         return self.stacked();
     };
@@ -168,9 +159,7 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
     this.className = function(d) {
         var dimension = self.sliceSelector(d);
 
-        var selected = self.selectedClassName(dimension);
-
-        return seriesName + 'class bar ' + dimension + " " + selected + " " + self.dimensionName;
+        return seriesName + 'class bar ' + dimension + " " + self.dimensionName;
     };
 
     var click = function(filter) {
@@ -181,7 +170,7 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
         return 200 + (i * 20);
     };
 
-    this.draw = function(drag) {
+    this.draw = function(chart, drag) {
 
         var reset = function(d) {
             d.yPos = 0;
@@ -191,7 +180,7 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
         var d = this.dataset()
             .forEach(reset);
 
-        var groups = this.chart.chart
+        var groups = chart.chart
             .selectAll('g.' + insight.Constants.BarGroupClass)
             .data(this.dataset(), this.keyAccessor);
 
@@ -200,6 +189,14 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
             .attr('class', insight.Constants.BarGroupClass);
 
         var newBars = newGroups.selectAll('rect.bar');
+
+        var barHeight = function(d) {
+            var func = self.currentSeries.accessor;
+
+            return (chart.height() - chart.margin()
+                .top - chart.margin()
+                .bottom) - self.y.scale(func(d));
+        };
 
         for (var seriesIndex in this.series) {
 
@@ -212,7 +209,7 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
                 .attr('y', this.y.bounds[0])
                 .attr('height', 0)
                 .attr('fill', this.currentSeries.color)
-                .attr('clip-path', 'url(#' + this.chart.clipPath() + ')')
+                .attr('clip-path', 'url(#' + chart.clipPath() + ')')
                 .on('mouseover', this.mouseOver)
                 .on('mouseout', this.mouseOut)
                 .on('click', click);
@@ -228,7 +225,7 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
                 .attr('y', this.yPosition)
                 .attr('x', this.offsetXPosition)
                 .attr('width', this.groupedBarWidth)
-                .attr('height', this.barHeight);
+                .attr('height', barHeight);
 
             bars.selectAll('.' + insight.Constants.ToolTipTextClass)
                 .text(tooltipFunction);

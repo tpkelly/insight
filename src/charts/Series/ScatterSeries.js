@@ -2,15 +2,14 @@
  * The ScatterSeries class extends the Series class
  * @class insight.ScatterSeries
  * @param {string} name - A uniquely identifying name for this chart
- * @param {Chart} chart - The parent chart object
  * @param {DataSet} data - The DataSet containing this series' data
  * @param {insight.Scales.Scale} x - the x axis
  * @param {insight.Scales.Scale} y - the y axis
  * @param {object} color - a string or function that defines the color to be used for the items in this series
  */
-insight.ScatterSeries = function ScatterSeries(name, chart, data, x, y, color) {
+insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
 
-    insight.Series.call(this, name, chart, data, x, y, color);
+    insight.Series.call(this, name, data, x, y, color);
 
     var radiusFunction = d3.functor(3);
     var opacityFunction = d3.functor(1);
@@ -140,7 +139,7 @@ insight.ScatterSeries = function ScatterSeries(name, chart, data, x, y, color) {
         return data;
     };
 
-    this.draw = function(drag) {
+    this.draw = function(chart, drag) {
         var duration = drag ? 0 : function(d, i) {
             return 200 + (i * 20);
         };
@@ -151,7 +150,7 @@ insight.ScatterSeries = function ScatterSeries(name, chart, data, x, y, color) {
 
         var scatterData = this.scatterData(this.dataset());
 
-        var points = this.chart.chart.selectAll('circle.' + selector)
+        var points = chart.chart.selectAll('circle.' + selector)
             .data(scatterData);
 
         points.enter()
