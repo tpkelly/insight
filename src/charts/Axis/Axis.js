@@ -17,6 +17,7 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
     this.bounds = [];
     this.direction = direction;
     this.series = [];
+    this.gridlines = new insight.AxisGridlines(this);
 
     var self = this;
     var label = name;
@@ -346,6 +347,9 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
         return transform;
     };
 
+    this.pixelValueForValue = function(d) {
+        return self.scale(d);
+    };
 
     /**
      * This method positions the text label for the axis (not the tick labels)
@@ -380,61 +384,6 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
 
         return this;
     };
-
-    /** Returns the array of all gridlines for this axis. */
-    this.gridlines = function() {
-        var gridLineIdentifier = 'line.' + label;
-        return this.chart.chart.selectAll(gridLineIdentifier);
-    };
-
-
-    this.drawGridLines = function() {
-
-        var ticks = this.scale.ticks();
-
-        var attributes = {
-            'class': label,
-            'fill': 'none',
-            'shape-rendering': 'crispEdges',
-            'stroke': this.color,
-            'stroke-width': '1px'
-        };
-        var chartMargin = self.chart.margin();
-        var margin = self.chart.margin();
-        var valueFunction = function(d) {
-            return self.scale(d);
-        };
-
-        if (self.horizontal()) {
-            attributes.x1 = valueFunction;
-            attributes.x2 = valueFunction;
-            attributes.y1 = 0;
-            attributes.y2 = self.chart.height() - chartMargin.top - chartMargin.bottom;
-        } else {
-            attributes.x1 = 0;
-            attributes.x2 = self.chart.width() - chartMargin.left - chartMargin.right;
-            attributes.y1 = valueFunction;
-            attributes.y2 = valueFunction;
-        }
-
-        //Get all lines, and add new datapoints.
-        var gridLines = this.gridlines()
-            .data(ticks);
-
-        //Add lines for all new datapoints
-        gridLines
-            .enter()
-            .append('line');
-
-        //Update position of all lines
-        gridLines.attr(attributes);
-
-        //Remove any lines which are no longer in the data
-        gridLines.exit()
-            .remove();
-
-    };
-
 
     this.initializeScale = function() {
         applyScaleRange.call(this.scale.domain(this.domain()), this.rangeType);
@@ -502,7 +451,7 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
                 .text(this.label());
 
             if (showGridLines) {
-                this.drawGridLines();
+                this.gridlines.drawGridLines(this.scale.ticks());
             }
         }
     };
