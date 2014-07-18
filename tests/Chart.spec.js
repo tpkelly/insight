@@ -389,4 +389,120 @@ describe('Chart', function() {
             });
         });
     });
+
+    describe('autosize margins', function() {
+
+        var chart;
+        var xAxis;
+        var yAxis;
+
+        //Set up tests
+        beforeEach(function() {
+            chart = new insight.Chart('asda', 'asdads', 'ada');
+
+            xAxis = new insight.Axis(chart, 'xAxis', 'h', insight.Scales.Linear, 'bottom');
+            yAxis = new insight.Axis(chart, 'yAxis', 'v', insight.Scales.Linear, 'left');
+        });
+
+        it('margins are 0 when no series on chart', function() {
+            //Given:
+            chart.series([]);
+
+            //When:
+            chart.calculateLabelMargin();
+
+            //Then:
+            expect(chart.margin()).toEqual({"top":0,"left":0,"right":0,"bottom":0});
+        });
+
+        it('margins are 0 when series has no data', function() {
+            //Given:
+            var series = new insight.Series('testSeries', chart, new insight.DataSet([]), xAxis, yAxis, 'silver');
+            chart.series([series]);
+
+            //When:
+            chart.calculateLabelMargin();
+
+            //Then:
+            expect(chart.margin()).toEqual({"top":0,"left":0,"right":0,"bottom":0});
+        });
+
+        it('bottom margins are expanded when x-axis has labels', function() {
+            //Given:
+            var series = new insight.Series('testSeries', chart, new insight.DataSet([]), xAxis, yAxis, 'silver');
+            series.maxLabelDimensions = function() {
+                return maxDimensions = {
+                    "maxKeyWidth": 5,
+                    "maxValueWidth": 0
+                };
+            };
+
+            chart.series([series]);
+
+            //When:
+            chart.calculateLabelMargin();
+
+            //Then:
+            expect(chart.margin()).toEqual({"top":0,"left":0,"right":0,"bottom":5});
+        });
+
+        it('left margins are expanded when y-axis has labels', function() {
+            //Given:
+            var series = new insight.Series('testSeries', chart, new insight.DataSet([]), xAxis, yAxis, 'silver');
+            series.maxLabelDimensions = function() {
+                return maxDimensions = {
+                    "maxKeyWidth": 0,
+                    "maxValueWidth": 5
+                };
+            };
+
+            chart.series([series]);
+
+            //When:
+            chart.calculateLabelMargin();
+
+            //Then:
+            expect(chart.margin()).toEqual({"top":0,"left":5,"right":0,"bottom":0});
+        });
+
+        it('right margins are expanded when y-axis is reversed', function() {
+            //Given:
+            yAxis = new insight.Axis(chart, 'yAxis', 'v', insight.Scales.Linear, 'right');
+            var series = new insight.Series('testSeries', chart, new insight.DataSet([]), xAxis, yAxis, 'silver');
+            series.maxLabelDimensions = function() {
+                return maxDimensions = {
+                    "maxKeyWidth": 0,
+                    "maxValueWidth": 5
+                };
+            };
+
+            chart.series([series]);
+
+            //When:
+            chart.calculateLabelMargin();
+
+            //Then:
+            expect(chart.margin()).toEqual({"top":0,"left":0,"right":5,"bottom":0});
+        });
+
+        it('top margins are expanded when x-axis is reversed', function() {
+            //Given:
+            xAxis = new insight.Axis(chart, 'xAxis', 'h', insight.Scales.Linear, 'top');
+            var series = new insight.Series('testSeries', chart, new insight.DataSet([]), xAxis, yAxis, 'silver');
+            series.maxLabelDimensions = function() {
+                return maxDimensions = {
+                    "maxKeyWidth": 5,
+                    "maxValueWidth":0
+                };
+            };
+
+            chart.series([series]);
+
+            //When:
+            chart.calculateLabelMargin();
+
+            //Then:
+            expect(chart.margin()).toEqual({"top":5,"left":0,"right":0,"bottom":0});
+        });
+    });
 });
