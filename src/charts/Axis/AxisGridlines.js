@@ -6,6 +6,8 @@
 insight.AxisGridlines = function AxisGridlines(axis) {
 
     this.parentAxis = axis;
+    var lineColor = '#777';
+    var lineWidth = 1;
 
     /** Returns the array of all gridlines for this axis. */
     this.allGridlines = function() {
@@ -13,6 +15,22 @@ insight.AxisGridlines = function AxisGridlines(axis) {
         return this.parentAxis.chart.chart.selectAll(gridLineIdentifier);
     };
 
+
+    this.lineColor = function(value) {
+        if (!arguments.length) {
+            return lineColor;
+        }
+        lineColor = value;
+        return this;
+    };
+
+    this.lineWidth = function(value) {
+        if (!arguments.length) {
+            return lineWidth;
+        }
+        lineWidth = value;
+        return this;
+    };
 
     /** Draw all gridlines for a given set of ticks
      *
@@ -23,8 +41,8 @@ insight.AxisGridlines = function AxisGridlines(axis) {
             'class': this.parentAxis.label(),
             'fill': 'none',
             'shape-rendering': 'crispEdges',
-            'stroke': 'silver',
-            'stroke-width': '1px'
+            'stroke': lineColor,
+            'stroke-width': lineWidth
         };
         var chartMargin = this.parentAxis.chart.margin();
         var axis = this.parentAxis;
