@@ -59,7 +59,7 @@
                     .attr('width', this.width())
                     .attr('height', this.height());
 
-                this.chart = this.chartSVG.append('g')
+                this.plotArea = this.chartSVG.append('g')
                     .attr('class', insight.Constants.Chart)
                     .attr('transform', 'translate(' + this.margin()
                         .left + ',' + this.margin()
@@ -109,7 +109,7 @@
             };
 
             this.addClipPath = function() {
-                this.chart.append('clipPath')
+                this.plotArea.append('clipPath')
                     .attr('id', this.clipPath())
                     .append('rect')
                     .attr('x', 1)
@@ -130,12 +130,12 @@
                     .attr('width', this.width())
                     .attr('height', this.height());
 
-                this.chart = this.chart
+                this.plotArea = this.plotArea
                     .attr('transform', 'translate(' + this.margin()
                         .left + ',' + this.margin()
                         .top + ')');
 
-                this.chart.select('#' + this.clipPath())
+                this.plotArea.select('#' + this.clipPath())
                     .append('rect')
                     .attr('x', 1)
                     .attr('y', 0)
@@ -173,7 +173,7 @@
                 this.zoom.x(zoomAxis.scale);
 
                 if (!this.zoomExists()) {
-                    this.chart.append('rect')
+                    this.plotArea.append('rect')
                         .attr('class', 'zoompane')
                         .attr('width', this.width())
                         .attr('height', this.height() - this.margin()
@@ -183,12 +183,12 @@
                         .style('pointer-events', 'all');
                 }
 
-                this.chart.select('.zoompane')
+                this.plotArea.select('.zoompane')
                     .call(this.zoom);
             };
 
             this.zoomExists = function() {
-                var z = this.chart.selectAll('.zoompane');
+                var z = this.plotArea.selectAll('.zoompane');
                 return z[0].length;
             };
 
@@ -226,7 +226,7 @@
                         return '<span class="tipvalue">' + d + '</span>';
                     });
 
-                this.chart.call(this.tip);
+                this.plotArea.call(this.tip);
 
                 return this;
             };
@@ -307,7 +307,7 @@
 
             this.highlight = function(selector, value) {
 
-                var clicked = this.chart.selectAll('.' + selector);
+                var clicked = this.plotArea.selectAll('.' + selector);
                 var alreadySelected = clicked.classed('selected');
 
                 if (alreadySelected) {
@@ -319,8 +319,8 @@
                     self.selectedItems.push(selector);
                 }
 
-                var selected = this.chart.selectAll('.selected');
-                var notselected = this.chart.selectAll('.bar:not(.selected),.bubble:not(.selected)');
+                var selected = this.plotArea.selectAll('.selected');
+                var notselected = this.plotArea.selectAll('.bar:not(.selected),.bubble:not(.selected)');
 
                 notselected.classed('notselected', selected[0].length > 0);
             };

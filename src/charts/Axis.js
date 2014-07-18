@@ -384,7 +384,7 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
     /** Returns the array of all gridlines for this axis. */
     this.gridlines = function() {
         var gridLineIdentifier = 'line.' + label;
-        return this.chart.chart.selectAll(gridLineIdentifier);
+        return this.chart.plotArea.selectAll(gridLineIdentifier);
     };
 
 
@@ -454,7 +454,7 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
                 .tickPadding(self.tickPadding())
                 .tickFormat(self.labelFormat());
 
-            this.axisElement = this.chart.chart.append('g');
+            this.axisElement = this.chart.plotArea.append('g');
 
             this.axisElement
                 .attr('class', insight.Constants.AxisClass)

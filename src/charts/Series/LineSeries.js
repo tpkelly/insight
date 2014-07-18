@@ -74,10 +74,10 @@ insight.LineSeries = function LineSeries(name, data, x, y, color) {
 
         var rangeIdentifier = "path." + this.name + ".in-line";
 
-        var rangeElement = chart.chart.selectAll(rangeIdentifier);
+        var rangeElement = chart.plotArea.selectAll(rangeIdentifier);
 
         if (!this.rangeExists(rangeElement)) {
-            chart.chart.append("path")
+            chart.plotArea.append("path")
                 .attr("class", this.name + " in-line")
                 .attr("stroke", this.color)
                 .attr("fill", "none")
@@ -91,13 +91,13 @@ insight.LineSeries = function LineSeries(name, data, x, y, color) {
             return 300 + i * 20;
         };
 
-        chart.chart.selectAll(rangeIdentifier)
+        chart.plotArea.selectAll(rangeIdentifier)
             .datum(this.dataset(), this.matcher)
             .transition()
             .duration(duration)
             .attr("d", transform);
 
-        var circles = chart.chart.selectAll("circle")
+        var circles = chart.plotArea.selectAll("circle")
             .data(this.dataset());
 
         circles.enter()

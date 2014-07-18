@@ -180,7 +180,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
         var d = this.dataset()
             .forEach(reset);
 
-        var groups = chart.chart
+        var groups = chart.plotArea
             .selectAll('g.' + insight.Constants.BarGroupClass)
             .data(this.dataset(), this.keyAccessor);
 

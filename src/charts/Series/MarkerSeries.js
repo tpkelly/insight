@@ -150,7 +150,7 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
         var d = this.dataset()
             .forEach(reset);
 
-        var groups = chart.chart
+        var groups = chart.plotArea
             .selectAll('g.' + insight.Constants.BarGroupClass + "." + this.name)
             .data(this.dataset(), this.keyAccessor);
 
