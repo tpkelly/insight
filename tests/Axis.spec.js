@@ -471,12 +471,11 @@ describe('Axis Tests', function() {
             chart.series([lineSeries]);
 
             insight.drawCharts();
+            removeChartElement();
 
             //Then:
             // One per tickmark, between 0 and 3 by 0.5 steps (inclusive).
-            expect(y.gridlines()).toBeCloseTo([]);
-
-            removeChartElement();
+            expect(y.gridlines.allGridlines()).toBeCloseTo([]);
         });
 
         it('multiple gridlines when gridlines are visible', function () {
@@ -511,12 +510,11 @@ describe('Axis Tests', function() {
             chart.series([lineSeries]);
 
             insight.drawCharts();
+            removeChartElement();
 
             //Then:
             // One per tickmark, between 0 and 3 by 0.5 steps (inclusive).
-            expect(y.gridlines()[0].length).toEqual(7);
-
-            removeChartElement();
+            expect(y.gridlines.allGridlines()[0].length).toEqual(7);
         });
 
     });
