@@ -202,18 +202,29 @@ insight.Series = function Series(name, chart, data, x, y, color) {
         var ctx = measureCanvas.getContext('2d');
         ctx.font = style['font-size'] + ' ' + style['font-family'];
 
-        var max = 0;
+        var maxDimensions = {
+            "maxKeyWidth": 0,
+            "maxKeyHeight": 0,
+            "maxValueWidth": 0,
+            "maxValueHeight": 0
+        };
+
+        var data = this.dataset();
 
         this.keys()
             .forEach(function(key) {
 
-                var width = ctx.measureText(key)
-                    .width;
+                var value = data[key];
+                var keyDimensions = ctx.measureText(key);
+                var valueDimensions = ctx.measureText(value);
 
-                max = width > max ? width : max;
+                maxDimensions.maxKeyWidth = Math.max(keyDimensions.width, maxDimensions.maxKeyWidth);
+                maxDimensions.maxKeyHeight = Math.max(keyDimensions.height, maxDimensions.maxKeyHeight);
+                maxDimensions.maxValueWidth = Math.max(valueDimensions.width, maxDimensions.maxValueWidth);
+                maxDimensions.maxValueHeight = Math.max(valueDimensions.height, maxDimensions.maxValueHeight);
             });
 
-        return max;
+        return maxDimensions;
     };
 
 

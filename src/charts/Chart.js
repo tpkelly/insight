@@ -334,15 +334,22 @@
 
             var canvas = this.measureCanvas;
             var max = 0;
+            var margin = {
+                "top": 0,
+                "left": 0,
+                "bottom": 0,
+                "right": 0
+            };
 
             this.series()
                 .forEach(function(series) {
-                    var m = series.maxLabelDimensions(canvas);
-                    max = m > max ? m : max;
+                    var labelDimensions = series.maxLabelDimensions(canvas);
+
+                    margin[series.x.anchor] = Math.max(labelDimensions.maxKeyWidth, margin[series.x.anchor]);
+                    margin[series.y.anchor] = Math.max(labelDimensions.maxValueWidth, margin[series.y.anchor]);
                 });
 
-            this.margin()
-                .bottom = max;
+            this.margin(margin);
         };
 
         return Chart;
