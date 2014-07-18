@@ -31,9 +31,11 @@ $(document)
             var xScale = new insight.Axis(chart, 'Time', 'h', insight.Scales.Time, 'bottom')
                 .tickRotation(90)
                 .tickOrientation('tb')
-                .labelFormat(InsightFormatters.dateFormatter);
+                .labelFormat(InsightFormatters.dateFormatter)
+                .showGridlines(true);
 
-            var yScale = new insight.Axis(chart, 'Revenue', 'v', insight.Scales.Linear, 'left');
+            var yScale = new insight.Axis(chart, 'Revenue', 'v', insight.Scales.Linear, 'left')
+                .showGridlines(true);
 
             var line = new insight.LineSeries('valueLine', chart, dateData, xScale, yScale, '#aae')
                 .tooltipFormat(InsightFormatters.currencyFormatter)
