@@ -209,10 +209,12 @@ insight.Series = function Series(name, chart, data, x, y, color) {
             "maxValueHeight": 0
         };
 
+        var data = this.dataset();
+
         this.keys()
             .forEach(function(key) {
 
-                var value = this.data[key];
+                var value = data[key];
                 var keyDimensions = ctx.measureText(key);
                 var valueDimensions = ctx.measureText(value);
 
