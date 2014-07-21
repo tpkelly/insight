@@ -87,7 +87,7 @@ insight.Series = function Series(name, chart, data, x, y, color) {
         var orderFunction = null;
 
         if (this.valueAxis.ordered()) {
-            
+
             orderFunction = function(a, b) {
                 return self.valueFunction()(b) - self.valueFunction()(a);
             };

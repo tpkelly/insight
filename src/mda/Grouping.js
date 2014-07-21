@@ -18,12 +18,7 @@ insight.Grouping = (function(insight) {
         var linkedSeries = [];
         var ordered = false;
 
-        this._compute = null;
         this.gIndices = {};
-
-        this._valueAccessor = function(d) {
-            return d;
-        };
 
         var orderFunction = function(a, b) {
             return b.value.Count - a.value.Count;
@@ -107,29 +102,11 @@ insight.Grouping = (function(insight) {
             return this;
         };
 
-        /**
-         * This getter/setter defines the post aggregation function that will be run once dimension map-reduce has been performed.  Used for any calculations that require the outputs of the map-reduce stage.
-         * @returns {function}
-         */
-        /**
-         * @param {function} compareFunction - A function taking two parameters, that compares them and returns a value greater than 0 then the second parameter will be lower in the ordering than the first.
-         * @returns {this}
-         */
-        this.computeFunction = function(c) {
-            ordered = true;
-            if (!arguments.length) {
-                return this._compute;
-            }
-            this._compute = c.bind(this);
-            return this;
-        };
-
 
         /**
-         * This method gets or sets the function used to compare the elements in this grouping if sorting is requested.  See <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">MDN</a> for examples of comparison functions.
+         * This method gets or sets the function used to compare the elements in this grouping if sorting is requested.
          * @returns {this}
-         * @param {function} function - The function to be run once once map-reduce has been performed.
-         * @todo Auto-bind to this inside the setter?
+         * @param {function} function - The comparison function to be used to sort the elements in this group.  The function should take the form of a standard {@link https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/sort|Javascript comparison function}.
          */
         this.orderFunction = function(o) {
             if (!arguments.length) {
@@ -139,12 +116,14 @@ insight.Grouping = (function(insight) {
             return this;
         };
 
+
+
         /**
          * Gets or sets whether the group's data is ordered.
-         * @returns {String[]}
+         * @returns {boolean}
          */
         /**
-         * @param {boolean} order - a boolean for whether to order the group's values
+         * @param {boolean} ordered - a boolean for whether to order the group's values
          * @returns {this}
          */
         this.ordered = function(_) {
@@ -373,25 +352,18 @@ insight.Grouping = (function(insight) {
         }
         this._data = data;
 
-        this.postAggregationCalculations();
+        this.recalculate();
 
         return this;
     };
 
     /**
-     * This method is called when any post aggregation calculations, provided by the computeFunction() setter, need to be recalculated.
+     * This method is called when any post aggregation calculations need to be recalculated.
      * For example, calculating group percentages after totals have been created during map-reduce.
-     * @param {object[]} data - The short name used to identify this dimension, and any linked dimensions sharing the same name
      */
     Grouping.prototype.recalculate = function() {
 
-        var propertiesToAverage = this.mean();
-
         this.postAggregationCalculations();
-
-        if (this._compute) {
-            this._compute();
-        }
     };
 
 
@@ -428,21 +400,6 @@ insight.Grouping = (function(insight) {
         }
 
         return data;
-    };
-
-
-
-
-    Grouping.prototype.compute = function() {
-        this._compute();
-    };
-
-    Grouping.prototype.valueAccessor = function(v) {
-        if (!arguments.length) {
-            return this._valueAccessor;
-        }
-        this._valueAccessor = v;
-        return this;
     };
 
 

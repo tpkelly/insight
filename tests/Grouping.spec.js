@@ -78,39 +78,27 @@ describe('Grouping tests', function() {
         // Given
         var data = new insight.DataSet(sourceData);
         
-        var group =  data.group('country', function(d){return d.Country;});
+        var group =  data.group('country', function(d){return d.Country;});        
         var age =  data.group('age', function(d){return d.Age;});
 
         group.mean(['IQ']);
 
+        // When 
+
         var data = group.getData();
         
-        scotland = data.filter(function(country){ return country.key=='Scotland'; })[0];
-        england = data.filter(function(country){ return country.key=='England'; })[0];
-        
-        var actualValueScotland = scotland.value.IQ.Average;
-        var expectedValueScotland = 268/3;
-        
-        var actualValueEngland = england.value.IQ.Average;
-        var expectedValueEngland = 589/7;
-
-        var expectedCount = 3;
-        var actualCount = scotland.value.Count;
-
-        expect(actualValueScotland).toBe(expectedValueScotland);
-        expect(actualValueEngland).toBe(expectedValueEngland);
-        expect(actualCount).toBe(expectedCount);
-
-        //filter age by people older than 10, to remove an entry from the scotland group and hopefully trigger a recalculation of the property counts
+        //filter age by people older than 10, to remove an entry from the scotland group
         age.dimension.Dimension.filter(function(d){
             return d > 10;
         });
 
-        group.postAggregationCalculations();
+        group.recalculate();
 
         scotland = data.filter(function(country){ return country.key=='Scotland'; })[0];
         england = data.filter(function(country){ return country.key=='England'; })[0];
         
+        // Then
+
         actualValueScotland = scotland.value.IQ.Average;
         expectedValueScotland = 199/2;
 
@@ -122,25 +110,7 @@ describe('Grouping tests', function() {
 
         expect(actualValueScotland).toBe(expectedValueScotland);
         expect(actualValueEngland).toBe(expectedValueEngland);
-
-        expect(actualCount).toBe(expectedCount);
-        
-        // clear previous filter
-        age.dimension.Dimension.filter();
-        group.postAggregationCalculations();
-
-        scotland = data.filter(function(country){ return country.key=='Scotland'; })[0];
-        england = data.filter(function(country){ return country.key=='England'; })[0];
-        
-        var actualValueScotland = scotland.value.IQ.Average;
-        var expectedValueScotland = 268/3;
-        
-        var actualValueEngland = england.value.IQ.Average;
-        var expectedValueEngland = 589/7;
-
-        expect(actualValueScotland).toBe(expectedValueScotland);
-        expect(actualValueEngland).toBe(expectedValueEngland);
-
+        expect(actualCount).toBe(expectedCount);        
     });
 
 
@@ -250,7 +220,7 @@ describe('Grouping tests', function() {
             return d > 10;
         });
 
-        group.postAggregationCalculations();
+        group.recalculate();
 
         scotland = group.getData().filter(function(country){ return country.key=='Scotland'; })[0];
 
