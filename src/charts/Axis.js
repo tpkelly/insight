@@ -7,15 +7,15 @@
  * @param {insight.Scales.Scale} scale - insight.Scale.Linear for example
  * @param {string} anchor - 'left/right/top/bottom'
  */
-insight.Axis = function Axis(name, direction, scale, anchor) {
+insight.Axis = function Axis(name, scale, anchor) {
 
     this.scaleType = scale.name;
     this.scale = scale.scale();
     this.anchor = anchor ? anchor : 'left';
     this.rangeType = this.scale.rangeRoundBands ? this.scale.rangeRoundBands : this.scale.rangeRound;
     this.bounds = [0, 0];
-    this.direction = direction;
     this.series = [];
+    this.direction = '';
 
     var self = this;
     var label = name;
@@ -24,20 +24,13 @@ insight.Axis = function Axis(name, direction, scale, anchor) {
     var tickPadding = d3.functor(10);
     var labelRotation = '90';
     var tickOrientation = d3.functor('lr');
-    var orientation = direction == 'h' ? d3.functor(this.anchor) : d3.functor(this.anchor);
-    var textAnchor;
+    var orientation = d3.functor(this.anchor);
+    var textAnchor = (anchor == 'left' || anchor == 'top') ? 'end' : 'start';
     var showGridLines = false;
     var colorFunction = d3.functor('#777');
     var display = true;
     var barPadding = d3.functor(0.1);
     var initialisedAxisView = false;
-
-    if (direction == 'v') {
-        textAnchor = this.anchor == 'left' ? 'end' : 'start';
-    }
-    if (direction == 'h') {
-        textAnchor = 'start';
-    }
 
     // private functions
 

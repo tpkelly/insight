@@ -10,10 +10,10 @@ describe("Series Tests", function(){
 
     beforeEach(function() {
         chart = new insight.Chart('Chart', '#chart');
-        xScale = new insight.Axis('x-axis', 'h', insight.Scales.Linear, 'bottom');
-        yScale = new insight.Axis('y-axis', 'v', insight.Scales.Linear, 'left');
-        chart.addAxis(xScale);
-        chart.addAxis(yScale);
+        xScale = new insight.Axis('x-axis', insight.Scales.Linear, 'bottom');
+        yScale = new insight.Axis('y-axis', insight.Scales.Linear, 'left');
+        chart.addXAxis(xScale);
+        chart.addYAxis(yScale);
     });
 
    it("Dataset is empty when no data given", function(){

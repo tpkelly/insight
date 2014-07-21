@@ -15,10 +15,10 @@ describe('Bubble Series Tests', function() {
             .width(250)
             .height(250);
 
-        var xAxis = new insight.Axis('', 'h', insight.Scales.Linear, 'bottom');
-        var yAxis = new insight.Axis('', 'v', insight.Scales.Linear, 'left');
-        chart.addAxis(xAxis);
-        chart.addAxis(yAxis);
+        var xAxis = new insight.Axis('', insight.Scales.Linear, 'bottom');
+        var yAxis = new insight.Axis('', insight.Scales.Linear, 'left');
+        chart.addXAxis(xAxis);
+        chart.addYAxis(yAxis);
 
         var series = new insight.BubbleSeries('BubbleSeries', dataset, xAxis, yAxis, 'silver')
             .radiusFunction(function(d) {
@@ -52,10 +52,10 @@ describe('Bubble Series Tests', function() {
             .width(250)
             .height(250);
 
-        var xAxis = new insight.Axis('', 'h', insight.Scales.Linear);
-        var yAxis = new insight.Axis('', 'v', insight.Scales.Linear);
-        chart.addAxis(xAxis);
-        chart.addAxis(yAxis);
+        var xAxis = new insight.Axis('', insight.Scales.Linear);
+        var yAxis = new insight.Axis('', insight.Scales.Linear);
+        chart.addXAxis(xAxis);
+        chart.addYAxis(yAxis);
 
         var series = new insight.BubbleSeries('BubbleSeries', dataset, xAxis, yAxis, 'silver')
             .radiusFunction(function(d) {
@@ -86,10 +86,10 @@ describe('Bubble Series Tests', function() {
             .width(250)
             .height(250);
 
-        var xAxis = new insight.Axis('', 'h', insight.Scales.Linear);
-        var yAxis = new insight.Axis('', 'v', insight.Scales.Linear);
-        chart.addAxis(xAxis);
-        chart.addAxis(yAxis);
+        var xAxis = new insight.Axis('', insight.Scales.Linear);
+        var yAxis = new insight.Axis('', insight.Scales.Linear);
+        chart.addXAxis(xAxis);
+        chart.addYAxis(yAxis);
 
         var series = new insight.BubbleSeries('BubbleSeries', dataset, xAxis, yAxis, 'silver')
             .radiusFunction(function(d) {

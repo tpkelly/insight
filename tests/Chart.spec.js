@@ -71,7 +71,8 @@ describe('Chart', function() {
 
         it('axes empty', function() {
 
-            expect(chart.axes()).toEqual([]);
+            expect(chart.xAxes()).toEqual([]);
+            expect(chart.yAxes()).toEqual([]);
 
         });
 
@@ -157,13 +158,13 @@ describe('Chart', function() {
 
             var chart = new insight.Chart();
 
-            expect(chart.axes()).toEqual([]);
+            expect(chart.xAxes()).toEqual([]);
 
             var a = {};
 
-            chart.addAxis(a);
+            chart.addXAxis(a);
 
-            expect(chart.axes()[0]).toBe(a);
+            expect(chart.xAxes()[0]).toBe(a);
 
         });
 
@@ -358,11 +359,11 @@ describe('Chart', function() {
         beforeEach(function() {
             chart = new insight.Chart('asda', 'asdads', 'ada');
 
-            xAxis = new insight.Axis('xAxis', 'h', insight.Scales.Linear, 'bottom');
-            yAxis = new insight.Axis('yAxis', 'v', insight.Scales.Linear, 'left');
+            xAxis = new insight.Axis('xAxis', insight.Scales.Linear, 'bottom');
+            yAxis = new insight.Axis('yAxis', insight.Scales.Linear, 'left');
 
-            chart.addAxis(xAxis);
-            chart.addAxis(yAxis);
+            chart.addXAxis(xAxis);
+            chart.addYAxis(yAxis);
         });
 
         it('margins are 0 when no series on chart', function() {
@@ -428,7 +429,7 @@ describe('Chart', function() {
 
         it('right margins are expanded when y-axis is reversed', function() {
             //Given:
-            yAxis = new insight.Axis('yAxis', 'v', insight.Scales.Linear, 'right');
+            yAxis = new insight.Axis('yAxis', insight.Scales.Linear, 'right');
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
             series.maxLabelDimensions = function() {
                 return maxDimensions = {
@@ -448,7 +449,7 @@ describe('Chart', function() {
 
         it('top margins are expanded when x-axis is reversed', function() {
             //Given:
-            xAxis = new insight.Axis('xAxis', 'h', insight.Scales.Linear, 'top');
+            xAxis = new insight.Axis('xAxis', insight.Scales.Linear, 'top');
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
             series.maxLabelDimensions = function() {
                 return maxDimensions = {

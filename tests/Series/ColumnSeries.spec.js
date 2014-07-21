@@ -46,10 +46,10 @@ describe('Column Series Tests', function() {
                 
         var group =  data.group('country',function(d){return d.Country;});
         
-        var xScale = new insight.Axis('Country', 'h', insight.Scales.Ordinal);
-        var yScale = new insight.Axis('Stuff', 'v', insight.Scales.Linear);
-        chart.addAxis(xScale);
-        chart.addAxis(yScale);
+        var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
+        var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        chart.addXAxis(xScale);
+        chart.addYAxis(yScale);
 
         var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale, 'silver').filterFunction(function(d){return d.key=='Scotland';});
         
@@ -65,10 +65,10 @@ describe('Column Series Tests', function() {
                 
         var group =  data.group('country',function(d){return d.Country;});
 
-        var xScale = new insight.Axis('Country', 'h', insight.Scales.Ordinal);
-        var yScale = new insight.Axis('Stuff', 'v', insight.Scales.Linear);
-        chart.addAxis(xScale);
-        chart.addAxis(yScale);
+        var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
+        var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        chart.addXAxis(xScale);
+        chart.addYAxis(yScale);
 
         var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale, 'silver')
                             .filterFunction(function(d){return d.key=='Scotland' || d.key=='England';});
@@ -87,10 +87,10 @@ describe('Column Series Tests', function() {
                 
         var group =  data.group('country',function(d){return d.Country;});
 
-        var xScale = new insight.Axis('Country', 'h', insight.Scales.Ordinal);
-        var yScale = new insight.Axis('Stuff', 'v', insight.Scales.Linear);
-        chart.addAxis(xScale);
-        chart.addAxis(yScale);
+        var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
+        var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        chart.addXAxis(xScale);
+        chart.addYAxis(yScale);
 
         var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale, 'silver')
                             .valueFunction(function(d){return d.value.Count;});
@@ -108,10 +108,10 @@ describe('Column Series Tests', function() {
                 
         var group =  data.group('country',function(d){return d.Country;}).mean(['Age']);
 
-        var xScale = new insight.Axis('Country', 'h', insight.Scales.Ordinal);
-        var yScale = new insight.Axis('Stuff', 'v', insight.Scales.Linear);
-        chart.addAxis(xScale);
-        chart.addAxis(yScale);
+        var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
+        var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        chart.addXAxis(xScale);
+        chart.addYAxis(yScale);
 
         var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale, 'silver');
 
@@ -150,10 +150,10 @@ describe('Column Series Tests', function() {
                 
         var group =  data.group('country',function(d){return d.Country;}).mean(['Age']);
 
-        var xScale = new insight.Axis('Country', 'h', insight.Scales.Ordinal);
-        var yScale = new insight.Axis('Stuff', 'v', insight.Scales.Linear);
-        chart.addAxis(xScale);
-        chart.addAxis(yScale);
+        var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
+        var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        chart.addXAxis(xScale);
+        chart.addYAxis(yScale);
 
         var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale, 'silver').stacked(true);
 

@@ -30,7 +30,8 @@
             var width = d3.functor(300);
             var zoomable = false;
             var series = [];
-            var axes = [];
+            var xAxes = [];
+            var yAxes = [];
             var self = this;
             var title = '';
             var autoMargin = false;
@@ -77,6 +78,8 @@
             this.draw = function(dragging) {
                 this.resizeChart();
 
+                var axes = xAxes.concat(yAxes);
+
                 axes.map(function(axis) {
                     var isZoom = zoomAxis == axis;
 
@@ -91,14 +94,6 @@
                     .map(function(series) {
                         series.draw(self, dragging);
                     });
-            };
-
-            this.addAxis = function(axis) {
-                axes.push(axis);
-            };
-
-            this.axes = function() {
-                return axes;
             };
 
             this.addClipPath = function() {
@@ -238,6 +233,61 @@
                 return this;
             };
 
+            this.addXAxis = function(axis) {
+                axis.direction = 'h';
+                xAxes.push(axis);
+                return this;
+            };
+
+            this.xAxes = function(newXAxes) {
+                if (!arguments.length) {
+                    return xAxes;
+                }
+
+                for (var index = 0; index < newXAxes.length; index++) {
+                    self.addXAxis(newXAxes[index]);
+                }
+
+                return this;
+            };
+
+            this.xAxis = function(xAxis) {
+                if (!arguments.length) {
+                    return xAxes[0];
+                }
+
+                var newXAxes = xAxes.slice(0);
+                newXAxes[0] = xAxis;
+                return this.xAxes(newXAxes);
+            };
+
+            this.addYAxis = function(axis) {
+                axis.direction = 'v';
+                yAxes.push(axis);
+                return this;
+            };
+
+            this.yAxes = function(newYAxes) {
+                if (!arguments.length) {
+                    return yAxes;
+                }
+
+                for (var index = 0; index < newYAxes.length; index++) {
+                    self.addYAxis(newYAxes[index]);
+                }
+
+                return this;
+            };
+
+            this.yAxis = function(yAxis) {
+                if (!arguments.length) {
+                    return yAxes[0];
+                }
+
+                var newYAxes = yAxes.slice(0);
+                newYAxes[0] = yAxis;
+                return this.yAxes(newYAxes);
+            };
 
             this.addHorizontalScale = function(type, typeString, direction) {
                 var scale = new Scale(this, type, direction, typeString);
