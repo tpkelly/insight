@@ -16,6 +16,7 @@ insight.Grouping = (function(insight) {
         var averageProperties = [];
 
         var linkedSeries = [];
+        var ordered = false;
 
         this._compute = null;
         this.gIndices = {};
@@ -24,7 +25,7 @@ insight.Grouping = (function(insight) {
             return d;
         };
 
-        this._orderFunction = function(a, b) {
+        var orderFunction = function(a, b) {
             return b.value.Count - a.value.Count;
         };
 
@@ -37,7 +38,6 @@ insight.Grouping = (function(insight) {
 
         };
 
-        this._ordered = false;
 
         /**
          * The sum function gets or sets the properties that this group will sum across.
@@ -107,26 +107,60 @@ insight.Grouping = (function(insight) {
             return this;
         };
 
+        /**
+         * This getter/setter defines the post aggregation function that will be run once dimension map-reduce has been performed.  Used for any calculations that require the outputs of the map-reduce stage.
+         * @returns {function}
+         */
+        /**
+         * @param {function} compareFunction - A function taking two parameters, that compares them and returns a value greater than 0 then the second parameter will be lower in the ordering than the first.
+         * @returns {this}
+         */
+        this.computeFunction = function(c) {
+            ordered = true;
+            if (!arguments.length) {
+                return this._compute;
+            }
+            this._compute = c.bind(this);
+            return this;
+        };
+
+
+        /**
+         * This method gets or sets the function used to compare the elements in this grouping if sorting is requested.  See <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">MDN</a> for examples of comparison functions.
+         * @returns {this}
+         * @param {function} function - The function to be run once once map-reduce has been performed.
+         * @todo Auto-bind to this inside the setter?
+         */
+        this.orderFunction = function(o) {
+            if (!arguments.length) {
+                return orderFunction;
+            }
+            orderFunction = o;
+            return this;
+        };
+
+        /**
+         * Gets or sets whether the group's data is ordered.
+         * @returns {String[]}
+         */
+        /**
+         * @param {boolean} order - a boolean for whether to order the group's values
+         * @returns {this}
+         */
+        this.ordered = function(_) {
+            if (!arguments.length) {
+                return ordered;
+            }
+            ordered = _;
+
+            return this;
+        };
+
         return this;
     }
 
 
-    /**
-     * Gets or sets whether the group's data is ordered.
-     * @returns {String[]}
-     */
-    /**
-     * @param {boolean} order - a boolean for whether to order the group's values
-     * @returns {this}
-     */
-    Grouping.prototype.ordered = function(_) {
-        if (!arguments.length) {
-            return this._ordered;
-        }
-        this._ordered = _;
 
-        return this;
-    };
 
     /**
      * The filter method gets or sets the function used to filter the results returned by this grouping.
@@ -156,6 +190,7 @@ insight.Grouping = (function(insight) {
         }
         return a;
     };
+
 
 
     /**
@@ -242,6 +277,7 @@ insight.Grouping = (function(insight) {
         var propertiesToSum = this.sum();
         var propertiesToCount = this.count();
         var propertiesToAverage = this.mean();
+        var propertyName = "";
 
         var data = [];
 
@@ -259,15 +295,9 @@ insight.Grouping = (function(insight) {
                             }
                         }
 
-                        for (var avProperty in propertiesToAverage) {
-                            if (v.hasOwnProperty(propertiesToAverage[avProperty])) {
-                                p[propertiesToAverage[avProperty]].Average = p[propertiesToAverage[avProperty]].Average + ((v[propertiesToAverage[avProperty]] - p[propertiesToAverage[avProperty]].Average) / p.Count);
-                            }
-                        }
-
                         for (var countProp in propertiesToCount) {
                             if (v.hasOwnProperty(propertiesToCount[countProp])) {
-                                var propertyName = propertiesToCount[countProp];
+                                propertyName = propertiesToCount[countProp];
                                 var propertyValue = v[propertiesToCount[countProp]];
 
                                 if (insight.Utils.isArray(propertyValue)) {
@@ -296,39 +326,25 @@ insight.Grouping = (function(insight) {
                             }
                         }
 
-
                         for (var countProp in propertiesToCount) {
                             if (v.hasOwnProperty(propertiesToCount[countProp])) {
-                                var propertyName = propertiesToCount[countProp];
+
+                                propertyName = propertiesToCount[countProp];
                                 var propertyValue = v[propertiesToCount[countProp]];
 
                                 if (insight.Utils.isArray(propertyValue)) {
 
                                     for (var subIndex in propertyValue) {
                                         var subVal = propertyValue[subIndex];
-                                        p[propertyName][subVal] = p[propertyName].hasOwnProperty(subVal) ? p[propertyName][subVal] - 1 : 1;
+                                        p[propertyName][subVal] = p[propertyName].hasOwnProperty(subVal) ? p[propertyName][subVal] - 1 : 0;
                                         p[propertyName].Total--;
                                     }
 
                                 } else {
-                                    p[propertyName][propertyValue] = p[propertyName].hasOwnProperty(propertyValue) ? p[propertyName][propertyValue] - 1 : 1;
+                                    p[propertyName][propertyValue] = p[propertyName].hasOwnProperty(propertyValue) ? p[propertyName][propertyValue] - 1 : 0;
                                     p[propertyName].Total--;
                                 }
 
-                            }
-                        }
-
-                        for (var avProperty in propertiesToAverage) {
-                            if (v.hasOwnProperty(propertiesToAverage[avProperty])) {
-                                var valRemoved = v[propertiesToAverage[avProperty]];
-                                var sum = p[propertiesToAverage[avProperty]].Sum;
-                                p[propertiesToAverage[avProperty]].Average = sum / p.Count;
-
-                                var result = p[propertiesToAverage[avProperty]].Average;
-
-                                if (!isFinite(result)) {
-                                    p[propertiesToAverage[avProperty]].Average = 0;
-                                }
                             }
                         }
 
@@ -357,16 +373,10 @@ insight.Grouping = (function(insight) {
         }
         this._data = data;
 
-        if (this.cumulative()
-            .length) {
-            this.calculateTotals();
-        }
+        this.postAggregationCalculations();
 
         return this;
     };
-
-
-
 
     /**
      * This method is called when any post aggregation calculations, provided by the computeFunction() setter, need to be recalculated.
@@ -374,10 +384,11 @@ insight.Grouping = (function(insight) {
      * @param {object[]} data - The short name used to identify this dimension, and any linked dimensions sharing the same name
      */
     Grouping.prototype.recalculate = function() {
-        if (this.cumulative()
-            .length) {
-            this.calculateTotals();
-        }
+
+        var propertiesToAverage = this.mean();
+
+        this.postAggregationCalculations();
+
         if (this._compute) {
             this._compute();
         }
@@ -388,7 +399,7 @@ insight.Grouping = (function(insight) {
      * This method is used to return the group's data, without ordering.  It checks if there is any filtering requested and applies the filter to the return array.
      * @returns {object[]} return - The grouping's data in an object array, with an object per slice of the dimension.
      */
-    Grouping.prototype.getData = function() {
+    Grouping.prototype.getData = function(orderFunction, top) {
         var data;
 
         if (!this._data) {
@@ -399,8 +410,17 @@ insight.Grouping = (function(insight) {
             data = this._data.value()
                 .values;
         } else {
-            data = this._data.all()
-                .slice(0);
+            data = this._data.all();
+        }
+
+        // take a copy of the array to not alter the original dataset
+        data = data.slice(0);
+
+        if (orderFunction) {
+            data = data.sort(orderFunction);
+        }
+        if (top) {
+            data = data.slice(0, top);
         }
 
         if (this._filterFunction) {
@@ -411,78 +431,7 @@ insight.Grouping = (function(insight) {
     };
 
 
-    /**
-     * This method is used to return the group's data, with ordering applied.  It checks if there is any filtering requested and applies the filter to the return array.
-     * @returns {object[]} return - The grouping's data in an object array, with an object per slice of the dimension.
-     */
-    Grouping.prototype.getOrderedData = function(topValues) {
 
-        var data = [];
-
-        if (!this._data) {
-            this.initialize();
-        }
-
-        if (!this.dimension.multiple) {
-            data = this._data.all()
-                .slice(0)
-                .sort(this.orderFunction());
-
-            if (topValues) {
-                data = data.slice(0, topValues);
-            }
-        } else {
-
-            // take shallow copy of array prior to ordering so that ordering is not done in place, which would break ordering of index map. Must be better way to do this.
-            data = this._data.value()
-                .values
-                .slice(0);
-
-            data = data.sort(this.orderFunction());
-            if (topValues) {
-                data = data.slice(0, topValues);
-            }
-        }
-
-        if (this._filterFunction) {
-            data = data.filter(this._filterFunction);
-        }
-
-        return data;
-    };
-
-
-    /**
-     * This getter/setter defines the post aggregation function that will be run once dimension map-reduce has been performed.  Used for any calculations that require the outputs of the map-reduce stage.
-     * @returns {function}
-     */
-    /**
-     * @param {function} compareFunction - A function taking two parameters, that compares them and returns a value greater than 0 then the second parameter will be lower in the ordering than the first.
-     * @returns {this}
-     */
-    Grouping.prototype.computeFunction = function(c) {
-        this._ordered = true;
-        if (!arguments.length) {
-            return this._compute;
-        }
-        this._compute = c.bind(this);
-        return this;
-    };
-
-
-    /**
-     * This method gets or sets the function used to compare the elements in this grouping if sorting is requested.  See <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">MDN</a> for examples of comparison functions.
-     * @returns {this}
-     * @param {function} function - The function to be run once once map-reduce has been performed.
-     * @todo Auto-bind to this inside the setter?
-     */
-    Grouping.prototype.orderFunction = function(o) {
-        if (!arguments.length) {
-            return this._orderFunction;
-        }
-        this._orderFunction = o;
-        return this;
-    };
 
     Grouping.prototype.compute = function() {
         this._compute();
@@ -514,35 +463,68 @@ insight.Grouping = (function(insight) {
         };
     };
 
-    Grouping.prototype.calculateTotals = function() {
+
+
+    Grouping.prototype.calculateAverages = function(group) {
+
+        var propertiesToAverage = this.mean();
+
+        for (var avProperty in propertiesToAverage) {
+
+            var propertyName = propertiesToAverage[avProperty];
+            var propertyValue = group.value[propertyName];
+            var mean = propertyValue.Sum / group.value.Count;
+
+            mean = insight.Utils.isNumber(mean) & isFinite(mean) ? mean : 0;
+
+            group.value[propertyName].Average = mean;
+        }
+    };
+
+    /**
+     * This method is used to calculate any values that need to run after the data set has been aggregated into groups and basic values
+     */
+    Grouping.prototype.postAggregationCalculations = function() {
+
+        var self = this;
+
+        var totals = {};
+
+        var data = this.ordered() ? this.getData(this.orderFunction()) : this.getData();
+
+        data.forEach(function(d) {
+
+            self.calculateAverages(d);
+
+            self.calculateCumulativeValues(d, totals);
+
+        });
+    };
+
+    /**
+     * This method calculates running cumulative values for any properties defined in the cumulative() list.
+     * @param {object} data - The data group being added to the cumulative running totals list
+     * @param {object} totals - The map object of running totals for the defined properties
+     */
+    Grouping.prototype.calculateCumulativeValues = function(d, totals) {
 
         var self = this;
 
         var cumulativeProperties = this.cumulative();
 
-        if (cumulativeProperties.length) {
-            var totals = {};
+        cumulativeProperties.map(function(propertyName) {
 
-            var data = this._ordered ? this.getOrderedData() : this.getData();
+            var desc = self.getDescendant(d.value, propertyName);
 
-            data
-                .forEach(function(d, i) {
+            var totalName = desc.propertyName + 'Cumulative';
 
-                    cumulativeProperties.map(function(propertyName) {
+            totals[totalName] = totals[totalName] ? totals[totalName] + desc.value : desc.value;
 
-                        var desc = self.getDescendant(d.value, propertyName);
+            desc.container[totalName] = totals[totalName];
 
-                        var totalName = desc.propertyName + 'Cumulative';
+        });
 
-                        totals[totalName] = totals[totalName] ? totals[totalName] + desc.value : desc.value;
-
-                        desc.container[totalName] = totals[totalName];
-
-                    });
-
-                });
-        }
-        return this;
+        return totals;
     };
 
     return Grouping;

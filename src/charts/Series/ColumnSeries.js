@@ -188,12 +188,13 @@ insight.ColumnSeries = function ColumnSeries(name, chart, data, x, y, color) {
             d.xPos = 0;
         };
 
-        var d = this.dataset()
-            .forEach(reset);
+        var data = this.dataset();
+
+        data.forEach(reset);
 
         var groups = this.chart.chart
             .selectAll('g.' + insight.Constants.BarGroupClass)
-            .data(this.dataset(), this.keyAccessor);
+            .data(data, this.keyAccessor);
 
         var newGroups = groups.enter()
             .append('g')

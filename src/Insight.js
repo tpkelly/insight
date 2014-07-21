@@ -17,8 +17,7 @@ var insight = (function() {
             this.DimensionChartMap = {};
         },
         redrawCharts: function() {
-            for (var i = 0; i < this.Charts
-                .length; i++) {
+            for (var i = 0; i < this.Charts.length; i++) {
                 this.Charts[i].draw();
             }
         },
@@ -55,10 +54,7 @@ var insight = (function() {
             var listeningSeries = this.DimensionChartMap[chart.data.dimension.Name];
 
             listeningSeries.forEach(function(chart) {
-
                 chart.highlight(dimensionSelector, value);
-
-
             });
         },
         drawCharts: function() {
@@ -68,13 +64,15 @@ var insight = (function() {
             this.Charts
                 .forEach(
                     function(chart) {
-
+                        // if this chart contains series data with dimensions that can be filtered, add the charts to a map of dimension->chart so that charts know 
+                        // when they need to update css highlighting after a filter event.
                         chart.series()
                             .forEach(function(s) {
                                 if (s.data.dimension) {
-                                    if (self.DimensionChartMap[s.data.dimension.Name]) {
-                                        if (self.DimensionChartMap[s.data.dimension.Name].indexOf(chart) == -1) {
-                                            self.DimensionChartMap[s.data.dimension.Name].push(chart);
+                                    var listeningSeries = self.DimensionChartMap[s.data.dimension.Name];
+                                    if (listeningSeries) {
+                                        if (listeningSeries.indexOf(chart) == -1) {
+                                            listeningSeries.push(chart);
                                         }
                                     } else {
                                         self.DimensionChartMap[s.data.dimension.Name] = [chart];
@@ -84,12 +82,6 @@ var insight = (function() {
 
                         chart.init();
                     });
-
-            for (var i = 0; i < this.Charts
-                .length; i++) {
-                this.Charts[i].draw();
-            }
-
         },
         chartFilterHandler: function(chart, value, dimensionSelector) {
             var self = this;

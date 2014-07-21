@@ -16,6 +16,7 @@ insight.LineSeries = function LineSeries(name, chart, data, x, y, color) {
 
     var lineType = 'linear';
     var tooltipExists = false;
+    var displayPoints = true;
 
     var mouseOver = function(d, item) {
         self.chart.mouseOver(self, this, d);
@@ -38,6 +39,14 @@ insight.LineSeries = function LineSeries(name, chart, data, x, y, color) {
 
     var lineClick = function(d, item) {
 
+    };
+
+    this.showPoints = function(value) {
+        if (!arguments.length) {
+            return displayPoints;
+        }
+        displayPoints = value;
+        return this;
     };
 
     this.rangeY = function(d) {
@@ -98,38 +107,40 @@ insight.LineSeries = function LineSeries(name, chart, data, x, y, color) {
             .duration(duration)
             .attr("d", transform);
 
-        var circles = this.chart.chart.selectAll("circle")
-            .data(this.dataset());
+        if (displayPoints) {
+            var circles = this.chart.chart.selectAll("circle")
+                .data(this.dataset());
 
-        circles.enter()
-            .append('circle')
-            .attr('class', 'target-point')
-            .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
-            .attr("cx", self.rangeX)
-            .attr("cy", self.chart.height() - self.chart.margin()
-                .bottom - self.chart.margin()
-                .top)
-            .on('mouseover', mouseOver)
-            .on('mouseout', mouseOut);
-
-
-        circles
-            .transition()
-            .duration(duration)
-            .attr("cx", self.rangeX)
-            .attr("cy", self.rangeY)
-            .attr("r", 3)
-            .attr("fill", this.color);
+            circles.enter()
+                .append('circle')
+                .attr('class', 'target-point')
+                .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
+                .attr("cx", self.rangeX)
+                .attr("cy", self.chart.height() - self.chart.margin()
+                    .bottom - self.chart.margin()
+                    .top)
+                .on('mouseover', mouseOver)
+                .on('mouseout', mouseOut);
 
 
-        if (!tooltipExists) {
-            circles.append('svg:text')
-                .attr('class', insight.Constants.ToolTipTextClass);
-            tooltipExists = true;
+            circles
+                .transition()
+                .duration(duration)
+                .attr("cx", self.rangeX)
+                .attr("cy", self.rangeY)
+                .attr("r", 3)
+                .attr("fill", this.color);
+
+
+            if (!tooltipExists) {
+                circles.append('svg:text')
+                    .attr('class', insight.Constants.ToolTipTextClass);
+                tooltipExists = true;
+            }
+
+            circles.selectAll("." + insight.Constants.ToolTipTextClass)
+                .text(this.tooltipFunction());
         }
-
-        circles.selectAll("." + insight.Constants.ToolTipTextClass)
-            .text(this.tooltipFunction());
     };
 
     this.rangeExists = function(rangeSelector) {

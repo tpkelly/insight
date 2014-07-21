@@ -40,44 +40,44 @@
             this.init = function(create, container) {
 
                 if (autoMargin) {
-                    this.calculateLabelMargin();
+                    self.calculateLabelMargin();
                 }
 
-                this.container = create ? d3.select(container)
-                    .append('div') : d3.select(this.element)
+                self.container = create ? d3.select(container)
+                    .append('div') : d3.select(self.element)
                     .append('div');
 
-                this.container
+                self.container
                     .attr('class', insight.Constants.ContainerClass)
-                    .style('width', this.width() + 'px')
+                    .style('width', self.width() + 'px')
                     .style('position', 'relative')
                     .style('display', 'inline-block');
 
-                this.chartSVG = this.container
+                self.chartSVG = self.container
                     .append('svg')
                     .attr('class', insight.Constants.ChartSVG)
-                    .attr('width', this.width())
-                    .attr('height', this.height());
+                    .attr('width', self.width())
+                    .attr('height', self.height());
 
-                this.chart = this.chartSVG.append('g')
+                self.chart = self.chartSVG.append('g')
                     .attr('class', insight.Constants.Chart)
-                    .attr('transform', 'translate(' + this.margin()
-                        .left + ',' + this.margin()
+                    .attr('transform', 'translate(' + self.margin()
+                        .left + ',' + self.margin()
                         .top + ')');
 
-                this.addClipPath();
+                self.addClipPath();
 
                 axes.map(function(axis) {
                     axis.initialize();
                 });
 
                 if (zoomable) {
-                    this.initZoom();
+                    self.initZoom();
                 }
 
-                this.tooltip();
+                self.tooltip();
 
-                this.draw(false);
+                self.draw(false);
             };
 
 
