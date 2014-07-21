@@ -128,8 +128,8 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
         //Minimum of pixels-per-axis-unit
         var xValues = data.map(xFunction);
         var yValues = data.map(yFunction);
-        var xBounds = this.x.calculateBounds()[1];
-        var yBounds = this.y.calculateBounds()[0];
+        var xBounds = this.x.bounds[1];
+        var yBounds = this.y.bounds[0];
 
         // create radius for each item
         data.forEach(function(d) {

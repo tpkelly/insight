@@ -31,8 +31,10 @@ describe('Row Series Tests', function() {
        
         var group =  dataset.group('country',function(d){return d.Country;});
 
-        var xScale = new insight.Axis(chart, 'Values', 'h', insight.Scales.Ordinal);
-        var yScale = new insight.Axis(chart, 'Keys', 'v', insight.Scales.Linear);
+        var xScale = new insight.Axis('Values', 'h', insight.Scales.Ordinal);
+        var yScale = new insight.Axis('Keys', 'v', insight.Scales.Linear);
+        chart.addAxis(xScale);
+        chart.addAxis(yScale);
 
         var series = new insight.RowSeries('countryColumn', group, xScale, yScale, 'silver')
                             .valueFunction(function(d){return d.value.Count;});
@@ -51,8 +53,10 @@ describe('Row Series Tests', function() {
        
         var group =  dataset.group('country',function(d){return d.Country;});
 
-        var xScale = new insight.Axis(chart, 'Values', 'h', insight.Scales.Ordinal);
-        var yScale = new insight.Axis(chart, 'Keys', 'v', insight.Scales.Linear);
+        var xScale = new insight.Axis('Values', 'h', insight.Scales.Ordinal);
+        var yScale = new insight.Axis('Keys', 'v', insight.Scales.Linear);
+        chart.addAxis(xScale);
+        chart.addAxis(yScale);
 
         var series = new insight.RowSeries('countryColumn', group, xScale, yScale, 'silver')
                             .valueFunction(function(d){return d.value.Count;});        

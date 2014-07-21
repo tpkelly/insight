@@ -7,14 +7,13 @@
  * @param {insight.Scales.Scale} scale - insight.Scale.Linear for example
  * @param {string} anchor - 'left/right/top/bottom'
  */
-insight.Axis = function Axis(chart, name, direction, scale, anchor) {
+insight.Axis = function Axis(name, direction, scale, anchor) {
 
-    this.chart = chart;
     this.scaleType = scale.name;
     this.scale = scale.scale();
     this.anchor = anchor ? anchor : 'left';
     this.rangeType = this.scale.rangeRoundBands ? this.scale.rangeRoundBands : this.scale.rangeRound;
-    this.bounds = [];
+    this.bounds = [0, 0];
     this.direction = direction;
     this.series = [];
 
@@ -30,8 +29,8 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
     var showGridLines = false;
     var colorFunction = d3.functor('#777');
     var display = true;
-
-    this.chart.addAxis(this);
+    var barPadding = d3.functor(0.1);
+    var initialisedAxisView = false;
 
     if (direction == 'v') {
         textAnchor = this.anchor == 'left' ? 'end' : 'start';
@@ -56,11 +55,22 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
      * @param {rangeType} rangeType - a d3 range function, which can either be in bands (for columns) or a continuous range
      */
     var applyScaleRange = function(rangeType) {
-        self.bounds = self.calculateBounds();
+
+        // x-axis goes from 0 (left) to max (right)
+        // y-axis goes from max (top) to 0 (bottom)
+        var rangeBounds = (self.horizontal()) ? [0, self.bounds[0]] : [self.bounds[1], 0];
 
         rangeType.apply(this, [
-            self.bounds, self.chart.barPadding()
+            rangeBounds, self.barPadding()
         ]);
+    };
+
+    this.barPadding = function(_) {
+        if (!arguments.length) {
+            return barPadding();
+        }
+        barPadding = d3.functor(_);
+        return this;
     };
 
     /**
@@ -181,19 +191,16 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
      * @memberof insight.Axis
      * @returns {int[]} bounds - An array with two items, for the lower and upper bound of this axis
      */
-    this.calculateBounds = function() {
+    this.calculateAxisBounds = function(chart) {
         var bounds = [];
-        var margin = self.chart.margin();
+        var margin = chart.margin();
 
-        if (self.horizontal()) {
-            bounds[0] = 0;
-            bounds[1] = self.chart.width() - margin.right - margin.left;
-        } else if (self.vertical()) {
-            bounds[0] = self.chart.height() - margin.top - margin.bottom;
-            bounds[1] = 0;
+        bounds[0] = chart.width() - margin.right - margin.left;
+        bounds[1] = chart.height() - margin.top - margin.bottom;
 
-        }
-        return bounds;
+        self.bounds = bounds;
+
+        return self.bounds;
     };
 
 
@@ -330,16 +337,12 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
 
         if (self.horizontal()) {
             var transX = 0;
-            var transY = self.anchor == 'top' ? 0 : (self.chart.height() - self.chart.margin()
-                .bottom - self.chart.margin()
-                .top);
+            var transY = self.anchor == 'top' ? 0 : self.bounds[1];
 
             transform += transX + ',' + transY + ')';
 
         } else if (self.vertical()) {
-            var xShift = self.anchor == 'left' ? 0 : self.chart.width() - self.chart.margin()
-                .right - self.chart.margin()
-                .left;
+            var xShift = self.anchor == 'left' ? 0 : self.bounds[0];
             transform += xShift + ',0)';
         }
 
@@ -382,13 +385,13 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
     };
 
     /** Returns the array of all gridlines for this axis. */
-    this.gridlines = function() {
+    this.gridlines = function(chart) {
         var gridLineIdentifier = 'line.' + label;
-        return this.chart.plotArea.selectAll(gridLineIdentifier);
+        return chart.plotArea.selectAll(gridLineIdentifier);
     };
 
 
-    this.drawGridLines = function() {
+    this.drawGridLines = function(gridlines) {
 
         var ticks = this.scale.ticks();
 
@@ -399,8 +402,7 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
             'stroke': this.color,
             'stroke-width': '1px'
         };
-        var chartMargin = self.chart.margin();
-        var margin = self.chart.margin();
+
         var valueFunction = function(d) {
             return self.scale(d);
         };
@@ -409,17 +411,16 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
             attributes.x1 = valueFunction;
             attributes.x2 = valueFunction;
             attributes.y1 = 0;
-            attributes.y2 = self.chart.height() - chartMargin.top - chartMargin.bottom;
+            attributes.y2 = this.bounds[1];
         } else {
             attributes.x1 = 0;
-            attributes.x2 = self.chart.width() - chartMargin.left - chartMargin.right;
+            attributes.x2 = this.bounds[0];
             attributes.y1 = valueFunction;
             attributes.y2 = valueFunction;
         }
 
         //Get all lines, and add new datapoints.
-        var gridLines = this.gridlines()
-            .data(ticks);
+        var gridLines = gridlines.data(ticks);
 
         //Add lines for all new datapoints
         gridLines
@@ -442,68 +443,78 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
     };
 
 
-    this.initialize = function() {
+    this.setupAxisView = function(chart) {
+
+        if (initialisedAxisView)
+            return;
+
+        initialisedAxisView = true;
 
         this.initializeScale();
 
-        if (this.display()) {
-            this.axis = d3.svg.axis()
-                .scale(this.scale)
-                .orient(self.orientation())
-                .tickSize(self.tickSize())
-                .tickPadding(self.tickPadding())
-                .tickFormat(self.labelFormat());
+        this.axis = d3.svg.axis()
+            .scale(this.scale)
+            .orient(self.orientation())
+            .tickSize(self.tickSize())
+            .tickPadding(self.tickPadding())
+            .tickFormat(self.labelFormat());
 
-            this.axisElement = this.chart.plotArea.append('g');
+        this.axisElement = chart.plotArea.append('g');
 
-            this.axisElement
-                .attr('class', insight.Constants.AxisClass)
-                .attr('transform', self.axisPosition())
-                .call(this.axis)
-                .selectAll('text')
-                .attr('class', insight.Constants.AxisTextClass)
-                .style('text-anchor', self.textAnchor())
-                .style('transform', self.tickRotationTransform());
+        this.axisElement
+            .attr('class', insight.Constants.AxisClass)
+            .attr('transform', self.axisPosition())
+            .call(this.axis)
+            .selectAll('text')
+            .attr('class', insight.Constants.AxisTextClass)
+            .style('text-anchor', self.textAnchor())
+            .style('transform', self.tickRotationTransform());
 
-            this.labelElement = this.chart.container
-                .append('div')
-                .attr('class', insight.Constants.AxisLabelClass)
-                .style('position', 'absolute')
-                .text(this.label());
+        this.labelElement = chart.container
+            .append('div')
+            .attr('class', insight.Constants.AxisLabelClass)
+            .style('position', 'absolute')
+            .text(this.label());
 
-            this.positionLabel();
-        }
+        this.positionLabel();
     };
 
 
 
-    this.draw = function(dragging) {
+    this.draw = function(chart, dragging) {
 
-        if (this.display()) {
+        if (!this.display()) {
+            return;
+        }
 
-            this.axis = d3.svg.axis()
-                .scale(this.scale)
-                .orient(self.orientation())
-                .tickSize(self.tickSize())
-                .tickPadding(self.tickPadding())
-                .tickFormat(self.labelFormat());
+        //Update bounds
+        this.calculateAxisBounds(chart);
 
-            this.axisElement
-                .attr('transform', self.axisPosition())
-                .style('stroke', self.color())
-                .call(this.axis);
+        this.setupAxisView(chart);
 
-            this.axisElement
-                .selectAll('text')
-                .attr('transform', self.tickRotationTransform())
-                .style('text-anchor', self.textAnchor());
+        this.axis = d3.svg.axis()
+            .scale(this.scale)
+            .orient(self.orientation())
+            .tickSize(self.tickSize())
+            .tickPadding(self.tickPadding())
+            .tickFormat(self.labelFormat());
 
-            this.labelElement
-                .text(this.label());
+        this.axisElement
+            .attr('transform', self.axisPosition())
+            .style('stroke', self.color())
+            .call(this.axis);
 
-            if (showGridLines) {
-                this.drawGridLines();
-            }
+        this.axisElement
+            .selectAll('text')
+            .attr('transform', self.tickRotationTransform())
+            .style('text-anchor', self.textAnchor());
+
+        this.labelElement
+            .text(this.label());
+
+        if (showGridLines) {
+            var gridlines = this.gridlines(chart);
+            this.drawGridLines(gridlines);
         }
     };
 };

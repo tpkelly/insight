@@ -13,8 +13,7 @@ describe('Axis Tests', function() {
     it('label getter works after initialization', function() {
         
         //Given:
-        var chart = new insight.Chart('test', '#test', 'ada');
-        var axis = new insight.Axis(chart, 'Value Axis', 'h', insight.Scales.Linear, 'bottom');
+        var axis = new insight.Axis('Value Axis', 'h', insight.Scales.Linear, 'bottom');
 
         //Then:
         var observedLabel = axis.label();
@@ -23,12 +22,19 @@ describe('Axis Tests', function() {
         
     });
 
+    it('barPadding 0.1', function() {
+        //Given:
+        var axis = new insight.Axis('Value Axis', 'h', insight.Scales.Linear, 'bottom');
+
+        //Then:
+        expect(axis.barPadding()).toBe(0.1);
+
+    });
 
     it('horizontal getter works', function() {
         
         //Given:
-        var chart = new insight.Chart('test', '#test', 'ada');
-        var axis = new insight.Axis(chart, 'Value Axis', 'h', insight.Scales.Linear, 'bottom');
+        var axis = new insight.Axis('Value Axis', 'h', insight.Scales.Linear, 'bottom');
 
         //Then:
         var observedResult = axis.horizontal();
@@ -40,8 +46,7 @@ describe('Axis Tests', function() {
     it('vertical getter works', function() {
         
         //Given:
-        var chart = new insight.Chart('test', '#test', 'ada');
-        var axis = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Linear, 'bottom');
+        var axis = new insight.Axis('Value Axis', 'v', insight.Scales.Linear, 'bottom');
 
         //Then:
         var observedResult = axis.vertical();
@@ -52,8 +57,7 @@ describe('Axis Tests', function() {
     it('will be displayed by default', function() {
         
         //Given:
-        var chart = new insight.Chart('test', '#test', 'ada');
-        var axis = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Linear, 'bottom');
+        var axis = new insight.Axis('Value Axis', 'v', insight.Scales.Linear, 'bottom');
 
         //Then:
         var observedResult = axis.display();
@@ -64,8 +68,7 @@ describe('Axis Tests', function() {
     it('can be set to not be displayed', function() {
         
         //Given:
-        var chart = new insight.Chart('test', '#test', 'ada');
-        var axis = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Linear, 'bottom')
+        var axis = new insight.Axis('Value Axis', 'v', insight.Scales.Linear, 'bottom')
                               .display(false);
 
         //Then:
@@ -77,8 +80,7 @@ describe('Axis Tests', function() {
     it('not ordered by default', function() {
         
         //Given:
-        var chart = new insight.Chart('test', '#test', 'ada');
-        var axis = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Linear, 'bottom');
+        var axis = new insight.Axis('Value Axis', 'v', insight.Scales.Linear, 'bottom');
 
         //Then:
         var observedResult = axis.ordered();
@@ -90,8 +92,7 @@ describe('Axis Tests', function() {
     it('ordering setter works', function() {
         
         //Given:
-        var chart = new insight.Chart('test', '#test', 'ada');
-        var axis = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Linear, 'bottom')
+        var axis = new insight.Axis('Value Axis', 'v', insight.Scales.Linear, 'bottom')
                               .ordered(true);
 
         //Then:
@@ -105,13 +106,9 @@ describe('Axis Tests', function() {
         
         //Given:
         var dataset = new insight.DataSet(data);
-        var chart = new insight.Chart('test', '#test', 'ada')
-                               .width(300)
-                               .height(400)
-                               .margin({top:50, left:30, right: 50, bottom:50});
 
-        var x = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Ordinal, 'left');
-        var y = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Linear, 'left');
+        var x = new insight.Axis('Key Axis', 'h', insight.Scales.Ordinal, 'left');
+        var y = new insight.Axis('Value Axis', 'v', insight.Scales.Linear, 'left');
 
         var series = new insight.ColumnSeries('chart', dataset, x, y, 'blue')
                                 .valueFunction(function(d){return d.value;});
@@ -127,13 +124,9 @@ describe('Axis Tests', function() {
         
         //Given:
         var dataset = new insight.DataSet(data);
-        var chart = new insight.Chart('test', '#test', 'ada')
-                               .width(300)
-                               .height(400)
-                               .margin({top:50, left:30, right: 50, bottom:50});
 
-        var x = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Ordinal, 'left');
-        var y = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Linear, 'left');
+        var x = new insight.Axis('Key Axis', 'h', insight.Scales.Ordinal, 'left');
+        var y = new insight.Axis('Value Axis', 'v', insight.Scales.Linear, 'left');
 
         var series = new insight.ColumnSeries('chart', dataset, x, y, 'blue')
                                 .valueFunction(function(d){return d.value;});
@@ -149,13 +142,9 @@ describe('Axis Tests', function() {
         
         //Given:
         var dataset = new insight.DataSet(data);
-        var chart = new insight.Chart('test', '#test', 'ada')
-                               .width(300)
-                               .height(400)
-                               .margin({top:50, left:30, right: 50, bottom:50});
 
-        var x = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Time, 'left');
-        var y = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Linear, 'left');
+        var x = new insight.Axis('Key Axis', 'h', insight.Scales.Time, 'left');
+        var y = new insight.Axis('Value Axis', 'v', insight.Scales.Linear, 'left');
 
         var series = new insight.ColumnSeries('chart', dataset, x, y, 'blue')
                                 .keyFunction(function(d){return d.date;});
@@ -177,14 +166,19 @@ describe('Axis Tests', function() {
                                .height(400)
                                .margin({top:0, left:0, right: 0, bottom:0});
 
-        var x = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Ordinal, 'left');
-        var y = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Linear, 'left');
+        var x = new insight.Axis('Key Axis', 'h', insight.Scales.Ordinal, 'left');
+        var y = new insight.Axis('Value Axis', 'v', insight.Scales.Linear, 'left');
+        chart.addAxis(x);
+        chart.addAxis(y);
 
         var series = new insight.ColumnSeries('chart', dataset, x, y, 'blue');
 
-        //Then: (origin of SVG is top left, hence starting at the height of the chart)
-        var observedResult = y.calculateBounds();
-        var expectedResult = [400, 0];
+        //When:
+        y.calculateAxisBounds(chart);
+
+        //Then:
+        var observedResult = y.bounds;
+        var expectedResult = [300, 400];
 
         expect(observedResult).toEqual(expectedResult);
     });
@@ -198,14 +192,19 @@ describe('Axis Tests', function() {
                                .height(400)
                                .margin({top:50, left:0, right: 0, bottom:100});
 
-        var x = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Ordinal, 'left');
-        var y = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Linear, 'left');
+        var x = new insight.Axis('Key Axis', 'h', insight.Scales.Ordinal, 'left');
+        var y = new insight.Axis('Value Axis', 'v', insight.Scales.Linear, 'left');
+        chart.addAxis(x);
+        chart.addAxis(y);
 
         var series = new insight.ColumnSeries('chart', dataset, x, y, 'blue');
 
+        //When:
+        y.calculateAxisBounds(chart);
+
         //Then:
-        var observedResult = y.calculateBounds();
-        var expectedResult = [250, 0];
+        var observedResult = y.bounds;
+        var expectedResult = [300, 250];
 
         expect(observedResult).toEqual(expectedResult);
     });
@@ -219,14 +218,19 @@ describe('Axis Tests', function() {
                                .height(300)
                                .margin({top:0, left:0, right: 0, bottom:0});
 
-        var x = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Linear, 'left');
-        var y = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Ordinal, 'left');
+        var x = new insight.Axis('Key Axis', 'h', insight.Scales.Linear, 'left');
+        var y = new insight.Axis('Value Axis', 'v', insight.Scales.Ordinal, 'left');
+        chart.addAxis(x);
+        chart.addAxis(y);
 
         var series = new insight.RowSeries('chart', dataset, x, y, 'blue');
 
+        //When:
+        x.calculateAxisBounds(chart);
+
         //Then:
-        var observedResult = x.calculateBounds();
-        var expectedResult = [0, 400];
+        var observedResult = x.bounds;
+        var expectedResult = [400, 300];
 
         expect(observedResult).toEqual(expectedResult);
     });
@@ -240,14 +244,19 @@ describe('Axis Tests', function() {
                                .height(300)
                                .margin({top:0, left:100, right: 10, bottom:0});
 
-        var x = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Linear, 'left');
-        var y = new insight.Axis(chart, 'Value Axis', 'v', insight.Scales.Ordinal, 'left');
+        var x = new insight.Axis('Key Axis', 'h', insight.Scales.Linear, 'left');
+        var y = new insight.Axis('Value Axis', 'v', insight.Scales.Ordinal, 'left');
+        chart.addAxis(x);
+        chart.addAxis(y);
 
         var series = new insight.RowSeries('chart', dataset, x, y, 'blue');
 
+        //When:
+        x.calculateAxisBounds(chart);
+
         //Then:
-        var observedResult = x.calculateBounds();
-        var expectedResult = [0, 290];
+        var observedResult = x.bounds;
+        var expectedResult = [290, 300];
 
         expect(observedResult).toEqual(expectedResult);
     });
@@ -260,8 +269,12 @@ describe('Axis Tests', function() {
                                .height(300)
                                .margin({top:0, left:0, right: 0, bottom:0});
 
-        var x = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Linear, 'bottom');
-        
+        var x = new insight.Axis('Key Axis', 'h', insight.Scales.Linear, 'bottom');
+        chart.addAxis(x);
+
+        //When:
+        x.calculateAxisBounds(chart);
+
         //Then:
         var observedResult = x.axisPosition();
         var expectedResult = 'translate(0,300)';
@@ -277,8 +290,12 @@ describe('Axis Tests', function() {
                                .height(300)
                                .margin({top:10, left:100, right: 10, bottom:50});
 
-        var x = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Linear, 'bottom');
-        
+        var x = new insight.Axis('Key Axis', 'h', insight.Scales.Linear, 'bottom');
+        chart.addAxis(x);
+
+        //When:
+        x.calculateAxisBounds(chart);
+
         //Then:
         var observedResult = x.axisPosition();
         var expectedResult = 'translate(0,240)';
@@ -294,8 +311,12 @@ describe('Axis Tests', function() {
                                .height(300)
                                .margin({top:0, left:0, right: 0, bottom:0});
 
-        var x = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Linear, 'top');
-        
+        var x = new insight.Axis('Key Axis', 'h', insight.Scales.Linear, 'top');
+        chart.addAxis(x);
+
+        //When:
+        x.calculateAxisBounds(chart);
+
         //Then:
         var observedResult = x.axisPosition();
         var expectedResult = 'translate(0,0)';
@@ -311,8 +332,12 @@ describe('Axis Tests', function() {
                                .height(300)
                                .margin({top:0, left:0, right: 0, bottom:0});
 
-        var y = new insight.Axis(chart, 'Key Axis', 'v', insight.Scales.Linear, 'left');
-        
+        var y = new insight.Axis('Key Axis', 'v', insight.Scales.Linear, 'left');
+        chart.addAxis(y);
+
+        //When:
+        y.calculateAxisBounds(chart);
+
         //Then:
         var observedResult = y.axisPosition();
         var expectedResult = 'translate(0,0)';
@@ -328,8 +353,12 @@ describe('Axis Tests', function() {
                                .height(300)
                                .margin({top:0, left:0, right: 0, bottom:0});
 
-        var y = new insight.Axis(chart, 'Key Axis', 'v', insight.Scales.Linear, 'right');
-        
+        var y = new insight.Axis('Key Axis', 'v', insight.Scales.Linear, 'right');
+        chart.addAxis(y);
+
+        //When:
+        y.calculateAxisBounds(chart);
+
         //Then:
         var observedResult = y.axisPosition();
         var expectedResult = 'translate(400,0)';
@@ -345,8 +374,12 @@ describe('Axis Tests', function() {
                                .height(300)
                                .margin({top:0, left:10, right: 40, bottom:0});
 
-        var y = new insight.Axis(chart, 'Key Axis', 'v', insight.Scales.Linear, 'right');
-        
+        var y = new insight.Axis('Key Axis', 'v', insight.Scales.Linear, 'right');
+        chart.addAxis(y);
+
+        //When:
+        y.calculateAxisBounds(chart);
+
         //Then:
         var observedResult = y.axisPosition();
         var expectedResult = 'translate(350,0)';
@@ -357,13 +390,8 @@ describe('Axis Tests', function() {
     it('no tick label rotation by default', function() {
         
         //Given:        
-        var chart = new insight.Chart('test', '#test', 'ada')
-                               .width(400)
-                               .height(300)
-                               .margin({top:0, left:10, right: 40, bottom:0});
+        var y = new insight.Axis('Key Axis', 'h', insight.Scales.Linear, 'bottom');
 
-        var y = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Linear, 'bottom');
-        
         //Then:
         var observedResult = y.tickRotationTransform();
         var expectedResult = '';
@@ -375,13 +403,8 @@ describe('Axis Tests', function() {
     it('no  label rotation by default', function() {
         
         //Given:        
-        var chart = new insight.Chart('test', '#test', 'ada')
-                               .width(400)
-                               .height(300)
-                               .margin({top:0, left:10, right: 40, bottom:0});
+        var y = new insight.Axis('Key Axis', 'h', insight.Scales.Linear, 'bottom');
 
-        var y = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Linear, 'bottom');
-        
         //Then:
         var observedResult = y.tickRotationTransform();
         var expectedResult = '';
@@ -392,15 +415,10 @@ describe('Axis Tests', function() {
     it('default label rotation when top to bottom specified', function() {
         
         //Given:        
-        var chart = new insight.Chart('test', '#test', 'ada')
-                               .width(400)
-                               .height(300)
-                               .margin({top:0, left:10, right: 40, bottom:0});
-
-        var y = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Linear, 'bottom')
+        var y = new insight.Axis('Key Axis', 'h', insight.Scales.Linear, 'bottom')
                            .tickOrientation('tb')
                            .tickSize(0);
-        
+
         //Then:
         var observedResult = y.tickRotationTransform();
         var expectedResult = ' rotate(90,0,10)';
@@ -425,12 +443,7 @@ describe('Axis Tests', function() {
 
         it('gridlines hidden by default', function () {
             //Given:
-            var chart = new insight.Chart('test', '#test', 'ada')
-                .width(400)
-                .height(300)
-                .margin({top: 0, left: 10, right: 40, bottom: 0});
-
-            var y = new insight.Axis(chart, 'Key Axis', 'h', insight.Scales.Linear, 'bottom')
+            var y = new insight.Axis('Key Axis', 'h', insight.Scales.Linear, 'bottom')
                 .tickOrientation('tb')
                 .tickSize(0);
 
@@ -455,12 +468,15 @@ describe('Axis Tests', function() {
                     bottom: 100
                 });
 
-            var x = new insight.Axis(chart, 'ValueAxis', 'h', insight.Scales.Linear, 'bottom')
+            var x = new insight.Axis('ValueAxis', 'h', insight.Scales.Linear, 'bottom')
                 .tickOrientation('lr');
 
-            var y = new insight.Axis(chart, 'KeyAxis', 'v', insight.Scales.Linear, 'left')
+            var y = new insight.Axis('KeyAxis', 'v', insight.Scales.Linear, 'left')
                 .tickOrientation('lr')
                 .showGridlines(false);
+
+            chart.addAxis(x);
+            chart.addAxis(y);
 
             var data = new insight.DataSet([
                 {"key": 1, "value": 1},
@@ -474,7 +490,7 @@ describe('Axis Tests', function() {
 
             //Then:
             // One per tickmark, between 0 and 3 by 0.5 steps (inclusive).
-            expect(y.gridlines()).toBeCloseTo([]);
+            expect(y.gridlines(chart)).toBeCloseTo([]);
 
             removeChartElement();
         });
@@ -495,12 +511,15 @@ describe('Axis Tests', function() {
                     bottom: 100
                 });
 
-            var x = new insight.Axis(chart, 'ValueAxis', 'h', insight.Scales.Linear, 'bottom')
+            var x = new insight.Axis('ValueAxis', 'h', insight.Scales.Linear, 'bottom')
                 .tickOrientation('lr');
 
-            var y = new insight.Axis(chart, 'KeyAxis', 'v', insight.Scales.Linear, 'left')
+            var y = new insight.Axis('KeyAxis', 'v', insight.Scales.Linear, 'left')
                 .tickOrientation('lr')
                 .showGridlines(true);
+
+            chart.addAxis(x);
+            chart.addAxis(y);
 
             var data = new insight.DataSet([
                 {"key": 1, "value": 1},
@@ -514,7 +533,7 @@ describe('Axis Tests', function() {
 
             //Then:
             // One per tickmark, between 0 and 3 by 0.5 steps (inclusive).
-            expect(y.gridlines()[0].length).toEqual(7);
+            expect(y.gridlines(chart)[0].length).toEqual(7);
 
             removeChartElement();
         });

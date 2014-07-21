@@ -18,8 +18,10 @@ describe('ScatterSeries', function() {
             .width(250)
             .height(250);
 
-        var xAxis = new insight.Axis(chart, '', 'h', insight.Scales.Linear);
-        var yAxis = new insight.Axis(chart, '', 'v', insight.Scales.Linear);
+        var xAxis = new insight.Axis('', 'h', insight.Scales.Linear);
+        var yAxis = new insight.Axis('', 'v', insight.Scales.Linear);
+        chart.addAxis(xAxis);
+        chart.addAxis(yAxis);
 
         series = new insight.ScatterSeries('ScatterSeries', dataset, xAxis, yAxis, 'silver');
         chart.series([series]);

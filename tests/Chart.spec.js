@@ -75,12 +75,6 @@ describe('Chart', function() {
 
         });
 
-        it('barPadding 0.1', function() {
-
-            expect(chart.barPadding()).toBe(0.1);
-
-        });
-
         it('title empty', function() {
 
             expect(chart.title()).toBe('');
@@ -325,33 +319,6 @@ describe('Chart', function() {
 
                 });
 
-                it('initialize on all axes', function() {
-
-                    var axes = [
-                        { initialize: function () {} },
-                        { initialize: function () {} },
-                        { initialize: function () {} }
-                    ];
-
-                    testInit(function() {
-
-                        axes.forEach(function(axis) {
-
-                            chart.addAxis(axis);
-                            spyOn(axis, 'initialize');
-
-                        });
-
-                    });
-
-                    axes.forEach(function(axis) {
-
-                        expect(axis.initialize).toHaveBeenCalled();
-
-                    });
-
-                });
-
                 it('initZoom if zoomable', function() {
 
                     testInit(function() {
@@ -391,8 +358,11 @@ describe('Chart', function() {
         beforeEach(function() {
             chart = new insight.Chart('asda', 'asdads', 'ada');
 
-            xAxis = new insight.Axis(chart, 'xAxis', 'h', insight.Scales.Linear, 'bottom');
-            yAxis = new insight.Axis(chart, 'yAxis', 'v', insight.Scales.Linear, 'left');
+            xAxis = new insight.Axis('xAxis', 'h', insight.Scales.Linear, 'bottom');
+            yAxis = new insight.Axis('yAxis', 'v', insight.Scales.Linear, 'left');
+
+            chart.addAxis(xAxis);
+            chart.addAxis(yAxis);
         });
 
         it('margins are 0 when no series on chart', function() {
@@ -458,7 +428,7 @@ describe('Chart', function() {
 
         it('right margins are expanded when y-axis is reversed', function() {
             //Given:
-            yAxis = new insight.Axis(chart, 'yAxis', 'v', insight.Scales.Linear, 'right');
+            yAxis = new insight.Axis('yAxis', 'v', insight.Scales.Linear, 'right');
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
             series.maxLabelDimensions = function() {
                 return maxDimensions = {
@@ -478,7 +448,7 @@ describe('Chart', function() {
 
         it('top margins are expanded when x-axis is reversed', function() {
             //Given:
-            xAxis = new insight.Axis(chart, 'xAxis', 'h', insight.Scales.Linear, 'top');
+            xAxis = new insight.Axis('xAxis', 'h', insight.Scales.Linear, 'top');
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
             series.maxLabelDimensions = function() {
                 return maxDimensions = {

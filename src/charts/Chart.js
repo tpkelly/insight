@@ -32,7 +32,6 @@
             var series = [];
             var axes = [];
             var self = this;
-            var barPadding = d3.functor(0.1);
             var title = '';
             var autoMargin = false;
 
@@ -67,10 +66,6 @@
 
                 this.addClipPath();
 
-                axes.map(function(axis) {
-                    axis.initialize();
-                });
-
                 if (zoomable) {
                     this.initZoom();
                 }
@@ -89,7 +84,7 @@
                         axis.initializeScale();
                     }
 
-                    axis.draw(dragging);
+                    axis.draw(self, dragging);
                 });
 
                 this.series()
@@ -192,14 +187,6 @@
 
             this.dragging = function() {
                 self.draw(true);
-            };
-
-            this.barPadding = function(_) {
-                if (!arguments.length) {
-                    return barPadding();
-                }
-                barPadding = d3.functor(_);
-                return this;
             };
 
             this.margin = function(_) {
