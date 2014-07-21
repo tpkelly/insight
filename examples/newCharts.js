@@ -16,16 +16,16 @@ $(document)
                     bottom: 40
                 });
 
-            var xScale = new insight.Axis('Country', 'h', insight.Scales.Ordinal, 'bottom')
+            var xScale = new insight.Axis('Country', insight.Scales.Ordinal, 'bottom')
                 .textAnchor('middle');;
-            var yScale = new insight.Axis('Value', 'v', insight.Scales.Linear, 'left');
+            var yScale = new insight.Axis('Value', insight.Scales.Linear, 'left');
 
-            var yScale2 = new insight.Axis('Percentage', 'v', insight.Scales.Linear, 'right')
+            var yScale2 = new insight.Axis('Percentage', insight.Scales.Linear, 'right')
                 .labelFormat(InsightFormatters.percentageFormatter);
 
-            chart.addAxis(xScale);
-            chart.addAxis(yScale);
-            chart.addAxis(yScale2);
+            chart.addXAxis(xScale);
+            chart.addYAxis(yScale);
+            chart.addYAxis(yScale2);
 
             var series = new insight.ColumnSeries('countryColumn', dataset, xScale, yScale, 'silver');
             var line = new insight.LineSeries('valueLine', dataset, xScale, yScale2, '#e44')

@@ -46,7 +46,7 @@ $(document)
                     bottom: 120
                 })
 
-            var xScale = new insight.Axis('Genre', 'h', insight.Scales.Ordinal, 'bottom')
+            var xScale = new insight.Axis('Genre', insight.Scales.Ordinal, 'bottom')
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
@@ -54,10 +54,10 @@ $(document)
                 .barPadding(0.3)
                 .ordered(true);
 
-            var yScale = new insight.Axis('Apps', 'v', insight.Scales.Linear, 'left');
+            var yScale = new insight.Axis('Apps', insight.Scales.Linear, 'left');
 
-            chart.addAxis(xScale);
-            chart.addAxis(yScale);
+            chart.addXAxis(xScale);
+            chart.addYAxis(yScale);
 
             var series = new insight.ColumnSeries('genre', genres, xScale, yScale, '#aae');
 
@@ -92,17 +92,17 @@ $(document)
                     bottom: 100
                 });
 
-            var xTime = new insight.Axis('Month', 'h', insight.Scales.Time, 'bottom')
+            var xTime = new insight.Axis('Month', insight.Scales.Time, 'bottom')
                 .tickOrientation('tb')
                 .tickSize(5)
                 .textAnchor('start')
                 .labelFormat(InsightFormatters.dateFormatter);
 
-            var yTime = new insight.Axis('New Apps', 'v', insight.Scales.Linear, 'left')
+            var yTime = new insight.Axis('New Apps', insight.Scales.Linear, 'left')
                 .tickSize(5);
 
-            timeChart.addAxis(xTime);
-            timeChart.addAxis(yTime);
+            timeChart.addXAxis(xTime);
+            timeChart.addYAxis(yTime);
 
             var line = new insight.LineSeries('valueLine', dates, xTime, yTime, '#aae')
                 .valueFunction(function(d)
@@ -128,17 +128,17 @@ $(document)
                     bottom: 100
                 });
 
-            var bubbleX = new insight.Axis('Average Number of Ratings', 'h', insight.Scales.Linear, 'bottom')
+            var bubbleX = new insight.Axis('Average Number of Ratings', insight.Scales.Linear, 'bottom')
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .tickOrientation('tb');
 
-            var bubbleY = new insight.Axis('Average Price', 'v', insight.Scales.Linear, 'left')
+            var bubbleY = new insight.Axis('Average Price', insight.Scales.Linear, 'left')
                 .tickSize(5);
 
-            bubbleChart.addAxis(bubbleX);
-            bubbleChart.addAxis(bubbleY);
+            bubbleChart.addXAxis(bubbleX);
+            bubbleChart.addYAxis(bubbleY);
 
             var bubbles = new insight.BubbleSeries('bubbles', genres, bubbleX, bubbleY, '#aae')
                 .xFunction(function(d)
