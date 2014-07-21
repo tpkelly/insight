@@ -45,18 +45,21 @@ $(document)
                     right: 40,
                     bottom: 120
                 })
-                .barPadding(0.3);
 
-            var xScale = new insight.Axis(chart, 'Genre', 'h', insight.Scales.Ordinal, 'bottom')
+            var xScale = new insight.Axis('Genre', 'h', insight.Scales.Ordinal, 'bottom')
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .tickOrientation('tb')
+                .barPadding(0.3)
                 .ordered(true);
 
-            var yScale = new insight.Axis(chart, 'Apps', 'v', insight.Scales.Linear, 'left');
+            var yScale = new insight.Axis('Apps', 'v', insight.Scales.Linear, 'left');
 
-            var series = new insight.ColumnSeries('genre', chart, genres, xScale, yScale, '#aae');
+            chart.addAxis(xScale);
+            chart.addAxis(yScale);
+
+            var series = new insight.ColumnSeries('genre', genres, xScale, yScale, '#aae');
 
             series.series = [
             {
@@ -89,16 +92,19 @@ $(document)
                     bottom: 100
                 });
 
-            var xTime = new insight.Axis(timeChart, 'Month', 'h', insight.Scales.Time, 'bottom')
+            var xTime = new insight.Axis('Month', 'h', insight.Scales.Time, 'bottom')
                 .tickOrientation('tb')
                 .tickSize(5)
                 .textAnchor('start')
                 .labelFormat(InsightFormatters.dateFormatter);
 
-            var yTime = new insight.Axis(timeChart, 'New Apps', 'v', insight.Scales.Linear, 'left')
-                .tickSize(5);;
+            var yTime = new insight.Axis('New Apps', 'v', insight.Scales.Linear, 'left')
+                .tickSize(5);
 
-            var line = new insight.LineSeries('valueLine', timeChart, dates, xTime, yTime, '#aae')
+            timeChart.addAxis(xTime);
+            timeChart.addAxis(yTime);
+
+            var line = new insight.LineSeries('valueLine', dates, xTime, yTime, '#aae')
                 .valueFunction(function(d)
                 {
                     return d.value.CountCumulative;
@@ -122,16 +128,19 @@ $(document)
                     bottom: 100
                 });
 
-            var bubbleX = new insight.Axis(bubbleChart, 'Average Number of Ratings', 'h', insight.Scales.Linear, 'bottom')
+            var bubbleX = new insight.Axis('Average Number of Ratings', 'h', insight.Scales.Linear, 'bottom')
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .tickOrientation('tb');
 
-            var bubbleY = new insight.Axis(bubbleChart, 'Average Price', 'v', insight.Scales.Linear, 'left')
+            var bubbleY = new insight.Axis('Average Price', 'v', insight.Scales.Linear, 'left')
                 .tickSize(5);
 
-            var bubbles = new insight.BubbleSeries('bubbles', bubbleChart, genres, bubbleX, bubbleY, '#aae')
+            bubbleChart.addAxis(bubbleX);
+            bubbleChart.addAxis(bubbleY);
+
+            var bubbles = new insight.BubbleSeries('bubbles', genres, bubbleX, bubbleY, '#aae')
                 .xFunction(function(d)
                 {
                     return d.value.userRatingCount.Average;

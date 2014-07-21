@@ -30,20 +30,24 @@ $(document)
                     bottom: 150
                 });
 
-            var x = new insight.Axis(chart, 'Client', 'h', insight.Scales.Ordinal, 'bottom')
+            var x = new insight.Axis('Client', 'h', insight.Scales.Ordinal, 'bottom')
                 .textAnchor('start')
                 .tickOrientation('tb')
                 .ordered(true);
 
-            var y = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'left')
+            var y = new insight.Axis('', 'v', insight.Scales.Linear, 'left')
                 .labelFormat(InsightFormatters.currencyFormatter);
 
-            var y2 = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'right')
+            var y2 = new insight.Axis('', 'v', insight.Scales.Linear, 'right')
                 .labelFormat(InsightFormatters.percentageFormatter);
 
-            var series = new insight.ColumnSeries('clientColumn', chart, clientData, x, y);
+            chart.addAxis(x);
+            chart.addAxis(y);
+            chart.addAxis(y2);
 
-            var line = new insight.LineSeries('percentLine', chart, clientData, x, y2, '#aae')
+            var series = new insight.ColumnSeries('clientColumn', clientData, x, y);
+
+            var line = new insight.LineSeries('percentLine', clientData, x, y2, '#aae')
                 .tooltipFormat(InsightFormatters.percentageFormatter)
                 .valueFunction(function(d)
                 {

@@ -32,14 +32,17 @@ $(document)
                 bottom: 120
             });
 
-        var x = new insight.Axis(chart, 'Country', 'h', insight.Scales.Ordinal, 'bottom')
+        var x = new insight.Axis('Country', 'h', insight.Scales.Ordinal, 'bottom')
             .tickOrientation('tb');
 
-        var y = new insight.Axis(chart, 'Population', 'v', insight.Scales.Linear, 'left')
+        var y = new insight.Axis('Population', 'v', insight.Scales.Linear, 'left')
             .tickSize(5)
             .labelFormat(d3.format('0,000'));
 
-        var series = new insight.ColumnSeries('countryColumn', chart, dataset, x, y, '#aae')
+        chart.addAxis(x);
+        chart.addAxis(y);
+
+        var series = new insight.ColumnSeries('countryColumn', dataset, x, y, '#aae')
             .valueFunction(function(d)
             {
                 return d.value;
