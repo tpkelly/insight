@@ -14,7 +14,6 @@ $(document)
             data.forEach(function(d)
             {
                 d.releaseDate = new Date(d.releaseDate);
-                d.fileSizeBytes = +d.fileSizeBytes;
             });
 
             var dataset = new insight.DataSet(data);
@@ -57,8 +56,26 @@ $(document)
 
             var yScale = new insight.Axis(chart, 'Apps', 'v', insight.Scales.Linear, 'left');
 
+<<<<<<< HEAD
+            var series = new insight.ColumnSeries('genre', chart, genres, xScale, yScale, 'silver');
+
+            series.series = [
+            {
+                name: 'genre',
+                accessor: function(d)
+                {
+                    return d.value.Count;
+                },
+                label: function(d)
+                {
+                    return d.key
+                },
+                color: 'lightblue',
+                tooltipValue: function(d)
+=======
             var series = new insight.ColumnSeries('genre', chart, genres, xScale, yScale, 'lightblue')
                 .valueFunction(function(d)
+>>>>>>> 04135a5... updating samples
                 {
                     return d.value.Count;
                 });

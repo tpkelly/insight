@@ -146,6 +146,14 @@ img
   padding: 0;
 }
 
+<<<<<<< HEAD
+=======
+.fa
+{
+  font-size: 150px;
+  color: silver;
+}
+>>>>>>> 04135a5... updating samples
 
 
 #fields li .badge, .measureButton
@@ -171,6 +179,10 @@ img
     
 }
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> 04135a5... updating samples
 .charticon
 {
   cursor: pointer;
