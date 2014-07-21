@@ -17,6 +17,14 @@ insight.Series = function Series(name, data, x, y, color) {
     this.animationDuration = 300;
     this.topValues = null;
     this.dimensionName = data.dimension ? data.dimension.Name + "Dim" : "";
+
+    this.tip = d3.tip()
+        .attr('class', 'd3-tip')
+        .offset([-10, 0])
+        .html(function(d) {
+            return '<span class="tipvalue">' + d + '</span>';
+        });
+
     x.addSeries(this);
     y.addSeries(this);
 
@@ -114,11 +122,22 @@ insight.Series = function Series(name, data, x, y, color) {
 
 
     this.mouseOver = function(d, item) {
-        self.chart.mouseOver(self, this, d);
+        var tooltip = $(this)
+            .find('.tooltip')
+            .first()
+            .text();
+
+        self.tip.show(tooltip);
+
+        d3.select(this)
+            .classed('active', true);
     };
 
     this.mouseOut = function(d, item) {
-        self.chart.mouseOut(self, this, d);
+        self.tip.hide(d);
+
+        d3.select(this)
+            .classed('active', false);
     };
 
     /**

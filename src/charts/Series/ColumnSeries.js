@@ -172,6 +172,8 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
     this.draw = function(chart, drag) {
 
+        chart.plotArea.call(this.tip);
+
         var reset = function(d) {
             d.yPos = 0;
             d.xPos = 0;

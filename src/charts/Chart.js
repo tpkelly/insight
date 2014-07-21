@@ -75,8 +75,6 @@
                     this.initZoom();
                 }
 
-                this.tooltip();
-
                 this.draw(false);
             };
 
@@ -217,39 +215,6 @@
                 return insight.Utils.safeString(this.name) + 'clip';
             };
 
-            this.tooltip = function() {
-
-                this.tip = d3.tip()
-                    .attr('class', 'd3-tip')
-                    .offset([-10, 0])
-                    .html(function(d) {
-                        return '<span class="tipvalue">' + d + '</span>';
-                    });
-
-                this.plotArea.call(this.tip);
-
-                return this;
-            };
-
-            this.mouseOver = function(chart, item, d) {
-
-                var tooltip = $(item)
-                    .find('.tooltip')
-                    .first()
-                    .text();
-
-                this.tip.show(tooltip);
-
-                d3.select(item)
-                    .classed('active', true);
-            };
-
-            this.mouseOut = function(chart, item, d) {
-                this.tip.hide(d);
-
-                d3.select(item)
-                    .classed('active', false);
-            };
 
             this.title = function(_) {
                 if (!arguments.length) {
@@ -277,11 +242,12 @@
                 return this;
             };
 
-            this.series = function(_) {
+            this.series = function(newSeries) {
                 if (!arguments.length) {
                     return series;
                 }
-                series = _;
+                series = newSeries;
+
                 return this;
             };
 

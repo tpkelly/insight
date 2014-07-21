@@ -65,6 +65,9 @@ insight.LineSeries = function LineSeries(name, data, x, y, color) {
     };
 
     this.draw = function(chart, dragging) {
+
+        chart.plotArea.call(this.tip);
+
         var transform = d3.svg.line()
             .x(self.rangeX)
             .y(self.rangeY)

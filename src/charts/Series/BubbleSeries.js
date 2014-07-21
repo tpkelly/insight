@@ -130,6 +130,8 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
     };
 
     this.draw = function(chart, drag) {
+        chart.plotArea.call(this.tip);
+
         var duration = drag ? 0 : function(d, i) {
             return 200 + (i * 20);
         };
