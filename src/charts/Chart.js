@@ -75,7 +75,12 @@
                     self.initZoom();
                 }
 
-                self.tooltip();
+                this.tooltip = new insight.Tooltip()
+                    .container(self.container.node())
+                    .offset({
+                        x: 0,
+                        y: -10
+                    });
 
                 self.draw(false);
             };
@@ -217,37 +222,30 @@
                 return insight.Utils.safeString(this.name) + 'clip';
             };
 
-            this.tooltip = function() {
 
-                this.tip = d3.tip()
-                    .attr('class', 'd3-tip')
-                    .offset([-10, 0])
-                    .html(function(d) {
-                        return '<span class="tipvalue">' + d + '</span>';
-                    });
+            /**
+             * This method is called by member series when their items are activated by a mouseover event. Tooltips are displayed and CSS classes applied.
+             * @param {DOMElement} element - The DOMElement (usually SVG) triggering the event
+             * @param {string} text - The text/html that the series is providing
+             */
+            this.mouseOver = function(element, tooltipText) {
 
-                this.chart.call(this.tip);
+                this.tooltip.show(element, tooltipText);
 
-                return this;
-            };
-
-            this.mouseOver = function(chart, item, d) {
-
-                var tooltip = $(item)
-                    .find('.tooltip')
-                    .first()
-                    .text();
-
-                this.tip.show(tooltip);
-
-                d3.select(item)
+                d3.select(element)
                     .classed('active', true);
             };
 
-            this.mouseOut = function(chart, item, d) {
-                this.tip.hide(d);
+            /**
+             * This method is called by member series when their items activate a mouseout event.  Any tooltip is hidden and CSS classes are applied.
+             * @param {DOMElement} element - The DOMElement (usually SVG) triggering the event
+             * @param {string} text - The text/html that the series is providing
+             */
+            this.mouseOut = function(element) {
 
-                d3.select(item)
+                this.tooltip.hide();
+
+                d3.select(element)
                     .classed('active', false);
             };
 
@@ -285,17 +283,6 @@
                 return this;
             };
 
-
-            this.addHorizontalScale = function(type, typeString, direction) {
-                var scale = new Scale(this, type, direction, typeString);
-            };
-
-
-            this.addHorizontalAxis = function(scale) {
-                var axis = new Axis(this, scale, 'h', 'left');
-            };
-
-
             this.autoMargin = function(_) {
                 if (!arguments.length) {
                     return autoMargin;
@@ -303,7 +290,6 @@
                 autoMargin = _;
                 return this;
             };
-
 
             this.highlight = function(selector, value) {
 

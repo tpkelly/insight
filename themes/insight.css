@@ -16,6 +16,9 @@
 
 
 .d3-tip:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
   box-sizing: border-box;
   display: inline;
   font-size: 10px;

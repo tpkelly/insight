@@ -33,4 +33,58 @@ describe('InsightCharts Utils Tests', function() {
         expect(actualResult).toEqual(expectedResult);
     });
 
+    it('unions two objects, prioritizing the first', function() {
+        
+        // Given
+        var base =  {'font': 'arial', 'display':'block'};
+        var extension = {'font-size': '17px', 'display': 'inline'};
+        
+        
+        // Then
+
+        var expectedResult = {'font': 'arial', 'display':'block', 'font-size': '17px'};
+        var actualResult = insight.Utils.objectUnion(base, extension);
+
+        expect(actualResult).toEqual(expectedResult);
+    });
+
+    it('unions two objects, if second is empty', function() {
+        
+        // Given
+        var base =  {'font': 'arial', 'display':'block'};
+        var extension = {};
+        
+        
+        // Then
+
+        var expectedResult = {'font': 'arial', 'display':'block'};
+        var actualResult = insight.Utils.objectUnion(base, extension);
+
+        expect(actualResult).toEqual(expectedResult);
+    });
+
+
+    it('calculates the bounding box of an SVG element', function() {
+        
+        // Given
+        var svg = document.createElement('svg');
+        svg.id  = 'svg';
+        svg.style = 'width:400px; height:300px';
+
+        var rect = document.createElement('rect');
+        rect.setAttribute('x','100');
+        rect.setAttribute('y','50');
+        rect.setAttribute('width','20');
+        rect.setAttribute('height','150');
+        
+        svg.appendChild(rect);
+        document.body.appendChild(svg);
+        
+        // Then
+        
+        
+
+    });
+
 })
+

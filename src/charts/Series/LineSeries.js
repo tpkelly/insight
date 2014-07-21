@@ -18,17 +18,6 @@ insight.LineSeries = function LineSeries(name, chart, data, x, y, color) {
     var tooltipExists = false;
     var displayPoints = true;
 
-    var mouseOver = function(d, item) {
-        self.chart.mouseOver(self, this, d);
-
-        d3.select(this)
-            .classed("hover", true);
-    };
-
-    var mouseOut = function(d, item) {
-        self.chart.mouseOut(self, this, d);
-    };
-
     var lineOver = function(d, item) {
 
     };
@@ -119,8 +108,8 @@ insight.LineSeries = function LineSeries(name, chart, data, x, y, color) {
                 .attr("cy", self.chart.height() - self.chart.margin()
                     .bottom - self.chart.margin()
                     .top)
-                .on('mouseover', mouseOver)
-                .on('mouseout', mouseOut);
+                .on('mouseover', self.mouseOver)
+                .on('mouseout', self.mouseOut);
 
 
             circles

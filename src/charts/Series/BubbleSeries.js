@@ -25,17 +25,6 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
         return d.y;
     };
 
-    var mouseOver = function(d, item) {
-        self.chart.mouseOver(self, this, d);
-
-        d3.select(this)
-            .classed("hover", true);
-    };
-
-    var mouseOut = function(d, item) {
-        self.chart.mouseOut(self, this, d);
-    };
-
 
     this.findMax = function(scale) {
         var self = this;
@@ -147,8 +136,8 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
         bubbles.enter()
             .append('circle')
             .attr('class', className)
-            .on('mouseover', mouseOver)
-            .on('mouseout', mouseOut)
+            .on('mouseover', self.mouseOver)
+            .on('mouseout', self.mouseOut)
             .on('click', click);
 
 

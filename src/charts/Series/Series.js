@@ -128,12 +128,15 @@ insight.Series = function Series(name, chart, data, x, y, color) {
         return this;
     };
 
-    this.mouseOver = function(d, item) {
-        self.chart.mouseOver(self, this, d);
+    this.mouseOver = function(d) {
+
+        var tooltipText = self.tooltipFunction()(d);
+
+        self.chart.mouseOver(this, tooltipText);
     };
 
-    this.mouseOut = function(d, item) {
-        self.chart.mouseOut(self, this, d);
+    this.mouseOut = function() {
+        self.chart.mouseOut(this);
     };
 
     /**
