@@ -40,10 +40,10 @@ $(document)
                 bottom: 90
             });
 
-        var x = new insight.Axis('Country', insight.Scales.Ordinal, 'bottom')
+        var x = new insight.Axis('Country', insight.Scales.Ordinal)
             .tickOrientation('tb');
 
-        var y = new insight.Axis('Value', insight.Scales.Linear, 'left')
+        var y = new insight.Axis('Value', insight.Scales.Linear)
             .labelFormat(d3.format("0,000"));
 
         chart.addXAxis(x);

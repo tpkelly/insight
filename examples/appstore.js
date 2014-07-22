@@ -46,7 +46,7 @@ $(document)
                     bottom: 120
                 })
 
-            var xScale = new insight.Axis('Genre', insight.Scales.Ordinal, 'bottom')
+            var xScale = new insight.Axis('Genre', insight.Scales.Ordinal)
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
@@ -54,7 +54,7 @@ $(document)
                 .barPadding(0.3)
                 .ordered(true);
 
-            var yScale = new insight.Axis('Apps', insight.Scales.Linear, 'left');
+            var yScale = new insight.Axis('Apps', insight.Scales.Linear);
 
             chart.addXAxis(xScale);
             chart.addYAxis(yScale);
@@ -92,13 +92,13 @@ $(document)
                     bottom: 100
                 });
 
-            var xTime = new insight.Axis('Month', insight.Scales.Time, 'bottom')
+            var xTime = new insight.Axis('Month', insight.Scales.Time)
                 .tickOrientation('tb')
                 .tickSize(5)
                 .textAnchor('start')
                 .labelFormat(InsightFormatters.dateFormatter);
 
-            var yTime = new insight.Axis('New Apps', insight.Scales.Linear, 'left')
+            var yTime = new insight.Axis('New Apps', insight.Scales.Linear)
                 .tickSize(5);
 
             timeChart.addXAxis(xTime);
@@ -128,13 +128,13 @@ $(document)
                     bottom: 100
                 });
 
-            var bubbleX = new insight.Axis('Average Number of Ratings', insight.Scales.Linear, 'bottom')
+            var bubbleX = new insight.Axis('Average Number of Ratings', insight.Scales.Linear)
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .tickOrientation('tb');
 
-            var bubbleY = new insight.Axis('Average Price', insight.Scales.Linear, 'left')
+            var bubbleY = new insight.Axis('Average Price', insight.Scales.Linear)
                 .tickSize(5);
 
             bubbleChart.addXAxis(bubbleX);

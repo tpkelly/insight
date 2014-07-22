@@ -37,13 +37,14 @@ $(document)
                 bottom: 0
             });
 
-        var x = new insight.Axis('Population', insight.Scales.Linear, 'top')
+        var x = new insight.Axis('Population', insight.Scales.Linear)
             .textAnchor('end')
             .tickSize(5)
             .tickOrientation('tb')
-            .tickRotation('45');
+            .tickRotation('45')
+            .reversed(true);
 
-        var y = new insight.Axis('', insight.Scales.Ordinal, 'left');
+        var y = new insight.Axis('', insight.Scales.Ordinal);
 
         chart.addXAxis(x);
         chart.addYAxis(y);

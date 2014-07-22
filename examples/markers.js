@@ -36,12 +36,12 @@ $(document)
                 bottom: 120
             });
 
-        var x = new insight.Axis('Country', insight.Scales.Ordinal, 'bottom')
+        var x = new insight.Axis('Country', insight.Scales.Ordinal)
             .tickOrientation('tb')
             .tickRotation(45)
             .tickSize(5);
 
-        var y = new insight.Axis('Population', insight.Scales.Linear, 'left')
+        var y = new insight.Axis('Population', insight.Scales.Linear)
             .labelFormat(d3.format("0,000"));
 
         chart.addXAxis(x);

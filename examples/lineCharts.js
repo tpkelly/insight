@@ -28,13 +28,13 @@ $(document)
                     bottom: 100
                 });
 
-            var xScale = new insight.Axis('Time', insight.Scales.Time, 'bottom')
+            var xScale = new insight.Axis('Time', insight.Scales.Time)
                 .tickRotation(90)
                 .tickOrientation('tb')
                 .labelFormat(InsightFormatters.dateFormatter)
                 .showGridlines(true);
 
-            var yScale = new insight.Axis('Revenue', insight.Scales.Linear, 'left')
+            var yScale = new insight.Axis('Revenue', insight.Scales.Linear)
                 .showGridlines(true);
 
             chart.addXAxis(xScale);

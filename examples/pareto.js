@@ -30,16 +30,17 @@ $(document)
                     bottom: 150
                 });
 
-            var x = new insight.Axis('Client', insight.Scales.Ordinal, 'bottom')
+            var x = new insight.Axis('Client', insight.Scales.Ordinal)
                 .textAnchor('start')
                 .tickOrientation('tb')
                 .ordered(true);
 
-            var y = new insight.Axis('', insight.Scales.Linear, 'left')
+            var y = new insight.Axis('', insight.Scales.Linear)
                 .labelFormat(InsightFormatters.currencyFormatter);
 
-            var y2 = new insight.Axis('', insight.Scales.Linear, 'right')
-                .labelFormat(InsightFormatters.percentageFormatter);
+            var y2 = new insight.Axis('', insight.Scales.Linear)
+                .labelFormat(InsightFormatters.percentageFormatter)
+                .reversed(true);
 
             chart.addXAxis(x);
             chart.addYAxis(y);

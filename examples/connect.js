@@ -34,7 +34,7 @@ $(document)
                     bottom: 120
                 });
 
-            var xScale = new insight.Axis('Genre', insight.Scales.Ordinal, 'bottom')
+            var xScale = new insight.Axis('Genre', insight.Scales.Ordinal)
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
@@ -42,7 +42,7 @@ $(document)
                 .barPadding(0.3)
                 .ordered(true);
 
-            var yScale = new insight.Axis('Apps', insight.Scales.Linear, 'left')
+            var yScale = new insight.Axis('Apps', insight.Scales.Linear)
                 .tickSize(5);
 
             chart.addXAxis(xScale);
@@ -88,14 +88,14 @@ $(document)
                     bottom: 50
                 });
 
-            var lxScale = new insight.Axis('Language', insight.Scales.Ordinal, 'bottom')
+            var lxScale = new insight.Axis('Language', insight.Scales.Ordinal)
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .tickOrientation('tb')
                 .ordered(true);
 
-            var lyScale = new insight.Axis('AppsSupported', insight.Scales.Linear, 'left');
+            var lyScale = new insight.Axis('AppsSupported', insight.Scales.Linear);
 
             languageChart.addXAxis(lxScale);
             languageChart.addYAxis(lyScale);
