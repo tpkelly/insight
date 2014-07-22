@@ -13,6 +13,9 @@ insight.Constants = (function() {
     exports.BarGroupClass = "bargroup";
     exports.ContainerClass = "incontainer";
     exports.ChartSVG = "chartSVG";
+    exports.PlotArea = "plotArea";
+    exports.Legend = "legend";
+    exports.LegendView = "legend-view";
     exports.Bubble = "bubble";
     exports.Scatter = "scatter";
 

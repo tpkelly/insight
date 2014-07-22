@@ -188,7 +188,6 @@ describe('Chart', function() {
                 spyOn(chart, 'addClipPath');
 
                 chart.init();
-
             };
 
             beforeEach(function(){
@@ -212,16 +211,6 @@ describe('Chart', function() {
                     testInit();
 
                     expect(d3.elements['div'].attrs['class']).toEqual(insight.Constants.ContainerClass);
-
-                });
-
-                it('width', function() {
-
-                    testInit(function() {
-                        chart.width(12345);
-                    });
-
-                    expect(d3.elements['div'].styles['width']).toEqual('12345px');
 
                 });
 
@@ -253,26 +242,6 @@ describe('Chart', function() {
 
                 });
 
-                it('width', function() {
-
-                    testInit(function() {
-                        chart.width(345);
-                    });
-
-                    expect(d3.elements['svg'].attrs['width']).toEqual(345);
-
-                });
-
-                it('height', function() {
-
-                    testInit(function() {
-                        chart.height(999);
-                    });
-
-                    expect(d3.elements['svg'].attrs['height']).toEqual(999);
-
-                });
-
             });
 
             describe('sets chart g', function() {
@@ -281,22 +250,7 @@ describe('Chart', function() {
 
                     testInit();
 
-                    expect(d3.elements['g'].attrs['class']).toEqual(insight.Constants.Chart);
-
-                });
-
-                it('transform', function() {
-
-                    testInit(function() {
-                        chart.margin({
-                            left: 1,
-                            right: 2,
-                            top: 3,
-                            bottom: 4
-                        });
-                    });
-
-                    expect(d3.elements['g'].attrs['transform']).toEqual('translate(1,3)');
+                    expect(d3.elements['g'].attrs['class']).toEqual(insight.Constants.PlotArea);
 
                 });
 
