@@ -34,9 +34,10 @@ insight.AxisGridlines = function AxisGridlines(axis) {
 
     /** Draw all gridlines for a given set of ticks
      *
+     * @param chart The chart to draw the gridlines on.
      * @param ticks The ticks to create gridlines for.
      */
-    this.drawGridLines = function(charts, ticks) {
+    this.drawGridLines = function(chart, ticks) {
         var attributes = {
             'class': this.parentAxis.label(),
             'fill': 'none',
@@ -60,7 +61,7 @@ insight.AxisGridlines = function AxisGridlines(axis) {
         }
 
         //Get all lines, and add new datapoints.
-        var gridLines = this.allGridlines(charts)
+        var gridLines = this.allGridlines(chart)
             .data(ticks);
 
         //Add lines for all new datapoints
