@@ -67,11 +67,11 @@
 
                 this.addClipPath();
 
+                this.draw(false);
+
                 if (zoomable) {
                     this.initZoom();
                 }
-
-                this.draw(false);
             };
 
 
