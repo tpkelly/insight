@@ -2,20 +2,22 @@
  * The RowSeries class extends the Series class and draws horizontal bars on a Chart
  * @class insight.RowSeries
  * @param {string} name - A uniquely identifying name for this chart
- * @param {Chart} chart - The parent chart object
  * @param {DataSet} data - The DataSet containing this series' data
  * @param {insight.Scales.Scale} x - the x axis
  * @param {insight.Scales.Scale} y - the y axis
  * @param {object} color - a string or function that defines the color to be used for the items in this series
  */
-insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
+insight.RowSeries = function RowSeries(name, data, x, y, color) {
 
-    insight.Series.call(this, name, chart, data, x, y, color);
+    insight.Series.call(this, name, data, x, y, color);
 
     var self = this;
     var stacked = d3.functor(false);
     var seriesName = "";
     var tooltipExists = false;
+
+    this.valueAxis = y;
+    this.keyAxis = x;
 
     var tooltipFunction = function(d) {
         var func = self.currentSeries.accessor;
@@ -168,16 +170,22 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
         return seriesName + 'class bar ' + self.sliceSelector(d);
     };
 
-    this.draw = function(drag) {
+    this.draw = function(chart, drag) {
+
+        chart.plotArea.call(this.tip);
+
         var reset = function(d) {
             d.yPos = 0;
             d.xPos = 0;
         };
 
-        var groups = this.chart.chart
+        var data = this.dataset();
+
+        data.forEach(reset);
+
+        var groups = chart.plotArea
             .selectAll('g.' + insight.Constants.BarGroupClass + "." + this.name)
-            .data(this.dataset(), this.keyAccessor)
-            .each(reset);
+            .data(data, this.keyAccessor);
 
         var newGroups = groups.enter()
             .append('g')
@@ -203,7 +211,7 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
                 .attr('class', this.className)
                 .attr('height', 0)
                 .attr('fill', this.currentSeries.color)
-                .attr("clip-path", "url(#" + this.chart.clipPath() + ")")
+                .attr("clip-path", "url(#" + chart.clipPath() + ")")
                 .on('mouseover', this.mouseOver)
                 .on('mouseout', this.mouseOut)
                 .on('click', click);
@@ -223,6 +231,9 @@ insight.RowSeries = function RowSeries(name, chart, data, x, y, color) {
             bars.selectAll("." + insight.Constants.ToolTipTextClass)
                 .text(tooltipFunction);
         }
+
+        groups.exit()
+            .remove();
     };
 
     return this;

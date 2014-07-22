@@ -17,4 +17,20 @@ describe('InsightCharts Utils Tests', function() {
         expect(insight.Utils.isArray(data.objectProperty)).toBe(false);
     });
 
+    it('combines two arrays, removing duplicates', function() {
+        
+        // Given
+        var firstArray = ['a','b','c','d','e','f'];
+        var secondArray = ['c','d','e','f', 'g', 'h', 'i'];
+        
+        var combinedArray = firstArray.concat(secondArray);
+
+        // Then
+
+        var expectedResult = ['a','b','c','d','e','f','g','h','i'];
+        var actualResult = insight.Utils.arrayUnique(combinedArray);
+
+        expect(actualResult).toEqual(expectedResult);
+    });
+
 })

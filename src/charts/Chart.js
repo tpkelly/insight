@@ -30,9 +30,9 @@
             var width = d3.functor(300);
             var zoomable = false;
             var series = [];
-            var axes = [];
+            var xAxes = [];
+            var yAxes = [];
             var self = this;
-            var barPadding = d3.functor(0.1);
             var title = '';
             var autoMargin = false;
 
@@ -40,49 +40,45 @@
             this.init = function(create, container) {
 
                 if (autoMargin) {
-                    this.calculateLabelMargin();
+                    self.calculateLabelMargin();
                 }
 
-                this.container = create ? d3.select(container)
-                    .append('div') : d3.select(this.element)
+                self.container = create ? d3.select(container)
+                    .append('div') : d3.select(self.element)
                     .append('div');
 
-                this.container
+                self.container
                     .attr('class', insight.Constants.ContainerClass)
-                    .style('width', this.width() + 'px')
+                    .style('width', self.width() + 'px')
                     .style('position', 'relative')
                     .style('display', 'inline-block');
 
-                this.chartSVG = this.container
+                self.chartSVG = self.container
                     .append('svg')
                     .attr('class', insight.Constants.ChartSVG)
-                    .attr('width', this.width())
-                    .attr('height', this.height());
+                    .attr('width', self.width())
+                    .attr('height', self.height());
 
-                this.chart = this.chartSVG.append('g')
+                self.plotArea = self.chartSVG.append('g')
                     .attr('class', insight.Constants.Chart)
-                    .attr('transform', 'translate(' + this.margin()
-                        .left + ',' + this.margin()
+                    .attr('transform', 'translate(' + self.margin()
+                        .left + ',' + self.margin()
                         .top + ')');
 
-                this.addClipPath();
-
-                axes.map(function(axis) {
-                    axis.initialize();
-                });
-
-                if (zoomable) {
-                    this.initZoom();
-                }
-
-                this.tooltip();
+                self.addClipPath();
 
                 this.draw(false);
+
+                if (zoomable) {
+                    self.initZoom();
+                }
             };
 
 
             this.draw = function(dragging) {
                 this.resizeChart();
+
+                var axes = xAxes.concat(yAxes);
 
                 axes.map(function(axis) {
                     var isZoom = zoomAxis == axis;
@@ -91,25 +87,17 @@
                         axis.initializeScale();
                     }
 
-                    axis.draw(dragging);
+                    axis.draw(self, dragging);
                 });
 
                 this.series()
                     .map(function(series) {
-                        series.draw(dragging);
+                        series.draw(self, dragging);
                     });
             };
 
-            this.addAxis = function(axis) {
-                axes.push(axis);
-            };
-
-            this.axes = function() {
-                return axes;
-            };
-
             this.addClipPath = function() {
-                this.chart.append('clipPath')
+                this.plotArea.append('clipPath')
                     .attr('id', this.clipPath())
                     .append('rect')
                     .attr('x', 1)
@@ -130,12 +118,12 @@
                     .attr('width', this.width())
                     .attr('height', this.height());
 
-                this.chart = this.chart
+                this.plotArea = this.plotArea
                     .attr('transform', 'translate(' + this.margin()
                         .left + ',' + this.margin()
                         .top + ')');
 
-                this.chart.select('#' + this.clipPath())
+                this.plotArea.select('#' + this.clipPath())
                     .append('rect')
                     .attr('x', 1)
                     .attr('y', 0)
@@ -173,7 +161,7 @@
                 this.zoom.x(zoomAxis.scale);
 
                 if (!this.zoomExists()) {
-                    this.chart.append('rect')
+                    this.plotArea.append('rect')
                         .attr('class', 'zoompane')
                         .attr('width', this.width())
                         .attr('height', this.height() - this.margin()
@@ -183,25 +171,17 @@
                         .style('pointer-events', 'all');
                 }
 
-                this.chart.select('.zoompane')
+                this.plotArea.select('.zoompane')
                     .call(this.zoom);
             };
 
             this.zoomExists = function() {
-                var z = this.chart.selectAll('.zoompane');
+                var z = this.plotArea.selectAll('.zoompane');
                 return z[0].length;
             };
 
             this.dragging = function() {
                 self.draw(true);
-            };
-
-            this.barPadding = function(_) {
-                if (!arguments.length) {
-                    return barPadding();
-                }
-                barPadding = d3.functor(_);
-                return this;
             };
 
             this.margin = function(_) {
@@ -217,39 +197,6 @@
                 return insight.Utils.safeString(this.name) + 'clip';
             };
 
-            this.tooltip = function() {
-
-                this.tip = d3.tip()
-                    .attr('class', 'd3-tip')
-                    .offset([-10, 0])
-                    .html(function(d) {
-                        return '<span class="tipvalue">' + d + '</span>';
-                    });
-
-                this.chart.call(this.tip);
-
-                return this;
-            };
-
-            this.mouseOver = function(chart, item, d) {
-
-                var tooltip = $(item)
-                    .find('.tooltip')
-                    .first()
-                    .text();
-
-                this.tip.show(tooltip);
-
-                d3.select(item)
-                    .classed('active', true);
-            };
-
-            this.mouseOut = function(chart, item, d) {
-                this.tip.hide(d);
-
-                d3.select(item)
-                    .classed('active', false);
-            };
 
             this.title = function(_) {
                 if (!arguments.length) {
@@ -277,14 +224,70 @@
                 return this;
             };
 
-            this.series = function(_) {
+            this.series = function(newSeries) {
                 if (!arguments.length) {
                     return series;
                 }
-                series = _;
+                series = newSeries;
+
                 return this;
             };
 
+            this.addXAxis = function(axis) {
+                axis.direction = 'h';
+                xAxes.push(axis);
+                return this;
+            };
+
+            this.xAxes = function(newXAxes) {
+                if (!arguments.length) {
+                    return xAxes;
+                }
+
+                for (var index = 0; index < newXAxes.length; index++) {
+                    self.addXAxis(newXAxes[index]);
+                }
+
+                return this;
+            };
+
+            this.xAxis = function(xAxis) {
+                if (!arguments.length) {
+                    return xAxes[0];
+                }
+
+                var newXAxes = xAxes.slice(0);
+                newXAxes[0] = xAxis;
+                return this.xAxes(newXAxes);
+            };
+
+            this.addYAxis = function(axis) {
+                axis.direction = 'v';
+                yAxes.push(axis);
+                return this;
+            };
+
+            this.yAxes = function(newYAxes) {
+                if (!arguments.length) {
+                    return yAxes;
+                }
+
+                for (var index = 0; index < newYAxes.length; index++) {
+                    self.addYAxis(newYAxes[index]);
+                }
+
+                return this;
+            };
+
+            this.yAxis = function(yAxis) {
+                if (!arguments.length) {
+                    return yAxes[0];
+                }
+
+                var newYAxes = yAxes.slice(0);
+                newYAxes[0] = yAxis;
+                return this.yAxes(newYAxes);
+            };
 
             this.addHorizontalScale = function(type, typeString, direction) {
                 var scale = new Scale(this, type, direction, typeString);
@@ -307,7 +310,7 @@
 
             this.highlight = function(selector, value) {
 
-                var clicked = this.chart.selectAll('.' + selector);
+                var clicked = this.plotArea.selectAll('.' + selector);
                 var alreadySelected = clicked.classed('selected');
 
                 if (alreadySelected) {
@@ -319,8 +322,8 @@
                     self.selectedItems.push(selector);
                 }
 
-                var selected = this.chart.selectAll('.selected');
-                var notselected = this.chart.selectAll('.bar:not(.selected),.bubble:not(.selected)');
+                var selected = this.plotArea.selectAll('.selected');
+                var notselected = this.plotArea.selectAll('.bar:not(.selected),.bubble:not(.selected)');
 
                 notselected.classed('notselected', selected[0].length > 0);
             };
@@ -345,8 +348,8 @@
                 .forEach(function(series) {
                     var labelDimensions = series.maxLabelDimensions(canvas);
 
-                    margin[series.x.anchor] = Math.max(labelDimensions.maxKeyWidth, margin[series.x.anchor]);
-                    margin[series.y.anchor] = Math.max(labelDimensions.maxValueWidth, margin[series.y.anchor]);
+                    margin[series.x.orientation()] = Math.max(labelDimensions.maxKeyWidth, margin[series.x.orientation()]);
+                    margin[series.y.orientation()] = Math.max(labelDimensions.maxValueWidth, margin[series.y.orientation()]);
                 });
 
             this.margin(margin);
