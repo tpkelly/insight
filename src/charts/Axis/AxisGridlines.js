@@ -10,9 +10,9 @@ insight.AxisGridlines = function AxisGridlines(axis) {
     var lineWidth = 1;
 
     /** Returns the array of all gridlines for this axis. */
-    this.allGridlines = function() {
+    this.allGridlines = function(chart) {
         var gridLineIdentifier = 'line.' + this.parentAxis.label();
-        return this.parentAxis.chart.chart.selectAll(gridLineIdentifier);
+        return chart.plotArea.selectAll(gridLineIdentifier);
     };
 
 
@@ -36,7 +36,7 @@ insight.AxisGridlines = function AxisGridlines(axis) {
      *
      * @param ticks The ticks to create gridlines for.
      */
-    this.drawGridLines = function(ticks) {
+    this.drawGridLines = function(charts, ticks) {
         var attributes = {
             'class': this.parentAxis.label(),
             'fill': 'none',
@@ -44,23 +44,23 @@ insight.AxisGridlines = function AxisGridlines(axis) {
             'stroke': lineColor,
             'stroke-width': lineWidth
         };
-        var chartMargin = this.parentAxis.chart.margin();
+
         var axis = this.parentAxis;
 
         if (this.parentAxis.horizontal()) {
             attributes.x1 = this.parentAxis.pixelValueForValue;
             attributes.x2 = this.parentAxis.pixelValueForValue;
             attributes.y1 = 0;
-            attributes.y2 = this.parentAxis.chart.height() - chartMargin.top - chartMargin.bottom;
+            attributes.y2 = this.parentAxis.bounds[1];
         } else {
             attributes.x1 = 0;
-            attributes.x2 = this.parentAxis.chart.width() - chartMargin.left - chartMargin.right;
+            attributes.x2 = this.parentAxis.bounds[0];
             attributes.y1 = this.parentAxis.pixelValueForValue;
             attributes.y2 = this.parentAxis.pixelValueForValue;
         }
 
         //Get all lines, and add new datapoints.
-        var gridLines = this.allGridlines()
+        var gridLines = this.allGridlines(charts)
             .data(ticks);
 
         //Add lines for all new datapoints
