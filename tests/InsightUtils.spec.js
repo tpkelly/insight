@@ -1,5 +1,11 @@
 
 
+var createElement = function(namespace, tag) {
+    return document.createElementNS(namespace, tag);
+}
+
+
+
 describe('InsightCharts Utils Tests', function() {
     
     it('correctly identifies arrays', function() {
@@ -64,26 +70,40 @@ describe('InsightCharts Utils Tests', function() {
     });
 
 
-    it('calculates the bounding box of an SVG element', function() {
+    it('calculates the north point of an SVG element', function() {
         
         // Given
-        var svg = document.createElement('svg');
+        var svg = createElement('http://www.w3.org/2000/svg', 'svg' );
         svg.id  = 'svg';
         svg.style = 'width:400px; height:300px';
 
-        var rect = document.createElement('rect');
+        var rect = createElement('http://www.w3.org/2000/svg', 'rect');
         rect.setAttribute('x','100');
         rect.setAttribute('y','50');
         rect.setAttribute('width','20');
         rect.setAttribute('height','150');
-        
+                
         svg.appendChild(rect);
         document.body.appendChild(svg);
+        // When
         
+        var boundingBox = insight.Utils.getSVGBoundingBox(rect);
+
         // Then
         
-        
+        var expectedNorthX = 110;
+        var expectedNorthY = 50;
 
+        var actualNorthX = boundingBox.n.x;
+        var actualNorthY = boundingBox.n.y;
+
+        expect(actualNorthY).toEqual(expectedNorthY);
+        expect(expectedNorthX).toEqual(expectedNorthX);
+
+
+        // Tidy up
+
+        document.body.removeChild(svg);
     });
 
 })

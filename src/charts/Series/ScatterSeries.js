@@ -21,19 +21,9 @@ insight.ScatterSeries = function ScatterSeries(name, chart, data, x, y, color) {
     var xFunction = function(d) {
         return d.x;
     };
+
     var yFunction = function(d) {
         return d.y;
-    };
-
-    var mouseOver = function(d, item) {
-        self.chart.mouseOver(self, this, d);
-
-        d3.select(this)
-            .classed("hover", true);
-    };
-
-    var mouseOut = function(d, item) {
-        self.chart.mouseOut(self, this, d);
     };
 
     this.findMax = function(scale) {
@@ -72,13 +62,10 @@ insight.ScatterSeries = function ScatterSeries(name, chart, data, x, y, color) {
     };
 
     this.rangeY = function(d) {
-        var f = self.yFunction();
-
         return self.y.scale(self.yFunction()(d));
     };
 
     this.rangeX = function(d, i) {
-        var f = self.xFunction();
         return self.x.scale(self.xFunction()(d));
     };
 
@@ -157,8 +144,8 @@ insight.ScatterSeries = function ScatterSeries(name, chart, data, x, y, color) {
         points.enter()
             .append('circle')
             .attr('class', className)
-            .on('mouseover', mouseOver)
-            .on('mouseout', mouseOut)
+            .on('mouseover', this.mouseOver)
+            .on('mouseout', this.mouseOut)
             .on('click', click);
 
         points

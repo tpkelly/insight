@@ -8,7 +8,7 @@ insight.Tooltip = (function(insight) {
 
     function Tooltip() {
 
-        // Local private variables
+        // Private variables
         var className = insight.Constants.Tooltip,
             self = this,
             chartContainer = null,
@@ -25,9 +25,14 @@ insight.Tooltip = (function(insight) {
                 'box-sizing': 'border-box'
             };
 
+
+
         // Private methods
 
 
+        /**
+         * This method creates the tooltip element inside the defined container element.  It sets this.element.
+         */
         function createElement() {
 
             var element = d3.select(self.container())
@@ -39,13 +44,22 @@ insight.Tooltip = (function(insight) {
             self.element = element.node();
         }
 
-
+        /**
+         * This method updates the content of the tooltip.
+         * @param {string} content - Textual or HTML content to display inside the tooltip div
+         */
         function setTooltipContent(content) {
             d3.select(self.element)
                 .html(content);
         }
 
 
+        /**
+         * This method calculates the position that the tooltip should be drawn at, relative to the provided HTML element.
+         * It currently just returns the position centrally above the provided DOM element, however the coordinate system is in place to allow customization around the element.
+         * @returns {object} point - an {x,y} point object representing the north point of the provided DOM element, in relation to the top left corner of its SVG container (not the page).
+         * @param {DOMElement} target - The target element to calculate the position from.
+         */
         function getTooltipPosition(target) {
 
             var boundingBox = insight.Utils.getSVGBoundingBox(target);
@@ -64,7 +78,10 @@ insight.Tooltip = (function(insight) {
             };
         }
 
-
+        /**
+         * Given a coordinate {x,y} position, this method updates the position and visibility of the tooltip to display it.
+         * @param {object} point - an {x,y} coordinate, from the top left of the tooltip's container SVG.
+         */
         function drawTooltip(position) {
 
             d3.select(self.element)
@@ -125,12 +142,12 @@ insight.Tooltip = (function(insight) {
          * @returns {object} return - The tooltip object
          * @param {object} offset - The container DOM Element that this Tooltip should be added to.
          */
-        this.container = function(chart) {
+        this.container = function(container) {
             if (!arguments.length) {
                 return chartContainer;
             }
 
-            chartContainer = chart;
+            chartContainer = container;
             return this;
         };
 

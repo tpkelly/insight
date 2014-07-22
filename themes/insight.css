@@ -104,7 +104,7 @@ circle.target-point
     fill: rgb(44, 44, 85);
 }
 
-.bubble:hover
+.bubble:active
 {
     stroke: #222;
 }
