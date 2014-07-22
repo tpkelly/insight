@@ -168,10 +168,10 @@
                                         right: 0
                                     });
 
-        var x = new insight.Axis(chart, '', 'h', insight.Scales.Linear, 'bottom').display(false);
+        var x = new insight.Axis(chart, '', 'h', insight.Scales.Linear, 'bottom')
+                           .display(false);
 
-        var y = new insight.Axis(chart, '', 'v', insight.Scales.Ordinal, 'left')
-                           .ordered(true);
+        var y = new insight.Axis(chart, '', 'v', insight.Scales.Ordinal, 'left');
 
         var rowSeries = new insight.RowSeries('content', chart, contentRating, x, y, '#336699')
                                    .valueFunction(function(d){ return d.value.Count;});
