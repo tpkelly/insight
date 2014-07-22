@@ -54,15 +54,63 @@ describe('Grouping tests', function() {
 
         var group =  data.group('country', function(d){return d.Country;});
 
-        group.sum(['IQ']);
+        group.mean(['IQ']);
 
         var data = group.getData();
         
         var scotland = data.filter(function(country){ return country.key=='Scotland'; })[0];
         var england = data.filter(function(country){ return country.key=='England'; })[0];
         
-        expect(scotland.value.IQ.Sum).toBe(268);
-        expect(england.value.IQ.Sum).toBe(589);
+        // Then
+
+        var actualValue = scotland.value.IQ.Average;
+        var expectedValue = 268/3;
+
+        var actualSum = scotland.value.IQ.Sum;
+        var expectedSum = 268;
+
+        expect(actualValue).toBe(expectedValue);
+        expect(actualSum).toBe(expectedSum);
+    });
+
+
+    it('will correctly average a property after a filter event', function() {
+        // Given
+        var data = new insight.DataSet(sourceData);
+        
+        var group =  data.group('country', function(d){return d.Country;});        
+        var age =  data.group('age', function(d){return d.Age;});
+
+        group.mean(['IQ']);
+
+        // When 
+
+        var data = group.getData();
+        
+        //filter age by people older than 10, to remove an entry from the scotland group
+        age.dimension.Dimension.filter(function(d){
+            return d > 10;
+        });
+
+        group.recalculate();
+
+        scotland = data.filter(function(country){ return country.key=='Scotland'; })[0];
+        england = data.filter(function(country){ return country.key=='England'; })[0];
+        
+        // Then
+
+        actualValueScotland = scotland.value.IQ.Average;
+        expectedValueScotland = 199/2;
+
+        actualValueEngland = england.value.IQ.Average;
+        expectedValueEngland = 278/4;
+
+        expectedCount = 2;
+        actualCount = scotland.value.Count;
+
+        expect(actualValueScotland).toBe(expectedValueScotland);
+        expect(actualValueEngland).toBe(expectedValueEngland);
+        expect(actualCount).toBe(expectedCount);        
     });
 
 
@@ -73,7 +121,7 @@ describe('Grouping tests', function() {
         var group =  data.group('country', function(d){return d.Country;})
                         .ordered(true);
         
-        var data = group.getOrderedData();
+        var data = group.getData(function(a,b){return b.value.Count - a.value.Count;});
         
         expect(data[0].key).toBe('England');
         expect(data[data.length-1].key).toBe('Scotland');
@@ -87,7 +135,7 @@ describe('Grouping tests', function() {
         var group =  data.group('country', function(d){return d.Country;})
                          .ordered(true);
         
-        var data = group.getOrderedData();
+        var data = group.getData(function(a,b){return b.value.Count - a.value.Count;});
         
         expect(data[0].key).toBe('England');
         expect(data[data.length-1].key).toBe('Scotland');
@@ -172,6 +220,8 @@ describe('Grouping tests', function() {
             return d > 10;
         });
 
+        group.recalculate();
+
         scotland = group.getData().filter(function(country){ return country.key=='Scotland'; })[0];
 
         expect(scotland.value.Gender['Male']).toBe(1);
@@ -223,7 +273,7 @@ describe('Grouping tests', function() {
         var age =  ndx.group('age', function(d){return d.Age;});
         
         
-        var data = group.getOrderedData();
+        var data = group.getData(function(a,b){return b.value - a.value;});
 
         var ballet = group.getData().filter(function(a){ return a.key=='Ballet'; })[0];
         var triathlon = group.getData().filter(function(a){ return a.key=='Triathlon'; })[0];
@@ -242,7 +292,7 @@ describe('Grouping tests', function() {
             return d > 10; 
         });
 
-        data = group.getOrderedData();
+        data = group.getData(function(a,b){return b.value - a.value;});
         
         ballet = group.getData().filter(function(a){ return a.key=='Ballet'; })[0];
         triathlon = group.getData().filter(function(a){ return a.key=='Triathlon'; })[0];

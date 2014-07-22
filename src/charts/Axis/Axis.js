@@ -22,6 +22,7 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
     var self = this;
     var label = name;
     var ordered = d3.functor(false);
+    var orderingFunction = null;
     var tickSize = d3.functor(1);
     var tickPadding = d3.functor(10);
     var labelRotation = '90';
@@ -73,8 +74,10 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
         var vals = [];
 
         self.series.map(function(series) {
-            vals = series.keys();
+            vals = vals.concat(series.keys());
         });
+
+        vals = insight.Utils.arrayUnique(vals);
 
         return vals;
     };
@@ -145,6 +148,14 @@ insight.Axis = function Axis(chart, name, direction, scale, anchor) {
             return ordered();
         }
         ordered = d3.functor(value);
+        return this;
+    };
+
+    this.orderingFunction = function(value) {
+        if (!arguments.length) {
+            return orderingFunction();
+        }
+        orderingFunction = value;
         return this;
     };
 
