@@ -2,15 +2,13 @@
  * The Series base class provides some base functions that are used by any specific types of series that derive from this class
  * @class insight.Series
  * @param {string} name - A uniquely identifying name for this chart
- * @param {Chart} chart - The parent chart object
  * @param {DataSet} data - The DataSet containing this series' data
  * @param {insight.Scales.Scale} x - the x axis
  * @param {insight.Scales.Scale} y - the y axis
  * @param {object} color - a string or function that defines the color to be used for the items in this series
  */
-insight.Series = function Series(name, chart, data, x, y, color) {
+insight.Series = function Series(name, data, x, y, color) {
 
-    this.chart = chart;
     this.data = data;
     this.x = x;
     this.y = y;
@@ -19,6 +17,13 @@ insight.Series = function Series(name, chart, data, x, y, color) {
     this.animationDuration = 300;
     this.topValues = null;
     this.dimensionName = data.dimension ? data.dimension.Name + "Dim" : "";
+
+    this.tip = d3.tip()
+        .attr('class', 'd3-tip')
+        .offset([-10, 0])
+        .html(function(d) {
+            return '<span class="tipvalue">' + d + '</span>';
+        });
 
     this.valueAxis = x;
     this.keyAxis = y;
@@ -129,11 +134,22 @@ insight.Series = function Series(name, chart, data, x, y, color) {
     };
 
     this.mouseOver = function(d, item) {
-        self.chart.mouseOver(self, this, d);
+        var tooltip = $(this)
+            .find('.tooltip')
+            .first()
+            .text();
+
+        self.tip.show(tooltip);
+
+        d3.select(this)
+            .classed('active', true);
     };
 
     this.mouseOut = function(d, item) {
-        self.chart.mouseOut(self, this, d);
+        self.tip.hide(d);
+
+        d3.select(this)
+            .classed('active', false);
     };
 
     /**
@@ -151,18 +167,6 @@ insight.Series = function Series(name, chart, data, x, y, color) {
 
         return result;
     };
-
-
-    this.selectedClassName = function(name) {
-        var selected = "";
-
-        if (self.chart.selectedItems.length) {
-            selected = self.chart.selectedItems.indexOf(name) > -1 ? "selected" : "notselected";
-        }
-
-        return selected;
-    };
-
 
     this.click = function(element, filter) {
 
@@ -256,7 +260,7 @@ insight.Series = function Series(name, chart, data, x, y, color) {
         return max;
     };
 
-    this.draw = function() {};
+    this.draw = function(chart, drag) {};
 
     return this;
 };
