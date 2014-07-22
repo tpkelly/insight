@@ -80,7 +80,7 @@ describe('Tooltip Tests', function() {
         
         // Given
         var tooltip = new insight.Tooltip();
-        var text = "Hello";
+        var text = "";
 
         var container = createElement(htmlNamespace, 'div' );
         var svg = createElement(svgNamespace, 'svg');
@@ -100,8 +100,8 @@ describe('Tooltip Tests', function() {
 
         // Expect
         
-        var expectedLeft = "94px";
-        var expectedTop = "30px";
+        var expectedLeft = "110px";
+        var expectedTop = "50px";
         
         var actualLeft = tooltip.element.style.left;
         var actualTop = tooltip.element.style.top;
