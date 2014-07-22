@@ -59,25 +59,11 @@ $(document)
             chart.addXAxis(xScale);
             chart.addYAxis(yScale);
 
-            var series = new insight.ColumnSeries('genre', genres, xScale, yScale, '#aae');
-
-            series.series = [
-            {
-                name: 'genre',
-                accessor: function(d)
+            var series = new insight.ColumnSeries('genre', genres, xScale, yScale, '#aae')
+                .valueFunction(function(d)
                 {
                     return d.value.Count;
-                },
-                label: function(d)
-                {
-                    return d.key
-                },
-                color: 'lightblue',
-                tooltipValue: function(d)
-                {
-                    return d.value.Count;
-                }
-            }];
+                });
 
             chart.series([series]);
 
