@@ -2,18 +2,16 @@
  * The BubbleSeries class extends the Series class
  * @class insight.BubbleSeries
  * @param {string} name - A uniquely identifying name for this chart
- * @param {Chart} chart - The parent chart object
  * @param {DataSet} data - The DataSet containing this series' data
  * @param {insight.Scales.Scale} x - the x axis
  * @param {insight.Scales.Scale} y - the y axis
  * @param {object} color - a string or function that defines the color to be used for the items in this series
  */
-insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
+insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
 
-    insight.Series.call(this, name, chart, data, x, y, color);
+    insight.Series.call(this, name, data, x, y, color);
 
     var radiusFunction = d3.functor(10);
-    var tooltipExists = false;
     var self = this;
     var selector = this.name + insight.Constants.Bubble;
 
@@ -96,8 +94,8 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
         //Minimum of pixels-per-axis-unit
         var xValues = data.map(xFunction);
         var yValues = data.map(yFunction);
-        var xBounds = this.x.calculateBounds()[1];
-        var yBounds = this.y.calculateBounds()[0];
+        var xBounds = this.x.bounds[1];
+        var yBounds = this.y.bounds[0];
         var maxRad = Math.min(xBounds / 10, yBounds / 10);
 
         // create radius for each item
@@ -119,7 +117,10 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
         return data;
     };
 
-    this.draw = function(drag) {
+    this.draw = function(chart, drag) {
+
+        this.initializeTooltip(chart.container.node());
+
         var duration = drag ? 0 : function(d, i) {
             return 200 + (i * 20);
         };
@@ -130,7 +131,7 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
 
         var bubbleData = this.bubbleData(this.dataset());
 
-        var bubbles = this.chart.chart.selectAll('circle.' + selector)
+        var bubbles = chart.plotArea.selectAll('circle.' + selector)
             .data(bubbleData, self.keyAccessor);
 
         bubbles.enter()
@@ -152,15 +153,6 @@ insight.BubbleSeries = function BubbleSeries(name, chart, data, x, y, color) {
             .attr('cy', self.rangeY)
             .attr('opacity', 0.5)
             .attr('fill', this.color);
-
-        if (!tooltipExists) {
-            bubbles.append('svg:text')
-                .attr('class', insight.Constants.ToolTipTextClass);
-            tooltipExists = true;
-        }
-
-        bubbles.selectAll("." + insight.Constants.ToolTipTextClass)
-            .text(this.tooltipFunction());
     };
 };
 

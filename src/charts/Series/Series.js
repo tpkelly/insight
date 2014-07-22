@@ -2,15 +2,13 @@
  * The Series base class provides some base functions that are used by any specific types of series that derive from this class
  * @class insight.Series
  * @param {string} name - A uniquely identifying name for this chart
- * @param {Chart} chart - The parent chart object
  * @param {DataSet} data - The DataSet containing this series' data
  * @param {insight.Scales.Scale} x - the x axis
  * @param {insight.Scales.Scale} y - the y axis
  * @param {object} color - a string or function that defines the color to be used for the items in this series
  */
-insight.Series = function Series(name, chart, data, x, y, color) {
+insight.Series = function Series(name, data, x, y, color) {
 
-    this.chart = chart;
     this.data = data;
     this.x = x;
     this.y = y;
@@ -128,15 +126,44 @@ insight.Series = function Series(name, chart, data, x, y, color) {
         return this;
     };
 
-    this.mouseOver = function(d) {
-
-        var tooltipText = self.tooltipFunction()(d);
-
-        self.chart.mouseOver(this, tooltipText);
+    this.initializeTooltip = function(container) {
+        this.tooltip = new insight.Tooltip()
+            .container(container)
+            .offset({
+                x: 0,
+                y: -10
+            });
     };
 
+    /**
+     * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouse over. Tooltips are shown and CSS updated.
+     * The *this* context will reference the DOMElement raising the event.
+     * @param {object} item - The data point for the hovered item.
+     * @param {int} index - The index of the hovered item in the data set.  This is required at the moment as we need to provide the valueFunction until stacked series are refactored.
+     * @param {function} valueFunction - If provided, this function will be used to generate the tooltip text, otherwise the series default valueFunction will be used.
+     *                                   This is only for stacked charts that currently have multiple valueFunctions.
+     */
+    this.mouseOver = function(item, i, valueFunction) {
+
+        var textFunction = valueFunction ? valueFunction : self.tooltipFunction();
+        var tooltipText = textFunction(item);
+
+        self.tooltip.show(this, tooltipText);
+
+        d3.select(this)
+            .classed('active', true);
+    };
+
+    /**
+     * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouseout event. Tooltips are hidden and CSS updated.
+     * The *this* context will reference the DOMElement raising the event.
+     */
     this.mouseOut = function() {
-        self.chart.mouseOut(this);
+
+        self.tooltip.hide();
+
+        d3.select(this)
+            .classed('active', false);
     };
 
     /**
@@ -154,18 +181,6 @@ insight.Series = function Series(name, chart, data, x, y, color) {
 
         return result;
     };
-
-
-    this.selectedClassName = function(name) {
-        var selected = "";
-
-        if (self.chart.selectedItems.length) {
-            selected = self.chart.selectedItems.indexOf(name) > -1 ? "selected" : "notselected";
-        }
-
-        return selected;
-    };
-
 
     this.click = function(element, filter) {
 
@@ -259,7 +274,7 @@ insight.Series = function Series(name, chart, data, x, y, color) {
         return max;
     };
 
-    this.draw = function() {};
+    this.draw = function(chart, drag) {};
 
     return this;
 };

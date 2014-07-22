@@ -2,24 +2,21 @@
  * The MarkerSeries class extends the Series class and draws markers/targets on a chart
  * @class insight.MarkerSeries
  * @param {string} name - A uniquely identifying name for this chart
- * @param {Chart} chart - The parent chart object
  * @param {DataSet} data - The DataSet containing this series' data
  * @param {insight.Scales.Scale} x - the x axis
  * @param {insight.Scales.Scale} y - the y axis
  * @param {object} color - a string or function that defines the color to be used for the items in this series
  */
-insight.MarkerSeries = function MarkerSeries(name, chart, data, x, y, color) {
+insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
 
-    insight.Series.call(this, name, chart, data, x, y, color);
+    insight.Series.call(this, name, data, x, y, color);
 
-    var self = this;
-    var thickness = 5;
-
-    var widthFactor = 1;
-    var offset = 0;
-
-    var horizontal = false;
-    var vertical = true;
+    var self = this,
+        thickness = 5,
+        widthFactor = 1,
+        offset = 0,
+        horizontal = false,
+        vertical = true;
 
     this.xPosition = function(d) {
         var pos = 0;
@@ -136,14 +133,14 @@ insight.MarkerSeries = function MarkerSeries(name, chart, data, x, y, color) {
     this.className = function(d) {
         var dimension = self.sliceSelector(d);
 
-        var selected = self.selectedClassName(dimension);
-
-        return self.name + 'class bar ' + dimension + " " + selected + " " + self.dimensionName;
+        return self.name + 'class bar ' + dimension + " " + self.dimensionName;
     };
 
 
 
-    this.draw = function(drag) {
+    this.draw = function(chart, drag) {
+
+        this.initializeTooltip(chart.container.node());
 
         var reset = function(d) {
             d.yPos = 0;
@@ -153,7 +150,7 @@ insight.MarkerSeries = function MarkerSeries(name, chart, data, x, y, color) {
         var d = this.dataset()
             .forEach(reset);
 
-        var groups = this.chart.chart
+        var groups = chart.plotArea
             .selectAll('g.' + insight.Constants.BarGroupClass + "." + this.name)
             .data(this.dataset(), this.keyAccessor);
 
@@ -176,13 +173,10 @@ insight.MarkerSeries = function MarkerSeries(name, chart, data, x, y, color) {
             .attr('y', this.y.bounds[0])
             .attr('height', 0)
             .attr('fill', this.color)
-            .attr('clip-path', 'url(#' + this.chart.clipPath() + ')')
+            .attr('clip-path', 'url(#' + chart.clipPath() + ')')
             .on('mouseover', this.mouseOver)
             .on('mouseout', this.mouseOut)
             .on('click', click);
-
-        newBars.append('svg:text')
-            .attr('class', insight.Constants.ToolTipTextClass);
 
         var bars = groups.selectAll('.' + this.name + 'class.bar');
 
@@ -193,9 +187,6 @@ insight.MarkerSeries = function MarkerSeries(name, chart, data, x, y, color) {
             .attr('x', this.xPosition)
             .attr('width', this.markerWidth)
             .attr('height', this.markerHeight);
-
-        bars.selectAll('.' + insight.Constants.ToolTipTextClass)
-            .text(this.tooltipFunction());
 
         groups.exit()
             .remove();
