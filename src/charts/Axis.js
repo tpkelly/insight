@@ -1,17 +1,13 @@
 /**
- * The Axis class coordinates the domain of the series data and draws axes on the chart in the required orientation and position.
+ * The Axis class coordinates the domain of the series data and draws axes.
  * @class insight.Axis
- * @param {Chart} chart - The parent chart object
  * @param {string} name - A uniquely identifying name for this chart
- * @param {string} orientation - horizontal 'h' or vertical 'v'
  * @param {insight.Scales.Scale} scale - insight.Scale.Linear for example
- * @param {string} anchor - 'left/right/top/bottom'
  */
-insight.Axis = function Axis(name, scale, anchor) {
+insight.Axis = function Axis(name, scale) {
 
     this.scaleType = scale.name;
     this.scale = scale.scale();
-    this.anchor = anchor ? anchor : 'left';
     this.rangeType = this.scale.rangeRoundBands ? this.scale.rangeRoundBands : this.scale.rangeRound;
     this.bounds = [0, 0];
     this.series = [];
@@ -24,13 +20,29 @@ insight.Axis = function Axis(name, scale, anchor) {
     var tickPadding = d3.functor(10);
     var labelRotation = '90';
     var tickOrientation = d3.functor('lr');
-    var orientation = d3.functor(this.anchor);
-    var textAnchor = (anchor == 'left' || anchor == 'top') ? 'end' : 'start';
     var showGridLines = false;
     var colorFunction = d3.functor('#777');
     var display = true;
     var barPadding = d3.functor(0.1);
     var initialisedAxisView = false;
+    var reversedPosition = false;
+
+    var orientation = function() {
+        if (self.horizontal()) {
+            return (reversedPosition) ? 'top' : 'bottom';
+        } else {
+            return (reversedPosition) ? 'right' : 'left';
+        }
+    };
+
+    var textAnchor = function() {
+        var orientation = self.orientation();
+        if (orientation == 'left' || orientation == 'top') {
+            return 'end';
+        } else {
+            return 'start';
+        }
+    };
 
     // private functions
 
@@ -214,6 +226,13 @@ insight.Axis = function Axis(name, scale, anchor) {
         return this;
     };
 
+    this.reversed = function(value) {
+        if (!arguments.length) {
+            return reversedPosition;
+        }
+        reversedPosition = value;
+        return this;
+    };
 
     // label and axis tick methods
 
@@ -290,9 +309,9 @@ insight.Axis = function Axis(name, scale, anchor) {
 
     this.textAnchor = function(value) {
         if (!arguments.length) {
-            return textAnchor;
+            return textAnchor();
         }
-        textAnchor = value;
+        textAnchor = d3.functor(value);
         return this;
     };
 
@@ -317,7 +336,7 @@ insight.Axis = function Axis(name, scale, anchor) {
      */
     this.tickRotationTransform = function() {
         var offset = self.tickPadding() + (self.tickSize() * 2);
-        offset = self.anchor == 'top' ? 0 - offset : offset;
+        offset = (reversedPosition && self.vertical()) ? 0 - offset : offset;
 
         var rotation = this.tickOrientation() == 'tb' ? ' rotate(' + self.tickRotation() + ',0,' + offset + ')' : '';
 
@@ -330,18 +349,17 @@ insight.Axis = function Axis(name, scale, anchor) {
 
         if (self.horizontal()) {
             var transX = 0;
-            var transY = self.anchor == 'top' ? 0 : self.bounds[1];
+            var transY = self.orientation() == 'top' ? 0 : self.bounds[1];
 
             transform += transX + ',' + transY + ')';
 
         } else if (self.vertical()) {
-            var xShift = self.anchor == 'left' ? 0 : self.bounds[0];
+            var xShift = self.orientation() == 'left' ? 0 : self.bounds[0];
             transform += xShift + ',0)';
         }
 
         return transform;
     };
-
 
     /**
      * This method positions the text label for the axis (not the tick labels)
@@ -351,11 +369,11 @@ insight.Axis = function Axis(name, scale, anchor) {
 
         if (self.horizontal()) {
             this.labelElement.style('left', 0)
-                .style(self.anchor, 0)
+                .style(self.orientation(), 0)
                 .style('width', '100%')
                 .style('text-align', 'center');
         } else if (self.vertical()) {
-            this.labelElement.style(self.anchor, '0')
+            this.labelElement.style(self.orientation(), '0')
                 .style('top', '35%');
         }
     };
@@ -468,8 +486,6 @@ insight.Axis = function Axis(name, scale, anchor) {
             .attr('class', insight.Constants.AxisLabelClass)
             .style('position', 'absolute')
             .text(this.label());
-
-        this.positionLabel();
     };
 
 
@@ -504,6 +520,8 @@ insight.Axis = function Axis(name, scale, anchor) {
 
         this.labelElement
             .text(this.label());
+
+        this.positionLabel();
 
         if (showGridLines) {
             var gridlines = this.gridlines(chart);

@@ -348,8 +348,8 @@
                 .forEach(function(series) {
                     var labelDimensions = series.maxLabelDimensions(canvas);
 
-                    margin[series.x.anchor] = Math.max(labelDimensions.maxKeyWidth, margin[series.x.anchor]);
-                    margin[series.y.anchor] = Math.max(labelDimensions.maxValueWidth, margin[series.y.anchor]);
+                    margin[series.x.orientation()] = Math.max(labelDimensions.maxKeyWidth, margin[series.x.orientation()]);
+                    margin[series.y.orientation()] = Math.max(labelDimensions.maxValueWidth, margin[series.y.orientation()]);
                 });
 
             this.margin(margin);

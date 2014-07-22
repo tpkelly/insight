@@ -359,8 +359,8 @@ describe('Chart', function() {
         beforeEach(function() {
             chart = new insight.Chart('asda', 'asdads', 'ada');
 
-            xAxis = new insight.Axis('xAxis', insight.Scales.Linear, 'bottom');
-            yAxis = new insight.Axis('yAxis', insight.Scales.Linear, 'left');
+            xAxis = new insight.Axis('xAxis', insight.Scales.Linear);
+            yAxis = new insight.Axis('yAxis', insight.Scales.Linear);
 
             chart.addXAxis(xAxis);
             chart.addYAxis(yAxis);
@@ -429,7 +429,7 @@ describe('Chart', function() {
 
         it('right margins are expanded when y-axis is reversed', function() {
             //Given:
-            yAxis = new insight.Axis('yAxis', insight.Scales.Linear, 'right');
+            yAxis = new insight.Axis('yAxis', insight.Scales.Linear).reversed(true);
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
             series.maxLabelDimensions = function() {
                 return maxDimensions = {
@@ -439,6 +439,7 @@ describe('Chart', function() {
             };
 
             chart.series([series]);
+            chart.yAxis(yAxis);
 
             //When:
             chart.calculateLabelMargin();
@@ -449,7 +450,7 @@ describe('Chart', function() {
 
         it('top margins are expanded when x-axis is reversed', function() {
             //Given:
-            xAxis = new insight.Axis('xAxis', insight.Scales.Linear, 'top');
+            xAxis = new insight.Axis('xAxis', insight.Scales.Linear).reversed(true);
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
             series.maxLabelDimensions = function() {
                 return maxDimensions = {
@@ -459,6 +460,7 @@ describe('Chart', function() {
             };
 
             chart.series([series]);
+            chart.xAxis(xAxis);
 
             //When:
             chart.calculateLabelMargin();
