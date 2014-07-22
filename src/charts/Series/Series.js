@@ -31,6 +31,10 @@ insight.Series = function Series(name, data, x, y, color) {
     var self = this;
     var cssClass = "";
     var filter = null;
+    var tooltipOffset = {
+        x: 0,
+        y: -10
+    };
 
     // private functions used internally, set by functions below that are exposed on the object
 
@@ -126,13 +130,36 @@ insight.Series = function Series(name, data, x, y, color) {
         return this;
     };
 
+
+    /**
+     * This method gets or sets the tooltip offset, which moves the tooltip for this series relative to its default point.
+     * @memberof insight.Series
+     * @returns {object} offset - An {x,y} offset point object
+     */
+    /**
+     * @memberof insight.Series
+     * @returns {object} this - this
+     * @param {object} value - An {x,y} offset point
+     */
+    this.tooltipOffset = function(value) {
+        if (!arguments.length) {
+            return tooltipOffset;
+        }
+        tooltipOffset = value;
+
+        return this;
+    };
+
+    /**
+     * This method creates the tooltip for this Series, checking if it exists already first.
+     * @param {DOMElement} container - The DOM Element that the tooltip should be drawn inside.
+     */
     this.initializeTooltip = function(container) {
-        this.tooltip = new insight.Tooltip()
-            .container(container)
-            .offset({
-                x: 0,
-                y: -10
-            });
+        if (!this.tooltip) {
+            this.tooltip = new insight.Tooltip()
+                .container(container)
+                .offset(self.tooltipOffset());
+        }
     };
 
     /**
