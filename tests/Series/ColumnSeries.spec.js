@@ -24,7 +24,7 @@ var dataset =
 
 
 var div = document.createElement('div');
-div.id  = 'testChart';
+div.id  = 'test';
 
 var createChartElement = function(){
      
@@ -40,9 +40,13 @@ describe('Column Series Tests', function() {
     
     it('filtering works with a single item', function() {
         
+        insight.init();
+
+        createChartElement();
+
         var data = new insight.DataSet(dataset);
 
-        var chart = new insight.Chart('Chart 1', '#chart1');
+        var chart = new insight.Chart('Chart 1', '#test');
                 
         var group =  data.group('country',function(d){return d.Country;});
         
@@ -54,7 +58,12 @@ describe('Column Series Tests', function() {
         var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale, 'silver').filterFunction(function(d){return d.key=='Scotland';});
         
         var data = series.dataset();
+
+        insight.drawCharts();
+
         expect(data.length).toBe(1);
+
+        removeChartElement();
     });
 
     it('filtering works with multiple items', function() {

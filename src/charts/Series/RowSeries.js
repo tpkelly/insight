@@ -16,6 +16,9 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
     var seriesName = "";
     var tooltipExists = false;
 
+    this.valueAxis = y;
+    this.keyAxis = x;
+
     var tooltipFunction = function(d) {
         var func = self.currentSeries.accessor;
         return self.tooltipFormat()(func(d));
@@ -176,10 +179,13 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
             d.xPos = 0;
         };
 
+        var data = this.dataset();
+
+        data.forEach(reset);
+
         var groups = chart.plotArea
             .selectAll('g.' + insight.Constants.BarGroupClass + "." + this.name)
-            .data(this.dataset(), this.keyAccessor)
-            .each(reset);
+            .data(data, this.keyAccessor);
 
         var newGroups = groups.enter()
             .append('g')
@@ -225,6 +231,9 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
             bars.selectAll("." + insight.Constants.ToolTipTextClass)
                 .text(tooltipFunction);
         }
+
+        groups.exit()
+            .remove();
     };
 
     return this;

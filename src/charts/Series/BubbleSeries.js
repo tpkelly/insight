@@ -19,10 +19,10 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
     var xFunction = function(d) {
         return d.x;
     };
+
     var yFunction = function(d) {
         return d.y;
     };
-
 
     var mouseOver = function(d, item) {
         self.chart.mouseOver(self, this, d);

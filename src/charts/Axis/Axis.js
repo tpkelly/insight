@@ -12,10 +12,12 @@ insight.Axis = function Axis(name, scale) {
     this.bounds = [0, 0];
     this.series = [];
     this.direction = '';
+    this.gridlines = new insight.AxisGridlines(this);
 
     var self = this;
     var label = name;
     var ordered = d3.functor(false);
+    var orderingFunction = null;
     var tickSize = d3.functor(1);
     var tickPadding = d3.functor(10);
     var labelRotation = '90';
@@ -87,8 +89,10 @@ insight.Axis = function Axis(name, scale) {
         var vals = [];
 
         self.series.map(function(series) {
-            vals = series.keys();
+            vals = vals.concat(series.keys());
         });
+
+        vals = insight.Utils.arrayUnique(vals);
 
         return vals;
     };
@@ -159,6 +163,14 @@ insight.Axis = function Axis(name, scale) {
             return ordered();
         }
         ordered = d3.functor(value);
+        return this;
+    };
+
+    this.orderingFunction = function(value) {
+        if (!arguments.length) {
+            return orderingFunction();
+        }
+        orderingFunction = value;
         return this;
     };
 
@@ -361,6 +373,10 @@ insight.Axis = function Axis(name, scale) {
         return transform;
     };
 
+    this.pixelValueForValue = function(d) {
+        return self.scale(d);
+    };
+
     /**
      * This method positions the text label for the axis (not the tick labels)
      * @memberof insight.Axis
@@ -394,13 +410,6 @@ insight.Axis = function Axis(name, scale) {
 
         return this;
     };
-
-    /** Returns the array of all gridlines for this axis. */
-    this.gridlines = function(chart) {
-        var gridLineIdentifier = 'line.' + label;
-        return chart.plotArea.selectAll(gridLineIdentifier);
-    };
-
 
     this.drawGridLines = function(gridlines) {
 
@@ -523,9 +532,9 @@ insight.Axis = function Axis(name, scale) {
 
         this.positionLabel();
 
+
         if (showGridLines) {
-            var gridlines = this.gridlines(chart);
-            this.drawGridLines(gridlines);
+            this.gridlines.drawGridLines(chart, this.scale.ticks());
         }
     };
 };

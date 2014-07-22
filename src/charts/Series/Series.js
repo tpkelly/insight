@@ -25,6 +25,9 @@ insight.Series = function Series(name, data, x, y, color) {
             return '<span class="tipvalue">' + d + '</span>';
         });
 
+    this.valueAxis = x;
+    this.keyAxis = y;
+
     x.addSeries(this);
     y.addSeries(this);
 
@@ -34,7 +37,6 @@ insight.Series = function Series(name, data, x, y, color) {
 
     var self = this;
     var cssClass = "";
-
     var filter = null;
 
     // private functions used internally, set by functions below that are exposed on the object
@@ -50,7 +52,6 @@ insight.Series = function Series(name, data, x, y, color) {
     var xFunction = function(d) {
         return d.key;
     };
-
 
     var tooltipFormat = function(d) {
         return d;
@@ -82,10 +83,22 @@ insight.Series = function Series(name, data, x, y, color) {
         return this;
     };
 
+    /**
+     * This method returns the data set used by this Series.
+     * @returns {object[]} dataset - The data set to be used by the series
+     */
     this.dataset = function() {
-        //won't always be x that determines this (rowcharts, bullets etc.), need concept of ordering by data scale?
 
-        var data = this.x.ordered() ? this.data.getOrderedData(this.topValues) : this.data.getData();
+        var orderFunction = null;
+
+        if (this.valueAxis.ordered()) {
+
+            orderFunction = function(a, b) {
+                return self.valueFunction()(b) - self.valueFunction()(a);
+            };
+        }
+
+        var data = this.data.getData(orderFunction, this.topValues);
 
         if (filter) {
             data = data.filter(filter);
@@ -119,7 +132,6 @@ insight.Series = function Series(name, data, x, y, color) {
 
         return this;
     };
-
 
     this.mouseOver = function(d, item) {
         var tooltip = $(this)
@@ -237,7 +249,7 @@ insight.Series = function Series(name, data, x, y, color) {
         var self = this;
 
         var max = 0;
-        var data = this.data.getData();
+        var data = this.dataset();
 
         var func = scale == self.x ? self.keyFunction() : self.valueFunction();
 
