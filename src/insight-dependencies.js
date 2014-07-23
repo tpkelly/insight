@@ -14,10 +14,6 @@
 
         undefinedMessages.push('d3.js');
 
-    } else if (isMissing(d3, 'tip')) {
-
-        undefinedMessages.push('d3.tip.js');
-
     }
 
     if (isMissing(window, 'crossfilter')) {

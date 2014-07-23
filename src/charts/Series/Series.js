@@ -18,13 +18,6 @@ insight.Series = function Series(name, data, x, y, color) {
     this.topValues = null;
     this.dimensionName = data.dimension ? data.dimension.Name + "Dim" : "";
 
-    this.tip = d3.tip()
-        .attr('class', 'd3-tip')
-        .offset([-10, 0])
-        .html(function(d) {
-            return '<span class="tipvalue">' + d + '</span>';
-        });
-
     this.valueAxis = x;
     this.keyAxis = y;
 
@@ -38,6 +31,10 @@ insight.Series = function Series(name, data, x, y, color) {
     var self = this;
     var cssClass = "";
     var filter = null;
+    var tooltipOffset = {
+        x: 0,
+        y: -10
+    };
 
     // private functions used internally, set by functions below that are exposed on the object
 
@@ -133,20 +130,64 @@ insight.Series = function Series(name, data, x, y, color) {
         return this;
     };
 
-    this.mouseOver = function(d, item) {
-        var tooltip = $(this)
-            .find('.tooltip')
-            .first()
-            .text();
 
-        self.tip.show(tooltip);
+    /**
+     * This method gets or sets the tooltip offset, which moves the tooltip for this series relative to its default point.
+     * @memberof insight.Series
+     * @returns {object} offset - An {x,y} offset point object
+     */
+    /**
+     * @memberof insight.Series
+     * @returns {object} this - this
+     * @param {object} value - An {x,y} offset point
+     */
+    this.tooltipOffset = function(value) {
+        if (!arguments.length) {
+            return tooltipOffset;
+        }
+        tooltipOffset = value;
+
+        return this;
+    };
+
+    /**
+     * This method creates the tooltip for this Series, checking if it exists already first.
+     * @param {DOMElement} container - The DOM Element that the tooltip should be drawn inside.
+     */
+    this.initializeTooltip = function(container) {
+        if (!this.tooltip) {
+            this.tooltip = new insight.Tooltip()
+                .container(container)
+                .offset(self.tooltipOffset());
+        }
+    };
+
+    /**
+     * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouse over. Tooltips are shown and CSS updated.
+     * The *this* context will reference the DOMElement raising the event.
+     * @param {object} item - The data point for the hovered item.
+     * @param {int} index - The index of the hovered item in the data set.  This is required at the moment as we need to provide the valueFunction until stacked series are refactored.
+     * @param {function} valueFunction - If provided, this function will be used to generate the tooltip text, otherwise the series default valueFunction will be used.
+     *                                   This is only for stacked charts that currently have multiple valueFunctions.
+     */
+    this.mouseOver = function(item, i, valueFunction) {
+
+        var textFunction = valueFunction ? valueFunction : self.tooltipFunction();
+        var tooltipText = textFunction(item);
+
+        self.tooltip.show(this, tooltipText);
 
         d3.select(this)
             .classed('active', true);
     };
 
-    this.mouseOut = function(d, item) {
-        self.tip.hide(d);
+    /**
+     * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouseout event. Tooltips are hidden and CSS updated.
+     * The *this* context will reference the DOMElement raising the event.
+     */
+    this.mouseOut = function() {
+
+        self.tooltip.hide();
 
         d3.select(this)
             .classed('active', false);

@@ -9,6 +9,7 @@ insight.Constants = (function() {
     exports.AxisClass = 'in-axis';
     exports.XAxisClass = 'x-axis';
     exports.XAxisRotation = "rotate(90)";
+    exports.Tooltip = "d3-tip";
     exports.ToolTipTextClass = "tooltip";
     exports.BarGroupClass = "bargroup";
     exports.ContainerClass = "incontainer";

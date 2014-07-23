@@ -12,7 +12,6 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
     insight.Series.call(this, name, data, x, y, color);
 
     var radiusFunction = d3.functor(10);
-    var tooltipExists = false;
     var self = this;
     var selector = this.name + insight.Constants.Bubble;
 
@@ -22,17 +21,6 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
 
     var yFunction = function(d) {
         return d.y;
-    };
-
-    var mouseOver = function(d, item) {
-        self.chart.mouseOver(self, this, d);
-
-        d3.select(this)
-            .classed("hover", true);
-    };
-
-    var mouseOut = function(d, item) {
-        self.chart.mouseOut(self, this, d);
     };
 
 
@@ -130,7 +118,8 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
     };
 
     this.draw = function(chart, drag) {
-        chart.plotArea.call(this.tip);
+
+        this.initializeTooltip(chart.container.node());
 
         var duration = drag ? 0 : function(d, i) {
             return 200 + (i * 20);
@@ -148,8 +137,8 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
         bubbles.enter()
             .append('circle')
             .attr('class', className)
-            .on('mouseover', mouseOver)
-            .on('mouseout', mouseOut)
+            .on('mouseover', self.mouseOver)
+            .on('mouseout', self.mouseOut)
             .on('click', click);
 
 
@@ -164,15 +153,6 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
             .attr('cy', self.rangeY)
             .attr('opacity', 0.5)
             .attr('fill', this.color);
-
-        if (!tooltipExists) {
-            bubbles.append('svg:text')
-                .attr('class', insight.Constants.ToolTipTextClass);
-            tooltipExists = true;
-        }
-
-        bubbles.selectAll("." + insight.Constants.ToolTipTextClass)
-            .text(this.tooltipFunction());
     };
 };
 

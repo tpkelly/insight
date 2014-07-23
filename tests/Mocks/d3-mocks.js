@@ -25,6 +25,11 @@ D3Match.prototype.style = function(name, value) {
     
 };
 
+D3Match.prototype.node = function() {
+
+    return this;   
+};
+
 var D3Mocks = function() {
     this.elements = {};
 }

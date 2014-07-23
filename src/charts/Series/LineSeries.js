@@ -11,22 +11,9 @@ insight.LineSeries = function LineSeries(name, data, x, y, color) {
 
     insight.Series.call(this, name, data, x, y, color);
 
-    var self = this;
-
-    var lineType = 'linear';
-    var tooltipExists = false;
-    var displayPoints = true;
-
-    var mouseOver = function(d, item) {
-        self.chart.mouseOver(self, this, d);
-
-        d3.select(this)
-            .classed("hover", true);
-    };
-
-    var mouseOut = function(d, item) {
-        self.chart.mouseOut(self, this, d);
-    };
+    var self = this,
+        lineType = 'linear',
+        displayPoints = true;
 
     var lineOver = function(d, item) {
 
@@ -75,7 +62,7 @@ insight.LineSeries = function LineSeries(name, data, x, y, color) {
 
     this.draw = function(chart, dragging) {
 
-        chart.plotArea.call(this.tip);
+        this.initializeTooltip(chart.container.node());
 
         var transform = d3.svg.line()
             .x(self.rangeX)
@@ -121,8 +108,8 @@ insight.LineSeries = function LineSeries(name, data, x, y, color) {
                 .attr("cy", chart.height() - chart.margin()
                     .bottom - chart.margin()
                     .top)
-                .on('mouseover', mouseOver)
-                .on('mouseout', mouseOut);
+                .on('mouseover', self.mouseOver)
+                .on('mouseout', self.mouseOut);
 
 
             circles
@@ -132,16 +119,6 @@ insight.LineSeries = function LineSeries(name, data, x, y, color) {
                 .attr("cy", self.rangeY)
                 .attr("r", 3)
                 .attr("fill", this.color);
-
-
-            if (!tooltipExists) {
-                circles.append('svg:text')
-                    .attr('class', insight.Constants.ToolTipTextClass);
-                tooltipExists = true;
-            }
-
-            circles.selectAll("." + insight.Constants.ToolTipTextClass)
-                .text(this.tooltipFunction());
         }
     };
 

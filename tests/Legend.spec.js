@@ -126,7 +126,7 @@ describe('Legend', function() {
     it('legend blobs contain series colours', function() {
 
         //Given:
-        lineSeries.color = d3.functor("rgb(128, 0, 128)");
+        lineSeries.color = d3.functor(d3.rgb(128, 0, 128));
         chart.series([lineSeries, lineSeries, lineSeries]);
         var legend = new insight.Legend();
 
@@ -136,10 +136,10 @@ describe('Legend', function() {
         //Then:
         var allTextElements = chart.legendItems.selectAll('rect')[0];
         var allTexts = allTextElements.map(function(item) {
-            return item["style"]["fill"];
+            return d3.rgb(item["style"]["fill"]);
         });
 
-        expect(allTexts).toEqual(["rgb(128, 0, 128)", "rgb(128, 0, 128)", "rgb(128, 0, 128)"]);
+        expect(allTexts).toEqual([d3.rgb(128, 0, 128), d3.rgb(128, 0, 128), d3.rgb(128, 0, 128)]);
     });
 
     it('legend items contain series names', function() {
@@ -154,7 +154,7 @@ describe('Legend', function() {
         //Then:
         var allTextElements = chart.legendItems.selectAll('text')[0];
         var allTexts = allTextElements.map(function(item) {
-            return item.innerHTML;
+            return item.textContent;
         });
 
         expect(allTexts).toEqual(["line", "line", "line"]);
