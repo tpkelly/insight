@@ -8,8 +8,8 @@ insight.Legend = function Legend() {
 
         var series = chart.series();
 
-        var legendHeight = 10;
-        var legendWidth = 5;
+        var legendHeight = 0;
+        var legendWidth = 0;
 
         var ctx = chart.measureCanvas.getContext('2d');
         ctx.font = "12px sans-serif";
@@ -36,6 +36,11 @@ insight.Legend = function Legend() {
             .attr("y", function(item, index) {
                 return index * 20 + 14;
             })
+            .attr("width", function(item) {
+                return ctx.measureText(item.name)
+                    .width;
+            })
+            .attr("height", 20)
             .text(function(item) {
                 return item.name;
             })
