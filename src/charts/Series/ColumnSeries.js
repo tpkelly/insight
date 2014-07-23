@@ -156,7 +156,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
     };
 
     this.className = function(d) {
-        var dimension = insight.Utils.sliceSelector(d);
+        var dimension = insight.Utils.keySelector(d);
 
         return seriesName + 'class bar ' + dimension + " " + self.dimensionName;
     };

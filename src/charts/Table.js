@@ -13,18 +13,23 @@
             this.name = name;
             this.element = element;
             this.data = dataset;
-            this.selectedItems = [];
+            topValues = null;
 
             // private variables
 
             var self = this,
                 columnProperties = [],
                 tableInitialized = false,
-                header;
+                selectedItems = [],
+                header,
+                sortFunctions = [];
 
 
             // private methods
 
+            /**
+             * This method creates the main <table>, <thead> and <tbody> sections of this Table
+             */
             var initializeTable = function() {
                 self.tableElement = d3.select(self.element)
                     .append('table')
@@ -37,20 +42,78 @@
                     .attr('class', 'blank')
                     .html('');
 
+                self.tableBody = self.tableElement.append('tbody');
+
                 tableInitialized = true;
             };
 
 
+            /**
+             * This method takes a data point and returns a class name based based on the group key
+             * @returns {string} cssClass - The css class to identify this row based on its dimension
+             * @param {object} dataPoint - The underlying data for this rows class name
+             */
             var rowClass = function(dataPoint) {
-                return insight.Constants.TableRowClass + ' ' + insight.Utils.sliceSelector(dataPoint);
+                return insight.Constants.TableRowClass + ' ' + insight.Utils.keySelector(dataPoint);
             };
 
 
-            var click = function(element, filter) {
+            /**
+             * This local click handler forwards any click events to any click handler subscribed to this Table's clicks.
+             * @param {object} dataPoint - The underlying data for the row being clicked.
+             */
+            var click = function(dataItem) {
 
-                var selector = insight.Utils.sliceSelector(filter);
+                var selector = insight.Utils.keySelector(dataItem);
 
-                self.clickHandler(self, filter, selector);
+                self.clickEvent(self, dataItem, selector);
+            };
+
+            var addSortOrder = function(func, order) {
+                var sort = {
+                    sortFunction: func,
+                    order: order
+                };
+
+                sortFunctions.push(sort);
+            };
+
+            this.multiSort = function(data) {
+
+                var sortOrders = sortFunctions;
+
+                var sortFunction = function(a, b) {
+                    var sortIndex = 0;
+                    var currentSort = sortOrders[sortIndex];
+                    var currentFunction = currentSort.sortFunction;
+                    var result = null;
+
+                    if (currentFunction(a) > currentFunction(b)) {
+                        result = currentSort.order == 'ASC' ? 1 : -1;
+                    } else if (currentFunction(a) < currentFunction(b)) {
+                        result = currentSort.order == 'ASC' ? -1 : 1;
+                    }
+
+                    // if the values are equal, keep on trying if there are more sorting options
+                    while (result === null && (++sortIndex < sortOrders.length)) {
+
+                        currentSort = sortOrders[sortIndex];
+                        currentFunction = currentSort.sortFunction;
+
+                        if (currentFunction(a) > currentFunction(b)) {
+                            result = currentSort.order == 'ASC' ? 1 : -1;
+                        }
+                        if (currentFunction(a) < currentFunction(b)) {
+                            result = currentSort.order == 'ASC' ? -1 : 1;
+                        }
+                    }
+
+                    result = result === null ? 0 : result;
+
+                    return result;
+                };
+
+                return data.sort(sortFunction);
             };
 
             // public methods
@@ -74,6 +137,29 @@
                 return this;
             };
 
+            this.ascending = function(sortFunction) {
+
+                addSortOrder(sortFunction, 'ASC');
+
+                return this;
+            };
+
+            this.descending = function(sortFunction) {
+
+                addSortOrder(sortFunction, 'DESC');
+
+                return this;
+            };
+
+
+            this.top = function(top) {
+                if (!arguments.length) {
+                    return topValues;
+                }
+                topValues = top;
+
+                return this;
+            };
 
             /**
              * This method returns the data set used by this Series.
@@ -81,7 +167,11 @@
              */
             this.dataset = function() {
 
+                var sorters = sortFunctions;
+
                 var data = self.data.getData();
+
+                data = self.multiSort(data);
 
                 return data;
             };
@@ -93,7 +183,7 @@
              */
             this.highlight = function(selector) {
 
-                var clicked = self.tableElement.selectAll('.' + selector);
+                var clicked = self.tableBody.selectAll('.' + selector);
                 var alreadySelected = clicked.classed('selected');
 
                 if (alreadySelected) {
@@ -105,8 +195,8 @@
                     self.selectedItems.push(selector);
                 }
 
-                var selected = this.tableElement.selectAll('.selected');
-                var notselected = this.tableElement.selectAll('tr:not(.selected)');
+                var selected = this.tableBody.selectAll('.selected');
+                var notselected = this.tableBody.selectAll('tr:not(.selected)');
 
                 notselected.classed('notselected', selected[0].length > 0);
             };
@@ -133,17 +223,17 @@
                         return d.label;
                     });
 
-                var rows = this.tableElement.selectAll('tr.' + insight.Constants.TableRowClass)
+                var rows = this.tableBody.selectAll('tr.' + insight.Constants.TableRowClass)
                     .data(data);
 
                 rows.enter()
                     .append('tr')
                     .attr('class', rowClass)
+                    .on('click', click)
                     .append('th')
                     .html(function(d) {
                         return d.key;
-                    })
-                    .on('click', function() {});
+                    });
 
                 var cells = rows.selectAll('td')
                     .data(function(row) {
@@ -162,6 +252,7 @@
                         return d.value;
                     });
 
+                // remove any DOM elements no longer in the data set
                 cells.exit()
                     .remove();
                 rows.exit()
@@ -175,7 +266,7 @@
          * @param {object} series - The row being clicked
          * @param {object[]} filter - The value of the point selected, used for filtering/highlighting
          */
-        Table.prototype.clickHandler = function(series, filter) {
+        Table.prototype.clickEvent = function(series, filter) {
 
         };
 

@@ -30,7 +30,7 @@ insight.Utils = (function() {
      * @returns {string} return - A class name to identify this point and any other points taking the same value in other charts.
      * @param {object} data - The input point
      */
-    exports.sliceSelector = function(d) {
+    exports.keySelector = function(d) {
 
         var str = d.key.toString();
 

@@ -23,10 +23,10 @@ insight.Grouping = (function(insight) {
         };
 
         this.registerSeries = function(series) {
-            series.clickEvent = this.filter;
+            series.clickEvent = this.filterHandler;
         };
 
-        this.filter = function(series, filter, dimensionSelector) {
+        this.filterHandler = function(series, filter, dimensionSelector) {
 
         };
 
@@ -331,7 +331,7 @@ insight.Grouping = (function(insight) {
                         }
                 );
             }
-            self._data = data;
+            self.data = data;
 
             self.recalculate();
 
@@ -346,15 +346,15 @@ insight.Grouping = (function(insight) {
         this.getData = function(orderFunction, top) {
             var data;
 
-            if (!self._data) {
+            if (!self.data) {
                 self.initialize();
             }
 
             if (this.dimension.multiple) {
-                data = self._data.value()
+                data = self.data.value()
                     .values;
             } else {
-                data = self._data.all();
+                data = self.data.all();
             }
 
             // take a copy of the array to not alter the original dataset
@@ -368,14 +368,11 @@ insight.Grouping = (function(insight) {
             }
 
             if (filterFunction) {
-                data = data.filter(ilterFunction);
+                data = data.filter(filterFunction);
             }
 
             return data;
         };
-
-
-
 
         this.getDescendant = function(obj, desc) {
             var arr = desc.split(".");

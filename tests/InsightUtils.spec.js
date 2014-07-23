@@ -47,7 +47,7 @@ describe('InsightCharts Utils Tests', function() {
         // Then
 
         var expectedResult = 'in_Scotland';
-        var actualResult = insight.Utils.sliceSelector(input);
+        var actualResult = insight.Utils.keySelector(input);
 
         expect(actualResult).toBe(expectedResult);
     });

@@ -30,7 +30,7 @@ var insight = (function() {
         addTable: function(table) {
 
             // wire up the click event of the table to the filter handler of the DataSet
-            table.clickHandler = table.data.filter;
+            table.clickEvent = table.data.filterHandler;
 
             this.Tables.push(table);
 

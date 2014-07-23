@@ -16,8 +16,8 @@ insight.Constants = (function() {
     exports.ChartSVG = 'chartSVG';
     exports.Bubble = 'bubble';
     exports.Scatter = 'scatter';
-    exports.TableClass = 'insight-table';
-    exports.TableRowClass = 'in_datarow';
+    exports.TableClass = 'in-table';
+    exports.TableRowClass = 'in-datarow';
 
     return exports;
 }());

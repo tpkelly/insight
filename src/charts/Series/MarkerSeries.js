@@ -131,7 +131,7 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
 
 
     this.className = function(d) {
-        var dimension = insight.Utils.sliceSelector(d);
+        var dimension = insight.Utils.keySelector(d);
 
         return self.name + 'class bar ' + dimension + " " + self.dimensionName;
     };
