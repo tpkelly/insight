@@ -11,14 +11,12 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
 
     insight.Series.call(this, name, data, x, y, color);
 
-    var self = this;
-    var thickness = 5;
-
-    var widthFactor = 1;
-    var offset = 0;
-
-    var horizontal = false;
-    var vertical = true;
+    var self = this,
+        thickness = 5,
+        widthFactor = 1,
+        offset = 0,
+        horizontal = false,
+        vertical = true;
 
     this.xPosition = function(d) {
         var pos = 0;
@@ -141,7 +139,8 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
 
 
     this.draw = function(chart, drag) {
-        chart.plotArea.call(this.tip);
+
+        this.initializeTooltip(chart.container.node());
 
         var reset = function(d) {
             d.yPos = 0;
@@ -179,9 +178,6 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
             .on('mouseout', this.mouseOut)
             .on('click', click);
 
-        newBars.append('svg:text')
-            .attr('class', insight.Constants.ToolTipTextClass);
-
         var bars = groups.selectAll('.' + this.name + 'class.bar');
 
         bars
@@ -191,9 +187,6 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
             .attr('x', this.xPosition)
             .attr('width', this.markerWidth)
             .attr('height', this.markerHeight);
-
-        bars.selectAll('.' + insight.Constants.ToolTipTextClass)
-            .text(this.tooltipFunction());
 
         groups.exit()
             .remove();

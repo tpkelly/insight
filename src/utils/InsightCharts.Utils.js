@@ -51,6 +51,66 @@ insight.Utils = (function() {
         return a;
     };
 
+    /**
+     * This function takes two objects and returns the union, with priority given to the first parameter in the event of clashes.
+     * This bias is used for scenarios where user defined CSS properties must not override default values.
+     * @returns {object} union - a shallow copy representing the union between the provided objects
+     * @param {object} base - The base object to have priority in the union operation.
+     * @param {object} extend - The object to extend from, adding any additional properties and values defined in this parameter.
+     */
+    exports.objectUnion = function(base, extend) {
+        var merged = {},
+            key = null;
+
+        for (key in extend) {
+            merged[key] = extend[key];
+        }
+        for (key in base) {
+            merged[key] = base[key];
+        }
+        return merged;
+    };
+
+    /**
+     * This function takes a SVG element and returns a bounding box of coordinates at each of its compass points
+     * @returns {object} return - A bounding box object {nw: ..., n: ..., ne: ..., e: ..., se: ..., s: ..., sw: ..., w: ...}
+     * @param {DOMElement} element - The element to measure
+     */
+    exports.getSVGBoundingBox = function(element) {
+
+        var point = element.ownerSVGElement.createSVGPoint();
+
+        var bbox = {},
+            matrix = element.getCTM(),
+            tbbox = element.getBBox(),
+            width = tbbox.width,
+            height = tbbox.height,
+            x = tbbox.x,
+            y = tbbox.y;
+
+        point.x = x;
+        point.y = y;
+        bbox.nw = point.matrixTransform(matrix);
+        point.x += width;
+        bbox.ne = point.matrixTransform(matrix);
+        point.y += height;
+        bbox.se = point.matrixTransform(matrix);
+        point.x -= width;
+        bbox.sw = point.matrixTransform(matrix);
+        point.y -= height / 2;
+        bbox.w = point.matrixTransform(matrix);
+        point.x += width;
+        bbox.e = point.matrixTransform(matrix);
+        point.x -= width / 2;
+        point.y -= height / 2;
+        bbox.n = point.matrixTransform(matrix);
+        point.y += height;
+        bbox.s = point.matrixTransform(matrix);
+
+        return bbox;
+    };
+
+
     exports.safeString = function(input) {
         return input.split(' ')
             .join('_');

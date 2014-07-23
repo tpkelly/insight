@@ -11,28 +11,17 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
 
     insight.Series.call(this, name, data, x, y, color);
 
-    var radiusFunction = d3.functor(3);
-    var opacityFunction = d3.functor(1);
-    var tooltipExists = false;
-    var self = this;
-    var selector = this.name + insight.Constants.Scatter;
+    var radiusFunction = d3.functor(3),
+        opacityFunction = d3.functor(1),
+        self = this,
+        selector = this.name + insight.Constants.Scatter;
 
     var xFunction = function(d) {
         return d.x;
     };
+
     var yFunction = function(d) {
         return d.y;
-    };
-
-    var mouseOver = function(d, item) {
-        self.chart.mouseOver(self, this, d);
-
-        d3.select(this)
-            .classed("hover", true);
-    };
-
-    var mouseOut = function(d, item) {
-        self.chart.mouseOut(self, this, d);
     };
 
     this.findMax = function(scale) {
@@ -71,13 +60,10 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
     };
 
     this.rangeY = function(d) {
-        var f = self.yFunction();
-
         return self.y.scale(self.yFunction()(d));
     };
 
     this.rangeX = function(d, i) {
-        var f = self.xFunction();
         return self.x.scale(self.xFunction()(d));
     };
 
@@ -141,7 +127,7 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
 
     this.draw = function(chart, drag) {
 
-        chart.plotArea.call(this.tip);
+        this.initializeTooltip(chart.container.node());
 
         var duration = drag ? 0 : function(d, i) {
             return 200 + (i * 20);
@@ -159,8 +145,8 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
         points.enter()
             .append('circle')
             .attr('class', className)
-            .on('mouseover', mouseOver)
-            .on('mouseout', mouseOut)
+            .on('mouseover', this.mouseOver)
+            .on('mouseout', this.mouseOut)
             .on('click', click);
 
         points
@@ -169,15 +155,6 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
             .attr('cy', self.rangeY)
             .attr('opacity', opacityFunction)
             .attr('fill', this.color);
-
-        if (!tooltipExists) {
-            points.append('svg:text')
-                .attr('class', insight.Constants.ToolTipTextClass);
-            tooltipExists = true;
-        }
-
-        points.selectAll("." + insight.Constants.ToolTipTextClass)
-            .text(this.tooltipFunction());
     };
 };
 

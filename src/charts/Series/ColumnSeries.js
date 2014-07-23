@@ -11,10 +11,11 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
     insight.Series.call(this, name, data, x, y, color);
 
-    var self = this;
-    var stacked = d3.functor(false);
-    var seriesName = "";
-    var barWidthFunction = this.x.rangeType;
+    var self = this,
+        stacked = d3.functor(false),
+        seriesName = "",
+        seriesFunctions = {},
+        barWidthFunction = this.x.rangeType;
 
 
     var tooltipFunction = function(d) {
@@ -170,9 +171,17 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
         return 200 + (i * 20);
     };
 
+    var mouseOver = function(data, i) {
+        var seriesName = this.getAttribute('in_series');
+        var seriesFunction = seriesFunctions[seriesName];
+
+        self.mouseOver.call(this, data, i, seriesFunction);
+    };
+
+
     this.draw = function(chart, drag) {
 
-        chart.plotArea.call(this.tip);
+        this.initializeTooltip(chart.container.node());
 
         var reset = function(d) {
             d.yPos = 0;
@@ -206,19 +215,18 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
             this.currentSeries = this.series[seriesIndex];
 
             seriesName = this.currentSeries.name;
+            seriesFunctions[seriesName] = this.currentSeries.accessor;
 
             newBars = newGroups.append('rect')
                 .attr('class', self.className)
                 .attr('y', this.y.bounds[0])
                 .attr('height', 0)
+                .attr('in_series', seriesName)
                 .attr('fill', this.currentSeries.color)
                 .attr('clip-path', 'url(#' + chart.clipPath() + ')')
-                .on('mouseover', this.mouseOver)
+                .on('mouseover', mouseOver)
                 .on('mouseout', this.mouseOut)
                 .on('click', click);
-
-            newBars.append('svg:text')
-                .attr('class', insight.Constants.ToolTipTextClass);
 
             var bars = groups.selectAll('.' + seriesName + 'class.bar');
 
@@ -229,10 +237,6 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
                 .attr('x', this.offsetXPosition)
                 .attr('width', this.groupedBarWidth)
                 .attr('height', barHeight);
-
-            bars.selectAll('.' + insight.Constants.ToolTipTextClass)
-                .text(tooltipFunction);
-
         }
 
         groups.exit()
