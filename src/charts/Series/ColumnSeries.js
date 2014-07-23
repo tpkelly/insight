@@ -155,10 +155,8 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
         return self.stacked();
     };
 
-
-
     this.className = function(d) {
-        var dimension = self.sliceSelector(d);
+        var dimension = insight.Utils.sliceSelector(d);
 
         return seriesName + 'class bar ' + dimension + " " + self.dimensionName;
     };

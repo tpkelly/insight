@@ -81,7 +81,7 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
 
     var className = function(d) {
 
-        return selector + " " + insight.Constants.Bubble + " " + self.sliceSelector(d) + " " + self.dimensionName;
+        return selector + " " + insight.Constants.Bubble + " " + insight.Utils.sliceSelector(d) + " " + self.dimensionName;
     };
 
     this.bubbleData = function(data) {

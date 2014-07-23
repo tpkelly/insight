@@ -39,6 +39,19 @@ describe('InsightCharts Utils Tests', function() {
         expect(actualResult).toEqual(expectedResult);
     });
 
+    it('can calculate a dimensional slice', function(){
+        // Given 
+
+        var input = { key: 'Scotland', value: 100 };
+
+        // Then
+
+        var expectedResult = 'in_Scotland';
+        var actualResult = insight.Utils.sliceSelector(input);
+
+        expect(actualResult).toBe(expectedResult);
+    });
+
     it('unions two objects, prioritizing the first', function() {
         
         // Given

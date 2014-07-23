@@ -89,7 +89,7 @@ insight.DataSet = (function(insight) {
         insight.Dimensions.push(dim);
         insight.Groups.push(group);
 
-        group.preFilter = insight.chartFilterHandler.bind(insight);
+        group.filter = insight.chartFilterHandler.bind(insight);
 
         return group;
     };
