@@ -260,26 +260,32 @@ insight.Series = function Series(name, data, x, y, color) {
         var ctx = measureCanvas.getContext('2d');
         ctx.font = style['font-size'] + ' ' + style['font-family'];
 
+        var fontSize = Math.ceil(style['font-size']) || 12;
+
         var maxDimensions = {
             "maxKeyWidth": 0,
-            "maxKeyHeight": 0,
+            "maxKeyHeight": fontSize,
             "maxValueWidth": 0,
-            "maxValueHeight": 0
+            "maxValueHeight": fontSize
         };
 
         var data = this.dataset();
 
         this.keys()
             .forEach(function(key) {
+                var value = insight.Utils.valueForKey(data, key, keyFunction, valueFunction);
 
-                var value = data[key];
-                var keyDimensions = ctx.measureText(key);
-                var valueDimensions = ctx.measureText(value);
+                var valueFormat = self.x.labelFormat();
+                var keyFormat = self.y.labelFormat();
+
+                var valueString = valueFormat(value);
+                var keyString = keyFormat(key);
+
+                var keyDimensions = ctx.measureText(keyString);
+                var valueDimensions = ctx.measureText(valueString);
 
                 maxDimensions.maxKeyWidth = Math.max(keyDimensions.width, maxDimensions.maxKeyWidth);
-                maxDimensions.maxKeyHeight = Math.max(keyDimensions.height, maxDimensions.maxKeyHeight);
                 maxDimensions.maxValueWidth = Math.max(valueDimensions.width, maxDimensions.maxValueWidth);
-                maxDimensions.maxValueHeight = Math.max(valueDimensions.height, maxDimensions.maxValueHeight);
             });
 
         return maxDimensions;

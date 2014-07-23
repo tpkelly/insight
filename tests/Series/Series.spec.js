@@ -72,6 +72,59 @@ describe("Series Tests", function(){
         expect(observedData).toEqual(expectedData);
     });
 
+    it("Label dimensions size by longest label", function() {
+        //Given:
+        var data = new insight.DataSet([
+            {key: "1", value: "short"},
+            {key: "5000000000", value: "c"},
+            {key : "50", value: "longest label"}
+        ]);
+        var series = new insight.Series('Test series', data, xScale, yScale, 'red');
+        var ctx = chart.measureCanvas.getContext('2d');
+        ctx.font = "12pt sans-serif";
+
+        //Then:
+        var expectedLongestKey = ctx.measureText("5000000000");
+        var expectedLongestValue = ctx.measureText("longest label");
+
+        var expectedMaxDimensions = {
+            "maxKeyWidth": expectedLongestKey.width,
+            "maxKeyHeight": 12,
+            "maxValueWidth": expectedLongestValue.width,
+            "maxValueHeight": 12
+        };
+
+        var observedMaxDimensions = series.maxLabelDimensions(chart.measureCanvas);
+        expect(observedMaxDimensions).toEqual(expectedMaxDimensions);
+    });
+
+    it("Label dimensions apply formatting", function() {
+        //Given:
+        var data = new insight.DataSet([
+            {key: "1", value: "short"},
+            {key: "5000000000", value: "c"},
+            {key : "50", value: "longest label"}
+        ]);
+        var series = new insight.Series('Test series', data, xScale, yScale, 'red');
+        var ctx = chart.measureCanvas.getContext('2d');
+        ctx.font = "12pt sans-serif";
+        yScale.labelFormat(d3.format('0,000'));
+
+        //Then:
+        var expectedLongestKey = ctx.measureText("5,000,000,000");
+        var expectedLongestValue = ctx.measureText("longest label");
+
+        var expectedMaxDimensions = {
+            "maxKeyWidth": expectedLongestKey.width,
+            "maxKeyHeight": 12,
+            "maxValueWidth": expectedLongestValue.width,
+            "maxValueHeight": 12
+        };
+
+        var observedMaxDimensions = series.maxLabelDimensions(chart.measureCanvas);
+        expect(observedMaxDimensions).toEqual(expectedMaxDimensions);
+    });
+
 /*  Currently failing: Need to think about how to react to data which is just a series of numbers or strings or dates,
                        without providing a valueFunction or keyFunction.
 
