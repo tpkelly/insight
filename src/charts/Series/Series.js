@@ -296,13 +296,21 @@ insight.Series = function Series(name, data, x, y, color) {
 
         //Handle tick rotation
         if (x.tickRotation() !== '0') {
-            maxDimensions.maxKeyWidth = Math.ceil(maxKeyWidth * Math.cos(x.tickRotation()));
-            maxDimensions.maxKeyHeight = Math.ceil(maxKeyWidth * Math.cos(x.tickRotation()));
+            //Convert Degrees -> Radians
+            var xSin = Math.sin(x.tickRotation() * Math.PI / 180);
+            var xCos = Math.cos(x.tickRotation() * Math.PI / 180);
+
+            maxDimensions.maxKeyWidth = Math.ceil(Math.max(fontSize * xSin, maxKeyWidth * xCos));
+            maxDimensions.maxKeyHeight = Math.ceil(Math.max(fontSize * xCos, maxKeyWidth * xSin));
         }
 
         if (y.tickRotation() !== '0') {
-            maxDimensions.maxValueWidth = Math.ceil(maxKeyWidth * Math.cos(y.tickRotation()));
-            maxDimensions.maxValueHeight = Math.ceil(maxKeyWidth * Math.cos(y.tickRotation()));
+            //Convert Degrees -> Radians
+            var ySin = Math.sin(y.tickRotation() * Math.PI / 180);
+            var yCos = Math.cos(y.tickRotation() * Math.PI / 180);
+
+            maxDimensions.maxValueWidth = Math.ceil(Math.max(fontSize * ySin, maxValueWidth * yCos));
+            maxDimensions.maxValueHeight = Math.ceil(Math.max(fontSize * yCos, maxValueWidth * ySin));
         }
 
         return maxDimensions;

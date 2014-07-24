@@ -193,7 +193,7 @@
                     return this._margin;
                 }
 
-                automargin = false;
+                autoMargin = false;
                 this._margin = _;
 
                 return this;
@@ -365,20 +365,11 @@
                 .forEach(function(series) {
                     var xAxis = series.x;
                     var yAxis = series.y;
-                    var context = canvas.getContext('2d');
-                    context.font = "15pt Open Sans Bold";
-
-                    var xPadding = xAxis.tickSize() + xAxis.tickPadding() + 15;
-                    var yPadding = yAxis.tickSize() + yAxis.tickPadding() + context.measureText(yAxis.label())
-                        .width;
 
                     var labelDimensions = series.maxLabelDimensions(canvas);
 
-                    var xMargin = labelDimensions.maxKeyHeight + xPadding;
-                    var yMargin = labelDimensions.maxValueWidth + yPadding;
-
-                    margin[series.x.orientation()] = Math.max(xMargin, margin[series.x.orientation()]);
-                    margin[series.y.orientation()] = Math.max(yMargin, margin[series.y.orientation()]);
+                    margin[xAxis.orientation()] = Math.max(labelDimensions.maxKeyHeight, margin[xAxis.orientation()]);
+                    margin[yAxis.orientation()] = Math.max(labelDimensions.maxValueWidth, margin[yAxis.orientation()]);
                 });
 
             this.margin(margin);
