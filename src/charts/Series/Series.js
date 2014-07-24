@@ -260,27 +260,50 @@ insight.Series = function Series(name, data, x, y, color) {
         var ctx = measureCanvas.getContext('2d');
         ctx.font = style['font-size'] + ' ' + style['font-family'];
 
-        var maxDimensions = {
-            "maxKeyWidth": 0,
-            "maxKeyHeight": 0,
-            "maxValueWidth": 0,
-            "maxValueHeight": 0
-        };
+        var fontSize = 0;
+
+        var maxValueWidth = 0;
+        var maxKeyWidth = 0;
 
         var data = this.dataset();
 
         this.keys()
             .forEach(function(key) {
+                var value = insight.Utils.valueForKey(data, key, keyFunction, valueFunction);
 
-                var value = data[key];
-                var keyDimensions = ctx.measureText(key);
-                var valueDimensions = ctx.measureText(value);
+                var keyFormat = self.x.labelFormat();
+                var valueFormat = self.y.labelFormat();
 
-                maxDimensions.maxKeyWidth = Math.max(keyDimensions.width, maxDimensions.maxKeyWidth);
-                maxDimensions.maxKeyHeight = Math.max(keyDimensions.height, maxDimensions.maxKeyHeight);
-                maxDimensions.maxValueWidth = Math.max(valueDimensions.width, maxDimensions.maxValueWidth);
-                maxDimensions.maxValueHeight = Math.max(valueDimensions.height, maxDimensions.maxValueHeight);
+                var keyString = keyFormat(key);
+                var valueString = valueFormat(value);
+
+                var keyDimensions = ctx.measureText(keyString);
+                var valueDimensions = ctx.measureText(valueString);
+
+                maxKeyWidth = Math.max(keyDimensions.width, maxKeyWidth);
+                maxValueWidth = Math.max(valueDimensions.width, maxValueWidth);
+                fontSize = Math.ceil(style['font-size']) || 10;
             });
+
+
+
+        var maxDimensions = {
+            "maxKeyWidth": maxKeyWidth,
+            "maxKeyHeight": fontSize,
+            "maxValueWidth": maxValueWidth,
+            "maxValueHeight": fontSize
+        };
+
+        //Handle tick rotation
+        if (x.tickRotation() !== '0') {
+            maxDimensions.maxKeyWidth = Math.ceil(maxKeyWidth * Math.cos(x.tickRotation()));
+            maxDimensions.maxKeyHeight = Math.ceil(maxKeyWidth * Math.cos(x.tickRotation()));
+        }
+
+        if (y.tickRotation() !== '0') {
+            maxDimensions.maxValueWidth = Math.ceil(maxKeyWidth * Math.cos(y.tickRotation()));
+            maxDimensions.maxValueHeight = Math.ceil(maxKeyWidth * Math.cos(y.tickRotation()));
+        }
 
         return maxDimensions;
     };

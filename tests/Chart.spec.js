@@ -313,8 +313,8 @@ describe('Chart', function() {
         beforeEach(function() {
             chart = new insight.Chart('asda', 'asdads', 'ada');
 
-            xAxis = new insight.Axis('xAxis', insight.Scales.Linear);
-            yAxis = new insight.Axis('yAxis', insight.Scales.Linear);
+            xAxis = new insight.Axis('', insight.Scales.Linear);
+            yAxis = new insight.Axis('', insight.Scales.Linear);
 
             chart.addXAxis(xAxis);
             chart.addYAxis(yAxis);
@@ -340,7 +340,13 @@ describe('Chart', function() {
             chart.calculateLabelMargin();
 
             //Then:
-            expect(chart.margin()).toEqual({"top":0,"left":0,"right":0,"bottom":0});
+            //15pts for the x-axis label height
+            expect(chart.margin()).toEqual({
+                "top":0,
+                "left":(yAxis.tickPadding() + yAxis.tickSize()),
+                "right":0,
+                "bottom":(xAxis.tickPadding() + xAxis.tickSize() + 15)
+                });
         });
 
         it('bottom margins are expanded when x-axis has labels', function() {
@@ -349,7 +355,9 @@ describe('Chart', function() {
             series.maxLabelDimensions = function() {
                 return maxDimensions = {
                     "maxKeyWidth": 5,
-                    "maxValueWidth": 0
+                    "maxValueWidth": 0,
+                    "maxKeyHeight": 10,
+                    "maxValueHeight": 0
                 };
             };
 
@@ -359,7 +367,12 @@ describe('Chart', function() {
             chart.calculateLabelMargin();
 
             //Then:
-            expect(chart.margin()).toEqual({"top":0,"left":0,"right":0,"bottom":5});
+            expect(chart.margin()).toEqual({
+                "top":0,
+                "left":(yAxis.tickPadding() + yAxis.tickSize()),
+                "right":0,
+                "bottom":(xAxis.tickPadding() + xAxis.tickSize() + 15 + 10)
+            });
         });
 
         it('left margins are expanded when y-axis has labels', function() {
@@ -368,7 +381,9 @@ describe('Chart', function() {
             series.maxLabelDimensions = function() {
                 return maxDimensions = {
                     "maxKeyWidth": 0,
-                    "maxValueWidth": 5
+                    "maxValueWidth": 5,
+                    "maxKeyHeight": 0,
+                    "maxValueHeight": 10
                 };
             };
 
@@ -378,17 +393,24 @@ describe('Chart', function() {
             chart.calculateLabelMargin();
 
             //Then:
-            expect(chart.margin()).toEqual({"top":0,"left":5,"right":0,"bottom":0});
+            expect(chart.margin()).toEqual({
+                "top":0,
+                "left":(yAxis.tickPadding() + yAxis.tickSize() + 5),
+                "right":0,
+                "bottom":(xAxis.tickPadding() + xAxis.tickSize() + 15)
+            });
         });
 
         it('right margins are expanded when y-axis is reversed', function() {
             //Given:
-            yAxis = new insight.Axis('yAxis', insight.Scales.Linear).reversed(true);
+            yAxis = new insight.Axis('', insight.Scales.Linear).reversed(true);
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
             series.maxLabelDimensions = function() {
                 return maxDimensions = {
                     "maxKeyWidth": 0,
-                    "maxValueWidth": 5
+                    "maxValueWidth": 5,
+                    "maxKeyHeight": 0,
+                    "maxValueHeight": 10
                 };
             };
 
@@ -399,17 +421,24 @@ describe('Chart', function() {
             chart.calculateLabelMargin();
 
             //Then:
-            expect(chart.margin()).toEqual({"top":0,"left":0,"right":5,"bottom":0});
+            expect(chart.margin()).toEqual({
+                "top":0,
+                "left":0,
+                "right":(yAxis.tickPadding() + yAxis.tickSize() + 5),
+                "bottom":(xAxis.tickPadding() + xAxis.tickSize() + 15)
+            });
         });
 
         it('top margins are expanded when x-axis is reversed', function() {
             //Given:
-            xAxis = new insight.Axis('xAxis', insight.Scales.Linear).reversed(true);
+            xAxis = new insight.Axis('', insight.Scales.Linear).reversed(true);
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
             series.maxLabelDimensions = function() {
                 return maxDimensions = {
                     "maxKeyWidth": 5,
-                    "maxValueWidth":0
+                    "maxValueWidth":0,
+                    "maxKeyHeight": 10,
+                    "maxValueHeight": 0
                 };
             };
 
@@ -420,7 +449,12 @@ describe('Chart', function() {
             chart.calculateLabelMargin();
 
             //Then:
-            expect(chart.margin()).toEqual({"top":5,"left":0,"right":0,"bottom":0});
+            expect(chart.margin()).toEqual({
+                "top":(xAxis.tickPadding() + xAxis.tickSize() + 15 + 10),
+                "left":(yAxis.tickPadding() + yAxis.tickSize()),
+                "right":0,
+                "bottom":0
+            });
         });
     });
 });

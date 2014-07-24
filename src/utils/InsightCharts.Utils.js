@@ -116,5 +116,12 @@ insight.Utils = (function() {
             .join('_');
     };
 
+    exports.valueForKey = function(dictionary, key, keyFunction, valueFunction) {
+        var values = dictionary.filter(function(item) {
+            return keyFunction(item) == key;
+        });
+        return valueFunction(values[0]);
+    };
+
     return exports;
 }());
