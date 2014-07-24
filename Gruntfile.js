@@ -7,6 +7,7 @@ module.exports = function(grunt) {
     'src/charts/Chart.js',
     'src/charts/Table.js',
     'src/charts/Tooltip.js',
+    'src/charts/Legend.js',
     'src/charts/Axis/Axis.js',
     'src/charts/Axis/AxisGridlines.js',
     'src/charts/Series/Series.js',

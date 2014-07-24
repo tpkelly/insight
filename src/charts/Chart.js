@@ -13,6 +13,7 @@
             this.name = name;
             this.element = element;
             this.selectedItems = [];
+            var legend = null;
 
             var zoomAxis = null;
             this.container = null;
@@ -25,6 +26,8 @@
                 right: 0,
                 bottom: 0
             };
+
+            this.legendView = null;
 
             var height = d3.functor(300);
             var width = d3.functor(300);
@@ -49,29 +52,24 @@
 
                 self.container
                     .attr('class', insight.Constants.ContainerClass)
-                    .style('width', self.width() + 'px')
                     .style('position', 'relative')
                     .style('display', 'inline-block');
 
                 self.chartSVG = self.container
                     .append('svg')
-                    .attr('class', insight.Constants.ChartSVG)
-                    .attr('width', self.width())
-                    .attr('height', self.height());
+                    .attr('class', insight.Constants.ChartSVG);
 
                 self.plotArea = self.chartSVG.append('g')
-                    .attr('class', insight.Constants.Chart)
-                    .attr('transform', 'translate(' + self.margin()
-                        .left + ',' + self.margin()
-                        .top + ')');
+                    .attr('class', insight.Constants.PlotArea);
 
                 self.addClipPath();
 
-                this.draw(false);
+                self.draw(false);
 
                 if (zoomable) {
                     self.initZoom();
                 }
+
             };
 
 
@@ -94,6 +92,10 @@
                     .map(function(series) {
                         series.draw(self, dragging);
                     });
+
+                if (legend !== null) {
+                    legend.draw(self, self.series());
+                }
             };
 
             this.addClipPath = function() {
@@ -112,27 +114,23 @@
 
 
             this.resizeChart = function() {
-                this.container.style('width', this.width() + 'px');
+                var chartMargin = self.margin();
 
-                this.chartSVG
-                    .attr('width', this.width())
-                    .attr('height', this.height());
+                self.container.style('width', self.width() + 'px');
 
-                this.plotArea = this.plotArea
-                    .attr('transform', 'translate(' + this.margin()
-                        .left + ',' + this.margin()
-                        .top + ')');
+                self.chartSVG
+                    .attr('width', (self.width() + 100))
+                    .attr('height', self.height());
 
-                this.plotArea.select('#' + this.clipPath())
+                self.plotArea = this.plotArea
+                    .attr('transform', 'translate(' + chartMargin.left + ',' + chartMargin.top + ')');
+
+                self.plotArea.select('#' + self.clipPath())
                     .append('rect')
                     .attr('x', 1)
                     .attr('y', 0)
-                    .attr('width', this.width() - this.margin()
-                        .left - this.margin()
-                        .right)
-                    .attr('height', this.height() - this.margin()
-                        .top - this.margin()
-                        .bottom);
+                    .attr('width', self.width() - chartMargin.left - chartMargin.right)
+                    .attr('height', self.height() - chartMargin.top - chartMargin.bottom);
             };
 
 
@@ -229,6 +227,16 @@
                     return series;
                 }
                 series = newSeries;
+
+                return this;
+            };
+
+            this.legend = function(newLegend) {
+                if (!arguments.length) {
+                    return legend;
+                }
+
+                legend = newLegend;
 
                 return this;
             };
