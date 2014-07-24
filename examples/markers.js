@@ -34,7 +34,8 @@ $(document)
                 left: 165,
                 right: 40,
                 bottom: 120
-            });
+            })
+            .legend(new insight.Legend);
 
         var x = new insight.Axis('Country', insight.Scales.Ordinal)
             .tickOrientation('tb')
