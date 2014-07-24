@@ -35,14 +35,10 @@
             var yAxes = [];
             var self = this;
             var title = '';
-            var autoMargin = false;
+            var autoMargin = true;
 
 
             this.init = function(create, container) {
-
-                if (autoMargin) {
-                    self.calculateLabelMargin();
-                }
 
                 self.container = create ? d3.select(container)
                     .append('div') : d3.select(self.element)
@@ -122,7 +118,17 @@
 
 
             this.resizeChart = function() {
+                if (autoMargin) {
+                    self.calculateLabelMargin();
+                }
+
                 var chartMargin = self.margin();
+
+                var context = self.measureCanvas.getContext('2d');
+                context.font = "15pt Open Sans Bold";
+
+                var axisLabelSize = context.measureText(self.yAxis()
+                    .label());
 
                 self.container.style('width', self.width() + 'px');
 
@@ -131,7 +137,7 @@
                     .attr('height', self.height());
 
                 self.plotArea = this.plotArea
-                    .attr('transform', 'translate(' + chartMargin.left + ',' + chartMargin.top + ')');
+                    .attr('transform', 'translate(' + (axisLabelSize.width * 2) + ',' + chartMargin.top + ')');
 
                 self.plotArea.select('#' + self.clipPath())
                     .append('rect')
@@ -194,7 +200,10 @@
                 if (!arguments.length) {
                     return this._margin;
                 }
+
+                automargin = false;
                 this._margin = _;
+
                 return this;
             };
 
@@ -352,10 +361,22 @@
 
             this.series()
                 .forEach(function(series) {
+                    var xAxis = series.x;
+                    var yAxis = series.y;
+                    var context = canvas.getContext('2d');
+                    context.font = "15pt Open Sans Bold";
+
+                    var xPadding = xAxis.tickSize() + xAxis.tickPadding() + 15;
+                    var yPadding = yAxis.tickSize() + yAxis.tickPadding() + context.measureText(yAxis.label())
+                        .width;
+
                     var labelDimensions = series.maxLabelDimensions(canvas);
 
-                    margin[series.x.orientation()] = Math.max(labelDimensions.maxKeyWidth, margin[series.x.orientation()]);
-                    margin[series.y.orientation()] = Math.max(labelDimensions.maxValueWidth, margin[series.y.orientation()]);
+                    var xMargin = labelDimensions.maxKeyHeight + xPadding;
+                    var yMargin = labelDimensions.maxValueWidth + yPadding;
+
+                    margin[series.x.orientation()] = Math.max(xMargin, margin[series.x.orientation()]);
+                    margin[series.y.orientation()] = Math.max(yMargin, margin[series.y.orientation()]);
                 });
 
             this.margin(margin);
