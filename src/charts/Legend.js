@@ -4,7 +4,52 @@
  */
 insight.Legend = function Legend() {
 
+    var initialised = false;
+
+    var blobPositionY = function(item, index) {
+        return index * 20 + 5;
+    };
+
+    var blobFillColor = function(item) {
+        return item.color();
+    };
+
+    var textPositionY = function(item, index) {
+        return index * 20 + 14;
+    };
+
+    var textContent = function(item) {
+        return item.name;
+    };
+
+
+    this.init = function(chart) {
+        initialised = true;
+
+        //Get rid of any previous legend objects
+        if (chart.legendView !== null) {
+            chart.legendView.removeChild(chart.legendBox);
+            chart.legendView.removeChild(chart.legendItems);
+            chart.chartSVG.removeChild(chart.legendView);
+        }
+
+        chart.legendView = chart.chartSVG.append("g")
+            .attr("class", insight.Constants.LegendView)
+            .attr("transform", "translate(" + (chart.width() - 80) + ",30)");
+
+        chart.legendBox = chart.legendView.append("rect")
+            .style("stroke", 'black')
+            .style("stroke-width", 1)
+            .style("fill", 'white');
+
+        chart.legendItems = chart.legendView.append("g")
+            .attr("class", insight.Constants.Legend);
+    };
+
     this.draw = function(chart) {
+        if (!initialised) {
+            this.init(chart);
+        }
 
         var series = chart.series();
 
@@ -19,31 +64,23 @@ insight.Legend = function Legend() {
             .enter()
             .append("rect")
             .attr("x", 5)
-            .attr("y", function(item, index) {
-                return index * 20 + 5;
-            })
+            .attr("y", blobPositionY)
             .attr("width", 10)
             .attr("height", 10)
-            .style("fill", function(item) {
-                return item.color();
-            });
+            .style("fill", blobFillColor);
 
         chart.legendItems.selectAll('text')
             .data(series)
             .enter()
             .append("text")
             .attr("x", 20)
-            .attr("y", function(item, index) {
-                return index * 20 + 14;
-            })
+            .attr("y", textPositionY)
             .attr("width", function(item) {
                 return ctx.measureText(item.name)
                     .width;
             })
             .attr("height", 20)
-            .text(function(item) {
-                return item.name;
-            })
+            .text(textContent)
             .attr("font-family", "sans-serif")
             .attr("font-size", "12px")
             .attr("fill", "black");

@@ -13,7 +13,7 @@
             this.name = name;
             this.element = element;
             this.selectedItems = [];
-            this.legend = new insight.Legend();
+            var legend = null;
 
             var zoomAxis = null;
             this.container = null;
@@ -26,6 +26,8 @@
                 right: 0,
                 bottom: 0
             };
+
+            this.legendView = null;
 
             var height = d3.functor(300);
             var width = d3.functor(300);
@@ -56,18 +58,6 @@
                 self.chartSVG = self.container
                     .append('svg')
                     .attr('class', insight.Constants.ChartSVG);
-
-                self.legendView = self.chartSVG.append("g")
-                    .attr("class", insight.Constants.LegendView)
-                    .attr("transform", "translate(" + (self.width() - 80) + ",30)");
-
-                self.legendBox = self.legendView.append("rect")
-                    .style("stroke", 'black')
-                    .style("stroke-width", 1)
-                    .style("fill", 'white');
-
-                self.legendItems = self.legendView.append("g")
-                    .attr("class", insight.Constants.Legend);
 
                 self.plotArea = self.chartSVG.append('g')
                     .attr('class', insight.Constants.PlotArea);
@@ -103,7 +93,9 @@
                         series.draw(self, dragging);
                     });
 
-                this.legend.draw(self, self.series());
+                if (legend !== null) {
+                    legend.draw(self, self.series());
+                }
             };
 
             this.addClipPath = function() {
@@ -235,6 +227,16 @@
                     return series;
                 }
                 series = newSeries;
+
+                return this;
+            };
+
+            this.legend = function(newLegend) {
+                if (!arguments.length) {
+                    return legend;
+                }
+
+                legend = newLegend;
 
                 return this;
             };
