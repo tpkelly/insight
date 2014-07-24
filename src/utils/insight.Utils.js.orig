@@ -15,24 +15,58 @@ insight.Utils = (function() {
      * @param {object} a - Description
      * @param {object} b - Description
      * @param {object[]} sorters - A list of sorting rules [{sortFunction: function(a){return a.valueToSortOn;}, order: 'ASC'}]
+     * @param {int} index - the current depth of the sort. i.e. which function in the order of sorting priorities is currently being evaluated.
      */
-    var recursiveSort = function(a, b, sorters) {
-        if (sorters.length === 0)
-            return 0;
+    var recursiveSort = function(a, b, sorters, index) {
+<<<<<<< HEAD
+=======
 
-        var current = sorters[0];
-        var sortParameter = current.sortParameter;
+        if (index == sorters.length - 1) {
+            return 0;
+        }
+
+        var current = sorters[index];
+        var sortFunction = current.sortFunction;
         var sortOrder = current.order;
+        var sortResult = null;
+>>>>>>> switching to master
+
+        var current = sorters[index],
+            continueSorting = index < sorters.length - 1,
+            sortParameter = current.sortParameter,
+            sortOrder = current.order,
+            sortResult = null;
 
         var aResult = sortParameter(a),
             bResult = sortParameter(b);
 
+        if (aResult > bResult) {
+<<<<<<< HEAD
+            sortResult = sortOrder == 'ASC' ? 1 : -1;
+            return sortResult;
+        } 
+        if (aResult < bResult) {
+            sortResult = sortOrder == 'ASC' ? -1 : 1;
+            return sortResult;
+        }
+        if ((aResult == bResult) && (continueSorting)) {
+            return recursiveSort(a, b, sorters, index + 1);
+        }
         if (aResult == bResult) {
-            return recursiveSort(a, b, sorters.slice(1));
+            return 0;
+        }
+=======
+            sortResult = 1;
+        } else if (aResult < bResult) {
+            sortResult = -1;
+        } else if ((aResult == bResult)) {
+            sortResult = recursiveSort(a, b, sorters, index + 1);
         }
 
-        var sortResult = (aResult > bResult) ? 1 : -1;
-        return (sortOrder == 'ASC') ? sortResult : -sortResult;
+        sortResult = sortOrder == 'ASC' ? sortOrder : -sortOrder;
+
+        return sortResult;
+>>>>>>> switching to master
     };
 
 
