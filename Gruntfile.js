@@ -79,7 +79,7 @@ module.exports = function(grunt) {
             options: {
                 specs: 'tests/**/*spec.js',
                 helpers: ['tests/Mocks/d3-mocks.js'],
-                vendor: ['./bower_components/jquery/jquery.js', './bower_components/d3/d3.js', './bower_components/crossfilter/crossfilter.js', './lib/d3.tip.js'],
+                vendor: ['./bower_components/jquery/jquery.js', './bower_components/d3/d3.js', './bower_components/crossfilter/crossfilter.js'],
                 keepRunner: true
             }
         }

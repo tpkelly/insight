@@ -1,4 +1,4 @@
-var tabledata = 
+var tableData = 
 [{'Id':1,'Forename':'Martin','Surname':'Watkins','Country':'Scotland','DisplayColour':'#38d33c','Age':1,'IQ':69,'Gender':'Male','Interests':['Ballet', 'Music', 'Climbing'],},
 {'Id':2,'Forename':'Teresa','Surname':'Knight','Country':'Scotland','DisplayColour':'#6ee688','Age':20,'IQ':103,'Interests':['Triathlon', 'Music', 'Mountain Biking'],'Gender':'Female'},
 {'Id':3,'Forename':'Mary','Surname':'Lee','Country':'Wales','DisplayColour':'#8e6bc2','Age':3,'IQ':96,'Interests':['Triathlon', 'Music', 'Mountain Biking'],'Gender':'Female'},
@@ -24,20 +24,168 @@ var tabledata =
 describe('Table Tests', function() {
     
 
-    it('multisort works correctly with a single ascending sort', function() {
-        // Given 
-        var table = new insight.Table('testtable', '#table', tabledata);
-
-        // When 
-
-        table.ascending(function(d){ return d.Country; })
-             .ascending(function(d){ return d.Age; });
+    it('initializes without error', function() {
+        
+        // Given
+        var dataset = new insight.DataSet(tableData);
+        var table = new insight.Table('Test Table', '#table', dataset);
 
         // Then
 
-        var actualData = table.multiSort(tabledata);
+        expect(function(){ insight.addTable(table); }).not.toThrow();
 
-        console.log(actualData);
+    });
+
+
+    it('returns normal dataset with no sorters', function() {
+        
+        // Given
+        var dataset = new insight.DataSet(tableData);
+        var table = new insight.Table('Test Table', '#table', dataset);
+
+        
+        // Then
+
+        var expectedDataset = tableData;
+        var actualDataset = table.dataset();
+
+        expect(actualDataset).toBe(expectedDataset);
+
+    });
+
+    it('returns a full, sorted set of data', function() {
+        
+        // Given
+        var dataset = new insight.DataSet(tableData);
+        var table = new insight.Table('Test Table', '#table', dataset);
+
+        
+        // When
+
+        table.ascending(function(person){ return person.Age; });
+
+
+        // Then
+
+        var sortedData = table.dataset();
+
+        for (var i=0; i < (sortedData.length-1); i++) {
+
+            var item = sortedData[i];
+            var nextItem = sortedData[i+1];
+
+            var smallerAge = item.Age <= nextItem.Age;
+            
+            expect(smallerAge).toBeTruthy();
+            
+        }
+
+    });
+
+    it('returns a full, sorted set of data with two ascending sorts', function() {
+        
+        // Given
+        var dataset = new insight.DataSet(tableData);
+        var table = new insight.Table('Test Table', '#table', dataset);
+
+        
+        // When
+
+        table.ascending(function(person) { return person.Age; })
+             .ascending(function(person) { return person.IQ; });
+
+        // Then
+
+        var sortedData = table.dataset();
+
+        for (var i=0; i < (sortedData.length-1); i++) {
+
+            var item = sortedData[i];
+            var nextItem = sortedData[i+1];
+
+            var smallerAge = item.Age <= nextItem.Age;
+            
+            expect(smallerAge).toBeTruthy();
+            
+            if (item.Age == nextItem.Age) {
+
+                var smallerIQ = item.IQ <= nextItem.IQ;
+                expect(smallerIQ).toBeTruthy();
+
+            }
+        }
+    });
+
+    it('returns a full, sorted set of data with two different ordered sorts', function() {
+        
+        // Given
+        var dataset = new insight.DataSet(tableData);
+        var table = new insight.Table('Test Table', '#table', dataset);
+
+        
+        // When
+
+        table.ascending(function(person) { return person.Age; })
+             .descending(function(person) { return person.IQ; });
+
+        // Then
+
+        var sortedData = table.dataset();
+
+        for (var i=0; i < (sortedData.length-1); i++) {
+
+            var item = sortedData[i];
+            var nextItem = sortedData[i+1];
+
+            var smallerAge = item.Age <= nextItem.Age;
+            
+            expect(smallerAge).toBeTruthy();
+            
+            if (item.Age == nextItem.Age) {
+
+                var largerIQ = item.IQ >= nextItem.IQ;
+                expect(largerIQ).toBeTruthy();
+
+            }
+        }
+    });
+
+    it('returns a truncated, sorted set of data with two sorts', function() {
+        
+        // Given
+        var dataset = new insight.DataSet(tableData);
+        var table = new insight.Table('Test Table', '#table', dataset);
+
+        
+        // When
+
+        table.ascending(function(person) { return person.Age; })
+             .descending(function(person) { return person.IQ; })
+             .top(5);
+
+        // Then
+
+        var sortedData = table.dataset();
+
+        expect(sortedData.length).toBe(5);
+
+        for (var i=0; i < (sortedData.length-1); i++) {
+
+            var item = sortedData[i];
+            var nextItem = sortedData[i+1];
+
+            var smallerAge = item.Age <= nextItem.Age;
+            
+            expect(smallerAge).toBeTruthy();
+            
+            if (item.Age == nextItem.Age) {
+
+                var largerIQ = item.IQ >= nextItem.IQ;
+                expect(largerIQ).toBeTruthy();
+
+            }
+        }
+
     });
 
 

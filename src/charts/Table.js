@@ -10,22 +10,47 @@
          * @param {DataSet} dataset - The DataSet to render this Table from
          */
         function Table(name, element, dataset) {
+
+            // Publicly accessible properties
+
             this.name = name;
             this.element = element;
             this.data = dataset;
-            topValues = null;
+            this.selectedItems = [];
 
             // private variables
 
             var self = this,
                 columnProperties = [],
                 tableInitialized = false,
-                selectedItems = [],
                 header,
-                sortFunctions = [];
+                sortFunctions = [],
+                topValues = null;
 
 
             // private methods
+
+            var labelFunction = function(d) {
+                return d.label;
+            };
+            var keyFunction = function(d) {
+                return d.key;
+            };
+            var valueFunction = function(d) {
+                return d.value;
+            };
+
+            var columnBuilder = function(row) {
+
+                return self.columns()
+                    .map(function(column) {
+                        return {
+                            column: column,
+                            value: column.value(row)
+                        };
+                    });
+            };
+
 
             /**
              * This method creates the main <table>, <thead> and <tbody> sections of this Table
@@ -69,6 +94,11 @@
                 self.clickEvent(self, dataItem, selector);
             };
 
+            /**
+             * This private helper adds sorters to this Table's list of sorting methods and orders.
+             * @param {function} sortFunction - The function to use in the sort comparison
+             * @param {string} order - 'ASC' or 'DESC'
+             */
             var addSortOrder = function(func, order) {
                 var sort = {
                     sortFunction: func,
@@ -78,45 +108,7 @@
                 sortFunctions.push(sort);
             };
 
-            this.multiSort = function(data) {
-
-                var sortOrders = sortFunctions;
-
-                var sortFunction = function(a, b) {
-                    var sortIndex = 0;
-                    var currentSort = sortOrders[sortIndex];
-                    var currentFunction = currentSort.sortFunction;
-                    var result = null;
-
-                    if (currentFunction(a) > currentFunction(b)) {
-                        result = currentSort.order == 'ASC' ? 1 : -1;
-                    } else if (currentFunction(a) < currentFunction(b)) {
-                        result = currentSort.order == 'ASC' ? -1 : 1;
-                    }
-
-                    // if the values are equal, keep on trying if there are more sorting options
-                    while (result === null && (++sortIndex < sortOrders.length)) {
-
-                        currentSort = sortOrders[sortIndex];
-                        currentFunction = currentSort.sortFunction;
-
-                        if (currentFunction(a) > currentFunction(b)) {
-                            result = currentSort.order == 'ASC' ? 1 : -1;
-                        }
-                        if (currentFunction(a) < currentFunction(b)) {
-                            result = currentSort.order == 'ASC' ? -1 : 1;
-                        }
-                    }
-
-                    result = result === null ? 0 : result;
-
-                    return result;
-                };
-
-                return data.sort(sortFunction);
-            };
-
-            // public methods
+            // Public methods
 
             /**
              * This method gets or sets the properties of the DataSet to use as columns.
@@ -137,6 +129,12 @@
                 return this;
             };
 
+            /**
+             * This method adds an ascending sort to this Table's rows using the provided function as a comparison
+             * @memberof insight.Table
+             * @returns {object} this - Returns the Table object
+             * @param {function} sortFunction - A function to define the object property to sort on: function(d) { return d.Age; }
+             */
             this.ascending = function(sortFunction) {
 
                 addSortOrder(sortFunction, 'ASC');
@@ -144,6 +142,13 @@
                 return this;
             };
 
+
+            /**
+             * This method adds a descending sort to this Table's rows using the provided function as a comparison
+             * @memberof insight.Table
+             * @returns {object} this - Returns the Table object
+             * @param {function} sortFunction - A function to define the object property to sort on: function(d) { return d.Age; }
+             */
             this.descending = function(sortFunction) {
 
                 addSortOrder(sortFunction, 'DESC');
@@ -151,7 +156,16 @@
                 return this;
             };
 
-
+            /**
+             * This method gets or sets the number of rows to display.  Used in combination with ascending() or descending() to display top or bottom data.
+             * @memberof insight.Table
+             * @returns {int} topValues - How many values to display in the Table.
+             */
+            /**
+             * @memberof insight.Table
+             * @returns {object} this - this
+             * @param {int} topValues - How many values to display in the Table.
+             */
             this.top = function(top) {
                 if (!arguments.length) {
                     return topValues;
@@ -171,7 +185,11 @@
 
                 var data = self.data.getData();
 
-                data = self.multiSort(data);
+                data = insight.Utils.multiSort(data, sorters);
+
+                if (this.top()) {
+                    data = data.slice(0, this.top());
+                }
 
                 return data;
             };
@@ -219,42 +237,29 @@
                     .enter()
                     .append('th')
                     .attr('class', 'column')
-                    .html(function(d) {
-                        return d.label;
-                    });
+                    .html(labelFunction);
 
                 var rows = this.tableBody.selectAll('tr.' + insight.Constants.TableRowClass)
-                    .data(data);
+                    .data(data, keyFunction);
 
                 rows.enter()
                     .append('tr')
                     .attr('class', rowClass)
                     .on('click', click)
                     .append('th')
-                    .html(function(d) {
-                        return d.key;
-                    });
+                    .html(keyFunction);
 
                 var cells = rows.selectAll('td')
-                    .data(function(row) {
-                        return columns
-                            .map(function(column) {
-                                return {
-                                    column: column,
-                                    value: column.value(row)
-                                };
-                            });
-                    });
+                    .data(columnBuilder);
 
                 cells.enter()
                     .append('td')
-                    .html(function(d) {
-                        return d.value;
-                    });
+                    .html(valueFunction);
 
                 // remove any DOM elements no longer in the data set
                 cells.exit()
                     .remove();
+
                 rows.exit()
                     .remove();
             };
