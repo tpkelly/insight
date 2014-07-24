@@ -75,23 +75,23 @@ describe("Series Tests", function(){
     it("Label dimensions size by longest label", function() {
         //Given:
         var data = new insight.DataSet([
-            {key: "1", value: "short"},
-            {key: "5000000000", value: "c"},
-            {key : "50", value: "longest label"}
+            {key: "short", value: "1"},
+            {key: "c", value: "5000000000"},
+            {key: "longest label", value : "50"}
         ]);
         var series = new insight.Series('Test series', data, xScale, yScale, 'red');
         var ctx = chart.measureCanvas.getContext('2d');
-        ctx.font = "12pt sans-serif";
+        ctx.font = "10pt sans-serif";
 
         //Then:
-        var expectedLongestKey = ctx.measureText("5000000000");
-        var expectedLongestValue = ctx.measureText("longest label");
+        var expectedLongestKey = ctx.measureText("longest label");
+        var expectedLongestValue = ctx.measureText("5000000000");
 
         var expectedMaxDimensions = {
             "maxKeyWidth": expectedLongestKey.width,
-            "maxKeyHeight": 12,
+            "maxKeyHeight": 10,
             "maxValueWidth": expectedLongestValue.width,
-            "maxValueHeight": 12
+            "maxValueHeight": 10
         };
 
         var observedMaxDimensions = series.maxLabelDimensions(chart.measureCanvas);
@@ -101,24 +101,24 @@ describe("Series Tests", function(){
     it("Label dimensions apply formatting", function() {
         //Given:
         var data = new insight.DataSet([
-            {key: "1", value: "short"},
-            {key: "5000000000", value: "c"},
-            {key : "50", value: "longest label"}
+            {key: "short", value: "1"},
+            {key: "c", value: "5000000000"},
+            {key: "longest label", value : "50"}
         ]);
         var series = new insight.Series('Test series', data, xScale, yScale, 'red');
         var ctx = chart.measureCanvas.getContext('2d');
-        ctx.font = "12pt sans-serif";
+        ctx.font = "10pt sans-serif";
         yScale.labelFormat(d3.format('0,000'));
 
         //Then:
-        var expectedLongestKey = ctx.measureText("5,000,000,000");
-        var expectedLongestValue = ctx.measureText("longest label");
+        var expectedLongestKey = ctx.measureText("longest label");
+        var expectedLongestValue = ctx.measureText("5,000,000,000");
 
         var expectedMaxDimensions = {
             "maxKeyWidth": expectedLongestKey.width,
-            "maxKeyHeight": 12,
+            "maxKeyHeight": 10,
             "maxValueWidth": expectedLongestValue.width,
-            "maxValueHeight": 12
+            "maxValueHeight": 10
         };
 
         var observedMaxDimensions = series.maxLabelDimensions(chart.measureCanvas);

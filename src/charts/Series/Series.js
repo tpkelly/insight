@@ -260,7 +260,7 @@ insight.Series = function Series(name, data, x, y, color) {
         var ctx = measureCanvas.getContext('2d');
         ctx.font = style['font-size'] + ' ' + style['font-family'];
 
-        var fontSize = Math.ceil(style['font-size']) || 10;
+        var fontSize = 0;
 
         var maxValueWidth = 0;
         var maxKeyWidth = 0;
@@ -282,6 +282,7 @@ insight.Series = function Series(name, data, x, y, color) {
 
                 maxKeyWidth = Math.max(keyDimensions.width, maxKeyWidth);
                 maxValueWidth = Math.max(valueDimensions.width, maxValueWidth);
+                fontSize = Math.ceil(style['font-size']) || 10;
             });
 
 
@@ -294,12 +295,12 @@ insight.Series = function Series(name, data, x, y, color) {
         };
 
         //Handle tick rotation
-        if (x.tickRotation() != 0) {
+        if (x.tickRotation() !== '0') {
             maxDimensions.maxKeyWidth = Math.ceil(maxKeyWidth * Math.cos(x.tickRotation()));
             maxDimensions.maxKeyHeight = Math.ceil(maxKeyWidth * Math.cos(x.tickRotation()));
         }
 
-        if (y.tickRotation() != 0) {
+        if (y.tickRotation() !== '0') {
             maxDimensions.maxValueWidth = Math.ceil(maxKeyWidth * Math.cos(y.tickRotation()));
             maxDimensions.maxValueHeight = Math.ceil(maxKeyWidth * Math.cos(y.tickRotation()));
         }
