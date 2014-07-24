@@ -464,6 +464,8 @@ insight.Axis = function Axis(name, scale) {
 
         this.setupAxisView(chart);
 
+        var animationDuration = dragging ? 0 : 200;
+
         this.axis = d3.svg.axis()
             .scale(this.scale)
             .orient(self.orientation())
@@ -474,6 +476,8 @@ insight.Axis = function Axis(name, scale) {
         this.axisElement
             .attr('transform', self.axisPosition())
             .style('stroke', self.color())
+            .transition()
+            .duration(animationDuration)
             .call(this.axis);
 
         this.axisElement
