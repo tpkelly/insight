@@ -28,14 +28,7 @@ $(document)
         var chart = new insight.Chart('Chart 1', "#exampleChart")
             .width(450)
             .height(400)
-            .margin(
-            {
-                top: 10,
-                left: 165,
-                right: 40,
-                bottom: 120
-            })
-            .legend(new insight.Legend);
+            .autoMargin(true);
 
         var x = new insight.Axis('Country', insight.Scales.Ordinal)
             .tickOrientation('tb')

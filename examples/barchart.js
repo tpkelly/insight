@@ -23,14 +23,7 @@ $(document)
 
         var chart = new insight.Chart('Chart 1', '#exampleChart')
             .width(450)
-            .height(400)
-            .margin(
-            {
-                top: 10,
-                left: 150,
-                right: 40,
-                bottom: 120
-            });
+            .height(400);
 
         var x = new insight.Axis('Country', insight.Scales.Ordinal)
             .tickOrientation('tb');
