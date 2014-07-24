@@ -17,9 +17,10 @@ insight.Series = function Series(name, data, x, y, color) {
     this.animationDuration = 300;
     this.topValues = null;
     this.dimensionName = data.dimension ? data.dimension.Name + "Dim" : "";
-
+    this.classValues = [];
     this.valueAxis = x;
     this.keyAxis = y;
+    this.selectedItems = [];
 
     x.addSeries(this);
     y.addSeries(this);
@@ -29,12 +30,12 @@ insight.Series = function Series(name, data, x, y, color) {
     }
 
     var self = this;
-    var cssClass = "";
     var filter = null;
     var tooltipOffset = {
         x: 0,
         y: -10
     };
+
 
     // private functions used internally, set by functions below that are exposed on the object
 
@@ -61,6 +62,35 @@ insight.Series = function Series(name, data, x, y, color) {
     var tooltipFunction = function(d) {
         return tooltipFormat(tooltipAccessor(d));
     };
+
+    var selectedClassName = function(selectedItems, name) {
+        var selected = "";
+
+        if (selectedItems.length) {
+            selected = selectedItems.indexOf(name) > -1 ? "selected" : "notselected";
+        }
+
+        return selected;
+    };
+
+    this.seriesClassName = function() {
+
+        var classComponents = [self.name + 'class', self.dimensionName].concat(self.classValues);
+
+        return classComponents.join(' ');
+    };
+
+
+    this.itemClassName = function(d, additionalClasses) {
+
+        var keySelector = insight.Utils.keySelector(d);
+        var selected = selectedClassName(self.selectedItems, keySelector);
+
+        return self.classValue + ' ' + keySelector + ' ' + selected + ' ';
+    };
+
+
+    // Public methods
 
     this.keyFunction = function(_) {
         if (!arguments.length) {
@@ -109,13 +139,7 @@ insight.Series = function Series(name, data, x, y, color) {
             .map(self.keyFunction());
     };
 
-    this.cssClass = function(_) {
-        if (!arguments.length) {
-            return cssClass;
-        }
-        cssClass = _;
-        return this;
-    };
+
 
     this.keyAccessor = function(d) {
         return d.key;

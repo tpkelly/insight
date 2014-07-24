@@ -11,9 +11,12 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
 
     insight.Series.call(this, name, data, x, y, color);
 
-    var radiusFunction = d3.functor(10);
-    var self = this;
-    var selector = this.name + insight.Constants.Bubble;
+    var self = this,
+        selector = this.name + insight.Constants.Bubble,
+        radiusFunction = d3.functor(10),
+        selectedItems = [];
+
+    this.classValues = [insight.Constants.Bubble];
 
     var xFunction = function(d) {
         return d.x;
@@ -79,11 +82,6 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
     };
 
 
-    var className = function(d) {
-
-        return selector + " " + insight.Constants.Bubble + " " + insight.Utils.keySelector(d) + " " + self.dimensionName;
-    };
-
     this.bubbleData = function(data) {
         var max = d3.max(data, radiusFunction);
 
@@ -120,6 +118,8 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
     this.draw = function(chart, drag) {
 
         this.initializeTooltip(chart.container.node());
+        this.selectedItems = chart.selectedItems;
+        this.classValue = self.seriesClassName();
 
         var duration = drag ? 0 : function(d, i) {
             return 200 + (i * 20);
@@ -131,12 +131,12 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
 
         var bubbleData = this.bubbleData(this.dataset());
 
-        var bubbles = chart.plotArea.selectAll('circle.' + selector)
+        var bubbles = chart.plotArea.selectAll('circle.' + insight.Constants.Bubble)
             .data(bubbleData, self.keyAccessor);
 
         bubbles.enter()
             .append('circle')
-            .attr('class', className)
+            .attr('class', self.itemClassName)
             .on('mouseover', self.mouseOver)
             .on('mouseout', self.mouseOut)
             .on('click', click);

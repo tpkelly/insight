@@ -14,10 +14,12 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
     var self = this,
         stacked = d3.functor(false),
         seriesName = "",
-        seriesFunctions = {};
+        seriesFunctions = {},
+        selectedItems = [];
 
     this.valueAxis = y;
     this.keyAxis = x;
+    this.classValues = [insight.Constants.BarClass];
 
     var tooltipFunction = function(d) {
         var func = self.currentSeries.accessor;
@@ -166,9 +168,6 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
         return self.x.scale(func(d));
     };
 
-    this.className = function(d) {
-        return seriesName + 'class bar ' + insight.Utils.keySelector(d);
-    };
 
     var mouseOver = function(data, i) {
 
@@ -178,9 +177,17 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
         self.mouseOver.call(this, data, i, seriesFunction);
     };
 
+    var itemClassName = function(d) {
+        var additionalClass = self.currentSeries.name + 'class';
+
+        return self.itemClassName(d) + additionalClass;
+    };
+
     this.draw = function(chart, drag) {
 
         this.initializeTooltip(chart.container.node());
+        this.selectedItems = chart.selectedItems;
+        this.classValue = this.seriesClassName();
 
         var reset = function(d) {
             d.yPos = 0;
@@ -217,7 +224,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
             seriesFunctions[seriesName] = this.currentSeries.accessor;
 
             newBars = newGroups.append('rect')
-                .attr('class', this.className)
+                .attr('class', itemClassName)
                 .attr('height', 0)
                 .attr('fill', this.currentSeries.color)
                 .attr('in_series', seriesName)
@@ -226,7 +233,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
                 .on('mouseout', this.mouseOut)
                 .on('click', click);
 
-            var bars = groups.selectAll('.' + seriesName + 'class.bar')
+            var bars = groups.selectAll('.' + seriesName + 'class.' + insight.Constants.BarClass)
                 .transition()
                 .duration(duration)
                 .attr('y', this.offsetYPosition)
