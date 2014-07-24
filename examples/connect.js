@@ -32,21 +32,24 @@ $(document)
                     left: 100,
                     right: 40,
                     bottom: 120
-                })
-                .barPadding(0.3);
+                });
 
-            var xScale = new insight.Axis(chart, 'Genre', 'h', insight.Scales.Ordinal, 'bottom')
+            var xScale = new insight.Axis('Genre', insight.Scales.Ordinal)
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .tickOrientation('tb')
+                .barPadding(0.3)
                 .ordered(true);
 
-            var yScale = new insight.Axis(chart, 'Apps', 'v', insight.Scales.Linear, 'left')
+            var yScale = new insight.Axis('Apps', insight.Scales.Linear)
                 .tickSize(5);
 
+            chart.addXAxis(xScale);
+            chart.addYAxis(yScale);
 
-            var series = new insight.ColumnSeries('genre', chart, genres, xScale, yScale, 'silver')
+
+            var series = new insight.ColumnSeries('genre', genres, xScale, yScale, 'silver')
                 .tooltipFunction(function(d)
                 {
                     return d;
@@ -85,16 +88,19 @@ $(document)
                     bottom: 50
                 });
 
-            var lxScale = new insight.Axis(languageChart, 'Language', 'h', insight.Scales.Ordinal, 'bottom')
+            var lxScale = new insight.Axis('Language', insight.Scales.Ordinal)
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .tickOrientation('tb')
                 .ordered(true);
 
-            var lyScale = new insight.Axis(languageChart, 'AppsSupported', 'v', insight.Scales.Linear, 'left');
+            var lyScale = new insight.Axis('AppsSupported', insight.Scales.Linear);
 
-            var lSeries = new insight.ColumnSeries('languages', languageChart, languageGroup, lxScale, lyScale, 'silver')
+            languageChart.addXAxis(lxScale);
+            languageChart.addYAxis(lyScale);
+
+            var lSeries = new insight.ColumnSeries('languages', languageGroup, lxScale, lyScale, 'silver')
                 .tooltipFunction(function(d)
                 {
                     return d;

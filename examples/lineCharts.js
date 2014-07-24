@@ -28,16 +28,19 @@ $(document)
                     bottom: 100
                 });
 
-            var xScale = new insight.Axis(chart, 'Time', 'h', insight.Scales.Time, 'bottom')
+            var xScale = new insight.Axis('Time', insight.Scales.Time)
                 .tickRotation(90)
                 .tickOrientation('tb')
                 .labelFormat(InsightFormatters.dateFormatter)
                 .showGridlines(true);
 
-            var yScale = new insight.Axis(chart, 'Revenue', 'v', insight.Scales.Linear, 'left')
+            var yScale = new insight.Axis('Revenue', insight.Scales.Linear)
                 .showGridlines(true);
 
-            var line = new insight.LineSeries('valueLine', chart, dateData, xScale, yScale, '#aae')
+            chart.addXAxis(xScale);
+            chart.addYAxis(yScale);
+
+            var line = new insight.LineSeries('valueLine', dateData, xScale, yScale, '#aae')
                 .tooltipFormat(InsightFormatters.currencyFormatter)
                 .lineType('monotone')
                 .valueFunction(function(d)
