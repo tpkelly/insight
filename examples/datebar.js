@@ -28,7 +28,7 @@ $(document)
                     bottom: 60,
                     right: 0
                 });
-            var x = new insight.Axis(chart, 'Country', 'h', insight.Scales.Ordinal, 'bottom')
+            var x = new insight.Axis('Country', insight.Scales.Ordinal)
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(5)
@@ -36,10 +36,13 @@ $(document)
                 .tickRotation(45)
                 .labelFormat(d3.time.format('%Y'));
 
-            var y = new insight.Axis(chart, 'Avg App Price (£)', 'v', insight.Scales.Linear, 'left')
+            var y = new insight.Axis('Avg App Price (£)', insight.Scales.Linear)
                 .labelFormat(d3.format('0,000'));
 
-            var columns = new insight.ColumnSeries('Year', chart, yearly, x, y, '#ACC3EE')
+            chart.addXAxis(x);
+            chart.addYAxis(y);
+
+            var columns = new insight.ColumnSeries('Year', yearly, x, y, '#ACC3EE')
                 .valueFunction(function(d)
                 {
                     return d.value.price.Average;
