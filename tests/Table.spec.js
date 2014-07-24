@@ -67,19 +67,10 @@ describe('Table Tests', function() {
 
         // Then
 
-        var sortedData = table.dataset();
-
-        for (var i=0; i < (sortedData.length-1); i++) {
-
-            var item = sortedData[i];
-            var nextItem = sortedData[i+1];
-
-            var smallerAge = item.Age <= nextItem.Age;
-            
-            expect(smallerAge).toBeTruthy();
-            
-        }
-
+        var actualAges = table.dataset().map(function(entry){return entry.Age; });
+        var expectedAges = [1, 2, 3, 4, 5, 5, 6, 7, 7, 7, 10, 11, 12, 14, 16, 18, 18, 19, 20, 20];
+        
+        expect(actualAges).toEqual(expectedAges);        
     });
 
     it('returns a full, sorted set of data with two ascending sorts', function() {
@@ -88,7 +79,6 @@ describe('Table Tests', function() {
         var dataset = new insight.DataSet(tableData);
         var table = new insight.Table('Test Table', '#table', dataset);
 
-        
         // When
 
         table.ascending(function(person) { return person.Age; })
@@ -96,24 +86,14 @@ describe('Table Tests', function() {
 
         // Then
 
-        var sortedData = table.dataset();
-
-        for (var i=0; i < (sortedData.length-1); i++) {
-
-            var item = sortedData[i];
-            var nextItem = sortedData[i+1];
-
-            var smallerAge = item.Age <= nextItem.Age;
-            
-            expect(smallerAge).toBeTruthy();
-            
-            if (item.Age == nextItem.Age) {
-
-                var smallerIQ = item.IQ <= nextItem.IQ;
-                expect(smallerIQ).toBeTruthy();
-
-            }
-        }
+        var actualAges = table.dataset().map(function(entry){return entry.Age; });
+        var actualIQs = table.dataset().map(function(entry){return entry.IQ; });
+        
+        var expectedAges = [1, 2, 3, 4, 5, 5, 6, 7, 7, 7, 10, 11, 12, 14, 16, 18, 18, 19, 20, 20];
+        var expectedIQs = [69, 70, 96, 87, 85, 105, 60, 51, 86, 106, 100, 98, 96, 71, 55, 53, 63, 69, 93, 103];
+        
+        expect(actualAges).toEqual(expectedAges);  
+        expect(expectedIQs).toEqual(expectedIQs);  
     });
 
     it('returns a full, sorted set of data with two different ordered sorts', function() {
@@ -130,24 +110,14 @@ describe('Table Tests', function() {
 
         // Then
 
-        var sortedData = table.dataset();
+        var actualAges = table.dataset().map(function(entry){return entry.Age; });
+        var actualIQs = table.dataset().map(function(entry){return entry.IQ; });
+        
+        var expectedAges = [1, 2, 3, 4, 5, 5, 6, 7, 7, 7, 10, 11, 12, 14, 16, 18, 18, 19, 20, 20];
+        var expectedIQs =[69, 70, 96, 87, 105, 85, 60, 106, 86, 51, 100, 98, 96, 71, 55, 63, 53, 69, 103, 93];
 
-        for (var i=0; i < (sortedData.length-1); i++) {
-
-            var item = sortedData[i];
-            var nextItem = sortedData[i+1];
-
-            var smallerAge = item.Age <= nextItem.Age;
-            
-            expect(smallerAge).toBeTruthy();
-            
-            if (item.Age == nextItem.Age) {
-
-                var largerIQ = item.IQ >= nextItem.IQ;
-                expect(largerIQ).toBeTruthy();
-
-            }
-        }
+        expect(actualAges).toEqual(expectedAges);  
+        expect(expectedIQs).toEqual(expectedIQs);
     });
 
     it('returns a truncated, sorted set of data with two sorts', function() {
@@ -155,7 +125,6 @@ describe('Table Tests', function() {
         // Given
         var dataset = new insight.DataSet(tableData);
         var table = new insight.Table('Test Table', '#table', dataset);
-
         
         // When
 
@@ -164,28 +133,15 @@ describe('Table Tests', function() {
              .top(5);
 
         // Then
+        
+        var actualAges = table.dataset().map(function(entry){return entry.Age; });
+        var actualIQs = table.dataset().map(function(entry){return entry.IQ; });
 
-        var sortedData = table.dataset();
-
-        expect(sortedData.length).toBe(5);
-
-        for (var i=0; i < (sortedData.length-1); i++) {
-
-            var item = sortedData[i];
-            var nextItem = sortedData[i+1];
-
-            var smallerAge = item.Age <= nextItem.Age;
-            
-            expect(smallerAge).toBeTruthy();
-            
-            if (item.Age == nextItem.Age) {
-
-                var largerIQ = item.IQ >= nextItem.IQ;
-                expect(largerIQ).toBeTruthy();
-
-            }
-        }
-
+        var expectedAges = [1, 2, 3, 4, 5] ;
+        var expectedIQs = [69, 70, 96, 87, 105];
+        
+        expect(actualAges).toEqual(expectedAges);  
+        expect(expectedIQs).toEqual(expectedIQs);
     });
 
 

@@ -25,7 +25,6 @@ var createElement = function(namespace, tag) {
     return document.createElementNS(namespace, tag);
 }
 
-
 describe('InsightCharts Utils Tests', function() {
     
     it('correctly identifies arrays', function() {
@@ -154,20 +153,15 @@ describe('InsightCharts Utils Tests', function() {
      
         // When
 
-        var actualData = insight.Utils.multiSort(tabledata, sorters);
+        var actualData = insight.Utils.multiSort(tabledata, sorters)
+                                      .map(function(point){return point.IQ;});
 
+        var expectedData= [51, 53, 55, 60, 63, 69, 69, 70, 71, 85, 86, 87, 93, 96, 96, 98, 100, 103, 105, 106] ;
         // Then
         
-        for (var i=0; i < (actualData.length-1); i++) {
-
-            var item = actualData[i];
-            var nextItem = actualData[i+1];
-
-            var smallerIQ = item.IQ <= nextItem.IQ;
+        expect(actualData).toEqual(expectedData)
             
-            expect(smallerIQ).toBeTruthy();
-            
-        }
+        
     });
 
 
@@ -186,20 +180,13 @@ describe('InsightCharts Utils Tests', function() {
      
         // When 
 
-        var actualData = insight.Utils.multiSort(tabledata, sorters);
+        var actualData = insight.Utils.multiSort(tabledata, sorters)
+                                      .map(function(d){return d.IQ;});
+        var expectedData = [106, 105, 103, 100, 98, 96, 96, 93, 87, 86, 85, 71, 70, 69, 69, 63, 60, 55, 53, 51];
 
         // Then
         
-        for (var i=0; i < (actualData.length-1); i++) {
-
-            var item = actualData[i];
-            var nextItem = actualData[i+1];
-
-            var largerIQ = item.IQ >= nextItem.IQ;
-            
-            expect(largerIQ).toBeTruthy();
-            
-        }
+        expect(actualData).toEqual(expectedData);
     });
 
 
@@ -222,26 +209,16 @@ describe('InsightCharts Utils Tests', function() {
      
         // When 
 
-        var actualData = insight.Utils.multiSort(tabledata, sorters);
+        var actualCountries = insight.Utils.multiSort(tabledata, sorters).map(function(d){return d.Country;});
+        var actualAges = insight.Utils.multiSort(tabledata, sorters).map(function(d){return d.Age;});
+
+        var expectedCountries = ["England", "England", "England", "England", "England", "England", "England", "Northern Ireland", "Northern Ireland", "Northern Ireland", "Northern Ireland", "Northern Ireland", "Northern Ireland", "Scotland", "Scotland", "Scotland", "Wales", "Wales", "Wales", "Wales"];
+        var expectedAges = [20, 19, 18, 18, 10, 7, 5, 16, 14, 7, 7, 5, 2, 20, 12, 1, 11, 6, 4, 3];
 
         // Then
-        
-        for (var i=0; i < (actualData.length-1); i++) {
 
-            var item = actualData[i];
-            var nextItem = actualData[i+1];
-
-            var countrySmaller = item.Country <= nextItem.Country;
-            
-            expect(countrySmaller).toBeTruthy();
-
-            if (item.Country == nextItem.Country) {
-
-                var ageLarger = item.Age >= nextItem.Age;
-                expect(ageLarger).toBeTruthy();
-
-            }            
-        }
+        expect(actualCountries).toEqual(expectedCountries);
+        expect(actualAges).toEqual(expectedAges);
     });
 
     it('multisort works correctly with a descending and ascending sort', function() {
@@ -262,26 +239,16 @@ describe('InsightCharts Utils Tests', function() {
      
         // When
 
-        var actualData = insight.Utils.multiSort(tabledata, sorters);
+        var actualCountries = insight.Utils.multiSort(tabledata, sorters).map(function(d){return d.Country;});
+        var actualAges = insight.Utils.multiSort(tabledata, sorters).map(function(d){return d.Age;});
+        
+        var expectedCountries = ["Wales", "Wales", "Wales", "Wales", "Scotland", "Scotland", "Scotland", "Northern Ireland", "Northern Ireland", "Northern Ireland", "Northern Ireland", "Northern Ireland", "Northern Ireland", "England", "England", "England", "England", "England", "England", "England"];
+        var expectedAges = [3, 4, 6, 11, 1, 12, 20, 2, 5, 7, 7, 14, 16, 5, 7, 10, 18, 18, 19, 20];
 
         // Then
         
-        for (var i=0; i < (actualData.length-1); i++) {
-
-            var item = actualData[i];
-            var nextItem = actualData[i+1];
-
-            var countryLarger = item.Country >= nextItem.Country;
-            
-            expect(countryLarger).toBeTruthy();
-
-            if (item.Country == nextItem.Country) {
-
-                var ageSmaller = item.Age <= nextItem.Age;
-                expect(ageSmaller).toBeTruthy();
-
-            }            
-        }
+        expect(actualCountries).toEqual(expectedCountries);
+        expect(actualAges).toEqual(expectedAges);
     });
 
 })
