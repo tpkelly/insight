@@ -101,7 +101,7 @@
              */
             var addSortOrder = function(func, order) {
                 var sort = {
-                    sortFunction: func,
+                    sortParameter: func,
                     order: order
                 };
 

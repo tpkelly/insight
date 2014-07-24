@@ -147,7 +147,7 @@ describe('InsightCharts Utils Tests', function() {
         var data = tabledata;
         var sorters = [
             {
-                sortFunction: function(d) { return d.IQ; },
+                sortParameter: function(d) { return d.IQ; },
                 order: 'ASC'
             }
         ];
@@ -179,7 +179,7 @@ describe('InsightCharts Utils Tests', function() {
         var data = tabledata;
         var sorters = [
             {
-                sortFunction: function(d) { return d.IQ; },
+                sortParameter: function(d) { return d.IQ; },
                 order: 'DESC'
             }
         ];
@@ -211,11 +211,11 @@ describe('InsightCharts Utils Tests', function() {
         var data = tabledata;
         var sorters = [
             {
-                sortFunction: function(d) { return d.Country; },
+                sortParameter: function(d) { return d.Country; },
                 order: 'ASC'
             },
             {
-                sortFunction: function(d) { return d.Age; },
+                sortParameter: function(d) { return d.Age; },
                 order: 'DESC'
             }
         ];
@@ -251,11 +251,11 @@ describe('InsightCharts Utils Tests', function() {
         var data = tabledata;
         var sorters = [
             {
-                sortFunction: function(d) { return d.Country; },
+                sortParameter: function(d) { return d.Country; },
                 order: 'DESC'
             },
             {
-                sortFunction: function(d) { return d.Age; },
+                sortParameter: function(d) { return d.Age; },
                 order: 'ASC'
             }
         ];

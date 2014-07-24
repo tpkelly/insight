@@ -18,24 +18,30 @@ insight.Utils = (function() {
      * @param {int} index - the current depth of the sort. i.e. which function in the order of sorting priorities is currently being evaluated.
      */
     var recursiveSort = function(a, b, sorters, index) {
-        var current = sorters[index];
-        var sortFunction = current.sortFunction;
-        var sortOrder = current.order;
-        var sortResult = null;
 
-        var aResult = sortFunction(a),
-            bResult = sortFunction(b);
+        var current = sorters[index],
+            continueSorting = index < sorters.length - 1,
+            sortParameter = current.sortParameter,
+            sortOrder = current.order,
+            sortResult = null;
+
+        var aResult = sortParameter(a),
+            bResult = sortParameter(b);
 
         if (aResult > bResult) {
             sortResult = sortOrder == 'ASC' ? 1 : -1;
-        } else if (aResult < bResult) {
+            return sortResult;
+        } 
+        if (aResult < bResult) {
             sortResult = sortOrder == 'ASC' ? -1 : 1;
-        } else if ((aResult == bResult) && (++index < sorters.length)) {
-            sortResult = recursiveSort(a, b, sorters, index);
+            return sortResult;
         }
-        sortResult = sortResult === null ? 0 : sortResult;
-
-        return sortResult;
+        if ((aResult == bResult) && (continueSorting)) {
+            return recursiveSort(a, b, sorters, index + 1);
+        }
+        if (aResult == bResult) {
+            return 0;
+        }
     };
 
 
