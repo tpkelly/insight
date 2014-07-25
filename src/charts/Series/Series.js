@@ -193,25 +193,11 @@ insight.Series = function Series(name, data, x, y, color) {
             .classed('active', false);
     };
 
-    /**
-     * This function takes a data point, and creates a class name for insight to identify this particular key
-     * If the parameter is not an object (just a value in an array) then there is no need for this particular class so blank is returned.
-     * @memberof insight.Series
-     * @returns {string} return - A class name to identify this point and any other points taking the same value in other charts.
-     * @param {object} data - The input point
-     */
-    this.sliceSelector = function(d) {
 
-        var str = d.key.toString();
-
-        var result = "in_" + str.replace(/[^A-Z0-9]/ig, "_");
-
-        return result;
-    };
 
     this.click = function(element, filter) {
 
-        var selector = self.sliceSelector(filter);
+        var selector = insight.Utils.keySelector(filter);
 
         this.clickEvent(this, filter, selector);
     };
@@ -296,13 +282,21 @@ insight.Series = function Series(name, data, x, y, color) {
 
         //Handle tick rotation
         if (x.tickRotation() !== '0') {
-            maxDimensions.maxKeyWidth = Math.ceil(maxKeyWidth * Math.cos(x.tickRotation()));
-            maxDimensions.maxKeyHeight = Math.ceil(maxKeyWidth * Math.cos(x.tickRotation()));
+            //Convert Degrees -> Radians
+            var xSin = Math.sin(x.tickRotation() * Math.PI / 180);
+            var xCos = Math.cos(x.tickRotation() * Math.PI / 180);
+
+            maxDimensions.maxKeyWidth = Math.ceil(Math.max(fontSize * xSin, maxKeyWidth * xCos));
+            maxDimensions.maxKeyHeight = Math.ceil(Math.max(fontSize * xCos, maxKeyWidth * xSin));
         }
 
         if (y.tickRotation() !== '0') {
-            maxDimensions.maxValueWidth = Math.ceil(maxKeyWidth * Math.cos(y.tickRotation()));
-            maxDimensions.maxValueHeight = Math.ceil(maxKeyWidth * Math.cos(y.tickRotation()));
+            //Convert Degrees -> Radians
+            var ySin = Math.sin(y.tickRotation() * Math.PI / 180);
+            var yCos = Math.cos(y.tickRotation() * Math.PI / 180);
+
+            maxDimensions.maxValueWidth = Math.ceil(Math.max(fontSize * ySin, maxValueWidth * yCos));
+            maxDimensions.maxValueHeight = Math.ceil(Math.max(fontSize * yCos, maxValueWidth * ySin));
         }
 
         return maxDimensions;

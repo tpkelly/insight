@@ -48,6 +48,7 @@ describe('Legend', function() {
 
         //Given:
         var legend = new insight.Legend();
+        chart.legend(legend);
 
         //When:
         legend.draw(chart);
@@ -64,6 +65,7 @@ describe('Legend', function() {
         //Given:
         chart.series([lineSeries, lineSeries, lineSeries]);
         var legend = new insight.Legend();
+        chart.legend(legend);
 
         //When:
         legend.draw(chart);
@@ -80,6 +82,7 @@ describe('Legend', function() {
         //Given:
         chart.series([lineSeries, lineSeries, lineSeries]);
         var legend = new insight.Legend();
+        chart.legend(legend);
 
         //When:
         legend.draw(chart);
@@ -104,6 +107,7 @@ describe('Legend', function() {
         //Given:
         chart.series([lineSeries, lineSeries, lineSeries]);
         var legend = new insight.Legend();
+        chart.legend(legend);
 
         //When:
         legend.draw(chart);
@@ -129,6 +133,7 @@ describe('Legend', function() {
         lineSeries.color = d3.functor(d3.rgb(128, 0, 128));
         chart.series([lineSeries, lineSeries, lineSeries]);
         var legend = new insight.Legend();
+        chart.legend(legend);
 
         //When:
         legend.draw(chart);
@@ -147,6 +152,7 @@ describe('Legend', function() {
         //Given:
         chart.series([lineSeries, lineSeries, lineSeries]);
         var legend = new insight.Legend();
+        chart.legend(legend);
 
         //When:
         legend.draw(chart);

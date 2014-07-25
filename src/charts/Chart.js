@@ -13,7 +13,7 @@
             this.name = name;
             this.element = element;
             this.selectedItems = [];
-            this.legend = new insight.Legend();
+            var legend = null;
 
             var zoomAxis = null;
             this.container = null;
@@ -26,6 +26,8 @@
                 right: 0,
                 bottom: 0
             };
+
+            this.legendView = null;
 
             var height = d3.functor(300);
             var width = d3.functor(300);
@@ -52,18 +54,6 @@
                 self.chartSVG = self.container
                     .append('svg')
                     .attr('class', insight.Constants.ChartSVG);
-
-                self.legendView = self.chartSVG.append("g")
-                    .attr("class", insight.Constants.LegendView)
-                    .attr("transform", "translate(" + (self.width() - 80) + ",30)");
-
-                self.legendBox = self.legendView.append("rect")
-                    .style("stroke", 'black')
-                    .style("stroke-width", 1)
-                    .style("fill", 'white');
-
-                self.legendItems = self.legendView.append("g")
-                    .attr("class", insight.Constants.Legend);
 
                 self.plotArea = self.chartSVG.append('g')
                     .attr('class', insight.Constants.PlotArea);
@@ -99,7 +89,9 @@
                         series.draw(self, dragging);
                     });
 
-                this.legend.draw(self, self.series());
+                if (legend !== null) {
+                    legend.draw(self, self.series());
+                }
             };
 
             this.addClipPath = function() {
@@ -202,7 +194,7 @@
                     return this._margin;
                 }
 
-                automargin = false;
+                autoMargin = false;
                 this._margin = _;
 
                 return this;
@@ -245,6 +237,16 @@
                     return series;
                 }
                 series = newSeries;
+
+                return this;
+            };
+
+            this.legend = function(newLegend) {
+                if (!arguments.length) {
+                    return legend;
+                }
+
+                legend = newLegend;
 
                 return this;
             };
@@ -364,20 +366,11 @@
                 .forEach(function(series) {
                     var xAxis = series.x;
                     var yAxis = series.y;
-                    var context = canvas.getContext('2d');
-                    context.font = "15pt Open Sans Bold";
-
-                    var xPadding = xAxis.tickSize() + xAxis.tickPadding() + 15;
-                    var yPadding = yAxis.tickSize() + yAxis.tickPadding() + context.measureText(yAxis.label())
-                        .width;
 
                     var labelDimensions = series.maxLabelDimensions(canvas);
 
-                    var xMargin = labelDimensions.maxKeyHeight + xPadding;
-                    var yMargin = labelDimensions.maxValueWidth + yPadding;
-
-                    margin[series.x.orientation()] = Math.max(xMargin, margin[series.x.orientation()]);
-                    margin[series.y.orientation()] = Math.max(yMargin, margin[series.y.orientation()]);
+                    margin[xAxis.orientation()] = Math.max(labelDimensions.maxKeyHeight, margin[xAxis.orientation()]);
+                    margin[yAxis.orientation()] = Math.max(labelDimensions.maxValueWidth, margin[yAxis.orientation()]);
                 });
 
             this.margin(margin);

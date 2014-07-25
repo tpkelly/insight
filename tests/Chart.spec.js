@@ -341,12 +341,8 @@ describe('Chart', function() {
 
             //Then:
             //15pts for the x-axis label height
-            expect(chart.margin()).toEqual({
-                "top":0,
-                "left":(yAxis.tickPadding() + yAxis.tickSize()),
-                "right":0,
-                "bottom":(xAxis.tickPadding() + xAxis.tickSize() + 15)
-                });
+            expect(chart.margin()).toEqual({"top":0, "left":0, "right":0, "bottom":0});
+
         });
 
         it('bottom margins are expanded when x-axis has labels', function() {
@@ -367,12 +363,8 @@ describe('Chart', function() {
             chart.calculateLabelMargin();
 
             //Then:
-            expect(chart.margin()).toEqual({
-                "top":0,
-                "left":(yAxis.tickPadding() + yAxis.tickSize()),
-                "right":0,
-                "bottom":(xAxis.tickPadding() + xAxis.tickSize() + 15 + 10)
-            });
+            expect(chart.margin()).toEqual({"top":0, "left":0, "right":0, "bottom":10});
+
         });
 
         it('left margins are expanded when y-axis has labels', function() {
@@ -393,12 +385,8 @@ describe('Chart', function() {
             chart.calculateLabelMargin();
 
             //Then:
-            expect(chart.margin()).toEqual({
-                "top":0,
-                "left":(yAxis.tickPadding() + yAxis.tickSize() + 5),
-                "right":0,
-                "bottom":(xAxis.tickPadding() + xAxis.tickSize() + 15)
-            });
+            expect(chart.margin()).toEqual({"top":0, "left":5, "right":0, "bottom":0});
+
         });
 
         it('right margins are expanded when y-axis is reversed', function() {
@@ -421,12 +409,7 @@ describe('Chart', function() {
             chart.calculateLabelMargin();
 
             //Then:
-            expect(chart.margin()).toEqual({
-                "top":0,
-                "left":0,
-                "right":(yAxis.tickPadding() + yAxis.tickSize() + 5),
-                "bottom":(xAxis.tickPadding() + xAxis.tickSize() + 15)
-            });
+            expect(chart.margin()).toEqual({"top":0, "left":0, "right":5, "bottom":0});
         });
 
         it('top margins are expanded when x-axis is reversed', function() {
@@ -449,12 +432,7 @@ describe('Chart', function() {
             chart.calculateLabelMargin();
 
             //Then:
-            expect(chart.margin()).toEqual({
-                "top":(xAxis.tickPadding() + xAxis.tickSize() + 15 + 10),
-                "left":(yAxis.tickPadding() + yAxis.tickSize()),
-                "right":0,
-                "bottom":0
-            });
+            expect(chart.margin()).toEqual({"top":10, "left":0, "right":0, "bottom":0});
         });
     });
 });

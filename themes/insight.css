@@ -59,6 +59,31 @@
     stroke: none;
 }
 
+/* Table Styles */
+
+.in-table th, in-table td
+{
+    padding: 0.4em 1em;
+}
+
+.in-table td
+{
+  text-align: right;
+}
+
+.in-datarow
+{
+  cursor: pointer;
+}
+.in-datarow.selected
+{
+  background: #D3D3E7;
+}
+.in-datarow:hover:not(.selected)
+{
+  background: #eee;
+}
+
 
 /*Dynamic Styles*/
 
