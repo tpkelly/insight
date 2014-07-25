@@ -289,7 +289,7 @@ insight.Series = function Series(name, data, x, y, color) {
 
     this.maxLabelDimensions = function(measureCanvas) {
 
-        var sampleText = document.createElement('div');
+        var sampleText = document.createElement('text');
         sampleText.setAttribute('class', insight.Constants.AxisTextClass);
         var style = window.getComputedStyle(sampleText);
         var ctx = measureCanvas.getContext('2d');
@@ -319,8 +319,6 @@ insight.Series = function Series(name, data, x, y, color) {
                 maxValueWidth = Math.max(valueDimensions.width, maxValueWidth);
                 fontSize = Math.ceil(style['font-size']) || 10;
             });
-
-
 
         var maxDimensions = {
             "maxKeyWidth": maxKeyWidth,
