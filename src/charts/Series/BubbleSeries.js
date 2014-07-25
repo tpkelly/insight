@@ -13,8 +13,7 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
 
     var self = this,
         selector = this.name + insight.Constants.Bubble,
-        radiusFunction = d3.functor(10),
-        selectedItems = [];
+        radiusFunction = d3.functor(10);
 
     this.classValues = [insight.Constants.Bubble];
 
