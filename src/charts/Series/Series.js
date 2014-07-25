@@ -302,20 +302,24 @@ insight.Series = function Series(name, data, x, y, color) {
         return maxDimensions;
     };
 
-
-    this.findMax = function(scale) {
+    this.findMin = function(scale) {
         var self = this;
 
-        var max = 0;
         var data = this.dataset();
 
         var func = scale == self.x ? self.keyFunction() : self.valueFunction();
 
-        var m = d3.max(data, func);
+        return d3.min(data, func);
+    };
 
-        max = m > max ? m : max;
+    this.findMax = function(scale) {
+        var self = this;
 
-        return max;
+        var data = this.dataset();
+
+        var func = scale == self.x ? self.keyFunction() : self.valueFunction();
+
+        return d3.max(data, func);
     };
 
     this.draw = function(chart, drag) {};

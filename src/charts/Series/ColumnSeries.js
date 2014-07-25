@@ -26,7 +26,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
     this.series = [{
         name: 'default',
-        accessor: function(d) {
+        valueFunction: function(d) {
             return self.valueFunction()(d);
         },
         tooltipValue: function(d) {
@@ -53,7 +53,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
         for (var series in self.series) {
             var s = self.series[series];
 
-            var seriesValue = s.accessor(d);
+            var seriesValue = s.valueFunction(d);
 
             seriesMax = stacked ? seriesMax + seriesValue : seriesValue;
 

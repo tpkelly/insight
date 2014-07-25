@@ -53,8 +53,8 @@ describe('Axis Tests', function() {
         chart.yAxis(axis);
 
         //Then:
-        var observedResult = axis.vertical();
-        var expectedResult = true;
+        var observedResult = axis.horizontal();
+        var expectedResult = false;
         expect(observedResult).toBe(expectedResult);
     });
 
@@ -150,7 +150,7 @@ describe('Axis Tests', function() {
         var x = new insight.Axis('Key Axis', insight.Scales.Time);
         var y = new insight.Axis('Value Axis', insight.Scales.Linear);
 
-        var series = new insight.ColumnSeries('chart', dataset, x, y, 'blue')
+        var series = new insight.Series('chart', dataset, x, y, 'blue')
                                 .keyFunction(function(d){return d.date;});
 
         //Then:

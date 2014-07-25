@@ -48,19 +48,10 @@ insight.Axis = function Axis(name, scale) {
 
     // private functions
 
-    /**
-     * The default axis tick format, just returns the input
-     * @returns {object} tickPoint - The axis data for a particular tick
-     * @param {object} ticklabel - The output string to be displayed
-     */
     var format = function(d) {
         return d;
     };
 
-    /**
-     * This method calculates the scale ranges for this axis, given a range type function and using the calculated output bounds for this axis.
-     * @param {rangeType} rangeType - a d3 range function, which can either be in bands (for columns) or a continuous range
-     */
     var applyScaleRange = function(rangeType) {
 
         // x-axis goes from 0 (left) to max (right)
@@ -80,11 +71,8 @@ insight.Axis = function Axis(name, scale) {
         return this;
     };
 
-    /**
-     * For an ordinal/categorical axis, this method queries all series that use this axis to get the list of available values
-     * TODO - currently just checks the first as I've not had a scenario where different series on the same axis had different ordinal keys.
-     * @returns {object[]} values - the values for this ordinal axis
-     */
+    // For an ordinal/categorical axis, this method queries all series that use this axis to get the list of available values
+    // TODO - currently just checks the first as I've not had a scenario where different series on the same axis had different ordinal keys.
     var findOrdinalValues = function() {
         var vals = [];
 
@@ -98,8 +86,24 @@ insight.Axis = function Axis(name, scale) {
     };
 
     /**
-     * For linear series, this method is used to calculate the maximum value to be used in this axis.
-     * @returns {Date} max - The largest value in the datasets that use this axis
+     * Calculates the minimum value to be used in this axis.
+     * @returns {object} - The smallest value in the datasets that use this axis
+     */
+    var findMin = function() {
+        var min = Number.MAX_VALUE;
+
+        self.series.map(function(series) {
+            var m = series.findMin(self);
+
+            min = m < min ? m : min;
+        });
+
+        return min;
+    };
+
+    /**
+     * Calculates the maximum value to be used in this axis.
+     * @returns {object} - The largest value in the datasets that use this axis
      */
     var findMax = function() {
         var max = 0;
@@ -113,51 +117,23 @@ insight.Axis = function Axis(name, scale) {
         return max;
     };
 
+    // public functions
 
     /**
-     * For time series, this method is used to calculate the minimum value to be used in this axis.
-     * @returns {Date} minTime - The smallest time in the datasets that use this axis
+     * Whether or not the axis is displayed horizontally (true) or vertically (false).
+     * @memberof insight.Axis
+     * @returns {boolean} - Whether the axis is horizontal.
      */
-    var minTime = function() {
-        // start at the largest time, and work back from there to find the minimum
-        var minTime = new Date(8640000000000000);
-
-        self.series.map(function(series) {
-            var cMin = d3.min(series.keys());
-            minTime = cMin < minTime ? cMin : minTime;
-        });
-        return minTime;
-    };
-
-
-    /**
-     * For time series, this method is used to calculate the maximum value to be used in this axis.
-     * @returns {Date} minTime - The largest time in the datasets that use this axis
-     */
-    var maxTime = function() {
-        // start at the smallest time, and work back from there to find the minimum
-        var maxTime = new Date(-8640000000000000);
-
-        self.series.map(function(series) {
-            var cMax = d3.max(series.keys());
-            maxTime = cMax > maxTime ? cMax : maxTime;
-        });
-
-        return maxTime;
-    };
-
-
-    // public functions 
-
-
     this.horizontal = function() {
         return this.direction == 'h';
     };
 
-    this.vertical = function() {
-        return this.direction == 'v';
-    };
-
+    /**
+     * Getter/Setter for whether the axis values are displayed in order or not.
+     * @memberof insight.Axis
+     * @param {boolean} [value] The new value to use for whether or not to order the axis.
+     * @returns {*} - If no arguments are supplied, returns whether the axis is currently ordered. Otherwise returns this.
+     */
     this.ordered = function(value) {
         if (!arguments.length) {
             return ordered();
@@ -173,7 +149,6 @@ insight.Axis = function Axis(name, scale) {
         orderingFunction = value;
         return this;
     };
-
 
     this.addSeries = function(series) {
         this.series.push(series);
@@ -196,7 +171,7 @@ insight.Axis = function Axis(name, scale) {
         } else if (this.scaleType == insight.Scales.Ordinal.name) {
             domain = findOrdinalValues();
         } else if (this.scaleType == insight.Scales.Time.name) {
-            domain = [minTime(), maxTime()];
+            domain = [new Date(findMin()), new Date(findMax())];
         }
 
         return domain;
@@ -206,7 +181,7 @@ insight.Axis = function Axis(name, scale) {
     /**
      * This method calculates the output range bound of this axis, taking into account the size and margins of the chart.
      * @memberof insight.Axis
-     * @returns {int[]} bounds - An array with two items, for the width and height of the axis, respectively.
+     * @returns {int[]} - An array with two items, for the width and height of the axis, respectively.
      */
     this.calculateAxisBounds = function(chart) {
         var bounds = [];
@@ -224,11 +199,9 @@ insight.Axis = function Axis(name, scale) {
 
     /**
      * This getter/setter defines whether or not the axis should be drawn on the chart (lines and labels)
-     * @returns {function}
-     */
-    /**
+     * @memberof insight.Axis
      * @param {boolean} value - When used as a setter, this function takes a boolean value that will define whether this axis will be drawn
-     * @returns {this}
+     * @returns {*} - If no arguments are supplied, returns whether the axis is currently being displayed. Otherwise returns this.
      */
     this.display = function(value) {
         if (!arguments.length) {
@@ -238,6 +211,12 @@ insight.Axis = function Axis(name, scale) {
         return this;
     };
 
+    /**
+     * This getter/setter defines whether the axis should be drawn at the left/bottom (false) or top/right (true).
+     * @memberof insight.Axis
+     * @param {boolean} value - When used as a setter, this function takes a boolean value that will define where the axis is drawn.
+     * @returns {*} - If no arguments are supplied, returns whether the axis is currently reversed. Otherwise returns this.
+     */
     this.reversed = function(value) {
         if (!arguments.length) {
             return reversedPosition;
@@ -267,11 +246,9 @@ insight.Axis = function Axis(name, scale) {
 
     /**
      * This getter/setter defines the color used by the axis labels and lines
-     * @returns {function}
-     */
-    /**
+     * @memberof insight.Axis
      * @param {object} color - When used as a setter, this function can take a string color (hex, named or "rgb(r,g,b)") or a function that returns the color of the axis.
-     * @returns {this}
+     * @returns {*} - If no arguments are supplied, returns the current color of the axis line. Otherwise returns this.
      */
     this.color = function(color) {
         if (!arguments.length) {
@@ -345,13 +322,6 @@ insight.Axis = function Axis(name, scale) {
         return this;
     };
 
-
-    /**
-     * This method gets/sets the rotation angle used for horizontal axis labels.  Defaults to 90 degrees
-     * @memberof insight.Axis
-     * @returns {object} return - Description
-     * @param {object[]} data - Description
-     */
     this.tickRotationTransform = function() {
         var offset = self.tickPadding() + (self.tickSize() * 2);
         offset = (reversedPosition && self.vertical()) ? 0 - offset : offset;
@@ -371,7 +341,7 @@ insight.Axis = function Axis(name, scale) {
 
             transform += transX + ',' + transY + ')';
 
-        } else if (self.vertical()) {
+        } else {
             var xShift = self.orientation() == 'left' ? 0 : self.bounds[0];
             transform += xShift + ',0)';
         }
@@ -383,10 +353,6 @@ insight.Axis = function Axis(name, scale) {
         return self.scale(d);
     };
 
-    /**
-     * This method positions the text label for the axis (not the tick labels)
-     * @memberof insight.Axis
-     */
     this.positionLabel = function() {
 
         if (self.horizontal()) {
@@ -394,7 +360,7 @@ insight.Axis = function Axis(name, scale) {
                 .style(self.orientation(), 0)
                 .style('width', '100%')
                 .style('text-align', 'center');
-        } else if (self.vertical()) {
+        } else {
             this.labelElement.style(self.orientation(), '0')
                 .style('top', '35%');
         }
@@ -402,11 +368,9 @@ insight.Axis = function Axis(name, scale) {
 
     /**
      * This getter/setter defines whether gridlines are displayed for the axis.
-     * @returns {function}
-     */
-    /**
-     * @param {object} showLines - When used as a setter, this function can take a boolean of whether to display the gridlines (true) or hide them (false).
-     * @returns {this}
+     * @memberof insight.Axis
+     * @param {object} [showLines] - When used as a setter, this function can take a boolean of whether to display the gridlines (true) or hide them (false).
+     * @returns {*} - If no arguments are supplied, returns whether the axis currently has gridlines. Otherwise returns this.
      */
     this.showGridlines = function(showLines) {
         if (!arguments.length) {
@@ -456,8 +420,6 @@ insight.Axis = function Axis(name, scale) {
             .style('position', 'absolute')
             .text(this.label());
     };
-
-
 
     this.draw = function(chart, dragging) {
 
