@@ -170,6 +170,13 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
         self.mouseOver.call(this, data, i, seriesFunction);
     };
 
+    /**
+     * This function is required by the Series that currently support stacking.
+     * it appends the stacked/grouped series name to the base class value returned by Series.itemClassName()
+     * @memberof insight.ColumnSeries
+     * @returns {string} itemClassValue - A value to use for this particular item and stacked/grouped series combination
+     * @param {object} data - The data object being drawn
+     */
     this.seriesSpecificClassName = function(d) {
 
         var additionalClass = ' ' + self.currentSeries.name + 'class';
