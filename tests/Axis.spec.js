@@ -391,27 +391,14 @@ describe('Axis Tests', function() {
         expect(observedResult).toEqual(expectedResult);
     });
 
-    it('no tick label rotation by default', function() {
+    it('no tick rotation by default', function() {
         
         //Given:        
         var y = new insight.Axis('Key Axis', insight.Scales.Linear);
 
         //Then:
         var observedResult = y.tickRotationTransform();
-        var expectedResult = '';
-
-        expect(observedResult).toEqual(expectedResult);
-    });
-
-
-    it('no  label rotation by default', function() {
-        
-        //Given:        
-        var y = new insight.Axis('Key Axis', insight.Scales.Linear);
-
-        //Then:
-        var observedResult = y.tickRotationTransform();
-        var expectedResult = '';
+        var expectedResult = ' rotate(0,0,12)';
 
         expect(observedResult).toEqual(expectedResult);
     });

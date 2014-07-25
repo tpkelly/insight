@@ -246,27 +246,58 @@ insight.Series = function Series(name, data, x, y, color) {
         var ctx = measureCanvas.getContext('2d');
         ctx.font = style['font-size'] + ' ' + style['font-family'];
 
-        var maxDimensions = {
-            "maxKeyWidth": 0,
-            "maxKeyHeight": 0,
-            "maxValueWidth": 0,
-            "maxValueHeight": 0
-        };
+        var fontSize = 0;
+
+        var maxValueWidth = 0;
+        var maxKeyWidth = 0;
 
         var data = this.dataset();
 
         this.keys()
             .forEach(function(key) {
+                var value = insight.Utils.valueForKey(data, key, keyFunction, valueFunction);
 
-                var value = data[key];
-                var keyDimensions = ctx.measureText(key);
-                var valueDimensions = ctx.measureText(value);
+                var keyFormat = self.x.labelFormat();
+                var valueFormat = self.y.labelFormat();
 
-                maxDimensions.maxKeyWidth = Math.max(keyDimensions.width, maxDimensions.maxKeyWidth);
-                maxDimensions.maxKeyHeight = Math.max(keyDimensions.height, maxDimensions.maxKeyHeight);
-                maxDimensions.maxValueWidth = Math.max(valueDimensions.width, maxDimensions.maxValueWidth);
-                maxDimensions.maxValueHeight = Math.max(valueDimensions.height, maxDimensions.maxValueHeight);
+                var keyString = keyFormat(key);
+                var valueString = valueFormat(value);
+
+                var keyDimensions = ctx.measureText(keyString);
+                var valueDimensions = ctx.measureText(valueString);
+
+                maxKeyWidth = Math.max(keyDimensions.width, maxKeyWidth);
+                maxValueWidth = Math.max(valueDimensions.width, maxValueWidth);
+                fontSize = Math.ceil(style['font-size']) || 10;
             });
+
+
+
+        var maxDimensions = {
+            "maxKeyWidth": maxKeyWidth,
+            "maxKeyHeight": fontSize,
+            "maxValueWidth": maxValueWidth,
+            "maxValueHeight": fontSize
+        };
+
+        //Handle tick rotation
+        if (x.tickRotation() !== '0') {
+            //Convert Degrees -> Radians
+            var xSin = Math.sin(x.tickRotation() * Math.PI / 180);
+            var xCos = Math.cos(x.tickRotation() * Math.PI / 180);
+
+            maxDimensions.maxKeyWidth = Math.ceil(Math.max(fontSize * xSin, maxKeyWidth * xCos));
+            maxDimensions.maxKeyHeight = Math.ceil(Math.max(fontSize * xCos, maxKeyWidth * xSin));
+        }
+
+        if (y.tickRotation() !== '0') {
+            //Convert Degrees -> Radians
+            var ySin = Math.sin(y.tickRotation() * Math.PI / 180);
+            var yCos = Math.cos(y.tickRotation() * Math.PI / 180);
+
+            maxDimensions.maxValueWidth = Math.ceil(Math.max(fontSize * ySin, maxValueWidth * yCos));
+            maxDimensions.maxValueHeight = Math.ceil(Math.max(fontSize * yCos, maxValueWidth * ySin));
+        }
 
         return maxDimensions;
     };
