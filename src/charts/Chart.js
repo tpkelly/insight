@@ -173,7 +173,8 @@
                 this.zoom.x(zoomAxis.scale);
 
                 if (!this.zoomExists()) {
-                    this.plotArea.append('rect')
+                    //Draw ourselves as the first element in the plot area
+                    this.plotArea.insert('rect', ':first-child')
                         .attr('class', 'zoompane')
                         .attr('width', this.width())
                         .attr('height', this.height() - this.margin()
