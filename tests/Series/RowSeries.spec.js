@@ -23,28 +23,7 @@ var rowdata =
 
 describe('Row Series Tests', function() {
     
-    it('can identify a dimensional slice', function(){
-        
-        var chart = new insight.Chart('Chart 1', '#chart1');
-        
-        var dataset = new insight.DataSet(rowdata);        
-       
-        var group =  dataset.group('country',function(d){return d.Country;});
-
-        var xScale = new insight.Axis('Values', insight.Scales.Ordinal);
-        var yScale = new insight.Axis('Keys', insight.Scales.Linear);
-        chart.addXAxis(xScale);
-        chart.addYAxis(yScale);
-
-        var series = new insight.RowSeries('countryColumn', group, xScale, yScale, 'silver')
-                            .valueFunction(function(d){return d.value.Count;});
-        
-        var scotland = group.getData().filter(function(country){ return country.key=='Scotland'; })[0]; 
-
-        expect(series.sliceSelector(scotland)).toBe('in_Scotland');
-
-    });
-
+    
     it('correctly places a single row series', function() {
         
         var chart = new insight.Chart('Chart 1', '#chart1');

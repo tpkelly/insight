@@ -6,6 +6,38 @@ insight.Utils = (function() {
 
     var exports = {};
 
+    // Internal Functions
+
+    /**
+     * This recursive function takes two values a and b, a list of sort objects [{sortFunction: function(a){return a.valueToSortOn;}, order: 'ASC'}] and an index of the current function being used to sort.
+     * It returns a ordering value for a and b, as per the normal Javascript sorting rules https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+     * @returns {int} sortResult - if a > b then the result = 1, -1 if a < b and 0 if a == b.
+     * @param {object} a - Description
+     * @param {object} b - Description
+     * @param {object[]} sorters - A list of sorting rules [{sortFunction: function(a){return a.valueToSortOn;}, order: 'ASC'}]
+     */
+    var recursiveSort = function(a, b, sorters) {
+        if (sorters.length === 0)
+            return 0;
+
+        var current = sorters[0];
+        var sortParameter = current.sortParameter;
+        var sortOrder = current.order;
+
+        var aResult = sortParameter(a),
+            bResult = sortParameter(b);
+
+        if (aResult == bResult) {
+            return recursiveSort(a, b, sorters.slice(1));
+        }
+
+        var sortResult = (aResult > bResult) ? 1 : -1;
+        return (sortOrder == 'ASC') ? sortResult : -sortResult;
+    };
+
+
+    // Public Functions
+
     /**
      * This is a utility method used to check if an object is an array or not
      * @returns {boolean} return - is the object an array
@@ -24,6 +56,21 @@ insight.Utils = (function() {
         return Object.prototype.toString.call(obj) === '[object Number]';
     };
 
+    /**
+     * This function takes a data point, and creates a class name for insight to identify this particular key
+     * If the parameter is not an object (just a value in an array) then there is no need for this particular class so blank is returned.
+     * @returns {string} return - A class name to identify this point and any other points taking the same value in other charts.
+     * @param {object} data - The input point
+     */
+    exports.keySelector = function(d) {
+
+        var str = d.key.toString();
+
+        var result = "in_" + str.replace(/[^A-Z0-9]/ig, "_");
+
+        return result;
+    };
+
     exports.removeMatchesFromArray = function(array, comparer) {
         var self = this;
         var matches = array.filter(comparer);
@@ -38,6 +85,7 @@ insight.Utils = (function() {
             array.splice(index, 1);
         }
     };
+
 
     exports.arrayUnique = function(array) {
         var a = array.concat();
@@ -69,6 +117,27 @@ insight.Utils = (function() {
             merged[key] = base[key];
         }
         return merged;
+    };
+
+
+    /**
+     * This function takes an array and a list of sort objects, sorting the array (in place) using the provided priorities and returning that array at the end.
+     * @returns {object[]} sortedArray - The sorted array
+     * @param {object[]} data - The array to sort.  It will be sorted in place (as per Javascript sort standard behaviour) and returned at the end.
+     * @param {object[]} sorters - A list of sorting rules [{sortFunction: function(a){return a.valueToSortOn;}, order: 'ASC'}]
+     */
+    exports.multiSort = function(array, sorters) {
+        if (!sorters.length)
+            return array;
+
+        // create a comparison function that takes two values, and tries to sort them according to the provided sorting functions and orders.
+        // the sorting functions will be recursively tested if the values a and b are equal until an ordering is established or all or the sorter list is exhausted.
+        var sortFunction = function(a, b) {
+            var result = recursiveSort(a, b, sorters, 0);
+            return result;
+        };
+
+        return array.sort(sortFunction);
     };
 
     /**

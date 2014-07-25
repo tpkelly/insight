@@ -8,17 +8,19 @@ insight.Constants = (function() {
     exports.YAxisClass = 'y-axis';
     exports.AxisClass = 'in-axis';
     exports.XAxisClass = 'x-axis';
-    exports.XAxisRotation = "rotate(90)";
-    exports.Tooltip = "d3-tip";
-    exports.ToolTipTextClass = "tooltip";
-    exports.BarGroupClass = "bargroup";
-    exports.ContainerClass = "incontainer";
-    exports.ChartSVG = "chartSVG";
-    exports.PlotArea = "plotArea";
-    exports.Legend = "legend";
-    exports.LegendView = "legend-view";
-    exports.Bubble = "bubble";
-    exports.Scatter = "scatter";
+    exports.XAxisRotation = 'rotate(90)';
+    exports.Tooltip = 'd3-tip';
+    exports.ToolTipTextClass = 'tooltip';
+    exports.BarGroupClass = 'bargroup';
+    exports.ContainerClass = 'incontainer';
+    exports.ChartSVG = 'chartSVG';
+    exports.PlotArea = 'plotArea';
+    exports.Legend = 'legend';
+    exports.LegendView = 'legend-view';
+    exports.Bubble = 'bubble';
+    exports.Scatter = 'scatter';
+    exports.TableClass = 'in-table';
+    exports.TableRowClass = 'in-datarow';
 
     return exports;
 }());
@@ -28,15 +30,15 @@ insight.Scales = (function() {
     var exports = {};
 
     exports.Ordinal = {
-        name: "ordinal",
+        name: 'ordinal',
         scale: d3.scale.ordinal
     };
     exports.Linear = {
-        name: "linear",
+        name: 'linear',
         scale: d3.scale.linear
     };
     exports.Time = {
-        name: "time",
+        name: 'time',
         scale: d3.time.scale
     };
     return exports;

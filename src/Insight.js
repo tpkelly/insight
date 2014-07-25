@@ -6,29 +6,39 @@ var insight = (function() {
 
     return {
         Charts: [],
+        Tables: [],
         Groups: [],
         Dimensions: [],
         FilteredDimensions: [],
-        DimensionChartMap: {},
+        DimensionListenerMap: {},
         init: function() {
             this.Charts = [];
             this.Groups = [];
             this.FilteredDimensions = [];
-            this.DimensionChartMap = {};
+            this.DimensionListenerMap = {};
         },
-        redrawCharts: function() {
-            for (var i = 0; i < this.Charts.length; i++) {
-                this.Charts[i].draw();
-            }
+        redraw: function() {
+
+            this.Charts.forEach(function(chart) {
+                chart.draw();
+            });
+
+            this.Tables.forEach(function(table) {
+                table.draw();
+            });
+        },
+        addTable: function(table) {
+
+            // wire up the click event of the table to the filter handler of the DataSet
+            table.clickEvent = table.data.filterHandler;
+
+            this.Tables.push(table);
+
+            return table;
         },
         addChart: function(chart) {
-
             var self = this;
-
-            chart.triggerRedraw = this.redrawCharts.bind(this);
-
             this.Charts.push(chart);
-
             return chart;
         },
         filterFunction: function(filter, element) {
@@ -50,12 +60,24 @@ var insight = (function() {
                 return String(d.name) == String(filterFunction.name);
             };
         },
-        applyCSSClasses: function(chart, value, dimensionSelector) {
-            var listeningSeries = this.DimensionChartMap[chart.data.dimension.Name];
+        applyCSSClasses: function(item, value, dimensionSelector) {
+            var listeningObjects = this.DimensionListenerMap[item.data.dimension.Name];
 
-            listeningSeries.forEach(function(chart) {
-                chart.highlight(dimensionSelector, value);
+            listeningObjects.forEach(function(item) {
+                item.highlight(dimensionSelector, value);
             });
+        },
+        addDimensionListener: function(dataset, widget) {
+            var dimension = dataset.dimension;
+
+            if (dimension) {
+                var listeningObjects = this.DimensionListenerMap[dimension.Name];
+                if (listeningObjects && (listeningObjects.indexOf(widget) == -1)) {
+                    listeningObjects.push(widget);
+                } else {
+                    this.DimensionListenerMap[dimension.Name] = [widget];
+                }
+            }
         },
         drawCharts: function() {
 
@@ -64,24 +86,18 @@ var insight = (function() {
             this.Charts
                 .forEach(
                     function(chart) {
-                        // if this chart contains series data with dimensions that can be filtered, add the charts to a map of dimension->chart so that charts know 
-                        // when they need to update css highlighting after a filter event.
                         chart.series()
-                            .forEach(function(s) {
-                                if (s.data.dimension) {
-                                    var listeningSeries = self.DimensionChartMap[s.data.dimension.Name];
-                                    if (listeningSeries) {
-                                        if (listeningSeries.indexOf(chart) == -1) {
-                                            listeningSeries.push(chart);
-                                        }
-                                    } else {
-                                        self.DimensionChartMap[s.data.dimension.Name] = [chart];
-                                    }
-                                }
+                            .forEach(function(series) {
+                                self.addDimensionListener(series.data, chart);
                             });
 
                         chart.init();
                     });
+
+            this.Tables.forEach(function(table) {
+                self.addDimensionListener(table.data, table);
+                table.draw();
+            });
         },
         chartFilterHandler: function(chart, value, dimensionSelector) {
             var self = this;
@@ -147,7 +163,7 @@ var insight = (function() {
 
                 });
 
-                this.redrawCharts();
+                this.redraw();
             }
         }
     };
