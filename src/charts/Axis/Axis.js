@@ -14,20 +14,21 @@ insight.Axis = function Axis(name, scale) {
     this.direction = '';
     this.gridlines = new insight.AxisGridlines(this);
 
-    var self = this;
-    var label = name;
-    var ordered = d3.functor(false);
-    var orderingFunction = null;
-    var tickSize = d3.functor(1);
-    var tickPadding = d3.functor(10);
-    var labelRotation = '90';
-    var tickOrientation = d3.functor('lr');
-    var showGridLines = false;
-    var colorFunction = d3.functor('#777');
-    var display = true;
-    var barPadding = d3.functor(0.1);
-    var initialisedAxisView = false;
-    var reversedPosition = false;
+    var self = this,
+        label = name,
+        ordered = d3.functor(false),
+        orderingFunction = null,
+        tickSize = d3.functor(1),
+        tickPadding = d3.functor(10),
+        labelRotation = '90',
+        tickOrientation = d3.functor('lr'),
+        showGridLines = false,
+        colorFunction = d3.functor('#777'),
+        display = true,
+        barPadding = d3.functor(0.1),
+        initialisedAxisView = false,
+        reversedPosition = false,
+        zoomable = false;
 
     var orientation = function() {
         if (self.horizontal()) {
@@ -221,6 +222,12 @@ insight.Axis = function Axis(name, scale) {
     };
 
 
+    this.zoomable = function(value) {
+        if (!arguments.length) {
+            return zoomable;
+        }
+        zoomable = value;
+    };
 
     /**
      * This getter/setter defines whether or not the axis should be drawn on the chart (lines and labels)
