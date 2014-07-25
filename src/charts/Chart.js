@@ -79,13 +79,7 @@
                 var axes = xAxes.concat(yAxes);
 
                 axes.map(function(axis) {
-                    var isZoom = zoomAxis == axis;
-
-                    if (!isZoom) {
-                        axis.initializeScale();
-                    }
-
-                    axis.draw(self, dragging);
+                     axis.draw(self, dragging);
                 });
 
                 this.series()
@@ -133,13 +127,6 @@
                     .attr('height', self.height() - chartMargin.top - chartMargin.bottom);
             };
 
-
-
-            this.recalculateScales = function() {
-                scales.map(function(scale) {
-                    scale.initialize();
-                });
-            };
 
             this.zoomable = function(scale) {
                 zoomable = true;

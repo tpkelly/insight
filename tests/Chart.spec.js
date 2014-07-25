@@ -278,7 +278,9 @@ describe('Chart', function() {
 
                     testInit(function() {
 
-                        chart.zoomable(2);
+                        var axis = new insight.Axis('test', insight.Scales.Ordinal);
+
+                        chart.zoomable(axis);
                         spyOn(chart, 'initZoom');
 
                     });
