@@ -20,7 +20,7 @@ insight.Axis = function Axis(name, scale) {
         orderingFunction = null,
         tickSize = d3.functor(1),
         tickPadding = d3.functor(10),
-        labelRotation = '90',
+        labelRotation = '0',
         tickOrientation = d3.functor('lr'),
         showGridLines = false,
         colorFunction = d3.functor('#777'),
@@ -359,6 +359,12 @@ insight.Axis = function Axis(name, scale) {
             return tickOrientation();
         }
 
+        if (value === 'tb') {
+            labelRotation = '90';
+        } else if (value === 'lr') {
+            labelRotation = '0';
+        }
+
         tickOrientation = d3.functor(value);
 
         return this;
@@ -375,7 +381,7 @@ insight.Axis = function Axis(name, scale) {
         var offset = self.tickPadding() + (self.tickSize() * 2);
         offset = (reversedPosition && self.vertical()) ? 0 - offset : offset;
 
-        var rotation = this.tickOrientation() == 'tb' ? ' rotate(' + self.tickRotation() + ',0,' + offset + ')' : '';
+        var rotation = ' rotate(' + self.tickRotation() + ',0,' + offset + ')';
 
         return rotation;
     };
