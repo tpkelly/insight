@@ -119,7 +119,7 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
 
         this.initializeTooltip(chart.container.node());
         this.selectedItems = chart.selectedItems;
-        this.classValue = self.seriesClassName();
+        this.rootClassName = self.seriesClassName();
 
         var duration = drag ? 0 : function(d, i) {
             return 200 + (i * 20);

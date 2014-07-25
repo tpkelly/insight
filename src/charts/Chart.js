@@ -75,7 +75,7 @@
                 var axes = xAxes.concat(yAxes);
 
                 axes.map(function(axis) {
-                     axis.draw(self, dragging);
+                    axis.draw(self, dragging);
                 });
 
                 this.series()

@@ -42,4 +42,41 @@ describe('Row Series Tests', function() {
         
     });
 
+    it('RowSeries item class values are correct', function() {
+        
+        //Given 
+
+        var data = new insight.DataSet(rowdata);
+
+        var chart = new insight.Chart('Chart 1', '#chart1');
+                
+        var group =  data.group('country', function(d){return d.Country;})
+                         .mean(['Age']);
+
+        var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
+        var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        
+        chart.addXAxis(xScale);
+        chart.addYAxis(yScale);
+
+        var series = new insight.RowSeries('countryRows', group, xScale, yScale, 'silver')
+                                .valueFunction(function(d){ return d.Country; });
+        // When 
+        
+        series.currentSeries = {name: 'default', accessor: function(d){ return d.Country; }};
+        series.rootClassName = series.seriesClassName();
+
+        // Then
+        var actualData = series.dataset().map(function(data){ return series.seriesSpecificClassName(data); });
+        var expectedData = [
+                            'countryRowsclass bar in_England defaultclass',
+                            'countryRowsclass bar in_Northern_Ireland defaultclass',
+                            'countryRowsclass bar in_Scotland defaultclass',
+                            'countryRowsclass bar in_Wales defaultclass',
+                            ];
+
+        expect(actualData).toEqual(expectedData);
+
+    });
+
 });
