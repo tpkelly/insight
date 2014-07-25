@@ -222,6 +222,14 @@ insight.Axis = function Axis(name, scale) {
     };
 
 
+    /**
+     * This getter/setter defines whether or not the axis is initialized with zoom functionality by a chart
+     * @returns {boolean}
+     */
+    /**
+     * @param {boolean} value - When used as a setter, this function takes a boolean value that will define whether this axis is zoomable
+     * @returns {this}
+     */
     this.zoomable = function(value) {
         if (!arguments.length) {
             return zoomable;
