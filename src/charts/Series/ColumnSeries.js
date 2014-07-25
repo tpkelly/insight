@@ -15,8 +15,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
         stacked = d3.functor(false),
         seriesName = "",
         seriesFunctions = {},
-        barWidthFunction = this.x.rangeType,
-        selectedItems = [];
+        barWidthFunction = this.x.rangeType;
 
     this.classValues = [insight.Constants.BarClass];
 
@@ -184,8 +183,10 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
         self.initializeTooltip(chart.container.node());
         self.selectedItems = chart.selectedItems;
-
         self.rootClassName = self.seriesClassName();
+
+        var groupSelector = 'g.' + insight.Constants.BarGroupClass,
+            barSelector = 'rect.' + insight.Constants.BarGroupClass;
 
         var reset = function(d) {
             d.yPos = 0;
@@ -197,14 +198,14 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
         data.forEach(reset);
 
         var groups = chart.plotArea
-            .selectAll('g.' + insight.Constants.BarGroupClass)
+            .selectAll(groupSelector)
             .data(data, self.keyAccessor);
 
         var newGroups = groups.enter()
             .append('g')
             .attr('class', insight.Constants.BarGroupClass);
 
-        var newBars = newGroups.selectAll('rect.' + insight.Constants.BarGroupClass);
+        var newBars = newGroups.selectAll(barSelector);
 
         var barHeight = function(d) {
             var func = self.currentSeries.accessor;
@@ -221,6 +222,10 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
             seriesName = self.currentSeries.name;
             seriesFunctions[seriesName] = self.currentSeries.accessor;
 
+            var seriesSelector = '.' + seriesName + 'class.' + insight.Constants.BarClass;
+
+            // Add any new bars
+
             newBars = newGroups.append('rect')
                 .attr('class', self.seriesSpecificClassName)
                 .attr('y', self.y.bounds[0])
@@ -232,7 +237,8 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
                 .on('mouseout', self.mouseOut)
                 .on('click', click);
 
-            var bars = groups.selectAll('.' + seriesName + 'class.' + insight.Constants.BarClass);
+            // Select and update all bars
+            var bars = groups.selectAll(seriesSelector);
 
             bars
                 .transition()
@@ -243,6 +249,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
                 .attr('height', barHeight);
         }
 
+        // Remove groups no longer in the data set
         groups.exit()
             .remove();
     };

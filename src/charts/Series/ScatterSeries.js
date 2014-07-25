@@ -14,8 +14,7 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
     var radiusFunction = d3.functor(3),
         opacityFunction = d3.functor(1),
         self = this,
-        selector = this.name + insight.Constants.Scatter,
-        selectedItems = [];
+        selector = this.name + insight.Constants.Scatter;
 
     var xFunction = function(d) {
         return d.x;

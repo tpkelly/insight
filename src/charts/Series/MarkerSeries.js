@@ -134,7 +134,7 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
 
         self.initializeTooltip(chart.container.node());
         self.selectedItems = chart.selectedItems;
-        self.rootClassName = this.seriesClassName();
+        self.rootClassName = self.seriesClassName();
 
         var reset = function(d) {
             d.yPos = 0;
