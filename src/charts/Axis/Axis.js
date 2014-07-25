@@ -227,6 +227,8 @@ insight.Axis = function Axis(name, scale) {
             return zoomable;
         }
         zoomable = value;
+
+        return this;
     };
 
     /**
@@ -435,9 +437,9 @@ insight.Axis = function Axis(name, scale) {
         if (initialisedAxisView)
             return;
 
-        initialisedAxisView = true;
-
         this.initializeScale();
+
+        initialisedAxisView = true;
 
         this.axis = d3.svg.axis()
             .scale(this.scale)
@@ -468,12 +470,17 @@ insight.Axis = function Axis(name, scale) {
 
     this.draw = function(chart, dragging) {
 
+        // Scale range and bounds need to be initialized regardless of whether the axis will be displayed
+
+        this.calculateAxisBounds(chart);
+
+        if (!this.zoomable()) {
+            this.initializeScale();
+        }
+
         if (!this.display()) {
             return;
         }
-
-        //Update bounds
-        this.calculateAxisBounds(chart);
 
         this.setupAxisView(chart);
 
