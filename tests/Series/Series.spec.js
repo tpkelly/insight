@@ -2,6 +2,24 @@
  * Created by tkelly on 01/07/2014.
  */
 
+var seriesData = 
+    [
+        {
+            key: 'A',
+            value: 20
+        },
+        {
+            key: 'B',
+            value: 14
+        },
+        {
+            key: 'C',
+            value: 10
+        }
+    ];
+
+
+
 describe("Series Tests", function(){
 
     var chart;
@@ -71,6 +89,7 @@ describe("Series Tests", function(){
         var observedData = series.dataset();
         expect(observedData).toEqual(expectedData);
     });
+
 
 /*  Currently failing: Need to think about how to react to data which is just a series of numbers or strings or dates,
                        without providing a valueFunction or keyFunction.

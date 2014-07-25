@@ -171,10 +171,13 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
         self.mouseOver.call(this, data, i, seriesFunction);
     };
 
-    var itemClassName = function(d) {
-        var additionalClass = self.currentSeries.name + 'class';
+    this.seriesSpecificClassName = function(d) {
 
-        return self.itemClassName(d) + additionalClass;
+        var additionalClass = ' ' + self.currentSeries.name + 'class';
+        var baseClassName = self.itemClassName(d);
+        var itemClassName = baseClassName + additionalClass;
+
+        return itemClassName;
     };
 
     this.draw = function(chart, drag) {
@@ -182,7 +185,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
         self.initializeTooltip(chart.container.node());
         self.selectedItems = chart.selectedItems;
 
-        self.classValue = self.seriesClassName();
+        self.rootClassName = self.seriesClassName();
 
         var reset = function(d) {
             d.yPos = 0;
@@ -201,7 +204,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
             .append('g')
             .attr('class', insight.Constants.BarGroupClass);
 
-        var newBars = newGroups.selectAll('rect.bar');
+        var newBars = newGroups.selectAll('rect.' + insight.Constants.BarGroupClass);
 
         var barHeight = function(d) {
             var func = self.currentSeries.accessor;
@@ -219,7 +222,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
             seriesFunctions[seriesName] = self.currentSeries.accessor;
 
             newBars = newGroups.append('rect')
-                .attr('class', itemClassName)
+                .attr('class', self.seriesSpecificClassName)
                 .attr('y', self.y.bounds[0])
                 .attr('height', 0)
                 .attr('in_series', seriesName)

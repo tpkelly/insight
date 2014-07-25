@@ -13,7 +13,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
 
     var self = this,
         stacked = d3.functor(false),
-        seriesName = "",
+        seriesName = '',
         seriesFunctions = {},
         selectedItems = [];
 
@@ -177,17 +177,20 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
         self.mouseOver.call(this, data, i, seriesFunction);
     };
 
-    var itemClassName = function(d) {
-        var additionalClass = self.currentSeries.name + 'class';
+    this.seriesSpecificClassName = function(d) {
 
-        return self.itemClassName(d) + additionalClass;
+        var additionalClass = ' ' + self.currentSeries.name + 'class';
+        var baseClassName = self.itemClassName(d);
+        var itemClassName = baseClassName + additionalClass;
+
+        return itemClassName;
     };
 
     this.draw = function(chart, drag) {
 
-        this.initializeTooltip(chart.container.node());
-        this.selectedItems = chart.selectedItems;
-        this.classValue = this.seriesClassName();
+        self.initializeTooltip(chart.container.node());
+        self.selectedItems = chart.selectedItems;
+        self.rootClassName = self.seriesClassName();
 
         var reset = function(d) {
             d.yPos = 0;
@@ -199,14 +202,14 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
         data.forEach(reset);
 
         var groups = chart.plotArea
-            .selectAll('g.' + insight.Constants.BarGroupClass + "." + this.name)
+            .selectAll('g.' + insight.Constants.BarGroupClass + '.' + this.name)
             .data(data, this.keyAccessor);
 
         var newGroups = groups.enter()
             .append('g')
-            .attr('class', insight.Constants.BarGroupClass + " " + this.name);
+            .attr('class', insight.Constants.BarGroupClass + ' ' + this.name);
 
-        var newBars = newGroups.selectAll('rect.bar');
+        var newBars = newGroups.selectAll('rect.' + insight.Constants.BarGroupClass);
 
         var click = function(filter) {
             return self.click(this, filter);
@@ -224,11 +227,11 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
             seriesFunctions[seriesName] = this.currentSeries.accessor;
 
             newBars = newGroups.append('rect')
-                .attr('class', itemClassName)
+                .attr('class', self.seriesSpecificClassName)
                 .attr('height', 0)
                 .attr('fill', this.currentSeries.color)
                 .attr('in_series', seriesName)
-                .attr("clip-path", "url(#" + chart.clipPath() + ")")
+                .attr('clip-path', 'url(#' + chart.clipPath() + ')')
                 .on('mouseover', mouseOver)
                 .on('mouseout', this.mouseOut)
                 .on('click', click);
