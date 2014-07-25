@@ -1,6 +1,5 @@
-var InsightFormatters = (function(d3) {
+insight.Formatters = (function(d3) {
     var exports = {};
-
 
     exports.moduleProperty = 1;
 
@@ -15,7 +14,7 @@ var InsightFormatters = (function(d3) {
     };
 
     exports.numberFormatter = function(value) {
-        var format = d3.format("0,000");
+        var format = d3.format("0,000.0f");
         return format(value);
     };
 
@@ -27,6 +26,11 @@ var InsightFormatters = (function(d3) {
     exports.percentageFormatter = function(value) {
         var format = d3.format("%");
         return format(value);
+    };
+
+    exports.format = function(format, value) {
+        var formatter = d3.format(format);
+        return formatter(value);
     };
 
     return exports;

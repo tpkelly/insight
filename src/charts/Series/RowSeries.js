@@ -167,7 +167,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
     };
 
     this.className = function(d) {
-        return seriesName + 'class bar ' + self.sliceSelector(d);
+        return seriesName + 'class bar ' + insight.Utils.keySelector(d);
     };
 
     var mouseOver = function(data, i) {
