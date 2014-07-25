@@ -14,20 +14,21 @@ insight.Axis = function Axis(name, scale) {
     this.direction = '';
     this.gridlines = new insight.AxisGridlines(this);
 
-    var self = this;
-    var label = name;
-    var ordered = d3.functor(false);
-    var orderingFunction = null;
-    var tickSize = d3.functor(1);
-    var tickPadding = d3.functor(10);
-    var labelRotation = '90';
-    var tickOrientation = d3.functor('lr');
-    var showGridLines = false;
-    var colorFunction = d3.functor('#777');
-    var display = true;
-    var barPadding = d3.functor(0.1);
-    var initialisedAxisView = false;
-    var reversedPosition = false;
+    var self = this,
+        label = name,
+        ordered = d3.functor(false),
+        orderingFunction = null,
+        tickSize = d3.functor(1),
+        tickPadding = d3.functor(10),
+        labelRotation = '90',
+        tickOrientation = d3.functor('lr'),
+        showGridLines = false,
+        colorFunction = d3.functor('#777'),
+        display = true,
+        barPadding = d3.functor(0.1),
+        initialisedAxisView = false,
+        reversedPosition = false,
+        zoomable = false;
 
     var orientation = function() {
         if (self.horizontal()) {
@@ -221,6 +222,14 @@ insight.Axis = function Axis(name, scale) {
     };
 
 
+    this.zoomable = function(value) {
+        if (!arguments.length) {
+            return zoomable;
+        }
+        zoomable = value;
+
+        return this;
+    };
 
     /**
      * This getter/setter defines whether or not the axis should be drawn on the chart (lines and labels)
@@ -422,9 +431,9 @@ insight.Axis = function Axis(name, scale) {
         if (initialisedAxisView)
             return;
 
-        initialisedAxisView = true;
-
         this.initializeScale();
+
+        initialisedAxisView = true;
 
         this.axis = d3.svg.axis()
             .scale(this.scale)
@@ -455,14 +464,21 @@ insight.Axis = function Axis(name, scale) {
 
     this.draw = function(chart, dragging) {
 
+        // Scale range and bounds need to be initialized regardless of whether the axis will be displayed
+
+        this.calculateAxisBounds(chart);
+
+        if (!this.zoomable()) {
+            this.initializeScale();
+        }
+
         if (!this.display()) {
             return;
         }
 
-        //Update bounds
-        this.calculateAxisBounds(chart);
-
         this.setupAxisView(chart);
+
+        var animationDuration = dragging ? 0 : 200;
 
         this.axis = d3.svg.axis()
             .scale(this.scale)
@@ -474,6 +490,8 @@ insight.Axis = function Axis(name, scale) {
         this.axisElement
             .attr('transform', self.axisPosition())
             .style('stroke', self.color())
+            .transition()
+            .duration(animationDuration)
             .call(this.axis);
 
         this.axisElement

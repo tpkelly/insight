@@ -79,12 +79,6 @@
                 var axes = xAxes.concat(yAxes);
 
                 axes.map(function(axis) {
-                    var isZoom = zoomAxis == axis;
-
-                    if (!isZoom) {
-                        axis.initializeScale();
-                    }
-
                     axis.draw(self, dragging);
                 });
 
@@ -134,21 +128,10 @@
             };
 
 
-
-            this.recalculateScales = function() {
-                scales.map(function(scale) {
-                    // don't resize the scale that is being dragged/zoomed, it is done automatically by d3
-                    var notZoomScale = zoomAxis != scale;
-
-                    if (notZoomScale) {
-                        scale.initialize();
-                    }
-                });
-            };
-
             this.zoomable = function(scale) {
                 zoomable = true;
                 zoomAxis = scale;
+                scale.zoomable(true);
                 return this;
             };
 

@@ -14,7 +14,8 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
     var radiusFunction = d3.functor(3),
         opacityFunction = d3.functor(1),
         self = this,
-        selector = this.name + insight.Constants.Scatter;
+        selector = this.name + insight.Constants.Scatter,
+        selectedItems = [];
 
     var xFunction = function(d) {
         return d.x;
@@ -127,7 +128,8 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
 
     this.draw = function(chart, drag) {
 
-        this.initializeTooltip(chart.container.node());
+        self.initializeTooltip(chart.container.node());
+        self.selectedItems = chart.selectedItems;
 
         var duration = drag ? 0 : function(d, i) {
             return 200 + (i * 20);
