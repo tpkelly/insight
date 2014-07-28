@@ -23,41 +23,6 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
         return d.y;
     };
 
-
-    this.findMax = function(scale) {
-        var self = this;
-
-        var max = 0;
-        var data = this.data.getData();
-
-        var func = scale == self.x ? self.xFunction() : self.yFunction();
-
-        var m = d3.max(data, func);
-
-        max = m > max ? m : max;
-
-        return max;
-    };
-
-    this.yFunction = function(_) {
-        if (!arguments.length) {
-            return yFunction;
-        }
-        yFunction = _;
-
-        return this;
-    };
-
-
-    this.xFunction = function(_) {
-        if (!arguments.length) {
-            return xFunction;
-        }
-        xFunction = _;
-
-        return this;
-    };
-
     this.rangeY = function(d) {
         var f = self.yFunction();
 
@@ -69,11 +34,17 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
         return self.x.scale(self.xFunction()(d));
     };
 
-    this.radiusFunction = function(_) {
+    /**
+     * The function to extract the radius of each bubble from the data objects.
+     * @memberof insight.BubbleSeries
+     * @param {function} [radiusFunc] The new radius function to use to extract the radius from a data object.
+     * @returns {*} - If no arguments are supplied, returns the current radiusFunction. Otherwise returns this.
+     */
+    this.radiusFunction = function(radiusFunc) {
         if (!arguments.length) {
             return radiusFunction;
         }
-        radiusFunction = _;
+        radiusFunction = radiusFunc;
 
         return this;
     };
