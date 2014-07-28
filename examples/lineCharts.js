@@ -17,29 +17,35 @@ $(document)
                 .sum(['CurrentRevenue'])
                 .cumulative(['CurrentRevenue.Sum']);
 
+
+
+            var x = new insight.Axis('Time', insight.Scales.Time)
+                .tickRotation(90)
+                .tickOrientation('tb')
+                .labelFormat(insight.Formatters.dateFormatter)
+                .showGridlines(true);
+
+            var y = new insight.Axis('Revenue', insight.Scales.Linear)
+                .showGridlines(true);
+
+
             var chart = new insight.Chart('Chart 1', "#chart1")
-                .width(650)
+                .width(700)
                 .height(350)
                 .margin(
                 {
                     top: 0,
                     left: 130,
-                    right: 40,
+                    right: 100,
                     bottom: 100
-                });
+                })
+                .legend(new insight.Legend());
 
-            var x = new insight.Axis(chart, 'Time', 'h', insight.Scales.Time, 'bottom')
-                .tickRotation(90)
-                .tickOrientation('tb')
-                .labelFormat(InsightFormatters.dateFormatter)
-                .showGridlines(true);
+            chart.xAxis(x);
+            chart.yAxis(y);
 
-            var y = new insight.Axis(chart, 'Revenue', 'v', insight.Scales.Linear, 'left')
-                .showGridlines(true);
-
-
-            var line = new insight.LineSeries('valueLine', chart, dateData, x, y, '#aae')
-                .tooltipFormat(InsightFormatters.currencyFormatter)
+            var line = new insight.LineSeries('Revenue', dateData, x, y, '#aae')
+                .tooltipFormat(insight.Formatters.currencyFormatter)
                 .lineType('monotone')
                 .valueFunction(function(d)
                 {

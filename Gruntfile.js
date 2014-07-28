@@ -73,7 +73,7 @@ module.exports = function(grunt) {
             },
             deployment: {
                 files: ['insight.js.zip'],
-                tasks: ['unzip']
+                tasks: ['unzip', 'deploy']
             }
         },
         unzip: {

@@ -11,6 +11,7 @@ $(document)
                 })
                 .sum(['CurrentRevenue'])
                 .cumulative(['CurrentRevenue.Sum'])
+                .total(['CurrentRevenue'])
                 .orderFunction(function(a, b)
                 {
                     return b.value.CurrentRevenue.Sum - a.value.CurrentRevenue.Sum;
@@ -30,29 +31,33 @@ $(document)
                     bottom: 150
                 });
 
-            var x = new insight.Axis(chart, 'Client', 'h', insight.Scales.Ordinal, 'bottom')
+            var x = new insight.Axis('Client', insight.Scales.Ordinal, 'bottom')
                 .textAnchor('start')
                 .tickOrientation('tb')
                 .ordered(true);
 
-            var y = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'left')
-                .labelFormat(InsightFormatters.currencyFormatter);
+            var y = new insight.Axis('', insight.Scales.Linear)
+                .labelFormat(insight.Formatters.currencyFormatter);
 
-            var y2 = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'right')
-                .labelFormat(InsightFormatters.percentageFormatter);
+            var y2 = new insight.Axis('', insight.Scales.Linear)
+                .labelFormat(insight.Formatters.percentageFormatter)
+                .reversed(true);
 
-            var series = new insight.ColumnSeries('clientColumn', chart, clientData, x, y, '#e74c3c')
+            chart.xAxis(x)
+                .yAxes([y, y2]);
+
+            var series = new insight.ColumnSeries('clientColumn', clientData, x, y, '#e74c3c')
                 .valueFunction(function(d)
                 {
                     return d.value.CurrentRevenue.Sum;
                 })
                 .tooltipFunction(function(d)
                 {
-                    return InsightFormatters.currencyFormatter(d.value.CurrentRevenue.Sum);
+                    return insight.Formatters.currencyFormatter(d.value.CurrentRevenue.Sum);
                 });
 
-            var line = new insight.LineSeries('percentLine', chart, clientData, x, y2, 'cyan')
-                .tooltipFormat(InsightFormatters.percentageFormatter)
+            var line = new insight.LineSeries('percentLine', clientData, x, y2, 'cyan')
+                .tooltipFormat(insight.Formatters.percentageFormatter)
                 .valueFunction(function(d)
                 {
                     return d.value.Percentage;
@@ -67,25 +72,22 @@ $(document)
 
 function computeGroupValues(group)
 {
-    var aggregateFunction = function()
+    var aggregateFunction = function(grouping)
     {
-
-        var self = this;
+        var self = grouping;
         var total = 0;
 
-        this.getData()
+        grouping.getData()
             .forEach(function(d)
             {
                 total += d.value.CurrentRevenue.Sum;
             });
-        this.getData()
+        grouping.getData()
             .forEach(function(d)
             {
                 d.value.Percentage = d.value.CurrentRevenue.SumCumulative / total;
             });
+    };
 
-    }.bind(group);
-
-    group.computeFunction(aggregateFunction);
-    group.recalculate();
+    group.postAggregation = aggregateFunction;
 }

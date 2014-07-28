@@ -28,16 +28,19 @@
                     bottom: 50
                 });
 
-            var bubbleX = new insight.Axis(bubbleChart, 'Average Rating', 'h', insight.Scales.Linear, 'bottom')
+            var bubbleX = new insight.Axis('Average Rating', insight.Scales.Linear)
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .tickOrientation('tb');
 
-            var bubbleY = new insight.Axis(bubbleChart, '$', 'v', insight.Scales.Linear, 'left')
+            var bubbleY = new insight.Axis('$', insight.Scales.Linear)
                 .tickSize(5);
 
-            var bubbles = new insight.BubbleSeries('bubbles', bubbleChart, bubbleData, bubbleX, bubbleY, '#336699')
+            bubbleChart.xAxis(bubbleX)
+                       .yAxis(bubbleY);
+
+            var bubbles = new insight.BubbleSeries('bubbles', bubbleData, bubbleX, bubbleY, '#336699')
                 .xFunction(function(d)
                 {
                     return d.value.averageUserRating.Average;
@@ -72,16 +75,19 @@
                     bottom: 50
                 });
 
-            var x = new insight.Axis(chart, 'Language', 'h', insight.Scales.Ordinal, 'bottom')
+            var x = new insight.Axis('Language', insight.Scales.Ordinal)
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .tickOrientation('tb')
                 .ordered(true);
 
-            var y = new insight.Axis(chart, '', 'v', insight.Scales.Linear, 'left');
+            var y = new insight.Axis('', insight.Scales.Linear);
 
-            var lSeries = new insight.ColumnSeries('languages', chart, languages, x, y, '#336699')
+            chart.xAxis(x)
+                 .yAxis(y);
+
+            var lSeries = new insight.ColumnSeries('languages', languages, x, y, '#336699')
                 .top(10);
 
             chart.series([lSeries]);
@@ -98,21 +104,23 @@
                     left: 0,
                     right: 0,
                     bottom: 120
-                })
-                .barPadding(0.3);
+                });
 
-        var x = new insight.Axis(chart, '', 'h', insight.Scales.Ordinal, 'bottom')
+        var x = new insight.Axis('', insight.Scales.Ordinal)
             .textAnchor('start')
             .tickSize(5)
             .tickPadding(0)
             .tickOrientation('tb')
             .ordered(true);
 
-        var y = new insight.Axis(chart, 'Apps', 'v', insight.Scales.Linear, 'left')
-                           .display(false);
+        var y = new insight.Axis('Apps', insight.Scales.Linear)
+                        .display(false);
 
-        var series = new insight.ColumnSeries('genre', chart, genreData, x, y, '#336699')
-                                .valueFunction(function(d){return d.value.Count;});
+        chart.xAxis(x)
+             .yAxis(y);
+
+        var series = new insight.ColumnSeries('genre', genreData, x, y, '#336699')
+                                .valueFunction(function(d){ return d.value.Count; });
 
         chart.series([series]);
 
@@ -131,28 +139,29 @@
                     bottom: 100
                 });
 
-            var xTime = new insight.Axis(timeChart, '', 'h', insight.Scales.Time, 'bottom')
+            var xTime = new insight.Axis('', insight.Scales.Time)
                 .tickOrientation('tb')
                 .tickSize(5)
                 .textAnchor('start')
-                .labelFormat(InsightFormatters.dateFormatter);
+                .labelFormat(insight.Formatters.dateFormatter);
 
-            var yTime = new insight.Axis(timeChart, 'Apps', 'v', insight.Scales.Linear, 'left')
+            var yTime = new insight.Axis('Apps', insight.Scales.Linear)
                 .tickSize(5);
 
-            var line = new insight.LineSeries('valueLine', timeChart, timeData, xTime, yTime, '#336699')
+            timeChart.xAxis(xTime)
+                     .yAxis(yTime);
+
+            var cumulative = new insight.LineSeries('valueLine', timeData, xTime, yTime, '#336699')
                 .valueFunction(function(d)
                 {
                     return d.value.CountCumulative;
                 }).showPoints(false);
 
 
-            timeChart.series()
-                .push(line);
+            timeChart.series([cumulative]);
 
             timeChart.zoomable(xTime);
     }
-
 
 
 
@@ -168,12 +177,18 @@
                                         right: 0
                                     });
 
-        var x = new insight.Axis(chart, '', 'h', insight.Scales.Linear, 'bottom')
+        var x = new insight.Axis('', insight.Scales.Linear)
+                           .tickSize(5)
+                           .tickOrientation('tb')
+                           .tickRotation(45)
                            .display(false);
 
-        var y = new insight.Axis(chart, '', 'v', insight.Scales.Ordinal, 'left');
+        var y = new insight.Axis('', insight.Scales.Ordinal);
 
-        var rowSeries = new insight.RowSeries('content', chart, contentRating, x, y, '#336699')
+        chart.xAxis(x)
+             .yAxis(y);
+
+        var rowSeries = new insight.RowSeries('content', contentRating, x, y, '#336699')
                                    .valueFunction(function(d){ return d.value.Count;});
         
         chart.series().push(rowSeries);
@@ -196,8 +211,6 @@
             d3.json('/datasets/appstore.json', function(data)
             {
                 preprocess(data);                
-
-                console.log(data);
 
                 var dataset = new insight.DataSet(data);
 

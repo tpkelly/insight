@@ -95,7 +95,6 @@ img
 .selected
 {
     fill: #2c3e50 !important;
-    opacity:0.8 !important;
 }
 
 #source {
@@ -140,8 +139,6 @@ img
 #page-content-wrapper {
   width: 100%;
 }
-
-
 
 
 .sidebar-nav {

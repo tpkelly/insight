@@ -5,6 +5,16 @@ $(document)
         {
             var dataset = new insight.DataSet(data);
 
+            var x = new insight.Axis('Country', insight.Scales.Ordinal)
+                .textAnchor('middle');
+
+            var y1 = new insight.Axis('Value', insight.Scales.Linear);
+
+            var y2 = new insight.Axis('Percentage', insight.Scales.Linear)
+                .labelFormat(insight.Formatters.percentageFormatter)
+                .reversed(true);
+
+
             var chart = new insight.Chart('Chart 1', "#chart1")
                 .width(700)
                 .height(300)
@@ -16,22 +26,17 @@ $(document)
                     bottom: 40
                 });
 
-            var xScale = new insight.Axis(chart, 'Country', 'h', insight.Scales.Ordinal, 'bottom')
-                .textAnchor('middle');;
-            var yScale = new insight.Axis(chart, 'Value', 'v', insight.Scales.Linear, 'left');
+            chart.xAxis(x);
+            chart.yAxes([y1, y2]);
 
-            var yScale2 = new insight.Axis(chart, 'Percentage', 'v', insight.Scales.Linear, 'right')
-                .labelFormat(InsightFormatters.percentageFormatter);;
-
-
-            var series = new insight.ColumnSeries('countryColumn', chart, dataset, xScale, yScale, 'silver');
-            var line = new insight.LineSeries('valueLine', chart, dataset, xScale, yScale2, 'cyan')
+            var series = new insight.ColumnSeries('countryColumn', dataset, x, y1, 'silver');
+            var line = new insight.LineSeries('valueLine', dataset, x, y2, 'cyan')
                 .valueFunction(function(d)
                 {
                     return d.pct;
                 })
                 .lineType('monotone')
-                .tooltipFormat(InsightFormatters.percentageFormatter);
+                .tooltipFormat(insight.Formatters.percentageFormatter);
 
             series.series = [
             {
