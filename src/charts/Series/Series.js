@@ -317,7 +317,7 @@ insight.Series = function Series(name, data, x, y, color) {
      * Extracts the minimum value on an axis for this series.
      * @memberof insight.Series
      * @param scale The corresponding x or y axis
-     * @returns {object} - The minimum value within the range of the values for this series on the given axis.
+     * @returns {Number} - The minimum value within the range of the values for this series on the given axis.
      */
     this.findMin = function(scale) {
         var self = this;
@@ -333,7 +333,7 @@ insight.Series = function Series(name, data, x, y, color) {
      * Extracts the maximum value on an axis for this series.
      * @memberof insight.Series
      * @param scale The corresponding x or y axis
-     * @returns {object} - The maximum value within the range of the values for this series on the given axis.
+     * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
      */
     this.findMax = function(scale) {
         var self = this;
