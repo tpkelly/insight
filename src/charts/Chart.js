@@ -152,9 +152,15 @@
                 });
             };
 
-            this.zoomable = function(scale) {
+            /**
+             * Enable zooming for an axis on this chart
+             * @memberof insight.Chart
+             * @param axis The axis to enable zooming for
+             * @returns {Chart} Returns this.
+             */
+            this.zoomable = function(axis) {
                 zoomable = true;
-                zoomAxis = scale;
+                zoomAxis = axis;
                 return this;
             };
 
@@ -189,13 +195,21 @@
                 self.draw(true);
             };
 
-            this.margin = function(_) {
+            /**
+             * The margins to use around the chart (top, bottom, left, right), each measured in pixels.
+             *
+             * If no arguments are given, then this returns the current chart margins. Otherwise, it sets the margins to the supplied argument.
+             * @memberof insight.Chart
+             * @param {object} [newMargins] The new margins to use for the chart.
+             * @returns {*} - If no arguments are supplied, returns the current margin. Otherwise returns this.
+             */
+            this.margin = function(newMargins) {
                 if (!arguments.length) {
                     return this._margin;
                 }
 
                 autoMargin = false;
-                this._margin = _;
+                this._margin = newMargins;
 
                 return this;
             };
@@ -215,23 +229,47 @@
                 return this;
             };
 
-            this.width = function(_) {
+            /**
+             * The width of the chart element, measured in pixels.
+             *
+             * If no arguments are given, then this returns the current chart width. Otherwise, it sets the width to the supplied argument.
+             * @memberof insight.Chart
+             * @param {Number} [newWidth] The new width of the chart.
+             * @returns {*} - If no arguments are supplied, returns the current width. Otherwise returns this.
+             */
+            this.width = function(newWidth) {
                 if (!arguments.length) {
                     return width();
                 }
 
-                width = d3.functor(_);
+                width = d3.functor(newWidth);
                 return this;
             };
 
-            this.height = function(_) {
+            /**
+             * The height of the chart element, measured in pixels.
+             *
+             * If no arguments are given, then this returns the current chart height. Otherwise, it sets the height to the supplied argument.
+             * @memberof insight.Chart
+             * @param {Number} [newHeight] The new height of the chart.
+             * @returns {*} - If no arguments are supplied, returns the current height. Otherwise returns this.
+             */
+            this.height = function(newHeight) {
                 if (!arguments.length) {
                     return height();
                 }
-                height = d3.functor(_);
+                height = d3.functor(newHeight);
                 return this;
             };
 
+            /**
+             * The series to draw on this chart.
+             *
+             * If no arguments are given, then this returns the current chart width. Otherwise, it sets the width to the supplied argument.
+             * @memberof insight.Chart
+             * @param {Series} [newSeries] The new array of series to draw on the chart.
+             * @returns {*} - If no arguments are supplied, returns the current width. Otherwise returns this.
+             */
             this.series = function(newSeries) {
                 if (!arguments.length) {
                     return series;
@@ -241,6 +279,14 @@
                 return this;
             };
 
+            /**
+             * The legend to draw on this chart.
+             *
+             * If no arguments are given, then this returns the current chart legend. Otherwise, it sets the legend to the supplied argument.
+             * @memberof insight.Chart
+             * @param {Legend} [newLegend] The new legend to draw on the chart.
+             * @returns {*} - If no arguments are supplied, returns the current legend. Otherwise returns this.
+             */
             this.legend = function(newLegend) {
                 if (!arguments.length) {
                     return legend;
@@ -251,12 +297,27 @@
                 return this;
             };
 
+            /**
+             * Add a new x-axis to the chart.
+             *
+             * @memberof insight.Chart
+             * @param {Axis} [axis] The x-axis to add.
+             * @returns {object} - Returns this.
+             */
             this.addXAxis = function(axis) {
                 axis.direction = 'h';
                 xAxes.push(axis);
                 return this;
             };
 
+            /**
+             * All of the x-axes on the chart.
+             *
+             * If no arguments are given, then this returns the x-axes. Otherwise, it sets the x-axis array to the supplied argument.
+             * @memberof insight.Chart
+             * @param {Axis} [newXAxes] The x-axes to add.
+             * @returns {*} - If no arguments are supplied, returns the current x-axes. Otherwise returns this.
+             */
             this.xAxes = function(newXAxes) {
                 if (!arguments.length) {
                     return xAxes;
@@ -272,6 +333,14 @@
                 return this;
             };
 
+            /**
+             * The primary x-axis on the chart.
+             *
+             * If no arguments are given, then this returns the primary x-axis. Otherwise, it sets the x-axis to the supplied argument.
+             * @memberof insight.Chart
+             * @param {Axis} xAxis The x-axis to add.
+             * @returns {*} - If no arguments are supplied, returns the current x-axis. Otherwise returns this.
+             */
             this.xAxis = function(xAxis) {
                 if (!arguments.length) {
                     return xAxes[0];
@@ -282,12 +351,27 @@
                 return this.xAxes(newXAxes);
             };
 
+            /**
+             * Add a new y-axis to the chart.
+             *
+             * @memberof insight.Chart
+             * @param {Axis} [axis] The y-axis to add.
+             * @returns {object} - Returns this.
+             */
             this.addYAxis = function(axis) {
                 axis.direction = 'v';
                 yAxes.push(axis);
                 return this;
             };
 
+            /**
+             * All of the y-axes on the chart.
+             *
+             * If no arguments are given, then this returns the y-axes. Otherwise, it sets the y-axis array to the supplied argument.
+             * @memberof insight.Chart
+             * @param {Axis} [newYAxes] The y-axes to add.
+             * @returns {*} - If no arguments are supplied, returns the current y-axes. Otherwise returns this.
+             */
             this.yAxes = function(newYAxes) {
                 if (!arguments.length) {
                     return yAxes;
@@ -303,6 +387,14 @@
                 return this;
             };
 
+            /**
+             * The primary y-axis on the chart.
+             *
+             * If no arguments are given, then this returns the primary y-axis. Otherwise, it sets the y-axis to the supplied argument.
+             * @memberof insight.Chart
+             * @param {Axis} yAxis The y-axis to add.
+             * @returns {*} - If no arguments are supplied, returns the current y-axis. Otherwise returns this.
+             */
             this.yAxis = function(yAxis) {
                 if (!arguments.length) {
                     return yAxes[0];
