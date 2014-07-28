@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-
+    
     var mountFolder = function(connect, dir) {
         return connect.static(require('path')
             .resolve(dir));
@@ -8,7 +8,12 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-
+        concat: {
+          dist: {
+              src: 'js/controllers/*.js',
+              dest: 'js/insightChartsControllers.js'
+          }
+        },
         connect: {
             server: {
                 options: {
@@ -40,7 +45,7 @@ module.exports = function(grunt) {
             }
         },
         "jsbeautifier": {
-            files: ["./js/*.js", "./examples/*.js", "./**/*.html", "index.html"],
+            files: ["./js/*.js", "./examples/*.js", "./partials/*.html", "./examples/partials/*.html", "index.html"],
             options: {
                 js: {
                     braceStyle: 'expand',
@@ -68,7 +73,7 @@ module.exports = function(grunt) {
             },
             deployment: {
                 files: ['insight.js.zip'],
-                tasks: ['unzip']
+                tasks: ['unzip', 'deploy']
             }
         },
         unzip: {
@@ -86,8 +91,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-zip');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-concat');
 
-    grunt.registerTask('deploy', ['jsbeautifier', 'jshint']);
+    grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'concat']);
     grunt.registerTask('default', ['deploy', 'unzip', 'connect:server', 'open:dev', 'watch']);
 
 };

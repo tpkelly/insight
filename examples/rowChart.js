@@ -26,31 +26,30 @@ $(document)
 
         var dataset = new insight.DataSet(data);
 
+
+        var x = new insight.Axis('Population', insight.Scales.Linear)
+            .tickSize(5)
+            .tickOrientation('tb')
+            .tickRotation('45');
+
+        var y = new insight.Axis('', insight.Scales.Ordinal);
+
+
         var chart = new insight.Chart('Chart 1', '#exampleChart')
             .width(450)
             .height(400)
             .margin(
             {
-                top: 100,
+                top: 0,
                 left: 150,
                 right: 40,
-                bottom: 0
-            });
-
-        var x = new insight.Axis('Population', insight.Scales.Linear)
-            .textAnchor('end')
-            .tickSize(5)
-            .tickOrientation('tb')
-            .tickRotation('45')
-            .reversed(true);
-
-        var y = new insight.Axis('', insight.Scales.Ordinal);
-
-        chart.addXAxis(x);
-        chart.addYAxis(y);
+                bottom: 100
+            })
+            .xAxis(x)
+            .yAxis(y);
 
         var series = new insight.RowSeries('countryColumn', dataset, x, y, 'silver')
-            .tooltipFormat(InsightFormatters.numberFormatter);
+            .tooltipFormat(insight.Formatters.numberFormatter);
 
         series.series = [
         {

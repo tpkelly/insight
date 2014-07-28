@@ -13,6 +13,83 @@ img
 {
     max-width: 100%; 
 }
+
+
+
+/* Index Styles */
+
+.examples
+{
+  margin-top: 2em;
+}
+
+
+#twitter
+{
+}
+
+#twitter img
+{
+  height: 22px;
+}
+
+#download
+{
+}
+#download a
+{
+   color: white;  
+}
+
+
+.colorbox
+{
+  color: #fff;
+  padding: 0.2em 1em;
+}
+
+.colorbox h2 {
+  font-weight: 700;
+}
+
+
+.visualization
+{
+  background-color: #43ac6a;
+}
+
+.analysis
+{
+  background-color: #5bc0de;
+}
+
+.open {
+  background-color: #f39c12;
+}
+.open a {
+  color: #34495e;
+}
+
+.intro p {
+  margin-top: 2em;
+  font-size: 17px;
+}
+
+.chartcontainer
+{
+  display: inline-block;
+}
+
+.container p
+{
+  font-weight: initial;
+  line-height: 1.5em;
+}
+
+
+/* Example Page Styles */
+
+
 .incontainer
 {
   user-select:none;
@@ -27,7 +104,6 @@ img
 .selected
 {
     fill: #2c3e50 !important;
-    opacity:0.8 !important;
 }
 
 #source {
@@ -52,29 +128,6 @@ img
     -mox-user-select: none;
 }
 
-.d3-tip
-{
-    background-color: #333;
-    color: #fff;
-    padding: 1em;
-    font-size: 12px;
-    fill: none;
-}
-
-path.in-line
-{
-    stroke-width: 3;
-    transition: 0.25s ease all;
-    -webkit-transition: 0.25s ease all;
-    -moz-transition: 0.25s ease all;
-}
-
-path.in-line:hover
-{
-    stroke: darkblue;
-
-}
-
 #wrapper {
   padding-left: 350px;
   transition: all 0.4s ease 0s;
@@ -95,6 +148,7 @@ path.in-line:hover
 #page-content-wrapper {
   width: 100%;
 }
+
 
 .sidebar-nav {
   position: absolute;
@@ -134,11 +188,6 @@ path.in-line:hover
     
 }
 
-.bubble:hover
-{
-  opacity:1;
-}
-
 .charticon
 {
   cursor: pointer;
@@ -167,24 +216,4 @@ path.in-line:hover
 
 }
 
-.chartcontainer
-{
-  width:200px;
-  height:250px;
-  float:left;
-  margin-right:50px;
-}
 
-.chartbox
-{
-  width:100%;
-  height:200px;
-}
-
-.chartcaption
-{
-  width:100%;
-  height:50px;
-  text-align:center;
-  font-size:10pt;
-}

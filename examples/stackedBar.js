@@ -29,6 +29,13 @@ $(document)
     {
         var dataset = new insight.DataSet(data);
 
+        var x = new insight.Axis('Country', insight.Scales.Ordinal)
+            .tickOrientation('tb');
+
+        var y = new insight.Axis('Value', insight.Scales.Linear)
+            .labelFormat(d3.format("0,000"));
+
+
         var chart = new insight.Chart('Chart 1', "#exampleChart")
             .width(450)
             .height(400)
@@ -38,16 +45,10 @@ $(document)
                 left: 150,
                 right: 40,
                 bottom: 90
-            });
+            })
+            .xAxis(x)
+            .yAxis(y);
 
-        var x = new insight.Axis('Country', insight.Scales.Ordinal)
-            .tickOrientation('tb');
-
-        var y = new insight.Axis('Value', insight.Scales.Linear)
-            .labelFormat(d3.format("0,000"));
-
-        chart.addXAxis(x);
-        chart.addYAxis(y);
 
         var series = new insight.ColumnSeries('countryColumn', dataset, x, y, 'silver');
 

@@ -39,15 +39,15 @@ $(document)
             var y = new insight.Axis('Avg App Price (£)', insight.Scales.Linear)
                 .labelFormat(d3.format('0,000'));
 
-            chart.addXAxis(x);
-            chart.addYAxis(y);
+            chart.xAxis(x)
+                .yAxis(y);
 
             var columns = new insight.ColumnSeries('Year', yearly, x, y, '#ACC3EE')
                 .valueFunction(function(d)
                 {
                     return d.value.price.Average;
                 })
-                .tooltipFormat(InsightFormatters.currencyFormatter);
+                .tooltipFormat(insight.Formatters.currencyFormatter);
 
             chart.series([columns]);
 

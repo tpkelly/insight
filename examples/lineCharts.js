@@ -17,31 +17,35 @@ $(document)
                 .sum(['CurrentRevenue'])
                 .cumulative(['CurrentRevenue.Sum']);
 
+
+
+            var x = new insight.Axis('Time', insight.Scales.Time)
+                .tickRotation(90)
+                .tickOrientation('tb')
+                .labelFormat(insight.Formatters.dateFormatter)
+                .showGridlines(true);
+
+            var y = new insight.Axis('Revenue', insight.Scales.Linear)
+                .showGridlines(true);
+
+
             var chart = new insight.Chart('Chart 1', "#chart1")
-                .width(650)
+                .width(700)
                 .height(350)
                 .margin(
                 {
                     top: 0,
                     left: 130,
-                    right: 40,
+                    right: 100,
                     bottom: 100
-                });
+                })
+                .legend(new insight.Legend());
 
-            var xScale = new insight.Axis('Time', insight.Scales.Time)
-                .tickRotation(90)
-                .tickOrientation('tb')
-                .labelFormat(InsightFormatters.dateFormatter)
-                .showGridlines(true);
+            chart.xAxis(x);
+            chart.yAxis(y);
 
-            var yScale = new insight.Axis('Revenue', insight.Scales.Linear)
-                .showGridlines(true);
-
-            chart.addXAxis(xScale);
-            chart.addYAxis(yScale);
-
-            var line = new insight.LineSeries('valueLine', dateData, xScale, yScale, '#aae')
-                .tooltipFormat(InsightFormatters.currencyFormatter)
+            var line = new insight.LineSeries('Revenue', dateData, x, y, '#aae')
+                .tooltipFormat(insight.Formatters.currencyFormatter)
                 .lineType('monotone')
                 .valueFunction(function(d)
                 {
@@ -51,7 +55,7 @@ $(document)
             chart.series()
                 .push(line);
 
-            chart.zoomable(xScale);
+            chart.zoomable(x);
 
             insight.drawCharts();
         });

@@ -25,11 +25,6 @@ $(document)
     {
         var dataset = new insight.DataSet(data);
 
-        var chart = new insight.Chart('Chart 1', "#exampleChart")
-            .width(450)
-            .height(400)
-            .autoMargin(true);
-
         var x = new insight.Axis('Country', insight.Scales.Ordinal)
             .tickOrientation('tb')
             .tickRotation(45)
@@ -38,10 +33,22 @@ $(document)
         var y = new insight.Axis('Population', insight.Scales.Linear)
             .labelFormat(d3.format("0,000"));
 
-        chart.addXAxis(x);
-        chart.addYAxis(y);
+        var chart = new insight.Chart('Chart 1', "#exampleChart")
+            .width(450)
+            .height(400)
+            .margin(
+            {
+                top: 10,
+                left: 165,
+                right: 40,
+                bottom: 120
+            })
+            .legend(new insight.Legend());
 
-        var series = new insight.ColumnSeries('countryColumn', dataset, x, y, 'silver')
+        chart.xAxis(x);
+        chart.yAxis(y);
+
+        var series = new insight.ColumnSeries('countries', dataset, x, y, 'silver')
             .valueFunction(function(d)
             {
                 return d.value;

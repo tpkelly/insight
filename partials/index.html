@@ -1,66 +1,66 @@
-<script src="js/indexCharts.js"></script>
 <div class="jumbotron">
     <div class="container">
         <div class="">
             <h1>Insight Charts</h1>
-            <p class="lead">
-                Create simple Javascript charts and analytical dashboards with insight.js
-            </p>
-            <p id="snippet">
-
-            </p>
+            <p>Create simple Javascript charts and analytical dashboards with insight.js</p>
         </div>
     </div>
-
 </div>
-
-<div class="jumbotron" style="background:white">
-    <div class="container">
-        <p class="lead">Visualisation</p>
-
-        <div class="chartcontainer" style="width:300px">Display your data in an attractive visual format.</div>
-
-        <div class="chartcontainer">
-            <div id="line-chart" class="chartbox"></div>
-            <div class="chartcaption">Line Charts</div>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="visualization colorbox">
+                <h2>VISUALIZATION</h2>
+                <p>
+                    InsightJS provides many commonly used visualizations. Column, row, scatter, line and bubble series are currently available.
+                </p>
+            </div>
         </div>
-
-        <div class="chartcontainer">
-            <div id="column-chart" class="chartbox"></div>
-            <div class="chartcaption">Column Charts</div>
+        <div class="col-sm-4">
+            <div class="analysis colorbox">
+                <h2>ANALYSIS</h2>
+                <p>
+                    Quickly and easily aggregate your data into more meaningful statistics to explore the patterns inside.
+                </p>
+            </div>
         </div>
-
+        <div class="col-sm-4">
+            <div class="open colorbox">
+                <h2>OPEN</h2>
+                <p>
+                    InsightJS is an open source project developed by <a href="http://scottlogic.com">Scott Logic</a>. Find out more or get involved on our <a href="http://github.com/scottlogic/insight">GitHub page</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="intro col-md-12">
+        <p>
+            The example below uses data from the public iTunes API, allowing easy visualization of the patterns in the data. Explore the charts by clicking on particular bars or bubbles to see if you can spot any interesting patterns in the App Store ecosystem.
+        </p>
+    </div>
+    <div class="col-sm-12 examples">
+        <div class="chartcontainer">
+            <div id="genre-count" class="chartbox"></div>
+        </div>
+        <div class="chartcontainer">
+            <div id="time-releases" class="chartbox"></div>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="chartcontainer">
+            <div id="languages" class="chartbox"></div>
+        </div>
         <div class="chartcontainer">
             <div id="bubble-chart" class="chartbox"></div>
-            <div class="chartcaption">Bubble Charts</div>
+        </div>
+        <div class="chartcontainer">
+            <div id="content-advisory" class="chartbox"></div>
         </div>
     </div>
-</div>
 
-<div class="jumbotron">
-    <div class="container">
-        <p class="lead">Data Analysis</p>
-
-        <div class="chartcontainer" style="width:300px">Use Insight Tools to find patterns across your dataset.</div>
-
-        <div class="chartcontainer">
-            <div id="targets" class="chartbox"></div>
-            <div class="chartcaption">Targets</div>
-        </div>
-
-        <div class="chartcontainer">
-            <div id="correlation" class="chartbox"></div>
-            <div class="chartcaption">Correlation</div>
-        </div>
-
-        <div class="chartcontainer">
-            <div id="drill-down" class="chartbox"></div>
-            <div class="chartcaption">Drill down into data</div>
-        </div>
-    </div>
 </div>
 
 <div id="footer" class="container">
-    <footer>insight.js is an open source project created and maintained by <a target="_blank" href="//scottlogic.com">Scott Logic</a>
+    <footer>Insight.js is an open source project created and maintained by <a target="_blank" href="//scottlogic.com">Scott Logic</a>
     </footer>
 </div>
