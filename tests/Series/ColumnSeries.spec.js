@@ -127,7 +127,7 @@ describe('Column Series Tests', function() {
         series.series = [
         {
             name: 'value',
-            accessor: function(d)
+            valueFunction: function(d)
             {
                 return d.value.Count;
             },
@@ -137,7 +137,7 @@ describe('Column Series Tests', function() {
         },
         {
             name: 'value2',
-            accessor: function(d)
+            valueFunction: function(d)
             {
                 return d.value.Age.Average;
             },
@@ -169,7 +169,7 @@ describe('Column Series Tests', function() {
         series.series = [
         {
             name: 'value',
-            accessor: function(d)
+            valueFunction: function(d)
             {
                 return d.value.Count;
             },
@@ -179,7 +179,7 @@ describe('Column Series Tests', function() {
         },
         {
             name: 'value2',
-            accessor: function(d)
+            valueFunction: function(d)
             {
                 return d.value.Age.Average;
             },

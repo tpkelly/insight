@@ -18,15 +18,9 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
         barWidthFunction = this.x.rangeType;
 
 
-    var tooltipFunction = function(d) {
-        var func = self.currentSeries.accessor;
-        return self.tooltipFormat()(func(d));
-    };
-
-
     this.series = [{
         name: 'default',
-        accessor: function(d) {
+        valueFunction: function(d) {
             return self.valueFunction()(d);
         },
         tooltipValue: function(d) {
@@ -37,12 +31,12 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
     }];
 
 
-    /**
+    /*
      * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
      * This function is mapped across the entire data array by the findMax method.
-     * @public
-     * @returns {Number} return - Description
-     * @param {object} data - An item in the object array to query
+     * @memberof insight.ColumnSeries
+     * @param {object} data An item in the object array to query
+     * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
      */
     this.seriesMax = function(d) {
         var max = 0;
@@ -53,7 +47,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
         for (var series in self.series) {
             var s = self.series[series];
 
-            var seriesValue = s.accessor(d);
+            var seriesValue = s.valueFunction(d);
 
             seriesMax = stacked ? seriesMax + seriesValue : seriesValue;
 
@@ -65,10 +59,9 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
 
     /**
-     * This method returns the largest value on the value axis of this ColumnSeries, checking all series functions in the series on all points.
-     * This function is mapped across the entire data array by the findMax method.
+     * Extracts the maximum value on an axis for this series.
      * @memberof insight.ColumnSeries
-     * @returns {Number} return - The largest value on the value scale of this ColumnSeries
+     * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
      */
     this.findMax = function() {
         var max = d3.max(this.data.getData(), this.seriesMax);
@@ -78,20 +71,18 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
 
     /**
-     * This method gets or sets whether or not the series in this ColumnSeries are to be stacked or not.  This is false by default.
+     * Determines whether the series should stack columns, or line them up side-by-side.
+     *
+     * If no arguments are given, then this returns whether the series is stacked. Otherwise, it sets the stacking to the supplied argument.
      * @memberof insight.ColumnSeries
-     * @returns {boolean} - Whether or not the columns are stacked (they are grouped if this returns false)
+     * @param {boolean} [stack] To stack or not to stack
+     * @returns {*} - If no arguments are supplied, returns whether the series is currently stacked. Otherwise returns this.
      */
-    /**
-     * @memberof insight.ColumnSeries
-     * @returns {object} return - Description
-     * @param {boolean} stack - To stack or not to stack
-     */
-    this.stacked = function(_) {
+    this.stacked = function(stack) {
         if (!arguments.length) {
             return stacked();
         }
-        stacked = d3.functor(_);
+        stacked = d3.functor(stack);
         return this;
     };
 

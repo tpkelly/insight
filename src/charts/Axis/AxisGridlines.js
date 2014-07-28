@@ -9,13 +9,26 @@ insight.AxisGridlines = function AxisGridlines(axis) {
     var lineColor = '#777';
     var lineWidth = 1;
 
-    /** Returns the array of all gridlines for this axis. */
+    /** Returns the array of all gridlines for this axis.
+     *
+     * @memberof insight.AxisGridlines
+     * @param {Chart} chart The chart to grab the gridlines from.
+     * @return {object[]} - All of the gridlines currently added to this chart.
+     */
     this.allGridlines = function(chart) {
         var gridLineIdentifier = 'line.' + this.parentAxis.label();
         return chart.plotArea.selectAll(gridLineIdentifier);
     };
 
-
+    /** The getter/setter for the color of the gridlines.
+     *
+     * If an argument is provided, the line color will update to the provided value.
+     * Otherwise, the current line color is returned.
+     *
+     * @memberof insight.AxisGridlines
+     * @param {Color} [value] The value to set the gridline color to.
+     * @returns {*} - If no arguments are supplied, returns the line color of the gridlines. Otherwise returns this.
+     */
     this.lineColor = function(value) {
         if (!arguments.length) {
             return lineColor;
@@ -24,6 +37,15 @@ insight.AxisGridlines = function AxisGridlines(axis) {
         return this;
     };
 
+    /** The getter/setter for the width of the gridlines.
+     *
+     * If an argument is provided, the line width will update to the provided value.
+     * Otherwise, the current line width is returned.
+     *
+     * @memberof insight.AxisGridlines
+     * @param {number} [value] The value to set the gridline width to.
+     * @returns {*} - If no arguments are supplied, returns the line width of the gridlines. Otherwise returns this.
+     */
     this.lineWidth = function(value) {
         if (!arguments.length) {
             return lineWidth;
@@ -32,11 +54,6 @@ insight.AxisGridlines = function AxisGridlines(axis) {
         return this;
     };
 
-    /** Draw all gridlines for a given set of ticks
-     *
-     * @param chart The chart to draw the gridlines on.
-     * @param ticks The ticks to create gridlines for.
-     */
     this.drawGridLines = function(chart, ticks) {
         var attributes = {
             'class': this.parentAxis.label(),

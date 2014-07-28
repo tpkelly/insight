@@ -435,4 +435,106 @@ describe('Chart', function() {
             expect(chart.margin()).toEqual({"top":10, "left":0, "right":0, "bottom":0});
         });
     });
+
+    describe("adding axes", function() {
+       it("Adding x-axis adds to the axis array", function() {
+           //Given:
+           var chart = new insight.Chart('asda', 'asdads', 'ada');
+           var xAxis = new insight.Axis('', insight.Scales.Linear);
+
+           //When:
+           chart.xAxis(xAxis);
+
+           //Then:
+           expect(chart.xAxes()).toEqual([xAxis]);
+       });
+
+        it("Adding x-axis twice only adds to the axis array once", function() {
+            //Given:
+            var chart = new insight.Chart('asda', 'asdads', 'ada');
+            var xAxis = new insight.Axis('', insight.Scales.Linear);
+
+            //When:
+            chart.xAxis(xAxis);
+            chart.xAxis(xAxis);
+
+            //Then:
+            expect(chart.xAxes()).toEqual([xAxis]);
+        });
+
+    it("Adding x-axes adds to the axis array", function() {
+        //Given:
+        var chart = new insight.Chart('asda', 'asdads', 'ada');
+        var xAxis = new insight.Axis('', insight.Scales.Linear);
+
+        //When:
+        chart.xAxes([xAxis]);
+
+        //Then:
+        expect(chart.xAxes()).toEqual([xAxis]);
+    });
+
+    it("Adding x-axes twice only adds to the axis array once", function() {
+        //Given:
+        var chart = new insight.Chart('asda', 'asdads', 'ada');
+        var xAxis = new insight.Axis('', insight.Scales.Linear);
+
+        //When:
+        chart.xAxes([xAxis]);
+        chart.xAxes([xAxis]);
+
+        //Then:
+        expect(chart.xAxes()).toEqual([xAxis]);
+    });
+
+        it("Adding y-axis adds to the axis array", function() {
+            //Given:
+            var chart = new insight.Chart('asda', 'asdads', 'ada');
+            var yAxis = new insight.Axis('', insight.Scales.Linear);
+
+            //When:
+            chart.yAxis(yAxis);
+
+            //Then:
+            expect(chart.yAxes()).toEqual([yAxis]);
+        });
+
+        it("Adding y-axis twice only adds to the axis array once", function() {
+            //Given:
+            var chart = new insight.Chart('asda', 'asdads', 'ada');
+            var yAxis = new insight.Axis('', insight.Scales.Linear);
+
+            //When:
+            chart.yAxis(yAxis);
+            chart.yAxis(yAxis);
+
+            //Then:
+            expect(chart.yAxes()).toEqual([yAxis]);
+        });
+
+        it("Adding x-axes adds to the axis array", function() {
+            //Given:
+            var chart = new insight.Chart('asda', 'asdads', 'ada');
+            var yAxis = new insight.Axis('', insight.Scales.Linear);
+
+            //When:
+            chart.yAxes([yAxis]);
+
+            //Then:
+            expect(chart.yAxes()).toEqual([yAxis]);
+        });
+
+        it("Adding x-axes twice only adds to the axis array once", function() {
+            //Given:
+            var chart = new insight.Chart('asda', 'asdads', 'ada');
+            var yAxis = new insight.Axis('', insight.Scales.Linear);
+
+            //When:
+            chart.yAxes([yAxis]);
+            chart.yAxes([yAxis]);
+
+            //Then:
+            expect(chart.yAxes()).toEqual([yAxis]);
+        });
+});
 });
