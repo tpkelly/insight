@@ -208,7 +208,7 @@
             $scope.$parent.title = 'Insight Charts';
 
             // need to improve dependency management here, to allow the controller to know that it will need to load d3 and insight instead of just assuming they'll be there
-            d3.json('/datasets/appstore.json', function(data)
+            d3.json('datasets/appstore.json', function(data)
             {
                 preprocess(data);                
 
