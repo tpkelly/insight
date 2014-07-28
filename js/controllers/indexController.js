@@ -8,11 +8,11 @@
      * @param {object[]} data - The input data
      */
     function preprocess(data) {
-        data.forEach(function(d)
-                {
-                    d.releaseDate = new Date(d.releaseDate);
-                    d.fileSizeBytes = +d.fileSizeBytes;
-                });
+        data.forEach(function(d, i)
+        {
+            d.releaseDate = new Date(d.releaseDate);
+            d.fileSizeBytes = +d.fileSizeBytes;
+        });
     }
 
     function createBubbleChart(bubbleData) {
@@ -177,14 +177,22 @@
                                         right: 0
                                     });
 
+        var axisOrder = ['Not yet rated', '4+', '9+', '12+', '17+'];
+
         var x = new insight.Axis('', insight.Scales.Linear)
                            .tickSize(5)
                            .tickOrientation('tb')
                            .tickRotation(45)
                            .display(false);
 
-        var y = new insight.Axis('', insight.Scales.Ordinal);
+        var y = new insight.Axis('', insight.Scales.Ordinal)
+                           .ordered(true)
+                           .orderingFunction(function(a,b) {
+                                var aIndex = axisOrder.indexOf(a.key),
+                                    bIndex = axisOrder.indexOf(b.key);
 
+                                return bIndex - aIndex;
+                           });
         chart.xAxis(x)
              .yAxis(y);
 

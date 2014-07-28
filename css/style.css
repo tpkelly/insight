@@ -26,9 +26,6 @@ img
 
 #twitter
 {
-  float: right;
-  margin: 11px; 
-  margin-left: 50px;  
 }
 
 #twitter img
@@ -38,9 +35,6 @@ img
 
 #download
 {
-  float:right;
-  margin:13px;
-  margin-left:50px;
 }
 #download a
 {
@@ -51,6 +45,7 @@ img
 .colorbox
 {
   color: #fff;
+  padding: 0.2em 1em;
 }
 
 
@@ -62,7 +57,18 @@ img
 .analysis
 {
   background-color: #5bc0de;
+}
+
+.open {
+  background-color: #f39c12;
+}
+.open a {
+  color: #34495e;
+}
+
+.intro p {
   margin-top: 2em;
+  font-size: 17px;
 }
 
 .chartcontainer
@@ -72,7 +78,6 @@ img
 
 .container p
 {
-  font-size: 14px;
   font-weight: initial;
   line-height: 1.5em;
 }
