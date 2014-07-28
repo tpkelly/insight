@@ -446,9 +446,9 @@ insight.Axis = function Axis(name, scale) {
         if (initialisedAxisView)
             return;
 
-        this.initializeScale();
-
         initialisedAxisView = true;
+
+        this.initializeScale();
 
         this.axis = d3.svg.axis()
             .scale(this.scale)
