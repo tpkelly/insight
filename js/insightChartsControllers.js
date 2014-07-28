@@ -593,6 +593,7 @@
                            .tickSize(5)
                            .tickOrientation('tb')
                            .tickRotation(45)
+                           .ordered(true)
                            .display(false);
 
         var y = new insight.Axis('', insight.Scales.Ordinal);

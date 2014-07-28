@@ -45,25 +45,26 @@
             </div>
             <!-- Weirdly enough, the items defined here are displayed right-to-left -->
             <div id="navbar-main" class="navbar-collapse collapse">
-                <!-- Twitter link -->
-                <div id="twitter">
-                    <a href="https://twitter.com/insight_js">
-                        <img src="images/twitter-icon.png" />
-                    </a>
-                </div>
-                <!-- Download button -->
-                <div id="download">
-                    <a href="insight.js.zip" download="insight.js.zip">Download</a>
-                </div>
-                <!-- Examples pages -->
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
-                        <a href="" class="dropdown-toggle" data-toggle="dropdown">Demos <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li ng-repeat="example in examples">
-                                <a href="#/example/{{example.name}}">{{example.pageName}}</a>
-                            </li>
-                        </ul>
+                    <li>
+                        <!-- Twitter link -->
+                        <a id="twitter" href="https://twitter.com/insight_js">
+                            <img src="images/twitter-icon.png" />
+                        </a>
+                    </li>
+                    <li>
+                        <!-- Download button -->
+                        <a href="insight.js.zip" download="insight.js.zip">Download</a>
+                    </li>
+                    <li>
+                        <li class="dropdown">
+                            <a href="" class="dropdown-toggle" data-toggle="dropdown">Demos <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li ng-repeat="example in examples">
+                                    <a href="#/example/{{example.name}}">{{example.pageName}}</a>
+                                </li>
+                            </ul>
+                        </li>
                     </li>
                 </ul>
             </div>
