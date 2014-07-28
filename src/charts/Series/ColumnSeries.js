@@ -31,7 +31,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
     }];
 
 
-    /**
+    /*
      * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
      * This function is mapped across the entire data array by the findMax method.
      * @memberof insight.ColumnSeries
@@ -61,7 +61,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
     /**
      * Extracts the maximum value on an axis for this series.
      * @memberof insight.ColumnSeries
-     * @returns {object} - The maximum value within the range of the values for this series on the given axis.
+     * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
      */
     this.findMax = function() {
         var max = d3.max(this.data.getData(), this.seriesMax);
