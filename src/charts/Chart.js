@@ -262,6 +262,9 @@
                     return xAxes;
                 }
 
+                //Wipe out all existing axes
+                xAxes = [];
+
                 for (var index = 0; index < newXAxes.length; index++) {
                     self.addXAxis(newXAxes[index]);
                 }
@@ -289,6 +292,9 @@
                 if (!arguments.length) {
                     return yAxes;
                 }
+
+                //Wipe out all existing axes
+                yAxes = [];
 
                 for (var index = 0; index < newYAxes.length; index++) {
                     self.addYAxis(newYAxes[index]);
