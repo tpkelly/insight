@@ -87,6 +87,14 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
         return this;
     };
 
+    /**
+     * The width of the marker, as a proportion of the column width.
+     *
+     * If no arguments are given, then this returns whether the current width proportion. Otherwise, it sets the offset to the supplied argument.
+     * @memberof insight.MarkerSeries
+     * @param {object} [value] The new width proportion.
+     * @returns {*} - If no arguments are supplied, returns the current width proportion. Otherwise returns this.
+     */
     this.widthFactor = function(_) {
 
         if (!arguments.length) {
