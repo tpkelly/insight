@@ -48,6 +48,10 @@ img
   padding: 0.2em 1em;
 }
 
+.colorbox h2 {
+  font-weight: 700;
+}
+
 
 .visualization
 {

@@ -8,7 +8,7 @@
      * @param {object[]} data - The input data
      */
     function preprocess(data) {
-        data.forEach(function(d, i)
+        data.forEach(function(d)
         {
             d.releaseDate = new Date(d.releaseDate);
             d.fileSizeBytes = +d.fileSizeBytes;
