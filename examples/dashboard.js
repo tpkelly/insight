@@ -56,19 +56,22 @@ $(document)
 
             columns.x.ordered(true)
 
-            var x = new insight.Axis(chart, "x", columns.x, "bottom")
+            var x = new insight.Axis("x", columns.x, "bottom")
                 .textAnchor("start")
                 .tickSize(5)
                 .tickPadding(0)
                 .labelOrientation("tb")
                 .labelRotation(90);
 
-            var x2 = new insight.Axis(chart2, "x", columns2.x, "bottom")
+            var x2 = new insight.Axis("x", columns2.x, "bottom")
                 .textAnchor("start")
                 .tickSize(5)
                 .tickPadding(0)
                 .labelOrientation("tb")
                 .labelRotation(90);
+
+            chart.addAxis(x);
+            chart.addAxis(x2);
 
             insight.drawCharts();
         });
