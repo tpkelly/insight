@@ -83,7 +83,6 @@ insight.Axis = function Axis(name, scale) {
 
     /**
      * For an ordinal/categorical axis, this method queries all series that use this axis to get the list of available values
-     * @memberof insight.Axis
      * @returns {object[]} values - the values for this ordinal axis
      */
     var findOrdinalValues = function() {
@@ -100,7 +99,6 @@ insight.Axis = function Axis(name, scale) {
 
     /**
      * For linear series, this method is used to calculate the maximum value to be used in this axis.
-     * @memberof insight.Axis
      * @returns {Date} max - The largest value in the datasets that use this axis
      */
     var findMax = function() {
@@ -118,7 +116,6 @@ insight.Axis = function Axis(name, scale) {
 
     /**
      * For time series, this method is used to calculate the minimum value to be used in this axis.
-     * @memberof insight.Axis
      * @returns {Date} minTime - The smallest time in the datasets that use this axis
      */
     var minTime = function() {
@@ -245,11 +242,9 @@ insight.Axis = function Axis(name, scale) {
 
     /**
      * This getter/setter defines whether or not the axis should be drawn on the chart (lines and labels)
-     * @memberof insight.Axis
      * @returns {function}
      */
     /**
-     * @memberof insight.Axis
      * @param {boolean} value - When used as a setter, this function takes a boolean value that will define whether this axis will be drawn
      * @returns {this}
      */
@@ -290,11 +285,9 @@ insight.Axis = function Axis(name, scale) {
 
     /**
      * This getter/setter defines the color used by the axis labels and lines
-     * @memberof insight.Axis
      * @returns {function}
      */
     /**
-     * @memberof insight.Axis
      * @param {object} color - When used as a setter, this function can take a string color (hex, named or "rgb(r,g,b)") or a function that returns the color of the axis.
      * @returns {this}
      */
@@ -427,11 +420,9 @@ insight.Axis = function Axis(name, scale) {
 
     /**
      * This getter/setter defines whether gridlines are displayed for the axis.
-     * @memberof insight.Axis
      * @returns {function}
      */
     /**
-     * @memberof insight.Axis
      * @param {object} showLines - When used as a setter, this function can take a boolean of whether to display the gridlines (true) or hide them (false).
      * @returns {this}
      */
