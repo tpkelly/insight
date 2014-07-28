@@ -62,27 +62,44 @@ insight.Series = function Series(name, data, x, y, color) {
         return tooltipFormat(tooltipAccessor(d));
     };
 
-    this.keyFunction = function(_) {
+    /**
+     * The function used to retrieve the x-value to plot on a chart from the data object.
+     *
+     * If no arguments are given, then this returns the current keyFunction. Otherwise, it sets the keyFunction to the supplied argument.
+     * @memberof insight.Series
+     * @param {function} [keyFunc] The new key function to use to extract the x-value from a data object.
+     * @returns {*} - If no arguments are supplied, returns the current keyFunction. Otherwise returns this.
+     */
+    this.keyFunction = function(keyFunc) {
         if (!arguments.length) {
             return keyFunction;
         }
-        keyFunction = _;
-
-        return this;
-    };
-
-    this.valueFunction = function(_) {
-        if (!arguments.length) {
-            return valueFunction;
-        }
-        valueFunction = _;
+        keyFunction = keyFunc;
 
         return this;
     };
 
     /**
-     * This method returns the data set used by this Series.
-     * @returns {object[]} dataset - The data set to be used by the series
+     * The function used to retrieve the y-value to plot on a chart from the data object.
+     *
+     * If no arguments are given, then this returns the current valueFunction. Otherwise, it sets the valueFunction to the supplied argument.
+     * @memberof insight.Series
+     * @param {function} [valueFunc] The new key function to use to extract the y-value from a data object.
+     * @returns {*} - If no arguments are supplied, returns the current valueFunction. Otherwise returns this.
+     */
+    this.valueFunction = function(valueFunc) {
+        if (!arguments.length) {
+            return valueFunction;
+        }
+        valueFunction = valueFunc;
+
+        return this;
+    };
+
+    /**
+     * This method returns the array of data objects used to plot this Series.
+     * @memberof insight.Series
+     * @returns {object[]} - The data set to be used by the series
      */
     this.dataset = function() {
 
@@ -133,13 +150,11 @@ insight.Series = function Series(name, data, x, y, color) {
 
     /**
      * This method gets or sets the tooltip offset, which moves the tooltip for this series relative to its default point.
+     *
+     * If no arguments are given, then this returns the current tooltip offset. Otherwise, it sets the offset to the supplied argument.
      * @memberof insight.Series
-     * @returns {object} offset - An {x,y} offset point object
-     */
-    /**
-     * @memberof insight.Series
-     * @returns {object} this - this
-     * @param {object} value - An {x,y} offset point
+     * @param {object} [value] The new {x,y} offset point.
+     * @returns {*} - If no arguments are supplied, returns the current tooltip offset. Otherwise returns this.
      */
     this.tooltipOffset = function(value) {
         if (!arguments.length) {
@@ -150,10 +165,6 @@ insight.Series = function Series(name, data, x, y, color) {
         return this;
     };
 
-    /**
-     * This method creates the tooltip for this Series, checking if it exists already first.
-     * @param {DOMElement} container - The DOM Element that the tooltip should be drawn inside.
-     */
     this.initializeTooltip = function(container) {
         if (!this.tooltip) {
             this.tooltip = new insight.Tooltip()
@@ -162,7 +173,7 @@ insight.Series = function Series(name, data, x, y, color) {
         }
     };
 
-    /**
+    /*
      * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouse over. Tooltips are shown and CSS updated.
      * The *this* context will reference the DOMElement raising the event.
      * @param {object} item - The data point for the hovered item.
@@ -181,7 +192,7 @@ insight.Series = function Series(name, data, x, y, color) {
             .classed('active', true);
     };
 
-    /**
+    /*
      * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouseout event. Tooltips are hidden and CSS updated.
      * The *this* context will reference the DOMElement raising the event.
      */
@@ -302,6 +313,12 @@ insight.Series = function Series(name, data, x, y, color) {
         return maxDimensions;
     };
 
+    /**
+     * Extracts the minimum value on an axis for this series.
+     * @memberof insight.Series
+     * @param scale The corresponding x or y axis
+     * @returns {object} - The minimum value within the range of the values for this series on the given axis.
+     */
     this.findMin = function(scale) {
         var self = this;
 
@@ -312,6 +329,12 @@ insight.Series = function Series(name, data, x, y, color) {
         return d3.min(data, func);
     };
 
+    /**
+     * Extracts the maximum value on an axis for this series.
+     * @memberof insight.Series
+     * @param scale The corresponding x or y axis
+     * @returns {object} - The maximum value within the range of the values for this series on the given axis.
+     */
     this.findMax = function(scale) {
         var self = this;
 
