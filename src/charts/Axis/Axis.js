@@ -158,6 +158,7 @@ insight.Axis = function Axis(name, scale) {
         return this.direction == 'v';
     };
 
+
     this.ordered = function(value) {
         if (!arguments.length) {
             return ordered();
@@ -222,14 +223,16 @@ insight.Axis = function Axis(name, scale) {
 
 
     /**
-     * This getter/setter defines whether or not the axis is initialized with zoom functionality by a chart
-     * @memberof insight.Axis
-     * @returns {boolean}
-     */
-    /**
-     * @memberof insight.Axis
-     * @param {boolean} value - When used as a setter, this function takes a boolean value that will define whether this axis is zoomable
-     * @returns {this}
+     * This method returns a boolean value representing if this Axis is zoomable
+     * @instance
+     * @memberof! insight.Axis
+     * @returns {boolean} zoomable - Is this Axis zoomable
+     * @also
+     * This method sets the zoomable status of this Axis.  A zoomable Axis allows drag and zoom operations, and is not redrawn automatically on the draw() event of a chart.
+     * @instance
+     * @memberof! insight.Axis
+     * @returns {this} this - The Axis object
+     * @param {boolean} value - A true/false value to set this Axis as zoomable or not.
      */
     this.zoomable = function(value) {
         if (!arguments.length) {
@@ -241,12 +244,16 @@ insight.Axis = function Axis(name, scale) {
     };
 
     /**
-     * This getter/setter defines whether or not the axis should be drawn on the chart (lines and labels)
-     * @returns {function}
-     */
-    /**
-     * @param {boolean} value - When used as a setter, this function takes a boolean value that will define whether this axis will be drawn
-     * @returns {this}
+     * This method returns a boolean value representing whether this Axis will be drawn on the Chart, or just used as a scale.
+     * @instance
+     * @memberof! insight.Axis
+     * @returns {boolean} display - true/false for whether this Axis will be drawn
+     * @also
+     * This method sets whether or not this Axis will be drawn on the Chart, or just used as a scale.
+     * @instance
+     * @memberof! insight.Axis
+     * @returns {this} this - The Axis object
+     * @param {boolean} value - A true/false value to display this Axis (gridlines, ticks and labels etc.)
      */
     this.display = function(value) {
         if (!arguments.length) {

@@ -1,6 +1,6 @@
 /**
  * The Tooltip class
- * @class insight.Chart
+ * @class insight.Tooltip
  * @param {string} name - A uniquely identifying name for this chart
  * @param {string} element - The css selector identifying the div container that the chart will be drawn in. '#columnChart' for example.
  */
@@ -95,12 +95,14 @@ insight.Tooltip = (function(insight) {
         // Public Methods
 
         /**
-         * This method gets or sets the offset amounts for the tooltip, in an offset object {x, y}.
-         * @memberof insight.Tooltip
+         * This method gets the offset amounts for the tooltip, in an offset object {x, y}.
+         * @memberof! insight.Tooltip
+         * @instance
          * @returns {object} offset - An offset object with x and y values for offsetting the position of the tooltip.
-         */
-        /**
-         * @memberof insight.Tooltip
+         * @also
+         * This method sets the offset amounts for the tooltip, in an offset object {x, y}.
+         * @memberof! insight.Tooltip
+         * @instance
          * @returns {object} return - The tooltip object
          * @param {object} offset - An offset object with x and y values for offsetting the position of the tooltip.
          */
@@ -116,11 +118,12 @@ insight.Tooltip = (function(insight) {
 
         /**
          * This method gets or sets any styles for the tooltip, in standard {'name': 'value', ...} format.
-         * @memberof insight.Tooltip
+         * @memberof! insight.Tooltip
+         * @instance
          * @returns {object} styles - A dictionary object of CSS property names and values
-         */
-        /**
-         * @memberof insight.Tooltip
+         * @also
+         * @instance
+         * @memberof! insight.Tooltip
          * @returns {object} this - The tooltip object
          * @param {object} styles - A dictionary mapping CSS properties to values;
          */
@@ -134,11 +137,12 @@ insight.Tooltip = (function(insight) {
 
         /**
          * This method gets or sets the DOM element that this tooltip will be created inside, usually a div.
-         * @memberof insight.Tooltip
+         * @memberof! insight.Tooltip
+         * @instance
          * @returns {DOMElement} element - A DOM Element
-         */
-        /**
-         * @memberof insight.Tooltip
+         * @also
+         * @memberof! insight.Tooltip
+         * @instance
          * @returns {object} return - The tooltip object
          * @param {object} offset - The container DOM Element that this Tooltip should be added to.
          */
