@@ -1,6 +1,6 @@
 /**
  * The Tooltip class
- * @class insight.Chart
+ * @class insight.Tooltip
  * @param {string} name - A uniquely identifying name for this chart
  * @param {string} element - The css selector identifying the div container that the chart will be drawn in. '#columnChart' for example.
  */
@@ -30,7 +30,7 @@ insight.Tooltip = (function(insight) {
         // Private methods
 
 
-        /**
+        /*
          * This method creates the tooltip element inside the defined container element.  It sets this.element.
          */
         function createElement() {
@@ -44,9 +44,9 @@ insight.Tooltip = (function(insight) {
             self.element = element.node();
         }
 
-        /**
-         * This method updates the content of the tooltip.
-         * @param {string} content - Textual or HTML content to display inside the tooltip div
+        /*
+         This method updates the content of the tooltip.
+         @param {string} content - Textual or HTML content to display inside the tooltip div
          */
         function setTooltipContent(content) {
             d3.select(self.element)
@@ -54,11 +54,11 @@ insight.Tooltip = (function(insight) {
         }
 
 
-        /**
-         * This method calculates the position that the tooltip should be drawn at, relative to the provided HTML element.
-         * It currently just returns the position centrally above the provided DOM element, however the coordinate system is in place to allow customization around the element.
-         * @returns {object} point - an {x,y} point object representing the north point of the provided DOM element, in relation to the top left corner of its SVG container (not the page).
-         * @param {DOMElement} target - The target element to calculate the position from.
+        /*
+          This method calculates the position that the tooltip should be drawn at, relative to the provided HTML element.
+          It currently just returns the position centrally above the provided DOM element, however the coordinate system is in place to allow customization around the element.
+          @returns {object} point - an {x,y} point object representing the north point of the provided DOM element, in relation to the top left corner of its SVG container (not the page).
+          @param {DOMElement} target - The target element to calculate the position from.
          */
         function getTooltipPosition(target) {
 
@@ -78,7 +78,7 @@ insight.Tooltip = (function(insight) {
             };
         }
 
-        /**
+        /*
          * Given a coordinate {x,y} position, this method updates the position and visibility of the tooltip to display it.
          * @param {object} point - an {x,y} coordinate, from the top left of the tooltip's container SVG.
          */
@@ -94,14 +94,18 @@ insight.Tooltip = (function(insight) {
 
         // Public Methods
 
+
+
         /**
-         * This method gets or sets the offset amounts for the tooltip, in an offset object {x, y}.
-         * @memberof insight.Tooltip
-         * @returns {object} offset - An offset object with x and y values for offsetting the position of the tooltip.
-         */
-        /**
-         * @memberof insight.Tooltip
-         * @returns {object} return - The tooltip object
+         * The offset amounts for the tooltip, in an offset object {x, y}.
+         * @memberof! insight.Tooltip
+         * @instance
+         * @returns {object} - An offset object with x and y values for offsetting the position of the tooltip.
+         * @also
+         * Sets the offset amounts for the tooltip, in an offset object {x, y}.
+         * @memberof! insight.Tooltip
+         * @instance
+         * @returns {this}
          * @param {object} offset - An offset object with x and y values for offsetting the position of the tooltip.
          */
         this.offset = function(value) {
@@ -116,11 +120,12 @@ insight.Tooltip = (function(insight) {
 
         /**
          * This method gets or sets any styles for the tooltip, in standard {'name': 'value', ...} format.
-         * @memberof insight.Tooltip
+         * @memberof! insight.Tooltip
+         * @instance
          * @returns {object} styles - A dictionary object of CSS property names and values
-         */
-        /**
-         * @memberof insight.Tooltip
+         * @also
+         * @instance
+         * @memberof! insight.Tooltip
          * @returns {object} this - The tooltip object
          * @param {object} styles - A dictionary mapping CSS properties to values;
          */
@@ -134,12 +139,13 @@ insight.Tooltip = (function(insight) {
 
         /**
          * This method gets or sets the DOM element that this tooltip will be created inside, usually a div.
-         * @memberof insight.Tooltip
+         * @memberof! insight.Tooltip
+         * @instance
          * @returns {DOMElement} element - A DOM Element
-         */
-        /**
-         * @memberof insight.Tooltip
-         * @returns {object} return - The tooltip object
+         * @also
+         * @memberof! insight.Tooltip
+         * @instance
+         * @returns {this} return
          * @param {object} offset - The container DOM Element that this Tooltip should be added to.
          */
         this.container = function(container) {
@@ -154,6 +160,8 @@ insight.Tooltip = (function(insight) {
 
         /**
          * This method displays the tooltip relative to the tooltip.container() DOMElement, using the provided element and tooltipText parameters to control the context and position.
+         * @memberof! insight.Tooltip
+         * @instance
          * @param {object[]} data - Description
          */
         this.show = function(element, tooltipText) {
@@ -172,6 +180,8 @@ insight.Tooltip = (function(insight) {
 
         /**
          * This method hides the tooltip
+         * @memberof! insight.Tooltip
+         * @instance
          */
         this.hide = function() {
             d3.select(self.element)

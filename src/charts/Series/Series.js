@@ -16,10 +16,10 @@ insight.Series = function Series(name, data, x, y, color) {
     this.color = d3.functor(color);
     this.animationDuration = 300;
     this.topValues = null;
-    this.dimensionName = data.dimension ? data.dimension.Name + "Dim" : "";
-
+    this.classValues = [];
     this.valueAxis = x;
     this.keyAxis = y;
+    this.selectedItems = [];
 
     x.addSeries(this);
     y.addSeries(this);
@@ -29,12 +29,12 @@ insight.Series = function Series(name, data, x, y, color) {
     }
 
     var self = this;
-    var cssClass = "";
     var filter = null;
     var tooltipOffset = {
         x: 0,
         y: -10
     };
+
 
     // private functions used internally, set by functions below that are exposed on the object
 
@@ -61,6 +61,58 @@ insight.Series = function Series(name, data, x, y, color) {
     var tooltipFunction = function(d) {
         return tooltipFormat(tooltipAccessor(d));
     };
+
+    /**
+     * This function is used when individual chart items are being drawn, to check whether they should be marked as selected or not.
+     * @memberof insight.Series
+     * @returns {string} selectionClass - A string that is used by CSS highlighting to style the chart item.
+     * @param {string[]} selectedItems - A list of CSS selectors for currently selected items
+     * @param {string} selector - The selector for the item being drawn
+     */
+    var selectedClassName = function(selectedItems, selector) {
+        var selected = '';
+
+        if (selectedItems.length) {
+            selected = selectedItems.indexOf(selector) != -1 ? ' selected' : ' notselected';
+        }
+
+        return selected;
+    };
+
+
+    /**
+     * This function generates the base class name to be used for items in this series.  It can be extended upon by individual items to show
+     * if they are selected or to mark them out in other ways.
+     * @memberof insight.Series
+     * @returns {string} baseClassName - A root value for the class attribute used for items in this Series.
+     */
+    this.seriesClassName = function() {
+
+        var seriesName = [self.name + 'class'].concat(self.classValues)
+            .join(' ');
+
+        return seriesName;
+    };
+
+
+    /**
+     * This function constructs the text for the class attribute for a specific data point, using the base value for this Series and any additional values.
+     * @memberof insight.Series
+     * @param {object} dataItem - The data item being drawn
+     * @param {string[]} additionalClasses - Any additional values this Series needs appending to the class value.  Used by stacked Series to differentiate between Series.
+     * @returns {string} classValue - A class value for a particular data item being bound in this Series.
+     */
+    this.itemClassName = function(dataItem, additionalClasses) {
+
+        var keySelector = insight.Utils.keySelector(dataItem);
+        var selected = selectedClassName(self.selectedItems, keySelector);
+        var value = self.rootClassName + ' ' + keySelector + selected;
+
+        return value;
+    };
+
+
+    // Public methods
 
     this.keyFunction = function(_) {
         if (!arguments.length) {
@@ -109,13 +161,7 @@ insight.Series = function Series(name, data, x, y, color) {
             .map(self.keyFunction());
     };
 
-    this.cssClass = function(_) {
-        if (!arguments.length) {
-            return cssClass;
-        }
-        cssClass = _;
-        return this;
-    };
+
 
     this.keyAccessor = function(d) {
         return d.key;
@@ -152,6 +198,7 @@ insight.Series = function Series(name, data, x, y, color) {
 
     /**
      * This method creates the tooltip for this Series, checking if it exists already first.
+     * @memberof insight.Series
      * @param {DOMElement} container - The DOM Element that the tooltip should be drawn inside.
      */
     this.initializeTooltip = function(container) {
@@ -165,6 +212,7 @@ insight.Series = function Series(name, data, x, y, color) {
     /**
      * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouse over. Tooltips are shown and CSS updated.
      * The *this* context will reference the DOMElement raising the event.
+     * @memberof insight.Series
      * @param {object} item - The data point for the hovered item.
      * @param {int} index - The index of the hovered item in the data set.  This is required at the moment as we need to provide the valueFunction until stacked series are refactored.
      * @param {function} valueFunction - If provided, this function will be used to generate the tooltip text, otherwise the series default valueFunction will be used.
@@ -184,6 +232,7 @@ insight.Series = function Series(name, data, x, y, color) {
     /**
      * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouseout event. Tooltips are hidden and CSS updated.
      * The *this* context will reference the DOMElement raising the event.
+     * @memberof insight.Series
      */
     this.mouseOut = function() {
 
@@ -240,7 +289,7 @@ insight.Series = function Series(name, data, x, y, color) {
 
     this.maxLabelDimensions = function(measureCanvas) {
 
-        var sampleText = document.createElement('div');
+        var sampleText = document.createElement('text');
         sampleText.setAttribute('class', insight.Constants.AxisTextClass);
         var style = window.getComputedStyle(sampleText);
         var ctx = measureCanvas.getContext('2d');
@@ -270,8 +319,6 @@ insight.Series = function Series(name, data, x, y, color) {
                 maxValueWidth = Math.max(valueDimensions.width, maxValueWidth);
                 fontSize = Math.ceil(style['font-size']) || 10;
             });
-
-
 
         var maxDimensions = {
             "maxKeyWidth": maxKeyWidth,

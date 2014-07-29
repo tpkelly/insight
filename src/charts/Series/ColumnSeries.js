@@ -17,12 +17,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
         seriesFunctions = {},
         barWidthFunction = this.x.rangeType;
 
-
-    var tooltipFunction = function(d) {
-        var func = self.currentSeries.accessor;
-        return self.tooltipFormat()(func(d));
-    };
-
+    this.classValues = [insight.Constants.BarClass];
 
     this.series = [{
         name: 'default',
@@ -36,6 +31,11 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
         label: 'Value'
     }];
 
+
+    var tooltipFunction = function(d) {
+        var func = self.currentSeries.accessor;
+        return self.tooltipFormat()(func(d));
+    };
 
     /**
      * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
@@ -155,12 +155,6 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
         return self.stacked();
     };
 
-    this.className = function(d) {
-        var dimension = insight.Utils.keySelector(d);
-
-        return seriesName + 'class bar ' + dimension + " " + self.dimensionName;
-    };
-
     var click = function(filter) {
         return self.click(this, filter);
     };
@@ -177,28 +171,42 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
     };
 
 
+    this.seriesSpecificClassName = function(d) {
+
+        var additionalClass = ' ' + self.currentSeries.name + 'class';
+        var baseClassName = self.itemClassName(d);
+        var itemClassName = baseClassName + additionalClass;
+
+        return itemClassName;
+    };
+
     this.draw = function(chart, drag) {
 
-        this.initializeTooltip(chart.container.node());
+        self.initializeTooltip(chart.container.node());
+        self.selectedItems = chart.selectedItems;
+        self.rootClassName = self.seriesClassName();
+
+        var groupSelector = 'g.' + insight.Constants.BarGroupClass,
+            barSelector = 'rect.' + insight.Constants.BarGroupClass;
 
         var reset = function(d) {
             d.yPos = 0;
             d.xPos = 0;
         };
 
-        var data = this.dataset();
+        var data = self.dataset();
 
         data.forEach(reset);
 
         var groups = chart.plotArea
-            .selectAll('g.' + insight.Constants.BarGroupClass)
-            .data(data, this.keyAccessor);
+            .selectAll(groupSelector)
+            .data(data, self.keyAccessor);
 
         var newGroups = groups.enter()
             .append('g')
             .attr('class', insight.Constants.BarGroupClass);
 
-        var newBars = newGroups.selectAll('rect.bar');
+        var newBars = newGroups.selectAll(barSelector);
 
         var barHeight = function(d) {
             var func = self.currentSeries.accessor;
@@ -208,35 +216,41 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
                 .bottom) - self.y.scale(func(d));
         };
 
-        for (var seriesIndex in this.series) {
+        for (var seriesIndex in self.series) {
 
-            this.currentSeries = this.series[seriesIndex];
+            self.currentSeries = self.series[seriesIndex];
 
-            seriesName = this.currentSeries.name;
-            seriesFunctions[seriesName] = this.currentSeries.accessor;
+            seriesName = self.currentSeries.name;
+            seriesFunctions[seriesName] = self.currentSeries.accessor;
+
+            var seriesSelector = '.' + seriesName + 'class.' + insight.Constants.BarClass;
+
+            // Add any new bars
 
             newBars = newGroups.append('rect')
-                .attr('class', self.className)
-                .attr('y', this.y.bounds[0])
+                .attr('class', self.seriesSpecificClassName)
+                .attr('y', self.y.bounds[0])
                 .attr('height', 0)
                 .attr('in_series', seriesName)
-                .attr('fill', this.currentSeries.color)
+                .attr('fill', self.currentSeries.color)
                 .attr('clip-path', 'url(#' + chart.clipPath() + ')')
                 .on('mouseover', mouseOver)
-                .on('mouseout', this.mouseOut)
+                .on('mouseout', self.mouseOut)
                 .on('click', click);
 
-            var bars = groups.selectAll('.' + seriesName + 'class.bar');
+            // Select and update all bars
+            var bars = groups.selectAll(seriesSelector);
 
             bars
                 .transition()
                 .duration(duration)
-                .attr('y', this.yPosition)
-                .attr('x', this.offsetXPosition)
-                .attr('width', this.groupedBarWidth)
+                .attr('y', self.yPosition)
+                .attr('x', self.offsetXPosition)
+                .attr('width', self.groupedBarWidth)
                 .attr('height', barHeight);
         }
 
+        // Remove groups no longer in the data set
         groups.exit()
             .remove();
     };
