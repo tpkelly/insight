@@ -154,7 +154,8 @@
 
             /**
              * Enable zooming for an axis on this chart
-             * @memberof insight.Chart
+             * @memberof! insight.Chart
+             * @instance
              * @param axis The axis to enable zooming for
              * @returns {Chart} Returns this.
              */
@@ -197,11 +198,17 @@
 
             /**
              * The margins to use around the chart (top, bottom, left, right), each measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {object} - The current margins of the chart.
              *
-             * If no arguments are given, then this returns the current chart margins. Otherwise, it sets the margins to the supplied argument.
-             * @memberof insight.Chart
-             * @param {object} [newMargins] The new margins to use for the chart.
-             * @returns {*} - If no arguments are supplied, returns the current margin. Otherwise returns this.
+             * @also
+             *
+             * Sets the margins to use around the chart (top, bottom, left, right), each measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {object} margins The new margins to use around the chart.
+             * @returns {this}
              */
             this.margin = function(newMargins) {
                 if (!arguments.length) {
@@ -231,11 +238,17 @@
 
             /**
              * The width of the chart element, measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Number} - The current width of the chart.
              *
-             * If no arguments are given, then this returns the current chart width. Otherwise, it sets the width to the supplied argument.
-             * @memberof insight.Chart
-             * @param {Number} [newWidth] The new width of the chart.
-             * @returns {*} - If no arguments are supplied, returns the current width. Otherwise returns this.
+             * @also
+             *
+             * Sets the width of the chart element, measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Number} newWidth The new width of the chart.
+             * @returns {this}
              */
             this.width = function(newWidth) {
                 if (!arguments.length) {
@@ -248,11 +261,17 @@
 
             /**
              * The height of the chart element, measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Number} - The current height of the chart.
              *
-             * If no arguments are given, then this returns the current chart height. Otherwise, it sets the height to the supplied argument.
-             * @memberof insight.Chart
-             * @param {Number} [newHeight] The new height of the chart.
-             * @returns {*} - If no arguments are supplied, returns the current height. Otherwise returns this.
+             * @also
+             *
+             * Sets the height of the chart element, measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Number} newHeight The new height of the chart.
+             * @returns {this}
              */
             this.height = function(newHeight) {
                 if (!arguments.length) {
@@ -264,11 +283,17 @@
 
             /**
              * The series to draw on this chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Series[]} - The current series drawn on the chart.
              *
-             * If no arguments are given, then this returns the current chart width. Otherwise, it sets the width to the supplied argument.
-             * @memberof insight.Chart
-             * @param {Series} [newSeries] The new array of series to draw on the chart.
-             * @returns {*} - If no arguments are supplied, returns the current width. Otherwise returns this.
+             * @also
+             *
+             * Sets the series to draw on this chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Series[]} newSeries The new series to draw on the chart.
+             * @returns {this}
              */
             this.series = function(newSeries) {
                 if (!arguments.length) {
@@ -281,11 +306,17 @@
 
             /**
              * The legend to draw on this chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Legend} - The current legend drawn on the chart.
              *
-             * If no arguments are given, then this returns the current chart legend. Otherwise, it sets the legend to the supplied argument.
-             * @memberof insight.Chart
-             * @param {Legend} [newLegend] The new legend to draw on the chart.
-             * @returns {*} - If no arguments are supplied, returns the current legend. Otherwise returns this.
+             * @also
+             *
+             * Sets the legend to draw on this chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Legend} newLegend The new legend to draw on the chart.
+             * @returns {this}
              */
             this.legend = function(newLegend) {
                 if (!arguments.length) {
@@ -300,9 +331,10 @@
             /**
              * Add a new x-axis to the chart.
              *
-             * @memberof insight.Chart
+             * @memberof! insight.Chart
+             * @instance
              * @param {Axis} [axis] The x-axis to add.
-             * @returns {object} - Returns this.
+             * @returns {this}
              */
             this.addXAxis = function(axis) {
                 axis.direction = 'h';
@@ -312,11 +344,17 @@
 
             /**
              * All of the x-axes on the chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Axis[]} - The current x-axes of the chart.
              *
-             * If no arguments are given, then this returns the x-axes. Otherwise, it sets the x-axis array to the supplied argument.
-             * @memberof insight.Chart
-             * @param {Axis} [newXAxes] The x-axes to add.
-             * @returns {*} - If no arguments are supplied, returns the current x-axes. Otherwise returns this.
+             * @also
+             *
+             * Sets the x-axes on the chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Axis[]} newXAxes The new x-axes to draw on the chart.
+             * @returns {this}
              */
             this.xAxes = function(newXAxes) {
                 if (!arguments.length) {
@@ -335,11 +373,17 @@
 
             /**
              * The primary x-axis on the chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Axis} - The current primary x-axis of the chart.
              *
-             * If no arguments are given, then this returns the primary x-axis. Otherwise, it sets the x-axis to the supplied argument.
-             * @memberof insight.Chart
-             * @param {Axis} xAxis The x-axis to add.
-             * @returns {*} - If no arguments are supplied, returns the current x-axis. Otherwise returns this.
+             * @also
+             *
+             * Sets the primary x-axis on the chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Axis} xAxis The new primary x-axis of the chart.
+             * @returns {this}
              */
             this.xAxis = function(xAxis) {
                 if (!arguments.length) {
@@ -354,9 +398,10 @@
             /**
              * Add a new y-axis to the chart.
              *
-             * @memberof insight.Chart
+             * @memberof! insight.Chart
+             * @instance
              * @param {Axis} [axis] The y-axis to add.
-             * @returns {object} - Returns this.
+             * @returns {this}
              */
             this.addYAxis = function(axis) {
                 axis.direction = 'v';
@@ -366,11 +411,17 @@
 
             /**
              * All of the y-axes on the chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Axis[]} - The current y-axes of the chart.
              *
-             * If no arguments are given, then this returns the y-axes. Otherwise, it sets the y-axis array to the supplied argument.
-             * @memberof insight.Chart
-             * @param {Axis} [newYAxes] The y-axes to add.
-             * @returns {*} - If no arguments are supplied, returns the current y-axes. Otherwise returns this.
+             * @also
+             *
+             * Sets the y-axes on the chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Axis[]} newYAxes The new y-axes to draw on the chart.
+             * @returns {this}
              */
             this.yAxes = function(newYAxes) {
                 if (!arguments.length) {
@@ -389,11 +440,17 @@
 
             /**
              * The primary y-axis on the chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Axis} - The current primary y-axis of the chart.
              *
-             * If no arguments are given, then this returns the primary y-axis. Otherwise, it sets the y-axis to the supplied argument.
-             * @memberof insight.Chart
-             * @param {Axis} yAxis The y-axis to add.
-             * @returns {*} - If no arguments are supplied, returns the current y-axis. Otherwise returns this.
+             * @also
+             *
+             * Sets the primary y-axis on the chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Axis} yAxis The new primary y-axis of the chart.
+             * @returns {this}
              */
             this.yAxis = function(yAxis) {
                 if (!arguments.length) {

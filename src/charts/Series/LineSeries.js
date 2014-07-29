@@ -29,11 +29,17 @@ insight.LineSeries = function LineSeries(name, data, x, y, color) {
 
     /**
      * Whether or not to show circular points on top of the line for each datapoint.
+     * @memberof! insight.LineSeries
+     * @instance
+     * @returns {boolean} - To stack or not to stack.
      *
-     * If no arguments are given, then this returns whether the points are currently displayed. Otherwise, it sets the offset to the supplied argument.
-     * @memberof insight.LineSeries
-     * @param {object} [value] Whether points should be displayed.
-     * @returns {*} - If no arguments are supplied, returns whether the points are currently displayed. Otherwise returns this.
+     * @also
+     *
+     * Sets whether or not to show circular points on top of the line for each datapoint.
+     * @memberof! insight.LineSeries
+     * @instance
+     * @param {boolean} showPoints Whether or not to show circular points on top of the line for each datapoint.
+     * @returns {this}
      */
     this.showPoints = function(value) {
         if (!arguments.length) {

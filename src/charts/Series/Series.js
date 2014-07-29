@@ -66,7 +66,8 @@ insight.Series = function Series(name, data, x, y, color) {
      * The function used to retrieve the x-value to plot on a chart from the data object.
      *
      * If no arguments are given, then this returns the current keyFunction. Otherwise, it sets the keyFunction to the supplied argument.
-     * @memberof insight.Series
+     * @memberof! insight.Series
+     * @instance
      * @param {function} [keyFunc] The new key function to use to extract the x-value from a data object.
      * @returns {*} - If no arguments are supplied, returns the current keyFunction. Otherwise returns this.
      */
@@ -83,7 +84,8 @@ insight.Series = function Series(name, data, x, y, color) {
      * The function used to retrieve the y-value to plot on a chart from the data object.
      *
      * If no arguments are given, then this returns the current valueFunction. Otherwise, it sets the valueFunction to the supplied argument.
-     * @memberof insight.Series
+     * @memberof! insight.Series
+     * @instance
      * @param {function} [valueFunc] The new key function to use to extract the y-value from a data object.
      * @returns {*} - If no arguments are supplied, returns the current valueFunction. Otherwise returns this.
      */
@@ -98,7 +100,8 @@ insight.Series = function Series(name, data, x, y, color) {
 
     /**
      * This method returns the array of data objects used to plot this Series.
-     * @memberof insight.Series
+     * @memberof! insight.Series
+     * @instance
      * @returns {object[]} - The data set to be used by the series
      */
     this.dataset = function() {
@@ -147,14 +150,19 @@ insight.Series = function Series(name, data, x, y, color) {
         return this;
     };
 
-
     /**
-     * This method gets or sets the tooltip offset, which moves the tooltip for this series relative to its default point.
+     * The distance to which move the tooltip for this series relative to its default point.
+     * @memberof! insight.ColumnSeries
+     * @instance
+     * @returns {object} - The {x,y} offset to place the tooltip from the point.
      *
-     * If no arguments are given, then this returns the current tooltip offset. Otherwise, it sets the offset to the supplied argument.
-     * @memberof insight.Series
-     * @param {object} [value] The new {x,y} offset point.
-     * @returns {*} - If no arguments are supplied, returns the current tooltip offset. Otherwise returns this.
+     * @also
+     *
+     * Sets the distance to which move the tooltip for this series relative to its default point.
+     * @memberof! insight.ColumnSeries
+     * @instance
+     * @param {object} offset The new distance to which move the tooltip for this series relative to its default point.
+     * @returns {this}
      */
     this.tooltipOffset = function(value) {
         if (!arguments.length) {
@@ -315,7 +323,8 @@ insight.Series = function Series(name, data, x, y, color) {
 
     /**
      * Extracts the minimum value on an axis for this series.
-     * @memberof insight.Series
+     * @memberof! insight.Series
+     * @instance
      * @param scale The corresponding x or y axis
      * @returns {Number} - The minimum value within the range of the values for this series on the given axis.
      */
@@ -331,7 +340,8 @@ insight.Series = function Series(name, data, x, y, color) {
 
     /**
      * Extracts the maximum value on an axis for this series.
-     * @memberof insight.Series
+     * @memberof! insight.Series
+     * @instance
      * @param scale The corresponding x or y axis
      * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
      */

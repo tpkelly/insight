@@ -36,9 +36,17 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
 
     /**
      * The function to extract the radius of each bubble from the data objects.
-     * @memberof insight.BubbleSeries
-     * @param {function} [radiusFunc] The new radius function to use to extract the radius from a data object.
-     * @returns {*} - If no arguments are supplied, returns the current radiusFunction. Otherwise returns this.
+     * @memberof! insight.BubbleSeries
+     * @instance
+     * @returns {function} - The current function used to determine the radius of data objects.
+     *
+     * @also
+     *
+     * Sets the function to extract the radius of each bubble from the data objects.
+     * @memberof! insight.BubbleSeries
+     * @instance
+     * @param {boolean} reversed The new function to extract the radius of each bubble from the data objects.
+     * @returns {this}
      */
     this.radiusFunction = function(radiusFunc) {
         if (!arguments.length) {

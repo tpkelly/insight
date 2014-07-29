@@ -97,13 +97,18 @@
             // Public methods
 
             /**
-             * This method gets or sets the properties of the DataSet to use as columns.
-             * The properties array contains objects of the form {label:... , value:... }.
+             * The properties of the DataSet to use as columns.
+             * @memberof! insight.Table
+             * @instance
+             * @returns {object} - The current properties used as columns, of the form {'label':... , 'value':... }.
              *
-             * If no arguments are given, then this returns the current column properties. Otherwise, it sets the properties to the supplied argument.
-             * @memberof insight.Table
-             * @param {object[]} [columnProperties] An array of {label: , value: } objects.
-             * @returns {*} - If no arguments are supplied, returns the current column properties. Otherwise returns this.
+             * @also
+             *
+             * Sets the properties of the DataSet to use as columns.
+             * @memberof! insight.Table
+             * @instance
+             * @param {object} columnProperties The new properties to use as columns, of the form {'label':... , 'value':... }.
+             * @returns {this}
              */
             this.columns = function(value) {
                 if (!arguments.length) {
@@ -115,7 +120,8 @@
 
             /**
              * This method adds an ascending sort to this Table's rows using the provided function as a comparison
-             * @memberof insight.Table
+             * @memberof! insight.Table
+             * @instance
              * @param {function} sortFunction A function extracting the property to sort on from a data object.
              * @returns {object} this Returns the Table object
              */
@@ -129,7 +135,8 @@
 
             /**
              * Adds a descending sort to this Table's rows using the provided function as a comparison
-             * @memberof insight.Table
+             * @memberof! insight.Table
+             * @instance
              * @param {function} sortFunction A function extracting the property to sort on from a data object.
              * @returns {object} this Returns the Table object.
              */
@@ -141,12 +148,18 @@
             };
 
             /**
-             * This method gets or sets the number of rows to display.  Used in combination with ascending() or descending() to display top or bottom data.
+             * The number of rows to display. Used in combination with ascending() or descending() to display top or bottom data.
+             * @memberof! insight.Table
+             * @instance
+             * @returns {Number} - The maximum number of top values being displayed.
              *
-             * If no arguments are given, then this returns the maximum number of top values being displayed. Otherwise, it sets the number to the supplied argument.
-             * @memberof insight.Table
-             * @param {int} [topValueCount] How many values to display in the Table.
-             * @returns {*} - If no arguments are supplied, returns the maximum number of top values being displayed. Otherwise returns this.
+             * @also
+             *
+             * Sets the number of rows to display. Used in combination with ascending() or descending() to display top or bottom data.
+             * @memberof! insight.Table
+             * @instance
+             * @param {Number} topValueCount How many values to display in the Table.
+             * @returns {this}
              */
             this.top = function(top) {
                 if (!arguments.length) {

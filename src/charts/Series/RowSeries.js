@@ -34,7 +34,8 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
     /*
      * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
      * This function is mapped across the entire data array by the findMax method.
-     * @memberof insight.RowSeries
+     * @memberof! insight.RowSeries
+     * @instance
      * @param {object} data - An item in the object array to query
      * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
      */
@@ -60,7 +61,8 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
 
     /**
      * Extracts the maximum value on an axis for this series.
-     * @memberof insight.RowSeries
+     * @memberof! insight.RowSeries
+     * @instance
      * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
      */
     this.findMax = function() {
@@ -69,14 +71,19 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
         return max;
     };
 
-
     /**
      * Determines whether the series should stack rows, or line them up side-by-side.
+     * @memberof! insight.RowSeries
+     * @instance
+     * @returns {boolean} - To stack or not to stack.
      *
-     * If no arguments are given, then this returns whether the series is stacked. Otherwise, it sets the stacking to the supplied argument.
-     * @memberof insight.RowSeries
-     * @param {boolean} [stack] To stack or not to stack
-     * @returns {*} - If no arguments are supplied, returns whether the series is currently stacked. Otherwise returns this.
+     * @also
+     *
+     * Sets whether the series should stack rows, or line them up side-by-side.
+     * @memberof! insight.RowSeries
+     * @instance
+     * @param {boolean} stacked Whether the row series should be stacked.
+     * @returns {this}
      */
     this.stacked = function(_) {
         if (!arguments.length) {

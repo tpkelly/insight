@@ -60,7 +60,8 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
     /**
      * Extracts the maximum value on an axis for this series.
-     * @memberof insight.ColumnSeries
+     * @memberof! insight.ColumnSeries
+     * @instance
      * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
      */
     this.findMax = function() {
@@ -72,11 +73,17 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
     /**
      * Determines whether the series should stack columns, or line them up side-by-side.
+     * @memberof! insight.ColumnSeries
+     * @instance
+     * @returns {boolean} - To stack or not to stack.
      *
-     * If no arguments are given, then this returns whether the series is stacked. Otherwise, it sets the stacking to the supplied argument.
-     * @memberof insight.ColumnSeries
-     * @param {boolean} [stack] To stack or not to stack
-     * @returns {*} - If no arguments are supplied, returns whether the series is currently stacked. Otherwise returns this.
+     * @also
+     *
+     * Sets whether the series should stack columns, or line them up side-by-side.
+     * @memberof! insight.ColumnSeries
+     * @instance
+     * @param {boolean} stacked Whether the column series should be stacked.
+     * @returns {this}
      */
     this.stacked = function(stack) {
         if (!arguments.length) {

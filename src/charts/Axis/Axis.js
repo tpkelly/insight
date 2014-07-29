@@ -103,7 +103,7 @@ insight.Axis = function Axis(name, scale) {
 
     /**
      * Calculates the maximum value to be used in this axis.
-     * @returns {object} - The largest value in the datasets that use this axis
+     * @returns {Number} - The largest value in the datasets that use this axis
      */
     var findMax = function() {
         var max = 0;
@@ -129,10 +129,18 @@ insight.Axis = function Axis(name, scale) {
     };
 
     /**
-     * Getter/Setter for whether the axis values are displayed in order or not.
-     * @memberof insight.Axis
-     * @param {boolean} [value] The new value to use for whether or not to order the axis.
-     * @returns {*} - If no arguments are supplied, returns whether the axis is currently ordered. Otherwise returns this.
+     * Whether the axis values are displayed in order or not.
+     * @memberof! insight.Axis
+     * @instance
+     * @returns {boolean} - Whether the axis is currently ordered.
+     *
+     * @also
+     *
+     * Sets whether the axis values are displayed in order or not.
+     * @memberof! insight.Axis
+     * @instance
+     * @param {boolean} value Whether or not the axis will be ordered.
+     * @returns {this}
      */
     this.ordered = function(value) {
         if (!arguments.length) {
@@ -160,7 +168,8 @@ insight.Axis = function Axis(name, scale) {
 
     /**
      * This method calculates the domain of values that this axis has, from a minimum to a maximum.
-     * @memberof insight.Axis
+     * @memberof! insight.Axis
+     * @instance
      * @returns {object[]} bounds - An array with two items, for the lower and upper range of this axis
      */
     this.domain = function() {
@@ -180,7 +189,8 @@ insight.Axis = function Axis(name, scale) {
 
     /**
      * This method calculates the output range bound of this axis, taking into account the size and margins of the chart.
-     * @memberof insight.Axis
+     * @memberof! insight.Axis
+     * @instance
      * @returns {int[]} - An array with two items, for the width and height of the axis, respectively.
      */
     this.calculateAxisBounds = function(chart) {
@@ -196,12 +206,19 @@ insight.Axis = function Axis(name, scale) {
     };
 
 
-
     /**
-     * This getter/setter defines whether or not the axis should be drawn on the chart (lines and labels)
-     * @memberof insight.Axis
-     * @param {boolean} value - When used as a setter, this function takes a boolean value that will define whether this axis will be drawn
-     * @returns {*} - If no arguments are supplied, returns whether the axis is currently being displayed. Otherwise returns this.
+     * Whether the axis is drawn on the chart.
+     * @memberof! insight.Axis
+     * @instance
+     * @returns {boolean} - Whether the axis is currently being drawn on the chart.
+     *
+     * @also
+     *
+     * Sets whether the axis is drawn on the chart.
+     * @memberof! insight.Axis
+     * @instance
+     * @param {boolean} displayed Whether or not the axis will be drawn.
+     * @returns {this}
      */
     this.display = function(value) {
         if (!arguments.length) {
@@ -211,11 +228,20 @@ insight.Axis = function Axis(name, scale) {
         return this;
     };
 
+
     /**
-     * This getter/setter defines whether the axis should be drawn at the left/bottom (false) or top/right (true).
-     * @memberof insight.Axis
-     * @param {boolean} value - When used as a setter, this function takes a boolean value that will define where the axis is drawn.
-     * @returns {*} - If no arguments are supplied, returns whether the axis is currently reversed. Otherwise returns this.
+     * Whether the axis is drawn in a reversed position.
+     * @memberof! insight.Axis
+     * @instance
+     * @returns {boolean} - Whether the axis is drawn at the bottom/left (false) or top/right (true).
+     *
+     * @also
+     *
+     * Sets whether the axis is drawn in a reversed position.
+     * @memberof! insight.Axis
+     * @instance
+     * @param {boolean} reversed Whether the axis is drawn at the bottom/left (false) or top/right (true).
+     * @returns {this}
      */
     this.reversed = function(value) {
         if (!arguments.length) {
@@ -244,11 +270,20 @@ insight.Axis = function Axis(name, scale) {
         return this;
     };
 
+
     /**
-     * This getter/setter defines the color used by the axis labels and lines
-     * @memberof insight.Axis
-     * @param {object} color - When used as a setter, this function can take a string color (hex, named or "rgb(r,g,b)") or a function that returns the color of the axis.
-     * @returns {*} - If no arguments are supplied, returns the current color of the axis line. Otherwise returns this.
+     * The color of the axis labels and lines.
+     * @memberof! insight.Axis
+     * @instance
+     * @returns {Color} - The color of the axis labels and lines.
+     *
+     * @also
+     *
+     * Sets the color of the axis labels and lines.
+     * @memberof! insight.Axis
+     * @instance
+     * @param {Color} color The new color of the axis labels and lines.
+     * @returns {this}
      */
     this.color = function(color) {
         if (!arguments.length) {
@@ -367,10 +402,18 @@ insight.Axis = function Axis(name, scale) {
     };
 
     /**
-     * This getter/setter defines whether gridlines are displayed for the axis.
-     * @memberof insight.Axis
-     * @param {object} [showLines] - When used as a setter, this function can take a boolean of whether to display the gridlines (true) or hide them (false).
-     * @returns {*} - If no arguments are supplied, returns whether the axis currently has gridlines. Otherwise returns this.
+     * Whether the axis has gridlines drawn from its major ticks.
+     * @memberof! insight.Axis
+     * @instance
+     * @returns {boolean} - Whether the axis has gridlines drawn from its major ticks.
+     *
+     * @also
+     *
+     * Sets whether the axis has gridlines drawn from its major ticks.
+     * @memberof! insight.Axis
+     * @instance
+     * @param {boolean} reversed Whether the axis has gridlines drawn from its major ticks.
+     * @returns {this}
      */
     this.showGridlines = function(showLines) {
         if (!arguments.length) {
