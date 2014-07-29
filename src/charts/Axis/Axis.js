@@ -49,7 +49,7 @@ insight.Axis = function Axis(name, scale) {
 
     // private functions
 
-    /**
+    /*
      * The default axis tick format, just returns the input
      * @returns {object} tickPoint - The axis data for a particular tick
      * @param {object} ticklabel - The output string to be displayed
@@ -58,7 +58,7 @@ insight.Axis = function Axis(name, scale) {
         return d;
     };
 
-    /**
+    /*
      * This method calculates the scale ranges for this axis, given a range type function and using the calculated output bounds for this axis.
      * @param {rangeType} rangeType - a d3 range function, which can either be in bands (for columns) or a continuous range
      */
@@ -81,7 +81,7 @@ insight.Axis = function Axis(name, scale) {
         return this;
     };
 
-    /**
+    /*
      * For an ordinal/categorical axis, this method queries all series that use this axis to get the list of available values
      * @returns {object[]} values - the values for this ordinal axis
      */
@@ -97,7 +97,7 @@ insight.Axis = function Axis(name, scale) {
         return vals;
     };
 
-    /**
+    /*
      * For linear series, this method is used to calculate the maximum value to be used in this axis.
      * @returns {Date} max - The largest value in the datasets that use this axis
      */
@@ -114,7 +114,7 @@ insight.Axis = function Axis(name, scale) {
     };
 
 
-    /**
+    /*
      * For time series, this method is used to calculate the minimum value to be used in this axis.
      * @returns {Date} minTime - The smallest time in the datasets that use this axis
      */
@@ -130,7 +130,7 @@ insight.Axis = function Axis(name, scale) {
     };
 
 
-    /**
+    /*
      * For time series, this method is used to calculate the maximum value to be used in this axis.
      * @returns {Date} minTime - The largest time in the datasets that use this axis
      */
@@ -223,15 +223,15 @@ insight.Axis = function Axis(name, scale) {
 
 
     /**
-     * This method returns a boolean value representing if this Axis is zoomable
+     * Returns a boolean value representing if this Axis is zoomable.
      * @instance
      * @memberof! insight.Axis
-     * @returns {boolean} zoomable - Is this Axis zoomable
+     * @returns {boolean}
      * @also
-     * This method sets the zoomable status of this Axis.  A zoomable Axis allows drag and zoom operations, and is not redrawn automatically on the draw() event of a chart.
+     * Sets the zoomable status of this Axis.  A zoomable Axis allows drag and zoom operations, and is not redrawn automatically on the draw() event of a chart.
      * @instance
      * @memberof! insight.Axis
-     * @returns {this} this - The Axis object
+     * @returns {this} this
      * @param {boolean} value - A true/false value to set this Axis as zoomable or not.
      */
     this.zoomable = function(value) {
@@ -244,16 +244,12 @@ insight.Axis = function Axis(name, scale) {
     };
 
     /**
-     * This method returns a boolean value representing whether this Axis will be drawn on the Chart, or just used as a scale.
-     * @instance
-     * @memberof! insight.Axis
-     * @returns {boolean} display - true/false for whether this Axis will be drawn
-     * @also
-     * This method sets whether or not this Axis will be drawn on the Chart, or just used as a scale.
-     * @instance
-     * @memberof! insight.Axis
-     * @returns {this} this - The Axis object
-     * @param {boolean} value - A true/false value to display this Axis (gridlines, ticks and labels etc.)
+     * This getter/setter defines whether or not the axis should be drawn on the chart (lines and labels)
+     * @returns {function}
+     */
+    /**
+     * @param {boolean} value - When used as a setter, this function takes a boolean value that will define whether this axis will be drawn
+     * @returns {this}
      */
     this.display = function(value) {
         if (!arguments.length) {
