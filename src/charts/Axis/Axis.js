@@ -133,7 +133,7 @@ insight.Axis = function Axis(name, scale) {
 
     /**
      * Whether or not the axis is displayed horizontally (true) or vertically (false).
-     * @memberof insight.Axis
+     * @memberof! insight.Axis
      * @returns {boolean} - Whether the axis is horizontal.
      */
     this.horizontal = function() {

@@ -131,18 +131,6 @@
             };
 
 
-
-            this.recalculateScales = function() {
-                scales.map(function(scale) {
-                    // don't resize the scale that is being dragged/zoomed, it is done automatically by d3
-                    var notZoomScale = zoomAxis != scale;
-
-                    if (notZoomScale) {
-                        scale.initialize();
-                    }
-                });
-            };
-
             /**
              * Enable zooming for an axis on this chart
              * @memberof! insight.Chart
