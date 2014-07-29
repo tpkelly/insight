@@ -34,18 +34,6 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
 
 
     /**
-     * RowSeries overrides the standard key function used by most, vertical charts.
-     * @memberof insight.RowSeries
-     * @param {function} orderFunction - An optional comparator function to use if sorting is wanted on the list of keys
-     * @returns {object[]} return - The keys along the domain axis for this row series
-     */
-    this.keys = function(orderFunction) {
-        return self.dataset(orderFunction)
-            .map(self.keyFunction());
-    };
-
-
-    /**
      * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
      * This function is mapped across the entire data array by the findMax method.
      * @memberof! insight.RowSeries
@@ -133,7 +121,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
 
     this.xPosition = function(d) {
 
-        var func = self.currentSeries.accessor;
+        var func = self.currentSeries.valueFunction;
 
         var position = self.stacked() ? self.x.scale(self.calculateXPos(func, d)) : 0;
 
@@ -161,7 +149,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
     };
 
     this.barWidth = function(d) {
-        var func = self.currentSeries.accessor;
+        var func = self.currentSeries.valueFunction;
 
         return self.x.scale(func(d));
     };
@@ -207,7 +195,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
 
         var groups = chart.plotArea
             .selectAll(groupSelector)
-            .data(data, this.keyAccessor);
+            .data(data, this.keyvalueFunction);
 
 
         var newGroups = groups.enter()
@@ -229,7 +217,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
             this.currentSeries = this.series[seriesIndex];
 
             seriesName = this.currentSeries.name;
-            seriesFunctions[seriesName] = this.currentSeries.accessor;
+            seriesFunctions[seriesName] = this.currentSeries.valueFunction;
 
             var seriesSelector = '.' + seriesName + 'class.' + insight.Constants.BarClass;
 

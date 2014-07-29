@@ -45,8 +45,13 @@ insight.Series = function Series(name, data, x, y, color) {
         return d.value;
     };
 
+    // default x and y to vertical.  Series can override this if needed in their constructors.
     var xFunction = function(d) {
-        return d.key;
+        return d.x;
+    };
+
+    var yFunction = function(d) {
+        return d.y;
     };
 
     var tooltipFormat = function(d) {
@@ -202,6 +207,16 @@ insight.Series = function Series(name, data, x, y, color) {
         xFunction = _;
 
         return this;
+    };
+
+    this.yFunction = function(_) {
+        if (!arguments.length) {
+            return yFunction;
+        }
+        yFunction = _;
+
+        return this;
+
     };
 
     /**

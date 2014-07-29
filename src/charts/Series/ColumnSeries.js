@@ -33,7 +33,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
 
     var tooltipFunction = function(d) {
-        var func = self.currentSeries.accessor;
+        var func = self.currentSeries.valueFunction;
         return self.tooltipFormat()(func(d));
     };
 
@@ -124,7 +124,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
     this.yPosition = function(d) {
 
-        var func = self.currentSeries.accessor;
+        var func = self.currentSeries.valueFunction;
 
         var position = self.stackedBars() ? self.y.scale(self.calculateYPos(func, d)) : self.y.scale(func(d));
 
@@ -213,7 +213,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
         var newBars = newGroups.selectAll(barSelector);
 
         var barHeight = function(d) {
-            var func = self.currentSeries.accessor;
+            var func = self.currentSeries.valueFunction;
 
             return (chart.height() - chart.margin()
                 .top - chart.margin()
@@ -225,7 +225,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
             self.currentSeries = self.series[seriesIndex];
 
             seriesName = self.currentSeries.name;
-            seriesFunctions[seriesName] = self.currentSeries.accessor;
+            seriesFunctions[seriesName] = self.currentSeries.valueFunction;
 
             var seriesSelector = '.' + seriesName + 'class.' + insight.Constants.BarClass;
 

@@ -17,22 +17,12 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
 
     this.classValues = [insight.Constants.Bubble];
 
-    var xFunction = function(d) {
-        return d.x;
-    };
-
-    var yFunction = function(d) {
-        return d.y;
-    };
 
     this.rangeY = function(d) {
-        var f = self.yFunction();
-
         return self.y.scale(self.yFunction()(d));
     };
 
     this.rangeX = function(d, i) {
-        var f = self.xFunction();
         return self.x.scale(self.xFunction()(d));
     };
 
@@ -59,6 +49,23 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
         return this;
     };
 
+    /**
+     * This method is called when any post aggregation calculations, provided by the computeFunction() setter, need to be recalculated.
+     * @memberof insight.BubbleSeries
+     * @instance
+     * @param {insight.Scale} scale - a scale parameter to check if the values should be taken from x or y functions.
+     * @returns {object} - the maximum value for the series on the provided axis
+     */
+    this.findMax = function(scale) {
+        var self = this;
+
+        var data = this.dataset();
+
+        var func = scale == self.x ? self.xFunction() : self.yFunction();
+
+        return d3.max(data, func);
+    };
+
 
     this.bubbleData = function(data) {
         var max = d3.max(data, radiusFunction);
@@ -68,8 +75,8 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
         };
 
         //Minimum of pixels-per-axis-unit
-        var xValues = data.map(xFunction);
-        var yValues = data.map(yFunction);
+        var xValues = data.map(self.xFunction());
+        var yValues = data.map(self.yFunction());
         var xBounds = this.x.bounds[1];
         var yBounds = this.y.bounds[0];
         var maxRad = Math.min(xBounds / 10, yBounds / 10);
