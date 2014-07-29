@@ -87,6 +87,20 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
         return this;
     };
 
+    /**
+     * The width of the marker, as a proportion of the column width.
+     * @memberof! insight.MarkerSeries
+     * @instance
+     * @returns {Number} - The current width proportion.
+     *
+     * @also
+     *
+     * Sets the width of the marker, as a proportion of the column width.
+     * @memberof! insight.MarkerSeries
+     * @instance
+     * @param {Number} widthProportion The new width proportion.
+     * @returns {this}
+     */
     this.widthFactor = function(_) {
 
         if (!arguments.length) {

@@ -62,11 +62,11 @@ insight.Series = function Series(name, data, x, y, color) {
         return tooltipFormat(tooltipAccessor(d));
     };
 
-    /**
+    /*
      * This function is used when individual chart items are being drawn, to check whether they should be marked as selected or not.
      * @memberof insight.Series
      * @returns {string} selectionClass - A string that is used by CSS highlighting to style the chart item.
-     * @param {string[]} selectedItems - A list of CSS selectors for currently selected items
+     * @param {string[]}selectedItems - A list of CSS selectors for currently selected items
      * @param {string} selector - The selector for the item being drawn
      */
     var selectedClassName = function(selectedItems, selector) {
@@ -80,11 +80,11 @@ insight.Series = function Series(name, data, x, y, color) {
     };
 
 
-    /**
-     * This function generates the base class name to be used for items in this series.  It can be extended upon by individual items to show
+    /*
+     * This function generates the base class name to be used for items in this series.It can be extended upon by individual items to show
      * if they are selected or to mark them out in other ways.
      * @memberof insight.Series
-     * @returns {string} baseClassName - A root value for the class attribute used for items in this Series.
+     * @returns {string} baseClassName - A root valuefor the class attribute used for items in this Series.
      */
     this.seriesClassName = function() {
 
@@ -95,11 +95,11 @@ insight.Series = function Series(name, data, x, y, color) {
     };
 
 
-    /**
+    /*
      * This function constructs the text for the class attribute for a specific data point, using the base value for this Series and any additional values.
      * @memberof insight.Series
      * @param {object} dataItem - The data item being drawn
-     * @param {string[]} additionalClasses - Any additional values this Series needs appending to the class value.  Used by stacked Series to differentiate between Series.
+     * @param {string[]} additionalClasses - Any additional values this Series needs appending to the class value.Used by stacked Series to differentiate between Series.
      * @returns {string} classValue - A class value for a particular data item being bound in this Series.
      */
     this.itemClassName = function(dataItem, additionalClasses) {
@@ -114,27 +114,57 @@ insight.Series = function Series(name, data, x, y, color) {
 
     // Public methods
 
-    this.keyFunction = function(_) {
+    /**
+     * The function used to retrieve the x-value from the data object to plot on a chart.
+     * @memberof! insight.Series
+     * @instance
+     * @returns {function} The current function used to extract the x-value.
+     *
+     * @also
+     *
+     * Sets the function used to retrieve the x-value from the data object to plot on a chart.
+     * @memberof! insight.Series
+     * @instance
+     * @param {function} keyFunc The new key function to use to extract the x-value from a data object.
+     * @returns {this}
+     */
+    this.keyFunction = function(keyFunc) {
         if (!arguments.length) {
             return keyFunction;
         }
-        keyFunction = _;
-
-        return this;
-    };
-
-    this.valueFunction = function(_) {
-        if (!arguments.length) {
-            return valueFunction;
-        }
-        valueFunction = _;
+        keyFunction = keyFunc;
 
         return this;
     };
 
     /**
-     * This method returns the data set used by this Series.
-     * @returns {object[]} dataset - The data set to be used by the series
+     * The function used to retrieve the y-value from the data object to plot on a chart.
+     * @memberof! insight.Series
+     * @instance
+     * @returns {function} The current function used to extract the y-value.
+     *
+     * @also
+     *
+     * Sets the function used to retrieve the y-value from the data object to plot on a chart.
+     * @memberof! insight.Series
+     * @instance
+     * @param {function} valueFunc The new key function to use to extract the y-value from a data object.
+     * @returns {this}
+     */
+    this.valueFunction = function(valueFunc) {
+        if (!arguments.length) {
+            return valueFunction;
+        }
+        valueFunction = valueFunc;
+
+        return this;
+    };
+
+    /**
+     * This method returns the array of data objects used to plot this Series.
+     * @memberof! insight.Series
+     * @instance
+     * @returns {object[]} - The data set to be used by the series
      */
     this.dataset = function() {
 
@@ -176,16 +206,19 @@ insight.Series = function Series(name, data, x, y, color) {
         return this;
     };
 
-
     /**
-     * This method gets or sets the tooltip offset, which moves the tooltip for this series relative to its default point.
-     * @memberof insight.Series
-     * @returns {object} offset - An {x,y} offset point object
-     */
-    /**
-     * @memberof insight.Series
-     * @returns {object} this - this
-     * @param {object} value - An {x,y} offset point
+     * The distance to which move the tooltip for this series relative to its default point.
+     * @memberof! insight.Series
+     * @instance
+     * @returns {object} - The {x,y} offset to place the tooltip from the point.
+     *
+     * @also
+     *
+     * Sets the distance to which move the tooltip for this series relative to its default point.
+     * @memberof! insight.Series
+     * @instance
+     * @param {object} offset The new distance to which move the tooltip for this series relative to its default point.
+     * @returns {this}
      */
     this.tooltipOffset = function(value) {
         if (!arguments.length) {
@@ -196,7 +229,7 @@ insight.Series = function Series(name, data, x, y, color) {
         return this;
     };
 
-    /**
+    /*
      * This method creates the tooltip for this Series, checking if it exists already first.
      * @memberof insight.Series
      * @param {DOMElement} container - The DOM Element that the tooltip should be drawn inside.
@@ -209,7 +242,7 @@ insight.Series = function Series(name, data, x, y, color) {
         }
     };
 
-    /**
+    /*
      * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouse over. Tooltips are shown and CSS updated.
      * The *this* context will reference the DOMElement raising the event.
      * @memberof insight.Series
@@ -229,7 +262,7 @@ insight.Series = function Series(name, data, x, y, color) {
             .classed('active', true);
     };
 
-    /**
+    /*
      * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouseout event. Tooltips are hidden and CSS updated.
      * The *this* context will reference the DOMElement raising the event.
      * @memberof insight.Series
@@ -349,20 +382,38 @@ insight.Series = function Series(name, data, x, y, color) {
         return maxDimensions;
     };
 
-
-    this.findMax = function(scale) {
+    /**
+     * Extracts the minimum value on an axis for this series.
+     * @memberof! insight.Series
+     * @instance
+     * @param scale The corresponding x or y axis
+     * @returns {Number} - The minimum value within the range of the values for this series on the given axis.
+     */
+    this.findMin = function(scale) {
         var self = this;
 
-        var max = 0;
         var data = this.dataset();
 
         var func = scale == self.x ? self.keyFunction() : self.valueFunction();
 
-        var m = d3.max(data, func);
+        return d3.min(data, func);
+    };
 
-        max = m > max ? m : max;
+    /**
+     * Extracts the maximum value on an axis for this series.
+     * @memberof! insight.Series
+     * @instance
+     * @param scale The corresponding x or y axis
+     * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
+     */
+    this.findMax = function(scale) {
+        var self = this;
 
-        return max;
+        var data = this.dataset();
+
+        var func = scale == self.x ? self.keyFunction() : self.valueFunction();
+
+        return d3.max(data, func);
     };
 
     this.draw = function(chart, drag) {};

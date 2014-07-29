@@ -97,9 +97,25 @@ insight.Axis = function Axis(name, scale) {
         return vals;
     };
 
-    /*
-     * For linear series, this method is used to calculate the maximum value to be used in this axis.
-     * @returns {Date} max - The largest value in the datasets that use this axis
+    /**
+     * Calculates the minimum value to be used in this axis.
+     * @returns {object} - The smallest value in the datasets that use this axis
+     */
+    var findMin = function() {
+        var min = Number.MAX_VALUE;
+
+        self.series.map(function(series) {
+            var m = series.findMin(self);
+
+            min = m < min ? m : min;
+        });
+
+        return min;
+    };
+
+    /**
+     * Calculates the maximum value to be used in this axis.
+     * @returns {object} - The largest value in the datasets that use this axis
      */
     var findMax = function() {
         var max = 0;
@@ -113,52 +129,31 @@ insight.Axis = function Axis(name, scale) {
         return max;
     };
 
+    // public functions
 
-    /*
-     * For time series, this method is used to calculate the minimum value to be used in this axis.
-     * @returns {Date} minTime - The smallest time in the datasets that use this axis
+    /**
+     * Whether or not the axis is displayed horizontally (true) or vertically (false).
+     * @memberof! insight.Axis
+     * @returns {boolean} - Whether the axis is horizontal.
      */
-    var minTime = function() {
-        // start at the largest time, and work back from there to find the minimum
-        var minTime = new Date(8640000000000000);
-
-        self.series.map(function(series) {
-            var cMin = d3.min(series.keys());
-            minTime = cMin < minTime ? cMin : minTime;
-        });
-        return minTime;
-    };
-
-
-    /*
-     * For time series, this method is used to calculate the maximum value to be used in this axis.
-     * @returns {Date} minTime - The largest time in the datasets that use this axis
-     */
-    var maxTime = function() {
-        // start at the smallest time, and work back from there to find the minimum
-        var maxTime = new Date(-8640000000000000);
-
-        self.series.map(function(series) {
-            var cMax = d3.max(series.keys());
-            maxTime = cMax > maxTime ? cMax : maxTime;
-        });
-
-        return maxTime;
-    };
-
-
-    // public functions 
-
-
     this.horizontal = function() {
         return this.direction == 'h';
     };
 
-    this.vertical = function() {
-        return this.direction == 'v';
-    };
-
-
+    /**
+     * Whether the axis values are displayed in order or not.
+     * @memberof! insight.Axis
+     * @instance
+     * @returns {boolean} - Whether the axis is currently ordered.
+     *
+     * @also
+     *
+     * Sets whether the axis values are displayed in order or not.
+     * @memberof! insight.Axis
+     * @instance
+     * @param {boolean} value Whether or not the axis will be ordered.
+     * @returns {this}
+     */
     this.ordered = function(value) {
         if (!arguments.length) {
             return ordered();
@@ -175,7 +170,6 @@ insight.Axis = function Axis(name, scale) {
         return this;
     };
 
-
     this.addSeries = function(series) {
         this.series.push(series);
     };
@@ -186,7 +180,8 @@ insight.Axis = function Axis(name, scale) {
 
     /**
      * This method calculates the domain of values that this axis has, from a minimum to a maximum.
-     * @memberof insight.Axis
+     * @memberof! insight.Axis
+     * @instance
      * @returns {object[]} bounds - An array with two items, for the lower and upper range of this axis
      */
     this.domain = function() {
@@ -197,7 +192,7 @@ insight.Axis = function Axis(name, scale) {
         } else if (this.scaleType == insight.Scales.Ordinal.name) {
             domain = findOrdinalValues();
         } else if (this.scaleType == insight.Scales.Time.name) {
-            domain = [minTime(), maxTime()];
+            domain = [new Date(findMin()), new Date(findMax())];
         }
 
         return domain;
@@ -206,8 +201,9 @@ insight.Axis = function Axis(name, scale) {
 
     /**
      * This method calculates the output range bound of this axis, taking into account the size and margins of the chart.
-     * @memberof insight.Axis
-     * @returns {int[]} bounds - An array with two items, for the width and height of the axis, respectively.
+     * @memberof! insight.Axis
+     * @instance
+     * @returns {int[]} - An array with two items, for the width and height of the axis, respectively.
      */
     this.calculateAxisBounds = function(chart) {
         var bounds = [];
@@ -227,12 +223,14 @@ insight.Axis = function Axis(name, scale) {
      * @instance
      * @memberof! insight.Axis
      * @returns {boolean}
+     *
      * @also
+     *
      * Sets the zoomable status of this Axis.  A zoomable Axis allows drag and zoom operations, and is not redrawn automatically on the draw() event of a chart.
      * @instance
      * @memberof! insight.Axis
-     * @returns {this} this
      * @param {boolean} value - A true/false value to set this Axis as zoomable or not.
+     * @returns {this}
      */
     this.zoomable = function(value) {
         if (!arguments.length) {
@@ -244,11 +242,17 @@ insight.Axis = function Axis(name, scale) {
     };
 
     /**
-     * This getter/setter defines whether or not the axis should be drawn on the chart (lines and labels)
-     * @returns {function}
-     */
-    /**
-     * @param {boolean} value - When used as a setter, this function takes a boolean value that will define whether this axis will be drawn
+     * Whether the axis is drawn on the chart.
+     * @memberof! insight.Axis
+     * @instance
+     * @returns {boolean} - Whether the axis is currently being drawn on the chart.
+     *
+     * @also
+     *
+     * Sets whether the axis is drawn on the chart.
+     * @memberof! insight.Axis
+     * @instance
+     * @param {boolean} displayed Whether or not the axis will be drawn.
      * @returns {this}
      */
     this.display = function(value) {
@@ -259,6 +263,21 @@ insight.Axis = function Axis(name, scale) {
         return this;
     };
 
+
+    /**
+     * Whether the axis is drawn in a reversed position.
+     * @memberof! insight.Axis
+     * @instance
+     * @returns {boolean} - Whether the axis is drawn at the bottom/left (false) or top/right (true).
+     *
+     * @also
+     *
+     * Sets whether the axis is drawn in a reversed position.
+     * @memberof! insight.Axis
+     * @instance
+     * @param {boolean} reversed Whether the axis is drawn at the bottom/left (false) or top/right (true).
+     * @returns {this}
+     */
     this.reversed = function(value) {
         if (!arguments.length) {
             return reversedPosition;
@@ -286,12 +305,19 @@ insight.Axis = function Axis(name, scale) {
         return this;
     };
 
+
     /**
-     * This getter/setter defines the color used by the axis labels and lines
-     * @returns {function}
-     */
-    /**
-     * @param {object} color - When used as a setter, this function can take a string color (hex, named or "rgb(r,g,b)") or a function that returns the color of the axis.
+     * The color of the axis labels and lines.
+     * @memberof! insight.Axis
+     * @instance
+     * @returns {Color} - The color of the axis labels and lines.
+     *
+     * @also
+     *
+     * Sets the color of the axis labels and lines.
+     * @memberof! insight.Axis
+     * @instance
+     * @param {Color} color The new color of the axis labels and lines.
      * @returns {this}
      */
     this.color = function(color) {
@@ -366,13 +392,6 @@ insight.Axis = function Axis(name, scale) {
         return this;
     };
 
-
-    /**
-     * This method gets/sets the rotation angle used for horizontal axis labels.  Defaults to 90 degrees
-     * @memberof insight.Axis
-     * @returns {object} return - Description
-     * @param {object[]} data - Description
-     */
     this.tickRotationTransform = function() {
         var offset = self.tickPadding() + (self.tickSize() * 2);
         offset = (reversedPosition && self.vertical()) ? 0 - offset : offset;
@@ -392,7 +411,7 @@ insight.Axis = function Axis(name, scale) {
 
             transform += transX + ',' + transY + ')';
 
-        } else if (self.vertical()) {
+        } else {
             var xShift = self.orientation() == 'left' ? 0 : self.bounds[0];
             transform += xShift + ',0)';
         }
@@ -404,10 +423,6 @@ insight.Axis = function Axis(name, scale) {
         return self.scale(d);
     };
 
-    /**
-     * This method positions the text label for the axis (not the tick labels)
-     * @memberof insight.Axis
-     */
     this.positionLabel = function() {
 
         if (self.horizontal()) {
@@ -415,18 +430,24 @@ insight.Axis = function Axis(name, scale) {
                 .style(self.orientation(), 0)
                 .style('width', '100%')
                 .style('text-align', 'center');
-        } else if (self.vertical()) {
+        } else {
             this.labelElement.style(self.orientation(), '0')
                 .style('top', '35%');
         }
     };
 
     /**
-     * This getter/setter defines whether gridlines are displayed for the axis.
-     * @returns {function}
-     */
-    /**
-     * @param {object} showLines - When used as a setter, this function can take a boolean of whether to display the gridlines (true) or hide them (false).
+     * Whether the axis has gridlines drawn from its major ticks.
+     * @memberof! insight.Axis
+     * @instance
+     * @returns {boolean} - Whether the axis has gridlines drawn from its major ticks.
+     *
+     * @also
+     *
+     * Sets whether the axis has gridlines drawn from its major ticks.
+     * @memberof! insight.Axis
+     * @instance
+     * @param {boolean} reversed Whether the axis has gridlines drawn from its major ticks.
      * @returns {this}
      */
     this.showGridlines = function(showLines) {
@@ -477,8 +498,6 @@ insight.Axis = function Axis(name, scale) {
             .style('position', 'absolute')
             .text(this.label());
     };
-
-
 
     this.draw = function(chart, dragging) {
 

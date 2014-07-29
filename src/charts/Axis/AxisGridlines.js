@@ -9,13 +9,31 @@ insight.AxisGridlines = function AxisGridlines(axis) {
     var lineColor = '#777';
     var lineWidth = 1;
 
-    /** Returns the array of all gridlines for this axis. */
+    /** Returns the array of all gridlines for this axis.
+     *
+     * @memberof! insight.AxisGridlines
+     * @instance
+     * @param {Chart} chart The chart to grab the gridlines from.
+     * @return {object[]} - All of the gridlines currently added to this chart.
+     */
     this.allGridlines = function(chart) {
         var gridLineIdentifier = 'line.' + this.parentAxis.label();
         return chart.plotArea.selectAll(gridLineIdentifier);
     };
 
-
+    /** The color of the gridlines.
+     * @memberof! insight.AxisGridlines
+     * @instance
+     * @returns {Color} - The current line color of the gridlines.
+     *
+     * @also
+     *
+     * Sets the color of the gridlines
+     * @memberof! insight.AxisGridlines
+     * @instance
+     * @param {Color} value The new gridline color.
+     * @returns {this}
+     */
     this.lineColor = function(value) {
         if (!arguments.length) {
             return lineColor;
@@ -24,6 +42,19 @@ insight.AxisGridlines = function AxisGridlines(axis) {
         return this;
     };
 
+    /** The width of the gridlines.
+     * @memberof! insight.AxisGridlines
+     * @instance
+     * @returns {Number} - The current line width of the gridlines.
+     *
+     * @also
+     *
+     * Sets the width of the gridlines
+     * @memberof! insight.AxisGridlines
+     * @instance
+     * @param {Number} value The new gridline width.
+     * @returns {this}
+     */
     this.lineWidth = function(value) {
         if (!arguments.length) {
             return lineWidth;
@@ -32,11 +63,6 @@ insight.AxisGridlines = function AxisGridlines(axis) {
         return this;
     };
 
-    /** Draw all gridlines for a given set of ticks
-     *
-     * @param chart The chart to draw the gridlines on.
-     * @param ticks The ticks to create gridlines for.
-     */
     this.drawGridLines = function(chart, ticks) {
         var attributes = {
             'class': this.parentAxis.label(),
