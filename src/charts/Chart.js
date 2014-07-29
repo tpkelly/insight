@@ -75,12 +75,6 @@
                 var axes = xAxes.concat(yAxes);
 
                 axes.map(function(axis) {
-                    var isZoom = zoomAxis == axis;
-
-                    if (!isZoom) {
-                        axis.initializeScale();
-                    }
-
                     axis.draw(self, dragging);
                 });
 
@@ -119,17 +113,14 @@
                 var context = self.measureCanvas.getContext('2d');
                 context.font = "15pt Open Sans Bold";
 
-                var axisLabelSize = context.measureText(self.yAxis()
-                    .label());
-
                 self.container.style('width', self.width() + 'px');
 
                 self.chartSVG
-                    .attr('width', (self.width() + 100))
+                    .attr('width', self.width())
                     .attr('height', self.height());
 
                 self.plotArea = this.plotArea
-                    .attr('transform', 'translate(' + (axisLabelSize.width * 2) + ',' + chartMargin.top + ')');
+                    .attr('transform', 'translate(' + chartMargin.left + ',' + chartMargin.top + ')');
 
                 self.plotArea.select('#' + self.clipPath())
                     .append('rect')
@@ -162,6 +153,7 @@
             this.zoomable = function(axis) {
                 zoomable = true;
                 zoomAxis = axis;
+                axis.zoomable(true);
                 return this;
             };
 

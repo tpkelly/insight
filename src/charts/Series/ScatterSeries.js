@@ -127,7 +127,8 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
 
     this.draw = function(chart, drag) {
 
-        this.initializeTooltip(chart.container.node());
+        self.initializeTooltip(chart.container.node());
+        self.selectedItems = chart.selectedItems;
 
         var duration = drag ? 0 : function(d, i) {
             return 200 + (i * 20);

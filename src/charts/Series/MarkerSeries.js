@@ -144,17 +144,11 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
 
 
 
-    this.className = function(d) {
-        var dimension = insight.Utils.keySelector(d);
-
-        return self.name + 'class bar ' + dimension + " " + self.dimensionName;
-    };
-
-
-
     this.draw = function(chart, drag) {
 
-        this.initializeTooltip(chart.container.node());
+        self.initializeTooltip(chart.container.node());
+        self.selectedItems = chart.selectedItems;
+        self.rootClassName = self.seriesClassName();
 
         var reset = function(d) {
             d.yPos = 0;
@@ -183,7 +177,7 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
         };
 
         newBars = newGroups.append('rect')
-            .attr('class', self.className)
+            .attr('class', self.itemClassName)
             .attr('y', this.y.bounds[0])
             .attr('height', 0)
             .attr('fill', this.color)
@@ -192,7 +186,7 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
             .on('mouseout', this.mouseOut)
             .on('click', click);
 
-        var bars = groups.selectAll('.' + this.name + 'class.bar');
+        var bars = groups.selectAll('.' + this.name + 'class');
 
         bars
             .transition()

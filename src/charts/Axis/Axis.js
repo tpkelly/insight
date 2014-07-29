@@ -14,20 +14,21 @@ insight.Axis = function Axis(name, scale) {
     this.direction = '';
     this.gridlines = new insight.AxisGridlines(this);
 
-    var self = this;
-    var label = name;
-    var ordered = d3.functor(false);
-    var orderingFunction = null;
-    var tickSize = d3.functor(1);
-    var tickPadding = d3.functor(10);
-    var labelRotation = '0';
-    var tickOrientation = d3.functor('lr');
-    var showGridLines = false;
-    var colorFunction = d3.functor('#777');
-    var display = true;
-    var barPadding = d3.functor(0.1);
-    var initialisedAxisView = false;
-    var reversedPosition = false;
+    var self = this,
+        label = name,
+        ordered = d3.functor(false),
+        orderingFunction = null,
+        tickSize = d3.functor(1),
+        tickPadding = d3.functor(10),
+        labelRotation = '0',
+        tickOrientation = d3.functor('lr'),
+        showGridLines = false,
+        colorFunction = d3.functor('#777'),
+        display = true,
+        barPadding = d3.functor(0.1),
+        initialisedAxisView = false,
+        reversedPosition = false,
+        zoomable = false;
 
     var orientation = function() {
         if (self.horizontal()) {
@@ -48,10 +49,19 @@ insight.Axis = function Axis(name, scale) {
 
     // private functions
 
+    /*
+     * The default axis tick format, just returns the input
+     * @returns {object} tickPoint - The axis data for a particular tick
+     * @param {object} ticklabel - The output string to be displayed
+     */
     var format = function(d) {
         return d;
     };
 
+    /*
+     * This method calculates the scale ranges for this axis, given a range type function and using the calculated output bounds for this axis.
+     * @param {rangeType} rangeType - a d3 range function, which can either be in bands (for columns) or a continuous range
+     */
     var applyScaleRange = function(rangeType) {
 
         // x-axis goes from 0 (left) to max (right)
@@ -71,8 +81,10 @@ insight.Axis = function Axis(name, scale) {
         return this;
     };
 
-    // For an ordinal/categorical axis, this method queries all series that use this axis to get the list of available values
-    // TODO - currently just checks the first as I've not had a scenario where different series on the same axis had different ordinal keys.
+    /*
+     * For an ordinal/categorical axis, this method queries all series that use this axis to get the list of available values
+     * @returns {object[]} values - the values for this ordinal axis
+     */
     var findOrdinalValues = function() {
         var vals = [];
 
@@ -103,7 +115,7 @@ insight.Axis = function Axis(name, scale) {
 
     /**
      * Calculates the maximum value to be used in this axis.
-     * @returns {Number} - The largest value in the datasets that use this axis
+     * @returns {object} - The largest value in the datasets that use this axis
      */
     var findMax = function() {
         var max = 0;
@@ -205,6 +217,29 @@ insight.Axis = function Axis(name, scale) {
         return self.bounds;
     };
 
+
+    /**
+     * Returns a boolean value representing if this Axis is zoomable.
+     * @instance
+     * @memberof! insight.Axis
+     * @returns {boolean}
+     *
+     * @also
+     *
+     * Sets the zoomable status of this Axis.  A zoomable Axis allows drag and zoom operations, and is not redrawn automatically on the draw() event of a chart.
+     * @instance
+     * @memberof! insight.Axis
+     * @param {boolean} value - A true/false value to set this Axis as zoomable or not.
+     * @returns {this}
+     */
+    this.zoomable = function(value) {
+        if (!arguments.length) {
+            return zoomable;
+        }
+        zoomable = value;
+
+        return this;
+    };
 
     /**
      * Whether the axis is drawn on the chart.
@@ -466,14 +501,21 @@ insight.Axis = function Axis(name, scale) {
 
     this.draw = function(chart, dragging) {
 
+        // Scale range and bounds need to be initialized regardless of whether the axis will be displayed
+
+        this.calculateAxisBounds(chart);
+
+        if (!this.zoomable()) {
+            this.initializeScale();
+        }
+
         if (!this.display()) {
             return;
         }
 
-        //Update bounds
-        this.calculateAxisBounds(chart);
-
         this.setupAxisView(chart);
+
+        var animationDuration = dragging ? 0 : 200;
 
         this.axis = d3.svg.axis()
             .scale(this.scale)
@@ -485,6 +527,8 @@ insight.Axis = function Axis(name, scale) {
         this.axisElement
             .attr('transform', self.axisPosition())
             .style('stroke', self.color())
+            .transition()
+            .duration(animationDuration)
             .call(this.axis);
 
         this.axisElement

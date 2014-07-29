@@ -76,6 +76,7 @@ describe('Column Series Tests', function() {
 
         var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
         var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
 
@@ -192,5 +193,69 @@ describe('Column Series Tests', function() {
 
         expect(max).toBe(20.857142857142858);        
     });
+    
+    it('ColumnSeries root css is correct', function() {
+        
+        //Given 
 
+        var data = new insight.DataSet(dataset);
+
+        var chart = new insight.Chart('Chart 1', '#chart1');
+                
+        var group =  data.group('country', function(d){return d.Country;})
+                         .mean(['Age']);
+
+        var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
+        var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        
+        chart.addXAxis(xScale);
+        chart.addYAxis(yScale);
+
+        var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale, 'silver')
+                                .valueFunction(function(d){ return d.Country; });
+
+        // Then
+        var actualData = series.seriesClassName();
+        var expectedData = 'countryColumnclass bar';
+
+        expect(actualData).toBe(expectedData);
+
+    });
+
+    it('ColumnSeries item css is correct', function() {
+        
+        //Given 
+
+        var data = new insight.DataSet(dataset);
+
+        var chart = new insight.Chart('Chart 1', '#chart1');
+                
+        var group =  data.group('country', function(d){return d.Country;})
+                         .mean(['Age']);
+
+        var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
+        var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        
+        chart.addXAxis(xScale);
+        chart.addYAxis(yScale);
+
+        var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale, 'silver')
+                                .valueFunction(function(d){ return d.Country; });
+        // When 
+        
+        series.currentSeries = {name: 'default', accessor: function(d){ return d.value.Country; }};
+        series.rootClassName = series.seriesClassName();
+
+        // Then
+        var actualData = series.dataset().map(function(data){ return series.seriesSpecificClassName(data); });
+        var expectedData = [
+                            'countryColumnclass bar in_England defaultclass',
+                            'countryColumnclass bar in_Northern_Ireland defaultclass',
+                            'countryColumnclass bar in_Scotland defaultclass',
+                            'countryColumnclass bar in_Wales defaultclass',
+                            ];
+
+        expect(actualData).toEqual(expectedData);
+
+    });
 });

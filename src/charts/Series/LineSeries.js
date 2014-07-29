@@ -15,6 +15,9 @@ insight.LineSeries = function LineSeries(name, data, x, y, color) {
         lineType = 'linear',
         displayPoints = true;
 
+
+    this.classValues = [insight.Constants.LineClass];
+
     var lineOver = function(d, item) {
 
     };
@@ -85,13 +88,16 @@ insight.LineSeries = function LineSeries(name, data, x, y, color) {
 
         var data = this.dataset();
 
-        var rangeIdentifier = "path." + this.name + ".in-line";
+        var classValue = this.name + 'line ' + insight.Constants.LineClass;
+        var classSelector = '.' + this.name + 'line.' + insight.Constants.LineClass;
+
+        var rangeIdentifier = "path" + classSelector;
 
         var rangeElement = chart.plotArea.selectAll(rangeIdentifier);
 
         if (!this.rangeExists(rangeElement)) {
             chart.plotArea.append("path")
-                .attr("class", this.name + " in-line")
+                .attr("class", classValue)
                 .attr("stroke", this.color)
                 .attr("fill", "none")
                 .attr("clip-path", "url(#" + chart.clipPath() + ")")
@@ -100,9 +106,7 @@ insight.LineSeries = function LineSeries(name, data, x, y, color) {
                 .on('click', lineClick);
         }
 
-        var duration = dragging ? 0 : function(d, i) {
-            return 300 + i * 20;
-        };
+        var duration = dragging ? 0 : 300;
 
         chart.plotArea.selectAll(rangeIdentifier)
             .datum(this.dataset(), this.matcher)

@@ -67,7 +67,7 @@ insight.Tooltip = (function() {
             };
         }
 
-        /**
+        /*
          * Given a coordinate {x,y} position, this method updates the position and visibility of the tooltip to display it.
          * @param {object} point - an {x,y} coordinate, from the top left of the tooltip's container SVG.
          */

@@ -13,11 +13,12 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
 
     var self = this,
         stacked = d3.functor(false),
-        seriesName = "",
+        seriesName = '',
         seriesFunctions = {};
 
     this.valueAxis = y;
     this.keyAxis = x;
+    this.classValues = [insight.Constants.BarClass];
 
     this.series = [{
         name: 'default',
@@ -152,9 +153,6 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
         return self.x.scale(func(d));
     };
 
-    this.className = function(d) {
-        return seriesName + 'class bar ' + insight.Utils.keySelector(d);
-    };
 
     var mouseOver = function(data, i) {
 
@@ -164,28 +162,46 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
         self.mouseOver.call(this, data, i, seriesFunction);
     };
 
+
+    this.seriesSpecificClassName = function(d) {
+
+        var additionalClass = ' ' + self.currentSeries.name + 'class';
+        var baseClassName = self.itemClassName(d);
+        var itemClassName = baseClassName + additionalClass;
+
+        return itemClassName;
+    };
+
     this.draw = function(chart, drag) {
 
-        this.initializeTooltip(chart.container.node());
+        self.initializeTooltip(chart.container.node());
+        self.selectedItems = chart.selectedItems;
+        self.rootClassName = self.seriesClassName();
 
         var reset = function(d) {
             d.yPos = 0;
             d.xPos = 0;
         };
 
-        var data = this.dataset();
+        var data = this.dataset(),
+            groupSelector = 'g.' + insight.Constants.BarGroupClass + '.' + this.name,
+            groupClassName = insight.Constants.BarGroupClass + ' ' + this.name,
+            barSelector = 'rect.' + insight.Constants.BarGroupClass;
+
 
         data.forEach(reset);
 
+
         var groups = chart.plotArea
-            .selectAll('g.' + insight.Constants.BarGroupClass + "." + this.name)
+            .selectAll(groupSelector)
             .data(data, this.keyAccessor);
+
 
         var newGroups = groups.enter()
             .append('g')
-            .attr('class', insight.Constants.BarGroupClass + " " + this.name);
+            .attr('class', groupClassName);
 
-        var newBars = newGroups.selectAll('rect.bar');
+        var newBars = newGroups.selectAll(barSelector);
 
         var click = function(filter) {
             return self.click(this, filter);
@@ -202,17 +218,19 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
             seriesName = this.currentSeries.name;
             seriesFunctions[seriesName] = this.currentSeries.accessor;
 
+            var seriesSelector = '.' + seriesName + 'class.' + insight.Constants.BarClass;
+
             newBars = newGroups.append('rect')
-                .attr('class', this.className)
+                .attr('class', self.seriesSpecificClassName)
                 .attr('height', 0)
                 .attr('fill', this.currentSeries.color)
                 .attr('in_series', seriesName)
-                .attr("clip-path", "url(#" + chart.clipPath() + ")")
+                .attr('clip-path', 'url(#' + chart.clipPath() + ')')
                 .on('mouseover', mouseOver)
                 .on('mouseout', this.mouseOut)
                 .on('click', click);
 
-            var bars = groups.selectAll('.' + seriesName + 'class.bar')
+            var bars = groups.selectAll(seriesSelector)
                 .transition()
                 .duration(duration)
                 .attr('y', this.offsetYPosition)
