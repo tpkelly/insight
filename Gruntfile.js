@@ -135,7 +135,9 @@ module.exports = function(grunt) {
                 archive: './insight.js.zip',
                 mode: 'zip'
             },
-            files: [{ src: './dist/**' }]
+            files: [
+                {src: './dist/**', dest:'InsightJS/'},
+                {src: 'Changelog.txt', dest:'InsightJS/'}]
         }
     }
   });
