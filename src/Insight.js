@@ -38,6 +38,8 @@ var insight = (function() {
         },
         addChart: function(chart) {
             var self = this;
+            var series = chart.series();
+
             this.Charts.push(chart);
             return chart;
         },

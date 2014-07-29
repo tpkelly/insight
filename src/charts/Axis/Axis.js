@@ -88,8 +88,11 @@ insight.Axis = function Axis(name, scale) {
     var findOrdinalValues = function() {
         var vals = [];
 
+        // Build a list of values used by this axis by checking all Series using this axis
+        // Optionally provide an ordering function to sort the results by.  If the axis is ordered but no custom ordering is defined,
+        // then the series value function will be used by default.
         self.series.map(function(series) {
-            vals = vals.concat(series.keys());
+            vals = vals.concat(series.keys(self.orderingFunction()));
         });
 
         vals = insight.Utils.arrayUnique(vals);
@@ -164,7 +167,7 @@ insight.Axis = function Axis(name, scale) {
 
     this.orderingFunction = function(value) {
         if (!arguments.length) {
-            return orderingFunction();
+            return orderingFunction;
         }
         orderingFunction = value;
         return this;

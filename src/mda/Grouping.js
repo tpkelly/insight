@@ -1,11 +1,11 @@
+/**
+ * A Grouping is generated on a dimension, to reduce the items in the data set into groups along the provided dimension
+ * @class insight.Grouping
+ * @constructor
+ * @param {Dimension} dimension - The dimension to group
+ */
 insight.Grouping = (function(insight) {
 
-    /**
-     * A Grouping is generated on a dimension, to reduce the items in the data set into groups along the provided dimension
-     * @constructor
-     * @param {Dimension} dimension - The dimension to group
-     * @class
-     */
     function Grouping(dimension) {
 
         this.dimension = dimension;
@@ -18,123 +18,246 @@ insight.Grouping = (function(insight) {
             self = this,
             filterFunction = null;
 
+        // Private methods
+
         var orderFunction = function(a, b) {
             return b.value.Count - a.value.Count;
         };
 
-        this.registerSeries = function(series) {
+        /*
+         * This function takes an object and a property name in the form of a string, traversing the object until it finds a property with that name and returning
+         * a wrapped object with the immediate parent of the found property and the property's value.
+         * @param {object} - The object to search
+         * @param {string} propertyName - A string of the property to search, can include sub-properties using a dot notation. Eg. 'value.Revenue.Sum', which cannot be indexed directly in Javascript.
+         */
+        var getDescendant = function(obj, propertyName) {
+            var arr = propertyName.split(".");
+            var name = propertyName;
+            var container = null;
+
+            while (arr.length) {
+                name = arr.shift();
+                container = obj;
+                obj = obj[name];
+            }
+            return {
+                container: container,
+                value: obj,
+                propertyName: name
+            };
+        };
+
+        /*
+         * This function takes a group object and calculates the mean for any properties configured.
+         * @param {object} group - A dimensional slice of a Grouping {key: 'X', value : {}}
+         */
+        var calculateAverages = function(group) {
+
+            var propertiesToAverage = self.mean();
+
+            for (var i = 0, len = propertiesToAverage.length; i < len; i++) {
+
+                var propertyName = propertiesToAverage[i];
+                var propertyValue = group.value[propertyName];
+                var mean = propertyValue.Sum / group.value.Count;
+
+                mean = insight.Utils.isNumber(mean) & isFinite(mean) ? mean : 0;
+
+                group.value[propertyName].Average = mean;
+            }
+        };
+
+        /*
+         * This method calculates running cumulative values for any properties defined in the cumulative() list.
+         * @param {object} data - The data group being added to the cumulative running totals list
+         * @param {object} totals - The map object of running totals for the defined properties
+         */
+        var calculateCumulativeValues = function(d, totals) {
+
+            var cumulativeProperties = self.cumulative();
+
+            cumulativeProperties.map(function(propertyName) {
+
+                var desc = getDescendant(d.value, propertyName);
+
+                var totalName = desc.propertyName + 'Cumulative';
+
+                totals[totalName] = totals[totalName] ? totals[totalName] + desc.value : desc.value;
+
+                desc.container[totalName] = totals[totalName];
+
+            });
+
+            return totals;
+        };
+
+        /**
+         * This method is used to calculate any values that need to run after the data set has been aggregated into groups and basic values
+         */
+        var postAggregationCalculations = function() {
+
+            var totals = {};
+
+            var data = self.ordered() ? self.getData(self.orderFunction()) : self.getData();
+
+            data.forEach(function(d) {
+
+                calculateAverages(d);
+
+                calculateCumulativeValues(d, totals);
+
+            });
+        };
+
+
+
+        // Public methods
+
+        /** 
+         * This function is called by Series that use this Grouping, to wire up their click events to the filter event of this Grouping
+         * TODO - temporary, this needs to be removed from here (and series) and put into a new ChartGroup, ChartContainer or Dashboard type entity
+         * @param {insight.Series} series - The series registering with this Grouping
+         */
+        this.register = function(series) {
             series.clickEvent = this.filterHandler;
         };
 
+        /** 
+         * This handler is exposed by a Grouping and overriden by the global namespace when it wants to listen to this Grouping's filter events and wire them up to other Groupings and charts.
+         */
         this.filterHandler = function(series, filter, dimensionSelector) {
 
         };
 
 
         /**
-         * The sum function gets or sets the properties that this group will sum across.
-         * @returns {String[]}
-         */
-        /**
-         * @param {String[]} properties - An array of property names in the dataset that will be summed along this grouping's dimension
+         * Returns the list of properties to be summed on this Grouping
+         * @instance
+         * @memberof! insight.Grouping
+         * @returns {string[]} - The list of property names that will be summed
+         * @also
+         * Sets the list of property names that will be summed in this Grouping
+         * @instance
+         * @memberof! insight.Grouping
          * @returns {this}
+         * @param {string[]} properties - An array of property names to be summed for slices in this Grouping.
          */
-        this.sum = function(_) {
+        this.sum = function(properties) {
             if (!arguments.length) {
                 return sumProperties;
             }
-            sumProperties = _;
+            sumProperties = properties;
             return this;
         };
 
         /**
-         * The cumulative function gets or sets the properties whose value occurences will be accumulated across this dimension.
-         * @returns {String[]}
-         */
-        /**
-         * @param {String[]} properties - An array of property names that will have their occuring values accumulated after aggregation
+         * Returns the list of properties that will be cumulatively summed over this Grouping
+         * @instance
+         * @memberof! insight.Grouping
+         * @returns {string[]} - The list of property names that will be cumulatively summed
+         * @also
+         * Sets the list of properties that will be cumulatively summed over this Grouping
+         * @instance
+         * @memberof! insight.Grouping
          * @returns {this}
+         * @param {string[]} properties - An array of property names to be cumulatively summed over slices in this Grouping.
          */
-        this.cumulative = function(_) {
+        this.cumulative = function(properties) {
             if (!arguments.length) {
                 return cumulativeProperties;
             }
-            cumulativeProperties = _;
+            cumulativeProperties = properties;
             return this;
         };
 
         /**
-         * The count function gets or sets the properties whose value occurences will be counted across this dimension.
-         * If the provided property contains an array of values, each distinct value in that array will be counted.
-         * @returns {String[]}
-         */
-        /**
-         * @param {String[]} properties - An array of property names that will have their occuring values counted during aggregation
+         * Returns the array of properties whose distinct value occurences will be counted during the reduction of this Grouping
+         * @instance
+         * @memberof! insight.Grouping
+         * @returns {string[]} - The list of property names whose values will be counted
+         * @also
+         * Sets the array of properties whose distinct value occurences will be counted during the reduction of this Grouping
+         * @instance
+         * @memberof! insight.Grouping
          * @returns {this}
+         * @param {string[]} properties - An array of properties whose distinct value occurences will be counted during the reduction of this Grouping
          */
-        this.count = function(_) {
+        this.count = function(properties) {
             if (!arguments.length) {
                 return countProperties;
             }
-            countProperties = _;
+            countProperties = properties;
             return this;
         };
 
         /**
-         * The average function gets or sets the properties whose values will be averaged for across this grouped dimension
-         * @returns {String[]}
-         */
-        /**
-         * @param {String[]} properties - An array of property names that will have be averaged during aggregation
+         * Returns the array of properties whose mean will be calculated after the map reduce of this Grouping.
+         * @instance
+         * @memberof! insight.Grouping
+         * @returns {string[]} - The list of property names that will averaged
+         * @also
+         * Sets the array of properties whose mean will be calculated after the map reduce of this Grouping.
+         * @instance
+         * @memberof! insight.Grouping
          * @returns {this}
+         * @param {string[]} properties - An array of properties that will be averaged after the map reduce of this Grouping.
          */
-        this.mean = function(_) {
+        this.mean = function(properties) {
             if (!arguments.length) {
                 return averageProperties;
             }
-            averageProperties = _;
+            averageProperties = properties;
 
             sumProperties = insight.Utils.arrayUnique(sumProperties.concat(averageProperties));
 
             return this;
         };
 
-
         /**
-         * This method gets or sets the function used to compare the elements in this grouping if sorting is requested.
+         * Gets or sets the function used to compare the elements in this grouping if sorting is requested.
+         * @instance
+         * @memberof! insight.Grouping
+         * @returns {function} orderingFunction - The function used to compare two values when sort() is called on an array
+         * @also
+         * Sets the function used to compare the elements in this grouping if sorting is requested.
+         * @instance
+         * @memberof! insight.Grouping
          * @returns {this}
-         * @param {function} function - The comparison function to be used to sort the elements in this group.  The function should take the form of a standard {@link https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/sort|Javascript comparison function}.
+         * @param {function} function - The comparison function to be used to sort the elements in this group.  The function should take the form of a standard {@link https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/GlobalvalueObjects/Array/sort|Javascript comparison function}.
          */
-        this.orderFunction = function(o) {
+        this.orderFunction = function(orderingFunction) {
             if (!arguments.length) {
                 return orderFunction;
             }
-            orderFunction = o;
+            orderFunction = orderingFunction;
             return this;
         };
 
 
-
         /**
          * Gets or sets whether the group's data is ordered.
+         * @instance
+         * @memberof! insight.Grouping
          * @returns {boolean}
-         */
-        /**
-         * @param {boolean} ordered - a boolean for whether to order the group's values
+         * @also
+         * Sets if this Grouping will be ordered or not
+         * @instance
+         * @memberof! insight.Grouping
          * @returns {this}
+         * @param {boolean} ordered - Whether to order this Grouping or not
          */
-        this.ordered = function(_) {
+        this.ordered = function(value) {
             if (!arguments.length) {
                 return ordered;
             }
-            ordered = _;
+            ordered = value;
 
             return this;
         };
 
         /**
          * The filter method gets or sets the function used to filter the results returned by this grouping.
-         * @param {function} filterFunction - A function taking a parameter representing an object in the list.  The function must return true or false as per <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter">Array Filter</a>.
+         * @param {function} filterFunction - A function taking a parameter representing an object in the list.  The function must return true or false as per <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/GlobalvalueObjects/Array/filter">Array Filter</a>.
          */
         this.filter = function(f) {
             if (!arguments.length) {
@@ -222,10 +345,12 @@ insight.Grouping = (function(insight) {
         /**
          * This method is called when any post aggregation calculations need to be recalculated.
          * For example, calculating group percentages after totals have been created during map-reduce.
+         * @memberof! insight.Grouping
+         * @instance
          */
         this.recalculate = function() {
 
-            self.postAggregationCalculations();
+            postAggregationCalculations();
         };
 
         /**
@@ -341,6 +466,8 @@ insight.Grouping = (function(insight) {
 
         /**
          * This method is used to return the group's data, without ordering.  It checks if there is any filtering requested and applies the filter to the return array.
+         * @memberof! insight.Grouping
+         * @instance
          * @returns {object[]} return - The grouping's data in an object array, with an object per slice of the dimension.
          */
         this.getData = function(orderFunction, top) {
@@ -374,82 +501,6 @@ insight.Grouping = (function(insight) {
             return data;
         };
 
-        this.getDescendant = function(obj, desc) {
-            var arr = desc.split(".");
-            var name = desc;
-            var container = null;
-
-            while (arr.length) {
-                name = arr.shift();
-                container = obj;
-                obj = obj[name];
-            }
-            return {
-                container: container,
-                value: obj,
-                propertyName: name
-            };
-        };
-
-        this.calculateAverages = function(group) {
-
-            var propertiesToAverage = self.mean();
-
-            for (var avProperty in propertiesToAverage) {
-
-                var propertyName = propertiesToAverage[avProperty];
-                var propertyValue = group.value[propertyName];
-                var mean = propertyValue.Sum / group.value.Count;
-
-                mean = insight.Utils.isNumber(mean) & isFinite(mean) ? mean : 0;
-
-                group.value[propertyName].Average = mean;
-            }
-        };
-
-        /**
-         * This method is used to calculate any values that need to run after the data set has been aggregated into groups and basic values
-         */
-        this.postAggregationCalculations = function() {
-
-            var totals = {};
-
-            var data = self.ordered() ? self.getData(this.orderFunction()) : self.getData();
-
-            data.forEach(function(d) {
-
-                self.calculateAverages(d);
-
-                self.calculateCumulativeValues(d, totals);
-
-            });
-        };
-
-        /**
-         * This method calculates running cumulative values for any properties defined in the cumulative() list.
-         * @param {object} data - The data group being added to the cumulative running totals list
-         * @param {object} totals - The map object of running totals for the defined properties
-         */
-        this.calculateCumulativeValues = function(d, totals) {
-
-            var cumulativeProperties = this.cumulative();
-
-            cumulativeProperties.map(function(propertyName) {
-
-                var desc = self.getDescendant(d.value, propertyName);
-
-                var totalName = desc.propertyName + 'Cumulative';
-
-                totals[totalName] = totals[totalName] ? totals[totalName] + desc.value : desc.value;
-
-                desc.container[totalName] = totals[totalName];
-
-            });
-
-            return totals;
-        };
-
-        return this;
     }
 
     return Grouping;

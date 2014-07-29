@@ -32,7 +32,20 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
         label: 'Value'
     }];
 
-    /*
+
+    /**
+     * RowSeries overrides the standard key function used by most, vertical charts.
+     * @memberof insight.RowSeries
+     * @param {function} orderFunction - An optional comparator function to use if sorting is wanted on the list of keys
+     * @returns {object[]} return - The keys along the domain axis for this row series
+     */
+    this.keys = function(orderFunction) {
+        return self.dataset(orderFunction)
+            .map(self.keyFunction());
+    };
+
+
+    /**
      * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
      * This function is mapped across the entire data array by the findMax method.
      * @memberof! insight.RowSeries
