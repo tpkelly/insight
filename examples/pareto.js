@@ -11,7 +11,6 @@ $(document)
                 })
                 .sum(['CurrentRevenue'])
                 .cumulative(['CurrentRevenue.Sum'])
-                .total(['CurrentRevenue'])
                 .orderFunction(function(a, b)
                 {
                     return b.value.CurrentRevenue.Sum - a.value.CurrentRevenue.Sum;
@@ -74,7 +73,6 @@ function computeGroupValues(group)
 {
     var aggregateFunction = function(grouping)
     {
-        var self = grouping;
         var total = 0;
 
         grouping.getData()
@@ -89,5 +87,5 @@ function computeGroupValues(group)
             });
     };
 
-    group.postAggregation = aggregateFunction;
+    group.postAggregation(aggregateFunction);
 }
