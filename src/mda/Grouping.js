@@ -20,6 +20,11 @@ insight.Grouping = (function(insight) {
 
         // Private methods
 
+        // The default post aggregation step is blank, and can be overriden by users if they want to calculate additional values with this Grouping
+        var postAggregation = function() {
+
+        };
+
         var orderFunction = function(a, b) {
             return b.value.Count - a.value.Count;
         };
@@ -75,18 +80,21 @@ insight.Grouping = (function(insight) {
         var calculateCumulativeValues = function(d, totals) {
 
             var cumulativeProperties = self.cumulative();
+            var propertyName,
+                descendant;
 
-            cumulativeProperties.map(function(propertyName) {
+            for (var i = 0, len = cumulativeProperties.length; i < len; i++) {
 
-                var desc = getDescendant(d.value, propertyName);
+                propertyName = cumulativeProperties[i];
+                descendant = getDescendant(d.value, propertyName);
 
-                var totalName = desc.propertyName + 'Cumulative';
+                var totalName = descendant.propertyName + 'Cumulative';
 
-                totals[totalName] = totals[totalName] ? totals[totalName] + desc.value : desc.value;
+                totals[totalName] = totals[totalName] ? totals[totalName] + descendant.value : descendant.value;
 
-                desc.container[totalName] = totals[totalName];
+                descendant.container[totalName] = totals[totalName];
 
-            });
+            }
 
             return totals;
         };
@@ -129,6 +137,25 @@ insight.Grouping = (function(insight) {
 
         };
 
+        /**
+         * Gets the function that will run after the map reduce stage of this Grouping's aggregation. This is an empty function by default, and can be overriden by the setter.
+         * @instance
+         * @memberof! insight.Grouping
+         * @returns {function} - The function that will run after aggregation of this Grouping.
+         * @also
+         * Sets the function that will run after any aggregation has been performed on this Grouping.
+         * @instance
+         * @memberof! insight.Grouping
+         * @returns {this}
+         * @param {string[]} postAggregationFunc - A user defined function of the form function(grouping), that the Grouping will run post aggregation.
+         */
+        this.postAggregation = function(postAggregationFunc) {
+            if (!arguments.length) {
+                return postAggregation;
+            }
+            postAggregation = postAggregationFunc;
+            return this;
+        };
 
         /**
          * Returns the list of properties to be summed on this Grouping
