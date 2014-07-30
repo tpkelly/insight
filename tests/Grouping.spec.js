@@ -309,5 +309,43 @@ describe('Grouping tests', function() {
 
     });
 
+    it('will allow custom post aggregation steps', function() {
+        
+        // Given
+        var data = new insight.DataSet(sourceData);
+
+        var countryGroup =  data.group('countryGroup', function(d){ return d.Country; })
+                                .sum(['IQ']);
+       
+        var postAggregation = function(group) {
+            var total = 0;
+
+                           
+            group.getData()
+                .forEach(function(d)
+                {
+                    d.value.IQ.PlusOne = d.value.IQ.Sum + 1;
+                });
+        };
+
+        // When
+        
+        countryGroup.postAggregation(postAggregation)
+
+        var dataArray = countryGroup.getData();
+
+        // Then
+
+        var actualData = dataArray.map(function(entry){ return entry.value.IQ.Sum; });
+        var plusOneData = dataArray.map(function(entry){ return entry.value.IQ.PlusOne; });
+        
+        var expectedData = [589, 418, 268, 341];
+        var expectedPlusOneData = [590, 419, 269, 342];
+        
+        expect(actualData).toEqual(expectedData);
+        expect(plusOneData).toEqual(expectedPlusOneData);
+
+    });
+
 })
 
