@@ -39,25 +39,6 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
         return max;
     };
 
-    this.yFunction = function(_) {
-        if (!arguments.length) {
-            return yFunction;
-        }
-        yFunction = _;
-
-        return this;
-
-    };
-
-    this.xFunction = function(_) {
-        if (!arguments.length) {
-            return xFunction;
-        }
-        xFunction = _;
-
-        return this;
-
-    };
 
     this.rangeY = function(d) {
         return self.y.scale(self.yFunction()(d));

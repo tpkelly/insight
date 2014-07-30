@@ -24,17 +24,16 @@ insight.Series = function Series(name, data, x, y, color) {
     x.addSeries(this);
     y.addSeries(this);
 
-    if (data.registerSeries) {
-        data.registerSeries(this);
+    var self = this,
+        filter = null,
+        tooltipOffset = {
+            x: 0,
+            y: -10
+        };
+
+    if (data.register) {
+        data.register(this);
     }
-
-    var self = this;
-    var filter = null;
-    var tooltipOffset = {
-        x: 0,
-        y: -10
-    };
-
 
     // private functions used internally, set by functions below that are exposed on the object
 
@@ -46,8 +45,13 @@ insight.Series = function Series(name, data, x, y, color) {
         return d.value;
     };
 
+    // default x and y to vertical.  Series can override this if needed in their constructors.
     var xFunction = function(d) {
-        return d.key;
+        return d.x;
+    };
+
+    var yFunction = function(d) {
+        return d.y;
     };
 
     var tooltipFormat = function(d) {
@@ -166,11 +170,10 @@ insight.Series = function Series(name, data, x, y, color) {
      * @instance
      * @returns {object[]} - The data set to be used by the series
      */
-    this.dataset = function() {
+    this.dataset = function(orderFunction) {
 
-        var orderFunction = null;
-
-        if (this.valueAxis.ordered()) {
+        // If the valueAxis is ordered but no function has been provided, create one based on the Series' valueFunction
+        if (this.valueAxis.ordered() && !orderFunction) {
 
             orderFunction = function(a, b) {
                 return self.valueFunction()(b) - self.valueFunction()(a);
@@ -186,8 +189,8 @@ insight.Series = function Series(name, data, x, y, color) {
         return data;
     };
 
-    this.keys = function() {
-        return this.dataset()
+    this.keys = function(orderFunction) {
+        return this.dataset(orderFunction)
             .map(self.keyFunction());
     };
 
@@ -204,6 +207,16 @@ insight.Series = function Series(name, data, x, y, color) {
         xFunction = _;
 
         return this;
+    };
+
+    this.yFunction = function(_) {
+        if (!arguments.length) {
+            return yFunction;
+        }
+        yFunction = _;
+
+        return this;
+
     };
 
     /**
