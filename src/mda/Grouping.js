@@ -16,18 +16,17 @@ insight.Grouping = (function(insight) {
             averageProperties = [],
             ordered = false,
             self = this,
-            filterFunction = null;
+            filterFunction = null,
+            orderFunction;
 
         // Private methods
 
         // The default post aggregation step is blank, and can be overriden by users if they want to calculate additional values with this Grouping
-        var postAggregation = function() {
+        var postAggregation = function(grouping) {
 
         };
 
-        var orderFunction = function(a, b) {
-            return b.value.Count - a.value.Count;
-        };
+
 
         /*
          * This function takes an object and a property name in the form of a string, traversing the object until it finds a property with that name and returning
@@ -58,11 +57,10 @@ insight.Grouping = (function(insight) {
          */
         var calculateAverages = function(group) {
 
-            var propertiesToAverage = self.mean();
 
-            for (var i = 0, len = propertiesToAverage.length; i < len; i++) {
+            for (var i = 0, len = averageProperties.length; i < len; i++) {
 
-                var propertyName = propertiesToAverage[i];
+                var propertyName = averageProperties[i];
                 var propertyValue = group.value[propertyName];
                 var mean = propertyValue.Sum / group.value.Count;
 
@@ -79,7 +77,6 @@ insight.Grouping = (function(insight) {
          */
         var calculateCumulativeValues = function(d, totals) {
 
-            var cumulativeProperties = self.cumulative();
             var propertyName,
                 descendant;
 
@@ -115,6 +112,138 @@ insight.Grouping = (function(insight) {
                 calculateCumulativeValues(d, totals);
 
             });
+
+            // Run any user injected functions post aggregation
+            postAggregation(self);
+        };
+
+        /**
+         * This function is called by the map reduce process on a DataSet when an input object is being added to the aggregated group
+         * @returns {object} group - The group entry for this slice of the aggregated dataset, modified by the addition of the data object
+         * @param {object} group - The group entry for this slice of the aggregated dataset, prior to adding the input data object
+         * @param {object} data - The object being added from the aggregated group.
+         */
+        var reduceAddToGroup = function(group, data) {
+
+            group.Count++;
+
+            var propertyName,
+                i,
+                len;
+
+            for (i = 0, len = sumProperties.length; i < len; i++) {
+                propertyName = sumProperties[i];
+
+                if (data.hasOwnProperty(propertyName)) {
+                    group[propertyName].Sum += data[propertyName];
+                }
+            }
+
+            // Increment the counts of the different occurences of any properties defined. E.g: if a property 'Country' can take multiple string values, 
+            // this counts the occurences of each distinct value the property takes
+            for (i = 0, len = countProperties.length; i < len; i++) {
+                propertyName = countProperties[i];
+
+                var groupProperty = group[propertyName];
+
+                if (data.hasOwnProperty(propertyName)) {
+
+                    var propertyValue = data[propertyName];
+
+                    // If this property holds multiple values, increment the counts for each one.
+                    if (insight.Utils.isArray(propertyValue)) {
+
+                        for (var subIndex in propertyValue) {
+                            var subVal = propertyValue[subIndex];
+                            //Initialize or increment the count for this occurence of the property value
+                            group[propertyName][subVal] = groupProperty.hasOwnProperty(subVal) ? groupProperty[subVal] + 1 : 1;
+                            group[propertyName].Total++;
+                        }
+                    } else {
+                        group[propertyName][propertyValue] = groupProperty.hasOwnProperty(propertyValue) ? groupProperty[propertyValue] + 1 : 1;
+                        group[propertyName].Total++;
+                    }
+                }
+            }
+
+
+            return group;
+        };
+
+        /**
+         * This function is called by the map reduce process on a DataSet when an input object is being filtered out of the group
+         * @returns {object} group - The group entry for this slice of the aggregated dataset, modified by the removal of the data object
+         * @param {object} group - The group entry for this slice of the aggregated dataset, prior to removing the input data object
+         * @param {object} data - The object being removed from the aggregated group.
+         */
+        var reduceRemoveFromGroup = function(group, data) {
+
+            group.Count--;
+
+            var propertyName,
+                i,
+                len;
+
+            for (i = 0, len = sumProperties.length; i < len; i++) {
+                propertyName = sumProperties[i];
+
+                if (data.hasOwnProperty(propertyName)) {
+                    group[propertyName].Sum -= data[propertyName];
+                }
+            }
+
+            for (i = 0, len = countProperties.length; i < len; i++) {
+                propertyName = countProperties[i];
+
+                if (data.hasOwnProperty(propertyName)) {
+
+                    var propertyValue = data[propertyName];
+
+                    if (insight.Utils.isArray(propertyValue)) {
+
+                        for (var subIndex in propertyValue) {
+                            var subVal = propertyValue[subIndex];
+                            group[propertyName][subVal] = group[propertyName].hasOwnProperty(subVal) ? group[propertyName][subVal] - 1 : 0;
+                            group[propertyName].Total--;
+                        }
+
+                    } else {
+                        group[propertyName][propertyValue] = group[propertyName].hasOwnProperty(propertyValue) ? group[propertyName][propertyValue] - 1 : 0;
+                        group[propertyName].Total--;
+                    }
+                }
+            }
+
+            return group;
+        };
+
+        /**
+         * This method is called when a slice of an aggrgated DataSet is being initialized, creating initial values for certain properties
+         * @returns {object} return - The initialized slice of this aggreagted DataSet.  The returned object will be of the form {key: 'Distinct Key', value: {}}
+         */
+        var reduceInitializeGroup = function() {
+            var group = {
+                    Count: 0
+                },
+                propertyName,
+                i,
+                len;
+
+
+            for (i = 0, len = sumProperties.length; i < len; i++) {
+                propertyName = sumProperties[i];
+
+                group[propertyName] = group[propertyName] ? group[propertyName] : {};
+                group[propertyName].Sum = 0;
+            }
+
+            for (i = 0, len = countProperties.length; i < len; i++) {
+                propertyName = countProperties[i];
+                group[propertyName] = group[propertyName] ? group[propertyName] : {};
+                group[propertyName].Total = 0;
+            }
+
+            return group;
         };
 
 
@@ -302,16 +431,19 @@ insight.Grouping = (function(insight) {
          */
         this.reduceMultiDimension = function() {
 
-            var propertiesToSum = self.sum();
             var propertiesToCount = self.count();
-            var propertiesToAverage = self.mean();
 
-            var index = 0;
-            var gIndices = {};
+            var propertyName,
+                i,
+                index = 0,
+                len,
+                gIndices = {};
 
             function reduceAdd(p, v) {
-                for (var prop in propertiesToCount) {
-                    var propertyName = propertiesToCount[prop];
+
+                for (i = 0, len = propertiesToCount.length; i < len; i++) {
+
+                    propertyName = propertiesToCount[i];
 
                     if (v.hasOwnProperty(propertyName)) {
                         for (var val in v[propertyName]) {
@@ -336,8 +468,9 @@ insight.Grouping = (function(insight) {
             }
 
             function reduceRemove(p, v) {
-                for (var prop in propertiesToCount) {
-                    var propertyName = propertiesToCount[prop];
+                for (i = 0, len = propertiesToCount.length; i < len; i++) {
+
+                    propertyName = propertiesToCount[i];
 
                     if (v.hasOwnProperty(propertyName)) {
                         for (var val in v[propertyName]) {
@@ -386,106 +519,23 @@ insight.Grouping = (function(insight) {
          * @todo This should probably be run during the constructor? If not, lazily evaluated by getData() if it hasn't been run already.
          */
         this.initialize = function() {
-            var propertiesToSum = this.sum();
-            var propertiesToCount = this.count();
-            var propertiesToAverage = this.mean();
-            var propertyName = "";
 
-            var data = [];
+            var data;
 
-            if (self.dimension.multiple) {
+            if (self.dimension.oneToMany) {
                 data = self.reduceMultiDimension();
             } else {
                 data = self.dimension.Dimension.group()
                     .reduce(
-                        function(p, v) {
-                            p.Count++;
-
-                            for (var property in propertiesToSum) {
-                                if (v.hasOwnProperty(propertiesToSum[property])) {
-                                    p[propertiesToSum[property]].Sum += v[propertiesToSum[property]];
-                                }
-                            }
-
-                            for (var countProp in propertiesToCount) {
-                                if (v.hasOwnProperty(propertiesToCount[countProp])) {
-                                    propertyName = propertiesToCount[countProp];
-                                    var propertyValue = v[propertiesToCount[countProp]];
-
-                                    if (insight.Utils.isArray(propertyValue)) {
-
-                                        for (var subIndex in propertyValue) {
-                                            var subVal = propertyValue[subIndex];
-                                            p[propertyName][subVal] = p[propertyName].hasOwnProperty(subVal) ? p[propertyName][subVal] + 1 : 1;
-                                            p[propertyName].Total++;
-                                        }
-
-                                    } else {
-                                        p[propertyName][propertyValue] = p[propertyName].hasOwnProperty(propertyValue) ? p[propertyName][propertyValue] + 1 : 1;
-                                        p[propertyName].Total++;
-                                    }
-                                }
-                            }
-
-                            return p;
-                        },
-                        function(p, v) {
-                            p.Count--;
-
-                            for (var property in propertiesToSum) {
-                                if (v.hasOwnProperty(propertiesToSum[property])) {
-                                    p[propertiesToSum[property]].Sum -= v[propertiesToSum[property]];
-                                }
-                            }
-
-                            for (var countProp in propertiesToCount) {
-                                if (v.hasOwnProperty(propertiesToCount[countProp])) {
-
-                                    propertyName = propertiesToCount[countProp];
-                                    var propertyValue = v[propertiesToCount[countProp]];
-
-                                    if (insight.Utils.isArray(propertyValue)) {
-
-                                        for (var subIndex in propertyValue) {
-                                            var subVal = propertyValue[subIndex];
-                                            p[propertyName][subVal] = p[propertyName].hasOwnProperty(subVal) ? p[propertyName][subVal] - 1 : 0;
-                                            p[propertyName].Total--;
-                                        }
-
-                                    } else {
-                                        p[propertyName][propertyValue] = p[propertyName].hasOwnProperty(propertyValue) ? p[propertyName][propertyValue] - 1 : 0;
-                                        p[propertyName].Total--;
-                                    }
-
-                                }
-                            }
-
-                            return p;
-                        },
-                        function() {
-                            var p = {
-                                Count: 0
-                            };
-
-                            for (var property in propertiesToSum) {
-                                p[propertiesToSum[property]] = p[propertiesToSum[property]] ? p[propertiesToSum[property]] : {};
-                                p[propertiesToSum[property]].Sum = 0;
-                            }
-                            for (var avProperty in propertiesToAverage) {
-                                p[propertiesToAverage[avProperty]] = p[propertiesToAverage[avProperty]] ? p[propertiesToAverage[avProperty]] : {};
-                                p[propertiesToAverage[avProperty]].Average = 0;
-                            }
-                            for (var countProp in propertiesToCount) {
-                                p[propertiesToCount[countProp]] = p[propertiesToCount[countProp]] ? p[propertiesToCount[countProp]] : {};
-                                p[propertiesToCount[countProp]].Total = 0;
-                            }
-                            return p;
-                        }
+                        reduceAddToGroup,
+                        reduceRemoveFromGroup,
+                        reduceInitializeGroup
                 );
             }
+
             self.data = data;
 
-            self.recalculate();
+            postAggregationCalculations(self);
 
             return this;
         };
@@ -500,11 +550,14 @@ insight.Grouping = (function(insight) {
         this.getData = function(orderFunction, top) {
             var data;
 
+            // Set the provided order function if it has been given, otherwise use the inherent grouping order if one has been defined.
+            var orderFunc = orderFunction ? orderFunction : self.orderFunction();
+
             if (!self.data) {
                 self.initialize();
             }
 
-            if (this.dimension.multiple) {
+            if (this.dimension.oneToMany) {
                 data = self.data.value()
                     .values;
             } else {
@@ -514,8 +567,8 @@ insight.Grouping = (function(insight) {
             // take a copy of the array to not alter the original dataset
             data = data.slice(0);
 
-            if (orderFunction) {
-                data = data.sort(orderFunction);
+            if (orderFunc) {
+                data = data.sort(orderFunc);
             }
             if (top) {
                 data = data.slice(0, top);

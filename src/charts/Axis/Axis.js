@@ -397,7 +397,7 @@ insight.Axis = function Axis(name, scale) {
 
     this.tickRotationTransform = function() {
         var offset = self.tickPadding() + (self.tickSize() * 2);
-        offset = (reversedPosition && self.vertical()) ? 0 - offset : offset;
+        offset = (reversedPosition && !self.horizontal()) ? 0 - offset : offset;
 
         var rotation = ' rotate(' + self.tickRotation() + ',0,' + offset + ')';
 
