@@ -52,6 +52,18 @@ describe('Chart', function() {
 
         });
 
+        it('minWidth 50', function() {
+
+            expect(chart.minWidth()).toBe(50);
+
+        });
+
+        it('maxWidth 300', function() {
+
+            expect(chart.maxWidth()).toBe(300);
+
+        });
+
         it('margin {0,0,0,0}', function() {
 
             expect(chart.margin()).toEqual({
@@ -104,6 +116,50 @@ describe('Chart', function() {
             var result = chart.width(123);
 
             expect(chart.width()).toBe(123);
+            expect(result).toBe(chart);
+        });
+
+        it('maxWidth', function() {
+
+            var result = chart.width(220);
+
+            expect(chart.maxWidth()).toBe(220);
+            expect(result).toBe(chart);
+        });
+
+        it('setting width sets maxWidth', function() {
+
+            chart.maxWidth(300);
+            var result = chart.width(123);
+
+            expect(chart.maxWidth()).toBe(123);
+            expect(result).toBe(chart);
+        });
+
+        it('setting width sets maxWidth if dontSetMaxWidth false', function() {
+
+            chart.maxWidth(300);
+            var result = chart.width(123, false);
+
+            expect(chart.maxWidth()).toBe(123);
+            expect(result).toBe(chart);
+        });
+
+        it('setting width doesn\'t set maxWidth if dontSetMaxWidth true', function() {
+
+            chart.maxWidth(300);
+            var result = chart.width(123, true);
+
+            expect(chart.maxWidth()).toBe(300);
+            expect(result).toBe(chart);
+        });
+
+        it('setting maxWidth doesn\'t set width', function() {
+
+            chart.width(250);
+            var result = chart.maxWidth(450);
+
+            expect(chart.width()).toBe(250);
             expect(result).toBe(chart);
         });
 
@@ -464,79 +520,189 @@ describe('Chart', function() {
             expect(chart.xAxes()).toEqual([xAxis]);
         });
 
-    it("Adding x-axes adds to the axis array", function() {
-        //Given:
-        var chart = new insight.Chart('asda', 'asdads', 'ada');
-        var xAxis = new insight.Axis('', insight.Scales.Linear);
-
-        //When:
-        chart.xAxes([xAxis]);
-
-        //Then:
-        expect(chart.xAxes()).toEqual([xAxis]);
-    });
-
-    it("Adding x-axes twice only adds to the axis array once", function() {
-        //Given:
-        var chart = new insight.Chart('asda', 'asdads', 'ada');
-        var xAxis = new insight.Axis('', insight.Scales.Linear);
-
-        //When:
-        chart.xAxes([xAxis]);
-        chart.xAxes([xAxis]);
-
-        //Then:
-        expect(chart.xAxes()).toEqual([xAxis]);
-    });
-
-        it("Adding y-axis adds to the axis array", function() {
-            //Given:
-            var chart = new insight.Chart('asda', 'asdads', 'ada');
-            var yAxis = new insight.Axis('', insight.Scales.Linear);
-
-            //When:
-            chart.yAxis(yAxis);
-
-            //Then:
-            expect(chart.yAxes()).toEqual([yAxis]);
-        });
-
-        it("Adding y-axis twice only adds to the axis array once", function() {
-            //Given:
-            var chart = new insight.Chart('asda', 'asdads', 'ada');
-            var yAxis = new insight.Axis('', insight.Scales.Linear);
-
-            //When:
-            chart.yAxis(yAxis);
-            chart.yAxis(yAxis);
-
-            //Then:
-            expect(chart.yAxes()).toEqual([yAxis]);
-        });
-
         it("Adding x-axes adds to the axis array", function() {
             //Given:
             var chart = new insight.Chart('asda', 'asdads', 'ada');
-            var yAxis = new insight.Axis('', insight.Scales.Linear);
+            var xAxis = new insight.Axis('', insight.Scales.Linear);
 
             //When:
-            chart.yAxes([yAxis]);
+            chart.xAxes([xAxis]);
 
             //Then:
-            expect(chart.yAxes()).toEqual([yAxis]);
+            expect(chart.xAxes()).toEqual([xAxis]);
         });
 
         it("Adding x-axes twice only adds to the axis array once", function() {
             //Given:
             var chart = new insight.Chart('asda', 'asdads', 'ada');
-            var yAxis = new insight.Axis('', insight.Scales.Linear);
+            var xAxis = new insight.Axis('', insight.Scales.Linear);
 
             //When:
-            chart.yAxes([yAxis]);
-            chart.yAxes([yAxis]);
+            chart.xAxes([xAxis]);
+            chart.xAxes([xAxis]);
 
             //Then:
-            expect(chart.yAxes()).toEqual([yAxis]);
+            expect(chart.xAxes()).toEqual([xAxis]);
         });
-});
+
+            it("Adding y-axis adds to the axis array", function() {
+                //Given:
+                var chart = new insight.Chart('asda', 'asdads', 'ada');
+                var yAxis = new insight.Axis('', insight.Scales.Linear);
+
+                //When:
+                chart.yAxis(yAxis);
+
+                //Then:
+                expect(chart.yAxes()).toEqual([yAxis]);
+            });
+
+            it("Adding y-axis twice only adds to the axis array once", function() {
+                //Given:
+                var chart = new insight.Chart('asda', 'asdads', 'ada');
+                var yAxis = new insight.Axis('', insight.Scales.Linear);
+
+                //When:
+                chart.yAxis(yAxis);
+                chart.yAxis(yAxis);
+
+                //Then:
+                expect(chart.yAxes()).toEqual([yAxis]);
+            });
+
+            it("Adding x-axes adds to the axis array", function() {
+                //Given:
+                var chart = new insight.Chart('asda', 'asdads', 'ada');
+                var yAxis = new insight.Axis('', insight.Scales.Linear);
+
+                //When:
+                chart.yAxes([yAxis]);
+
+                //Then:
+                expect(chart.yAxes()).toEqual([yAxis]);
+            });
+
+            it("Adding x-axes twice only adds to the axis array once", function() {
+                //Given:
+                var chart = new insight.Chart('asda', 'asdads', 'ada');
+                var yAxis = new insight.Axis('', insight.Scales.Linear);
+
+                //When:
+                chart.yAxes([yAxis]);
+                chart.yAxes([yAxis]);
+
+                //Then:
+                expect(chart.yAxes()).toEqual([yAxis]);
+            });
+    });
+
+    describe('resizeWidth', function() {
+
+        var chart;
+
+        beforeEach(function() {
+            chart = new insight.Chart('name', 'element');
+            chart.init();
+
+            spyOn(chart, 'resizeChart');
+            spyOn(chart, 'draw');
+        });
+
+        it('sets width if less than current width and greater than minimum width', function() {
+
+            // Arrange
+            chart.width(750);
+            chart.minWidth(150);
+
+            // Act
+            chart.resizeWidth(200);
+
+            // Assert
+            expect(chart.width()).toBe(200);
+            expect(chart.resizeChart).toHaveBeenCalled();
+            expect(chart.draw).toHaveBeenCalled();
+
+        });
+
+        it('sets width to minimum if less than current width and less than minimum width', function() {
+
+            // Arrange
+            chart.width(750);
+            chart.minWidth(150);
+
+            // Act
+            chart.resizeWidth(10);
+
+            // Assert
+            expect(chart.width()).toBe(150);
+            expect(chart.resizeChart).toHaveBeenCalled();
+            expect(chart.draw).toHaveBeenCalled();
+
+        });
+
+        it('sets width if greater than current width and less than maximum width', function() {
+
+            // Arrange
+            chart.width(180);
+            chart.maxWidth(800);
+
+            // Act
+            chart.resizeWidth(300);
+
+            // Assert
+            expect(chart.width()).toBe(300);
+            expect(chart.resizeChart).toHaveBeenCalled();
+            expect(chart.draw).toHaveBeenCalled();
+
+        });
+
+        it('sets width to maximum if greater than current width and greater than maximum width', function() {
+
+            // Arrange
+            chart.width(100);
+            chart.maxWidth(150);
+
+            // Act
+            chart.resizeWidth(360);
+
+            // Assert
+            expect(chart.width()).toBe(150);
+            expect(chart.resizeChart).toHaveBeenCalled();
+            expect(chart.draw).toHaveBeenCalled();
+
+        });
+
+        it('doesn\'t resize or redraw if chart width is minimum and greater than window width', function() {
+
+            // Arrange
+            chart.width(100);
+            chart.minWidth(100);
+
+            // Act
+            chart.resizeWidth(50);
+
+            // Assert
+            expect(chart.width()).toBe(100);
+            expect(chart.resizeChart).not.toHaveBeenCalled();
+            expect(chart.draw).not.toHaveBeenCalled();
+
+        });
+
+        it('doesn\'t resize or redraw if chart width is maximum and less than window width', function() {
+
+            // Arrange
+            chart.width(120);
+            chart.maxWidth(120);
+
+            // Act
+            chart.resizeWidth(500);
+
+            // Assert
+            expect(chart.width()).toBe(120);
+            expect(chart.resizeChart).not.toHaveBeenCalled();
+            expect(chart.draw).not.toHaveBeenCalled();
+
+        });
+
+    });
 });
