@@ -64,7 +64,7 @@ insight.Grouping = (function(insight) {
                 var propertyValue = group.value[propertyName];
                 var mean = propertyValue.Sum / group.value.Count;
 
-                mean = insight.Utils.isNumber(mean) & isFinite(mean) ? mean : 0;
+                mean = insight.Utils.isNumber(mean) && isFinite(mean) ? mean : 0;
 
                 group.value[propertyName].Average = mean;
             }
@@ -72,10 +72,10 @@ insight.Grouping = (function(insight) {
 
         /*
          * This method calculates running cumulative values for any properties defined in the cumulative() list.
-         * @param {object} data - The data group being added to the cumulative running totals list
+         * @param {object} group - The data group being added to the cumulative running totals list
          * @param {object} totals - The map object of running totals for the defined properties
          */
-        var calculateCumulativeValues = function(d, totals) {
+        var calculateCumulativeValues = function(group, totals) {
 
             var propertyName,
                 descendant;
@@ -83,7 +83,7 @@ insight.Grouping = (function(insight) {
             for (var i = 0, len = cumulativeProperties.length; i < len; i++) {
 
                 propertyName = cumulativeProperties[i];
-                descendant = getDescendant(d.value, propertyName);
+                descendant = getDescendant(group.value, propertyName);
 
                 var totalName = descendant.propertyName + 'Cumulative';
 
