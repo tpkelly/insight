@@ -40,6 +40,11 @@
                 legend = null,
                 zoomAxis = null;
 
+			this.seriesChanged = function(series) {
+
+
+            };
+			
             function onWindowResize() {
 
                 var scrollBarWidth = 50;
@@ -380,6 +385,8 @@
                 }
                 series = newSeries;
 
+                self.seriesChanged(newSeries);
+
                 return this;
             };
 
@@ -579,8 +586,6 @@
 
                 notselected.classed('notselected', selected[0].length > 0);
             };
-
-            insight.addChart(this);
         }
 
 
