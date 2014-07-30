@@ -37,9 +37,9 @@ var insight = (function() {
             return table;
         },
         addChart: function(chart) {
-            
+
             this.Charts.push(chart);
-            
+
             return chart;
         },
         filterFunction: function(filter, element) {

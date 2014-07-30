@@ -96,7 +96,7 @@ insight.Grouping = (function(insight) {
             return totals;
         };
 
-        /**
+        /*
          * This method is used to calculate any values that need to run after the data set has been aggregated into groups and basic values
          */
         var postAggregationCalculations = function() {
@@ -117,7 +117,7 @@ insight.Grouping = (function(insight) {
             postAggregation(self);
         };
 
-        /**
+        /*
          * This function is called by the map reduce process on a DataSet when an input object is being added to the aggregated group
          * @returns {object} group - The group entry for this slice of the aggregated dataset, modified by the addition of the data object
          * @param {object} group - The group entry for this slice of the aggregated dataset, prior to adding the input data object
@@ -170,7 +170,7 @@ insight.Grouping = (function(insight) {
             return group;
         };
 
-        /**
+        /*
          * This function is called by the map reduce process on a DataSet when an input object is being filtered out of the group
          * @returns {object} group - The group entry for this slice of the aggregated dataset, modified by the removal of the data object
          * @param {object} group - The group entry for this slice of the aggregated dataset, prior to removing the input data object
@@ -217,7 +217,7 @@ insight.Grouping = (function(insight) {
             return group;
         };
 
-        /**
+        /*
          * This method is called when a slice of an aggrgated DataSet is being initialized, creating initial values for certain properties
          * @returns {object} return - The initialized slice of this aggreagted DataSet.  The returned object will be of the form {key: 'Distinct Key', value: {}}
          */
@@ -246,6 +246,86 @@ insight.Grouping = (function(insight) {
             return group;
         };
 
+
+
+
+        /*
+         * This aggregation method is tailored to dimensions that can hold multiple values (in an array), therefore they are counted differently.
+         * For example: a property called supportedDevices : ['iPhone5', 'iPhone4'] where the values inside the array are treated as dimensional slices
+         * @returns {object[]} return - the array of dimensional groupings resulting from this dimensional aggregation
+         */
+        var reduceMultiDimension = function() {
+
+            var propertiesToCount = self.count();
+
+            var propertyName,
+                i,
+                index = 0,
+                len,
+                gIndices = {};
+
+            function reduceAdd(p, v) {
+
+                for (i = 0, len = propertiesToCount.length; i < len; i++) {
+
+                    propertyName = propertiesToCount[i];
+
+                    if (v.hasOwnProperty(propertyName)) {
+                        for (var val in v[propertyName]) {
+                            if (typeof(gIndices[v[propertyName][val]]) != "undefined") {
+                                var gIndex = gIndices[v[propertyName][val]];
+
+                                p.values[gIndex].value++;
+                            } else {
+                                gIndices[v[propertyName][val]] = index;
+
+                                p.values[index] = {
+                                    key: v[propertyName][val],
+                                    value: 1
+                                };
+
+                                index++;
+                            }
+                        }
+                    }
+                }
+                return p;
+            }
+
+            function reduceRemove(p, v) {
+                for (i = 0, len = propertiesToCount.length; i < len; i++) {
+
+                    propertyName = propertiesToCount[i];
+
+                    if (v.hasOwnProperty(propertyName)) {
+                        for (var val in v[propertyName]) {
+                            var property = v[propertyName][val];
+
+                            var gIndex = gIndices[property];
+
+                            p.values[gIndex].value--;
+                        }
+                    }
+                }
+                return p;
+            }
+
+            function reduceInitial() {
+
+                return {
+                    values: []
+                };
+            }
+
+            data = self.dimension.Dimension.groupAll()
+                .reduce(reduceAdd, reduceRemove, reduceInitial);
+
+            self.orderFunction(function(a, b) {
+                return b.value - a.value;
+            });
+
+            return data;
+        };
 
 
         // Public methods
@@ -424,83 +504,7 @@ insight.Grouping = (function(insight) {
         };
 
 
-        /**
-         * This aggregation method is tailored to dimensions that can hold multiple values (in an array), therefore they are counted differently.
-         * For example: a property called supportedDevices : ['iPhone5', 'iPhone4'] where the values inside the array are treated as dimensional slices
-         * @returns {object[]} return - the array of dimensional groupings resulting from this dimensional aggregation
-         */
-        this.reduceMultiDimension = function() {
 
-            var propertiesToCount = self.count();
-
-            var propertyName,
-                i,
-                index = 0,
-                len,
-                gIndices = {};
-
-            function reduceAdd(p, v) {
-
-                for (i = 0, len = propertiesToCount.length; i < len; i++) {
-
-                    propertyName = propertiesToCount[i];
-
-                    if (v.hasOwnProperty(propertyName)) {
-                        for (var val in v[propertyName]) {
-                            if (typeof(gIndices[v[propertyName][val]]) != "undefined") {
-                                var gIndex = gIndices[v[propertyName][val]];
-
-                                p.values[gIndex].value++;
-                            } else {
-                                gIndices[v[propertyName][val]] = index;
-
-                                p.values[index] = {
-                                    key: v[propertyName][val],
-                                    value: 1
-                                };
-
-                                index++;
-                            }
-                        }
-                    }
-                }
-                return p;
-            }
-
-            function reduceRemove(p, v) {
-                for (i = 0, len = propertiesToCount.length; i < len; i++) {
-
-                    propertyName = propertiesToCount[i];
-
-                    if (v.hasOwnProperty(propertyName)) {
-                        for (var val in v[propertyName]) {
-                            var property = v[propertyName][val];
-
-                            var gIndex = gIndices[property];
-
-                            p.values[gIndex].value--;
-                        }
-                    }
-                }
-                return p;
-            }
-
-            function reduceInitial() {
-
-                return {
-                    values: []
-                };
-            }
-
-            data = self.dimension.Dimension.groupAll()
-                .reduce(reduceAdd, reduceRemove, reduceInitial);
-
-            self.orderFunction(function(a, b) {
-                return b.value - a.value;
-            });
-
-            return data;
-        };
 
         /**
          * This method is called when any post aggregation calculations need to be recalculated.
@@ -523,7 +527,7 @@ insight.Grouping = (function(insight) {
             var data;
 
             if (self.dimension.oneToMany) {
-                data = self.reduceMultiDimension();
+                data = reduceMultiDimension();
             } else {
                 data = self.dimension.Dimension.group()
                     .reduce(
