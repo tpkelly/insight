@@ -576,7 +576,7 @@ insight.Grouping = (function(insight) {
                 var propertyValue = group.value[propertyName];
                 var mean = propertyValue.Sum / group.value.Count;
 
-                mean = insight.Utils.isNumber(mean) & isFinite(mean) ? mean : 0;
+                mean = insight.Utils.isNumber(mean) && isFinite(mean) ? mean : 0;
 
                 group.value[propertyName].Average = mean;
             }
@@ -584,10 +584,10 @@ insight.Grouping = (function(insight) {
 
         /*
          * This method calculates running cumulative values for any properties defined in the cumulative() list.
-         * @param {object} data - The data group being added to the cumulative running totals list
+         * @param {object} group - The data group being added to the cumulative running totals list
          * @param {object} totals - The map object of running totals for the defined properties
          */
-        var calculateCumulativeValues = function(d, totals) {
+        var calculateCumulativeValues = function(group, totals) {
 
             var propertyName,
                 descendant;
@@ -595,7 +595,7 @@ insight.Grouping = (function(insight) {
             for (var i = 0, len = cumulativeProperties.length; i < len; i++) {
 
                 propertyName = cumulativeProperties[i];
-                descendant = getDescendant(d.value, propertyName);
+                descendant = getDescendant(group.value, propertyName);
 
                 var totalName = descendant.propertyName + 'Cumulative';
 
@@ -1130,11 +1130,11 @@ insight.Grouping = (function(insight) {
              * This internal function responds to click events on Series and Tables, alerting any other elements using the same Dimension that they need to
              * update to highlight the selected slices of the Dimension
              */
-            var notifyListeners = function(dimensionName, value, dimensionSelector) {
+            var notifyListeners = function(dimensionName, dimensionSelector) {
                 var listeningObjects = self.dimensionListenerMap[dimensionName];
 
                 listeningObjects.forEach(function(item) {
-                    item.highlight(dimensionSelector, value);
+                    item.highlight(dimensionSelector);
                 });
             };
 
@@ -1259,7 +1259,6 @@ insight.Grouping = (function(insight) {
 
             /**
              * Draws all Charts and Tables in this ChartGroup
-             * TODO - rename as it should only be called once, maybe to init()?
              * @memberof! insight.ChartGroup
              * @instance
              */
@@ -1288,7 +1287,7 @@ insight.Grouping = (function(insight) {
             this.chartFilterHandler = function(caller, value, dimensionSelector) {
 
                 // send events to any charts or tables also using this dimension, as they will need to update their styles to reflect the selection
-                notifyListeners(caller.data.dimension.name, value, dimensionSelector);
+                notifyListeners(caller.data.dimension.name, dimensionSelector);
 
                 var dimension = caller.data.dimension;
 
@@ -1335,15 +1334,20 @@ insight.Grouping = (function(insight) {
 
                         } else {
                             dim.crossfilterDimension.filter(function(d) {
+
+                                // apply all of the filters on this dimension to the current value, returning an array of true/false values (which filters does it satisfy)
                                 var vals = dim.filters
                                     .map(function(func) {
                                         return func.filterFunction(d);
                                     });
 
-                                return vals.filter(function(result) {
+                                // if this value satisfies any of the filters, it should be kept
+                                var matchesAnyFilter = vals.filter(function(result) {
                                         return result;
                                     })
                                     .length > 0;
+
+                                return matchesAnyFilter;
                             });
                         }
                     });
@@ -1403,15 +1407,13 @@ insight.Grouping = (function(insight) {
                 autoMargin = true,
                 initialized = false,
                 legend = null,
-                zoomInitialized = false;
-            zoomAxis = null;
-
-            this.seriesChanged = function(series) {
-
-            };
+                zoomInitialized = false,
+                zoomAxis = null;
 
 
-            this.init = function(create, container) {
+            // private methods
+
+            var init = function(create, container) {
 
                 self.container = create ? d3.select(container)
                     .append('div') : d3.select(self.element)
@@ -1435,10 +1437,47 @@ insight.Grouping = (function(insight) {
             };
 
 
+            var initZoom = function() {
+                self.zoom = d3.behavior.zoom()
+                    .on('zoom', self.dragging.bind(self));
+
+                self.zoom.x(zoomAxis.scale);
+
+                if (!self.zoomExists()) {
+                    //Draw ourselves as the first element in the plot area
+                    self.plotArea.insert('rect', ':first-child')
+                        .attr('class', 'zoompane')
+                        .attr('width', self.width())
+                        .attr('height', self.height() - self.margin()
+                            .top - self.margin()
+                            .bottom)
+                        .style('fill', 'none')
+                        .style('pointer-events', 'all');
+                }
+
+                self.plotArea.select('.zoompane')
+                    .call(self.zoom);
+
+                zoomInitialized = true;
+            };
+
+            // public methods
+
+            /** 
+             * Empty event handler that is overridden by any listeners who want to know when this Chart's series change
+             * @memberof! insight.Chart
+             * @param {insight.Series[]} series - An array of insight.Series belonging to this Chart
+             */
+            this.seriesChanged = function(series) {
+
+            };
+
+
+
             this.draw = function(dragging) {
 
                 if (!initialized) {
-                    self.init();
+                    init();
                 }
 
                 this.resizeChart();
@@ -1459,7 +1498,7 @@ insight.Grouping = (function(insight) {
                 }
 
                 if (zoomable && !zoomInitialized) {
-                    self.initZoom();
+                    initZoom();
                 }
             };
 
@@ -1520,29 +1559,7 @@ insight.Grouping = (function(insight) {
                 return this;
             };
 
-            this.initZoom = function() {
-                this.zoom = d3.behavior.zoom()
-                    .on('zoom', self.dragging.bind(self));
 
-                this.zoom.x(zoomAxis.scale);
-
-                if (!this.zoomExists()) {
-                    //Draw ourselves as the first element in the plot area
-                    this.plotArea.insert('rect', ':first-child')
-                        .attr('class', 'zoompane')
-                        .attr('width', this.width())
-                        .attr('height', this.height() - this.margin()
-                            .top - this.margin()
-                            .bottom)
-                        .style('fill', 'none')
-                        .style('pointer-events', 'all');
-                }
-
-                this.plotArea.select('.zoompane')
-                    .call(this.zoom);
-
-                zoomInitialized = true;
-            };
 
             this.zoomExists = function() {
                 var z = this.plotArea.selectAll('.zoompane');
@@ -1821,15 +1838,6 @@ insight.Grouping = (function(insight) {
                 return this.yAxes(newYAxes);
             };
 
-            this.addHorizontalScale = function(type, typeString, direction) {
-                var scale = new Scale(this, type, direction, typeString);
-            };
-
-
-            this.addHorizontalAxis = function(scale) {
-                var axis = new Axis(this, scale, 'h', 'left');
-            };
-
 
             this.autoMargin = function(_) {
                 if (!arguments.length) {
@@ -1839,9 +1847,15 @@ insight.Grouping = (function(insight) {
                 return this;
             };
 
-
-            this.highlight = function(selector, value) {
-
+            /**
+             * This function takes a CSS dimension selector and updates the class attributes of any attributes in this Chart to reflect
+             * whether they are currently selected or not.  .notselected is needed in addition to .selected, as items are coloured differently when they are not selected
+             * and something else is.
+             * @memberof! insight.Chart
+             * @param {string} selector - a CSS selector matching a slice of a dimension. eg. an entry in a grouping by Country would be 'in_England', which would match that dimensional value in any charts.
+             */
+            this.highlight = function(selector) {
+                // select the elements matching the dimension that has been clicked (possibly in another chart)
                 var clicked = this.plotArea.selectAll('.' + selector);
                 var alreadySelected = clicked.classed('selected');
 
@@ -1854,9 +1868,11 @@ insight.Grouping = (function(insight) {
                     self.selectedItems.push(selector);
                 }
 
+                // depending on if anything is selected, we have to update the rest as notselected so that they are coloured differently
                 var selected = this.plotArea.selectAll('.selected');
                 var notselected = this.plotArea.selectAll('.bar:not(.selected),.bubble:not(.selected)');
 
+                // if nothing is selected anymore, clear the .notselected class from any elements (stop showing them as gray)
                 notselected.classed('notselected', selected[0].length > 0);
             };
         }

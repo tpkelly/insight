@@ -210,6 +210,10 @@
             
             <span class="subtitle">Methods</span>
             
+                <li data-name="insight.Chart.this.highlight"><a href="insight.Chart.html#this.highlight">this.highlight</a></li>
+            
+                <li data-name="insight.Chart.this.seriesChanged"><a href="insight.Chart.html#this.seriesChanged">this.seriesChanged</a></li>
+            
                 <li data-name="insight.Chart#this.addXAxis"><a href="insight.Chart.html##this.addXAxis">#this.addXAxis</a></li>
             
                 <li data-name="insight.Chart#this.addYAxis"><a href="insight.Chart.html##this.addYAxis">#this.addYAxis</a></li>
@@ -775,6 +779,240 @@
             
 <dt>
     <div class="nameContainer">
+        <h4 class="name" id="this.highlight">
+            
+            <span class="type-signature static">static</span>insight.Chart.this.highlight<span class="signature">(selector)</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line487">line 487</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        This function takes a CSS dimension selector and updates the class attributes of any attributes in this Chart to reflect
+whether they are currently selected or not.  .notselected is needed in addition to .selected, as items are coloured differently when they are not selected
+and something else is.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>selector</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                a CSS selector matching a slice of a dimension. eg. an entry in a grouping by Country would be 'in_England', which would match that dimensional value in any charts.</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="this.seriesChanged">
+            
+            <span class="type-signature static">static</span>insight.Chart.this.seriesChanged<span class="signature">(series)</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line101">line 101</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Empty event handler that is overridden by any listeners who want to know when this Chart's series change
+    </div>
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>series</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">insight.Series[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                An array of insight.Series belonging to this Chart</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
         <h4 class="name" id="this.addXAxis">
             
             #this.addXAxis<span class="signature">(<span class="optional">axis</span>)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{this}</span>
@@ -782,7 +1020,7 @@
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line332">line 332</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line345">line 345</a>
         </div>
         
     </div>
@@ -910,7 +1148,7 @@
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line399">line 399</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line412">line 412</a>
         </div>
         
     </div>
@@ -1038,7 +1276,7 @@
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line267">line 267</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line280">line 280</a>
         </div>
         
     </div>
@@ -1118,7 +1356,7 @@ The current height of the chart.
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line267">line 267</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line280">line 280</a>
         </div>
         
     </div>
@@ -1239,7 +1477,7 @@ The current height of the chart.
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line314">line 314</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line327">line 327</a>
         </div>
         
     </div>
@@ -1319,7 +1557,7 @@ The current legend drawn on the chart.
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line314">line 314</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line327">line 327</a>
         </div>
         
     </div>
@@ -1440,7 +1678,7 @@ The current legend drawn on the chart.
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line204">line 204</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line217">line 217</a>
         </div>
         
     </div>
@@ -1520,7 +1758,7 @@ The current margins of the chart.
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line204">line 204</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line217">line 217</a>
         </div>
         
     </div>
@@ -1641,7 +1879,7 @@ The current margins of the chart.
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line289">line 289</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line302">line 302</a>
         </div>
         
     </div>
@@ -1721,7 +1959,7 @@ The current series drawn on the chart.
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line289">line 289</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line302">line 302</a>
         </div>
         
     </div>
@@ -1842,7 +2080,7 @@ The current series drawn on the chart.
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line244">line 244</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line257">line 257</a>
         </div>
         
     </div>
@@ -1922,7 +2160,7 @@ The current width of the chart.
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line244">line 244</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line257">line 257</a>
         </div>
         
     </div>
@@ -2043,7 +2281,7 @@ The current width of the chart.
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line352">line 352</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line365">line 365</a>
         </div>
         
     </div>
@@ -2123,7 +2361,7 @@ The current x-axes of the chart.
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line352">line 352</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line365">line 365</a>
         </div>
         
     </div>
@@ -2244,7 +2482,7 @@ The current x-axes of the chart.
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line381">line 381</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line394">line 394</a>
         </div>
         
     </div>
@@ -2324,7 +2562,7 @@ The current primary x-axis of the chart.
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line381">line 381</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line394">line 394</a>
         </div>
         
     </div>
@@ -2445,7 +2683,7 @@ The current primary x-axis of the chart.
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line419">line 419</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line432">line 432</a>
         </div>
         
     </div>
@@ -2525,7 +2763,7 @@ The current y-axes of the chart.
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line419">line 419</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line432">line 432</a>
         </div>
         
     </div>
@@ -2646,7 +2884,7 @@ The current y-axes of the chart.
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line448">line 448</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line461">line 461</a>
         </div>
         
     </div>
@@ -2726,7 +2964,7 @@ The current primary y-axis of the chart.
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line448">line 448</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line461">line 461</a>
         </div>
         
     </div>
@@ -2847,7 +3085,7 @@ The current primary y-axis of the chart.
     
         
         <div class="tag-source">
-            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line150">line 150</a>
+            <a href="Chart.js.html">charts/Chart.js</a>, <a href="Chart.js.html#line185">line 185</a>
         </div>
         
     </div>
