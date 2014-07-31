@@ -15,7 +15,7 @@
         });
     }
 
-    function createBubbleChart(bubbleData) {
+    function createBubbleChart(chartGroup, bubbleData) {
 
         var bubbleChart = new insight.Chart('Chart 3', '#bubble-chart')
                 .width(400)
@@ -59,10 +59,11 @@
                 });
 
             bubbleChart.series([bubbles]);
+            chartGroup.add(bubbleChart);
 
     }
 
-    function createLanguageChart(languages){
+    function createLanguageChart(chartGroup, languages){
 
         var chart = new insight.Chart('Chart 2', '#languages')
                 .width(400)
@@ -91,9 +92,10 @@
                 .top(10);
 
             chart.series([lSeries]);
+            chartGroup.add(chart);
     }
 
-    function createGenreCountChart(genreData){
+    function createGenreCountChart(chartGroup, genreData){
 
         var chart = new insight.Chart('Genre Chart', "#genre-count")
                 .width(500)
@@ -123,11 +125,12 @@
                                 .valueFunction(function(d){ return d.value.Count; });
 
         chart.series([series]);
+        chartGroup.add(chart);
 
         return chart;
     }
 
-    function createTimeChart(timeData) {
+    function createTimeChart(chartGroup, timeData) {
         var timeChart = new insight.Chart('Releases over time', '#time-releases')
                 .width(600)
                 .height(325)
@@ -161,11 +164,12 @@
             timeChart.series([cumulative]);
 
             timeChart.zoomable(xTime);
+            chartGroup.add(timeChart);
     }
 
 
 
-    function createAdvisoryChart(contentRating) {
+    function createAdvisoryChart(chartGroup, contentRating) {
 
         var chart = new insight.Chart('Languages', '#content-advisory')
                                     .width(250)
@@ -200,7 +204,8 @@
                                    .valueFunction(function(d){ return d.value.Count;});
         
         chart.series().push(rowSeries);
-
+        chartGroup.add(chart);
+        
         return chart;
     }
 
@@ -210,10 +215,8 @@
     angular.module('insightChartsControllers').controller('Index', ['$scope', 'Examples',
         function($scope, Examples)
         {
-            insight.init();
-
             $scope.examples = Examples.query();
-            $scope.$parent.title = 'Insight Charts';
+            $scope.$parent.title = 'Insight Charts - An open source analytics and visualization library for JavaScript';
 
             // need to improve dependency management here, to allow the controller to know that it will need to load d3 and insight instead of just assuming they'll be there
             d3.json('datasets/appstore.json', function(data)
@@ -221,6 +224,7 @@
                 preprocess(data);                
 
                 var dataset = new insight.DataSet(data);
+                var chartGroup = new insight.ChartGroup();
 
                 var genres = dataset.group('genre', function(d)
                     {
@@ -250,12 +254,13 @@
                         return d.contentAdvisoryRating;
                     });
 
-                var genreChart = createGenreCountChart(genres);
-                var timeChart = createTimeChart(dates);
-                var langChart = createAdvisoryChart(contentRating);
-                var bubbleChart = createBubbleChart(genres);
-                var languageChart = createLanguageChart(languages);
-                insight.drawCharts();
+                var genreChart = createGenreCountChart(chartGroup, genres);
+                var timeChart = createTimeChart(chartGroup, dates);
+                var langChart = createAdvisoryChart(chartGroup, contentRating);
+                var bubbleChart = createBubbleChart(chartGroup, genres);
+                var languageChart = createLanguageChart(chartGroup, languages);
+                
+                chartGroup.draw();
             });
         }
     ]);

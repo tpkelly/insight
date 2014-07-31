@@ -41,7 +41,7 @@ $(document)
             series.series = [
             {
                 name: 'value',
-                accessor: function(d)
+                valueFunction: function(d)
                 {
                     return d.value;
                 },
@@ -54,7 +54,7 @@ $(document)
             },
             {
                 name: 'value2',
-                accessor: function(d)
+                valueFunction: function(d)
                 {
                     return d.value2;
                 },
@@ -69,6 +69,6 @@ $(document)
 
             chart.series([series, line]);
 
-            insight.drawCharts();
+            chart.draw();
         });
     });

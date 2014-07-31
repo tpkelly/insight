@@ -26,7 +26,6 @@ $(document)
 
         var dataset = new insight.DataSet(data);
 
-
         var x = new insight.Axis('Population', insight.Scales.Linear)
             .tickSize(5)
             .tickOrientation('tb')
@@ -54,7 +53,7 @@ $(document)
         series.series = [
         {
             name: 'value',
-            accessor: function(d)
+            valueFunction: function(d)
             {
                 return d.value;
             },
@@ -67,7 +66,7 @@ $(document)
         },
         {
             name: 'value2',
-            accessor: function(d)
+            valueFunction: function(d)
             {
                 return d.value2;
             },
@@ -81,7 +80,7 @@ $(document)
 
         chart.series([series]);
 
-        insight.drawCharts();
+        chart.draw();
 
         $('#toggle')
             .click(function(d)

@@ -32,174 +32,13 @@
 
 })();
 ;/**
- * This is the global namespace that also handles some global events and filtering logic (the logic could be moved into a specific class as it gets larger)
+ * This is the global namespace.
  * @namespace insight
  */
 var insight = (function() {
 
     return {
-        Charts: [],
-        Tables: [],
-        Groups: [],
-        Dimensions: [],
-        FilteredDimensions: [],
-        DimensionListenerMap: {},
-        init: function() {
-            this.Charts = [];
-            this.Groups = [];
-            this.FilteredDimensions = [];
-            this.DimensionListenerMap = {};
-        },
-        redraw: function() {
 
-            this.Charts.forEach(function(chart) {
-                chart.draw();
-            });
-
-            this.Tables.forEach(function(table) {
-                table.draw();
-            });
-        },
-        addTable: function(table) {
-
-            // wire up the click event of the table to the filter handler of the DataSet
-            table.clickEvent = table.data.filterHandler;
-
-            this.Tables.push(table);
-
-            return table;
-        },
-        addChart: function(chart) {
-
-            this.Charts.push(chart);
-
-            return chart;
-        },
-        filterFunction: function(filter, element) {
-            var value = filter.key ? filter.key : filter;
-
-            return {
-                name: value,
-                filterFunction: function(d) {
-                    if (Array.isArray(d)) {
-                        return d.indexOf(value) != -1;
-                    } else {
-                        return String(d) == String(value);
-                    }
-                }
-            };
-        },
-        compareFilters: function(filterFunction) {
-            return function(d) {
-                return String(d.name) == String(filterFunction.name);
-            };
-        },
-        applyCSSClasses: function(item, value, dimensionSelector) {
-            var listeningObjects = this.DimensionListenerMap[item.data.dimension.Name];
-
-            listeningObjects.forEach(function(item) {
-                item.highlight(dimensionSelector, value);
-            });
-        },
-        addDimensionListener: function(dataset, widget) {
-            var dimension = dataset.dimension;
-
-            if (dimension) {
-                var listeningObjects = this.DimensionListenerMap[dimension.Name];
-                if (listeningObjects && (listeningObjects.indexOf(widget) == -1)) {
-                    listeningObjects.push(widget);
-                } else {
-                    this.DimensionListenerMap[dimension.Name] = [widget];
-                }
-            }
-        },
-        drawCharts: function() {
-
-            var self = this;
-
-            this.Charts
-                .forEach(
-                    function(chart) {
-                        chart.series()
-                            .forEach(function(series) {
-                                self.addDimensionListener(series.data, chart);
-                            });
-
-                        chart.init();
-                    });
-
-            this.Tables.forEach(function(table) {
-                self.addDimensionListener(table.data, table);
-                table.draw();
-            });
-        },
-        chartFilterHandler: function(chart, value, dimensionSelector) {
-            var self = this;
-
-            this.applyCSSClasses(chart, value, dimensionSelector);
-
-            var dimension = chart.data.dimension;
-
-            var filterFunction = this.filterFunction(value);
-
-            if (filterFunction) {
-                var dims = this.Dimensions
-                    .filter(dimension.comparer);
-
-                var activeDim = this.FilteredDimensions
-                    .filter(dimension.comparer);
-
-                if (!activeDim.length) {
-                    this.FilteredDimensions.push(dimension);
-                }
-
-                var comparerFunction = this.compareFilters(filterFunction);
-
-                dims.map(function(dim) {
-
-                    var filterExists = dim.Filters
-                        .filter(comparerFunction)
-                        .length;
-
-                    //if the dimension is already filtered by this value, toggle (remove) the filter
-                    if (filterExists) {
-                        insight.Utils.removeMatchesFromArray(dim.Filters, comparerFunction);
-
-                    } else {
-                        // add the provided filter to the list for this dimension
-
-                        dim.Filters.push(filterFunction);
-                    }
-
-                    // reset this dimension if no filters exist, else apply the filter to the dataset.
-                    if (dim.Filters.length === 0) {
-
-                        insight.Utils.removeItemFromArray(self.FilteredDimensions, dim);
-                        dim.Dimension.filterAll();
-
-                    } else {
-                        dim.Dimension.filter(function(d) {
-                            var vals = dim.Filters
-                                .map(function(func) {
-                                    return func.filterFunction(d);
-                                });
-
-                            return vals.filter(function(result) {
-                                    return result;
-                                })
-                                .length > 0;
-                        });
-                    }
-                });
-
-                this.Groups.forEach(function(group) {
-                    group.recalculate();
-
-                });
-
-                this.redraw();
-            }
-        }
     };
 
 })();
@@ -289,7 +128,7 @@ insight.Scales = (function() {
 }(d3));
 ;/**
  * This module contains some helper functions used throughout the library
- * @module InsightUtils
+ * @namespace insight.Utils
  */
 insight.Utils = (function() {
 
@@ -300,6 +139,7 @@ insight.Utils = (function() {
     /**
      * This recursive function takes two values a and b, a list of sort objects [{sortFunction: function(a){return a.valueToSortOn;}, order: 'ASC'}] and an index of the current function being used to sort.
      * It returns a ordering value for a and b, as per the normal Javascript sorting rules https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+     * @memberof! insight.Utils
      * @returns {int} sortResult - if a > b then the result = 1, -1 if a < b and 0 if a == b.
      * @param {object} a - Description
      * @param {object} b - Description
@@ -346,14 +186,38 @@ insight.Utils = (function() {
     };
 
     /**
+     * Returns true/false if an object is inside an array.
+     * @memberof! insight.Utils
+     * @param {object[]} array - The array to check
+     * @param {object} value - The value to check for
+     * @returns {boolean} - True if the provided array contains the provided value
+     */
+    exports.arrayContains = function(array, value) {
+        return array.indexOf(value) != -1;
+    };
+
+    /**
+     * Adds a value to an array, only if it doesn't already belong to the array.
+     * @memberof! insight.Utils
+     * @param {object[]} array - The array to insert into
+     * @param {object} value - The value to insert
+     */
+    exports.addToSet = function(array, value) {
+        if (!exports.arrayContains(array, value)) {
+            array.push(value);
+        }
+    };
+
+    /**
      * This function takes a data point, and creates a class name for insight to identify this particular key
      * If the parameter is not an object (just a value in an array) then there is no need for this particular class so blank is returned.
      * @returns {string} return - A class name to identify this point and any other points taking the same value in other charts.
      * @param {object} data - The input point
      */
-    exports.keySelector = function(d) {
+    exports.keySelector = function(d, keyFunction) {
 
-        var str = d.key.toString();
+        var str = keyFunction(d)
+            .toString();
 
         var result = "in_" + str.replace(/[^A-Z0-9]/ig, "_");
 
@@ -492,10 +356,7 @@ insight.Utils = (function() {
      */
     function DataSet(data) {
 
-        this._data = data;
-
-        this.Dimensions = [];
-        this.Groups = [];
+        this.data = data;
 
         this.ndx = null;
 
@@ -520,11 +381,11 @@ insight.Utils = (function() {
 
     DataSet.prototype.getData = function() {
         var data;
-        if (this._data.all) {
-            data = this._data.all();
+        if (this.data.all) {
+            data = this.data.all();
         } else {
             //not a crossfilter set
-            data = this._data;
+            data = this.data;
         }
 
         if (this._filterFunction) {
@@ -553,7 +414,7 @@ insight.Utils = (function() {
     DataSet.prototype.getOrderedData = function() {
         var data;
 
-        data = this._data.sort(this._orderFunction);
+        data = this.data.sort(this._orderFunction);
 
         if (this._filterFunction) {
             data = data.filter(this._filterFunction);
@@ -565,16 +426,11 @@ insight.Utils = (function() {
 
     DataSet.prototype.group = function(name, groupFunction, oneToMany) {
 
-        this.ndx = this.ndx ? this.ndx : crossfilter(this._data);
+        this.ndx = this.ndx ? this.ndx : crossfilter(this.data);
 
-        var dim = new insight.Dimension(name, groupFunction, this.ndx.dimension(groupFunction), groupFunction, oneToMany);
+        var dim = new insight.Dimension(name, this.ndx, groupFunction, oneToMany);
 
         var group = new insight.Grouping(dim);
-
-        insight.Dimensions.push(dim);
-        insight.Groups.push(group);
-
-        group.filterHandler = insight.chartFilterHandler.bind(insight);
 
         return group;
     };
@@ -590,26 +446,56 @@ insight.Utils = (function() {
      * @todo reimplement how Dimensions are created.  Too much is inside ChartGroup at the moment, and ChartGroup is becoming redundant and too mixed
      * @todo display function should be provided by a setter.
      * @param {String} name - The short name used to identify this dimension, and any linked dimensions sharing the same name
-     * @param {function} dimension - The function used to categorize points within the dimension.
-     * @param {dimension} dimension - The crossfilter dimension representing this dimension (TODO: create this inside the constructor - should be invisible)
-     * @param {function} dimension - The function used to generate a displayable string for this dimension, to be used as a label or otherwise (TODO: is this the business of this constructor or even object?)
-     * @param {boolean} multi - Whether or not this dimension represents a collection of possible values in each item.
+     * @param {crossfilter} crossfilter - The crossfilter object to create the Dimension on.
+     * @param {function} sliceFunction - The function used to categorize points within the dimension.
+     * @param {boolean} oneToMany - Whether or not this dimension represents a collection of possible values in each item.
      * @class
      */
-    var Dimension = function Dimension(name, func, dimension, displayFunction, oneToMany) {
-        this.Dimension = dimension;
-        this.Name = name;
-        this.Filters = [];
+    var Dimension = function Dimension(name, crossfilter, sliceFunction, oneToMany) {
+
+        this.crossfilterDimension = crossfilter.dimension(sliceFunction);
+        this.name = name;
+        this.filters = [];
         this.oneToMany = oneToMany;
 
-        this.displayFunction = displayFunction ? displayFunction : function(d) {
-            return d;
-        };
+        var self = this;
 
         this.comparer = function(d) {
-            return d.Name == this.Name;
-        }.bind(this);
+            return d.name == self.name;
+        };
 
+        var oneToManyFilterFunction = function(filterValue) {
+            return function(d) {
+                return d.indexOf(filterValue) != -1;
+            };
+        };
+
+        var filterFunction = function(filterValue) {
+            return function(d) {
+                return String(d) == String(filterValue);
+            };
+        };
+
+        /**
+         * Local helper function that creates a filter object given an element that has been clicked on a Chart or Table.
+         * The filter object creates the function used by crossfilter to remove or add objects to an aggregation after a filter event.
+         * It also includes a simple name variable to use for lookups.
+         * @memberof! insight.Dimension
+         * @param {object} filteredValue - The value to create a crossfilter filter function for.  It will either be a value, or a {key: , value: } crossfilter aggregation entry.
+         * @returns {function} - A function that a crossfilterdimension.filter() operation can use to map-reduce crossfilter aggregations.
+         */
+        this.createFilterFunction = function(filteredValue) {
+
+            var value = filteredValue.key ? filteredValue.key : filteredValue;
+
+            // create the appropriate type of filter function for this Dimension
+            var filterFunc = self.oneToMany ? oneToManyFilterFunction(value) : filterFunction(value);
+
+            return {
+                name: value,
+                filterFunction: filterFunc
+            };
+        };
 
     };
 
@@ -620,13 +506,15 @@ insight.Utils = (function() {
  * A Grouping is generated on a dimension, to reduce the items in the data set into groups along the provided dimension
  * @class insight.Grouping
  * @constructor
- * @param {Dimension} dimension - The dimension to group
+ * @param {dimension} dimension - The dimension to group
  */
 insight.Grouping = (function(insight) {
 
     function Grouping(dimension) {
 
-        this.dimension = dimension;
+
+
+        //private variables
 
         var sumProperties = [],
             countProperties = [],
@@ -636,6 +524,12 @@ insight.Grouping = (function(insight) {
             self = this,
             filterFunction = null,
             orderFunction;
+
+
+
+        //public variables
+
+        this.dimension = dimension;
 
         // Private methods
 
@@ -872,7 +766,7 @@ insight.Grouping = (function(insight) {
          * For example: a property called supportedDevices : ['iPhone5', 'iPhone4'] where the values inside the array are treated as dimensional slices
          * @returns {object[]} return - the array of dimensional groupings resulting from this dimensional aggregation
          */
-        var reduceMultiDimension = function() {
+        var reduceMultidimension = function() {
 
             var propertiesToCount = self.count();
 
@@ -935,7 +829,7 @@ insight.Grouping = (function(insight) {
                 };
             }
 
-            data = self.dimension.Dimension.groupAll()
+            data = self.dimension.crossfilterDimension.groupAll()
                 .reduce(reduceAdd, reduceRemove, reduceInitial);
 
             self.orderFunction(function(a, b) {
@@ -948,21 +842,6 @@ insight.Grouping = (function(insight) {
 
         // Public methods
 
-        /** 
-         * This function is called by Series that use this Grouping, to wire up their click events to the filter event of this Grouping
-         * TODO - temporary, this needs to be removed from here (and series) and put into a new ChartGroup, ChartContainer or Dashboard type entity
-         * @param {insight.Series} series - The series registering with this Grouping
-         */
-        this.register = function(series) {
-            series.clickEvent = this.filterHandler;
-        };
-
-        /** 
-         * This handler is exposed by a Grouping and overriden by the global namespace when it wants to listen to this Grouping's filter events and wire them up to other Groupings and charts.
-         */
-        this.filterHandler = function(series, filter, dimensionSelector) {
-
-        };
 
         /**
          * Gets the function that will run after the map reduce stage of this Grouping's aggregation. This is an empty function by default, and can be overriden by the setter.
@@ -1145,9 +1024,14 @@ insight.Grouping = (function(insight) {
             var data;
 
             if (self.dimension.oneToMany) {
-                data = reduceMultiDimension();
+                // Dimensions that are one to many {supportedLanguages: ['EN', 'DE']} as opposed to {supportedLanguage: 'EN'} need to be aggregated differently
+                data = reduceMultidimension();
             } else {
-                data = self.dimension.Dimension.group()
+                // this is crossfilter code.  It calls the crossfilter.group().reduce() functions on the crossfilter dimension wrapped inside our insight.Dimension
+                // more info at https://github.com/square/crossfilter/wiki/API-Reference
+                // the add, remove and initialie functions are called when crossfilter is aggregating the groups, and is amending the membership of the different 
+                // dimensional slices (groups) 
+                data = self.dimension.crossfilterDimension.group()
                     .reduce(
                         reduceAddToGroup,
                         reduceRemoveFromGroup,
@@ -1211,6 +1095,278 @@ insight.Grouping = (function(insight) {
 ;(function(insight) {
 
     /**
+     * The ChartGroup class is a container for Charts and Tables, linking them together and coordinating cross chart filtering and styling.
+     * @class insight.ChartGroup
+     */
+
+    insight.ChartGroup = (function(insight) {
+
+        function ChartGroup() {
+
+            this.charts = [];
+            this.tables = [];
+            this.groupings = [];
+            this.dimensions = [];
+            this.filteredDimensions = [];
+            this.dimensionListenerMap = {};
+
+            // private variables
+            var self = this;
+
+            // private methods
+
+
+            /*
+             * A helper functions used by Array.filter on an array of Dimension objects, to return any Dimensions in the list whose name matches the provided filter function.
+             */
+            var compareFilters = function(filterFunction) {
+                return function(d) {
+                    return String(d.name) == String(filterFunction.name);
+                };
+            };
+
+
+            /*
+             * This internal function responds to click events on Series and Tables, alerting any other elements using the same Dimension that they need to
+             * update to highlight the selected slices of the Dimension
+             */
+            var notifyListeners = function(dimensionName, value, dimensionSelector) {
+                var listeningObjects = self.dimensionListenerMap[dimensionName];
+
+                listeningObjects.forEach(function(item) {
+                    item.highlight(dimensionSelector, value);
+                });
+            };
+
+            /*
+             * This function takes a list of series and binds the click events of each one to the ChartGroup filtering handler
+             * It also adds the series' dataset to the internal list.
+             */
+            var addSeries = function(chart) {
+                chart.series()
+                    .forEach(function(series) {
+
+                        addDimensionListener(series.data, chart);
+
+                        series.clickEvent = self.chartFilterHandler.bind(self);
+
+                        addDataSet(series.data);
+                    });
+            };
+
+            /* 
+             * This function is called when a Chart belonging to this ChartGroup updates its list of Series.
+             * The ChartGroup needs to register the click events and any crossfilter dimensions belonging to the Series
+             */
+            var newSeries = function(chart, series) {
+
+                addSeries(chart, series);
+            };
+
+
+            /* 
+             * This function checks if the provided DataSet is crossfilter enabled, and if so, adds its components to internal lists of Groupings and Dimensions.
+             */
+            var addDataSet = function(dataset) {
+
+                // If this is a crossfilter enabled DataSet (aggregated and filter enabled)
+                var crossfilterEnabled = dataset.dimension;
+
+                if (crossfilterEnabled) {
+
+                    // Add Grouping and Dimension to internal lists if they are not already there             
+                    insight.Utils.addToSet(self.groupings, dataset);
+                    insight.Utils.addToSet(self.dimensions, dataset.dimension);
+                }
+            };
+
+            /*
+             * Adds a Table to this ChartGroup, wiring up the Table's events to any related Charts or Tables in the ChartGroup
+             * @memberof! insight.ChartGroup
+             * @instance
+             */
+            var addTable = function(table) {
+
+                // wire up the click event of the table to the filter handler of the DataSet
+                table.clickEvent = self.chartFilterHandler.bind(self);
+
+                addDimensionListener(table.data, table);
+
+                self.tables.push(table);
+
+                return table;
+            };
+
+
+            /*
+             * Adds a Chart to this ChartGroup, wiring up the click events of each Series to the filter handler
+             * @memberof! insight.ChartGroup
+             * @instance
+             */
+            var addChart = function(chart) {
+
+                chart.seriesChanged = newSeries;
+
+                addSeries(chart);
+
+                self.charts.push(chart);
+
+                return chart;
+            };
+
+
+            /*
+             * Given a DataSet and a widget (Table or Chart), this function adds the widget to the map of items subscribed to events on that Dimension,
+             * only if the provided DataSet is a crossfilter enabled one that exposes a dimension property.
+             */
+            var addDimensionListener = function(dataset, widget) {
+                var dimension = dataset ? dataset.dimension : null;
+
+                if (dimension) {
+                    var listeningObjects = self.dimensionListenerMap[dimension.name];
+
+                    if (listeningObjects) {
+
+                        var alreadyListening = listeningObjects.indexOf(widget) != -1;
+
+                        if (!alreadyListening) {
+                            self.dimensionListenerMap[dimension.name].push(widget);
+                        }
+                    } else {
+                        self.dimensionListenerMap[dimension.name] = [widget];
+                    }
+                }
+            };
+
+            // public methods
+
+
+            /**
+             * Adds an item to this ChartGroup, calling the appropriate internal addChart or addTable function depending on the type.
+             * @memberof! insight.ChartGroup
+             * @instance
+             * @param {object} widget - An insight.Table or insight.Chart
+             * @returns {this}
+             */
+            this.add = function(widget) {
+                if (widget instanceof insight.Chart) {
+                    addChart(widget);
+                } else if (widget instanceof insight.Table) {
+                    addTable(widget);
+                }
+                return self;
+            };
+
+            /**
+             * Draws all Charts and Tables in this ChartGroup
+             * TODO - rename as it should only be called once, maybe to init()?
+             * @memberof! insight.ChartGroup
+             * @instance
+             */
+            this.draw = function() {
+
+                self.charts.forEach(function(chart) {
+                    chart.draw();
+                });
+
+                self.tables.forEach(function(table) {
+                    table.draw();
+                });
+            };
+
+            /**
+             * Method handler that is bound by the ChartGroup to the click events of any chart series or table rows, if the DataSets used by those entities
+             * are crossfilter enabled.
+             * It notifies any other listening charts of the dimensional selection event, which they can respond to by applying CSS highlighting etc.
+             * @memberof! insight.ChartGroup
+             * @instance
+             * @param {object} caller - The insight.Table or insight.Chart initiating the click event.
+             * @param {object} value - The data item that the dimension is being sliced/filtered by. If it is an aggregation, it will be an object {key:, value:}, otherwise a string.
+             * @param {object} widget - An insight.Table or insight.Chart
+             * @returns {this}
+             */
+            this.chartFilterHandler = function(caller, value, dimensionSelector) {
+
+                // send events to any charts or tables also using this dimension, as they will need to update their styles to reflect the selection
+                notifyListeners(caller.data.dimension.name, value, dimensionSelector);
+
+                var dimension = caller.data.dimension;
+
+                var filterFunc = dimension.createFilterFunction(value);
+
+                if (filterFunc) {
+                    // get the list of any dimensions matching the one that is being filtered
+                    var dims = self.dimensions
+                        .filter(dimension.comparer);
+
+                    // get the list of matching dimensions that are already filtered
+                    var activeDim = self.filteredDimensions
+                        .filter(dimension.comparer);
+
+                    // add the new filter to the list of active filters if it's not already active
+                    if (!activeDim.length) {
+                        self.filteredDimensions.push(dimension);
+                    }
+
+                    var comparerFunction = compareFilters(filterFunc);
+
+                    // loop through the matching dimensions to filter them all
+                    dims.map(function(dim) {
+
+                        var filterExists = dim.filters
+                            .filter(comparerFunction)
+                            .length;
+
+                        //if the dimension is already filtered by this value, toggle (remove) the filter
+                        if (filterExists) {
+                            insight.Utils.removeMatchesFromArray(dim.filters, comparerFunction);
+
+                        } else {
+                            // add the provided filter to the list for this dimension
+
+                            dim.filters.push(filterFunc);
+                        }
+
+                        // reset this dimension if no filters exist, else apply the filter to the dataset.
+                        if (dim.filters.length === 0) {
+
+                            insight.Utils.removeItemFromArray(self.filteredDimensions, dim);
+                            dim.crossfilterDimension.filterAll();
+
+                        } else {
+                            dim.crossfilterDimension.filter(function(d) {
+                                var vals = dim.filters
+                                    .map(function(func) {
+                                        return func.filterFunction(d);
+                                    });
+
+                                return vals.filter(function(result) {
+                                        return result;
+                                    })
+                                    .length > 0;
+                            });
+                        }
+                    });
+
+                    // the above filtering will have triggered a re-aggregation of the groupings.  We must manually initiate the recalculation
+                    // of the groupings for any post aggregation calculations
+                    self.groupings.forEach(function(group) {
+                        group.recalculate();
+
+                    });
+
+                    self.draw();
+                }
+            };
+        }
+
+        return ChartGroup;
+
+    })(insight);
+})(insight);
+;(function(insight) {
+
+    /**
      * The Chart class is the element in which series and axes are drawn
      * @class insight.Chart
      * @param {string} name - A uniquely identifying name for this chart
@@ -1223,9 +1379,6 @@ insight.Grouping = (function(insight) {
             this.name = name;
             this.element = element;
             this.selectedItems = [];
-            var legend = null;
-
-            var zoomAxis = null;
             this.container = null;
             this.chart = null;
             this.measureCanvas = document.createElement('canvas');
@@ -1239,15 +1392,23 @@ insight.Grouping = (function(insight) {
 
             this.legendView = null;
 
-            var height = d3.functor(300);
-            var width = d3.functor(300);
-            var zoomable = false;
-            var series = [];
-            var xAxes = [];
-            var yAxes = [];
-            var self = this;
-            var title = '';
-            var autoMargin = true;
+            var height = d3.functor(300),
+                width = d3.functor(300),
+                zoomable = false,
+                series = [],
+                xAxes = [],
+                yAxes = [],
+                self = this,
+                title = '',
+                autoMargin = true,
+                initialized = false,
+                legend = null,
+                zoomInitialized = false;
+            zoomAxis = null;
+
+            this.seriesChanged = function(series) {
+
+            };
 
 
             this.init = function(create, container) {
@@ -1270,16 +1431,16 @@ insight.Grouping = (function(insight) {
 
                 self.addClipPath();
 
-                self.draw(false);
-
-                if (zoomable) {
-                    self.initZoom();
-                }
-
+                initialized = true;
             };
 
 
             this.draw = function(dragging) {
+
+                if (!initialized) {
+                    self.init();
+                }
+
                 this.resizeChart();
 
                 var axes = xAxes.concat(yAxes);
@@ -1295,6 +1456,10 @@ insight.Grouping = (function(insight) {
 
                 if (legend !== null) {
                     legend.draw(self, self.series());
+                }
+
+                if (zoomable && !zoomInitialized) {
+                    self.initZoom();
                 }
             };
 
@@ -1375,6 +1540,8 @@ insight.Grouping = (function(insight) {
 
                 this.plotArea.select('.zoompane')
                     .call(this.zoom);
+
+                zoomInitialized = true;
             };
 
             this.zoomExists = function() {
@@ -1490,6 +1657,8 @@ insight.Grouping = (function(insight) {
                     return series;
                 }
                 series = newSeries;
+
+                self.seriesChanged(self, newSeries);
 
                 return this;
             };
@@ -1690,8 +1859,6 @@ insight.Grouping = (function(insight) {
 
                 notselected.classed('notselected', selected[0].length > 0);
             };
-
-            insight.addChart(this);
         }
 
 
@@ -1799,13 +1966,13 @@ insight.Grouping = (function(insight) {
 
 
             var rowClass = function(dataPoint) {
-                return insight.Constants.TableRowClass + ' ' + insight.Utils.keySelector(dataPoint);
+                return insight.Constants.TableRowClass + ' ' + insight.Utils.keySelector(dataPoint, keyFunction);
             };
 
 
             var click = function(dataItem) {
 
-                var selector = insight.Utils.keySelector(dataItem);
+                var selector = insight.Utils.keySelector(dataItem, keyFunction);
 
                 self.clickEvent(self, dataItem, selector);
             };
@@ -1827,14 +1994,14 @@ insight.Grouping = (function(insight) {
              * The properties of the DataSet to use as columns.
              * @memberof! insight.Table
              * @instance
-             * @returns {object} - The current properties used as columns, of the form {'label':... , 'value':... }.
+             * @returns {object[]} - The current properties used as columns, of the form {'label':... , 'value':... }.
              *
              * @also
              *
              * Sets the properties of the DataSet to use as columns.
              * @memberof! insight.Table
              * @instance
-             * @param {object} columnProperties The new properties to use as columns, of the form {'label':... , 'value':... }.
+             * @param {object[]} columnProperties - The new properties to use as columns, of the form {'label':... , 'value':... }.
              * @returns {this}
              */
             this.columns = function(value) {
@@ -1842,6 +2009,29 @@ insight.Grouping = (function(insight) {
                     return columnProperties;
                 }
                 columnProperties = value;
+                return this;
+            };
+
+
+            /**
+             * The key function to use for this Table.
+             * @memberof! insight.Table
+             * @instance
+             * @returns {function} - The function to use as the key accessor for this Table
+             *
+             * @also
+             *
+             * Sets the properties of the DataSet to use as columns.
+             * @memberof! insight.Table
+             * @instance
+             * @param {function} keyFunc - The function to use as the key accessor for this Table
+             * @returns {this}
+             */
+            this.keyFunction = function(keyFunc) {
+                if (!arguments.length) {
+                    return keyFunction;
+                }
+                keyFunction = keyFunc;
                 return this;
             };
 
@@ -2963,10 +3153,6 @@ insight.Series = function Series(name, data, x, y, color) {
             y: -10
         };
 
-    if (data.register) {
-        data.register(this);
-    }
-
     // private functions used internally, set by functions below that are exposed on the object
 
     var keyFunction = function(d) {
@@ -3040,7 +3226,7 @@ insight.Series = function Series(name, data, x, y, color) {
      */
     this.itemClassName = function(dataItem, additionalClasses) {
 
-        var keySelector = insight.Utils.keySelector(dataItem);
+        var keySelector = insight.Utils.keySelector(dataItem, keyFunction);
         var selected = selectedClassName(self.selectedItems, keySelector);
         var value = self.rootClassName + ' ' + keySelector + selected;
 
@@ -3126,11 +3312,6 @@ insight.Series = function Series(name, data, x, y, color) {
             .map(self.keyFunction());
     };
 
-
-
-    this.keyAccessor = function(d) {
-        return d.key;
-    };
 
     this.xFunction = function(_) {
         if (!arguments.length) {
@@ -3224,7 +3405,7 @@ insight.Series = function Series(name, data, x, y, color) {
 
     this.click = function(element, filter) {
 
-        var selector = insight.Utils.keySelector(filter);
+        var selector = insight.Utils.keySelector(filter, keyFunction);
 
         this.clickEvent(this, filter, selector);
     };
@@ -3744,13 +3925,6 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
         self = this,
         selector = this.name + insight.Constants.Scatter;
 
-    var xFunction = function(d) {
-        return d.x;
-    };
-
-    var yFunction = function(d) {
-        return d.y;
-    };
 
     this.findMax = function(scale) {
         var self = this;
@@ -3821,8 +3995,8 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
         var max = d3.max(data, radiusFunction);
 
         //Minimum of pixels-per-axis-unit
-        var xValues = data.map(xFunction);
-        var yValues = data.map(yFunction);
+        var xValues = data.map(self.xFunction());
+        var yValues = data.map(self.yFunction());
         var xBounds = this.x.bounds[1];
         var yBounds = this.y.bounds[0];
 
@@ -4287,7 +4461,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
     var self = this,
         stacked = d3.functor(false),
-        seriesName = "",
+        seriesName = '',
         seriesFunctions = {},
         barWidthFunction = this.x.rangeType;
 
@@ -4478,7 +4652,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
         var groups = chart.plotArea
             .selectAll(groupSelector)
-            .data(data, self.keyAccessor);
+            .data(data, self.keyFunction());
 
         var newGroups = groups.enter()
             .append('g')

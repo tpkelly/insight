@@ -55,6 +55,35 @@
             </ul>
         </li>
     
+        <li class="item" data-name="insight.Utils">
+            <span class="title">
+                <a href="insight.Utils.html">insight.Utils</a>
+                
+                <span class="static">static</span>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.Utils.exports.addToSet"><a href="insight.Utils.html#exports.addToSet">exports.addToSet</a></li>
+            
+                <li data-name="insight.Utils.exports.arrayContains"><a href="insight.Utils.html#exports.arrayContains">exports.arrayContains</a></li>
+            
+                <li data-name="insight.Utils.recursiveSort"><a href="insight.Utils.html#recursiveSort">recursiveSort</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
         <li class="item" data-name="insight.Axis">
             <span class="title">
                 <a href="insight.Axis.html">insight.Axis</a>
@@ -222,6 +251,33 @@
                 <li data-name="insight.Chart#this.yAxis"><a href="insight.Chart.html##this.yAxis">#this.yAxis</a></li>
             
                 <li data-name="insight.Chart#this.zoomable"><a href="insight.Chart.html##this.zoomable">#this.zoomable</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.ChartGroup">
+            <span class="title">
+                <a href="insight.ChartGroup.html">insight.ChartGroup</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.ChartGroup#this.add"><a href="insight.ChartGroup.html##this.add">#this.add</a></li>
+            
+                <li data-name="insight.ChartGroup#this.chartFilterHandler"><a href="insight.ChartGroup.html##this.chartFilterHandler">#this.chartFilterHandler</a></li>
+            
+                <li data-name="insight.ChartGroup#this.draw"><a href="insight.ChartGroup.html##this.draw">#this.draw</a></li>
             
             </ul>
             <ul class="events itemMembers">
@@ -488,6 +544,10 @@
             
                 <li data-name="insight.Table#this.descending"><a href="insight.Table.html##this.descending">#this.descending</a></li>
             
+                <li data-name="insight.Table#this.keyFunction"><a href="insight.Table.html##this.keyFunction">#this.keyFunction</a></li>
+            
+                <li data-name="insight.Table#this.keyFunction"><a href="insight.Table.html##this.keyFunction">#this.keyFunction</a></li>
+            
                 <li data-name="insight.Table#this.top"><a href="insight.Table.html##this.top">#this.top</a></li>
             
                 <li data-name="insight.Table#this.top"><a href="insight.Table.html##this.top">#this.top</a></li>
@@ -574,10 +634,6 @@ insight.Series = function Series(name, data, x, y, color) {
             y: -10
         };
 
-    if (data.register) {
-        data.register(this);
-    }
-
     // private functions used internally, set by functions below that are exposed on the object
 
     var keyFunction = function(d) {
@@ -651,7 +707,7 @@ insight.Series = function Series(name, data, x, y, color) {
      */
     this.itemClassName = function(dataItem, additionalClasses) {
 
-        var keySelector = insight.Utils.keySelector(dataItem);
+        var keySelector = insight.Utils.keySelector(dataItem, keyFunction);
         var selected = selectedClassName(self.selectedItems, keySelector);
         var value = self.rootClassName + ' ' + keySelector + selected;
 
@@ -737,11 +793,6 @@ insight.Series = function Series(name, data, x, y, color) {
             .map(self.keyFunction());
     };
 
-
-
-    this.keyAccessor = function(d) {
-        return d.key;
-    };
 
     this.xFunction = function(_) {
         if (!arguments.length) {
@@ -835,7 +886,7 @@ insight.Series = function Series(name, data, x, y, color) {
 
     this.click = function(element, filter) {
 
-        var selector = insight.Utils.keySelector(filter);
+        var selector = insight.Utils.keySelector(filter, keyFunction);
 
         this.clickEvent(this, filter, selector);
     };

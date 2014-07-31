@@ -55,6 +55,35 @@
             </ul>
         </li>
     
+        <li class="item" data-name="insight.Utils">
+            <span class="title">
+                <a href="insight.Utils.html">insight.Utils</a>
+                
+                <span class="static">static</span>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.Utils.exports.addToSet"><a href="insight.Utils.html#exports.addToSet">exports.addToSet</a></li>
+            
+                <li data-name="insight.Utils.exports.arrayContains"><a href="insight.Utils.html#exports.arrayContains">exports.arrayContains</a></li>
+            
+                <li data-name="insight.Utils.recursiveSort"><a href="insight.Utils.html#recursiveSort">recursiveSort</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
         <li class="item" data-name="insight.Axis">
             <span class="title">
                 <a href="insight.Axis.html">insight.Axis</a>
@@ -222,6 +251,33 @@
                 <li data-name="insight.Chart#this.yAxis"><a href="insight.Chart.html##this.yAxis">#this.yAxis</a></li>
             
                 <li data-name="insight.Chart#this.zoomable"><a href="insight.Chart.html##this.zoomable">#this.zoomable</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.ChartGroup">
+            <span class="title">
+                <a href="insight.ChartGroup.html">insight.ChartGroup</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.ChartGroup#this.add"><a href="insight.ChartGroup.html##this.add">#this.add</a></li>
+            
+                <li data-name="insight.ChartGroup#this.chartFilterHandler"><a href="insight.ChartGroup.html##this.chartFilterHandler">#this.chartFilterHandler</a></li>
+            
+                <li data-name="insight.ChartGroup#this.draw"><a href="insight.ChartGroup.html##this.draw">#this.draw</a></li>
             
             </ul>
             <ul class="events itemMembers">
@@ -488,6 +544,10 @@
             
                 <li data-name="insight.Table#this.descending"><a href="insight.Table.html##this.descending">#this.descending</a></li>
             
+                <li data-name="insight.Table#this.keyFunction"><a href="insight.Table.html##this.keyFunction">#this.keyFunction</a></li>
+            
+                <li data-name="insight.Table#this.keyFunction"><a href="insight.Table.html##this.keyFunction">#this.keyFunction</a></li>
+            
                 <li data-name="insight.Table#this.top"><a href="insight.Table.html##this.top">#this.top</a></li>
             
                 <li data-name="insight.Table#this.top"><a href="insight.Table.html##this.top">#this.top</a></li>
@@ -543,7 +603,7 @@
         <article>
             <pre class="prettyprint source"><code>/**
  * This module contains some helper functions used throughout the library
- * @module InsightUtils
+ * @namespace insight.Utils
  */
 insight.Utils = (function() {
 
@@ -554,6 +614,7 @@ insight.Utils = (function() {
     /**
      * This recursive function takes two values a and b, a list of sort objects [{sortFunction: function(a){return a.valueToSortOn;}, order: 'ASC'}] and an index of the current function being used to sort.
      * It returns a ordering value for a and b, as per the normal Javascript sorting rules https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+     * @memberof! insight.Utils
      * @returns {int} sortResult - if a > b then the result = 1, -1 if a &lt; b and 0 if a == b.
      * @param {object} a - Description
      * @param {object} b - Description
@@ -600,14 +661,38 @@ insight.Utils = (function() {
     };
 
     /**
+     * Returns true/false if an object is inside an array.
+     * @memberof! insight.Utils
+     * @param {object[]} array - The array to check
+     * @param {object} value - The value to check for
+     * @returns {boolean} - True if the provided array contains the provided value
+     */
+    exports.arrayContains = function(array, value) {
+        return array.indexOf(value) != -1;
+    };
+
+    /**
+     * Adds a value to an array, only if it doesn't already belong to the array.
+     * @memberof! insight.Utils
+     * @param {object[]} array - The array to insert into
+     * @param {object} value - The value to insert
+     */
+    exports.addToSet = function(array, value) {
+        if (!exports.arrayContains(array, value)) {
+            array.push(value);
+        }
+    };
+
+    /**
      * This function takes a data point, and creates a class name for insight to identify this particular key
      * If the parameter is not an object (just a value in an array) then there is no need for this particular class so blank is returned.
      * @returns {string} return - A class name to identify this point and any other points taking the same value in other charts.
      * @param {object} data - The input point
      */
-    exports.keySelector = function(d) {
+    exports.keySelector = function(d, keyFunction) {
 
-        var str = d.key.toString();
+        var str = keyFunction(d)
+            .toString();
 
         var result = "in_" + str.replace(/[^A-Z0-9]/ig, "_");
 

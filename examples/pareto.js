@@ -64,7 +64,7 @@ $(document)
 
             chart.series([series, line]);
 
-            insight.drawCharts();
+            chart.draw();
         });
     });
 

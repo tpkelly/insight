@@ -45,5 +45,5 @@
 
          chart.series([series]);
 
-         insight.drawCharts();
+         chart.draw();
      });

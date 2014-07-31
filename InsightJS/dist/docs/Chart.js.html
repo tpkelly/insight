@@ -55,6 +55,35 @@
             </ul>
         </li>
     
+        <li class="item" data-name="insight.Utils">
+            <span class="title">
+                <a href="insight.Utils.html">insight.Utils</a>
+                
+                <span class="static">static</span>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.Utils.exports.addToSet"><a href="insight.Utils.html#exports.addToSet">exports.addToSet</a></li>
+            
+                <li data-name="insight.Utils.exports.arrayContains"><a href="insight.Utils.html#exports.arrayContains">exports.arrayContains</a></li>
+            
+                <li data-name="insight.Utils.recursiveSort"><a href="insight.Utils.html#recursiveSort">recursiveSort</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
         <li class="item" data-name="insight.Axis">
             <span class="title">
                 <a href="insight.Axis.html">insight.Axis</a>
@@ -222,6 +251,33 @@
                 <li data-name="insight.Chart#this.yAxis"><a href="insight.Chart.html##this.yAxis">#this.yAxis</a></li>
             
                 <li data-name="insight.Chart#this.zoomable"><a href="insight.Chart.html##this.zoomable">#this.zoomable</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.ChartGroup">
+            <span class="title">
+                <a href="insight.ChartGroup.html">insight.ChartGroup</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.ChartGroup#this.add"><a href="insight.ChartGroup.html##this.add">#this.add</a></li>
+            
+                <li data-name="insight.ChartGroup#this.chartFilterHandler"><a href="insight.ChartGroup.html##this.chartFilterHandler">#this.chartFilterHandler</a></li>
+            
+                <li data-name="insight.ChartGroup#this.draw"><a href="insight.ChartGroup.html##this.draw">#this.draw</a></li>
             
             </ul>
             <ul class="events itemMembers">
@@ -488,6 +544,10 @@
             
                 <li data-name="insight.Table#this.descending"><a href="insight.Table.html##this.descending">#this.descending</a></li>
             
+                <li data-name="insight.Table#this.keyFunction"><a href="insight.Table.html##this.keyFunction">#this.keyFunction</a></li>
+            
+                <li data-name="insight.Table#this.keyFunction"><a href="insight.Table.html##this.keyFunction">#this.keyFunction</a></li>
+            
                 <li data-name="insight.Table#this.top"><a href="insight.Table.html##this.top">#this.top</a></li>
             
                 <li data-name="insight.Table#this.top"><a href="insight.Table.html##this.top">#this.top</a></li>
@@ -556,9 +616,6 @@
             this.name = name;
             this.element = element;
             this.selectedItems = [];
-            var legend = null;
-
-            var zoomAxis = null;
             this.container = null;
             this.chart = null;
             this.measureCanvas = document.createElement('canvas');
@@ -572,15 +629,23 @@
 
             this.legendView = null;
 
-            var height = d3.functor(300);
-            var width = d3.functor(300);
-            var zoomable = false;
-            var series = [];
-            var xAxes = [];
-            var yAxes = [];
-            var self = this;
-            var title = '';
-            var autoMargin = true;
+            var height = d3.functor(300),
+                width = d3.functor(300),
+                zoomable = false,
+                series = [],
+                xAxes = [],
+                yAxes = [],
+                self = this,
+                title = '',
+                autoMargin = true,
+                initialized = false,
+                legend = null,
+                zoomInitialized = false;
+            zoomAxis = null;
+
+            this.seriesChanged = function(series) {
+
+            };
 
 
             this.init = function(create, container) {
@@ -603,16 +668,16 @@
 
                 self.addClipPath();
 
-                self.draw(false);
-
-                if (zoomable) {
-                    self.initZoom();
-                }
-
+                initialized = true;
             };
 
 
             this.draw = function(dragging) {
+
+                if (!initialized) {
+                    self.init();
+                }
+
                 this.resizeChart();
 
                 var axes = xAxes.concat(yAxes);
@@ -628,6 +693,10 @@
 
                 if (legend !== null) {
                     legend.draw(self, self.series());
+                }
+
+                if (zoomable && !zoomInitialized) {
+                    self.initZoom();
                 }
             };
 
@@ -708,6 +777,8 @@
 
                 this.plotArea.select('.zoompane')
                     .call(this.zoom);
+
+                zoomInitialized = true;
             };
 
             this.zoomExists = function() {
@@ -823,6 +894,8 @@
                     return series;
                 }
                 series = newSeries;
+
+                self.seriesChanged(self, newSeries);
 
                 return this;
             };
@@ -1023,8 +1096,6 @@
 
                 notselected.classed('notselected', selected[0].length > 0);
             };
-
-            insight.addChart(this);
         }
 
 

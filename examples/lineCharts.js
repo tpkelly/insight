@@ -57,6 +57,6 @@ $(document)
 
             chart.zoomable(x);
 
-            insight.drawCharts();
+            chart.draw();
         });
     });

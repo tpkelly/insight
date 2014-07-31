@@ -1,0 +1,29 @@
+[
+    {
+        "infrastructure": "Replica Set",
+        "label": "Replica Set",
+        "write_speed": {
+            "minutes": 14,
+            "seconds": 18
+        },
+        "queries_per_second": 14875.8
+    },
+    {
+        "infrastructure": "Sharded Cluster - key on added_at",
+        "label": "Sharded - added_at",
+        "write_speed": {
+            "minutes": 20,
+            "seconds": 43
+        },
+        "queries_per_second": 16875
+    },
+    {
+        "infrastructure": "Sharded Cluster - composite key on name and added_at",
+        "label": "Sharded - Composite Key",
+        "write_speed": {
+            "minutes": 27,
+            "seconds": 15
+        },
+        "queries_per_second": 17775
+    }
+]

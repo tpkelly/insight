@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Source: charts/Series/MarkerSeries.js</title>
+    <title>Module: Utils</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -48,35 +48,6 @@
             
             </ul>
             <ul class="methods itemMembers">
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="insight.Utils">
-            <span class="title">
-                <a href="insight.Utils.html">insight.Utils</a>
-                
-                <span class="static">static</span>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            <span class="subtitle">Methods</span>
-            
-                <li data-name="insight.Utils.exports.addToSet"><a href="insight.Utils.html#exports.addToSet">exports.addToSet</a></li>
-            
-                <li data-name="insight.Utils.exports.arrayContains"><a href="insight.Utils.html#exports.arrayContains">exports.arrayContains</a></li>
-            
-                <li data-name="insight.Utils.recursiveSort"><a href="insight.Utils.html#recursiveSort">recursiveSort</a></li>
             
             </ul>
             <ul class="events itemMembers">
@@ -273,11 +244,13 @@
             
             <span class="subtitle">Methods</span>
             
-                <li data-name="insight.ChartGroup#this.add"><a href="insight.ChartGroup.html##this.add">#this.add</a></li>
+                <li data-name="insight.ChartGroup#this.addChart"><a href="insight.ChartGroup.html##this.addChart">#this.addChart</a></li>
             
-                <li data-name="insight.ChartGroup#this.chartFilterHandler"><a href="insight.ChartGroup.html##this.chartFilterHandler">#this.chartFilterHandler</a></li>
+                <li data-name="insight.ChartGroup#this.addTable"><a href="insight.ChartGroup.html##this.addTable">#this.addTable</a></li>
             
                 <li data-name="insight.ChartGroup#this.draw"><a href="insight.ChartGroup.html##this.draw">#this.draw</a></li>
+            
+                <li data-name="insight.ChartGroup#this.redraw"><a href="insight.ChartGroup.html##this.redraw">#this.redraw</a></li>
             
             </ul>
             <ul class="events itemMembers">
@@ -544,10 +517,6 @@
             
                 <li data-name="insight.Table#this.descending"><a href="insight.Table.html##this.descending">#this.descending</a></li>
             
-                <li data-name="insight.Table#this.keyFunction"><a href="insight.Table.html##this.keyFunction">#this.keyFunction</a></li>
-            
-                <li data-name="insight.Table#this.keyFunction"><a href="insight.Table.html##this.keyFunction">#this.keyFunction</a></li>
-            
                 <li data-name="insight.Table#this.top"><a href="insight.Table.html##this.top">#this.top</a></li>
             
                 <li data-name="insight.Table#this.top"><a href="insight.Table.html##this.top">#this.top</a></li>
@@ -594,223 +563,758 @@
     </ul>
 </div>
     <div class="main">
-        <h1 class="page-title" data-filename="MarkerSeries.js.html">Source: charts/Series/MarkerSeries.js</h1>
+        <h1 class="page-title" data-filename="Utils.html">Module: Utils</h1>
         
 
 
+
+<section>
     
-    <section>
-        <article>
-            <pre class="prettyprint source"><code>/**
- * The MarkerSeries class extends the Series class and draws markers/targets on a chart
- * @class insight.MarkerSeries
- * @param {string} name - A uniquely identifying name for this chart
- * @param {DataSet} data - The DataSet containing this series' data
- * @param {insight.Scales.Scale} x - the x axis
- * @param {insight.Scales.Scale} y - the y axis
- * @param {object} color - a string or function that defines the color to be used for the items in this series
- */
-insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
+<header>
+    <h2>
+        <span class="ancestors"><a href="insight.html">insight</a>.</span>
+    
+    Utils
+    </h2>
+    
+</header>  
 
-    insight.Series.call(this, name, data, x, y, color);
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+            <div class="description">This module contains some helper functions used throughout the library</div>
+        
+        
+        
+<dl class="details">
+    
+        
+    
+    
+    
 
-    var self = this,
-        thickness = 5,
-        widthFactor = 1,
-        offset = 0,
-        horizontal = false,
-        vertical = true;
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
 
-    this.xPosition = function(d) {
-        var pos = 0;
+        
+        
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <h3 class="subsection-title">Methods</h3>
+        
+        <dl>
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="getSVGBoundingBox">
+            
+            <span class="type-signature static">static</span>insight.module:Utils.getSVGBoundingBox<span class="signature">(element)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{object}</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="insight.Utils.js.html">utils/insight.Utils.js</a>, <a href="insight.Utils.js.html#line171">line 171</a>
+        </div>
+        
+    </div>
 
-        if (vertical) {
-            pos = self.x.scale(self.keyFunction()(d));
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        This function takes a SVG element and returns a bounding box of coordinates at each of its compass points
+    </div>
+    
 
-            if (!offset) {
-                offset = self.calculateOffset(d);
-            }
+    
+    
+    
+    
+    
+        
 
-            pos = widthFactor != 1 ? pos + offset : pos;
-        } else {
-            pos = self.x.scale(self.valueFunction()(d));
-
-        }
-
-        return pos;
-    };
-
-
-    this.keys = function() {
-
-        var f = self.keyFunction();
-
-        return self.dataset()
-            .map(f);
-    };
-
-    this.calculateOffset = function(d) {
-
-        var thickness = horizontal ? self.markerHeight(d) : self.markerWidth(d);
-        var scalePos = horizontal ? self.y.scale.rangeBand(d) : self.x.scale.rangeBand(d);
-
-        return (scalePos - thickness) * 0.5;
-    };
-
-    this.yPosition = function(d) {
-
-        var position = 0;
-
-        if (horizontal) {
-            position = self.y.scale(self.keyFunction()(d));
-
-            if (!offset) {
-                offset = self.calculateOffset(d);
-            }
-
-            position = widthFactor != 1 ? position + offset : position;
-
-        } else {
-            position = self.y.scale(self.valueFunction()(d));
-        }
-
-        return position;
-    };
-
-    this.horizontal = function() {
-        horizontal = true;
-        vertical = false;
-
-        return this;
-    };
-
-    this.vertical = function() {
-        vertical = true;
-        horizontal = false;
-        return this;
-    };
-
-    /**
-     * The width of the marker, as a proportion of the column width.
-     * @memberof! insight.MarkerSeries
-     * @instance
-     * @returns {Number} - The current width proportion.
-     *
-     * @also
-     *
-     * Sets the width of the marker, as a proportion of the column width.
-     * @memberof! insight.MarkerSeries
-     * @instance
-     * @param {Number} widthProportion The new width proportion.
-     * @returns {this}
-     */
-    this.widthFactor = function(_) {
-
-        if (!arguments.length) {
-            return widthFactor;
-        }
-        widthFactor = _;
-        return this;
-    };
-
-    this.thickness = function(_) {
-        if (!arguments.length) {
-            return thickness;
-        }
-        thickness = _;
-        return this;
-    };
-
-    this.markerWidth = function(d) {
-        var w = 0;
-
-        if (horizontal) {
-            w = self.thickness();
-        } else {
-            w = self.x.scale.rangeBand(d) * widthFactor;
-        }
-
-        return w;
-    };
-
-    this.markerHeight = function(d) {
-        var h = 0;
-
-        if (horizontal) {
-            h = self.y.scale.rangeBand(d) * widthFactor;
-        } else {
-            h = self.thickness();
-        }
-
-        return h;
-    };
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>element</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">DOMElement</span>
 
 
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The element to measure</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
 
-    this.draw = function(chart, drag) {
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
 
-        self.initializeTooltip(chart.container.node());
-        self.selectedItems = chart.selectedItems;
-        self.rootClassName = self.seriesClassName();
+    
+    
 
-        var reset = function(d) {
-            d.yPos = 0;
-            d.xPos = 0;
-        };
+    
 
-        var d = this.dataset()
-            .forEach(reset);
+    
+    
+    
+    
+    
+    
+    
 
-        var groups = chart.plotArea
-            .selectAll('g.' + insight.Constants.BarGroupClass + "." + this.name)
-            .data(this.dataset(), this.keyAccessor);
 
-        var newGroups = groups.enter()
-            .append('g')
-            .attr('class', insight.Constants.BarGroupClass + " " + this.name);
+<h5>Returns:</h5>
+- A bounding box object {nw: ..., n: ..., ne: ..., e: ..., se: ..., s: ..., sw: ..., w: ...}
+<br />
 
-        var newBars = newGroups.selectAll('rect.bar');
+    
+    
+    
+</dd>
 
-        var click = function(filter) {
-            return self.click(this, filter);
-        };
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="isArray">
+            
+            <span class="type-signature static">static</span>insight.module:Utils.isArray<span class="signature">(input)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{boolean}</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="insight.Utils.js.html">utils/insight.Utils.js</a>, <a href="insight.Utils.js.html#line46">line 46</a>
+        </div>
+        
+    </div>
 
-        var duration = function(d, i) {
-            return 200 + (i * 20);
-        };
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        This is a utility method used to check if an object is an array or not
+    </div>
+    
 
-        newBars = newGroups.append('rect')
-            .attr('class', self.itemClassName)
-            .attr('y', this.y.bounds[0])
-            .attr('height', 0)
-            .attr('fill', this.color)
-            .attr('clip-path', 'url(#' + chart.clipPath() + ')')
-            .on('mouseover', this.mouseOver)
-            .on('mouseout', this.mouseOut)
-            .on('click', click);
+    
+    
+    
+    
+    
+        
 
-        var bars = groups.selectAll('.' + this.name + 'class');
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>input</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
 
-        bars
-            .transition()
-            .duration(duration)
-            .attr('y', this.yPosition)
-            .attr('x', this.xPosition)
-            .attr('width', this.markerWidth)
-            .attr('height', this.markerHeight);
 
-        groups.exit()
-            .remove();
-    };
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The object to check</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
 
-    return this;
-};
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
 
-insight.MarkerSeries.prototype = Object.create(insight.Series.prototype);
-insight.MarkerSeries.prototype.constructor = insight.MarkerSeries;
-</code></pre>
-        </article>
-    </section>
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+- is the object an array
+<br />
+
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="keySelector">
+            
+            <span class="type-signature static">static</span>insight.module:Utils.keySelector<span class="signature">(data)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{string}</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="insight.Utils.js.html">utils/insight.Utils.js</a>, <a href="insight.Utils.js.html#line88">line 88</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        This function takes a data point, and creates a class name for insight to identify this particular key
+If the parameter is not an object (just a value in an array) then there is no need for this particular class so blank is returned.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The input point</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+- A class name to identify this point and any other points taking the same value in other charts.
+<br />
+
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="multiSort">
+            
+            <span class="type-signature static">static</span>insight.module:Utils.multiSort<span class="signature">(data, sorters)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{object[]}</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="insight.Utils.js.html">utils/insight.Utils.js</a>, <a href="insight.Utils.js.html#line152">line 152</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        This function takes an array and a list of sort objects, sorting the array (in place) using the provided priorities and returning that array at the end.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The array to sort.  It will be sorted in place (as per Javascript sort standard behaviour) and returned at the end.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>sorters</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                A list of sorting rules [{sortFunction: function(a){return a.valueToSortOn;}, order: 'ASC'}]</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+- The sorted array
+<br />
+
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="objectUnion">
+            
+            <span class="type-signature static">static</span>insight.module:Utils.objectUnion<span class="signature">(base, extend)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{object}</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="insight.Utils.js.html">utils/insight.Utils.js</a>, <a href="insight.Utils.js.html#line132">line 132</a>
+        </div>
+        
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        This function takes two objects and returns the union, with priority given to the first parameter in the event of clashes.
+This bias is used for scenarios where user defined CSS properties must not override default values.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>base</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The base object to have priority in the union operation.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>extend</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The object to extend from, adding any additional properties and values defined in this parameter.</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+- a shallow copy representing the union between the provided objects
+<br />
+
+    
+    
+    
+</dd>
+
+        </dl>
+    
+    
+    
+    
+    
+</article>
+
+</section>  
 
 
 
