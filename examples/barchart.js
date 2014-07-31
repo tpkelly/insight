@@ -24,7 +24,13 @@
          var chart = new insight.Chart('Chart 1', '#exampleChart')
              .width(450)
              .height(400)
-             .autoMargin(true);
+             .margin(
+             {
+                 top: 0,
+                 left: 160,
+                 right: 0,
+                 bottom: 110
+             });
 
          var x = new insight.Axis('Country', insight.Scales.Ordinal)
              .tickOrientation('tb');
