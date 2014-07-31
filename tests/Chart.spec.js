@@ -52,9 +52,9 @@ describe('Chart', function() {
 
         });
 
-        it('minWidth 50', function() {
+        it('minWidth 300', function() {
 
-            expect(chart.minWidth()).toBe(50);
+            expect(chart.minWidth()).toBe(300);
 
         });
 

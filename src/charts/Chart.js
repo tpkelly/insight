@@ -13,9 +13,6 @@
             this.name = name;
             this.element = element;
             this.selectedItems = [];
-            var legend = null;
-
-            var zoomAxis = null;
             this.container = null;
             this.chart = null;
             this.measureCanvas = document.createElement('canvas');
@@ -29,33 +26,37 @@
 
             this.legendView = null;
 
-            var height = d3.functor(300);
-            var width = d3.functor(300);
-            var maxWidth = d3.functor(300);
-            var minWidth = d3.functor(50);
-            var zoomable = false;
-            var series = [];
-            var xAxes = [];
-            var yAxes = [];
-            var self = this;
-            var title = '';
-            var autoMargin = true;
+            var height = d3.functor(300),
+                width = d3.functor(300),
+                maxWidth = d3.functor(300),
+                minWidth = d3.functor(300),
+                zoomable = false,
+                series = [],
+                xAxes = [],
+                yAxes = [],
+                self = this,
+                title = '',
+                autoMargin = true,
+                legend = null,
+                zoomAxis = null;
+
+            function onWindowResize() {
+
+                var scrollBarWidth = 50;
+                var left = self.container[0][0].offsetLeft;
+
+                var widthWithoutScrollBar =
+                    window.innerWidth -
+                    left -
+                    scrollBarWidth;
+
+                self.resizeWidth(widthWithoutScrollBar);
+
+            }
 
             this.init = function(create, container) {
 
-                window.addEventListener('resize', function onWindowResize() {
-
-                    var scrollBarWidth = 50;
-                    var left = self.chartSVG[0][0].offsetLeft;
-
-                    var widthWithoutScrollBar =
-                        window.innerWidth -
-                        left -
-                        scrollBarWidth;
-
-                    self.resizeWidth(widthWithoutScrollBar);
-
-                });
+                window.addEventListener('resize', onWindowResize);
 
                 self.container = create ? d3.select(container)
                     .append('div') : d3.select(self.element)
