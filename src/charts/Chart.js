@@ -13,9 +13,6 @@
             this.name = name;
             this.element = element;
             this.selectedItems = [];
-            var legend = null;
-
-            var zoomAxis = null;
             this.container = null;
             this.chart = null;
             this.measureCanvas = document.createElement('canvas');
@@ -29,18 +26,37 @@
 
             this.legendView = null;
 
-            var height = d3.functor(300);
-            var width = d3.functor(300);
-            var zoomable = false;
-            var series = [];
-            var xAxes = [];
-            var yAxes = [];
-            var self = this;
-            var title = '';
-            var autoMargin = true;
+            var height = d3.functor(300),
+                width = d3.functor(300),
+                maxWidth = d3.functor(300),
+                minWidth = d3.functor(300),
+                zoomable = false,
+                series = [],
+                xAxes = [],
+                yAxes = [],
+                self = this,
+                title = '',
+                autoMargin = true,
+                legend = null,
+                zoomAxis = null;
 
+            function onWindowResize() {
+
+                var scrollBarWidth = 50;
+                var left = self.container[0][0].offsetLeft;
+
+                var widthWithoutScrollBar =
+                    window.innerWidth -
+                    left -
+                    scrollBarWidth;
+
+                self.resizeWidth(widthWithoutScrollBar);
+
+            }
 
             this.init = function(create, container) {
+
+                window.addEventListener('resize', onWindowResize);
 
                 self.container = create ? d3.select(container)
                     .append('div') : d3.select(self.element)
@@ -102,6 +118,36 @@
                         .bottom);
             };
 
+            /**
+             * Resizes the chart width according to the given window width within the chart's own minimum and maximum width
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Number} windowWidth The current window width to resize against
+             */
+            this.resizeWidth = function(windowWidth) {
+
+                var self = this;
+
+
+                if (this.width() > windowWidth && this.width() !== this.minWidth()) {
+
+                    doResize(Math.max(this.minWidth(), windowWidth));
+
+                } else if (this.width() < windowWidth && this.width() !== this.maxWidth()) {
+
+                    doResize(Math.min(this.maxWidth(), windowWidth));
+
+                }
+
+
+                function doResize(newWidth) {
+
+                    self.width(newWidth, true);
+                    self.draw();
+
+                }
+
+            };
 
             this.resizeChart = function() {
                 if (autoMargin) {
@@ -228,11 +274,18 @@
              * @memberof! insight.Chart
              * @instance
              * @param {Number} newWidth The new width of the chart.
+             * @param {Boolean} dontSetMax If falsey then the maxWidth of the chart will also be set to newWidth.
              * @returns {this}
              */
-            this.width = function(newWidth) {
+            this.width = function(newWidth, dontSetMax) {
                 if (!arguments.length) {
                     return width();
+                }
+
+                if (!dontSetMax) {
+
+                    this.maxWidth(newWidth);
+
                 }
 
                 width = d3.functor(newWidth);
@@ -250,7 +303,7 @@
              * Sets the height of the chart element, measured in pixels.
              * @memberof! insight.Chart
              * @instance
-             * @param {Number} newHeight The new height of the chart.
+             * @param {Number} newHeight The new height of the chart, measured in pixels.
              * @returns {this}
              */
             this.height = function(newHeight) {
@@ -258,6 +311,52 @@
                     return height();
                 }
                 height = d3.functor(newHeight);
+                return this;
+            };
+
+            /**
+             * The maximum width of the chart element, measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Number} - The maximum width of the chart.
+             *
+             * @also
+             *
+             * Sets the maximum width of the chart element, measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Number} newMaxWidth The new maximum width of the chart, measured in pixels.
+             * @returns {this}
+             */
+            this.maxWidth = function(newMaxWidth) {
+                if (!arguments.length) {
+                    return maxWidth();
+                }
+
+                maxWidth = d3.functor(newMaxWidth);
+                return this;
+            };
+
+            /**
+             * The minimum width of the chart element, measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Number} - The minimum width of the chart.
+             *
+             * @also
+             *
+             * Sets the minimum width of the chart element, measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Number} newMinWidth The new minimum width of the chart, measured in pixels.
+             * @returns {this}
+             */
+            this.minWidth = function(newMinWidth) {
+                if (!arguments.length) {
+                    return minWidth();
+                }
+
+                minWidth = d3.functor(newMinWidth);
                 return this;
             };
 
