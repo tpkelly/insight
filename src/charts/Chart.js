@@ -127,11 +127,6 @@
 
                 var self = this;
 
-                var left = this.chartSVG[0][0].offsetLeft;
-                var offsetWidth = this.chartSVG[0][0].offsetWidth;
-                var clientWidth = this.chartSVG[0][0].clientWidth;
-                console.log('X: ' + left + ', ow: ' + offsetWidth + ', cw: ' + clientWidth);
-
 
                 if (this.width() > windowWidth && this.width() !== this.minWidth()) {
 
