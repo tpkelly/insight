@@ -41,8 +41,16 @@
             var title = '';
             var autoMargin = true;
 
-
             this.init = function(create, container) {
+
+                console.log('Adding event listener...');
+                window.addEventListener('resize', function onWindowResize() {
+
+                    var widthWithoutScrollBar = window.innerWidth - 50;
+
+                    self.resizeWidth(widthWithoutScrollBar);
+
+                });
 
                 self.container = create ? d3.select(container)
                     .append('div') : d3.select(self.element)

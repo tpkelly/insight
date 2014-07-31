@@ -4,18 +4,6 @@
  */
 var insight = (function() {
 
-    function checkChartWidths() {
-
-        var innerWidth = window.innerWidth;
-
-        insight.Charts.forEach(function(chart) {
-
-            chart.resizeWidth(innerWidth);
-
-        });
-
-    }
-
     return {
         Charts: [],
         Tables: [],
@@ -28,8 +16,6 @@ var insight = (function() {
             this.Groups = [];
             this.FilteredDimensions = [];
             this.DimensionListenerMap = {};
-
-            window.onresize = checkChartWidths;
         },
         redraw: function() {
 
