@@ -581,7 +581,7 @@ describe('Chart', function() {
             document.body.appendChild(element);
 
             chart = new insight.Chart('name', '#testElement');
-            chart.init();
+            chart.draw();
 
             spyOn(chart, 'resizeChart');
             spyOn(chart, 'draw');

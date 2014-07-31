@@ -17,7 +17,7 @@
             this.chart = null;
             this.measureCanvas = document.createElement('canvas');
 
-            this._margin = {
+            var margin = {
                 top: 0,
                 left: 0,
                 right: 0,
@@ -39,13 +39,11 @@
                 autoMargin = true,
                 legend = null,
                 zoomInitialized = false,
+                initialized = false,
                 zoomAxis = null;
 
-			this.seriesChanged = function(series) {
+            // private functions
 
-
-            };
-			
             function onWindowResize() {
 
                 var scrollBarWidth = 50;
@@ -265,11 +263,11 @@
              */
             this.margin = function(newMargins) {
                 if (!arguments.length) {
-                    return this._margin;
+                    return margin;
                 }
 
                 autoMargin = false;
-                this._margin = newMargins;
+                margin = newMargins;
 
                 return this;
             };

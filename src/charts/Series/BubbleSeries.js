@@ -117,7 +117,7 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
         var bubbleData = this.bubbleData(this.dataset());
 
         var bubbles = chart.plotArea.selectAll('circle.' + insight.Constants.Bubble)
-            .data(bubbleData, self.keyAccessor);
+            .data(bubbleData, self.keyFunction());
 
         bubbles.enter()
             .append('circle')
