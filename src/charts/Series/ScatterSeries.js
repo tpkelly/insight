@@ -115,7 +115,7 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
         var scatterData = this.scatterData(this.dataset());
 
         var points = chart.plotArea.selectAll('circle.' + selector)
-            .data(scatterData);
+            .data(scatterData, self.keyFunction());
 
         points.enter()
             .append('circle')
