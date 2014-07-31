@@ -60,7 +60,7 @@
 
             }
 
-            this.init = function(create, container) {
+            var init = function(create, container) {
 
                 window.addEventListener('resize', onWindowResize);
 
@@ -86,10 +86,47 @@
             };
 
 
+            var initZoom = function() {
+                self.zoom = d3.behavior.zoom()
+                    .on('zoom', self.dragging.bind(self));
+
+                self.zoom.x(zoomAxis.scale);
+
+                if (!self.zoomExists()) {
+                    //Draw ourselves as the first element in the plot area
+                    self.plotArea.insert('rect', ':first-child')
+                        .attr('class', 'zoompane')
+                        .attr('width', self.width())
+                        .attr('height', self.height() - self.margin()
+                            .top - self.margin()
+                            .bottom)
+                        .style('fill', 'none')
+                        .style('pointer-events', 'all');
+                }
+
+                self.plotArea.select('.zoompane')
+                    .call(self.zoom);
+
+                zoomInitialized = true;
+            };
+
+            // public methods
+
+            /** 
+             * Empty event handler that is overridden by any listeners who want to know when this Chart's series change
+             * @memberof! insight.Chart
+             * @param {insight.Series[]} series - An array of insight.Series belonging to this Chart
+             */
+            this.seriesChanged = function(series) {
+
+            };
+
+
+
             this.draw = function(dragging) {
 
                 if (!initialized) {
-                    self.init();
+                    init();
                 }
 
                 this.resizeChart();
@@ -110,7 +147,7 @@
                 }
 
                 if (zoomable && !zoomInitialized) {
-                    self.initZoom();
+                    initZoom();
                 }
             };
 
@@ -201,29 +238,7 @@
                 return this;
             };
 
-            this.initZoom = function() {
-                this.zoom = d3.behavior.zoom()
-                    .on('zoom', self.dragging.bind(self));
 
-                this.zoom.x(zoomAxis.scale);
-
-                if (!this.zoomExists()) {
-                    //Draw ourselves as the first element in the plot area
-                    this.plotArea.insert('rect', ':first-child')
-                        .attr('class', 'zoompane')
-                        .attr('width', this.width())
-                        .attr('height', this.height() - this.margin()
-                            .top - this.margin()
-                            .bottom)
-                        .style('fill', 'none')
-                        .style('pointer-events', 'all');
-                }
-
-                this.plotArea.select('.zoompane')
-                    .call(this.zoom);
-
-                zoomInitialized = true;
-            };
 
             this.zoomExists = function() {
                 var z = this.plotArea.selectAll('.zoompane');
@@ -555,15 +570,6 @@
                 return this.yAxes(newYAxes);
             };
 
-            this.addHorizontalScale = function(type, typeString, direction) {
-                var scale = new Scale(this, type, direction, typeString);
-            };
-
-
-            this.addHorizontalAxis = function(scale) {
-                var axis = new Axis(this, scale, 'h', 'left');
-            };
-
 
             this.autoMargin = function(_) {
                 if (!arguments.length) {
@@ -573,9 +579,15 @@
                 return this;
             };
 
-
-            this.highlight = function(selector, value) {
-
+            /**
+             * This function takes a CSS dimension selector and updates the class attributes of any attributes in this Chart to reflect
+             * whether they are currently selected or not.  .notselected is needed in addition to .selected, as items are coloured differently when they are not selected
+             * and something else is.
+             * @memberof! insight.Chart
+             * @param {string} selector - a CSS selector matching a slice of a dimension. eg. an entry in a grouping by Country would be 'in_England', which would match that dimensional value in any charts.
+             */
+            this.highlight = function(selector) {
+                // select the elements matching the dimension that has been clicked (possibly in another chart)
                 var clicked = this.plotArea.selectAll('.' + selector);
                 var alreadySelected = clicked.classed('selected');
 
@@ -588,9 +600,11 @@
                     self.selectedItems.push(selector);
                 }
 
+                // depending on if anything is selected, we have to update the rest as notselected so that they are coloured differently
                 var selected = this.plotArea.selectAll('.selected');
                 var notselected = this.plotArea.selectAll('.bar:not(.selected),.bubble:not(.selected)');
 
+                // if nothing is selected anymore, clear the .notselected class from any elements (stop showing them as gray)
                 notselected.classed('notselected', selected[0].length > 0);
             };
         }

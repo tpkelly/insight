@@ -23,8 +23,7 @@ var dataset =
 
 describe('Column Series Tests', function() {
     
-    var chartGroup,
-        chart,
+    var chart,
         data,
         div = document.createElement('div');
 
@@ -43,7 +42,6 @@ describe('Column Series Tests', function() {
 
         createChartElement();
 
-        chartGroup = new insight.ChartGroup();
         data = new insight.DataSet(dataset);
         chart = new insight.Chart('Chart 1', '#test');
            
@@ -71,15 +69,12 @@ describe('Column Series Tests', function() {
         
         var data = series.dataset();
 
-        chartGroup.add(chart);
-
         expect(data.length).toBe(1);
 
     });
 
     it('filtering works with multiple items', function() {
         
-        chartGroup = new insight.ChartGroup();
         data = new insight.DataSet(dataset);
         chart = new insight.Chart('Chart 1', '#test');
         

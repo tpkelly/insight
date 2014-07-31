@@ -251,5 +251,38 @@ describe('InsightCharts Utils Tests', function() {
         expect(actualAges).toEqual(expectedAges);
     });
 
+    it('adding to a set works when the element isnt in there', function() {
+        
+        // Given 
+        var set = [1,2,3];
+        var value = 4;
+
+        // When
+
+        insight.Utils.addToSet(set, value);
+
+        // Then
+        var expectedResult = [1,2,3,4];
+
+        expect(set).toEqual(expectedResult);
+    });   
+
+    
+    it('adding to a set works when the element is already in there', function() {
+        
+        // Given 
+        var set = [1,2,3,4];
+        var value = 4;
+
+        // When
+
+        insight.Utils.addToSet(set, value);
+
+        // Then
+        var expectedResult = [1,2,3,4];
+
+        expect(set).toEqual(expectedResult);
+    });  
+
 })
 

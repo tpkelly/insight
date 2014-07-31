@@ -36,11 +36,11 @@
              * This internal function responds to click events on Series and Tables, alerting any other elements using the same Dimension that they need to
              * update to highlight the selected slices of the Dimension
              */
-            var notifyListeners = function(dimensionName, value, dimensionSelector) {
+            var notifyListeners = function(dimensionName, dimensionSelector) {
                 var listeningObjects = self.dimensionListenerMap[dimensionName];
 
                 listeningObjects.forEach(function(item) {
-                    item.highlight(dimensionSelector, value);
+                    item.highlight(dimensionSelector);
                 });
             };
 
@@ -165,7 +165,6 @@
 
             /**
              * Draws all Charts and Tables in this ChartGroup
-             * TODO - rename as it should only be called once, maybe to init()?
              * @memberof! insight.ChartGroup
              * @instance
              */
@@ -194,7 +193,7 @@
             this.chartFilterHandler = function(caller, value, dimensionSelector) {
 
                 // send events to any charts or tables also using this dimension, as they will need to update their styles to reflect the selection
-                notifyListeners(caller.data.dimension.name, value, dimensionSelector);
+                notifyListeners(caller.data.dimension.name, dimensionSelector);
 
                 var dimension = caller.data.dimension;
 
@@ -241,15 +240,20 @@
 
                         } else {
                             dim.crossfilterDimension.filter(function(d) {
+
+                                // apply all of the filters on this dimension to the current value, returning an array of true/false values (which filters does it satisfy)
                                 var vals = dim.filters
                                     .map(function(func) {
                                         return func.filterFunction(d);
                                     });
 
-                                return vals.filter(function(result) {
+                                // if this value satisfies any of the filters, it should be kept
+                                var matchesAnyFilter = vals.filter(function(result) {
                                         return result;
                                     })
                                     .length > 0;
+
+                                return matchesAnyFilter;
                             });
                         }
                     });

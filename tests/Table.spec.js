@@ -22,26 +22,18 @@ var tableData =
 
 
 describe('Table Tests', function() {
-    var group,
-        dataset,
+    var dataset,
         table;
 
     beforeEach(function() {
         
-        group = new insight.ChartGroup();
-
         dataset = new insight.DataSet(tableData);
 
         table = new insight.Table('Test Table', '#table', dataset);
-        
-        group.add(table);
     })
 
 
     it('returns normal dataset with no sorters', function() {
-
-        // When
-        group.add(group);
 
         // Then
 
@@ -53,7 +45,6 @@ describe('Table Tests', function() {
     });
 
     it('returns a full, sorted set of data', function() {
-        
         
         // When
 

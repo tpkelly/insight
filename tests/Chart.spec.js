@@ -240,7 +240,6 @@ describe('Chart', function() {
                 d3 = new D3Mocks();
 
                 // prevent calling through to functions that are not being tested
-                spyOn(chart, 'init').andCallThrough();
                 spyOn(chart, 'draw').andCallThrough();
                 spyOn(chart, 'addClipPath').andCallThrough();
 
@@ -330,33 +329,7 @@ describe('Chart', function() {
                     expect(chart.draw).toHaveBeenCalledWith();
 
                 });
-
-                it('initZoom if zoomable', function() {
-
-                    testInit(function() {
-
-                        var axis = new insight.Axis('test', insight.Scales.Ordinal);
-
-                        chart.zoomable(axis);
-                        spyOn(chart, 'initZoom');
-
-                    });
-
-                    expect(chart.initZoom).toHaveBeenCalled();
-
-                });
-
-                it('no initZoom if not zoomable', function() {
-
-                    testInit(function() {
-
-                        spyOn(chart, 'initZoom');
-
-                    });
-
-                    expect(chart.initZoom).not.toHaveBeenCalled();
-
-                });
+               
 
             });
         });
