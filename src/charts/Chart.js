@@ -38,6 +38,7 @@
                 title = '',
                 autoMargin = true,
                 legend = null,
+                zoomInitialized = false,
                 zoomAxis = null;
 
 			this.seriesChanged = function(series) {
@@ -81,16 +82,16 @@
 
                 self.addClipPath();
 
-                self.draw(false);
-
-                if (zoomable) {
-                    self.initZoom();
-                }
-
+                initialized = true;
             };
 
 
             this.draw = function(dragging) {
+
+                if (!initialized) {
+                    self.init();
+                }
+
                 this.resizeChart();
 
                 var axes = xAxes.concat(yAxes);
@@ -106,6 +107,10 @@
 
                 if (legend !== null) {
                     legend.draw(self, self.series());
+                }
+
+                if (zoomable && !zoomInitialized) {
+                    self.initZoom();
                 }
             };
 
@@ -216,6 +221,8 @@
 
                 this.plotArea.select('.zoompane')
                     .call(this.zoom);
+
+                zoomInitialized = true;
             };
 
             this.zoomExists = function() {
@@ -385,7 +392,7 @@
                 }
                 series = newSeries;
 
-                self.seriesChanged(newSeries);
+                self.seriesChanged(self, newSeries);
 
                 return this;
             };
