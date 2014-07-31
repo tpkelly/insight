@@ -598,14 +598,25 @@ describe('Chart', function() {
 
     describe('resizeWidth', function() {
 
-        var chart;
+        var chart, element;
 
         beforeEach(function() {
-            chart = new insight.Chart('name', 'element');
+
+            element = document.createElement('div');
+            element.id = 'testElement';
+            document.body.appendChild(element);
+
+            chart = new insight.Chart('name', '#testElement');
             chart.init();
 
             spyOn(chart, 'resizeChart');
             spyOn(chart, 'draw');
+        });
+
+        afterEach(function() {
+
+            element.parentNode.removeChild(element);
+
         });
 
         it('sets width if less than current width and greater than minimum width', function() {
@@ -619,7 +630,6 @@ describe('Chart', function() {
 
             // Assert
             expect(chart.width()).toBe(200);
-            expect(chart.resizeChart).toHaveBeenCalled();
             expect(chart.draw).toHaveBeenCalled();
 
         });
@@ -635,7 +645,6 @@ describe('Chart', function() {
 
             // Assert
             expect(chart.width()).toBe(150);
-            expect(chart.resizeChart).toHaveBeenCalled();
             expect(chart.draw).toHaveBeenCalled();
 
         });
@@ -651,7 +660,6 @@ describe('Chart', function() {
 
             // Assert
             expect(chart.width()).toBe(300);
-            expect(chart.resizeChart).toHaveBeenCalled();
             expect(chart.draw).toHaveBeenCalled();
 
         });
@@ -667,7 +675,6 @@ describe('Chart', function() {
 
             // Assert
             expect(chart.width()).toBe(150);
-            expect(chart.resizeChart).toHaveBeenCalled();
             expect(chart.draw).toHaveBeenCalled();
 
         });
@@ -683,7 +690,6 @@ describe('Chart', function() {
 
             // Assert
             expect(chart.width()).toBe(100);
-            expect(chart.resizeChart).not.toHaveBeenCalled();
             expect(chart.draw).not.toHaveBeenCalled();
 
         });
@@ -699,7 +705,6 @@ describe('Chart', function() {
 
             // Assert
             expect(chart.width()).toBe(120);
-            expect(chart.resizeChart).not.toHaveBeenCalled();
             expect(chart.draw).not.toHaveBeenCalled();
 
         });

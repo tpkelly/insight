@@ -43,10 +43,15 @@
 
             this.init = function(create, container) {
 
-                console.log('Adding event listener...');
                 window.addEventListener('resize', function onWindowResize() {
 
-                    var widthWithoutScrollBar = window.innerWidth - 50;
+                    var scrollBarWidth = 50;
+                    var left = self.chartSVG[0][0].offsetLeft;
+
+                    var widthWithoutScrollBar =
+                        window.innerWidth -
+                        left -
+                        scrollBarWidth;
 
                     self.resizeWidth(widthWithoutScrollBar);
 
@@ -122,6 +127,11 @@
 
                 var self = this;
 
+                var left = this.chartSVG[0][0].offsetLeft;
+                var offsetWidth = this.chartSVG[0][0].offsetWidth;
+                var clientWidth = this.chartSVG[0][0].clientWidth;
+                console.log('X: ' + left + ', ow: ' + offsetWidth + ', cw: ' + clientWidth);
+
 
                 if (this.width() > windowWidth && this.width() !== this.minWidth()) {
 
@@ -137,7 +147,6 @@
                 function doResize(newWidth) {
 
                     self.width(newWidth, true);
-                    self.resizeChart();
                     self.draw();
 
                 }
