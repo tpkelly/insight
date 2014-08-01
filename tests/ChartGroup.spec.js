@@ -67,14 +67,9 @@ describe('Chart Group Tests', function() {
         chartGroup.add(chart);
 
         // Then 
-        var expectedChartList = [chart];
-        var actualChartList = chartGroup.charts;
 
-        var expectedTableList = [];
-        var actualTableList = chartGroup.tables;
-
-        expect(actualChartList).toEqual(expectedChartList);
-        expect(actualTableList).toEqual(expectedTableList);
+        expect(chartGroup.charts).toEqual([chart]);
+        expect(chartGroup.tables).toEqual([]);
     });
 
     it('can add a table with no series', function() {
@@ -88,14 +83,9 @@ describe('Chart Group Tests', function() {
         chartGroup.add(table);
 
         // Then 
-        var expectedTableList = [table];
-        var actualTableList = chartGroup.tables;
 
-        var expectedChartList = [];
-        var actualChartList = chartGroup.charts;
-
-        expect(actualTableList).toEqual(expectedTableList);
-        expect(actualChartList).toEqual(expectedChartList);
+        expect(chartGroup.tables).toEqual([table]);
+        expect(chartGroup.charts).toEqual([]);
     });
 
     it('can add a chart with a series', function() {
@@ -123,17 +113,13 @@ describe('Chart Group Tests', function() {
         chartGroup.draw();
 
         // Then 
-        var expectedChartList = [chart];
-        var expectedDimensionList = [countries.dimension];
-        var expectedGroupingList = [countries];
-        var actualGroupingList = [countries];
 
         var expectedDimensionMap = {'country': [chart]};        
         var actualDimensionMap = chartGroup.dimensionListenerMap;
 
-        expect(chartGroup.charts).toEqual(expectedChartList);
-        expect(chartGroup.dimensions).toEqual(expectedDimensionList);
-        expect(actualGroupingList).toEqual(expectedGroupingList);
+        expect(chartGroup.charts).toEqual([chart]);
+        expect(chartGroup.dimensions).toEqual([countries.dimension]);
+        expect(chartGroup.groupings).toEqual([countries]);
         expect(actualDimensionMap).toEqual(expectedDimensionMap);
     });
 
@@ -164,18 +150,10 @@ describe('Chart Group Tests', function() {
         chartGroup.add(chart);
 
         // Then 
-        var expectedChartList = [chart];
-        var actualChartList = chartGroup.charts;
-
-        var expectedDimensionList = [countries.dimension];
-        var actualDimensionList = chartGroup.dimensions;
-
-        var expectedGroupingList = [countries];
-        var actualGroupingList = chartGroup.groupings;
-
-        expect(actualChartList).toEqual(expectedChartList);
-        expect(actualDimensionList).toEqual(expectedDimensionList);
-        expect(actualGroupingList).toEqual(expectedGroupingList);
+        
+        expect(chartGroup.charts).toEqual([chart]);
+        expect(chartGroup.dimensions).toEqual([countries.dimension]);
+        expect(chartGroup.groupings).toEqual([countries]);
     });
 
     it('drawing a ChartGroup draws a single chart', function() {
