@@ -28,7 +28,7 @@ insight.Dimension = (function(insight) {
 
         var filterFunction = function(filterValue) {
             return function(d) {
-                return String(d) == String(filterValue);
+                return String(d) === String(filterValue);
             };
         };
 
