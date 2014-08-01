@@ -9,7 +9,7 @@ insight.DataSet = (function(insight) {
 
         this.data = data;
 
-        this.ndx = null;
+        this.crossfilterData = null;
 
         this._orderFunction = function(a, b) {
             return b.value - a.value;
@@ -77,9 +77,9 @@ insight.DataSet = (function(insight) {
 
     DataSet.prototype.group = function(name, groupFunction, oneToMany) {
 
-        this.ndx = this.ndx ? this.ndx : crossfilter(this.data);
+        this.crossfilterData = this.crossfilterData ? this.crossfilterData : crossfilter(this.data);
 
-        var dim = new insight.Dimension(name, this.ndx, groupFunction, oneToMany);
+        var dim = new insight.Dimension(name, this.crossfilterData, groupFunction, oneToMany);
 
         var group = new insight.Grouping(dim);
 

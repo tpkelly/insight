@@ -40,7 +40,8 @@
                 legend = null,
                 zoomInitialized = false,
                 initialized = false,
-                zoomAxis = null;
+                zoomAxis = null,
+                highlightSelector = insight.Utils.highlightSelector();
 
             // private functions
 
@@ -578,18 +579,16 @@
             };
 
             /**
-             * This function takes a CSS dimension selector and updates the class attributes of 
-             * any attributes in this Chart to reflect whether they are currently selected or not. 
-             * .notselected is needed in addition to .selected, as items are coloured differently when they are not selected
+             * Takes a CSS selector and applies classes to chart elements to show them as selected or not.
+             * in response to a filtering event.
              * and something else is.
              * @memberof! insight.Chart
              * @param {string} selector - a CSS selector matching a slice of a dimension. eg. an entry in a grouping by Country 
                                           would be 'in_England', which would match that dimensional value in any charts.
              */
             this.highlight = function(selector) {
-                // select the elements matching the dimension that has been clicked (possibly in another chart)
-                var clicked = this.plotArea.selectAll('.' + selector);
-                var alreadySelected = clicked.classed('selected');
+                var clicked = self.plotArea.selectAll('.' + selector);
+                var alreadySelected = insight.Utils.arrayContains(self.selectedItems, selector);
 
                 if (alreadySelected) {
                     clicked.classed('selected', false);
@@ -600,15 +599,16 @@
                     self.selectedItems.push(selector);
                 }
 
+
                 // depending on if anything is selected, we have to update the rest as notselected so that they are coloured differently
-                var selected = this.plotArea.selectAll('.selected');
-                var notselected = this.plotArea.selectAll('.bar:not(.selected),.bubble:not(.selected)');
+                var selected = self.plotArea.selectAll('.selected');
+                var notselected = self.plotArea.selectAll(highlightSelector);
 
                 // if nothing is selected anymore, clear the .notselected class from any elements (stop showing them as gray)
                 notselected.classed('notselected', selected[0].length > 0);
             };
-        }
 
+        }
 
 
         Chart.prototype.calculateLabelMargin = function() {

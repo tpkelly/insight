@@ -22,7 +22,7 @@ insight.Dimension = (function(insight) {
 
         var oneToManyFilterFunction = function(filterValue) {
             return function(d) {
-                return d.indexOf(filterValue) != -1;
+                return insight.Utils.arrayContains(d, filterValue);
             };
         };
 

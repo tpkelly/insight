@@ -40,7 +40,7 @@ insight.Utils = (function() {
     // Public Functions
 
     /**
-     * This is a utility method used to check if an object is an array or not
+     * Checks if an object is an array or not
      * @returns {boolean} return - is the object an array
      * @param {object} input - The object to check
      */
@@ -48,6 +48,18 @@ insight.Utils = (function() {
         return Object.prototype.toString.call(obj) === '[object Array]';
     };
 
+    /**
+     * Builds the CSS selector used to return chart items that are not selected (and not axes)
+     * @returns {string} cssSelector - CSS selector for unselected chart items
+     */
+    exports.highlightSelector = function() {
+
+        var notSelected = ':not(.selected)';
+        var selector = '.' + insight.Constants.BarClass + notSelected +
+            ',.' + insight.Constants.Bubble + notSelected;
+
+        return selector;
+    };
 
     exports.isDate = function(obj) {
         return obj instanceof Date;
@@ -81,8 +93,9 @@ insight.Utils = (function() {
     };
 
     /**
-     * This function takes a data point, and creates a class name for insight to identify this particular key
-     * If the parameter is not an object (just a value in an array) then there is no need for this particular class so blank is returned.
+     * Takes a data point, and creates a class name for insight to identify this particular key
+     * If the parameter is not an object (just a value in an array) then there is no need for this particular
+     * class so an empty string is returned.
      * @returns {string} return - A class name to identify this point and any other points taking the same value in other charts.
      * @param {object} data - The input point
      */
@@ -157,7 +170,7 @@ insight.Utils = (function() {
     };
 
     /**
-     * This function takes two objects and returns the union, with priority given to the first parameter in the event of clashes.
+     * Takes two objects and returns the union, with priority given to the first parameter in the event of clashes.
      * This bias is used for scenarios where user defined CSS properties must not override default values.
      * @returns {object} union - a shallow copy representing the union between the provided objects
      * @param {object} base - The base object to have priority in the union operation.
@@ -178,7 +191,7 @@ insight.Utils = (function() {
 
 
     /**
-     * This function takes an array and a list of sort objects, sorting the array (in place) using the provided priorities and returning that array at the end.
+     * Takes an array and a list of sort objects, sorting the array (in place) using the provided priorities and returning that array at the end.
      * @returns {object[]} sortedArray - The sorted array
      * @param {object[]} data - The array to sort.  It will be sorted in place (as per Javascript sort standard behaviour) and returned at the end.
      * @param {object[]} sorters - A list of sorting rules [{sortFunction: function(a){return a.valueToSortOn;}, order: 'ASC'}]
@@ -198,7 +211,7 @@ insight.Utils = (function() {
     };
 
     /**
-     * This function takes a SVG element and returns a bounding box of coordinates at each of its compass points
+     * Takes a SVG element and returns a bounding box of coordinates at each of its compass points
      * @returns {object} return - A bounding box object {nw: ..., n: ..., ne: ..., e: ..., se: ..., s: ..., sw: ..., w: ...}
      * @param {DOMElement} element - The element to measure
      */
