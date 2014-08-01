@@ -11,9 +11,14 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
 
     insight.Series.call(this, name, data, x, y, color);
 
+    // private variables
+
     var self = this,
         selector = this.name + insight.Constants.Bubble,
         radiusFunction = d3.functor(10);
+
+
+    // public variables
 
     this.classValues = [insight.Constants.Bubble];
 
@@ -117,7 +122,7 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
         var bubbleData = this.bubbleData(this.dataset());
 
         var bubbles = chart.plotArea.selectAll('circle.' + insight.Constants.Bubble)
-            .data(bubbleData, self.keyAccessor);
+            .data(bubbleData, self.keyFunction());
 
         bubbles.enter()
             .append('circle')

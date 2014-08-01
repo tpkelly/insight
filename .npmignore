@@ -1,0 +1,23 @@
+# Grunt files
+.grunt
+_SpecRunner.html
+Gruntfile.js
+
+# Bower files
+bower_components
+
+# Node files
+node_modules
+
+# WebStorm files
+.idea
+
+# Generated files
+doc
+
+#code
+
+tests
+themes
+src
+doctemplate

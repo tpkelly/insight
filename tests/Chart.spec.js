@@ -240,10 +240,10 @@ describe('Chart', function() {
                 d3 = new D3Mocks();
 
                 // prevent calling through to functions that are not being tested
-                spyOn(chart, 'draw');
-                spyOn(chart, 'addClipPath');
+                spyOn(chart, 'draw').andCallThrough();
+                spyOn(chart, 'addClipPath').andCallThrough();
 
-                chart.init();
+                chart.draw();
             };
 
             beforeEach(function(){
@@ -326,36 +326,10 @@ describe('Chart', function() {
 
                     testInit();
 
-                    expect(chart.draw).toHaveBeenCalledWith(false);
+                    expect(chart.draw).toHaveBeenCalledWith();
 
                 });
-
-                it('initZoom if zoomable', function() {
-
-                    testInit(function() {
-
-                        var axis = new insight.Axis('test', insight.Scales.Ordinal);
-
-                        chart.zoomable(axis);
-                        spyOn(chart, 'initZoom');
-
-                    });
-
-                    expect(chart.initZoom).toHaveBeenCalled();
-
-                });
-
-                it('no initZoom if not zoomable', function() {
-
-                    testInit(function() {
-
-                        spyOn(chart, 'initZoom');
-
-                    });
-
-                    expect(chart.initZoom).not.toHaveBeenCalled();
-
-                });
+               
 
             });
         });
@@ -607,7 +581,7 @@ describe('Chart', function() {
             document.body.appendChild(element);
 
             chart = new insight.Chart('name', '#testElement');
-            chart.init();
+            chart.draw();
 
             spyOn(chart, 'resizeChart');
             spyOn(chart, 'draw');

@@ -31,10 +31,6 @@ insight.Series = function Series(name, data, x, y, color) {
             y: -10
         };
 
-    if (data.register) {
-        data.register(this);
-    }
-
     // private functions used internally, set by functions below that are exposed on the object
 
     var keyFunction = function(d) {
@@ -67,7 +63,7 @@ insight.Series = function Series(name, data, x, y, color) {
     };
 
     /*
-     * This function is used when individual chart items are being drawn, to check whether they should be marked as selected or not.
+     * Checks whether individual chart items should be marked as selected or not.
      * @memberof insight.Series
      * @returns {string} selectionClass - A string that is used by CSS highlighting to style the chart item.
      * @param {string[]}selectedItems - A list of CSS selectors for currently selected items
@@ -77,7 +73,7 @@ insight.Series = function Series(name, data, x, y, color) {
         var selected = '';
 
         if (selectedItems.length) {
-            selected = selectedItems.indexOf(selector) != -1 ? ' selected' : ' notselected';
+            selected = insight.Utils.arrayContains(selectedItems, selector) ? ' selected' : ' notselected';
         }
 
         return selected;
@@ -85,7 +81,7 @@ insight.Series = function Series(name, data, x, y, color) {
 
 
     /*
-     * This function generates the base class name to be used for items in this series.It can be extended upon by individual items to show
+     * Generates the base class name to be used for items in this series.It can be extended upon by individual items to show
      * if they are selected or to mark them out in other ways.
      * @memberof insight.Series
      * @returns {string} baseClassName - A root valuefor the class attribute used for items in this Series.
@@ -99,8 +95,13 @@ insight.Series = function Series(name, data, x, y, color) {
     };
 
 
+
+
+
+    // Public methods
+
     /*
-     * This function constructs the text for the class attribute for a specific data point, using the base value for this Series and any additional values.
+     * Constructs the text for the class attribute for a specific data point, using the base value for this Series and any additional values.
      * @memberof insight.Series
      * @param {object} dataItem - The data item being drawn
      * @param {string[]} additionalClasses - Any additional values this Series needs appending to the class value.Used by stacked Series to differentiate between Series.
@@ -108,18 +109,15 @@ insight.Series = function Series(name, data, x, y, color) {
      */
     this.itemClassName = function(dataItem, additionalClasses) {
 
-        var keySelector = insight.Utils.keySelector(dataItem);
+        var keySelector = insight.Utils.keySelector(dataItem, keyFunction);
         var selected = selectedClassName(self.selectedItems, keySelector);
         var value = self.rootClassName + ' ' + keySelector + selected;
 
         return value;
     };
 
-
-    // Public methods
-
     /**
-     * The function used to retrieve the x-value from the data object to plot on a chart.
+     * Gets the function used to retrieve the x-value from the data object to plot on a chart.
      * @memberof! insight.Series
      * @instance
      * @returns {function} The current function used to extract the x-value.
@@ -142,7 +140,7 @@ insight.Series = function Series(name, data, x, y, color) {
     };
 
     /**
-     * The function used to retrieve the y-value from the data object to plot on a chart.
+     * Gets the y-value from the data object to plot on a chart.
      * @memberof! insight.Series
      * @instance
      * @returns {function} The current function used to extract the y-value.
@@ -165,7 +163,7 @@ insight.Series = function Series(name, data, x, y, color) {
     };
 
     /**
-     * This method returns the array of data objects used to plot this Series.
+     * Returns the array of data objects used to plot this Series.
      * @memberof! insight.Series
      * @instance
      * @returns {object[]} - The data set to be used by the series
@@ -192,12 +190,6 @@ insight.Series = function Series(name, data, x, y, color) {
     this.keys = function(orderFunction) {
         return this.dataset(orderFunction)
             .map(self.keyFunction());
-    };
-
-
-
-    this.keyAccessor = function(d) {
-        return d.key;
     };
 
     this.xFunction = function(_) {
@@ -243,7 +235,7 @@ insight.Series = function Series(name, data, x, y, color) {
     };
 
     /*
-     * This method creates the tooltip for this Series, checking if it exists already first.
+     * Creates the tooltip for this Series, checking if it exists already first.
      * @memberof insight.Series
      * @param {DOMElement} container - The DOM Element that the tooltip should be drawn inside.
      */
@@ -292,7 +284,7 @@ insight.Series = function Series(name, data, x, y, color) {
 
     this.click = function(element, filter) {
 
-        var selector = insight.Utils.keySelector(filter);
+        var selector = insight.Utils.keySelector(filter, keyFunction);
 
         this.clickEvent(this, filter, selector);
     };

@@ -15,7 +15,7 @@ describe('Legend', function() {
     };
 
     beforeEach(function() {
-        insight.init();
+
         createChartElement();
 
         chart = new insight.Chart('test', '#testChart')
@@ -40,7 +40,8 @@ describe('Legend', function() {
 
         lineSeries = new insight.LineSeries('line', data, x, y);
 
-        insight.drawCharts();
+        chart.draw();
+        
         removeChartElement();
     });
 

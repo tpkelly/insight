@@ -22,28 +22,19 @@ var tableData =
 
 
 describe('Table Tests', function() {
-    
+    var dataset,
+        table;
 
-    it('initializes without error', function() {
+    beforeEach(function() {
         
-        // Given
-        var dataset = new insight.DataSet(tableData);
-        var table = new insight.Table('Test Table', '#table', dataset);
+        dataset = new insight.DataSet(tableData);
 
-        // Then
-
-        expect(function(){ insight.addTable(table); }).not.toThrow();
-
-    });
+        table = new insight.Table('Test Table', '#table', dataset);
+    })
 
 
     it('returns normal dataset with no sorters', function() {
-        
-        // Given
-        var dataset = new insight.DataSet(tableData);
-        var table = new insight.Table('Test Table', '#table', dataset);
 
-        
         // Then
 
         var expectedDataset = tableData;
@@ -54,11 +45,6 @@ describe('Table Tests', function() {
     });
 
     it('returns a full, sorted set of data', function() {
-        
-        // Given
-        var dataset = new insight.DataSet(tableData);
-        var table = new insight.Table('Test Table', '#table', dataset);
-
         
         // When
 
@@ -75,10 +61,6 @@ describe('Table Tests', function() {
 
     it('returns a full, sorted set of data with two ascending sorts', function() {
         
-        // Given
-        var dataset = new insight.DataSet(tableData);
-        var table = new insight.Table('Test Table', '#table', dataset);
-
         // When
 
         table.ascending(function(person) { return person.Age; })
@@ -98,11 +80,6 @@ describe('Table Tests', function() {
 
     it('returns a full, sorted set of data with two different ordered sorts', function() {
         
-        // Given
-        var dataset = new insight.DataSet(tableData);
-        var table = new insight.Table('Test Table', '#table', dataset);
-
-        
         // When
 
         table.ascending(function(person) { return person.Age; })
@@ -121,11 +98,7 @@ describe('Table Tests', function() {
     });
 
     it('returns a truncated, sorted set of data with two sorts', function() {
-        
-        // Given
-        var dataset = new insight.DataSet(tableData);
-        var table = new insight.Table('Test Table', '#table', dataset);
-        
+
         // When
 
         table.ascending(function(person) { return person.Age; })

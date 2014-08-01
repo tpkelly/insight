@@ -17,7 +17,7 @@
             this.chart = null;
             this.measureCanvas = document.createElement('canvas');
 
-            this._margin = {
+            var margin = {
                 top: 0,
                 left: 0,
                 right: 0,
@@ -38,7 +38,12 @@
                 title = '',
                 autoMargin = true,
                 legend = null,
-                zoomAxis = null;
+                zoomInitialized = false,
+                initialized = false,
+                zoomAxis = null,
+                highlightSelector = insight.Utils.highlightSelector();
+
+            // private functions
 
             function onWindowResize() {
 
@@ -54,7 +59,7 @@
 
             }
 
-            this.init = function(create, container) {
+            var init = function(create, container) {
 
                 window.addEventListener('resize', onWindowResize);
 
@@ -76,16 +81,53 @@
 
                 self.addClipPath();
 
-                self.draw(false);
+                initialized = true;
+            };
 
-                if (zoomable) {
-                    self.initZoom();
+
+            var initZoom = function() {
+                self.zoom = d3.behavior.zoom()
+                    .on('zoom', self.dragging.bind(self));
+
+                self.zoom.x(zoomAxis.scale);
+
+                if (!self.zoomExists()) {
+                    //Draw ourselves as the first element in the plot area
+                    self.plotArea.insert('rect', ':first-child')
+                        .attr('class', 'zoompane')
+                        .attr('width', self.width())
+                        .attr('height', self.height() - self.margin()
+                            .top - self.margin()
+                            .bottom)
+                        .style('fill', 'none')
+                        .style('pointer-events', 'all');
                 }
+
+                self.plotArea.select('.zoompane')
+                    .call(self.zoom);
+
+                zoomInitialized = true;
+            };
+
+            // public methods
+
+            /** 
+             * Empty event handler that is overridden by any listeners who want to know when this Chart's series change
+             * @memberof! insight.Chart
+             * @param {insight.Series[]} series - An array of insight.Series belonging to this Chart
+             */
+            this.seriesChanged = function(series) {
 
             };
 
 
+
             this.draw = function(dragging) {
+
+                if (!initialized) {
+                    init();
+                }
+
                 this.resizeChart();
 
                 var axes = xAxes.concat(yAxes);
@@ -101,6 +143,10 @@
 
                 if (legend !== null) {
                     legend.draw(self, self.series());
+                }
+
+                if (zoomable && !zoomInitialized) {
+                    initZoom();
                 }
             };
 
@@ -191,27 +237,7 @@
                 return this;
             };
 
-            this.initZoom = function() {
-                this.zoom = d3.behavior.zoom()
-                    .on('zoom', self.dragging.bind(self));
 
-                this.zoom.x(zoomAxis.scale);
-
-                if (!this.zoomExists()) {
-                    //Draw ourselves as the first element in the plot area
-                    this.plotArea.insert('rect', ':first-child')
-                        .attr('class', 'zoompane')
-                        .attr('width', this.width())
-                        .attr('height', this.height() - this.margin()
-                            .top - this.margin()
-                            .bottom)
-                        .style('fill', 'none')
-                        .style('pointer-events', 'all');
-                }
-
-                this.plotArea.select('.zoompane')
-                    .call(this.zoom);
-            };
 
             this.zoomExists = function() {
                 var z = this.plotArea.selectAll('.zoompane');
@@ -238,11 +264,11 @@
              */
             this.margin = function(newMargins) {
                 if (!arguments.length) {
-                    return this._margin;
+                    return margin;
                 }
 
                 autoMargin = false;
-                this._margin = newMargins;
+                margin = newMargins;
 
                 return this;
             };
@@ -379,6 +405,8 @@
                     return series;
                 }
                 series = newSeries;
+
+                self.seriesChanged(self, newSeries);
 
                 return this;
             };
@@ -541,15 +569,6 @@
                 return this.yAxes(newYAxes);
             };
 
-            this.addHorizontalScale = function(type, typeString, direction) {
-                var scale = new Scale(this, type, direction, typeString);
-            };
-
-
-            this.addHorizontalAxis = function(scale) {
-                var axis = new Axis(this, scale, 'h', 'left');
-            };
-
 
             this.autoMargin = function(_) {
                 if (!arguments.length) {
@@ -559,11 +578,17 @@
                 return this;
             };
 
-
-            this.highlight = function(selector, value) {
-
-                var clicked = this.plotArea.selectAll('.' + selector);
-                var alreadySelected = clicked.classed('selected');
+            /**
+             * Takes a CSS selector and applies classes to chart elements to show them as selected or not.
+             * in response to a filtering event.
+             * and something else is.
+             * @memberof! insight.Chart
+             * @param {string} selector - a CSS selector matching a slice of a dimension. eg. an entry in a grouping by Country 
+                                          would be 'in_England', which would match that dimensional value in any charts.
+             */
+            this.highlight = function(selector) {
+                var clicked = self.plotArea.selectAll('.' + selector);
+                var alreadySelected = insight.Utils.arrayContains(self.selectedItems, selector);
 
                 if (alreadySelected) {
                     clicked.classed('selected', false);
@@ -574,15 +599,16 @@
                     self.selectedItems.push(selector);
                 }
 
-                var selected = this.plotArea.selectAll('.selected');
-                var notselected = this.plotArea.selectAll('.bar:not(.selected),.bubble:not(.selected)');
 
+                // depending on if anything is selected, we have to update the rest as notselected so that they are coloured differently
+                var selected = self.plotArea.selectAll('.selected');
+                var notselected = self.plotArea.selectAll(highlightSelector);
+
+                // if nothing is selected anymore, clear the .notselected class from any elements (stop showing them as gray)
                 notselected.classed('notselected', selected[0].length > 0);
             };
 
-            insight.addChart(this);
         }
-
 
 
         Chart.prototype.calculateLabelMargin = function() {
