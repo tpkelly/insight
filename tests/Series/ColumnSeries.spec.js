@@ -29,18 +29,9 @@ describe('Column Series Tests', function() {
 
     div.id  = 'test';
 
-    var createChartElement = function(){
-         
-        document.body.appendChild(div);        
-    };
-
-    var removeChartElement = function(){
-        document.body.removeChild(div);
-    };
-
     beforeEach(function() {
 
-        createChartElement();
+        document.body.appendChild(div);  
 
         data = new insight.DataSet(dataset);
         chart = new insight.Chart('Chart 1', '#test');
@@ -48,7 +39,7 @@ describe('Column Series Tests', function() {
     });
 
     afterEach(function(){
-        removeChartElement();
+        document.body.removeChild(div);
     });
 
     it('filtering works with a single item', function() {
