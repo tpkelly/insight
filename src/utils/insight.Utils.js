@@ -65,7 +65,7 @@ insight.Utils = (function() {
      * @returns {boolean} - True if the provided array contains the provided value
      */
     exports.arrayContains = function(array, value) {
-        return array.indexOf(value) != -1;
+        return array.indexOf(value) !== -1;
     };
 
     /**
@@ -87,22 +87,54 @@ insight.Utils = (function() {
      * @param {object} data - The input point
      */
     exports.keySelector = function(d, keyFunction) {
+        var keyValue = keyFunction(d),
+            result = '';
 
-        var str = keyFunction(d)
-            .toString();
-
-        var result = "in_" + str.replace(/[^A-Z0-9]/ig, "_");
+        if (keyValue) {
+            var str = keyValue.toString();
+            result = 'in_' + str.replace(/[^A-Z0-9]/ig, '_');
+        }
 
         return result;
     };
 
-    exports.removeMatchesFromArray = function(array, comparer) {
+    /**
+     * Returns the elements in the provided array where the given parameter matches a specific value
+     * @param {object[]} array - The input array to check
+     * @param {string} propertyName - The name of the property to match
+     * @param {string} value - The value to match
+     * @returns {object[]} - The matching elements
+     */
+    exports.takeWhere = function(array, propertyName, value) {
+        var matches = array.filter(function(item) {
+            if (item.hasOwnProperty(propertyName)) {
+                return item[propertyName] == value;
+            } else {
+                return false;
+            }
+        });
+
+        return matches;
+    };
+
+    /**
+     * Removes the elements in the provided array where the given parameter matches a specific value
+     * @param {object[]} array - The input array to check
+     * @param {string} propertyName - The name of the property to match
+     * @param {string} value - The value to match
+     * @returns {object[]} - The matching elements
+     */
+    exports.removeWhere = function(array, propertyName, value) {
+
         var self = this;
-        var matches = array.filter(comparer);
+        var matches = exports.takeWhere(array, propertyName, value);
+
         matches.forEach(function(match) {
             self.removeItemFromArray(array, match);
         });
     };
+
+
 
     exports.removeItemFromArray = function(array, item) {
         var index = array.indexOf(item);
@@ -209,6 +241,9 @@ insight.Utils = (function() {
         return input.split(' ')
             .join('_');
     };
+
+
+
 
     exports.valueForKey = function(dictionary, key, keyFunction, valueFunction) {
         var values = dictionary.filter(function(item) {

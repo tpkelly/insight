@@ -578,11 +578,13 @@
             };
 
             /**
-             * This function takes a CSS dimension selector and updates the class attributes of any attributes in this Chart to reflect
-             * whether they are currently selected or not.  .notselected is needed in addition to .selected, as items are coloured differently when they are not selected
+             * This function takes a CSS dimension selector and updates the class attributes of 
+             * any attributes in this Chart to reflect whether they are currently selected or not. 
+             * .notselected is needed in addition to .selected, as items are coloured differently when they are not selected
              * and something else is.
              * @memberof! insight.Chart
-             * @param {string} selector - a CSS selector matching a slice of a dimension. eg. an entry in a grouping by Country would be 'in_England', which would match that dimensional value in any charts.
+             * @param {string} selector - a CSS selector matching a slice of a dimension. eg. an entry in a grouping by Country 
+                                          would be 'in_England', which would match that dimensional value in any charts.
              */
             this.highlight = function(selector) {
                 // select the elements matching the dimension that has been clicked (possibly in another chart)

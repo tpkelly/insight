@@ -20,10 +20,6 @@ insight.Dimension = (function(insight) {
 
         var self = this;
 
-        this.comparer = function(d) {
-            return d.name == self.name;
-        };
-
         var oneToManyFilterFunction = function(filterValue) {
             return function(d) {
                 return d.indexOf(filterValue) != -1;

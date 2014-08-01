@@ -32,42 +32,27 @@ describe('Chart Group Tests', function() {
 
     div.id  = 'testChart';
 
-    var createChartElement = function(){
-
+    
+    beforeEach(function() {        
+    
         document.body.appendChild(div);
-    };
-
-    var removeChartElement = function(){
-        document.body.removeChild(div);
-    };
-
-    beforeEach(function() {
-
-        createChartElement();
         dataset = new insight.DataSet(sourceData);
-        chartGroup = new insight.ChartGroup();
-        
+        chartGroup = new insight.ChartGroup();        
     });
 
     afterEach(function() {
-        removeChartElement();
+        document.body.removeChild(div);
     });
 
 
     it('initializes correctly', function() {
-        var expectedDimensions = [],
-            expectingGroupings = [],
-            expectedFilteredDims = [],
-            expectedDimMap = {},
-            expectedCharts = [],
-            expectedTables = [];
 
-        expect(chartGroup.dimensions).toEqual(expectedDimensions);
-        expect(chartGroup.groupings).toEqual(expectingGroupings);
-        expect(chartGroup.filteredDimensions).toEqual(expectedFilteredDims);
-        expect(chartGroup.dimensionListenerMap).toEqual(expectedDimMap);
-        expect(chartGroup.tables).toEqual(expectedTables);
-        expect(chartGroup.charts).toEqual(expectedCharts);
+        expect(chartGroup.dimensions).toEqual([]);
+        expect(chartGroup.groupings).toEqual([]);
+        expect(chartGroup.filteredDimensions).toEqual([]);
+        expect(chartGroup.dimensionListenerMap).toEqual([]);
+        expect(chartGroup.tables).toEqual([]);
+        expect(chartGroup.charts).toEqual([]);
     });
 
 
@@ -399,8 +384,7 @@ describe('Chart Group Tests', function() {
 
         // table
 
-        table = new insight.Table('testTable', '#testChart', countries);        
-
+        table = new insight.Table('testTable', '#testChart', countries);
 
         // spy on the initialization of the chart, to make sure it's called
         spyOn(chart, 'draw');
@@ -421,7 +405,6 @@ describe('Chart Group Tests', function() {
         var filterValue = {key: 'England', value: {}};
         
         chartGroup.chartFilterHandler(series, filterValue, 'in_England');
-
 
         // Then
         var expectedGroupingList = [countries];
