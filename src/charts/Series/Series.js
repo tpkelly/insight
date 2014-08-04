@@ -325,18 +325,11 @@ insight.Series = function Series(name, data, x, y, color) {
         return this;
     };
 
-    this.maxLabelDimensions = function(measureCanvas) {
-
-        var sampleText = document.createElement('text');
-        sampleText.setAttribute('class', insight.Constants.AxisTextClass);
-        var style = window.getComputedStyle(sampleText);
-        var ctx = measureCanvas.getContext('2d');
-        ctx.font = style['font-size'] + ' ' + style['font-family'];
-
-        var fontSize = 0;
+    this.maxLabelDimensions = function(fontSize, lineHeight, measureContext) {
 
         var maxValueWidth = 0;
         var maxKeyWidth = 0;
+        var maxFontHeight = 0;
 
         var data = this.dataset();
 
@@ -350,19 +343,21 @@ insight.Series = function Series(name, data, x, y, color) {
                 var keyString = keyFormat(key);
                 var valueString = valueFormat(value);
 
-                var keyDimensions = ctx.measureText(keyString);
-                var valueDimensions = ctx.measureText(valueString);
+                var keyDimensions = measureContext.measureText(keyString);
+                var valueDimensions = measureContext.measureText(valueString);
 
                 maxKeyWidth = Math.max(keyDimensions.width, maxKeyWidth);
                 maxValueWidth = Math.max(valueDimensions.width, maxValueWidth);
-                fontSize = Math.ceil(style['font-size']) || 10;
             });
+
+        maxKeyWidth += self.x.tickPadding() + self.x.tickSize();
+        maxValueWidth += self.y.tickPadding() + self.y.tickSize();
 
         var maxDimensions = {
             "maxKeyWidth": maxKeyWidth,
-            "maxKeyHeight": fontSize,
+            "maxKeyHeight": lineHeight,
             "maxValueWidth": maxValueWidth,
-            "maxValueHeight": fontSize
+            "maxValueHeight": lineHeight
         };
 
         //Handle tick rotation
@@ -371,8 +366,8 @@ insight.Series = function Series(name, data, x, y, color) {
             var xSin = Math.sin(x.tickRotation() * Math.PI / 180);
             var xCos = Math.cos(x.tickRotation() * Math.PI / 180);
 
-            maxDimensions.maxKeyWidth = Math.ceil(Math.max(fontSize * xSin, maxKeyWidth * xCos));
-            maxDimensions.maxKeyHeight = Math.ceil(Math.max(fontSize * xCos, maxKeyWidth * xSin));
+            maxDimensions.maxKeyWidth = Math.ceil(Math.max(lineHeight * xSin, maxKeyWidth * xCos));
+            maxDimensions.maxKeyHeight = Math.ceil(Math.max(lineHeight * xCos, maxKeyWidth * xSin));
         }
 
         if (y.tickRotation() !== '0') {
@@ -380,8 +375,8 @@ insight.Series = function Series(name, data, x, y, color) {
             var ySin = Math.sin(y.tickRotation() * Math.PI / 180);
             var yCos = Math.cos(y.tickRotation() * Math.PI / 180);
 
-            maxDimensions.maxValueWidth = Math.ceil(Math.max(fontSize * ySin, maxValueWidth * yCos));
-            maxDimensions.maxValueHeight = Math.ceil(Math.max(fontSize * yCos, maxValueWidth * ySin));
+            maxDimensions.maxValueWidth = Math.ceil(Math.max(lineHeight * ySin, maxValueWidth * yCos));
+            maxDimensions.maxValueHeight = Math.ceil(Math.max(lineHeight * yCos, maxValueWidth * ySin));
         }
 
         return maxDimensions;

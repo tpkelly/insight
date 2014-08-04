@@ -61,6 +61,8 @@
 
             var init = function(create, container) {
 
+
+
                 window.addEventListener('resize', onWindowResize);
 
                 self.container = create ? d3.select(container)
@@ -78,6 +80,11 @@
 
                 self.plotArea = self.chartSVG.append('g')
                     .attr('class', insight.Constants.PlotArea);
+
+                // create the empty text element used by the text measuring process
+                self.measureText = self.plotArea
+                    .append('text')
+                    .attr('class', insight.Constants.AxisTextClass);
 
                 self.addClipPath();
 
@@ -622,12 +629,25 @@
                 "right": 0
             };
 
+            var textNode = this.measureText.node();
+
+            var style = window.getComputedStyle(textNode);
+            var ctx = this.measureCanvas.getContext('2d');
+            ctx.font = style['font-size'] + ' ' + style['font-family'];
+
+            var fontSizeString = style.getPropertyValue('font-size');
+            var lineHeightString = style.getPropertyValue('line-height');
+
+            // remove 'px' from end
+            var fontSize = Number(fontSizeString.slice(0, fontSizeString.length - 2));
+            var lineHeight = Number(lineHeightString.slice(0, lineHeightString.length - 2));
+
             this.series()
                 .forEach(function(series) {
                     var xAxis = series.x;
                     var yAxis = series.y;
 
-                    var labelDimensions = series.maxLabelDimensions(canvas);
+                    var labelDimensions = series.maxLabelDimensions(fontSize, lineHeight, ctx);
 
                     margin[xAxis.orientation()] = Math.max(labelDimensions.maxKeyHeight, margin[xAxis.orientation()]);
                     margin[yAxis.orientation()] = Math.max(labelDimensions.maxValueWidth, margin[yAxis.orientation()]);
