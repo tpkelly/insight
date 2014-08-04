@@ -250,20 +250,45 @@ insight.Utils = (function() {
     };
 
 
-    exports.safeString = function(input) {
-        return input.split(' ')
-            .join('_');
-    };
-
-
-
-
     exports.valueForKey = function(dictionary, key, keyFunction, valueFunction) {
         var values = dictionary.filter(function(item) {
             return keyFunction(item) == key;
         });
         return valueFunction(values[0]);
     };
+
+    exports.safeString = function(input) {
+        return input.split(' ')
+            .join('_');
+    };
+
+    // Helper functions for text measurement.  Mock out in tests to remove dependency on window and DOM functions
+
+    exports.getElementStyles = function(textElement, styleProperties) {
+
+        var style = window.getComputedStyle(textElement);
+        var properties = {};
+
+        styleProperties.forEach(function(propertyName) {
+            try {
+                properties[propertyName] = style.getPropertyValue(propertyName);
+            } catch (err) {
+                // handle this formally when we have a logging framework
+                console.log(err);
+            }
+        });
+
+        return properties;
+    };
+
+    exports.getDrawingContext = function(canvas, styles) {
+
+        var ctx = canvas.getContext('2d');
+        ctx.font = styles['font-size'] + ' ' + styles['font-family'];
+
+        return ctx;
+    };
+
 
     return exports;
 }());

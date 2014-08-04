@@ -22,7 +22,6 @@ insight.Grouping = (function(insight) {
             orderFunction;
 
 
-
         //public variables
 
         this.dimension = dimension;
@@ -33,7 +32,6 @@ insight.Grouping = (function(insight) {
         var postAggregation = function(grouping) {
 
         };
-
 
 
         /*

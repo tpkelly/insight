@@ -240,6 +240,7 @@ describe('Chart', function() {
                 d3 = new D3Mocks();
 
                 // prevent calling through to functions that are not being tested
+                spyOn(chart, 'calculateLabelMargin');
                 spyOn(chart, 'draw').andCallThrough();
                 spyOn(chart, 'addClipPath').andCallThrough();
 
@@ -340,6 +341,8 @@ describe('Chart', function() {
         var chart;
         var xAxis;
         var yAxis;
+        var textElement;
+        var styles;
 
         //Set up tests
         beforeEach(function() {
@@ -348,8 +351,11 @@ describe('Chart', function() {
             xAxis = new insight.Axis('', insight.Scales.Linear);
             yAxis = new insight.Axis('', insight.Scales.Linear);
 
+            styles = {'font-size': '10px', 'font-family': 'Helvetica', 'line-height': '18px'};
+
             chart.addXAxis(xAxis);
             chart.addYAxis(yAxis);
+
         });
 
         it('margins are 0 when no series on chart', function() {
@@ -357,19 +363,19 @@ describe('Chart', function() {
             chart.series([]);
 
             //When:
-            chart.calculateLabelMargin();
+            chart.calculateLabelMargin(styles);
 
             //Then:
             expect(chart.margin()).toEqual({"top":0,"left":0,"right":0,"bottom":0});
         });
 
-        it('margins are 0 when series has no data', function() {
+        it('margins are when series has no data', function() {
             //Given:
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
             chart.series([series]);
 
             //When:
-            chart.calculateLabelMargin();
+            chart.calculateLabelMargin(styles);
 
             //Then:
             //15pts for the x-axis label height
@@ -392,7 +398,7 @@ describe('Chart', function() {
             chart.series([series]);
 
             //When:
-            chart.calculateLabelMargin();
+            chart.calculateLabelMargin(styles, styles);
 
             //Then:
             expect(chart.margin()).toEqual({"top":0, "left":0, "right":0, "bottom":10});
@@ -414,7 +420,7 @@ describe('Chart', function() {
             chart.series([series]);
 
             //When:
-            chart.calculateLabelMargin();
+            chart.calculateLabelMargin(styles);
 
             //Then:
             expect(chart.margin()).toEqual({"top":0, "left":5, "right":0, "bottom":0});
@@ -438,7 +444,7 @@ describe('Chart', function() {
             chart.yAxis(yAxis);
 
             //When:
-            chart.calculateLabelMargin();
+            chart.calculateLabelMargin(styles);
 
             //Then:
             expect(chart.margin()).toEqual({"top":0, "left":0, "right":5, "bottom":0});
@@ -461,7 +467,7 @@ describe('Chart', function() {
             chart.xAxis(xAxis);
 
             //When:
-            chart.calculateLabelMargin();
+            chart.calculateLabelMargin(styles);
 
             //Then:
             expect(chart.margin()).toEqual({"top":10, "left":0, "right":0, "bottom":0});

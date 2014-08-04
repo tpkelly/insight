@@ -45,7 +45,7 @@
 
             // private functions
 
-            function onWindowResize() {
+            var onWindowResize = function() {
 
                 var scrollBarWidth = 50;
                 var left = self.container[0][0].offsetLeft;
@@ -57,11 +57,9 @@
 
                 self.resizeWidth(widthWithoutScrollBar);
 
-            }
+            };
 
             var init = function(create, container) {
-
-
 
                 window.addEventListener('resize', onWindowResize);
 
@@ -82,9 +80,13 @@
                     .attr('class', insight.Constants.PlotArea);
 
                 // create the empty text element used by the text measuring process
-                self.measureText = self.plotArea
+                self.axisMeasurer = self.plotArea
                     .append('text')
                     .attr('class', insight.Constants.AxisTextClass);
+
+                self.labelMeasurer = self.container
+                    .append('text')
+                    .attr('class', insight.Constants.AxisLabelClass);
 
                 self.addClipPath();
 
@@ -93,6 +95,7 @@
 
 
             var initZoom = function() {
+
                 self.zoom = d3.behavior.zoom()
                     .on('zoom', self.dragging.bind(self));
 
@@ -197,20 +200,23 @@
 
                     self.width(newWidth, true);
                     self.draw();
-
                 }
 
             };
 
             this.resizeChart = function() {
+
                 if (autoMargin) {
-                    self.calculateLabelMargin();
+
+                    var axisStyles = insight.Utils.getElementStyles(self.axisMeasurer.node(), ['font-size', 'line-height', 'font-family']);
+                    var labelStyles = insight.Utils.getElementStyles(self.labelMeasurer.node(), ['font-size', 'line-height', 'font-family']);
+
+                    self.calculateLabelMargin(axisStyles, labelStyles);
                 }
 
                 var chartMargin = self.margin();
 
                 var context = self.measureCanvas.getContext('2d');
-                context.font = "15pt Open Sans Bold";
 
                 self.container.style('width', self.width() + 'px');
 
@@ -618,9 +624,10 @@
         }
 
 
-        Chart.prototype.calculateLabelMargin = function() {
+        Chart.prototype.calculateLabelMargin = function(axisStyles, labelStyles) {
 
-            var canvas = this.measureCanvas;
+            labelStyles = labelStyles ? labelStyles : axisStyles;
+
             var max = 0;
             var margin = {
                 "top": 0,
@@ -629,28 +636,26 @@
                 "right": 0
             };
 
-            var textNode = this.measureText.node();
+            var axisMeasuringContext = insight.Utils.getDrawingContext(this.measureCanvas, axisStyles);
+            var labelMeasuringContext = insight.Utils.getDrawingContext(this.measureCanvas, labelStyles);
 
-            var style = window.getComputedStyle(textNode);
-            var ctx = this.measureCanvas.getContext('2d');
-            ctx.font = style['font-size'] + ' ' + style['font-family'];
-
-            var fontSizeString = style.getPropertyValue('font-size');
-            var lineHeightString = style.getPropertyValue('line-height');
+            var lineHeightString = axisStyles['line-height'];
 
             // remove 'px' from end
-            var fontSize = Number(fontSizeString.slice(0, fontSizeString.length - 2));
             var lineHeight = Number(lineHeightString.slice(0, lineHeightString.length - 2));
 
             this.series()
                 .forEach(function(series) {
-                    var xAxis = series.x;
-                    var yAxis = series.y;
+                    var keyAxis = series.keyAxis;
+                    var valueAxis = series.valueAxis;
 
-                    var labelDimensions = series.maxLabelDimensions(fontSize, lineHeight, ctx);
+                    var labelDimensions = series.maxLabelDimensions(lineHeight, axisMeasuringContext, labelMeasuringContext);
 
-                    margin[xAxis.orientation()] = Math.max(labelDimensions.maxKeyHeight, margin[xAxis.orientation()]);
-                    margin[yAxis.orientation()] = Math.max(labelDimensions.maxValueWidth, margin[yAxis.orientation()]);
+                    var keyProperty = keyAxis.horizontal() ? 'maxKeyHeight' : 'maxKeyWidth';
+                    var valueProperty = valueAxis.horizontal() ? 'maxValueHeight' : 'maxValueWidth';
+
+                    margin[keyAxis.orientation()] = Math.max(labelDimensions[keyProperty], margin[keyAxis.orientation()]);
+                    margin[valueAxis.orientation()] = Math.max(labelDimensions[valueProperty], margin[valueAxis.orientation()]);
                 });
 
             this.margin(margin);
