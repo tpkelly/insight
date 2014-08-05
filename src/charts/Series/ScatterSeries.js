@@ -23,7 +23,7 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
         var max = 0;
         var data = this.data.getData();
 
-        var func = scale == self.x ? self.xFunction() : self.yFunction();
+        var func = scale === self.x ? self.xFunction() : self.yFunction();
 
         var m = d3.max(data, func);
 

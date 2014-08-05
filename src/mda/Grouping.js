@@ -276,7 +276,7 @@ insight.Grouping = (function(insight) {
 
                     if (v.hasOwnProperty(propertyName)) {
                         for (var val in v[propertyName]) {
-                            if (typeof(gIndices[v[propertyName][val]]) != "undefined") {
+                            if (typeof(gIndices[v[propertyName][val]]) !== "undefined") {
                                 var gIndex = gIndices[v[propertyName][val]];
 
                                 p.values[gIndex].value++;

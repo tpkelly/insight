@@ -353,7 +353,7 @@ insight.Series = function Series(name, data, x, y, color) {
 
         var data = this.dataset();
 
-        var func = scale == self.x ? self.keyFunction() : self.valueFunction();
+        var func = scale === self.x ? self.keyFunction() : self.valueFunction();
 
         return d3.min(data, func);
     };
@@ -370,7 +370,7 @@ insight.Series = function Series(name, data, x, y, color) {
 
         var data = this.dataset();
 
-        var func = scale == self.x ? self.keyFunction() : self.valueFunction();
+        var func = scale === self.x ? self.keyFunction() : self.valueFunction();
 
         return d3.max(data, func);
     };

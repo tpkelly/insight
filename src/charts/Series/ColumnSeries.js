@@ -143,7 +143,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
         var groupWidth = self.barWidth(d);
 
-        var width = self.stackedBars() || (self.series.length == 1) ? groupWidth : groupWidth / self.series.length;
+        var width = self.stackedBars() || (self.series.length === 1) ? groupWidth : groupWidth / self.series.length;
 
         return width;
     };

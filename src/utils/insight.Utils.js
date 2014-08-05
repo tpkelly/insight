@@ -28,7 +28,7 @@ insight.Utils = (function() {
         var aResult = sortParameter(a),
             bResult = sortParameter(b);
 
-        if (aResult == bResult) {
+        if (aResult === bResult) {
             return recursiveSort(a, b, sorters.slice(1));
         }
 
@@ -264,11 +264,10 @@ insight.Utils = (function() {
 
     exports.tryParseInt = function(str, defaultValue) {
         var retValue = defaultValue;
-        if (str !== null) {
-            if (str.length > 0) {
-                if (!isNaN(str)) {
-                    retValue = parseInt(str);
-                }
+        if (str != null) {
+            if ((str.length > 0) && !isNaN(str)) {
+
+                retValue = parseInt(str);
             }
         }
         return retValue;

@@ -40,7 +40,7 @@ insight.Axis = function Axis(name, scale) {
 
     var textAnchor = function() {
         var orientation = self.orientation();
-        if (orientation == 'left' || orientation == 'top') {
+        if (orientation === 'left' || orientation === 'top') {
             return 'end';
         } else {
             return 'start';
@@ -140,7 +140,7 @@ insight.Axis = function Axis(name, scale) {
      * @returns {boolean} - Whether the axis is horizontal.
      */
     this.horizontal = function() {
-        return this.direction == 'h';
+        return this.direction === 'h';
     };
 
     /**
@@ -190,11 +190,11 @@ insight.Axis = function Axis(name, scale) {
     this.domain = function() {
         var domain = [];
 
-        if (this.scaleType == insight.Scales.Linear.name) {
+        if (this.scaleType === insight.Scales.Linear.name) {
             domain = [0, findMax()];
-        } else if (this.scaleType == insight.Scales.Ordinal.name) {
+        } else if (this.scaleType === insight.Scales.Ordinal.name) {
             domain = findOrdinalValues();
-        } else if (this.scaleType == insight.Scales.Time.name) {
+        } else if (this.scaleType === insight.Scales.Time.name) {
             domain = [new Date(findMin()), new Date(findMax())];
         }
 
@@ -410,12 +410,12 @@ insight.Axis = function Axis(name, scale) {
 
         if (self.horizontal()) {
             var transX = 0;
-            var transY = self.orientation() == 'top' ? 0 : self.bounds[1];
+            var transY = self.orientation() === 'top' ? 0 : self.bounds[1];
 
             transform += transX + ',' + transY + ')';
 
         } else {
-            var xShift = self.orientation() == 'left' ? 0 : self.bounds[0];
+            var xShift = self.orientation() === 'left' ? 0 : self.bounds[0];
             transform += xShift + ',0)';
         }
 

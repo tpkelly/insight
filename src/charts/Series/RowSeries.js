@@ -136,7 +136,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
 
         var groupThickness = self.barThickness(d);
 
-        var width = self.stacked() || (self.series.length == 1) ? groupThickness : groupThickness / self.series.length;
+        var width = self.stacked() || (self.series.length === 1) ? groupThickness : groupThickness / self.series.length;
 
         return width;
     };

@@ -370,7 +370,7 @@ describe('Chart', function() {
             expect(chart.margin()).toEqual({"top":0,"left":0,"right":0,"bottom":0});
         });
 
-        it('margins are when series has no data', function() {
+        it('margins are 0 when series has no data', function() {
             //Given:
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
             
