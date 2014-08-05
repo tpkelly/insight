@@ -262,6 +262,18 @@ insight.Utils = (function() {
             .join('_');
     };
 
+    exports.tryParseInt = function(str, defaultValue) {
+        var retValue = defaultValue;
+        if (str !== null) {
+            if (str.length > 0) {
+                if (!isNaN(str)) {
+                    retValue = parseInt(str);
+                }
+            }
+        }
+        return retValue;
+    };
+
     // Helper functions for text measurement.  Mock out in tests to remove dependency on window and DOM functions
 
     exports.getElementStyles = function(textElement, styleProperties) {

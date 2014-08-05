@@ -63,7 +63,7 @@ module.exports = function(grunt) {
       }
     },
   "jsbeautifier" : {
-    files : ["src/**/*.js"],
+    files : sourceFiles,
     options:
     {
       js:

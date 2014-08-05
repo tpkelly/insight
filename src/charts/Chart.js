@@ -16,6 +16,8 @@
             this.container = null;
             this.chart = null;
             this.measureCanvas = document.createElement('canvas');
+            this.marginMeasurer = new insight.MarginMeasurer();
+
 
             var margin = {
                 top: 0,
@@ -211,7 +213,7 @@
                     var axisStyles = insight.Utils.getElementStyles(self.axisMeasurer.node(), ['font-size', 'line-height', 'font-family']);
                     var labelStyles = insight.Utils.getElementStyles(self.labelMeasurer.node(), ['font-size', 'line-height', 'font-family']);
 
-                    self.calculateLabelMargin(axisStyles, labelStyles);
+                    self.calculateLabelMargin(self.marginMeasurer, axisStyles, labelStyles);
                 }
 
                 var chartMargin = self.margin();
@@ -624,39 +626,11 @@
         }
 
 
-        Chart.prototype.calculateLabelMargin = function(axisStyles, labelStyles) {
+        Chart.prototype.calculateLabelMargin = function(measurer, axisStyles, labelStyles) {
 
             labelStyles = labelStyles ? labelStyles : axisStyles;
 
-            var max = 0;
-            var margin = {
-                "top": 0,
-                "left": 0,
-                "bottom": 0,
-                "right": 0
-            };
-
-            var axisMeasuringContext = insight.Utils.getDrawingContext(this.measureCanvas, axisStyles);
-            var labelMeasuringContext = insight.Utils.getDrawingContext(this.measureCanvas, labelStyles);
-
-            var lineHeightString = axisStyles['line-height'];
-
-            // remove 'px' from end
-            var lineHeight = Number(lineHeightString.slice(0, lineHeightString.length - 2));
-
-            this.series()
-                .forEach(function(series) {
-                    var keyAxis = series.keyAxis;
-                    var valueAxis = series.valueAxis;
-
-                    var labelDimensions = series.maxLabelDimensions(lineHeight, axisMeasuringContext, labelMeasuringContext);
-
-                    var keyProperty = keyAxis.horizontal() ? 'maxKeyHeight' : 'maxKeyWidth';
-                    var valueProperty = valueAxis.horizontal() ? 'maxValueHeight' : 'maxValueWidth';
-
-                    margin[keyAxis.orientation()] = Math.max(labelDimensions[keyProperty], margin[keyAxis.orientation()]);
-                    margin[valueAxis.orientation()] = Math.max(labelDimensions[valueProperty], margin[valueAxis.orientation()]);
-                });
+            var margin = measurer.calculateChartMargins(this.series(), this.measureCanvas, axisStyles, labelStyles);
 
             this.margin(margin);
         };

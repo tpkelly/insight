@@ -339,78 +339,7 @@ insight.Series = function Series(name, data, x, y, color) {
         return this;
     };
 
-    this.maxLabelDimensions = function(lineHeight, axisContext, labelContext) {
 
-        var maxValueWidth = 0;
-        var maxKeyWidth = 0;
-        var maxFontHeight = 0;
-        var labelHeight = 0;
-
-        var data = this.dataset();
-
-        var keyAxisLabelWidth = labelContext.measureText(self.keyAxis.label())
-            .width;
-        var valueAxisLabelWidth = labelContext.measureText(self.valueAxis.label())
-            .width;
-
-        var keyAxisPadding = self.keyAxis.tickPadding() + self.keyAxis.tickSize();
-        var valueAxisPadding = self.valueAxis.tickPadding() + self.valueAxis.tickSize();
-
-        var keys = this.keys();
-
-        keys.forEach(function(key) {
-
-            var value = insight.Utils.valueForKey(data, key, keyFunction, valueFunction);
-
-            var keyFormat = self.x == self.keyAxis ? self.x.labelFormat() : self.y.labelFormat();
-            var valueFormat = self.y == self.valueAxis ? self.y.labelFormat() : self.x.labelFormat();
-
-            var keyString = keyFormat(key);
-            var valueString = valueFormat(value);
-
-            var keyDimensions = axisContext.measureText(keyString);
-            var valueDimensions = axisContext.measureText(valueString);
-
-            maxKeyWidth = Math.max(keyDimensions.width, maxKeyWidth);
-            maxValueWidth = Math.max(valueDimensions.width, maxValueWidth);
-
-        });
-
-        // If there was some data, append Axis padding to the max values
-        if (keys.length) {
-            maxKeyWidth = self.keyAxis.display() ? maxKeyWidth + keyAxisPadding + keyAxisLabelWidth : maxKeyWidth;
-            maxValueWidth = self.valueAxis.display() ? maxValueWidth + valueAxisPadding + valueAxisLabelWidth : maxValueWidth;
-            labelHeight = lineHeight;
-        }
-
-        var maxDimensions = {
-            "maxKeyWidth": maxKeyWidth,
-            "maxKeyHeight": labelHeight,
-            "maxValueWidth": maxValueWidth,
-            "maxValueHeight": labelHeight
-        };
-
-        //Handle tick rotation
-        if (self.keyAxis.tickRotation() !== '0') {
-            //Convert Degrees -> Radians
-            var xSin = Math.sin(self.keyAxis.tickRotation() * Math.PI / 180);
-            var xCos = Math.cos(self.keyAxis.tickRotation() * Math.PI / 180);
-
-            maxDimensions.maxKeyWidth = Math.ceil(Math.max(lineHeight * xSin, maxKeyWidth * xCos));
-            maxDimensions.maxKeyHeight = Math.ceil(Math.max(lineHeight * xCos, maxKeyWidth * xSin));
-        }
-
-        if (self.valueAxis.tickRotation() !== '0') {
-            //Convert Degrees -> Radians
-            var ySin = Math.sin(self.valueAxis.tickRotation() * Math.PI / 180);
-            var yCos = Math.cos(self.valueAxis.tickRotation() * Math.PI / 180);
-
-            maxDimensions.maxValueWidth = Math.ceil(Math.max(lineHeight * ySin, maxValueWidth * yCos));
-            maxDimensions.maxValueHeight = Math.ceil(Math.max(lineHeight * yCos, maxValueWidth * ySin));
-        }
-
-        return maxDimensions;
-    };
 
     /**
      * Extracts the minimum value on an axis for this series.
