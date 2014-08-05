@@ -123,7 +123,7 @@ insight.Series = function Series(name, data, x, y, color) {
      */
     this.itemClassName = function(dataItem, additionalClasses) {
 
-        var keySelector = insight.Utils.keySelector(dataItem, keyFunction);
+        var keySelector = insight.Utils.keySelector(keyFunction(dataItem));
         var selected = selectedClassName(self.selectedItems, keySelector);
         var value = self.rootClassName + ' ' + keySelector + selected;
 
@@ -250,7 +250,7 @@ insight.Series = function Series(name, data, x, y, color) {
 
     /*
      * Creates the tooltip for this Series, checking if it exists already first.
-     * @memberof insight.Series
+     * @memberof! insight.Series
      * @param {DOMElement} container - The DOM Element that the tooltip should be drawn inside.
      */
     this.initializeTooltip = function(container) {
@@ -264,7 +264,7 @@ insight.Series = function Series(name, data, x, y, color) {
     /*
      * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouse over. Tooltips are shown and CSS updated.
      * The *this* context will reference the DOMElement raising the event.
-     * @memberof insight.Series
+     * @memberof! insight.Series
      * @param {object} item - The data point for the hovered item.
      * @param {int} index - The index of the hovered item in the data set.  This is required at the moment as we need to provide the valueFunction until stacked series are refactored.
      * @param {function} valueFunction - If provided, this function will be used to generate the tooltip text, otherwise the series default valueFunction will be used.
@@ -284,7 +284,7 @@ insight.Series = function Series(name, data, x, y, color) {
     /*
      * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouseout event. Tooltips are hidden and CSS updated.
      * The *this* context will reference the DOMElement raising the event.
-     * @memberof insight.Series
+     * @memberof! insight.Series
      */
     this.mouseOut = function() {
 
@@ -296,11 +296,10 @@ insight.Series = function Series(name, data, x, y, color) {
 
 
 
-    this.click = function(element, filter) {
+    this.click = function(element, filterBy) {
+        var filterValue = keyFunction(filterBy);
 
-        var selector = insight.Utils.keySelector(filter, keyFunction);
-
-        this.clickEvent(this, filter, selector);
+        self.clickEvent(self.data, filterValue);
     };
 
     this.filterFunction = function(_) {

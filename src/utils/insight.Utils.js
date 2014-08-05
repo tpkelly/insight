@@ -97,14 +97,15 @@ insight.Utils = (function() {
      * If the parameter is not an object (just a value in an array) then there is no need for this particular
      * class so an empty string is returned.
      * @returns {string} return - A class name to identify this point and any other points taking the same value in other charts.
-     * @param {object} data - The input point
+     * @param {object} d - The input point
+     * @param {function} keyFunction - An optional keyFunction if the
      */
-    exports.keySelector = function(d, keyFunction) {
-        var keyValue = keyFunction(d),
-            result = '';
+    exports.keySelector = function(d) {
 
-        if (keyValue) {
-            var str = keyValue.toString();
+        var result = '';
+
+        if (d) {
+            var str = d.toString();
             result = 'in_' + str.replace(/[^A-Z0-9]/ig, '_');
         }
 
