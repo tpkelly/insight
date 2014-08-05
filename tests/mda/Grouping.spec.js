@@ -385,22 +385,6 @@ describe('Grouping', function() {
             
         });
         
-        it('will correctly sum a property', function() {
-            var dataset = new insight.DataSet(sourceData);
-
-            var group =  dataset.group('country', function(d){return d.Country;});
-
-            group.sum(['IQ']);
-
-            var data = group.getData();
-
-            var scotland = data.filter(function(country){ return country.key=='Scotland'; })[0];
-            var england = data.filter(function(country){ return country.key=='England'; })[0];
-
-            expect(scotland.value.IQ.Sum).toBe(268);
-            expect(england.value.IQ.Sum).toBe(589);
-        });
-        
         it('correlation can be calculated on given property pairs', function() {
             
             var dataset = new insight.DataSet(sourceData);
