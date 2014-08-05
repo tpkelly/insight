@@ -6,17 +6,18 @@ insight.Dimension = (function(insight) {
      * @todo reimplement how Dimensions are created.  Too much is inside ChartGroup at the moment, and ChartGroup is becoming redundant and too mixed
      * @todo display function should be provided by a setter.
      * @param {String} name - The short name used to identify this dimension, and any linked dimensions sharing the same name
-     * @param {crossfilter} crossfilter - The crossfilter object to create the Dimension on.
+     * @param {crossfilter} crossfilterData - The crossfilter object to create the Dimension on.
      * @param {function} sliceFunction - The function used to categorize points within the dimension.
      * @param {boolean} oneToMany - Whether or not this dimension represents a collection of possible values in each item.
      * @class
      */
-    var Dimension = function Dimension(name, crossfilter, sliceFunction, oneToMany) {
+    var Dimension = function Dimension(name, crossfilterData, sliceFunction, oneToMany) {
 
-        this.crossfilterDimension = crossfilter.dimension(sliceFunction);
+        this.crossfilterDimension = crossfilterData.dimension(sliceFunction);
         this.name = name;
         this.filters = [];
         this.oneToMany = oneToMany;
+        this.aggregationFunction = sliceFunction;
 
         var self = this;
 
