@@ -27,7 +27,8 @@ D3Match.prototype.style = function(name, value) {
 
 D3Match.prototype.node = function() {
 
-    return this;   
+    var el = document.createElement("text");
+    return el;
 };
 
 D3Match.prototype.select = function(el) {
@@ -35,6 +36,10 @@ D3Match.prototype.select = function(el) {
     return new D3Match(el);
 
 };
+
+D3Match.prototype.node = function() {
+    return this;
+}
 
 var D3Mocks = function() {
     this.elements = {};

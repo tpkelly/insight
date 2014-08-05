@@ -10,6 +10,7 @@
 insight.Series = function Series(name, data, x, y, color) {
 
     this.data = data;
+    this.usesCrossfilter = (data instanceof insight.DataSet) || (data instanceof insight.Grouping);
     this.x = x;
     this.y = y;
     this.name = name;
@@ -17,8 +18,8 @@ insight.Series = function Series(name, data, x, y, color) {
     this.animationDuration = 300;
     this.topValues = null;
     this.classValues = [];
-    this.valueAxis = x;
-    this.keyAxis = y;
+    this.valueAxis = y;
+    this.keyAxis = x;
     this.selectedItems = [];
 
     x.addSeries(this);
@@ -95,7 +96,20 @@ insight.Series = function Series(name, data, x, y, color) {
     };
 
 
+    var arrayDataSet = function(orderFunction, topValues) {
 
+        // Take a shallow copy of the data array
+        var data = self.data.slice(0);
+
+        if (orderFunction) {
+            data = data.sort(orderFunc);
+        }
+        if (topValues) {
+            data = data.slice(0, top);
+        }
+
+        return data;
+    };
 
 
     // Public methods
@@ -170,15 +184,15 @@ insight.Series = function Series(name, data, x, y, color) {
      */
     this.dataset = function(orderFunction) {
 
-        // If the valueAxis is ordered but no function has been provided, create one based on the Series' valueFunction
-        if (this.valueAxis.ordered() && !orderFunction) {
+        // If the keyAxis is ordered but no function has been provided, create one based on the Series' valueFunction
+        if (self.keyAxis.ordered() && !orderFunction) {
 
             orderFunction = function(a, b) {
                 return self.valueFunction()(b) - self.valueFunction()(a);
             };
         }
 
-        var data = this.data.getData(orderFunction, this.topValues);
+        var data = this.usesCrossfilter ? self.data.getData(orderFunction, self.topValues) : arrayDataSet(orderFunction, self.topValues);
 
         if (filter) {
             data = data.filter(filter);
@@ -325,67 +339,7 @@ insight.Series = function Series(name, data, x, y, color) {
         return this;
     };
 
-    this.maxLabelDimensions = function(measureCanvas) {
 
-        var sampleText = document.createElement('text');
-        sampleText.setAttribute('class', insight.Constants.AxisTextClass);
-        var style = window.getComputedStyle(sampleText);
-        var ctx = measureCanvas.getContext('2d');
-        ctx.font = style['font-size'] + ' ' + style['font-family'];
-
-        var fontSize = 0;
-
-        var maxValueWidth = 0;
-        var maxKeyWidth = 0;
-
-        var data = this.dataset();
-
-        this.keys()
-            .forEach(function(key) {
-                var value = insight.Utils.valueForKey(data, key, keyFunction, valueFunction);
-
-                var keyFormat = self.x.labelFormat();
-                var valueFormat = self.y.labelFormat();
-
-                var keyString = keyFormat(key);
-                var valueString = valueFormat(value);
-
-                var keyDimensions = ctx.measureText(keyString);
-                var valueDimensions = ctx.measureText(valueString);
-
-                maxKeyWidth = Math.max(keyDimensions.width, maxKeyWidth);
-                maxValueWidth = Math.max(valueDimensions.width, maxValueWidth);
-                fontSize = Math.ceil(style['font-size']) || 10;
-            });
-
-        var maxDimensions = {
-            "maxKeyWidth": maxKeyWidth,
-            "maxKeyHeight": fontSize,
-            "maxValueWidth": maxValueWidth,
-            "maxValueHeight": fontSize
-        };
-
-        //Handle tick rotation
-        if (x.tickRotation() !== '0') {
-            //Convert Degrees -> Radians
-            var xSin = Math.sin(x.tickRotation() * Math.PI / 180);
-            var xCos = Math.cos(x.tickRotation() * Math.PI / 180);
-
-            maxDimensions.maxKeyWidth = Math.ceil(Math.max(fontSize * xSin, maxKeyWidth * xCos));
-            maxDimensions.maxKeyHeight = Math.ceil(Math.max(fontSize * xCos, maxKeyWidth * xSin));
-        }
-
-        if (y.tickRotation() !== '0') {
-            //Convert Degrees -> Radians
-            var ySin = Math.sin(y.tickRotation() * Math.PI / 180);
-            var yCos = Math.cos(y.tickRotation() * Math.PI / 180);
-
-            maxDimensions.maxValueWidth = Math.ceil(Math.max(fontSize * ySin, maxValueWidth * yCos));
-            maxDimensions.maxValueHeight = Math.ceil(Math.max(fontSize * yCos, maxValueWidth * ySin));
-        }
-
-        return maxDimensions;
-    };
 
     /**
      * Extracts the minimum value on an axis for this series.

@@ -16,6 +16,8 @@
             this.container = null;
             this.chart = null;
             this.measureCanvas = document.createElement('canvas');
+            this.marginMeasurer = new insight.MarginMeasurer();
+
 
             var margin = {
                 top: 0,
@@ -45,7 +47,7 @@
 
             // private functions
 
-            function onWindowResize() {
+            var onWindowResize = function() {
 
                 var scrollBarWidth = 50;
                 var left = self.container[0][0].offsetLeft;
@@ -57,7 +59,7 @@
 
                 self.resizeWidth(widthWithoutScrollBar);
 
-            }
+            };
 
             var init = function(create, container) {
 
@@ -79,6 +81,15 @@
                 self.plotArea = self.chartSVG.append('g')
                     .attr('class', insight.Constants.PlotArea);
 
+                // create the empty text element used by the text measuring process
+                self.axisMeasurer = self.plotArea
+                    .append('text')
+                    .attr('class', insight.Constants.AxisTextClass);
+
+                self.labelMeasurer = self.container
+                    .append('text')
+                    .attr('class', insight.Constants.AxisLabelClass);
+
                 self.addClipPath();
 
                 initialized = true;
@@ -86,6 +97,7 @@
 
 
             var initZoom = function() {
+
                 self.zoom = d3.behavior.zoom()
                     .on('zoom', self.dragging.bind(self));
 
@@ -190,20 +202,23 @@
 
                     self.width(newWidth, true);
                     self.draw();
-
                 }
 
             };
 
             this.resizeChart = function() {
+
                 if (autoMargin) {
-                    self.calculateLabelMargin();
+
+                    var axisStyles = insight.Utils.getElementStyles(self.axisMeasurer.node(), ['font-size', 'line-height', 'font-family']);
+                    var labelStyles = insight.Utils.getElementStyles(self.labelMeasurer.node(), ['font-size', 'line-height', 'font-family']);
+
+                    self.calculateLabelMargin(self.marginMeasurer, axisStyles, labelStyles);
                 }
 
                 var chartMargin = self.margin();
 
                 var context = self.measureCanvas.getContext('2d');
-                context.font = "15pt Open Sans Bold";
 
                 self.container.style('width', self.width() + 'px');
 
@@ -611,27 +626,11 @@
         }
 
 
-        Chart.prototype.calculateLabelMargin = function() {
+        Chart.prototype.calculateLabelMargin = function(measurer, axisStyles, labelStyles) {
 
-            var canvas = this.measureCanvas;
-            var max = 0;
-            var margin = {
-                "top": 0,
-                "left": 0,
-                "bottom": 0,
-                "right": 0
-            };
+            labelStyles = labelStyles ? labelStyles : axisStyles;
 
-            this.series()
-                .forEach(function(series) {
-                    var xAxis = series.x;
-                    var yAxis = series.y;
-
-                    var labelDimensions = series.maxLabelDimensions(canvas);
-
-                    margin[xAxis.orientation()] = Math.max(labelDimensions.maxKeyHeight, margin[xAxis.orientation()]);
-                    margin[yAxis.orientation()] = Math.max(labelDimensions.maxValueWidth, margin[yAxis.orientation()]);
-                });
+            var margin = measurer.calculateChartMargins(this.series(), this.measureCanvas, axisStyles, labelStyles);
 
             this.margin(margin);
         };
