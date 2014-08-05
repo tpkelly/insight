@@ -33,7 +33,7 @@ insight.Utils = (function() {
         }
 
         var sortResult = (aResult > bResult) ? 1 : -1;
-        return (sortOrder == 'ASC') ? sortResult : -sortResult;
+        return (sortOrder === 'ASC') ? sortResult : -sortResult;
     };
 
 
@@ -121,7 +121,7 @@ insight.Utils = (function() {
     exports.takeWhere = function(array, propertyName, value) {
         var matches = array.filter(function(item) {
             if (item.hasOwnProperty(propertyName)) {
-                return item[propertyName] == value;
+                return item[propertyName] === value;
             } else {
                 return false;
             }
@@ -252,7 +252,7 @@ insight.Utils = (function() {
 
     exports.valueForKey = function(dictionary, key, keyFunction, valueFunction) {
         var values = dictionary.filter(function(item) {
-            return keyFunction(item) == key;
+            return keyFunction(item) === key;
         });
         return valueFunction(values[0]);
     };
