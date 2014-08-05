@@ -338,12 +338,12 @@ describe('Chart', function() {
 
     describe('autosize margins', function() {
 
-        var chart;
-        var xAxis;
-        var yAxis;
-        var textElement;
-        var styles;
-        var measurer;
+        var chart,
+            xAxis,
+            yAxis,
+            textElement,
+            styles,
+            measurer;
 
         //Set up tests
         beforeEach(function() {
