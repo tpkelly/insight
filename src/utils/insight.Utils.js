@@ -170,7 +170,17 @@ insight.Utils = (function() {
         return a;
     };
 
+    /*
+     * Returns the last element in an array
+     * @param {Array} Any array
+     * @returns The last element in the array or undefined if the array is empty or the parameter is not an array
+     */
     exports.lastElement = function(array) {
+
+        if (!insight.Utils.isArray(array) || array.length === 0) {
+            return undefined;
+        }
+
         return array.slice(array.length - 1)[0];
     };
 
