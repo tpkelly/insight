@@ -88,7 +88,7 @@
             var addTable = function(table) {
 
                 // wire up the click event of the table to the filter handler of the DataSet
-                table.clickEvent = self.chartFilterHandler.bind(self);
+                table.clickEvent = self.chartFilterHandler;
 
                 addDimensionListener(table.data, table);
 
