@@ -480,15 +480,16 @@ insight.Grouping = (function(insight) {
         };
 
         /*
-         * Returns the list of properties to be summed on this Grouping * @instance * @memberof!insight.Grouping * @returns {
-         *           string[]
-         *    } - The list of property names that will be summed * @also * Sets the list of property names that will be summed in this Grouping * @instance * @memberof!insight.Grouping * @returns {
-         *       this
-         *     } * @param {
-         *        string[]
-         *    }
-         *    properties - An array of property names to be summed
-         *    for slices in this Grouping.
+         * Returns the list of properties to be summed on this Grouping
+         * @instance
+         * @memberof!insight.Grouping
+         * @returns {string[]} - The list of property names that will be summed
+         * @also
+         * Sets the list of property names that will be summed in this Grouping
+         * @instance
+         * @memberof!insight.Grouping
+         * @returns {this}
+         * @param {string[]} properties - An array of property names to be summed for slices in this Grouping.
          */
         self.sum = function(properties) {
             if (!arguments.length) {
@@ -502,13 +503,13 @@ insight.Grouping = (function(insight) {
          * Returns the list of property pairs whose correlation coefficient should be caclulated in this Grouping
          * @instance
          * @memberof!insight.Grouping
-         * @returns {string[][]} - The list of property pairs that will be summed.Each pair is an array of two strings
+         * @returns {Array<String[]>} - The list of property pairs that will be summed.Each pair is an array of two strings
          * @also
          * Sets the list of property pairs whose correlation coefficient should be caclulated in this Grouping
          * @instance
          * @memberof!insight.Grouping
          * @returns {this}
-         * @param {string[][]} properties - An array of property pairs whose correlation coefficient should
+         * @param {Array<String[]>} properties - An array of property pairs whose correlation coefficient should
          * be caclulated in this Grouping
          */
         self.correlationPairs = function(properties) {
