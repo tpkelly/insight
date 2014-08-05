@@ -38,7 +38,7 @@ describe("MarginMeasurer", function() {
 
     beforeEach(function () {
            
-            spyOn('insight.Utils', 'getDrawingContext').andCallFake;
+            spyOn('insight.Utils', 'getDrawingContext');
 
       });
 

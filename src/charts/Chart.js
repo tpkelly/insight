@@ -625,9 +625,19 @@
 
         }
 
-
+        /**
+         * Sets the margin for the Chart by using a MarginMEasurer to measure the required label and axis widths for
+         * the contents of this Chart
+         * @memberof! insight.Chart
+         * @instance
+         * @param {DOMElement} measurer - A canvas HTML element to use by the measurer.  Specific to each chart as
+         *                                each chart may have specific css rules
+         * @param {object} axisStyles - An associative map between css properties and values for the axis values
+         * @param {object} labelStyles - An associative map between css properties and values for the axis labels
+         */
         Chart.prototype.calculateLabelMargin = function(measurer, axisStyles, labelStyles) {
 
+            // labelStyles can be optional.  If so, use the same as the axisStyles
             labelStyles = labelStyles ? labelStyles : axisStyles;
 
             var margin = measurer.calculateChartMargins(this.series(), this.measureCanvas, axisStyles, labelStyles);

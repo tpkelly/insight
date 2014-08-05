@@ -8,8 +8,6 @@ insight.Grouping = (function(insight) {
 
     function Grouping(dimension) {
 
-
-
         //private variables
 
         var sumProperties = [],
