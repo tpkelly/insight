@@ -37,18 +37,16 @@ insight.Dimension = (function(insight) {
          * The filter object creates the function used by crossfilter to remove or add objects to an aggregation after a filter event.
          * It also includes a simple name variable to use for lookups.
          * @memberof! insight.Dimension
-         * @param {object} filteredValue - The value to create a crossfilter filter function for.  It will either be a value, or a {key: , value: } crossfilter aggregation entry.
+         * @param {object} filteredValue - The value to create a crossfilter filter function for.
          * @returns {function} - A function that a crossfilterdimension.filter() operation can use to map-reduce crossfilter aggregations.
          */
         this.createFilterFunction = function(filteredValue) {
 
-            var value = filteredValue.key ? filteredValue.key : filteredValue;
-
             // create the appropriate type of filter function for this Dimension
-            var filterFunc = self.oneToMany ? oneToManyFilterFunction(value) : filterFunction(value);
+            var filterFunc = self.oneToMany ? oneToManyFilterFunction(filteredValue) : filterFunction(filteredValue);
 
             return {
-                name: value,
+                name: filteredValue,
                 filterFunction: filterFunc
             };
         };

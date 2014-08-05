@@ -240,6 +240,7 @@ describe('Chart', function() {
                 d3 = new D3Mocks();
 
                 // prevent calling through to functions that are not being tested
+                spyOn(chart, 'calculateLabelMargin');
                 spyOn(chart, 'draw').andCallThrough();
                 spyOn(chart, 'addClipPath').andCallThrough();
 
@@ -340,24 +341,30 @@ describe('Chart', function() {
         var chart;
         var xAxis;
         var yAxis;
+        var textElement;
+        var styles;
+        var measurer;
 
         //Set up tests
         beforeEach(function() {
             chart = new insight.Chart('asda', 'asdads', 'ada');
-
+            measurer = new insight.MarginMeasurer();
             xAxis = new insight.Axis('', insight.Scales.Linear);
             yAxis = new insight.Axis('', insight.Scales.Linear);
 
+            styles = {'font-size': '10px', 'font-family': 'Helvetica', 'line-height': '18px'};
+
             chart.addXAxis(xAxis);
             chart.addYAxis(yAxis);
+
         });
 
         it('margins are 0 when no series on chart', function() {
             //Given:
             chart.series([]);
-
+            
             //When:
-            chart.calculateLabelMargin();
+            chart.calculateLabelMargin(measurer, styles);
 
             //Then:
             expect(chart.margin()).toEqual({"top":0,"left":0,"right":0,"bottom":0});
@@ -366,13 +373,23 @@ describe('Chart', function() {
         it('margins are 0 when series has no data', function() {
             //Given:
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
+            
+            var expectedDimensions = {
+                    "maxKeyWidth": 0,
+                    "maxValueWidth": 0,
+                    "maxKeyHeight": 0,
+                    "maxValueHeight": 0
+            };
+            
             chart.series([series]);
 
+            spyOn(measurer, 'seriesLabelDimensions').andReturn(expectedDimensions);
+
             //When:
-            chart.calculateLabelMargin();
+            chart.calculateLabelMargin(measurer, styles);
 
             //Then:
-            //15pts for the x-axis label height
+            
             expect(chart.margin()).toEqual({"top":0, "left":0, "right":0, "bottom":0});
 
         });
@@ -380,19 +397,20 @@ describe('Chart', function() {
         it('bottom margins are expanded when x-axis has labels', function() {
             //Given:
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
-            series.maxLabelDimensions = function() {
-                return maxDimensions = {
+            
+            var expectedDimensions = {
                     "maxKeyWidth": 5,
                     "maxValueWidth": 0,
                     "maxKeyHeight": 10,
                     "maxValueHeight": 0
-                };
             };
+
+            spyOn(measurer, 'seriesLabelDimensions').andReturn(expectedDimensions);
 
             chart.series([series]);
 
             //When:
-            chart.calculateLabelMargin();
+            chart.calculateLabelMargin(measurer, styles);
 
             //Then:
             expect(chart.margin()).toEqual({"top":0, "left":0, "right":0, "bottom":10});
@@ -402,19 +420,20 @@ describe('Chart', function() {
         it('left margins are expanded when y-axis has labels', function() {
             //Given:
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
-            series.maxLabelDimensions = function() {
-                return maxDimensions = {
+            
+            var expectedDimensions = {
                     "maxKeyWidth": 0,
                     "maxValueWidth": 5,
                     "maxKeyHeight": 0,
                     "maxValueHeight": 10
                 };
-            };
+
+            spyOn(measurer, 'seriesLabelDimensions').andReturn(expectedDimensions);
 
             chart.series([series]);
 
             //When:
-            chart.calculateLabelMargin();
+            chart.calculateLabelMargin(measurer, styles);
 
             //Then:
             expect(chart.margin()).toEqual({"top":0, "left":5, "right":0, "bottom":0});
@@ -425,20 +444,21 @@ describe('Chart', function() {
             //Given:
             yAxis = new insight.Axis('', insight.Scales.Linear).reversed(true);
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
-            series.maxLabelDimensions = function() {
-                return maxDimensions = {
+            
+            var maxDimensions = {
                     "maxKeyWidth": 0,
                     "maxValueWidth": 5,
                     "maxKeyHeight": 0,
                     "maxValueHeight": 10
                 };
-            };
+
+            spyOn(measurer, 'seriesLabelDimensions').andReturn(maxDimensions);
 
             chart.series([series]);
             chart.yAxis(yAxis);
 
             //When:
-            chart.calculateLabelMargin();
+            chart.calculateLabelMargin(measurer, styles);
 
             //Then:
             expect(chart.margin()).toEqual({"top":0, "left":0, "right":5, "bottom":0});
@@ -448,20 +468,22 @@ describe('Chart', function() {
             //Given:
             xAxis = new insight.Axis('', insight.Scales.Linear).reversed(true);
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
-            series.maxLabelDimensions = function() {
-                return maxDimensions = {
-                    "maxKeyWidth": 5,
-                    "maxValueWidth":0,
-                    "maxKeyHeight": 10,
-                    "maxValueHeight": 0
-                };
+            
+            var maxDimensions = {
+                "maxKeyWidth": 5,
+                "maxValueWidth":0,
+                "maxKeyHeight": 10,
+                "maxValueHeight": 0
             };
+
+            spyOn(measurer, 'seriesLabelDimensions').andReturn(maxDimensions);
+
 
             chart.series([series]);
             chart.xAxis(xAxis);
 
             //When:
-            chart.calculateLabelMargin();
+            chart.calculateLabelMargin(measurer, styles);
 
             //Then:
             expect(chart.margin()).toEqual({"top":10, "left":0, "right":0, "bottom":0});

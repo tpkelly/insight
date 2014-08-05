@@ -373,7 +373,7 @@ describe('Chart Group Tests', function() {
             // filter the data set
             var filterValue = {key: 'England', value: {}};
             
-            chartGroup.chartFilterHandler(series, filterValue, 'in_England');
+            chartGroup.chartFilterHandler(series.data, filterValue, 'in_England');
         });
 
         it('causes the countries dimension to create a filter function', function() {

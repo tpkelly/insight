@@ -8,8 +8,6 @@ insight.Grouping = (function(insight) {
 
     function Grouping(dimension) {
 
-
-
         //private variables
 
         var sumProperties = [],
@@ -22,7 +20,6 @@ insight.Grouping = (function(insight) {
             orderFunction;
 
 
-
         //public variables
 
         this.dimension = dimension;
@@ -33,7 +30,6 @@ insight.Grouping = (function(insight) {
         var postAggregation = function(grouping) {
 
         };
-
 
 
         /*
@@ -280,7 +276,7 @@ insight.Grouping = (function(insight) {
 
                     if (v.hasOwnProperty(propertyName)) {
                         for (var val in v[propertyName]) {
-                            if (typeof(gIndices[v[propertyName][val]]) != "undefined") {
+                            if (typeof(gIndices[v[propertyName][val]]) !== "undefined") {
                                 var gIndex = gIndices[v[propertyName][val]];
 
                                 p.values[gIndex].value++;

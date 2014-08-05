@@ -61,12 +61,12 @@ describe('InsightCharts Utils Tests', function() {
     it('can calculate a dimensional slice', function(){
         // Given 
 
-        var input = { key: 'Scotland', value: 100 };
+        var input = 'Scotland';
 
         // Then
 
         var expectedResult = 'in_Scotland';
-        var actualResult = insight.Utils.keySelector(input, function(d){return d.key});
+        var actualResult = insight.Utils.keySelector(input);
 
         expect(actualResult).toBe(expectedResult);
     });

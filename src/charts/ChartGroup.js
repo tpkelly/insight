@@ -178,23 +178,22 @@
             /**
              * Method handler that is bound by the ChartGroup to the click events of any chart series or table rows,
              * if the DataSets used by those entities are crossfilter enabled.
-             * It notifies any other listening charts of the dimensional selection event, which they can respond to 
+             * It notifies any other listening charts of the dimensional selection event, which they can respond to
              * by applying CSS highlighting etc.
              * @memberof! insight.ChartGroup
              * @instance
-             * @param {object} caller - The insight.Table or insight.Chart initiating the click event.
-             * @param {object} value - The data item that the dimension is being sliced/filtered by. If it is an 
-                                       aggregation, it will be an object {key:, value:}, otherwise a string.
-             * @param {object} dimensionSelector - the unique CSS name for the dimensionsal slice being filtered
-                                                   (usually something like 'in_England')
+             * @param {object} dataset - The insight.DataSet being filtered
+             * @param {string} value - The value that the dimension is being sliced/filtered by.
              */
-            this.chartFilterHandler = function(caller, value, dimensionSelector) {
+            this.chartFilterHandler = function(dataset, value) {
+
+                var dimensionSelector = insight.Utils.keySelector(value);
 
                 // send events to any charts or tables also using this dimension, as they will need to update their
                 // styles to reflect the selection
-                notifyListeners(caller.data.dimension.name, dimensionSelector);
+                notifyListeners(dataset.dimension.name, dimensionSelector);
 
-                var dimension = caller.data.dimension;
+                var dimension = dataset.dimension;
 
                 var filterFunc = dimension.createFilterFunction(value);
                 var nameProperty = 'name';
