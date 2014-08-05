@@ -1,21 +1,21 @@
 var data = [
 {
-    key: 'England',
+    country: 'England',
     value: 53012456,
     value2: 1023131
 },
 {
-    key: 'Scotland',
+    country: 'Scotland',
     value: 5295000,
     value2: 5675655
 },
 {
-    key: 'Wales',
+    country: 'Wales',
     value: 3063456,
     value2: 2342342
 },
 {
-    key: 'Northern Ireland',
+    country: 'Northern Ireland',
     value: 1810863,
     value2: 1231444
 }];
@@ -23,9 +23,6 @@ var data = [
 $(document)
     .ready(function()
     {
-
-        var dataset = new insight.DataSet(data);
-
         var x = new insight.Axis('Population', insight.Scales.Linear)
             .tickSize(5)
             .tickOrientation('tb')
@@ -33,22 +30,18 @@ $(document)
 
         var y = new insight.Axis('', insight.Scales.Ordinal);
 
-
         var chart = new insight.Chart('Chart 1', '#exampleChart')
             .width(450)
             .height(400)
-            .margin(
-            {
-                top: 0,
-                left: 150,
-                right: 40,
-                bottom: 100
-            })
             .xAxis(x)
             .yAxis(y);
 
-        var series = new insight.RowSeries('countryColumn', dataset, x, y, 'silver')
-            .tooltipFormat(insight.Formatters.numberFormatter);
+        var series = new insight.RowSeries('countryColumn', data, x, y, 'silver')
+            .tooltipFormat(insight.Formatters.numberFormatter)
+            .keyFunction(function(d)
+            {
+                return d.country;
+            });
 
         series.series = [
         {

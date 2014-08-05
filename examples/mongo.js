@@ -6,29 +6,40 @@ $(document)
 
             var dataset = new insight.DataSet(data);
 
-            var chartGroup = new insight.ChartGroup();
+
+            var clients = dataset.group('client', function(d)
+            {
+                return d.clients;
+            });
+
+            console.log(clients.getData());
+
+
+            clients.dimension.crossfilterDimension.filter(1);
+
+            console.log(dataset.ndx.groupAll()
+                .value());
 
             var writeChart = new insight.Chart('writeSpeed', '#writes')
-                .width(400)
-                .height(600)
+                .width(600)
+                .height(200)
                 .margin(
                 {
                     top: 0,
-                    left: 100,
-                    bottom: 300,
+                    left: 350,
+                    bottom: 50,
                     right: 0
                 });
 
-            var x = new insight.Axis('', insight.Scales.Ordinal)
+            var x = new insight.Axis('', insight.Scales.Linear)
                 .tickOrientation('tb');
 
-
-            var y = new insight.Axis('Writes/Sec', insight.Scales.Linear);
+            var y = new insight.Axis('Writes/Sec', insight.Scales.Ordinal);
 
             writeChart.xAxis(x);
             writeChart.yAxis(y);
 
-            var series = new insight.ColumnSeries('writes', dataset, x, y, '#3498db')
+            var series = new insight.RowSeries('writes', dataset, x, y, '#3498db')
                 .keyFunction(function(d)
                 {
                     return d.label;
@@ -36,48 +47,16 @@ $(document)
                 .valueFunction(function(d)
                 {
                     return d.write_speed.minutes;
+                })
+                .tooltipFunction(function(d)
+                {
+                    return 'Writes: ' + d.write_speed.minutes + '</br>Q/s: ' + d.queries_per_second;
                 });
 
 
             writeChart.series([series]);
 
-            // reads
+            writeChart.draw();
 
-            var qpsChart = new insight.Chart('readSpeed', '#reads')
-                .width(400)
-                .height(600)
-                .margin(
-                {
-                    top: 0,
-                    left: 150,
-                    bottom: 300,
-                    right: 0
-                });
-
-            var rx = new insight.Axis('', insight.Scales.Ordinal)
-                .tickOrientation('tb');
-
-
-            var ry = new insight.Axis('Queries/Sec', insight.Scales.Linear);
-
-            qpsChart.xAxis(rx);
-            qpsChart.yAxis(ry);
-
-            var reads = new insight.ColumnSeries('qps', dataset, rx, ry, '#3498db')
-                .keyFunction(function(d)
-                {
-                    return d.label;
-                })
-                .valueFunction(function(d)
-                {
-                    return d.queries_per_second;
-                });
-
-            qpsChart.series([reads]);
-
-            chartGroup.add(writeChart);
-            chartGroup.add(qpsChart);
-
-            chartGroup.draw();
         });
     });
