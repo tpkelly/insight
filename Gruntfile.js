@@ -3,7 +3,7 @@ module.exports = function(grunt) {
     'src/insight-dependencies.js', 
     'src/Insight.js', 
     'src/utils/*.js', 
-    'src/tests/**/*.js',
+    'src/tests/**/*.spec.js',
     'src/mda/*.js', 
     'src/charts/ChartGroup.js',
     'src/charts/Chart.js',
@@ -68,6 +68,7 @@ module.exports = function(grunt) {
     {
       js:
       {
+        fileTypes: ['.spec.js'],
         braceStyle: 'collapse',
         indentChart: ' ',
         indentSize: 4,

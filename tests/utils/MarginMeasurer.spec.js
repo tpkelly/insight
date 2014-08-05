@@ -22,8 +22,6 @@ describe("MarginMeasurer", function() {
     return { width: String(string).length * 10 };
   };
 
-  var fake
-
   beforeEach(function () {
 
       measureCanvas = document.createElement('canvas');

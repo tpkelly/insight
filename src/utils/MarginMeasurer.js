@@ -40,22 +40,27 @@
                     x = series.x,
                     y = series.y,
                     displayKey = keyAxis.display(),
-                    displayValue = valueAxis.display();
+                    displayValue = valueAxis.display(),
+                    formatFunction,
+                    valueString,
+                    keyDimensions,
+                    valueDimensions,
+                    value;
 
                 // loop through keys and values to measure lengths
                 keys.forEach(function(key) {
                     if (displayKey) {
-                        var keyFormat = x === keyAxis ? x.labelFormat() : y.labelFormat();
-                        var keyString = keyFormat(key);
-                        var keyDimensions = axisContext.measureText(keyString);
+                        formatFunction = x === keyAxis ? x.labelFormat() : y.labelFormat();
+                        valueString = formatFunction(key);
+                        keyDimensions = axisContext.measureText(valueString);
                         maxKeyWidth = Math.max(keyDimensions.width, maxKeyWidth);
                     }
                     if (displayValue) {
 
-                        var value = insight.Utils.valueForKey(data, key, series.keyFunction(), series.valueFunction());
-                        var valueFormat = y === valueAxis ? y.labelFormat() : x.labelFormat();
-                        var valueString = valueFormat(value);
-                        var valueDimensions = axisContext.measureText(valueString);
+                        value = insight.Utils.valueForKey(data, key, series.keyFunction(), series.valueFunction());
+                        formatFunction = y === valueAxis ? y.labelFormat() : x.labelFormat();
+                        valueString = formatFunction(value);
+                        valueDimensions = axisContext.measureText(valueString);
                         maxValueWidth = Math.max(valueDimensions.width, maxValueWidth);
                     }
                 });
