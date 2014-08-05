@@ -50,15 +50,13 @@ insight.Correlation = (function(insight) {
 
             var meanX = mean(x),
                 meanY = mean(y),
-                sumX = sum(x),
-                sumY = sum(y),
                 xDeviation = subtract(x, meanX),
                 yDeviation = subtract(y, meanY),
                 xDeviationSquared = multiply(xDeviation, xDeviation),
                 yDeviationSquared = multiply(yDeviation, yDeviation),
+
                 deviationProduct = multiply(xDeviation, yDeviation),
-                sumDeviationProduct = sum(deviationProduct),
-                r = sum(multiply(xDeviation, yDeviation)) / Math.sqrt(sum(xDeviationSquared) * sum(yDeviationSquared));
+                r = sum(deviationProduct) / Math.sqrt(sum(xDeviationSquared) * sum(yDeviationSquared));
 
             return r;
 

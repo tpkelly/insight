@@ -170,6 +170,10 @@ insight.Utils = (function() {
         return a;
     };
 
+    exports.lastElement = function(array) {
+        return array.slice(array.length - 1)[0];
+    };
+
     /**
      * Takes two objects and returns the union, with priority given to the first parameter in the event of clashes.
      * This bias is used for scenarios where user defined CSS properties must not override default values.
