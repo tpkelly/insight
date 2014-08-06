@@ -484,12 +484,12 @@ insight.Grouping = (function(insight) {
          * Gets the function that will run after the map reduce stage of this Grouping's aggregation.This is an empty
          * function by default, and can be overriden by the setter.
          * @instance
-         * @memberof!insight.Grouping
+         * @memberof! insight.Grouping
          * @returns {function} - The function that will run after aggregation of this Grouping.
          * @also
          * Sets the function that will run after any aggregation has been performed on this Grouping.
          * @instance
-         * @memberof!insight.Grouping
+         * @memberof! insight.Grouping
          * @returns {this}
          * @param {string[]} postAggregationFunc - A user defined function of the form function(grouping), that the Grouping will run post aggregation.
          */
@@ -504,12 +504,12 @@ insight.Grouping = (function(insight) {
         /*
          * Returns the list of properties to be summed on this Grouping
          * @instance
-         * @memberof!insight.Grouping
+         * @memberof! insight.Grouping
          * @returns {string[]} - The list of property names that will be summed
          * @also
          * Sets the list of property names that will be summed in this Grouping
          * @instance
-         * @memberof!insight.Grouping
+         * @memberof! insight.Grouping
          * @returns {this}
          * @param {string[]} properties - An array of property names to be summed for slices in this Grouping.
          */
@@ -524,12 +524,12 @@ insight.Grouping = (function(insight) {
         /*
          * Returns the list of property pairs whose correlation coefficient should be caclulated in this Grouping
          * @instance
-         * @memberof!insight.Grouping
+         * @memberof! insight.Grouping
          * @returns {Array<String[]>} - The list of property pairs that will be summed.Each pair is an array of two strings
          * @also
          * Sets the list of property pairs whose correlation coefficient should be caclulated in this Grouping
          * @instance
-         * @memberof!insight.Grouping
+         * @memberof! insight.Grouping
          * @returns {this}
          * @param {Array<String[]>} properties - An array of property pairs whose correlation coefficient should
          * be caclulated in this Grouping
