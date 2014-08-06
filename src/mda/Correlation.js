@@ -1,52 +1,7 @@
-insight.Correlation = (function(insight) {
+insight.correlation = (function(insight) {
 
-    function Correlation(xValues, yValues) {
-
-        var self = this,
-            x = xValues,
-            y = yValues;
-
-        function sum(array) {
-
-            return array.reduce(function(previous, current) {
-
-                return previous + current;
-
-            });
-
-        }
-
-        function mean(array) {
-
-            return sum(array) / array.length;
-
-        }
-
-        function multiply(array1, array2) {
-
-            var multiplied = [];
-
-            for (var i = 0; i < array1.length; i++) {
-
-                multiplied.push(array1[i] * array2[i]);
-
-            }
-
-            return multiplied;
-
-        }
-
-        function subtract(array, constant) {
-
-            return array.map(function(d) {
-
-                return d - constant;
-
-            });
-
-        }
-
-        self.pearson = function pearson() {
+    return {
+        fromValues: function(x, y) {
 
             var meanX = mean(x),
                 meanY = mean(y),
@@ -60,10 +15,49 @@ insight.Correlation = (function(insight) {
 
             return r;
 
-        };
+        }
+    };
+
+    function sum(array) {
+
+        return array.reduce(function(previous, current) {
+
+            return previous + current;
+
+        });
 
     }
 
-    return Correlation;
+    function mean(array) {
+
+        return sum(array) / array.length;
+
+    }
+
+    function multiply(array1, array2) {
+
+        var multiplied = [];
+
+        for (var i = 0; i < array1.length; i++) {
+
+            multiplied.push(array1[i] * array2[i]);
+
+        }
+
+        return multiplied;
+
+    }
+
+    function subtract(array, constant) {
+
+        return array.map(function(d) {
+
+            return d - constant;
+
+        });
+
+    }
+
+    return correlation;
 
 })(insight);
