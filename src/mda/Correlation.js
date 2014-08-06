@@ -17,9 +17,10 @@ insight.correlation = (function(insight) {
     correlation.fromValues = function(x, y) {
 
         if (!insight.Utils.isArray(x) || !insight.Utils.isArray(y) ||
-            x.length !== y.length) {
+            x.length !== y.length ||
+            x.length === 0) {
 
-            throw new Error('correlation.fromValues expects two array parameters of equal length');
+            throw new Error('correlation.fromValues expects two non-empty array parameters of equal length');
 
         }
 

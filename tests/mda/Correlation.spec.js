@@ -32,7 +32,7 @@ describe('Correlation', function() {
                         36.50619904, -91.19169747, -75.94170661, 31.61356244, 124.6459962, -68.19947738, 143.0487732,
                         203.7841096, 339.4097217, -102.2035722, 227.1428013, 171.3544472, -77.32741018, 40.2348384];
         
-        var paramException = new Error('correlation.fromValues expects two array parameters of equal length'),
+        var paramException = new Error('correlation.fromValues expects two non-empty array parameters of equal length'),
             nonNumberException = new Error('The correlation data contains non-numeric values.');
         
         it('calcluates expected correlation', function() {
@@ -151,6 +151,51 @@ describe('Correlation', function() {
             var r = insight.correlation.fromValues([3], [1]);
 
             expect(isNaN(r)).toBe(true);
+
+        });
+        
+        it('exception if first array empty', function() {
+
+            // Given
+            var r;
+            
+            // When
+            expect(function() {
+                r = insight.correlation.fromValues([], [1, 2, 3, 4]);
+            })
+            .toThrow(paramException);
+
+            expect(r).not.toBeDefined();
+
+        });
+        
+        it('exception if second array empty', function() {
+
+            // Given
+            var r;
+            
+            // When
+            expect(function() {
+                r = insight.correlation.fromValues([1, 2, 3, 4], []);
+            })
+            .toThrow(paramException);
+
+            expect(r).not.toBeDefined();
+
+        });
+        
+        it('exception if both arrays empty', function() {
+
+            // Given
+            var r;
+            
+            // When
+            expect(function() {
+                r = insight.correlation.fromValues([], []);
+            })
+            .toThrow(paramException);
+
+            expect(r).not.toBeDefined();
 
         });
         
