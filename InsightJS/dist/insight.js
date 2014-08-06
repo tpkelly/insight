@@ -42,6 +42,177 @@ var insight = (function() {
     };
 
 })();
+;(function(insight) {
+
+    /**
+     * Calculates margins for Charts, given axes and series with datasets.
+     * @class insight.MarginMeasurer
+     */
+    insight.MarginMeasurer = (function(insight) {
+
+        function MarginMeasurer() {
+
+            // private variables
+
+            var self = this;
+            var labelPadding = 10;
+
+            // public methods
+
+            /**
+             * Calculates the dimensions required for a single series' margin entries
+             * @memberof! insight.MarginMeasurer
+             * @instance
+             * @param {insight.Series} series - A Series to measure
+             * @param {Number} lineHeight - The CSS line-height to use when defining dimensions
+             * @param {object} axisContext - A 2d canvas drawing context to measure axis value text with
+             * @param {object} labelContext - A 2d canvas drawing context to measure label text with
+             * @param {object} labelStyles - An associative map {cssName: value} of styles to apply when measuring axis labels(font-size, font-family etc.)
+             * @returns {object} - margin object {top: Number,left: Number,bottom:Number,right:Number}
+             */
+            self.seriesLabelDimensions = function(series, lineHeight, axisContext, labelContext) {
+
+                var maxValueWidth = 0,
+                    maxKeyWidth = 0,
+                    maxFontHeight = 0,
+                    keyLabelHeight = 0,
+                    valueLabelHeight = 0,
+                    keyAxis = series.keyAxis,
+                    valueAxis = series.valueAxis,
+                    data = series.dataset(),
+                    keys = series.keys(),
+                    x = series.x,
+                    y = series.y,
+                    displayKey = keyAxis.display(),
+                    displayValue = valueAxis.display(),
+                    formatFunction,
+                    valueString,
+                    keyDimensions,
+                    valueDimensions,
+                    value;
+
+                // loop through keys and values to measure lengths
+                keys.forEach(function(key) {
+                    if (displayKey) {
+                        formatFunction = x === keyAxis ? x.labelFormat() : y.labelFormat();
+                        valueString = formatFunction(key);
+                        keyDimensions = axisContext.measureText(valueString);
+                        maxKeyWidth = Math.max(keyDimensions.width, maxKeyWidth);
+                    }
+                    if (displayValue) {
+
+                        value = insight.Utils.valueForKey(data, key, series.keyFunction(), series.valueFunction());
+                        formatFunction = y === valueAxis ? y.labelFormat() : x.labelFormat();
+                        valueString = formatFunction(value);
+                        valueDimensions = axisContext.measureText(valueString);
+                        maxValueWidth = Math.max(valueDimensions.width, maxValueWidth);
+                    }
+                });
+
+                // If there was some data, append Axis labels and padding to the max values
+                if (keys.length) {
+
+                    if (displayKey) {
+                        var keyAxisPadding = keyAxis.tickPadding() + keyAxis.tickSize();
+                        var keyAxisLabelWidth = labelContext.measureText(keyAxis.label())
+                            .width;
+                        var axisLabelAdditions = keyAxisPadding + keyAxisLabelWidth + labelPadding;
+
+                        maxKeyWidth = maxKeyWidth + axisLabelAdditions;
+                        keyLabelHeight = lineHeight;
+                    }
+                    if (displayValue) {
+                        var valueAxisPadding = valueAxis.tickPadding() + valueAxis.tickSize();
+                        var valueAxisLabelWidth = labelContext.measureText(valueAxis.label())
+                            .width;
+                        var valueLabelAdditions = valueAxisPadding + valueAxisLabelWidth + labelPadding;
+
+                        maxValueWidth = valueAxis.display() ? maxValueWidth + valueLabelAdditions : maxValueWidth;
+                        valueLabelHeight = lineHeight;
+                    }
+                }
+
+                var maxDimensions = {
+                    "maxKeyWidth": maxKeyWidth,
+                    "maxKeyHeight": keyLabelHeight,
+                    "maxValueWidth": maxValueWidth,
+                    "maxValueHeight": valueLabelHeight
+                };
+
+                //Handle tick rotation
+                if (keyAxis.tickRotation() !== '0') {
+                    //Convert Degrees -> Radians
+                    var xSin = Math.sin(keyAxis.tickRotation() * Math.PI / 180);
+                    var xCos = Math.cos(keyAxis.tickRotation() * Math.PI / 180);
+
+                    maxDimensions.maxKeyWidth = Math.ceil(Math.max(lineHeight * xSin, maxKeyWidth * xCos));
+                    maxDimensions.maxKeyHeight = Math.ceil(Math.max(lineHeight * xCos, maxKeyWidth * xSin));
+                }
+
+                if (valueAxis.tickRotation() !== '0') {
+                    //Convert Degrees -> Radians
+                    var ySin = Math.sin(valueAxis.tickRotation() * Math.PI / 180);
+                    var yCos = Math.cos(valueAxis.tickRotation() * Math.PI / 180);
+
+                    maxDimensions.maxValueWidth = Math.ceil(Math.max(lineHeight * ySin, maxValueWidth * yCos));
+                    maxDimensions.maxValueHeight = Math.ceil(Math.max(lineHeight * yCos, maxValueWidth * ySin));
+                }
+
+                return maxDimensions;
+            };
+
+
+            /**
+             * Calculates a margin object {top,left,bottom,right} for a chart given a list of series and associated CSS styles
+             * @memberof! insight.MarginMeasurer
+             * @instance
+             * @param {insight.Series[]} seriesArray - An array of Series to calculate dimensions from
+             * @param {DOMElement} measuringCanvas - A canvas element to measure text with
+             * @param {object} axisStyles - An associative map {cssName: value} of styles to apply when measuring axis values (font-size, font-family etc.)
+             * @param {object} labelStyles - An associative map {cssName: value} of styles to apply when measuring axis labels(font-size, font-family etc.)
+             * @returns {object} - margin object {top: Number,left: Number,bottom:Number,right:Number}
+             */
+            self.calculateChartMargins = function(seriesArray, measuringCanvas, axisStyles, labelStyles) {
+
+                labelStyles = labelStyles ? labelStyles : axisStyles;
+
+                var margin = {
+                    "top": 0,
+                    "left": 0,
+                    "bottom": 0,
+                    "right": 0
+                };
+
+                var axisMeasuringContext = insight.Utils.getDrawingContext(measuringCanvas, axisStyles);
+                var labelMeasuringContext = insight.Utils.getDrawingContext(measuringCanvas, labelStyles);
+
+                var lineHeightString = axisStyles['line-height'];
+
+                // remove 'px' from end
+                var lineHeight = insight.Utils.tryParseInt(lineHeightString.slice(0, lineHeightString.length - 2), 16);
+
+                seriesArray.forEach(function(series) {
+                    var keyAxis = series.keyAxis;
+                    var valueAxis = series.valueAxis;
+
+                    var labelDimensions = self.seriesLabelDimensions(series, lineHeight, axisMeasuringContext, labelMeasuringContext);
+
+                    var keyProperty = keyAxis.horizontal() ? 'maxKeyHeight' : 'maxKeyWidth';
+                    var valueProperty = valueAxis.horizontal() ? 'maxValueHeight' : 'maxValueWidth';
+
+                    margin[keyAxis.orientation()] = Math.max(labelDimensions[keyProperty], margin[keyAxis.orientation()]);
+                    margin[valueAxis.orientation()] = Math.max(labelDimensions[valueProperty], margin[valueAxis.orientation()]);
+                });
+
+                return margin;
+            };
+        }
+
+
+        return MarginMeasurer;
+
+    })(insight);
+})(insight);
 ;insight.Constants = (function() {
     var exports = {};
 
@@ -156,19 +327,19 @@ insight.Utils = (function() {
         var aResult = sortParameter(a),
             bResult = sortParameter(b);
 
-        if (aResult == bResult) {
+        if (aResult === bResult) {
             return recursiveSort(a, b, sorters.slice(1));
         }
 
         var sortResult = (aResult > bResult) ? 1 : -1;
-        return (sortOrder == 'ASC') ? sortResult : -sortResult;
+        return (sortOrder === 'ASC') ? sortResult : -sortResult;
     };
 
 
     // Public Functions
 
     /**
-     * This is a utility method used to check if an object is an array or not
+     * Checks if an object is an array or not
      * @returns {boolean} return - is the object an array
      * @param {object} input - The object to check
      */
@@ -176,6 +347,18 @@ insight.Utils = (function() {
         return Object.prototype.toString.call(obj) === '[object Array]';
     };
 
+    /**
+     * Builds the CSS selector used to return chart items that are not selected (and not axes)
+     * @returns {string} cssSelector - CSS selector for unselected chart items
+     */
+    exports.highlightSelector = function() {
+
+        var notSelected = ':not(.selected)';
+        var selector = '.' + insight.Constants.BarClass + notSelected +
+            ',.' + insight.Constants.Bubble + notSelected;
+
+        return selector;
+    };
 
     exports.isDate = function(obj) {
         return obj instanceof Date;
@@ -193,7 +376,7 @@ insight.Utils = (function() {
      * @returns {boolean} - True if the provided array contains the provided value
      */
     exports.arrayContains = function(array, value) {
-        return array.indexOf(value) != -1;
+        return array.indexOf(value) !== -1;
     };
 
     /**
@@ -209,28 +392,62 @@ insight.Utils = (function() {
     };
 
     /**
-     * This function takes a data point, and creates a class name for insight to identify this particular key
-     * If the parameter is not an object (just a value in an array) then there is no need for this particular class so blank is returned.
+     * Takes a data point, and creates a class name for insight to identify this particular key
+     * If the parameter is not an object (just a value in an array) then there is no need for this particular
+     * class so an empty string is returned.
      * @returns {string} return - A class name to identify this point and any other points taking the same value in other charts.
-     * @param {object} data - The input point
+     * @param {object} d - The input point
+     * @param {function} keyFunction - An optional keyFunction if the
      */
-    exports.keySelector = function(d, keyFunction) {
+    exports.keySelector = function(d) {
 
-        var str = keyFunction(d)
-            .toString();
+        var result = '';
 
-        var result = "in_" + str.replace(/[^A-Z0-9]/ig, "_");
+        if (d) {
+            var str = d.toString();
+            result = 'in_' + str.replace(/[^A-Z0-9]/ig, '_');
+        }
 
         return result;
     };
 
-    exports.removeMatchesFromArray = function(array, comparer) {
+    /**
+     * Returns the elements in the provided array where the given parameter matches a specific value
+     * @param {object[]} array - The input array to check
+     * @param {string} propertyName - The name of the property to match
+     * @param {string} value - The value to match
+     * @returns {object[]} - The matching elements
+     */
+    exports.takeWhere = function(array, propertyName, value) {
+        var matches = array.filter(function(item) {
+            if (item.hasOwnProperty(propertyName)) {
+                return item[propertyName] === value;
+            } else {
+                return false;
+            }
+        });
+
+        return matches;
+    };
+
+    /**
+     * Removes the elements in the provided array where the given parameter matches a specific value
+     * @param {object[]} array - The input array to check
+     * @param {string} propertyName - The name of the property to match
+     * @param {string} value - The value to match
+     * @returns {object[]} - The matching elements
+     */
+    exports.removeWhere = function(array, propertyName, value) {
+
         var self = this;
-        var matches = array.filter(comparer);
+        var matches = exports.takeWhere(array, propertyName, value);
+
         matches.forEach(function(match) {
             self.removeItemFromArray(array, match);
         });
     };
+
+
 
     exports.removeItemFromArray = function(array, item) {
         var index = array.indexOf(item);
@@ -252,8 +469,22 @@ insight.Utils = (function() {
         return a;
     };
 
+    /*
+     * Returns the last element in an array
+     * @param {Array} Any array
+     * @returns The last element in the array or undefined if the array is empty or the parameter is not an array
+     */
+    exports.lastElement = function(array) {
+
+        if (!insight.Utils.isArray(array) || array.length === 0) {
+            return undefined;
+        }
+
+        return array.slice(array.length - 1)[0];
+    };
+
     /**
-     * This function takes two objects and returns the union, with priority given to the first parameter in the event of clashes.
+     * Takes two objects and returns the union, with priority given to the first parameter in the event of clashes.
      * This bias is used for scenarios where user defined CSS properties must not override default values.
      * @returns {object} union - a shallow copy representing the union between the provided objects
      * @param {object} base - The base object to have priority in the union operation.
@@ -274,7 +505,7 @@ insight.Utils = (function() {
 
 
     /**
-     * This function takes an array and a list of sort objects, sorting the array (in place) using the provided priorities and returning that array at the end.
+     * Takes an array and a list of sort objects, sorting the array (in place) using the provided priorities and returning that array at the end.
      * @returns {object[]} sortedArray - The sorted array
      * @param {object[]} data - The array to sort.  It will be sorted in place (as per Javascript sort standard behaviour) and returned at the end.
      * @param {object[]} sorters - A list of sorting rules [{sortFunction: function(a){return a.valueToSortOn;}, order: 'ASC'}]
@@ -294,7 +525,7 @@ insight.Utils = (function() {
     };
 
     /**
-     * This function takes a SVG element and returns a bounding box of coordinates at each of its compass points
+     * Takes a SVG element and returns a bounding box of coordinates at each of its compass points
      * @returns {object} return - A bounding box object {nw: ..., n: ..., ne: ..., e: ..., se: ..., s: ..., sw: ..., w: ...}
      * @param {DOMElement} element - The element to measure
      */
@@ -333,20 +564,244 @@ insight.Utils = (function() {
     };
 
 
+    exports.valueForKey = function(dictionary, key, keyFunction, valueFunction) {
+        var values = dictionary.filter(function(item) {
+            return keyFunction(item) === key;
+        });
+        return valueFunction(values[0]);
+    };
+
     exports.safeString = function(input) {
         return input.split(' ')
             .join('_');
     };
 
-    exports.valueForKey = function(dictionary, key, keyFunction, valueFunction) {
-        var values = dictionary.filter(function(item) {
-            return keyFunction(item) == key;
-        });
-        return valueFunction(values[0]);
+    exports.tryParseInt = function(str, defaultValue) {
+        var retValue = defaultValue;
+        if (str != null) {
+            if ((str.length > 0) && !isNaN(str)) {
+
+                retValue = parseInt(str);
+            }
+        }
+        return retValue;
     };
+
+    // Helper functions for text measurement.  Mock out in tests to remove dependency on window and DOM functions
+
+    exports.getElementStyles = function(textElement, styleProperties) {
+
+        var style = window.getComputedStyle(textElement);
+        var properties = {};
+
+        styleProperties.forEach(function(propertyName) {
+            try {
+                properties[propertyName] = style.getPropertyValue(propertyName);
+            } catch (err) {
+                // handle this formally when we have a logging framework
+                console.log(err);
+            }
+        });
+
+        return properties;
+    };
+
+    exports.getDrawingContext = function(canvas, styles) {
+
+        var ctx = canvas.getContext('2d');
+        ctx.font = styles['font-size'] + ' ' + styles['font-family'];
+
+        return ctx;
+    };
+
 
     return exports;
 }());
+;/**
+ * Module for calculating correlation coefficients on pairs of values.
+ * @namespace insight.correlation
+ */
+insight.correlation = (function(insight) {
+
+    var correlation = {};
+
+    /**
+     * Calculates the pearson correlation coefficient for two arrays of numbers.
+     * The two arrays must be equal in length and must only contain numbers.
+     * @memberof! insight.correlation
+     * @param {Array<Number>} x The x values
+     * @param {Array<Number>} y The y values
+     * @returns {Number} The pearson correlation coefficient for two arrays of numbers
+     * @todo Improve handling of dirty data and error logging
+     */
+    correlation.fromValues = function(x, y) {
+
+        if (!insight.Utils.isArray(x) || !insight.Utils.isArray(y) ||
+            x.length !== y.length) {
+
+            return undefined;
+
+        }
+
+        if (x.length < 2) {
+            return x.length;
+        }
+
+        var meanX = mean(x),
+            meanY = mean(y),
+            xDeviation = subtract(x, meanX),
+            yDeviation = subtract(y, meanY),
+            xDeviationSquared = multiply(xDeviation, xDeviation),
+            yDeviationSquared = multiply(yDeviation, yDeviation),
+
+            deviationProduct = multiply(xDeviation, yDeviation),
+            r = sum(deviationProduct) / Math.sqrt(sum(xDeviationSquared) * sum(yDeviationSquared));
+
+        return r;
+
+    };
+
+    /**
+     * Calculates the pearson correlation coefficients for all given property pairs in the given dataset.
+     * @memberof! insight.correlation
+     * @param {insight.DatSet|Array<Object>} dataset The insight.DataSet or
+     * array to calclulate correlation coefficients for.
+     * @param {Array<String[]>} correlationPairs An array of pairs of property names to calculate correlation coefficients
+     * for. Each element of the array must be an array of two strings.
+     * @returns {Object} An object containing properties for all correlation pairs e.g. { X_Cor_Y: 0.75 }
+     */
+    correlation.fromDataSet = function(dataset, correlationPairs) {
+
+        var dataArray = getArray(dataset),
+            propertyValues = {},
+            results = {};
+
+        correlationPairs.forEach(function(pair) {
+
+            var x = pair[0],
+                y = pair[1],
+                r;
+
+            addPropertyArrays(dataArray, propertyValues, [x, y]);
+
+            r = insight.correlation.fromValues(propertyValues[x], propertyValues[y]);
+            results[correlationPropertyName(x, y)] = r;
+            results[correlationPropertyName(y, x)] = r;
+
+        });
+
+        return results;
+
+    };
+
+    /*
+     * Returns the property name to use for a correlation between two properties, x and y.
+     */
+    function correlationPropertyName(x, y) {
+
+        return x + '_Cor_' + y;
+
+    }
+
+    /*
+     * Adds an array to the container for each element in propertyNames.
+     * An array will not be added to the container object if it has been added before.
+     * Each array will contain the 'propertyName' property from the object in dataArray.
+     */
+    function addPropertyArrays(dataArray, container, propertyNames) {
+
+        propertyNames.forEach(function(propertyName) {
+
+            if (!container.hasOwnProperty(propertyName)) {
+
+                container[propertyName] = dataArray.map(function(d) {
+                    return d[propertyName];
+                });
+
+            }
+
+        });
+
+    }
+
+    /*
+     * Returns an array based on the given object.
+     * If the object is an insight.DataSet then its data is returned, otherwise the array id returned directly.
+     */
+    function getArray(obj) {
+
+        if (obj instanceof insight.DataSet) {
+            return obj.getData();
+        }
+
+        if (!insight.Utils.isArray(obj)) {
+            throw new Error('correlation.fromDataSet expects an insight.DataSet or Array');
+        }
+
+        return obj;
+
+    }
+
+    /*
+     * Sums the elements of an array;
+     */
+    function sum(array) {
+
+        return array.reduce(function(previous, current) {
+
+            if (!insight.Utils.isNumber(current)) {
+                throw new Error('The correlation data contains non-numeric values.');
+            }
+
+            return previous + current;
+
+        });
+
+    }
+
+    /*
+     * Calculates the mean of all elements in an array
+     */
+    function mean(array) {
+
+        return sum(array) / array.length;
+
+    }
+
+    /*
+     * Multiplies each element in an array with the corresponding element
+     * in another array and returns a new array with the results.
+     */
+    function multiply(array1, array2) {
+
+        var multiplied = [];
+
+        for (var i = 0; i < array1.length; i++) {
+
+            multiplied.push(array1[i] * array2[i]);
+
+        }
+
+        return multiplied;
+
+    }
+
+    /*
+     * Subtracts a constant from each element in an array and returns a new array with the results.
+     */
+    function subtract(array, constant) {
+
+        return array.map(function(d) {
+
+            return d - constant;
+
+        });
+
+    }
+
+    return correlation;
+
+})(insight);
 ;insight.DataSet = (function(insight) {
     /**
      * A DataSet is wrapper around a simple object array, but providing some functions that are required by charts to load and filter data.
@@ -358,7 +813,7 @@ insight.Utils = (function() {
 
         this.data = data;
 
-        this.ndx = null;
+        this.crossfilterData = null;
 
         this._orderFunction = function(a, b) {
             return b.value - a.value;
@@ -426,9 +881,9 @@ insight.Utils = (function() {
 
     DataSet.prototype.group = function(name, groupFunction, oneToMany) {
 
-        this.ndx = this.ndx ? this.ndx : crossfilter(this.data);
+        this.crossfilterData = this.crossfilterData || crossfilter(this.data);
 
-        var dim = new insight.Dimension(name, this.ndx, groupFunction, oneToMany);
+        var dim = new insight.Dimension(name, this.crossfilterData, groupFunction, oneToMany);
 
         var group = new insight.Grouping(dim);
 
@@ -446,33 +901,30 @@ insight.Utils = (function() {
      * @todo reimplement how Dimensions are created.  Too much is inside ChartGroup at the moment, and ChartGroup is becoming redundant and too mixed
      * @todo display function should be provided by a setter.
      * @param {String} name - The short name used to identify this dimension, and any linked dimensions sharing the same name
-     * @param {crossfilter} crossfilter - The crossfilter object to create the Dimension on.
+     * @param {crossfilter} crossfilterData - The crossfilter object to create the Dimension on.
      * @param {function} sliceFunction - The function used to categorize points within the dimension.
      * @param {boolean} oneToMany - Whether or not this dimension represents a collection of possible values in each item.
      * @class
      */
-    var Dimension = function Dimension(name, crossfilter, sliceFunction, oneToMany) {
+    var Dimension = function Dimension(name, crossfilterData, sliceFunction, oneToMany) {
 
-        this.crossfilterDimension = crossfilter.dimension(sliceFunction);
+        this.crossfilterDimension = crossfilterData.dimension(sliceFunction);
         this.name = name;
         this.filters = [];
         this.oneToMany = oneToMany;
+        this.aggregationFunction = sliceFunction;
 
         var self = this;
 
-        this.comparer = function(d) {
-            return d.name == self.name;
-        };
-
         var oneToManyFilterFunction = function(filterValue) {
             return function(d) {
-                return d.indexOf(filterValue) != -1;
+                return insight.Utils.arrayContains(d, filterValue);
             };
         };
 
         var filterFunction = function(filterValue) {
             return function(d) {
-                return String(d) == String(filterValue);
+                return String(d) === String(filterValue);
             };
         };
 
@@ -481,18 +933,16 @@ insight.Utils = (function() {
          * The filter object creates the function used by crossfilter to remove or add objects to an aggregation after a filter event.
          * It also includes a simple name variable to use for lookups.
          * @memberof! insight.Dimension
-         * @param {object} filteredValue - The value to create a crossfilter filter function for.  It will either be a value, or a {key: , value: } crossfilter aggregation entry.
+         * @param {object} filteredValue - The value to create a crossfilter filter function for.
          * @returns {function} - A function that a crossfilterdimension.filter() operation can use to map-reduce crossfilter aggregations.
          */
         this.createFilterFunction = function(filteredValue) {
 
-            var value = filteredValue.key ? filteredValue.key : filteredValue;
-
             // create the appropriate type of filter function for this Dimension
-            var filterFunc = self.oneToMany ? oneToManyFilterFunction(value) : filterFunction(value);
+            var filterFunc = self.oneToMany ? oneToManyFilterFunction(filteredValue) : filterFunction(filteredValue);
 
             return {
-                name: value,
+                name: filteredValue,
                 filterFunction: filterFunc
             };
         };
@@ -512,24 +962,21 @@ insight.Grouping = (function(insight) {
 
     function Grouping(dimension) {
 
-
-
-        //private variables
+        // Private variables
 
         var sumProperties = [],
             countProperties = [],
             cumulativeProperties = [],
             averageProperties = [],
+            correlationPairProperties = [],
+            allCorrelationProperties = [],
             ordered = false,
             self = this,
             filterFunction = null,
             orderFunction;
 
-
-
-        //public variables
-
-        this.dimension = dimension;
+        // Public variables
+        self.dimension = dimension;
 
         // Private methods
 
@@ -538,10 +985,8 @@ insight.Grouping = (function(insight) {
 
         };
 
-
-
         /*
-         * This function takes an object and a property name in the form of a string, traversing the object until it finds a property with that name and returning
+         * Takes an object and a property name in the form of a string, traversing the object until it finds a property with that name and returning
          * a wrapped object with the immediate parent of the found property and the property's value.
          * @param {object} - The object to search
          * @param {string} propertyName - A string of the property to search, can include sub-properties using a dot notation. Eg. 'value.Revenue.Sum', which cannot be indexed directly in Javascript.
@@ -564,7 +1009,7 @@ insight.Grouping = (function(insight) {
         };
 
         /*
-         * This function takes a group object and calculates the mean for any properties configured.
+         * Takes a group object and calculates the mean for any properties configured.
          * @param {object} group - A dimensional slice of a Grouping {key: 'X', value : {}}
          */
         var calculateAverages = function(group) {
@@ -583,7 +1028,7 @@ insight.Grouping = (function(insight) {
         };
 
         /*
-         * This method calculates running cumulative values for any properties defined in the cumulative() list.
+         * Calculates running cumulative values for any properties defined in the cumulative() list.
          * @param {object} group - The data group being added to the cumulative running totals list
          * @param {object} totals - The map object of running totals for the defined properties
          */
@@ -609,7 +1054,149 @@ insight.Grouping = (function(insight) {
         };
 
         /*
-         * This method is used to calculate any values that need to run after the data set has been aggregated into groups and basic values
+         * Calculates correlation coefficient values for all configured property pairs on the grouping.
+         * So after this function has run there will be a number of properties on the grouping value called
+         * 'X_Cor_Y' where X and Y are the configured property names.
+         */
+        var calculateCorrelations = function() {
+
+            /*
+             * Returns a property name for the deviation product array used in the correlation workings
+             */
+            var deviationProductNameFunction = function(xName, yName) {
+
+                return xName + '_' + yName + '_DeviationProduct';
+
+            };
+
+            /*
+             * Returns an empty object that will contain the correlation working data
+             */
+            var correlationReduceInitialize = function() {
+
+                return {};
+
+            };
+
+            /*
+             * Returns the function to use for creating a reduciton of all groups in order to calculate correlation
+             * between properties in a group.
+             */
+            var correlationReduceAdd = function(aggregatedData) {
+
+                var globalData = aggregatedData;
+
+                /*
+                 * This is the function that does the reduction to produce working data for correlation calculations.
+                 */
+                return function(workings, addingData) {
+
+                    allCorrelationProperties.forEach(function(propertyName) {
+
+                        if (addingData.hasOwnProperty(propertyName)) {
+
+                            // get this grouping from the global data
+                            var groupData = insight.Utils.takeWhere(globalData, 'key', self.dimension.aggregationFunction(addingData))[0].value;
+
+                            // get the group mean from global data for this grouping 
+                            var groupMean = groupData[propertyName].Average;
+
+                            var value = addingData[propertyName];
+                            var deviation = value - groupMean;
+                            var deviationSquared = deviation * deviation;
+
+                            // we need to track each deviation and its square so add them to workings
+                            if (!workings[propertyName]) {
+                                workings[propertyName] = {
+                                    deviation: [],
+                                    deviationSquared: []
+                                };
+                            }
+
+                            workings[propertyName].deviation.push(deviation);
+                            workings[propertyName].deviationSquared.push(deviationSquared);
+
+                        }
+
+                    });
+
+                    // having added to the deviation and deviationSquared we can now add 
+                    // the product of each pair's deviations to the workings object
+                    correlationPairProperties.forEach(function(pair) {
+
+                        var xName = pair[0],
+                            yName = pair[1],
+                            xDeviation = insight.Utils.lastElement(workings[xName].deviation),
+                            yDeviation = insight.Utils.lastElement(workings[yName].deviation),
+                            correlationName = deviationProductNameFunction(xName, yName);
+
+                        if (!workings[correlationName]) {
+                            workings[correlationName] = [];
+                        }
+
+                        workings[correlationName].push(xDeviation * yDeviation);
+
+                    });
+
+                    return workings;
+
+                };
+
+            };
+
+            var correlationReduceRemove = function(aggregatedData) {
+
+                return function() {
+
+                };
+
+            };
+
+            var completeData = self.data.all();
+
+            // the correlationData reduction calculates the deviation squared for 
+            // all properties in allCorrelationProperties (a private variable on Grouping)
+            var correlationWorkingData = self.dimension.crossfilterDimension.group()
+                .reduce(
+                    correlationReduceAdd(completeData),
+                    correlationReduceRemove(completeData),
+                    correlationReduceInitialize)
+                .all();
+
+            correlationWorkingData.forEach(function(d) {
+
+                var sum = function(array) {
+                    return array.reduce(function(previous, current) {
+                        return previous + current;
+                    });
+                };
+
+                correlationPairProperties.forEach(function(pair) {
+
+                    var xName = pair[0];
+                    var yName = pair[1];
+                    var deviationProductName = deviationProductNameFunction(xName, yName);
+                    var sumDeviationProduct = sum(d.value[deviationProductName]);
+                    var sumXDeviationSquared = sum(d.value[xName].deviationSquared);
+                    var sumYDeviationSquared = sum(d.value[yName].deviationSquared);
+
+                    var correlationCoefficient = sumDeviationProduct / Math.sqrt(sumXDeviationSquared * sumYDeviationSquared);
+
+                    var thisGroup = completeData.filter(function(item) {
+                        return item.key === d.key;
+                    })[0];
+
+                    var correlationName = xName + '_Cor_' + yName;
+                    thisGroup.value[correlationName] = correlationCoefficient;
+
+                });
+
+            });
+
+        };
+
+        /*
+         * Used to calculate any values that need to run after the data set has been aggregated into groups and basic values
          */
         var postAggregationCalculations = function() {
 
@@ -625,12 +1212,19 @@ insight.Grouping = (function(insight) {
 
             });
 
+            if (correlationPairProperties.length > 0) {
+
+                calculateCorrelations();
+
+            }
+
+
             // Run any user injected functions post aggregation
             postAggregation(self);
         };
 
         /*
-         * This function is called by the map reduce process on a DataSet when an input object is being added to the aggregated group
+         * Called by the map reduce process on a DataSet when an input object is being added to the aggregated group
          * @returns {object} group - The group entry for this slice of the aggregated dataset, modified by the addition of the data object
          * @param {object} group - The group entry for this slice of the aggregated dataset, prior to adding the input data object
          * @param {object} data - The object being added from the aggregated group.
@@ -678,12 +1272,11 @@ insight.Grouping = (function(insight) {
                 }
             }
 
-
             return group;
         };
 
         /*
-         * This function is called by the map reduce process on a DataSet when an input object is being filtered out of the group
+         * Called by the map reduce process on a DataSet when an input object is being filtered out of the group
          * @returns {object} group - The group entry for this slice of the aggregated dataset, modified by the removal of the data object
          * @param {object} group - The group entry for this slice of the aggregated dataset, prior to removing the input data object
          * @param {object} data - The object being removed from the aggregated group.
@@ -730,8 +1323,9 @@ insight.Grouping = (function(insight) {
         };
 
         /*
-         * This method is called when a slice of an aggrgated DataSet is being initialized, creating initial values for certain properties
-         * @returns {object} return - The initialized slice of this aggreagted DataSet.  The returned object will be of the form {key: 'Distinct Key', value: {}}
+         * Called when a slice of an aggrgated DataSet is being initialized, creating initial values for certain properties
+         * @returns {object} return - The initialized slice of this aggreagted DataSet.  The returned object will be of the form {key: '
+            Distinct Key ', value: {}}
          */
         var reduceInitializeGroup = function() {
             var group = {
@@ -758,12 +1352,9 @@ insight.Grouping = (function(insight) {
             return group;
         };
 
-
-
-
         /*
          * This aggregation method is tailored to dimensions that can hold multiple values (in an array), therefore they are counted differently.
-         * For example: a property called supportedDevices : ['iPhone5', 'iPhone4'] where the values inside the array are treated as dimensional slices
+         * For example: a property called supportedDevices : ['iPhone5 ', 'iPhone4 '] where the values inside the array are treated as dimensional slices
          * @returns {object[]} return - the array of dimensional groupings resulting from this dimensional aggregation
          */
         var reduceMultidimension = function() {
@@ -784,7 +1375,7 @@ insight.Grouping = (function(insight) {
 
                     if (v.hasOwnProperty(propertyName)) {
                         for (var val in v[propertyName]) {
-                            if (typeof(gIndices[v[propertyName][val]]) != "undefined") {
+                            if (typeof(gIndices[v[propertyName][val]]) !== "undefined") {
                                 var gIndex = gIndices[v[propertyName][val]];
 
                                 p.values[gIndex].value++;
@@ -829,7 +1420,7 @@ insight.Grouping = (function(insight) {
                 };
             }
 
-            data = self.dimension.crossfilterDimension.groupAll()
+            var data = self.dimension.crossfilterDimension.groupAll()
                 .reduce(reduceAdd, reduceRemove, reduceInitial);
 
             self.orderFunction(function(a, b) {
@@ -843,8 +1434,9 @@ insight.Grouping = (function(insight) {
         // Public methods
 
 
-        /**
-         * Gets the function that will run after the map reduce stage of this Grouping's aggregation. This is an empty function by default, and can be overriden by the setter.
+        /*
+         * Gets the function that will run after the map reduce stage of this Grouping's aggregation.This is an empty
+         * function by default, and can be overriden by the setter.
          * @instance
          * @memberof! insight.Grouping
          * @returns {function} - The function that will run after aggregation of this Grouping.
@@ -855,15 +1447,15 @@ insight.Grouping = (function(insight) {
          * @returns {this}
          * @param {string[]} postAggregationFunc - A user defined function of the form function(grouping), that the Grouping will run post aggregation.
          */
-        this.postAggregation = function(postAggregationFunc) {
+        self.postAggregation = function(postAggregationFunc) {
             if (!arguments.length) {
                 return postAggregation;
             }
             postAggregation = postAggregationFunc;
-            return this;
+            return self;
         };
 
-        /**
+        /*
          * Returns the list of properties to be summed on this Grouping
          * @instance
          * @memberof! insight.Grouping
@@ -875,12 +1467,46 @@ insight.Grouping = (function(insight) {
          * @returns {this}
          * @param {string[]} properties - An array of property names to be summed for slices in this Grouping.
          */
-        this.sum = function(properties) {
+        self.sum = function(properties) {
             if (!arguments.length) {
                 return sumProperties;
             }
             sumProperties = properties;
-            return this;
+            return self;
+        };
+
+        /*
+         * Returns the list of property pairs whose correlation coefficient should be caclulated in this Grouping
+         * @instance
+         * @memberof! insight.Grouping
+         * @returns {Array<String[]>} - The list of property pairs that will be summed.Each pair is an array of two strings
+         * @also
+         * Sets the list of property pairs whose correlation coefficient should be caclulated in this Grouping
+         * @instance
+         * @memberof! insight.Grouping
+         * @returns {this}
+         * @param {Array<String[]>} properties - An array of property pairs whose correlation coefficient should
+         * be caclulated in this Grouping
+         */
+        self.correlationPairs = function(properties) {
+            if (!arguments.length) {
+                return correlationPairProperties;
+            }
+
+            correlationPairProperties = properties;
+
+            for (var i = 0, len = properties.length; i < len; i++) {
+                insight.Utils.addToSet(allCorrelationProperties, properties[i][0]);
+                insight.Utils.addToSet(allCorrelationProperties, properties[i][1]);
+            }
+
+            // need mean for correlation
+            averageProperties = insight.Utils.arrayUnique(averageProperties.concat(allCorrelationProperties));
+
+            // need sum for mean so set that too
+            sumProperties = insight.Utils.arrayUnique(sumProperties.concat(allCorrelationProperties));
+
+            return self;
         };
 
         /**
@@ -895,12 +1521,12 @@ insight.Grouping = (function(insight) {
          * @returns {this}
          * @param {string[]} properties - An array of property names to be cumulatively summed over slices in this Grouping.
          */
-        this.cumulative = function(properties) {
+        self.cumulative = function(properties) {
             if (!arguments.length) {
                 return cumulativeProperties;
             }
             cumulativeProperties = properties;
-            return this;
+            return self;
         };
 
         /**
@@ -915,12 +1541,12 @@ insight.Grouping = (function(insight) {
          * @returns {this}
          * @param {string[]} properties - An array of properties whose distinct value occurences will be counted during the reduction of this Grouping
          */
-        this.count = function(properties) {
+        self.count = function(properties) {
             if (!arguments.length) {
                 return countProperties;
             }
             countProperties = properties;
-            return this;
+            return self;
         };
 
         /**
@@ -935,7 +1561,7 @@ insight.Grouping = (function(insight) {
          * @returns {this}
          * @param {string[]} properties - An array of properties that will be averaged after the map reduce of this Grouping.
          */
-        this.mean = function(properties) {
+        self.mean = function(properties) {
             if (!arguments.length) {
                 return averageProperties;
             }
@@ -943,7 +1569,7 @@ insight.Grouping = (function(insight) {
 
             sumProperties = insight.Utils.arrayUnique(sumProperties.concat(averageProperties));
 
-            return this;
+            return self;
         };
 
         /**
@@ -956,14 +1582,16 @@ insight.Grouping = (function(insight) {
          * @instance
          * @memberof! insight.Grouping
          * @returns {this}
-         * @param {function} function - The comparison function to be used to sort the elements in this group.  The function should take the form of a standard {@link https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/GlobalvalueObjects/Array/sort|Javascript comparison function}.
+         * @param {function} function - The comparison function to be used to sort the elements in this group.
+         * The function should take the form of a standard
+         * {@link https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/GlobalvalueObjects/Array/sort|Javascript comparison function}.
          */
-        this.orderFunction = function(orderingFunction) {
+        self.orderFunction = function(orderingFunction) {
             if (!arguments.length) {
                 return orderFunction;
             }
             orderFunction = orderingFunction;
-            return this;
+            return self;
         };
 
 
@@ -979,81 +1607,85 @@ insight.Grouping = (function(insight) {
          * @returns {this}
          * @param {boolean} ordered - Whether to order this Grouping or not
          */
-        this.ordered = function(value) {
+        self.ordered = function(value) {
             if (!arguments.length) {
                 return ordered;
             }
             ordered = value;
 
-            return this;
+            return self;
         };
 
         /**
-         * The filter method gets or sets the function used to filter the results returned by this grouping.
-         * @param {function} filterFunction - A function taking a parameter representing an object in the list.  The function must return true or false as per <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/GlobalvalueObjects/Array/filter">Array Filter</a>.
+         * Gets or sets the function used to filter the results returned by this grouping.
+         * @param {function} filterFunction - A function taking a parameter representing an object in the list.
+         * The function must return true or false as per
+         * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/GlobalvalueObjects/Array/filter">Array Filter</a>.
          */
-        this.filter = function(f) {
+        self.filter = function(f) {
             if (!arguments.length) {
                 return filterFunction;
             }
             filterFunction = f;
-            return this;
+            return self;
         };
 
 
 
 
         /**
-         * This method is called when any post aggregation calculations need to be recalculated.
+         * Called when any post aggregation calculations need to be recalculated.
          * For example, calculating group percentages after totals have been created during map-reduce.
          * @memberof! insight.Grouping
          * @instance
          */
-        this.recalculate = function() {
+        self.recalculate = function() {
 
             postAggregationCalculations();
         };
 
         /**
-         * This method performs the aggregation of the underlying crossfilter dimension, calculating any additional properties during the map-reduce phase.
+         * Performs the aggregation of the underlying crossfilter dimension, calculating any additional properties during the map-reduce phase.
          * It must be run prior to a group being used
          * @todo This should probably be run during the constructor? If not, lazily evaluated by getData() if it hasn't been run already.
          */
-        this.initialize = function() {
+        self.initialize = function() {
 
-            var data;
+            var basicGroupData;
 
             if (self.dimension.oneToMany) {
                 // Dimensions that are one to many {supportedLanguages: ['EN', 'DE']} as opposed to {supportedLanguage: 'EN'} need to be aggregated differently
-                data = reduceMultidimension();
+                basicGroupData = reduceMultidimension();
             } else {
                 // this is crossfilter code.  It calls the crossfilter.group().reduce() functions on the crossfilter dimension wrapped inside our insight.Dimension
                 // more info at https://github.com/square/crossfilter/wiki/API-Reference
                 // the add, remove and initialie functions are called when crossfilter is aggregating the groups, and is amending the membership of the different 
                 // dimensional slices (groups) 
-                data = self.dimension.crossfilterDimension.group()
+                basicGroupData = self.dimension.crossfilterDimension.group()
                     .reduce(
                         reduceAddToGroup,
                         reduceRemoveFromGroup,
                         reduceInitializeGroup
                 );
+
+
             }
 
-            self.data = data;
+            self.data = basicGroupData;
 
             postAggregationCalculations(self);
 
-            return this;
+            return self;
         };
 
 
         /**
-         * This method is used to return the group's data, without ordering.  It checks if there is any filtering requested and applies the filter to the return array.
+         * Used to return the group's data, without ordering.  It checks if there is any filtering requested and applies the filter to the return array.
          * @memberof! insight.Grouping
          * @instance
          * @returns {object[]} return - The grouping's data in an object array, with an object per slice of the dimension.
          */
-        this.getData = function(orderFunction, top) {
+        self.getData = function(orderFunction, top) {
             var data;
 
             // Set the provided order function if it has been given, otherwise use the inherent grouping order if one has been defined.
@@ -1063,7 +1695,7 @@ insight.Grouping = (function(insight) {
                 self.initialize();
             }
 
-            if (this.dimension.oneToMany) {
+            if (self.dimension.oneToMany) {
                 data = self.data.value()
                     .values;
             } else {
@@ -1095,7 +1727,8 @@ insight.Grouping = (function(insight) {
 ;(function(insight) {
 
     /**
-     * The ChartGroup class is a container for Charts and Tables, linking them together and coordinating cross chart filtering and styling.
+     * The ChartGroup class is a container for Charts and Tables, linking them together
+     * and coordinating cross chart filtering and styling.
      * @class insight.ChartGroup
      */
 
@@ -1115,32 +1748,26 @@ insight.Grouping = (function(insight) {
 
             // private methods
 
-
             /*
-             * A helper functions used by Array.filter on an array of Dimension objects, to return any Dimensions in the list whose name matches the provided filter function.
-             */
-            var compareFilters = function(filterFunction) {
-                return function(d) {
-                    return String(d.name) == String(filterFunction.name);
-                };
-            };
-
-
-            /*
-             * This internal function responds to click events on Series and Tables, alerting any other elements using the same Dimension that they need to
+             * This internal function responds to click events on Series and Tables,
+             * alerting any other elements using the same Dimension that they need to
              * update to highlight the selected slices of the Dimension
              */
             var notifyListeners = function(dimensionName, dimensionSelector) {
                 var listeningObjects = self.dimensionListenerMap[dimensionName];
 
-                listeningObjects.forEach(function(item) {
-                    item.highlight(dimensionSelector);
-                });
+                if (listeningObjects != null) {
+
+                    listeningObjects.forEach(function(item) {
+                        item.highlight(dimensionSelector);
+                    });
+
+                }
             };
 
             /*
-             * This function takes a list of series and binds the click events of each one to the ChartGroup filtering handler
-             * It also adds the series' dataset to the internal list.
+             * This function takes a list of series and binds the click events of each one to the ChartGroup
+             * filtering handler. It also adds the series' dataset to the internal list.
              */
             var addSeries = function(chart) {
                 chart.series()
@@ -1148,7 +1775,7 @@ insight.Grouping = (function(insight) {
 
                         addDimensionListener(series.data, chart);
 
-                        series.clickEvent = self.chartFilterHandler.bind(self);
+                        series.clickEvent = self.chartFilterHandler;
 
                         addDataSet(series.data);
                     });
@@ -1156,7 +1783,8 @@ insight.Grouping = (function(insight) {
 
             /* 
              * This function is called when a Chart belonging to this ChartGroup updates its list of Series.
-             * The ChartGroup needs to register the click events and any crossfilter dimensions belonging to the Series
+             * The ChartGroup needs to register the click events and any crossfilter dimensions belonging to
+             * the Series.
              */
             var newSeries = function(chart, series) {
 
@@ -1165,7 +1793,8 @@ insight.Grouping = (function(insight) {
 
 
             /* 
-             * This function checks if the provided DataSet is crossfilter enabled, and if so, adds its components to internal lists of Groupings and Dimensions.
+             * This function checks if the provided DataSet is crossfilter enabled,
+             * and if so, adds its components to internal lists of Groupings and Dimensions.
              */
             var addDataSet = function(dataset) {
 
@@ -1181,14 +1810,15 @@ insight.Grouping = (function(insight) {
             };
 
             /*
-             * Adds a Table to this ChartGroup, wiring up the Table's events to any related Charts or Tables in the ChartGroup
+             * Adds a Table to this ChartGroup, wiring up the Table's events to any
+             * related Charts or Tables in the ChartGroup.
              * @memberof! insight.ChartGroup
              * @instance
              */
             var addTable = function(table) {
 
                 // wire up the click event of the table to the filter handler of the DataSet
-                table.clickEvent = self.chartFilterHandler.bind(self);
+                table.clickEvent = self.chartFilterHandler;
 
                 addDimensionListener(table.data, table);
 
@@ -1216,7 +1846,8 @@ insight.Grouping = (function(insight) {
 
 
             /*
-             * Given a DataSet and a widget (Table or Chart), this function adds the widget to the map of items subscribed to events on that Dimension,
+             * Given a DataSet and a widget (Table or Chart), this function adds the widget
+             * to the map of items subscribed to events on that Dimension,
              * only if the provided DataSet is a crossfilter enabled one that exposes a dimension property.
              */
             var addDimensionListener = function(dataset, widget) {
@@ -1227,7 +1858,7 @@ insight.Grouping = (function(insight) {
 
                     if (listeningObjects) {
 
-                        var alreadyListening = listeningObjects.indexOf(widget) != -1;
+                        var alreadyListening = insight.Utils.arrayContains(listeningObjects, widget);
 
                         if (!alreadyListening) {
                             self.dimensionListenerMap[dimension.name].push(widget);
@@ -1242,7 +1873,8 @@ insight.Grouping = (function(insight) {
 
 
             /**
-             * Adds an item to this ChartGroup, calling the appropriate internal addChart or addTable function depending on the type.
+             * Adds an item to this ChartGroup, calling the appropriate internal addChart or addTable function
+             * depending on the type.
              * @memberof! insight.ChartGroup
              * @instance
              * @param {object} widget - An insight.Table or insight.Chart
@@ -1274,93 +1906,91 @@ insight.Grouping = (function(insight) {
             };
 
             /**
-             * Method handler that is bound by the ChartGroup to the click events of any chart series or table rows, if the DataSets used by those entities
-             * are crossfilter enabled.
-             * It notifies any other listening charts of the dimensional selection event, which they can respond to by applying CSS highlighting etc.
+             * Method handler that is bound by the ChartGroup to the click events of any chart series or table rows,
+             * if the DataSets used by those entities are crossfilter enabled.
+             * It notifies any other listening charts of the dimensional selection event, which they can respond to
+             * by applying CSS highlighting etc.
              * @memberof! insight.ChartGroup
              * @instance
-             * @param {object} caller - The insight.Table or insight.Chart initiating the click event.
-             * @param {object} value - The data item that the dimension is being sliced/filtered by. If it is an aggregation, it will be an object {key:, value:}, otherwise a string.
-             * @param {object} widget - An insight.Table or insight.Chart
-             * @returns {this}
+             * @param {object} dataset - The insight.DataSet or insight.Grouping being filtered
+             * @param {string} value - The value that the dimension is being sliced/filtered by.
              */
-            this.chartFilterHandler = function(caller, value, dimensionSelector) {
+            this.chartFilterHandler = function(dataset, value) {
 
-                // send events to any charts or tables also using this dimension, as they will need to update their styles to reflect the selection
-                notifyListeners(caller.data.dimension.name, dimensionSelector);
+                var dimensionSelector = insight.Utils.keySelector(value);
 
-                var dimension = caller.data.dimension;
+                // send events to any charts or tables also using this dimension, as they will need to update their
+                // styles to reflect the selection
+                notifyListeners(dataset.dimension.name, dimensionSelector);
+
+                var dimension = dataset.dimension;
 
                 var filterFunc = dimension.createFilterFunction(value);
+                var nameProperty = 'name';
 
-                if (filterFunc) {
-                    // get the list of any dimensions matching the one that is being filtered
-                    var dims = self.dimensions
-                        .filter(dimension.comparer);
+                // get the list of any dimensions matching the one that is being filtered
+                var dims = insight.Utils.takeWhere(self.dimensions, nameProperty, dimension.name);
 
-                    // get the list of matching dimensions that are already filtered
-                    var activeDim = self.filteredDimensions
-                        .filter(dimension.comparer);
+                // get the list of matching dimensions that are already filtered
+                var activeDim = insight.Utils.takeWhere(self.filteredDimensions, nameProperty, dimension.name);
 
-                    // add the new filter to the list of active filters if it's not already active
-                    if (!activeDim.length) {
-                        self.filteredDimensions.push(dimension);
+                // add the new filter to the list of active filters if it's not already active
+                if (!activeDim.length) {
+                    self.filteredDimensions.push(dimension);
+                }
+
+                // loop through the matching dimensions to filter them all
+                dims.map(function(dim) {
+
+                    var filterExists = insight.Utils.takeWhere(dim.filters, nameProperty, filterFunc.name)
+                        .length;
+
+                    //if the dimension is already filtered by this value, toggle (remove) the filter
+                    if (filterExists) {
+                        insight.Utils.removeWhere(dim.filters, nameProperty, filterFunc.name);
+
+                    } else {
+                        // add the provided filter to the list for this dimension
+
+                        dim.filters.push(filterFunc);
                     }
 
-                    var comparerFunction = compareFilters(filterFunc);
+                    // reset this dimension if no filters exist, else apply the filter to the dataset.
+                    if (dim.filters.length === 0) {
 
-                    // loop through the matching dimensions to filter them all
-                    dims.map(function(dim) {
+                        insight.Utils.removeItemFromArray(self.filteredDimensions, dim);
+                        dim.crossfilterDimension.filterAll();
 
-                        var filterExists = dim.filters
-                            .filter(comparerFunction)
-                            .length;
+                    } else {
+                        dim.crossfilterDimension.filter(function(d) {
 
-                        //if the dimension is already filtered by this value, toggle (remove) the filter
-                        if (filterExists) {
-                            insight.Utils.removeMatchesFromArray(dim.filters, comparerFunction);
+                            // apply all of the filters on this dimension to the current value, returning an array of 
+                            // true/false values (which filters does it satisfy)
+                            var vals = dim.filters
+                                .map(function(func) {
+                                    return func.filterFunction(d);
+                                });
 
-                        } else {
-                            // add the provided filter to the list for this dimension
+                            // if this value satisfies any of the filters, it should be kept
+                            var matchesAnyFilter = vals.filter(function(result) {
+                                    return result;
+                                })
+                                .length > 0;
 
-                            dim.filters.push(filterFunc);
-                        }
+                            return matchesAnyFilter;
+                        });
+                    }
+                });
 
-                        // reset this dimension if no filters exist, else apply the filter to the dataset.
-                        if (dim.filters.length === 0) {
+                // the above filtering will have triggered a re-aggregation of the groupings.  We must manually
+                // initiate the recalculation of the groupings for any post aggregation calculations
+                self.groupings.forEach(function(group) {
+                    group.recalculate();
 
-                            insight.Utils.removeItemFromArray(self.filteredDimensions, dim);
-                            dim.crossfilterDimension.filterAll();
+                });
 
-                        } else {
-                            dim.crossfilterDimension.filter(function(d) {
+                self.draw();
 
-                                // apply all of the filters on this dimension to the current value, returning an array of true/false values (which filters does it satisfy)
-                                var vals = dim.filters
-                                    .map(function(func) {
-                                        return func.filterFunction(d);
-                                    });
-
-                                // if this value satisfies any of the filters, it should be kept
-                                var matchesAnyFilter = vals.filter(function(result) {
-                                        return result;
-                                    })
-                                    .length > 0;
-
-                                return matchesAnyFilter;
-                            });
-                        }
-                    });
-
-                    // the above filtering will have triggered a re-aggregation of the groupings.  We must manually initiate the recalculation
-                    // of the groupings for any post aggregation calculations
-                    self.groupings.forEach(function(group) {
-                        group.recalculate();
-
-                    });
-
-                    self.draw();
-                }
             };
         }
 
@@ -1386,8 +2016,10 @@ insight.Grouping = (function(insight) {
             this.container = null;
             this.chart = null;
             this.measureCanvas = document.createElement('canvas');
+            this.marginMeasurer = new insight.MarginMeasurer();
 
-            this._margin = {
+
+            var margin = {
                 top: 0,
                 left: 0,
                 right: 0,
@@ -1398,6 +2030,8 @@ insight.Grouping = (function(insight) {
 
             var height = d3.functor(300),
                 width = d3.functor(300),
+                maxWidth = d3.functor(300),
+                minWidth = d3.functor(300),
                 zoomable = false,
                 series = [],
                 xAxes = [],
@@ -1405,15 +2039,31 @@ insight.Grouping = (function(insight) {
                 self = this,
                 title = '',
                 autoMargin = true,
-                initialized = false,
                 legend = null,
                 zoomInitialized = false,
-                zoomAxis = null;
+                initialized = false,
+                zoomAxis = null,
+                highlightSelector = insight.Utils.highlightSelector();
 
+            // private functions
 
-            // private methods
+            var onWindowResize = function() {
+
+                var scrollBarWidth = 50;
+                var left = self.container[0][0].offsetLeft;
+
+                var widthWithoutScrollBar =
+                    window.innerWidth -
+                    left -
+                    scrollBarWidth;
+
+                self.resizeWidth(widthWithoutScrollBar);
+
+            };
 
             var init = function(create, container) {
+
+                window.addEventListener('resize', onWindowResize);
 
                 self.container = create ? d3.select(container)
                     .append('div') : d3.select(self.element)
@@ -1431,6 +2081,15 @@ insight.Grouping = (function(insight) {
                 self.plotArea = self.chartSVG.append('g')
                     .attr('class', insight.Constants.PlotArea);
 
+                // create the empty text element used by the text measuring process
+                self.axisMeasurer = self.plotArea
+                    .append('text')
+                    .attr('class', insight.Constants.AxisTextClass);
+
+                self.labelMeasurer = self.container
+                    .append('text')
+                    .attr('class', insight.Constants.AxisLabelClass);
+
                 self.addClipPath();
 
                 initialized = true;
@@ -1438,6 +2097,7 @@ insight.Grouping = (function(insight) {
 
 
             var initZoom = function() {
+
                 self.zoom = d3.behavior.zoom()
                     .on('zoom', self.dragging.bind(self));
 
@@ -1516,16 +2176,49 @@ insight.Grouping = (function(insight) {
                         .bottom);
             };
 
+            /**
+             * Resizes the chart width according to the given window width within the chart's own minimum and maximum width
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Number} windowWidth The current window width to resize against
+             */
+            this.resizeWidth = function(windowWidth) {
+
+                var self = this;
+
+
+                if (this.width() > windowWidth && this.width() !== this.minWidth()) {
+
+                    doResize(Math.max(this.minWidth(), windowWidth));
+
+                } else if (this.width() < windowWidth && this.width() !== this.maxWidth()) {
+
+                    doResize(Math.min(this.maxWidth(), windowWidth));
+
+                }
+
+
+                function doResize(newWidth) {
+
+                    self.width(newWidth, true);
+                    self.draw();
+                }
+
+            };
 
             this.resizeChart = function() {
+
                 if (autoMargin) {
-                    self.calculateLabelMargin();
+
+                    var axisStyles = insight.Utils.getElementStyles(self.axisMeasurer.node(), ['font-size', 'line-height', 'font-family']);
+                    var labelStyles = insight.Utils.getElementStyles(self.labelMeasurer.node(), ['font-size', 'line-height', 'font-family']);
+
+                    self.calculateLabelMargin(self.marginMeasurer, axisStyles, labelStyles);
                 }
 
                 var chartMargin = self.margin();
 
                 var context = self.measureCanvas.getContext('2d');
-                context.font = "15pt Open Sans Bold";
 
                 self.container.style('width', self.width() + 'px');
 
@@ -1586,11 +2279,11 @@ insight.Grouping = (function(insight) {
              */
             this.margin = function(newMargins) {
                 if (!arguments.length) {
-                    return this._margin;
+                    return margin;
                 }
 
                 autoMargin = false;
-                this._margin = newMargins;
+                margin = newMargins;
 
                 return this;
             };
@@ -1622,11 +2315,18 @@ insight.Grouping = (function(insight) {
              * @memberof! insight.Chart
              * @instance
              * @param {Number} newWidth The new width of the chart.
+             * @param {Boolean} dontSetMax If falsey then the maxWidth of the chart will also be set to newWidth.
              * @returns {this}
              */
-            this.width = function(newWidth) {
+            this.width = function(newWidth, dontSetMax) {
                 if (!arguments.length) {
                     return width();
+                }
+
+                if (!dontSetMax) {
+
+                    this.maxWidth(newWidth);
+
                 }
 
                 width = d3.functor(newWidth);
@@ -1644,7 +2344,7 @@ insight.Grouping = (function(insight) {
              * Sets the height of the chart element, measured in pixels.
              * @memberof! insight.Chart
              * @instance
-             * @param {Number} newHeight The new height of the chart.
+             * @param {Number} newHeight The new height of the chart, measured in pixels.
              * @returns {this}
              */
             this.height = function(newHeight) {
@@ -1652,6 +2352,52 @@ insight.Grouping = (function(insight) {
                     return height();
                 }
                 height = d3.functor(newHeight);
+                return this;
+            };
+
+            /**
+             * The maximum width of the chart element, measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Number} - The maximum width of the chart.
+             *
+             * @also
+             *
+             * Sets the maximum width of the chart element, measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Number} newMaxWidth The new maximum width of the chart, measured in pixels.
+             * @returns {this}
+             */
+            this.maxWidth = function(newMaxWidth) {
+                if (!arguments.length) {
+                    return maxWidth();
+                }
+
+                maxWidth = d3.functor(newMaxWidth);
+                return this;
+            };
+
+            /**
+             * The minimum width of the chart element, measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Number} - The minimum width of the chart.
+             *
+             * @also
+             *
+             * Sets the minimum width of the chart element, measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Number} newMinWidth The new minimum width of the chart, measured in pixels.
+             * @returns {this}
+             */
+            this.minWidth = function(newMinWidth) {
+                if (!arguments.length) {
+                    return minWidth();
+                }
+
+                minWidth = d3.functor(newMinWidth);
                 return this;
             };
 
@@ -1848,16 +2594,16 @@ insight.Grouping = (function(insight) {
             };
 
             /**
-             * This function takes a CSS dimension selector and updates the class attributes of any attributes in this Chart to reflect
-             * whether they are currently selected or not.  .notselected is needed in addition to .selected, as items are coloured differently when they are not selected
+             * Takes a CSS selector and applies classes to chart elements to show them as selected or not.
+             * in response to a filtering event.
              * and something else is.
              * @memberof! insight.Chart
-             * @param {string} selector - a CSS selector matching a slice of a dimension. eg. an entry in a grouping by Country would be 'in_England', which would match that dimensional value in any charts.
+             * @param {string} selector - a CSS selector matching a slice of a dimension. eg. an entry in a grouping by Country 
+                                          would be 'in_England', which would match that dimensional value in any charts.
              */
             this.highlight = function(selector) {
-                // select the elements matching the dimension that has been clicked (possibly in another chart)
-                var clicked = this.plotArea.selectAll('.' + selector);
-                var alreadySelected = clicked.classed('selected');
+                var clicked = self.plotArea.selectAll('.' + selector);
+                var alreadySelected = insight.Utils.arrayContains(self.selectedItems, selector);
 
                 if (alreadySelected) {
                     clicked.classed('selected', false);
@@ -1868,38 +2614,33 @@ insight.Grouping = (function(insight) {
                     self.selectedItems.push(selector);
                 }
 
+
                 // depending on if anything is selected, we have to update the rest as notselected so that they are coloured differently
-                var selected = this.plotArea.selectAll('.selected');
-                var notselected = this.plotArea.selectAll('.bar:not(.selected),.bubble:not(.selected)');
+                var selected = self.plotArea.selectAll('.selected');
+                var notselected = self.plotArea.selectAll(highlightSelector);
 
                 // if nothing is selected anymore, clear the .notselected class from any elements (stop showing them as gray)
                 notselected.classed('notselected', selected[0].length > 0);
             };
+
         }
 
+        /**
+         * Sets the margin for the Chart by using a MarginMEasurer to measure the required label and axis widths for
+         * the contents of this Chart
+         * @memberof! insight.Chart
+         * @instance
+         * @param {DOMElement} measurer - A canvas HTML element to use by the measurer.  Specific to each chart as
+         *                                each chart may have specific css rules
+         * @param {object} axisStyles - An associative map between css properties and values for the axis values
+         * @param {object} labelStyles - An associative map between css properties and values for the axis labels
+         */
+        Chart.prototype.calculateLabelMargin = function(measurer, axisStyles, labelStyles) {
 
+            // labelStyles can be optional.  If so, use the same as the axisStyles
+            labelStyles = labelStyles ? labelStyles : axisStyles;
 
-        Chart.prototype.calculateLabelMargin = function() {
-
-            var canvas = this.measureCanvas;
-            var max = 0;
-            var margin = {
-                "top": 0,
-                "left": 0,
-                "bottom": 0,
-                "right": 0
-            };
-
-            this.series()
-                .forEach(function(series) {
-                    var xAxis = series.x;
-                    var yAxis = series.y;
-
-                    var labelDimensions = series.maxLabelDimensions(canvas);
-
-                    margin[xAxis.orientation()] = Math.max(labelDimensions.maxKeyHeight, margin[xAxis.orientation()]);
-                    margin[yAxis.orientation()] = Math.max(labelDimensions.maxValueWidth, margin[yAxis.orientation()]);
-                });
+            var margin = measurer.calculateChartMargins(this.series(), this.measureCanvas, axisStyles, labelStyles);
 
             this.margin(margin);
         };
@@ -2520,7 +3261,7 @@ insight.Axis = function Axis(name, scale) {
 
     var textAnchor = function() {
         var orientation = self.orientation();
-        if (orientation == 'left' || orientation == 'top') {
+        if (orientation === 'left' || orientation === 'top') {
             return 'end';
         } else {
             return 'start';
@@ -2620,7 +3361,7 @@ insight.Axis = function Axis(name, scale) {
      * @returns {boolean} - Whether the axis is horizontal.
      */
     this.horizontal = function() {
-        return this.direction == 'h';
+        return this.direction === 'h';
     };
 
     /**
@@ -2670,11 +3411,11 @@ insight.Axis = function Axis(name, scale) {
     this.domain = function() {
         var domain = [];
 
-        if (this.scaleType == insight.Scales.Linear.name) {
+        if (this.scaleType === insight.Scales.Linear.name) {
             domain = [0, findMax()];
-        } else if (this.scaleType == insight.Scales.Ordinal.name) {
+        } else if (this.scaleType === insight.Scales.Ordinal.name) {
             domain = findOrdinalValues();
-        } else if (this.scaleType == insight.Scales.Time.name) {
+        } else if (this.scaleType === insight.Scales.Time.name) {
             domain = [new Date(findMin()), new Date(findMax())];
         }
 
@@ -2890,12 +3631,12 @@ insight.Axis = function Axis(name, scale) {
 
         if (self.horizontal()) {
             var transX = 0;
-            var transY = self.orientation() == 'top' ? 0 : self.bounds[1];
+            var transY = self.orientation() === 'top' ? 0 : self.bounds[1];
 
             transform += transX + ',' + transY + ')';
 
         } else {
-            var xShift = self.orientation() == 'left' ? 0 : self.bounds[0];
+            var xShift = self.orientation() === 'left' ? 0 : self.bounds[0];
             transform += xShift + ',0)';
         }
 
@@ -3148,6 +3889,7 @@ insight.AxisGridlines = function AxisGridlines(axis) {
 insight.Series = function Series(name, data, x, y, color) {
 
     this.data = data;
+    this.usesCrossfilter = (data instanceof insight.DataSet) || (data instanceof insight.Grouping);
     this.x = x;
     this.y = y;
     this.name = name;
@@ -3155,8 +3897,8 @@ insight.Series = function Series(name, data, x, y, color) {
     this.animationDuration = 300;
     this.topValues = null;
     this.classValues = [];
-    this.valueAxis = x;
-    this.keyAxis = y;
+    this.valueAxis = y;
+    this.keyAxis = x;
     this.selectedItems = [];
 
     x.addSeries(this);
@@ -3201,7 +3943,7 @@ insight.Series = function Series(name, data, x, y, color) {
     };
 
     /*
-     * This function is used when individual chart items are being drawn, to check whether they should be marked as selected or not.
+     * Checks whether individual chart items should be marked as selected or not.
      * @memberof insight.Series
      * @returns {string} selectionClass - A string that is used by CSS highlighting to style the chart item.
      * @param {string[]}selectedItems - A list of CSS selectors for currently selected items
@@ -3211,7 +3953,7 @@ insight.Series = function Series(name, data, x, y, color) {
         var selected = '';
 
         if (selectedItems.length) {
-            selected = selectedItems.indexOf(selector) != -1 ? ' selected' : ' notselected';
+            selected = insight.Utils.arrayContains(selectedItems, selector) ? ' selected' : ' notselected';
         }
 
         return selected;
@@ -3219,7 +3961,7 @@ insight.Series = function Series(name, data, x, y, color) {
 
 
     /*
-     * This function generates the base class name to be used for items in this series.It can be extended upon by individual items to show
+     * Generates the base class name to be used for items in this series.It can be extended upon by individual items to show
      * if they are selected or to mark them out in other ways.
      * @memberof insight.Series
      * @returns {string} baseClassName - A root valuefor the class attribute used for items in this Series.
@@ -3233,8 +3975,26 @@ insight.Series = function Series(name, data, x, y, color) {
     };
 
 
+    var arrayDataSet = function(orderFunction, topValues) {
+
+        // Take a shallow copy of the data array
+        var data = self.data.slice(0);
+
+        if (orderFunction) {
+            data = data.sort(orderFunc);
+        }
+        if (topValues) {
+            data = data.slice(0, top);
+        }
+
+        return data;
+    };
+
+
+    // Public methods
+
     /*
-     * This function constructs the text for the class attribute for a specific data point, using the base value for this Series and any additional values.
+     * Constructs the text for the class attribute for a specific data point, using the base value for this Series and any additional values.
      * @memberof insight.Series
      * @param {object} dataItem - The data item being drawn
      * @param {string[]} additionalClasses - Any additional values this Series needs appending to the class value.Used by stacked Series to differentiate between Series.
@@ -3242,18 +4002,15 @@ insight.Series = function Series(name, data, x, y, color) {
      */
     this.itemClassName = function(dataItem, additionalClasses) {
 
-        var keySelector = insight.Utils.keySelector(dataItem, keyFunction);
+        var keySelector = insight.Utils.keySelector(keyFunction(dataItem));
         var selected = selectedClassName(self.selectedItems, keySelector);
         var value = self.rootClassName + ' ' + keySelector + selected;
 
         return value;
     };
 
-
-    // Public methods
-
     /**
-     * The function used to retrieve the x-value from the data object to plot on a chart.
+     * Gets the function used to retrieve the x-value from the data object to plot on a chart.
      * @memberof! insight.Series
      * @instance
      * @returns {function} The current function used to extract the x-value.
@@ -3276,7 +4033,7 @@ insight.Series = function Series(name, data, x, y, color) {
     };
 
     /**
-     * The function used to retrieve the y-value from the data object to plot on a chart.
+     * Gets the y-value from the data object to plot on a chart.
      * @memberof! insight.Series
      * @instance
      * @returns {function} The current function used to extract the y-value.
@@ -3299,22 +4056,22 @@ insight.Series = function Series(name, data, x, y, color) {
     };
 
     /**
-     * This method returns the array of data objects used to plot this Series.
+     * Returns the array of data objects used to plot this Series.
      * @memberof! insight.Series
      * @instance
      * @returns {object[]} - The data set to be used by the series
      */
     this.dataset = function(orderFunction) {
 
-        // If the valueAxis is ordered but no function has been provided, create one based on the Series' valueFunction
-        if (this.valueAxis.ordered() && !orderFunction) {
+        // If the keyAxis is ordered but no function has been provided, create one based on the Series' valueFunction
+        if (self.keyAxis.ordered() && !orderFunction) {
 
             orderFunction = function(a, b) {
                 return self.valueFunction()(b) - self.valueFunction()(a);
             };
         }
 
-        var data = this.data.getData(orderFunction, this.topValues);
+        var data = this.usesCrossfilter ? self.data.getData(orderFunction, self.topValues) : arrayDataSet(orderFunction, self.topValues);
 
         if (filter) {
             data = data.filter(filter);
@@ -3327,7 +4084,6 @@ insight.Series = function Series(name, data, x, y, color) {
         return this.dataset(orderFunction)
             .map(self.keyFunction());
     };
-
 
     this.xFunction = function(_) {
         if (!arguments.length) {
@@ -3372,8 +4128,8 @@ insight.Series = function Series(name, data, x, y, color) {
     };
 
     /*
-     * This method creates the tooltip for this Series, checking if it exists already first.
-     * @memberof insight.Series
+     * Creates the tooltip for this Series, checking if it exists already first.
+     * @memberof! insight.Series
      * @param {DOMElement} container - The DOM Element that the tooltip should be drawn inside.
      */
     this.initializeTooltip = function(container) {
@@ -3387,7 +4143,7 @@ insight.Series = function Series(name, data, x, y, color) {
     /*
      * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouse over. Tooltips are shown and CSS updated.
      * The *this* context will reference the DOMElement raising the event.
-     * @memberof insight.Series
+     * @memberof! insight.Series
      * @param {object} item - The data point for the hovered item.
      * @param {int} index - The index of the hovered item in the data set.  This is required at the moment as we need to provide the valueFunction until stacked series are refactored.
      * @param {function} valueFunction - If provided, this function will be used to generate the tooltip text, otherwise the series default valueFunction will be used.
@@ -3407,7 +4163,7 @@ insight.Series = function Series(name, data, x, y, color) {
     /*
      * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouseout event. Tooltips are hidden and CSS updated.
      * The *this* context will reference the DOMElement raising the event.
-     * @memberof insight.Series
+     * @memberof! insight.Series
      */
     this.mouseOut = function() {
 
@@ -3419,11 +4175,10 @@ insight.Series = function Series(name, data, x, y, color) {
 
 
 
-    this.click = function(element, filter) {
+    this.click = function(element, filterBy) {
+        var filterValue = keyFunction(filterBy);
 
-        var selector = insight.Utils.keySelector(filter, keyFunction);
-
-        this.clickEvent(this, filter, selector);
+        self.clickEvent(self.data, filterValue);
     };
 
     this.filterFunction = function(_) {
@@ -3462,67 +4217,7 @@ insight.Series = function Series(name, data, x, y, color) {
         return this;
     };
 
-    this.maxLabelDimensions = function(measureCanvas) {
 
-        var sampleText = document.createElement('text');
-        sampleText.setAttribute('class', insight.Constants.AxisTextClass);
-        var style = window.getComputedStyle(sampleText);
-        var ctx = measureCanvas.getContext('2d');
-        ctx.font = style['font-size'] + ' ' + style['font-family'];
-
-        var fontSize = 0;
-
-        var maxValueWidth = 0;
-        var maxKeyWidth = 0;
-
-        var data = this.dataset();
-
-        this.keys()
-            .forEach(function(key) {
-                var value = insight.Utils.valueForKey(data, key, keyFunction, valueFunction);
-
-                var keyFormat = self.x.labelFormat();
-                var valueFormat = self.y.labelFormat();
-
-                var keyString = keyFormat(key);
-                var valueString = valueFormat(value);
-
-                var keyDimensions = ctx.measureText(keyString);
-                var valueDimensions = ctx.measureText(valueString);
-
-                maxKeyWidth = Math.max(keyDimensions.width, maxKeyWidth);
-                maxValueWidth = Math.max(valueDimensions.width, maxValueWidth);
-                fontSize = Math.ceil(style['font-size']) || 10;
-            });
-
-        var maxDimensions = {
-            "maxKeyWidth": maxKeyWidth,
-            "maxKeyHeight": fontSize,
-            "maxValueWidth": maxValueWidth,
-            "maxValueHeight": fontSize
-        };
-
-        //Handle tick rotation
-        if (x.tickRotation() !== '0') {
-            //Convert Degrees -> Radians
-            var xSin = Math.sin(x.tickRotation() * Math.PI / 180);
-            var xCos = Math.cos(x.tickRotation() * Math.PI / 180);
-
-            maxDimensions.maxKeyWidth = Math.ceil(Math.max(fontSize * xSin, maxKeyWidth * xCos));
-            maxDimensions.maxKeyHeight = Math.ceil(Math.max(fontSize * xCos, maxKeyWidth * xSin));
-        }
-
-        if (y.tickRotation() !== '0') {
-            //Convert Degrees -> Radians
-            var ySin = Math.sin(y.tickRotation() * Math.PI / 180);
-            var yCos = Math.cos(y.tickRotation() * Math.PI / 180);
-
-            maxDimensions.maxValueWidth = Math.ceil(Math.max(fontSize * ySin, maxValueWidth * yCos));
-            maxDimensions.maxValueHeight = Math.ceil(Math.max(fontSize * yCos, maxValueWidth * ySin));
-        }
-
-        return maxDimensions;
-    };
 
     /**
      * Extracts the minimum value on an axis for this series.
@@ -3536,7 +4231,7 @@ insight.Series = function Series(name, data, x, y, color) {
 
         var data = this.dataset();
 
-        var func = scale == self.x ? self.keyFunction() : self.valueFunction();
+        var func = scale === self.x ? self.keyFunction() : self.valueFunction();
 
         return d3.min(data, func);
     };
@@ -3553,7 +4248,7 @@ insight.Series = function Series(name, data, x, y, color) {
 
         var data = this.dataset();
 
-        var func = scale == self.x ? self.keyFunction() : self.valueFunction();
+        var func = scale === self.x ? self.keyFunction() : self.valueFunction();
 
         return d3.max(data, func);
     };
@@ -3597,11 +4292,9 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
         if (vertical) {
             pos = self.x.scale(self.keyFunction()(d));
 
-            if (!offset) {
-                offset = self.calculateOffset(d);
-            }
+            offset = self.calculateOffset(d);
 
-            pos = widthFactor != 1 ? pos + offset : pos;
+            pos = widthFactor !== 1 ? pos + offset : pos;
         } else {
             pos = self.x.scale(self.valueFunction()(d));
 
@@ -3634,11 +4327,9 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
         if (horizontal) {
             position = self.y.scale(self.keyFunction()(d));
 
-            if (!offset) {
-                offset = self.calculateOffset(d);
-            }
+            offset = self.calculateOffset(d);
 
-            position = widthFactor != 1 ? position + offset : position;
+            position = widthFactor !== 1 ? position + offset : position;
 
         } else {
             position = self.y.scale(self.valueFunction()(d));
@@ -3791,9 +4482,14 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
 
     insight.Series.call(this, name, data, x, y, color);
 
+    // private variables
+
     var self = this,
         selector = this.name + insight.Constants.Bubble,
         radiusFunction = d3.functor(10);
+
+
+    // public variables
 
     this.classValues = [insight.Constants.Bubble];
 
@@ -3841,7 +4537,7 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
 
         var data = this.dataset();
 
-        var func = scale == self.x ? self.xFunction() : self.yFunction();
+        var func = scale === self.x ? self.xFunction() : self.yFunction();
 
         return d3.max(data, func);
     };
@@ -3897,7 +4593,7 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
         var bubbleData = this.bubbleData(this.dataset());
 
         var bubbles = chart.plotArea.selectAll('circle.' + insight.Constants.Bubble)
-            .data(bubbleData, self.keyAccessor);
+            .data(bubbleData, self.keyFunction());
 
         bubbles.enter()
             .append('circle')
@@ -3948,7 +4644,7 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
         var max = 0;
         var data = this.data.getData();
 
-        var func = scale == self.x ? self.xFunction() : self.yFunction();
+        var func = scale === self.x ? self.xFunction() : self.yFunction();
 
         var m = d3.max(data, func);
 
@@ -4040,7 +4736,7 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
         var scatterData = this.scatterData(this.dataset());
 
         var points = chart.plotArea.selectAll('circle.' + selector)
-            .data(scatterData);
+            .data(scatterData, self.keyFunction());
 
         points.enter()
             .append('circle')
@@ -4078,8 +4774,8 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
         seriesName = '',
         seriesFunctions = {};
 
-    this.valueAxis = y;
-    this.keyAxis = x;
+    this.valueAxis = x;
+    this.keyAxis = y;
     this.classValues = [insight.Constants.BarClass];
 
     this.series = [{
@@ -4130,7 +4826,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
      * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
      */
     this.findMax = function() {
-        var max = d3.max(this.data.getData(), this.seriesMax);
+        var max = d3.max(self.dataset(), self.seriesMax);
 
         return max;
     };
@@ -4198,7 +4894,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
 
         var groupThickness = self.barThickness(d);
 
-        var width = self.stacked() || (self.series.length == 1) ? groupThickness : groupThickness / self.series.length;
+        var width = self.stacked() || (self.series.length === 1) ? groupThickness : groupThickness / self.series.length;
 
         return width;
     };
@@ -4535,7 +5231,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
      * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
      */
     this.findMax = function() {
-        var max = d3.max(this.data.getData(), this.seriesMax);
+        var max = d3.max(self.dataset(), self.seriesMax);
 
         return max;
     };
@@ -4607,7 +5303,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
         var groupWidth = self.barWidth(d);
 
-        var width = self.stackedBars() || (self.series.length == 1) ? groupWidth : groupWidth / self.series.length;
+        var width = self.stackedBars() || (self.series.length === 1) ? groupWidth : groupWidth / self.series.length;
 
         return width;
     };

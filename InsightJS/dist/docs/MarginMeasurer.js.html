@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Source: charts/Legend.js</title>
+    <title>Source: utils/MarginMeasurer.js</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -654,117 +654,184 @@
     </ul>
 </div>
     <div class="main">
-        <h1 class="page-title" data-filename="Legend.js.html">Source: charts/Legend.js</h1>
+        <h1 class="page-title" data-filename="MarginMeasurer.js.html">Source: utils/MarginMeasurer.js</h1>
         
 
 
     
     <section>
         <article>
-            <pre class="prettyprint source"><code>/**
- * A Legend listing out the series on a chart
- * @class insight.Legend
- */
-insight.Legend = function Legend() {
+            <pre class="prettyprint source"><code>(function(insight) {
 
-    var initialised = false;
+    /**
+     * Calculates margins for Charts, given axes and series with datasets.
+     * @class insight.MarginMeasurer
+     */
+    insight.MarginMeasurer = (function(insight) {
 
-    var blobPositionY = function(item, index) {
-        return index * 20 + 5;
-    };
+        function MarginMeasurer() {
 
-    var blobFillColor = function(item) {
-        return item.color();
-    };
+            // private variables
 
-    var textPositionY = function(item, index) {
-        return index * 20 + 14;
-    };
+            var self = this;
+            var labelPadding = 10;
 
-    var textContent = function(item) {
-        return item.name;
-    };
+            // public methods
+
+            /**
+             * Calculates the dimensions required for a single series' margin entries
+             * @memberof! insight.MarginMeasurer
+             * @instance
+             * @param {insight.Series} series - A Series to measure
+             * @param {Number} lineHeight - The CSS line-height to use when defining dimensions
+             * @param {object} axisContext - A 2d canvas drawing context to measure axis value text with
+             * @param {object} labelContext - A 2d canvas drawing context to measure label text with
+             * @param {object} labelStyles - An associative map {cssName: value} of styles to apply when measuring axis labels(font-size, font-family etc.)
+             * @returns {object} - margin object {top: Number,left: Number,bottom:Number,right:Number}
+             */
+            self.seriesLabelDimensions = function(series, lineHeight, axisContext, labelContext) {
+
+                var maxValueWidth = 0,
+                    maxKeyWidth = 0,
+                    maxFontHeight = 0,
+                    keyLabelHeight = 0,
+                    valueLabelHeight = 0,
+                    keyAxis = series.keyAxis,
+                    valueAxis = series.valueAxis,
+                    data = series.dataset(),
+                    keys = series.keys(),
+                    x = series.x,
+                    y = series.y,
+                    displayKey = keyAxis.display(),
+                    displayValue = valueAxis.display(),
+                    formatFunction,
+                    valueString,
+                    keyDimensions,
+                    valueDimensions,
+                    value;
+
+                // loop through keys and values to measure lengths
+                keys.forEach(function(key) {
+                    if (displayKey) {
+                        formatFunction = x === keyAxis ? x.labelFormat() : y.labelFormat();
+                        valueString = formatFunction(key);
+                        keyDimensions = axisContext.measureText(valueString);
+                        maxKeyWidth = Math.max(keyDimensions.width, maxKeyWidth);
+                    }
+                    if (displayValue) {
+
+                        value = insight.Utils.valueForKey(data, key, series.keyFunction(), series.valueFunction());
+                        formatFunction = y === valueAxis ? y.labelFormat() : x.labelFormat();
+                        valueString = formatFunction(value);
+                        valueDimensions = axisContext.measureText(valueString);
+                        maxValueWidth = Math.max(valueDimensions.width, maxValueWidth);
+                    }
+                });
+
+                // If there was some data, append Axis labels and padding to the max values
+                if (keys.length) {
+
+                    if (displayKey) {
+                        var keyAxisPadding = keyAxis.tickPadding() + keyAxis.tickSize();
+                        var keyAxisLabelWidth = labelContext.measureText(keyAxis.label())
+                            .width;
+                        var axisLabelAdditions = keyAxisPadding + keyAxisLabelWidth + labelPadding;
+
+                        maxKeyWidth = maxKeyWidth + axisLabelAdditions;
+                        keyLabelHeight = lineHeight;
+                    }
+                    if (displayValue) {
+                        var valueAxisPadding = valueAxis.tickPadding() + valueAxis.tickSize();
+                        var valueAxisLabelWidth = labelContext.measureText(valueAxis.label())
+                            .width;
+                        var valueLabelAdditions = valueAxisPadding + valueAxisLabelWidth + labelPadding;
+
+                        maxValueWidth = valueAxis.display() ? maxValueWidth + valueLabelAdditions : maxValueWidth;
+                        valueLabelHeight = lineHeight;
+                    }
+                }
+
+                var maxDimensions = {
+                    "maxKeyWidth": maxKeyWidth,
+                    "maxKeyHeight": keyLabelHeight,
+                    "maxValueWidth": maxValueWidth,
+                    "maxValueHeight": valueLabelHeight
+                };
+
+                //Handle tick rotation
+                if (keyAxis.tickRotation() !== '0') {
+                    //Convert Degrees -> Radians
+                    var xSin = Math.sin(keyAxis.tickRotation() * Math.PI / 180);
+                    var xCos = Math.cos(keyAxis.tickRotation() * Math.PI / 180);
+
+                    maxDimensions.maxKeyWidth = Math.ceil(Math.max(lineHeight * xSin, maxKeyWidth * xCos));
+                    maxDimensions.maxKeyHeight = Math.ceil(Math.max(lineHeight * xCos, maxKeyWidth * xSin));
+                }
+
+                if (valueAxis.tickRotation() !== '0') {
+                    //Convert Degrees -> Radians
+                    var ySin = Math.sin(valueAxis.tickRotation() * Math.PI / 180);
+                    var yCos = Math.cos(valueAxis.tickRotation() * Math.PI / 180);
+
+                    maxDimensions.maxValueWidth = Math.ceil(Math.max(lineHeight * ySin, maxValueWidth * yCos));
+                    maxDimensions.maxValueHeight = Math.ceil(Math.max(lineHeight * yCos, maxValueWidth * ySin));
+                }
+
+                return maxDimensions;
+            };
 
 
-    this.init = function(chart) {
-        initialised = true;
+            /**
+             * Calculates a margin object {top,left,bottom,right} for a chart given a list of series and associated CSS styles
+             * @memberof! insight.MarginMeasurer
+             * @instance
+             * @param {insight.Series[]} seriesArray - An array of Series to calculate dimensions from
+             * @param {DOMElement} measuringCanvas - A canvas element to measure text with
+             * @param {object} axisStyles - An associative map {cssName: value} of styles to apply when measuring axis values (font-size, font-family etc.)
+             * @param {object} labelStyles - An associative map {cssName: value} of styles to apply when measuring axis labels(font-size, font-family etc.)
+             * @returns {object} - margin object {top: Number,left: Number,bottom:Number,right:Number}
+             */
+            self.calculateChartMargins = function(seriesArray, measuringCanvas, axisStyles, labelStyles) {
 
-        //Get rid of any previous legend objects
-        if (chart.legendView !== null) {
-            chart.legendView.removeChild(chart.legendBox);
-            chart.legendView.removeChild(chart.legendItems);
-            chart.chartSVG.removeChild(chart.legendView);
+                labelStyles = labelStyles ? labelStyles : axisStyles;
+
+                var margin = {
+                    "top": 0,
+                    "left": 0,
+                    "bottom": 0,
+                    "right": 0
+                };
+
+                var axisMeasuringContext = insight.Utils.getDrawingContext(measuringCanvas, axisStyles);
+                var labelMeasuringContext = insight.Utils.getDrawingContext(measuringCanvas, labelStyles);
+
+                var lineHeightString = axisStyles['line-height'];
+
+                // remove 'px' from end
+                var lineHeight = insight.Utils.tryParseInt(lineHeightString.slice(0, lineHeightString.length - 2), 16);
+
+                seriesArray.forEach(function(series) {
+                    var keyAxis = series.keyAxis;
+                    var valueAxis = series.valueAxis;
+
+                    var labelDimensions = self.seriesLabelDimensions(series, lineHeight, axisMeasuringContext, labelMeasuringContext);
+
+                    var keyProperty = keyAxis.horizontal() ? 'maxKeyHeight' : 'maxKeyWidth';
+                    var valueProperty = valueAxis.horizontal() ? 'maxValueHeight' : 'maxValueWidth';
+
+                    margin[keyAxis.orientation()] = Math.max(labelDimensions[keyProperty], margin[keyAxis.orientation()]);
+                    margin[valueAxis.orientation()] = Math.max(labelDimensions[valueProperty], margin[valueAxis.orientation()]);
+                });
+
+                return margin;
+            };
         }
 
-        chart.legendView = chart.chartSVG.append("g")
-            .attr("class", insight.Constants.LegendView)
-            .attr("transform", "translate(" + (chart.width() - 80) + ",30)");
 
-        chart.legendBox = chart.legendView.append("rect")
-            .style("stroke", 'black')
-            .style("stroke-width", 1)
-            .style("fill", 'white');
+        return MarginMeasurer;
 
-        chart.legendItems = chart.legendView.append("g")
-            .attr("class", insight.Constants.Legend);
-    };
-
-    this.draw = function(chart) {
-        if (!initialised) {
-            this.init(chart);
-        }
-
-        var series = chart.series();
-
-        var legendHeight = 0;
-        var legendWidth = 0;
-
-        var ctx = chart.measureCanvas.getContext('2d');
-        ctx.font = "12px sans-serif";
-
-        chart.legendItems.selectAll('rect')
-            .data(series)
-            .enter()
-            .append("rect")
-            .attr("x", 5)
-            .attr("y", blobPositionY)
-            .attr("width", 10)
-            .attr("height", 10)
-            .style("fill", blobFillColor);
-
-        chart.legendItems.selectAll('text')
-            .data(series)
-            .enter()
-            .append("text")
-            .attr("x", 20)
-            .attr("y", textPositionY)
-            .attr("width", function(item) {
-                return ctx.measureText(item.name)
-                    .width;
-            })
-            .attr("height", 20)
-            .text(textContent)
-            .attr("font-family", "sans-serif")
-            .attr("font-size", "12px")
-            .attr("fill", "black");
-
-        for (var index = 0; index &lt; series.length; index++) {
-            var seriesTextWidth = ctx.measureText(series[index].name)
-                .width;
-            legendHeight = index * 20 + 20;
-            legendWidth = Math.max(legendWidth, seriesTextWidth + 25);
-        }
-
-        //Adjust legend to tightly wrap items
-        chart.legendBox
-            .attr("width", legendWidth)
-            .attr("height", legendHeight);
-
-        chart.legendItems
-            .attr("width", legendWidth)
-            .attr("height", legendHeight);
-    };
-};
+    })(insight);
+})(insight);
 </code></pre>
         </article>
     </section>

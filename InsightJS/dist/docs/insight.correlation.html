@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Source: charts/Legend.js</title>
+    <title>Namespace: correlation</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -654,120 +654,394 @@
     </ul>
 </div>
     <div class="main">
-        <h1 class="page-title" data-filename="Legend.js.html">Source: charts/Legend.js</h1>
+        <h1 class="page-title" data-filename="insight.correlation.html">Namespace: correlation</h1>
         
 
 
+
+<section>
     
-    <section>
-        <article>
-            <pre class="prettyprint source"><code>/**
- * A Legend listing out the series on a chart
- * @class insight.Legend
- */
-insight.Legend = function Legend() {
+<header>
+    <h2>
+        <span class="ancestors"><a href="insight.html">insight</a>.</span>
+    
+    correlation
+    </h2>
+    
+</header>  
 
-    var initialised = false;
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+            <div class="description">Module for calculating correlation coefficients on pairs of values.</div>
+        
+        
+        
+<dl class="details">
+    
+        
+    
+    
+    
 
-    var blobPositionY = function(item, index) {
-        return index * 20 + 5;
-    };
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
 
-    var blobFillColor = function(item) {
-        return item.color();
-    };
+        
+        
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <h3 class="subsection-title">Methods</h3>
+        
+        <dl>
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="correlation.fromDataSet">
+            
+            <span class="type-signature static">static</span>insight.correlation.correlation.fromDataSet<span class="signature">(dataset, correlationPairs)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{Object}</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="Correlation.js.html">mda/Correlation.js</a>, <a href="Correlation.js.html#line54">line 54</a>
+        </div>
+        
+    </div>
 
-    var textPositionY = function(item, index) {
-        return index * 20 + 14;
-    };
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Calculates the pearson correlation coefficients for all given property pairs in the given dataset.
+    </div>
+    
 
-    var textContent = function(item) {
-        return item.name;
-    };
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>dataset</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">insight.DatSet</span>
+|
+
+<span class="param-type">Array.&lt;Object></span>
 
 
-    this.init = function(chart) {
-        initialised = true;
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The insight.DataSet or
+array to calclulate correlation coefficients for.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>correlationPairs</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Array.&lt;String>></span>
 
-        //Get rid of any previous legend objects
-        if (chart.legendView !== null) {
-            chart.legendView.removeChild(chart.legendBox);
-            chart.legendView.removeChild(chart.legendItems);
-            chart.chartSVG.removeChild(chart.legendView);
-        }
 
-        chart.legendView = chart.chartSVG.append("g")
-            .attr("class", insight.Constants.LegendView)
-            .attr("transform", "translate(" + (chart.width() - 80) + ",30)");
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                An array of pairs of property names to calculate correlation coefficients
+for. Each element of the array must be an array of two strings.</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
 
-        chart.legendBox = chart.legendView.append("rect")
-            .style("stroke", 'black')
-            .style("stroke-width", 1)
-            .style("fill", 'white');
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
 
-        chart.legendItems = chart.legendView.append("g")
-            .attr("class", insight.Constants.Legend);
-    };
+    
+    
 
-    this.draw = function(chart) {
-        if (!initialised) {
-            this.init(chart);
-        }
+    
 
-        var series = chart.series();
+    
+    
+    
+    
+    
+    
+    
 
-        var legendHeight = 0;
-        var legendWidth = 0;
 
-        var ctx = chart.measureCanvas.getContext('2d');
-        ctx.font = "12px sans-serif";
+<h5>Returns:</h5>
+object containing properties for all correlation pairs e.g. { X_Cor_Y: 0.75 }
+<br />
 
-        chart.legendItems.selectAll('rect')
-            .data(series)
-            .enter()
-            .append("rect")
-            .attr("x", 5)
-            .attr("y", blobPositionY)
-            .attr("width", 10)
-            .attr("height", 10)
-            .style("fill", blobFillColor);
+    
+    
+    
+</dd>
 
-        chart.legendItems.selectAll('text')
-            .data(series)
-            .enter()
-            .append("text")
-            .attr("x", 20)
-            .attr("y", textPositionY)
-            .attr("width", function(item) {
-                return ctx.measureText(item.name)
-                    .width;
-            })
-            .attr("height", 20)
-            .text(textContent)
-            .attr("font-family", "sans-serif")
-            .attr("font-size", "12px")
-            .attr("fill", "black");
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="correlation.fromValues">
+            
+            <span class="type-signature static">static</span>insight.correlation.correlation.fromValues<span class="signature">(x, y)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{Number}</span>
+        </h4>
+    
+        
+        <div class="tag-source">
+            <a href="Correlation.js.html">mda/Correlation.js</a>, <a href="Correlation.js.html#line18">line 18</a>
+        </div>
+        
+    </div>
 
-        for (var index = 0; index &lt; series.length; index++) {
-            var seriesTextWidth = ctx.measureText(series[index].name)
-                .width;
-            legendHeight = index * 20 + 20;
-            legendWidth = Math.max(legendWidth, seriesTextWidth + 25);
-        }
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Calculates the pearson correlation coefficient for two arrays of numbers.
+The two arrays must be equal in length and must only contain numbers.
+    </div>
+    
 
-        //Adjust legend to tightly wrap items
-        chart.legendBox
-            .attr("width", legendWidth)
-            .attr("height", legendHeight);
+    
+    
+    
+    
+    
+        
 
-        chart.legendItems
-            .attr("width", legendWidth)
-            .attr("height", legendHeight);
-    };
-};
-</code></pre>
-        </article>
-    </section>
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The x values</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>y</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The y values</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-todo">TODO</dt>
+    <dd class="tag-todo">
+        <ul>
+            <li>Improve handling of dirty data and error logging</li>
+        </ul>
+    </dd>
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+pearson correlation coefficient for two arrays of numbers
+<br />
+
+    
+    
+    
+</dd>
+
+        </dl>
+    
+    
+    
+    
+    
+</article>
+
+</section>  
 
 
 
