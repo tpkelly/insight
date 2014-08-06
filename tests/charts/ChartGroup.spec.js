@@ -370,7 +370,7 @@ describe('Chart Group Tests', function() {
             chartGroup.add(table);
             chartGroup.draw();        
             
-            // filter the data set
+            // filter the series to only include objects where the country is England 
             var filterValue = {key: 'England', value: {}};
             
             chartGroup.chartFilterHandler(series.data, filterValue, 'in_England');
