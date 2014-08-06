@@ -13,15 +13,19 @@ insight.correlation = (function(insight) {
      * @param {Array<Number>} x The x values
      * @param {Array<Number>} y The y values
      * @returns {Number} The pearson correlation coefficient for two arrays of numbers
+     * @todo Improve handling of dirty data and error logging
      */
     correlation.fromValues = function(x, y) {
 
         if (!insight.Utils.isArray(x) || !insight.Utils.isArray(y) ||
-            x.length !== y.length ||
-            x.length === 0) {
+            x.length !== y.length) {
 
-            throw new Error('correlation.fromValues expects two non-empty array parameters of equal length');
+            return undefined;
 
+        }
+
+        if (x.length < 2) {
+            return x.length;
         }
 
         var meanX = mean(x),

@@ -32,8 +32,7 @@ describe('Correlation', function() {
                         36.50619904, -91.19169747, -75.94170661, 31.61356244, 124.6459962, -68.19947738, 143.0487732,
                         203.7841096, 339.4097217, -102.2035722, 227.1428013, 171.3544472, -77.32741018, 40.2348384];
         
-        var paramException = new Error('correlation.fromValues expects two non-empty array parameters of equal length'),
-            nonNumberException = new Error('The correlation data contains non-numeric values.');
+        var nonNumberException = new Error('The correlation data contains non-numeric values.');
         
         it('calcluates expected correlation', function() {
 
@@ -43,66 +42,44 @@ describe('Correlation', function() {
 
         });
         
-        it('exception if no parameters', function() {
+        it('undefined if no parameters', function() {
 
-            // Given
-            var r;
-            
             // When
-            expect(function() {
-                r = insight.correlation.fromValues();
-            })
-            .toThrow(paramException);
+            var r = insight.correlation.fromValues();
 
             // Then
             expect(r).not.toBeDefined();
             
         });
         
-        it('exception if null parameters', function() {
+        it('undefined if null parameters', function() {
 
-            // Given
-            var r;
-            
             // When
-            expect(function() {
-                r = insight.correlation.fromValues(null, null);
-            })
-            .toThrow(paramException);
+            var r = insight.correlation.fromValues(null, null);
 
             // Then
             expect(r).not.toBeDefined();
             
         });
         
-        it('exception if one parameter', function() {
+        it('undefined if one parameter', function() {
             
             // Given
-            var r;
-            
-            // When
-            expect(function() {
-                insight.correlation.fromValues(xValues);
-            })
-            .toThrow(paramException);
+            var r = insight.correlation.fromValues(xValues);
 
             // Then
             expect(r).not.toBeDefined();
 
         });
         
-        it('exception if first parameter not array', function() {
+        it('undefined if first parameter not array', function() {
 
             // Given
-            var notArray = {},
-                r;
+            var notArray = {};
             spyOn(insight.Utils, 'isArray').andCallThrough();
             
             // When
-            expect(function() {
-                insight.correlation.fromValues(notArray, yValues);
-            })
-            .toThrow(paramException);
+            var r = insight.correlation.fromValues(notArray, yValues);
 
             // Then
             expect(r).not.toBeDefined();
@@ -111,19 +88,15 @@ describe('Correlation', function() {
             
         });
         
-        it('exception if second parameter not array', function() {
+        it('undefined if second parameter not array', function() {
 
             // Given
-            var notArray = {},
-                r;
+            var notArray = {};
             spyOn(insight.Utils, 'isArray').andCallThrough();
             
             // When
-            expect(function() {
-                insight.correlation.fromValues(xValues, notArray);
-            })
-            .toThrow(paramException);
-
+            var r = insight.correlation.fromValues(xValues, notArray);
+            
             // Then
             expect(r).not.toBeDefined();
             expect(insight.Utils.isArray).toHaveBeenCalledWith(xValues);
@@ -131,71 +104,33 @@ describe('Correlation', function() {
 
         });
         
-        it('exception if arrays not equal length', function() {
+        it('undefined if arrays not equal length', function() {
 
-            // Given
-            var r;
-            
             // When
-            expect(function() {
-                r = insight.correlation.fromValues([1, 2, 3], [1, 2, 3, 4]);
-            })
-            .toThrow(paramException);
+            var r = insight.correlation.fromValues([1, 2, 3], [1, 2, 3, 4]);
 
+            // Then
             expect(r).not.toBeDefined();
 
         });
     
-        it('NaN if arrays only contain one element', function() {
+        it('1 if arrays only contain one element', function() {
 
+            // When
             var r = insight.correlation.fromValues([3], [1]);
 
-            expect(isNaN(r)).toBe(true);
+            // Then
+            expect(r).toBe(1);
 
         });
         
-        it('exception if first array empty', function() {
+        it('0 if both arrays empty', function() {
 
-            // Given
-            var r;
-            
             // When
-            expect(function() {
-                r = insight.correlation.fromValues([], [1, 2, 3, 4]);
-            })
-            .toThrow(paramException);
+            var r = insight.correlation.fromValues([], []);
 
-            expect(r).not.toBeDefined();
-
-        });
-        
-        it('exception if second array empty', function() {
-
-            // Given
-            var r;
-            
-            // When
-            expect(function() {
-                r = insight.correlation.fromValues([1, 2, 3, 4], []);
-            })
-            .toThrow(paramException);
-
-            expect(r).not.toBeDefined();
-
-        });
-        
-        it('exception if both arrays empty', function() {
-
-            // Given
-            var r;
-            
-            // When
-            expect(function() {
-                r = insight.correlation.fromValues([], []);
-            })
-            .toThrow(paramException);
-
-            expect(r).not.toBeDefined();
+            // Then
+            expect(r).toBe(0);
 
         });
         
