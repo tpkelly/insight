@@ -194,8 +194,6 @@ insight.Grouping = (function(insight) {
 
                 return function() {
 
-                    console.log('correlationReduceRemove called...');
-
                 };
 
             };
