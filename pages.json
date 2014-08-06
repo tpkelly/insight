@@ -23,11 +23,11 @@
         "partialCSS": "examples/css/example.css"
     },    
     {
-        "name": "newcharts",
+        "name": "barsLines",
         "pageName": "Bars & Lines", 
-        "script": "examples/newCharts.js",
+        "script": "examples/barsLines.js",
         "imageUrl": "images/barChart.PNG",
-        "partial": "examples/partials/newCharts.html",
+        "partial": "examples/partials/barsLines.html",
         "partialCSS": "examples/css/example.css"
     },
     {
