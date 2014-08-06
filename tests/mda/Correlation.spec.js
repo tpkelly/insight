@@ -58,6 +58,22 @@ describe('Correlation', function() {
             
         });
         
+        it('exception if null parameters', function() {
+
+            // Given
+            var r;
+            
+            // When
+            expect(function() {
+                r = insight.correlation.fromValues(null, null);
+            })
+            .toThrow(paramException);
+
+            // Then
+            expect(r).not.toBeDefined();
+            
+        });
+        
         it('exception if one parameter', function() {
             
             // Given
@@ -139,18 +155,87 @@ describe('Correlation', function() {
         
     });
         
-    describe(fromDataSet, function() {
+    describe('fromDataSet', function() {
        
+        var noDataSet = new Error('correlation.fromDataSet expects an insight.DataSet or Array');
+        
+        it('exception if no arguments', function() {
+        
+            // Given
+            var result;
+            
+            // When
+            expect(function() {
+                result = insight.correlation.fromDataSet();
+            })
+            .toThrow(noDataSet);
+            
+            // Then
+            expect(result).not.toBeDefined();
+            
+        });
+        
+        it('exception if only argument is null', function() {
+        
+            // Given
+            var result;
+            
+            // When
+            expect(function() {
+                result = insight.correlation.fromDataSet(null);
+            })
+            .toThrow(noDataSet);
+            
+            // Then
+            expect(result).not.toBeDefined();
+            
+        });
+        
+        it('exception if first argument is null', function() {
+        
+            // Given
+            var result;
+            
+            // When
+            expect(function() {
+                result = insight.correlation.fromDataSet(null, []);
+            })
+            .toThrow(noDataSet);
+            
+            // Then
+            expect(result).not.toBeDefined();
+            
+        });
+        
+        it('exception if first not insight.DataSet or Array', function() {
+        
+            // Given
+            var result;
+            
+            // When
+            expect(function() {
+                result = insight.correlation.fromDataSet({}, []);
+            })
+            .toThrow(noDataSet);
+            
+            // Then
+            expect(result).not.toBeDefined();
+            
+        });
+        
         it('calculates correlation of given pairs', function() {
        
+            // Given
             var dataset = new insight.DataSet(sourceData);
 
-            var xFunction = function(d) { return d.IQ; };
-            var yFunction = function(d) { return d.Age; };
+            // When
+            var result = insight.correlation.fromDataSet(dataset, [['IQ', 'Age'], ['Id', 'Age']]);
 
-            var r = insight.correlation.fromDataSet(dataset, [[xFunction, yFunction]]);
-
-            expect(r).toBeCloseTo(-0.1246);
+            // Then
+            expect(result.IQ_Cor_Age).toBeCloseTo(-0.1246);
+            expect(result.Age_Cor_IQ).toBeCloseTo(-0.1246);
+            expect(result.Id_Cor_Age).toBeCloseTo(0.0712);
+            expect(result.Age_Cor_Id).toBeCloseTo(0.0712);
 
         });
         

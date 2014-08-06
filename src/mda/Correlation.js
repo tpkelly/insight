@@ -26,10 +26,64 @@ insight.correlation = (function(insight) {
 
         fromDataSet: function(dataset, correlationPairs) {
 
+            var dataArray = getArray(dataset),
+                propertyValues = {},
+                results = {};
 
+            correlationPairs.forEach(function(pair) {
+
+                var x = pair[0],
+                    y = pair[1],
+                    r;
+
+                addPropertyArrays(dataArray, propertyValues, [x, y]);
+
+                r = insight.correlation.fromValues(propertyValues[x], propertyValues[y]);
+                results[correlationPropertyName(x, y)] = r;
+                results[correlationPropertyName(y, x)] = r;
+
+            });
+
+            return results;
 
         }
     };
+
+    function correlationPropertyName(x, y) {
+
+        return x + '_Cor_' + y;
+
+    }
+
+    function addPropertyArrays(dataArray, container, propertyNames) {
+
+        propertyNames.forEach(function(propertyName) {
+
+            if (!container.hasOwnProperty(propertyName)) {
+
+                container[propertyName] = dataArray.map(function(d) {
+                    return d[propertyName];
+                });
+
+            }
+
+        });
+
+    }
+
+    function getArray(obj) {
+
+        if (obj instanceof insight.DataSet) {
+            return obj.getData();
+        }
+
+        if (!insight.Utils.isArray(obj)) {
+            throw new Error('correlation.fromDataSet expects an insight.DataSet or Array');
+        }
+
+        return obj;
+
+    }
 
     function sum(array) {
 
