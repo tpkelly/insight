@@ -400,9 +400,7 @@ insight.Grouping = (function(insight) {
 
         /*
          * This aggregation method is tailored to dimensions that can hold multiple values (in an array), therefore they are counted differently.
-         * For example: a property called supportedDevices : ['
-            iPhone5 ', '
-            iPhone4 '] where the values inside the array are treated as dimensional slices
+         * For example: a property called supportedDevices : ['iPhone5 ', 'iPhone4 '] where the values inside the array are treated as dimensional slices
          * @returns {object[]} return - the array of dimensional groupings resulting from this dimensional aggregation
          */
         var reduceMultidimension = function() {
