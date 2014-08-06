@@ -109,7 +109,7 @@ insight.Grouping = (function(insight) {
             /*
              * Returns a property name for the deviation product array used in the correlation workings
              */
-            var deviationProductName = function(xName, yName) {
+            var deviationProductNameFunction = function(xName, yName) {
 
                 return xName + '_' + yName + '_DeviationProduct';
 
@@ -174,7 +174,7 @@ insight.Grouping = (function(insight) {
                             yName = pair[1],
                             xDeviation = insight.Utils.lastElement(workings[xName].deviation),
                             yDeviation = insight.Utils.lastElement(workings[yName].deviation),
-                            correlationName = deviationProductName(xName, yName);
+                            correlationName = deviationProductNameFunction(xName, yName);
 
                         if (!workings[correlationName]) {
                             workings[correlationName] = [];
@@ -221,7 +221,7 @@ insight.Grouping = (function(insight) {
 
                     var xName = pair[0];
                     var yName = pair[1];
-                    var deviationProductName = xName + '_' + yName + '_DeviationProduct';
+                    var deviationProductName = deviationProductNameFunction(xName, yName);
                     var sumDeviationProduct = sum(d.value[deviationProductName]);
                     var sumXDeviationSquared = sum(d.value[xName].deviationSquared);
                     var sumYDeviationSquared = sum(d.value[yName].deviationSquared);
