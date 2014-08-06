@@ -10,6 +10,7 @@
 insight.Series = function Series(name, data, x, y, color) {
 
     this.data = data;
+    this.usesCrossfilter = (data instanceof insight.DataSet) || (data instanceof insight.Grouping);
     this.x = x;
     this.y = y;
     this.name = name;
@@ -17,24 +18,19 @@ insight.Series = function Series(name, data, x, y, color) {
     this.animationDuration = 300;
     this.topValues = null;
     this.classValues = [];
-    this.valueAxis = x;
-    this.keyAxis = y;
+    this.valueAxis = y;
+    this.keyAxis = x;
     this.selectedItems = [];
 
     x.addSeries(this);
     y.addSeries(this);
 
-    if (data.registerSeries) {
-        data.registerSeries(this);
-    }
-
-    var self = this;
-    var filter = null;
-    var tooltipOffset = {
-        x: 0,
-        y: -10
-    };
-
+    var self = this,
+        filter = null,
+        tooltipOffset = {
+            x: 0,
+            y: -10
+        };
 
     // private functions used internally, set by functions below that are exposed on the object
 
@@ -46,8 +42,13 @@ insight.Series = function Series(name, data, x, y, color) {
         return d.value;
     };
 
+    // default x and y to vertical.  Series can override this if needed in their constructors.
     var xFunction = function(d) {
-        return d.key;
+        return d.x;
+    };
+
+    var yFunction = function(d) {
+        return d.y;
     };
 
     var tooltipFormat = function(d) {
@@ -63,7 +64,7 @@ insight.Series = function Series(name, data, x, y, color) {
     };
 
     /*
-     * This function is used when individual chart items are being drawn, to check whether they should be marked as selected or not.
+     * Checks whether individual chart items should be marked as selected or not.
      * @memberof insight.Series
      * @returns {string} selectionClass - A string that is used by CSS highlighting to style the chart item.
      * @param {string[]}selectedItems - A list of CSS selectors for currently selected items
@@ -73,7 +74,7 @@ insight.Series = function Series(name, data, x, y, color) {
         var selected = '';
 
         if (selectedItems.length) {
-            selected = selectedItems.indexOf(selector) != -1 ? ' selected' : ' notselected';
+            selected = insight.Utils.arrayContains(selectedItems, selector) ? ' selected' : ' notselected';
         }
 
         return selected;
@@ -81,7 +82,7 @@ insight.Series = function Series(name, data, x, y, color) {
 
 
     /*
-     * This function generates the base class name to be used for items in this series.It can be extended upon by individual items to show
+     * Generates the base class name to be used for items in this series.It can be extended upon by individual items to show
      * if they are selected or to mark them out in other ways.
      * @memberof insight.Series
      * @returns {string} baseClassName - A root valuefor the class attribute used for items in this Series.
@@ -95,8 +96,26 @@ insight.Series = function Series(name, data, x, y, color) {
     };
 
 
+    var arrayDataSet = function(orderFunction, topValues) {
+
+        // Take a shallow copy of the data array
+        var data = self.data.slice(0);
+
+        if (orderFunction) {
+            data = data.sort(orderFunc);
+        }
+        if (topValues) {
+            data = data.slice(0, top);
+        }
+
+        return data;
+    };
+
+
+    // Public methods
+
     /*
-     * This function constructs the text for the class attribute for a specific data point, using the base value for this Series and any additional values.
+     * Constructs the text for the class attribute for a specific data point, using the base value for this Series and any additional values.
      * @memberof insight.Series
      * @param {object} dataItem - The data item being drawn
      * @param {string[]} additionalClasses - Any additional values this Series needs appending to the class value.Used by stacked Series to differentiate between Series.
@@ -104,18 +123,15 @@ insight.Series = function Series(name, data, x, y, color) {
      */
     this.itemClassName = function(dataItem, additionalClasses) {
 
-        var keySelector = insight.Utils.keySelector(dataItem);
+        var keySelector = insight.Utils.keySelector(keyFunction(dataItem));
         var selected = selectedClassName(self.selectedItems, keySelector);
         var value = self.rootClassName + ' ' + keySelector + selected;
 
         return value;
     };
 
-
-    // Public methods
-
     /**
-     * The function used to retrieve the x-value from the data object to plot on a chart.
+     * Gets the function used to retrieve the x-value from the data object to plot on a chart.
      * @memberof! insight.Series
      * @instance
      * @returns {function} The current function used to extract the x-value.
@@ -138,7 +154,7 @@ insight.Series = function Series(name, data, x, y, color) {
     };
 
     /**
-     * The function used to retrieve the y-value from the data object to plot on a chart.
+     * Gets the y-value from the data object to plot on a chart.
      * @memberof! insight.Series
      * @instance
      * @returns {function} The current function used to extract the y-value.
@@ -161,23 +177,22 @@ insight.Series = function Series(name, data, x, y, color) {
     };
 
     /**
-     * This method returns the array of data objects used to plot this Series.
+     * Returns the array of data objects used to plot this Series.
      * @memberof! insight.Series
      * @instance
      * @returns {object[]} - The data set to be used by the series
      */
-    this.dataset = function() {
+    this.dataset = function(orderFunction) {
 
-        var orderFunction = null;
-
-        if (this.valueAxis.ordered()) {
+        // If the keyAxis is ordered but no function has been provided, create one based on the Series' valueFunction
+        if (self.keyAxis.ordered() && !orderFunction) {
 
             orderFunction = function(a, b) {
                 return self.valueFunction()(b) - self.valueFunction()(a);
             };
         }
 
-        var data = this.data.getData(orderFunction, this.topValues);
+        var data = this.usesCrossfilter ? self.data.getData(orderFunction, self.topValues) : arrayDataSet(orderFunction, self.topValues);
 
         if (filter) {
             data = data.filter(filter);
@@ -186,15 +201,9 @@ insight.Series = function Series(name, data, x, y, color) {
         return data;
     };
 
-    this.keys = function() {
-        return this.dataset()
+    this.keys = function(orderFunction) {
+        return this.dataset(orderFunction)
             .map(self.keyFunction());
-    };
-
-
-
-    this.keyAccessor = function(d) {
-        return d.key;
     };
 
     this.xFunction = function(_) {
@@ -204,6 +213,16 @@ insight.Series = function Series(name, data, x, y, color) {
         xFunction = _;
 
         return this;
+    };
+
+    this.yFunction = function(_) {
+        if (!arguments.length) {
+            return yFunction;
+        }
+        yFunction = _;
+
+        return this;
+
     };
 
     /**
@@ -230,8 +249,8 @@ insight.Series = function Series(name, data, x, y, color) {
     };
 
     /*
-     * This method creates the tooltip for this Series, checking if it exists already first.
-     * @memberof insight.Series
+     * Creates the tooltip for this Series, checking if it exists already first.
+     * @memberof! insight.Series
      * @param {DOMElement} container - The DOM Element that the tooltip should be drawn inside.
      */
     this.initializeTooltip = function(container) {
@@ -245,7 +264,7 @@ insight.Series = function Series(name, data, x, y, color) {
     /*
      * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouse over. Tooltips are shown and CSS updated.
      * The *this* context will reference the DOMElement raising the event.
-     * @memberof insight.Series
+     * @memberof! insight.Series
      * @param {object} item - The data point for the hovered item.
      * @param {int} index - The index of the hovered item in the data set.  This is required at the moment as we need to provide the valueFunction until stacked series are refactored.
      * @param {function} valueFunction - If provided, this function will be used to generate the tooltip text, otherwise the series default valueFunction will be used.
@@ -265,7 +284,7 @@ insight.Series = function Series(name, data, x, y, color) {
     /*
      * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouseout event. Tooltips are hidden and CSS updated.
      * The *this* context will reference the DOMElement raising the event.
-     * @memberof insight.Series
+     * @memberof! insight.Series
      */
     this.mouseOut = function() {
 
@@ -277,11 +296,10 @@ insight.Series = function Series(name, data, x, y, color) {
 
 
 
-    this.click = function(element, filter) {
+    this.click = function(element, filterBy) {
+        var filterValue = keyFunction(filterBy);
 
-        var selector = insight.Utils.keySelector(filter);
-
-        this.clickEvent(this, filter, selector);
+        self.clickEvent(self.data, filterValue);
     };
 
     this.filterFunction = function(_) {
@@ -320,67 +338,7 @@ insight.Series = function Series(name, data, x, y, color) {
         return this;
     };
 
-    this.maxLabelDimensions = function(measureCanvas) {
 
-        var sampleText = document.createElement('text');
-        sampleText.setAttribute('class', insight.Constants.AxisTextClass);
-        var style = window.getComputedStyle(sampleText);
-        var ctx = measureCanvas.getContext('2d');
-        ctx.font = style['font-size'] + ' ' + style['font-family'];
-
-        var fontSize = 0;
-
-        var maxValueWidth = 0;
-        var maxKeyWidth = 0;
-
-        var data = this.dataset();
-
-        this.keys()
-            .forEach(function(key) {
-                var value = insight.Utils.valueForKey(data, key, keyFunction, valueFunction);
-
-                var keyFormat = self.x.labelFormat();
-                var valueFormat = self.y.labelFormat();
-
-                var keyString = keyFormat(key);
-                var valueString = valueFormat(value);
-
-                var keyDimensions = ctx.measureText(keyString);
-                var valueDimensions = ctx.measureText(valueString);
-
-                maxKeyWidth = Math.max(keyDimensions.width, maxKeyWidth);
-                maxValueWidth = Math.max(valueDimensions.width, maxValueWidth);
-                fontSize = Math.ceil(style['font-size']) || 10;
-            });
-
-        var maxDimensions = {
-            "maxKeyWidth": maxKeyWidth,
-            "maxKeyHeight": fontSize,
-            "maxValueWidth": maxValueWidth,
-            "maxValueHeight": fontSize
-        };
-
-        //Handle tick rotation
-        if (x.tickRotation() !== '0') {
-            //Convert Degrees -> Radians
-            var xSin = Math.sin(x.tickRotation() * Math.PI / 180);
-            var xCos = Math.cos(x.tickRotation() * Math.PI / 180);
-
-            maxDimensions.maxKeyWidth = Math.ceil(Math.max(fontSize * xSin, maxKeyWidth * xCos));
-            maxDimensions.maxKeyHeight = Math.ceil(Math.max(fontSize * xCos, maxKeyWidth * xSin));
-        }
-
-        if (y.tickRotation() !== '0') {
-            //Convert Degrees -> Radians
-            var ySin = Math.sin(y.tickRotation() * Math.PI / 180);
-            var yCos = Math.cos(y.tickRotation() * Math.PI / 180);
-
-            maxDimensions.maxValueWidth = Math.ceil(Math.max(fontSize * ySin, maxValueWidth * yCos));
-            maxDimensions.maxValueHeight = Math.ceil(Math.max(fontSize * yCos, maxValueWidth * ySin));
-        }
-
-        return maxDimensions;
-    };
 
     /**
      * Extracts the minimum value on an axis for this series.
@@ -394,7 +352,7 @@ insight.Series = function Series(name, data, x, y, color) {
 
         var data = this.dataset();
 
-        var func = scale == self.x ? self.keyFunction() : self.valueFunction();
+        var func = scale === self.x ? self.keyFunction() : self.valueFunction();
 
         return d3.min(data, func);
     };
@@ -411,7 +369,7 @@ insight.Series = function Series(name, data, x, y, color) {
 
         var data = this.dataset();
 
-        var func = scale == self.x ? self.keyFunction() : self.valueFunction();
+        var func = scale === self.x ? self.keyFunction() : self.valueFunction();
 
         return d3.max(data, func);
     };

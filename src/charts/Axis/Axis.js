@@ -40,7 +40,7 @@ insight.Axis = function Axis(name, scale) {
 
     var textAnchor = function() {
         var orientation = self.orientation();
-        if (orientation == 'left' || orientation == 'top') {
+        if (orientation === 'left' || orientation === 'top') {
             return 'end';
         } else {
             return 'start';
@@ -88,8 +88,11 @@ insight.Axis = function Axis(name, scale) {
     var findOrdinalValues = function() {
         var vals = [];
 
+        // Build a list of values used by this axis by checking all Series using this axis
+        // Optionally provide an ordering function to sort the results by.  If the axis is ordered but no custom ordering is defined,
+        // then the series value function will be used by default.
         self.series.map(function(series) {
-            vals = vals.concat(series.keys());
+            vals = vals.concat(series.keys(self.orderingFunction()));
         });
 
         vals = insight.Utils.arrayUnique(vals);
@@ -137,7 +140,7 @@ insight.Axis = function Axis(name, scale) {
      * @returns {boolean} - Whether the axis is horizontal.
      */
     this.horizontal = function() {
-        return this.direction == 'h';
+        return this.direction === 'h';
     };
 
     /**
@@ -164,7 +167,7 @@ insight.Axis = function Axis(name, scale) {
 
     this.orderingFunction = function(value) {
         if (!arguments.length) {
-            return orderingFunction();
+            return orderingFunction;
         }
         orderingFunction = value;
         return this;
@@ -187,11 +190,11 @@ insight.Axis = function Axis(name, scale) {
     this.domain = function() {
         var domain = [];
 
-        if (this.scaleType == insight.Scales.Linear.name) {
+        if (this.scaleType === insight.Scales.Linear.name) {
             domain = [0, findMax()];
-        } else if (this.scaleType == insight.Scales.Ordinal.name) {
+        } else if (this.scaleType === insight.Scales.Ordinal.name) {
             domain = findOrdinalValues();
-        } else if (this.scaleType == insight.Scales.Time.name) {
+        } else if (this.scaleType === insight.Scales.Time.name) {
             domain = [new Date(findMin()), new Date(findMax())];
         }
 
@@ -394,7 +397,7 @@ insight.Axis = function Axis(name, scale) {
 
     this.tickRotationTransform = function() {
         var offset = self.tickPadding() + (self.tickSize() * 2);
-        offset = (reversedPosition && self.vertical()) ? 0 - offset : offset;
+        offset = (reversedPosition && !self.horizontal()) ? 0 - offset : offset;
 
         var rotation = ' rotate(' + self.tickRotation() + ',0,' + offset + ')';
 
@@ -407,12 +410,12 @@ insight.Axis = function Axis(name, scale) {
 
         if (self.horizontal()) {
             var transX = 0;
-            var transY = self.orientation() == 'top' ? 0 : self.bounds[1];
+            var transY = self.orientation() === 'top' ? 0 : self.bounds[1];
 
             transform += transX + ',' + transY + ')';
 
         } else {
-            var xShift = self.orientation() == 'left' ? 0 : self.bounds[0];
+            var xShift = self.orientation() === 'left' ? 0 : self.bounds[0];
             transform += xShift + ',0)';
         }
 

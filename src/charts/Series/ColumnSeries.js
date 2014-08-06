@@ -13,7 +13,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
     var self = this,
         stacked = d3.functor(false),
-        seriesName = "",
+        seriesName = '',
         seriesFunctions = {},
         barWidthFunction = this.x.rangeType;
 
@@ -33,7 +33,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
 
     var tooltipFunction = function(d) {
-        var func = self.currentSeries.accessor;
+        var func = self.currentSeries.valueFunction;
         return self.tooltipFormat()(func(d));
     };
 
@@ -71,7 +71,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
      * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
      */
     this.findMax = function() {
-        var max = d3.max(this.data.getData(), this.seriesMax);
+        var max = d3.max(self.dataset(), self.seriesMax);
 
         return max;
     };
@@ -124,7 +124,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
     this.yPosition = function(d) {
 
-        var func = self.currentSeries.accessor;
+        var func = self.currentSeries.valueFunction;
 
         var position = self.stackedBars() ? self.y.scale(self.calculateYPos(func, d)) : self.y.scale(func(d));
 
@@ -143,7 +143,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
         var groupWidth = self.barWidth(d);
 
-        var width = self.stackedBars() || (self.series.length == 1) ? groupWidth : groupWidth / self.series.length;
+        var width = self.stackedBars() || (self.series.length === 1) ? groupWidth : groupWidth / self.series.length;
 
         return width;
     };
@@ -204,7 +204,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
         var groups = chart.plotArea
             .selectAll(groupSelector)
-            .data(data, self.keyAccessor);
+            .data(data, self.keyFunction());
 
         var newGroups = groups.enter()
             .append('g')
@@ -213,7 +213,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
         var newBars = newGroups.selectAll(barSelector);
 
         var barHeight = function(d) {
-            var func = self.currentSeries.accessor;
+            var func = self.currentSeries.valueFunction;
 
             return (chart.height() - chart.margin()
                 .top - chart.margin()
@@ -225,7 +225,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
             self.currentSeries = self.series[seriesIndex];
 
             seriesName = self.currentSeries.name;
-            seriesFunctions[seriesName] = self.currentSeries.accessor;
+            seriesFunctions[seriesName] = self.currentSeries.valueFunction;
 
             var seriesSelector = '.' + seriesName + 'class.' + insight.Constants.BarClass;
 

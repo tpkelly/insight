@@ -24,11 +24,9 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
         if (vertical) {
             pos = self.x.scale(self.keyFunction()(d));
 
-            if (!offset) {
-                offset = self.calculateOffset(d);
-            }
+            offset = self.calculateOffset(d);
 
-            pos = widthFactor != 1 ? pos + offset : pos;
+            pos = widthFactor !== 1 ? pos + offset : pos;
         } else {
             pos = self.x.scale(self.valueFunction()(d));
 
@@ -61,11 +59,9 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
         if (horizontal) {
             position = self.y.scale(self.keyFunction()(d));
 
-            if (!offset) {
-                offset = self.calculateOffset(d);
-            }
+            offset = self.calculateOffset(d);
 
-            position = widthFactor != 1 ? position + offset : position;
+            position = widthFactor !== 1 ? position + offset : position;
 
         } else {
             position = self.y.scale(self.valueFunction()(d));

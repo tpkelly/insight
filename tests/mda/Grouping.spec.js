@@ -88,7 +88,7 @@ describe('Grouping tests', function() {
         var data = group.getData();
         
         //filter age by people older than 10, to remove an entry from the scotland group
-        age.dimension.Dimension.filter(function(d){
+        age.dimension.crossfilterDimension.filter(function(d){
             return d > 10;
         });
 
@@ -216,7 +216,7 @@ describe('Grouping tests', function() {
         expect(scotland.value.Interests.Total).toBe(9);
 
         //filter age by people older than 10, to remove an entry from the scotland group and hopefully trigger a recalculation of the property counts
-        age.dimension.Dimension.filter(function(d){
+        age.dimension.crossfilterDimension.filter(function(d){
             return d > 10;
         });
 
@@ -249,7 +249,7 @@ describe('Grouping tests', function() {
         expect(ballet.value).toBe(1);
         expect(triathlon.value).toBe(11);        
 
-        age.dimension.Dimension.filter(function(d){ 
+        age.dimension.crossfilterDimension.filter(function(d){ 
             return d > 10; 
         });
 
@@ -288,7 +288,7 @@ describe('Grouping tests', function() {
             current = d.value;
         });
 
-        age.dimension.Dimension.filter(function(d){ 
+        age.dimension.crossfilterDimension.filter(function(d){ 
             return d > 10; 
         });
 
@@ -306,6 +306,44 @@ describe('Grouping tests', function() {
             expect(d.value <= current).toBe(true);
             current = d.value;
         });
+
+    });
+
+    it('will allow custom post aggregation steps', function() {
+        
+        // Given
+        var data = new insight.DataSet(sourceData);
+
+        var countryGroup =  data.group('countryGroup', function(d){ return d.Country; })
+                                .sum(['IQ']);
+       
+        var postAggregation = function(group) {
+            var total = 0;
+
+                           
+            group.getData()
+                .forEach(function(d)
+                {
+                    d.value.IQ.PlusOne = d.value.IQ.Sum + 1;
+                });
+        };
+
+        // When
+        
+        countryGroup.postAggregation(postAggregation)
+
+        var dataArray = countryGroup.getData();
+
+        // Then
+
+        var actualData = dataArray.map(function(entry){ return entry.value.IQ.Sum; });
+        var plusOneData = dataArray.map(function(entry){ return entry.value.IQ.PlusOne; });
+        
+        var expectedData = [589, 418, 268, 341];
+        var expectedPlusOneData = [590, 419, 269, 342];
+        
+        expect(actualData).toEqual(expectedData);
+        expect(plusOneData).toEqual(expectedPlusOneData);
 
     });
 

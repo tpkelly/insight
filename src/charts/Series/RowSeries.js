@@ -16,8 +16,8 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
         seriesName = '',
         seriesFunctions = {};
 
-    this.valueAxis = y;
-    this.keyAxis = x;
+    this.valueAxis = x;
+    this.keyAxis = y;
     this.classValues = [insight.Constants.BarClass];
 
     this.series = [{
@@ -32,7 +32,8 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
         label: 'Value'
     }];
 
-    /*
+
+    /**
      * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
      * This function is mapped across the entire data array by the findMax method.
      * @memberof! insight.RowSeries
@@ -67,7 +68,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
      * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
      */
     this.findMax = function() {
-        var max = d3.max(this.data.getData(), this.seriesMax);
+        var max = d3.max(self.dataset(), self.seriesMax);
 
         return max;
     };
@@ -120,7 +121,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
 
     this.xPosition = function(d) {
 
-        var func = self.currentSeries.accessor;
+        var func = self.currentSeries.valueFunction;
 
         var position = self.stacked() ? self.x.scale(self.calculateXPos(func, d)) : 0;
 
@@ -135,7 +136,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
 
         var groupThickness = self.barThickness(d);
 
-        var width = self.stacked() || (self.series.length == 1) ? groupThickness : groupThickness / self.series.length;
+        var width = self.stacked() || (self.series.length === 1) ? groupThickness : groupThickness / self.series.length;
 
         return width;
     };
@@ -148,7 +149,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
     };
 
     this.barWidth = function(d) {
-        var func = self.currentSeries.accessor;
+        var func = self.currentSeries.valueFunction;
 
         return self.x.scale(func(d));
     };
@@ -194,7 +195,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
 
         var groups = chart.plotArea
             .selectAll(groupSelector)
-            .data(data, this.keyAccessor);
+            .data(data, this.keyvalueFunction);
 
 
         var newGroups = groups.enter()
@@ -216,7 +217,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
             this.currentSeries = this.series[seriesIndex];
 
             seriesName = this.currentSeries.name;
-            seriesFunctions[seriesName] = this.currentSeries.accessor;
+            seriesFunctions[seriesName] = this.currentSeries.valueFunction;
 
             var seriesSelector = '.' + seriesName + 'class.' + insight.Constants.BarClass;
 

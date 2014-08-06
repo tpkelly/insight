@@ -3,7 +3,9 @@ module.exports = function(grunt) {
     'src/insight-dependencies.js', 
     'src/Insight.js', 
     'src/utils/*.js', 
+    'src/tests/**/*.spec.js',
     'src/mda/*.js', 
+    'src/charts/ChartGroup.js',
     'src/charts/Chart.js',
     'src/charts/Table.js',
     'src/charts/Tooltip.js',
@@ -51,6 +53,8 @@ module.exports = function(grunt) {
     jshint: {
         files: ['Gruntfile.js', 'src/**/*.js', 'examples/*/*.js','!examples/lib/*.js', '!examples/js/*.js' ],
       options: {
+        eqeqeq: true,
+        eqnull: true,
         // options here to override JSHint defaults
         globals: {
           jQuery: true,
@@ -61,11 +65,12 @@ module.exports = function(grunt) {
       }
     },
   "jsbeautifier" : {
-    files : ["src/**/*.js"],
+    files : sourceFiles,
     options:
     {
       js:
       {
+        fileTypes: ['.spec.js'],
         braceStyle: 'collapse',
         indentChart: ' ',
         indentSize: 4,
@@ -128,18 +133,7 @@ module.exports = function(grunt) {
             }
         }
     },
-    clean: ["dist/docs/"],
-    compress: {
-        zip: {
-            options: {
-                archive: './insight.js.zip',
-                mode: 'zip'
-            },
-            files: [
-                {src: './dist/**', dest:'InsightJS/'},
-                {src: 'Changelog.txt', dest:'InsightJS/'}]
-        }
-    }
+    clean: ["dist/docs/"]
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -149,13 +143,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-open');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-jsbeautifier');
   grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-contrib-clean');
 
-  grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'cssmin', 'clean', 'jsdoc', 'compress']);
+  grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'cssmin', 'clean', 'jsdoc']);
   grunt.registerTask('default', ['deploy', 'connect:server','open','watch']);
 };

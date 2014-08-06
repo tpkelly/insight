@@ -16,13 +16,6 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
         self = this,
         selector = this.name + insight.Constants.Scatter;
 
-    var xFunction = function(d) {
-        return d.x;
-    };
-
-    var yFunction = function(d) {
-        return d.y;
-    };
 
     this.findMax = function(scale) {
         var self = this;
@@ -30,7 +23,7 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
         var max = 0;
         var data = this.data.getData();
 
-        var func = scale == self.x ? self.xFunction() : self.yFunction();
+        var func = scale === self.x ? self.xFunction() : self.yFunction();
 
         var m = d3.max(data, func);
 
@@ -39,25 +32,6 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
         return max;
     };
 
-    this.yFunction = function(_) {
-        if (!arguments.length) {
-            return yFunction;
-        }
-        yFunction = _;
-
-        return this;
-
-    };
-
-    this.xFunction = function(_) {
-        if (!arguments.length) {
-            return xFunction;
-        }
-        xFunction = _;
-
-        return this;
-
-    };
 
     this.rangeY = function(d) {
         return self.y.scale(self.yFunction()(d));
@@ -112,8 +86,8 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
         var max = d3.max(data, radiusFunction);
 
         //Minimum of pixels-per-axis-unit
-        var xValues = data.map(xFunction);
-        var yValues = data.map(yFunction);
+        var xValues = data.map(self.xFunction());
+        var yValues = data.map(self.yFunction());
         var xBounds = this.x.bounds[1];
         var yBounds = this.y.bounds[0];
 
@@ -141,7 +115,7 @@ insight.ScatterSeries = function ScatterSeries(name, data, x, y, color) {
         var scatterData = this.scatterData(this.dataset());
 
         var points = chart.plotArea.selectAll('circle.' + selector)
-            .data(scatterData);
+            .data(scatterData, self.keyFunction());
 
         points.enter()
             .append('circle')
