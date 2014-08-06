@@ -64,5 +64,5 @@ $(document)
 
         chart.series([series, targets]);
 
-        insight.drawCharts();
+        chart.draw();
     });

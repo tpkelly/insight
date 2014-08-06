@@ -19,14 +19,12 @@
  $(document)
      .ready(function()
      {
-         var dataset = new insight.DataSet(data);
 
          var chart = new insight.Chart('Chart 1', '#exampleChart')
              .width(450)
-             .height(400)
-             .autoMargin(true);
+             .height(400);
 
-         var x = new insight.Axis('Country', insight.Scales.Ordinal)
+         var x = new insight.Axis('', insight.Scales.Ordinal)
              .tickOrientation('tb');
 
          var y = new insight.Axis('Population', insight.Scales.Linear)
@@ -36,14 +34,17 @@
          chart.xAxis(x);
          chart.yAxis(y);
 
-         var series = new insight.ColumnSeries('countryColumn', dataset, x, y, '#3498db')
+         var series = new insight.ColumnSeries('countryColumn', data, x, y, '#3498db')
              .valueFunction(function(d)
              {
                  return d.value;
              })
-             .tooltipFormat(insight.Formatters.currencyFormatter);
+             .tooltipFormat(function(d)
+             {
+                 return d + 'kajdlajdl';
+             })
 
          chart.series([series]);
 
-         insight.drawCharts();
+         chart.draw();
      });

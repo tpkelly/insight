@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Source: charts/Series/ColumnSeries.js</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <script src="scripts/jquery.min.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jaguar.css">
+    
+    
+    <script>
+    var config = {"monospaceLinks":false,"cleverLinks":false,"default":{"outputSourceFiles":true}};
+    </script>
+    
+
+    
+</head>
+<body>
+<div id="wrap" class="clearfix">
+    
+<div class="navigation">
+    <h3 class="applicationName"><a href="index.html"></a></h3>
+
+    <div class="search">
+        <input id="search" type="text" class="form-control input-sm" placeholder="Search Documentations">
+    </div>
+    <ul class="list">
+    
+        <li class="item" data-name="insight">
+            <span class="title">
+                <a href="insight.html">insight</a>
+                
+                <span class="static">static</span>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.correlation">
+            <span class="title">
+                <a href="insight.correlation.html">insight.correlation</a>
+                
+                <span class="static">static</span>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.correlation.correlation.fromDataSet"><a href="insight.correlation.html#correlation.fromDataSet">correlation.fromDataSet</a></li>
+            
+                <li data-name="insight.correlation.correlation.fromValues"><a href="insight.correlation.html#correlation.fromValues">correlation.fromValues</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.Utils">
+            <span class="title">
+                <a href="insight.Utils.html">insight.Utils</a>
+                
+                <span class="static">static</span>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.Utils.exports.addToSet"><a href="insight.Utils.html#exports.addToSet">exports.addToSet</a></li>
+            
+                <li data-name="insight.Utils.exports.arrayContains"><a href="insight.Utils.html#exports.arrayContains">exports.arrayContains</a></li>
+            
+                <li data-name="insight.Utils.recursiveSort"><a href="insight.Utils.html#recursiveSort">recursiveSort</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.Axis">
+            <span class="title">
+                <a href="insight.Axis.html">insight.Axis</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.Axis.this.horizontal"><a href="insight.Axis.html#this.horizontal">this.horizontal</a></li>
+            
+                <li data-name="insight.Axis#this.calculateAxisBounds"><a href="insight.Axis.html##this.calculateAxisBounds">#this.calculateAxisBounds</a></li>
+            
+                <li data-name="insight.Axis#this.color"><a href="insight.Axis.html##this.color">#this.color</a></li>
+            
+                <li data-name="insight.Axis#this.color"><a href="insight.Axis.html##this.color">#this.color</a></li>
+            
+                <li data-name="insight.Axis#this.display"><a href="insight.Axis.html##this.display">#this.display</a></li>
+            
+                <li data-name="insight.Axis#this.display"><a href="insight.Axis.html##this.display">#this.display</a></li>
+            
+                <li data-name="insight.Axis#this.domain"><a href="insight.Axis.html##this.domain">#this.domain</a></li>
+            
+                <li data-name="insight.Axis#this.ordered"><a href="insight.Axis.html##this.ordered">#this.ordered</a></li>
+            
+                <li data-name="insight.Axis#this.ordered"><a href="insight.Axis.html##this.ordered">#this.ordered</a></li>
+            
+                <li data-name="insight.Axis#this.reversed"><a href="insight.Axis.html##this.reversed">#this.reversed</a></li>
+            
+                <li data-name="insight.Axis#this.reversed"><a href="insight.Axis.html##this.reversed">#this.reversed</a></li>
+            
+                <li data-name="insight.Axis#this.showGridlines"><a href="insight.Axis.html##this.showGridlines">#this.showGridlines</a></li>
+            
+                <li data-name="insight.Axis#this.showGridlines"><a href="insight.Axis.html##this.showGridlines">#this.showGridlines</a></li>
+            
+                <li data-name="insight.Axis#this.zoomable"><a href="insight.Axis.html##this.zoomable">#this.zoomable</a></li>
+            
+                <li data-name="insight.Axis#this.zoomable"><a href="insight.Axis.html##this.zoomable">#this.zoomable</a></li>
+            
+                <li data-name="insight.Axis~findMax"><a href="insight.Axis.html#findMax">findMax</a></li>
+            
+                <li data-name="insight.Axis~findMin"><a href="insight.Axis.html#findMin">findMin</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.AxisGridlines">
+            <span class="title">
+                <a href="insight.AxisGridlines.html">insight.AxisGridlines</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.AxisGridlines#this.allGridlines"><a href="insight.AxisGridlines.html##this.allGridlines">#this.allGridlines</a></li>
+            
+                <li data-name="insight.AxisGridlines#this.lineColor"><a href="insight.AxisGridlines.html##this.lineColor">#this.lineColor</a></li>
+            
+                <li data-name="insight.AxisGridlines#this.lineColor"><a href="insight.AxisGridlines.html##this.lineColor">#this.lineColor</a></li>
+            
+                <li data-name="insight.AxisGridlines#this.lineWidth"><a href="insight.AxisGridlines.html##this.lineWidth">#this.lineWidth</a></li>
+            
+                <li data-name="insight.AxisGridlines#this.lineWidth"><a href="insight.AxisGridlines.html##this.lineWidth">#this.lineWidth</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.BubbleSeries">
+            <span class="title">
+                <a href="insight.BubbleSeries.html">insight.BubbleSeries</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.BubbleSeries#this.radiusFunction"><a href="insight.BubbleSeries.html##this.radiusFunction">#this.radiusFunction</a></li>
+            
+                <li data-name="insight.BubbleSeries#this.radiusFunction"><a href="insight.BubbleSeries.html##this.radiusFunction">#this.radiusFunction</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.Chart">
+            <span class="title">
+                <a href="insight.Chart.html">insight.Chart</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.Chart.this.highlight"><a href="insight.Chart.html#this.highlight">this.highlight</a></li>
+            
+                <li data-name="insight.Chart.this.seriesChanged"><a href="insight.Chart.html#this.seriesChanged">this.seriesChanged</a></li>
+            
+                <li data-name="insight.Chart#Chart#calculateLabelMargin"><a href="insight.Chart.html##Chart#calculateLabelMargin">#Chart#calculateLabelMargin</a></li>
+            
+                <li data-name="insight.Chart#this.addXAxis"><a href="insight.Chart.html##this.addXAxis">#this.addXAxis</a></li>
+            
+                <li data-name="insight.Chart#this.addYAxis"><a href="insight.Chart.html##this.addYAxis">#this.addYAxis</a></li>
+            
+                <li data-name="insight.Chart#this.height"><a href="insight.Chart.html##this.height">#this.height</a></li>
+            
+                <li data-name="insight.Chart#this.height"><a href="insight.Chart.html##this.height">#this.height</a></li>
+            
+                <li data-name="insight.Chart#this.legend"><a href="insight.Chart.html##this.legend">#this.legend</a></li>
+            
+                <li data-name="insight.Chart#this.legend"><a href="insight.Chart.html##this.legend">#this.legend</a></li>
+            
+                <li data-name="insight.Chart#this.margin"><a href="insight.Chart.html##this.margin">#this.margin</a></li>
+            
+                <li data-name="insight.Chart#this.margin"><a href="insight.Chart.html##this.margin">#this.margin</a></li>
+            
+                <li data-name="insight.Chart#this.maxWidth"><a href="insight.Chart.html##this.maxWidth">#this.maxWidth</a></li>
+            
+                <li data-name="insight.Chart#this.maxWidth"><a href="insight.Chart.html##this.maxWidth">#this.maxWidth</a></li>
+            
+                <li data-name="insight.Chart#this.minWidth"><a href="insight.Chart.html##this.minWidth">#this.minWidth</a></li>
+            
+                <li data-name="insight.Chart#this.minWidth"><a href="insight.Chart.html##this.minWidth">#this.minWidth</a></li>
+            
+                <li data-name="insight.Chart#this.resizeWidth"><a href="insight.Chart.html##this.resizeWidth">#this.resizeWidth</a></li>
+            
+                <li data-name="insight.Chart#this.series"><a href="insight.Chart.html##this.series">#this.series</a></li>
+            
+                <li data-name="insight.Chart#this.series"><a href="insight.Chart.html##this.series">#this.series</a></li>
+            
+                <li data-name="insight.Chart#this.width"><a href="insight.Chart.html##this.width">#this.width</a></li>
+            
+                <li data-name="insight.Chart#this.width"><a href="insight.Chart.html##this.width">#this.width</a></li>
+            
+                <li data-name="insight.Chart#this.xAxes"><a href="insight.Chart.html##this.xAxes">#this.xAxes</a></li>
+            
+                <li data-name="insight.Chart#this.xAxes"><a href="insight.Chart.html##this.xAxes">#this.xAxes</a></li>
+            
+                <li data-name="insight.Chart#this.xAxis"><a href="insight.Chart.html##this.xAxis">#this.xAxis</a></li>
+            
+                <li data-name="insight.Chart#this.xAxis"><a href="insight.Chart.html##this.xAxis">#this.xAxis</a></li>
+            
+                <li data-name="insight.Chart#this.yAxes"><a href="insight.Chart.html##this.yAxes">#this.yAxes</a></li>
+            
+                <li data-name="insight.Chart#this.yAxes"><a href="insight.Chart.html##this.yAxes">#this.yAxes</a></li>
+            
+                <li data-name="insight.Chart#this.yAxis"><a href="insight.Chart.html##this.yAxis">#this.yAxis</a></li>
+            
+                <li data-name="insight.Chart#this.yAxis"><a href="insight.Chart.html##this.yAxis">#this.yAxis</a></li>
+            
+                <li data-name="insight.Chart#this.zoomable"><a href="insight.Chart.html##this.zoomable">#this.zoomable</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.ChartGroup">
+            <span class="title">
+                <a href="insight.ChartGroup.html">insight.ChartGroup</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.ChartGroup#this.add"><a href="insight.ChartGroup.html##this.add">#this.add</a></li>
+            
+                <li data-name="insight.ChartGroup#this.chartFilterHandler"><a href="insight.ChartGroup.html##this.chartFilterHandler">#this.chartFilterHandler</a></li>
+            
+                <li data-name="insight.ChartGroup#this.draw"><a href="insight.ChartGroup.html##this.draw">#this.draw</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.ColumnSeries">
+            <span class="title">
+                <a href="insight.ColumnSeries.html">insight.ColumnSeries</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.ColumnSeries#this.findMax"><a href="insight.ColumnSeries.html##this.findMax">#this.findMax</a></li>
+            
+                <li data-name="insight.ColumnSeries#this.stacked"><a href="insight.ColumnSeries.html##this.stacked">#this.stacked</a></li>
+            
+                <li data-name="insight.ColumnSeries#this.stacked"><a href="insight.ColumnSeries.html##this.stacked">#this.stacked</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.Grouping">
+            <span class="title">
+                <a href="insight.Grouping.html">insight.Grouping</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.Grouping#self.count"><a href="insight.Grouping.html##self.count">#self.count</a></li>
+            
+                <li data-name="insight.Grouping#self.count"><a href="insight.Grouping.html##self.count">#self.count</a></li>
+            
+                <li data-name="insight.Grouping#self.cumulative"><a href="insight.Grouping.html##self.cumulative">#self.cumulative</a></li>
+            
+                <li data-name="insight.Grouping#self.cumulative"><a href="insight.Grouping.html##self.cumulative">#self.cumulative</a></li>
+            
+                <li data-name="insight.Grouping#self.getData"><a href="insight.Grouping.html##self.getData">#self.getData</a></li>
+            
+                <li data-name="insight.Grouping#self.mean"><a href="insight.Grouping.html##self.mean">#self.mean</a></li>
+            
+                <li data-name="insight.Grouping#self.mean"><a href="insight.Grouping.html##self.mean">#self.mean</a></li>
+            
+                <li data-name="insight.Grouping#self.ordered"><a href="insight.Grouping.html##self.ordered">#self.ordered</a></li>
+            
+                <li data-name="insight.Grouping#self.ordered"><a href="insight.Grouping.html##self.ordered">#self.ordered</a></li>
+            
+                <li data-name="insight.Grouping#self.orderFunction"><a href="insight.Grouping.html##self.orderFunction">#self.orderFunction</a></li>
+            
+                <li data-name="insight.Grouping#self.orderFunction"><a href="insight.Grouping.html##self.orderFunction">#self.orderFunction</a></li>
+            
+                <li data-name="insight.Grouping#self.recalculate"><a href="insight.Grouping.html##self.recalculate">#self.recalculate</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.Legend">
+            <span class="title">
+                <a href="insight.Legend.html">insight.Legend</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.LineSeries">
+            <span class="title">
+                <a href="insight.LineSeries.html">insight.LineSeries</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.LineSeries#this.showPoints"><a href="insight.LineSeries.html##this.showPoints">#this.showPoints</a></li>
+            
+                <li data-name="insight.LineSeries#this.showPoints"><a href="insight.LineSeries.html##this.showPoints">#this.showPoints</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.MarginMeasurer">
+            <span class="title">
+                <a href="insight.MarginMeasurer.html">insight.MarginMeasurer</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.MarginMeasurer#self.calculateChartMargins"><a href="insight.MarginMeasurer.html##self.calculateChartMargins">#self.calculateChartMargins</a></li>
+            
+                <li data-name="insight.MarginMeasurer#self.seriesLabelDimensions"><a href="insight.MarginMeasurer.html##self.seriesLabelDimensions">#self.seriesLabelDimensions</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.MarkerSeries">
+            <span class="title">
+                <a href="insight.MarkerSeries.html">insight.MarkerSeries</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.MarkerSeries#this.widthFactor"><a href="insight.MarkerSeries.html##this.widthFactor">#this.widthFactor</a></li>
+            
+                <li data-name="insight.MarkerSeries#this.widthFactor"><a href="insight.MarkerSeries.html##this.widthFactor">#this.widthFactor</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.RowSeries">
+            <span class="title">
+                <a href="insight.RowSeries.html">insight.RowSeries</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.RowSeries#this.findMax"><a href="insight.RowSeries.html##this.findMax">#this.findMax</a></li>
+            
+                <li data-name="insight.RowSeries#this.seriesMax"><a href="insight.RowSeries.html##this.seriesMax">#this.seriesMax</a></li>
+            
+                <li data-name="insight.RowSeries#this.stacked"><a href="insight.RowSeries.html##this.stacked">#this.stacked</a></li>
+            
+                <li data-name="insight.RowSeries#this.stacked"><a href="insight.RowSeries.html##this.stacked">#this.stacked</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.ScatterSeries">
+            <span class="title">
+                <a href="insight.ScatterSeries.html">insight.ScatterSeries</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.Series">
+            <span class="title">
+                <a href="insight.Series.html">insight.Series</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.Series#this.dataset"><a href="insight.Series.html##this.dataset">#this.dataset</a></li>
+            
+                <li data-name="insight.Series#this.findMax"><a href="insight.Series.html##this.findMax">#this.findMax</a></li>
+            
+                <li data-name="insight.Series#this.findMin"><a href="insight.Series.html##this.findMin">#this.findMin</a></li>
+            
+                <li data-name="insight.Series#this.keyFunction"><a href="insight.Series.html##this.keyFunction">#this.keyFunction</a></li>
+            
+                <li data-name="insight.Series#this.keyFunction"><a href="insight.Series.html##this.keyFunction">#this.keyFunction</a></li>
+            
+                <li data-name="insight.Series#this.tooltipOffset"><a href="insight.Series.html##this.tooltipOffset">#this.tooltipOffset</a></li>
+            
+                <li data-name="insight.Series#this.tooltipOffset"><a href="insight.Series.html##this.tooltipOffset">#this.tooltipOffset</a></li>
+            
+                <li data-name="insight.Series#this.valueFunction"><a href="insight.Series.html##this.valueFunction">#this.valueFunction</a></li>
+            
+                <li data-name="insight.Series#this.valueFunction"><a href="insight.Series.html##this.valueFunction">#this.valueFunction</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.Table">
+            <span class="title">
+                <a href="insight.Table.html">insight.Table</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.Table#this.ascending"><a href="insight.Table.html##this.ascending">#this.ascending</a></li>
+            
+                <li data-name="insight.Table#this.columns"><a href="insight.Table.html##this.columns">#this.columns</a></li>
+            
+                <li data-name="insight.Table#this.columns"><a href="insight.Table.html##this.columns">#this.columns</a></li>
+            
+                <li data-name="insight.Table#this.descending"><a href="insight.Table.html##this.descending">#this.descending</a></li>
+            
+                <li data-name="insight.Table#this.keyFunction"><a href="insight.Table.html##this.keyFunction">#this.keyFunction</a></li>
+            
+                <li data-name="insight.Table#this.keyFunction"><a href="insight.Table.html##this.keyFunction">#this.keyFunction</a></li>
+            
+                <li data-name="insight.Table#this.top"><a href="insight.Table.html##this.top">#this.top</a></li>
+            
+                <li data-name="insight.Table#this.top"><a href="insight.Table.html##this.top">#this.top</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.Tooltip">
+            <span class="title">
+                <a href="insight.Tooltip.html">insight.Tooltip</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.Tooltip#this.hide"><a href="insight.Tooltip.html##this.hide">#this.hide</a></li>
+            
+                <li data-name="insight.Tooltip#this.offset"><a href="insight.Tooltip.html##this.offset">#this.offset</a></li>
+            
+                <li data-name="insight.Tooltip#this.offset"><a href="insight.Tooltip.html##this.offset">#this.offset</a></li>
+            
+                <li data-name="insight.Tooltip#this.show"><a href="insight.Tooltip.html##this.show">#this.show</a></li>
+            
+                <li data-name="insight.Tooltip#this.styles"><a href="insight.Tooltip.html##this.styles">#this.styles</a></li>
+            
+                <li data-name="insight.Tooltip#this.styles"><a href="insight.Tooltip.html##this.styles">#this.styles</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+    </ul>
+</div>
+    <div class="main">
+        <h1 class="page-title" data-filename="ColumnSeries.js.html">Source: charts/Series/ColumnSeries.js</h1>
+        
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/**
+ * The ColumnSeries class extends the Series class and draws vertical bars on a Chart
+ * @class insight.ColumnSeries
+ * @param {string} name - A uniquely identifying name for this chart
+ * @param {DataSet} data - The DataSet containing this series' data
+ * @param {insight.Scales.Scale} x - the x axis
+ * @param {insight.Scales.Scale} y - the y axis
+ * @param {object} color - a string or function that defines the color to be used for the items in this series
+ */
+insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
+
+    insight.Series.call(this, name, data, x, y, color);
+
+    var self = this,
+        stacked = d3.functor(false),
+        seriesName = '',
+        seriesFunctions = {},
+        barWidthFunction = this.x.rangeType;
+
+    this.classValues = [insight.Constants.BarClass];
+
+    this.series = [{
+        name: 'default',
+        valueFunction: function(d) {
+            return self.valueFunction()(d);
+        },
+        tooltipValue: function(d) {
+            return self.tooltipFunction()(d);
+        },
+        color: d3.functor(color),
+        label: 'Value'
+    }];
+
+
+    var tooltipFunction = function(d) {
+        var func = self.currentSeries.valueFunction;
+        return self.tooltipFormat()(func(d));
+    };
+
+    /*
+     * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
+     * This function is mapped across the entire data array by the findMax method.
+     * @memberof insight.ColumnSeries
+     * @param {object} data An item in the object array to query
+     * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
+     */
+    this.seriesMax = function(d) {
+        var max = 0;
+        var seriesMax = 0;
+
+        var stacked = self.stacked();
+
+        for (var series in self.series) {
+            var s = self.series[series];
+
+            var seriesValue = s.valueFunction(d);
+
+            seriesMax = stacked ? seriesMax + seriesValue : seriesValue;
+
+            max = seriesMax > max ? seriesMax : max;
+        }
+
+        return max;
+    };
+
+
+    /**
+     * Extracts the maximum value on an axis for this series.
+     * @memberof! insight.ColumnSeries
+     * @instance
+     * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
+     */
+    this.findMax = function() {
+        var max = d3.max(self.dataset(), self.seriesMax);
+
+        return max;
+    };
+
+
+    /**
+     * Determines whether the series should stack columns, or line them up side-by-side.
+     * @memberof! insight.ColumnSeries
+     * @instance
+     * @returns {boolean} - To stack or not to stack.
+     *
+     * @also
+     *
+     * Sets whether the series should stack columns, or line them up side-by-side.
+     * @memberof! insight.ColumnSeries
+     * @instance
+     * @param {boolean} stacked Whether the column series should be stacked.
+     * @returns {this}
+     */
+    this.stacked = function(stack) {
+        if (!arguments.length) {
+            return stacked();
+        }
+        stacked = d3.functor(stack);
+        return this;
+    };
+
+    this.calculateYPos = function(func, d) {
+        if (!d.yPos) {
+            d.yPos = 0;
+        }
+
+        d.yPos += func(d);
+
+        return d.yPos;
+    };
+
+    this.xPosition = function(d) {
+        return self.x.scale(self.keyFunction()(d));
+    };
+
+    this.calculateXPos = function(width, d) {
+        if (!d.xPos) {
+            d.xPos = self.xPosition(d);
+        } else {
+            d.xPos += width;
+        }
+        return d.xPos;
+    };
+
+    this.yPosition = function(d) {
+
+        var func = self.currentSeries.valueFunction;
+
+        var position = self.stackedBars() ? self.y.scale(self.calculateYPos(func, d)) : self.y.scale(func(d));
+
+        return position;
+    };
+
+
+
+    this.barWidth = function(d) {
+        // comment for tom, this is the bit that is currently breaking the linear x axis, because d3 linear scales don't support the rangeBand() function, whereas ordinal ones do.
+        // in js, you can separate the scale and range function using rangeBandFunction.call(self.x.scale, d), where rangeBandFunction can point to the appropriate function for the type of scale being used.
+        return self.x.scale.rangeBand(d);
+    };
+
+    this.groupedBarWidth = function(d) {
+
+        var groupWidth = self.barWidth(d);
+
+        var width = self.stackedBars() || (self.series.length === 1) ? groupWidth : groupWidth / self.series.length;
+
+        return width;
+    };
+
+    this.offsetXPosition = function(d) {
+        var width = self.groupedBarWidth(d);
+        var position = self.stackedBars() ? self.xPosition(d) : self.calculateXPos(width, d);
+
+        return position;
+    };
+
+    this.stackedBars = function() {
+        return self.stacked();
+    };
+
+    var click = function(filter) {
+        return self.click(this, filter);
+    };
+
+    var duration = function(d, i) {
+        return 200 + (i * 20);
+    };
+
+    var mouseOver = function(data, i) {
+        var seriesName = this.getAttribute('in_series');
+        var seriesFunction = seriesFunctions[seriesName];
+
+        self.mouseOver.call(this, data, i, seriesFunction);
+    };
+
+
+    this.seriesSpecificClassName = function(d) {
+
+        var additionalClass = ' ' + self.currentSeries.name + 'class';
+        var baseClassName = self.itemClassName(d);
+        var itemClassName = baseClassName + additionalClass;
+
+        return itemClassName;
+    };
+
+    this.draw = function(chart, drag) {
+
+        self.initializeTooltip(chart.container.node());
+        self.selectedItems = chart.selectedItems;
+        self.rootClassName = self.seriesClassName();
+
+        var groupSelector = 'g.' + insight.Constants.BarGroupClass,
+            barSelector = 'rect.' + insight.Constants.BarGroupClass;
+
+        var reset = function(d) {
+            d.yPos = 0;
+            d.xPos = 0;
+        };
+
+        var data = self.dataset();
+
+        data.forEach(reset);
+
+        var groups = chart.plotArea
+            .selectAll(groupSelector)
+            .data(data, self.keyFunction());
+
+        var newGroups = groups.enter()
+            .append('g')
+            .attr('class', insight.Constants.BarGroupClass);
+
+        var newBars = newGroups.selectAll(barSelector);
+
+        var barHeight = function(d) {
+            var func = self.currentSeries.valueFunction;
+
+            return (chart.height() - chart.margin()
+                .top - chart.margin()
+                .bottom) - self.y.scale(func(d));
+        };
+
+        for (var seriesIndex in self.series) {
+
+            self.currentSeries = self.series[seriesIndex];
+
+            seriesName = self.currentSeries.name;
+            seriesFunctions[seriesName] = self.currentSeries.valueFunction;
+
+            var seriesSelector = '.' + seriesName + 'class.' + insight.Constants.BarClass;
+
+            // Add any new bars
+
+            newBars = newGroups.append('rect')
+                .attr('class', self.seriesSpecificClassName)
+                .attr('y', self.y.bounds[0])
+                .attr('height', 0)
+                .attr('in_series', seriesName)
+                .attr('fill', self.currentSeries.color)
+                .attr('clip-path', 'url(#' + chart.clipPath() + ')')
+                .on('mouseover', mouseOver)
+                .on('mouseout', self.mouseOut)
+                .on('click', click);
+
+            // Select and update all bars
+            var bars = groups.selectAll(seriesSelector);
+
+            bars
+                .transition()
+                .duration(duration)
+                .attr('y', self.yPosition)
+                .attr('x', self.offsetXPosition)
+                .attr('width', self.groupedBarWidth)
+                .attr('height', barHeight);
+        }
+
+        // Remove groups no longer in the data set
+        groups.exit()
+            .remove();
+    };
+
+    return this;
+};
+
+insight.ColumnSeries.prototype = Object.create(insight.Series.prototype);
+insight.ColumnSeries.prototype.constructor = insight.ColumnSeries;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+
+        
+
+        <footer>
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>.
+        </footer>
+    </div>
+</div>
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+<script src="scripts/main.js"></script>
+</body>
+</html>

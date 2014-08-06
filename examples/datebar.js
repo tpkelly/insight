@@ -51,7 +51,7 @@ $(document)
 
             chart.series([columns]);
 
-            insight.drawCharts();
+            chart.draw();
 
         });
     });

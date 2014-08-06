@@ -9,6 +9,8 @@ $(document)
                 d.releaseDate = new Date(d.releaseDate);
             });
 
+            var chartGroup = new insight.ChartGroup();
+
             var dataset = new insight.DataSet(data);
 
             var genres = dataset.group('genre', function(d)
@@ -87,35 +89,22 @@ $(document)
             languageChart.xAxis(lxScale);
             languageChart.yAxis(lyScale);
 
-            var lSeries = new insight.ColumnSeries('languages', languageGroup, lxScale, lyScale, 'silver')
+            var lSeries = new insight.ColumnSeries('languages', languageGroup, lxScale, lyScale, '#ACC3EE')
                 .tooltipFunction(function(d)
                 {
                     return d;
                 })
+                .valueFunction(function(d)
+                {
+                    return d.value;
+                })
                 .top(10);
-
-            lSeries.series = [
-            {
-                name: 'language',
-                accessor: function(d)
-                {
-                    return d.value;
-                },
-                label: function(d)
-                {
-                    return '';
-                },
-                color: '#ACC3EE',
-                tooltipValue: function(d)
-                {
-                    return d.value;
-
-                }
-            }];
 
             languageChart.series([lSeries]);
 
-            insight.drawCharts();
+            chartGroup.add(chart)
+                .add(languageChart);
 
+            chartGroup.draw();
         });
     });

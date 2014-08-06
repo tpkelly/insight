@@ -55,7 +55,7 @@ $(document)
         series.series = [
         {
             name: 'value',
-            accessor: function(d)
+            valueFunction: function(d)
             {
                 return d.wins;
             },
@@ -68,7 +68,7 @@ $(document)
         },
         {
             name: 'value2',
-            accessor: function(d)
+            valueFunction: function(d)
             {
                 return d.losses;
             },
@@ -83,8 +83,7 @@ $(document)
 
         chart.series([series]);
 
-
-        insight.drawCharts();
+        chart.draw();
 
         $('#toggle')
             .click(function(d)

@@ -17,6 +17,8 @@ $(document)
                 d.fileSizeBytes = +d.fileSizeBytes;
             });
 
+            var chartGroup = new insight.ChartGroup();
+
             var dataset = new insight.DataSet(data);
 
             var genres = dataset.group('genre', function(d)
@@ -168,9 +170,11 @@ $(document)
                 });
 
 
-
-            insight.addTable(table);
-            insight.drawCharts();
+            chartGroup.add(bubbleChart);
+            chartGroup.add(timeChart);
+            chartGroup.add(chart);
+            chartGroup.add(table);
+            chartGroup.draw();
 
 
             $('.btn')
@@ -184,7 +188,7 @@ $(document)
                         return d.value.averageUserRating.Average;
                     });
                     bubbleY.label('Average Rating');
-                    insight.redraw();
+                    chartGroup.draw();
                 });
 
 
@@ -197,7 +201,7 @@ $(document)
                     });
                     bubbleY.label('Average # Ratings');
 
-                    insight.redraw();
+                    chartGroup.draw();
                 });
 
 
@@ -209,7 +213,7 @@ $(document)
                         return d.value.CountCumulative;
                     });
 
-                    insight.redraw();
+                    chartGroup.draw();
                 });
 
             $('#timemonthly')
@@ -220,7 +224,7 @@ $(document)
                         return d.value.Count;
                     });
 
-                    insight.redraw();
+                    chartGroup.draw();
                 });
 
             $('#yavgprice')
@@ -231,7 +235,7 @@ $(document)
                         return d.value.price.Average;
                     });
                     bubbleY.label('Average Price');
-                    insight.redraw();
+                    chartGroup.draw();
                 });
 
             $('#xsumrating')
@@ -242,7 +246,7 @@ $(document)
                         return d.value.userRatingCount.Sum;
                     });
                     bubbleX.label('Total Ratings');
-                    insight.redraw();
+                    chartGroup.draw();
                 });
 
             $('#xavgrating')
@@ -254,7 +258,7 @@ $(document)
                     });
                     bubbleX.label('Average Rating');
 
-                    insight.redraw();
+                    chartGroup.draw();
                 });
 
             $('#xavgsize')
@@ -267,7 +271,7 @@ $(document)
                     });
                     bubbleX.label('Average File Size (Mb)');
 
-                    insight.redraw();
+                    chartGroup.draw();
                 });
 
             $('#radprice')
@@ -279,7 +283,7 @@ $(document)
                         return d.value.price.Average;
                     });
 
-                    insight.redraw();
+                    chartGroup.draw();
                 });
             $('#radcount')
                 .click(function()
@@ -290,7 +294,7 @@ $(document)
                         return d.value.Count;
                     });
 
-                    insight.redraw();
+                    chartGroup.draw();
                 });
 
             $('#radsize')
@@ -302,7 +306,7 @@ $(document)
                         return d.value.fileSizeBytes.Average;
                     });
 
-                    insight.redraw();
+                    chartGroup.draw();
                 });
         });
 

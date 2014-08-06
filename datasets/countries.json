@@ -1,21 +1,21 @@
 [
     {
-        "key": "England",
+        "country": "England",
         "value": 10,
         "value2": 5,
         "pct": 0.5
     }, {
-        "key": "Scotland",
+        "country": "Scotland",
         "value": 20,
         "value2": 7,
         "pct": 0.78
     }, {
-        "key": "Wales",
+        "country": "Wales",
         "value": 13,
         "value2": 18,
         "pct": 0.25
     }, {
-        "key": "Ireland",
+        "country": "Ireland",
         "value": 15,
         "value2": 10,
         "pct": 0.9
