@@ -1,52 +1,52 @@
 insight.correlation = (function(insight) {
 
-    return {
-        fromValues: function(x, y) {
+    var correlation = {};
 
-            if (!insight.Utils.isArray(x) || !insight.Utils.isArray(y) ||
-                x.length !== y.length) {
+    correlation.fromValues = function(x, y) {
 
-                throw new Error('correlation.fromValues expects two array parameters of equal length');
+        if (!insight.Utils.isArray(x) || !insight.Utils.isArray(y) ||
+            x.length !== y.length) {
 
-            }
-
-            var meanX = mean(x),
-                meanY = mean(y),
-                xDeviation = subtract(x, meanX),
-                yDeviation = subtract(y, meanY),
-                xDeviationSquared = multiply(xDeviation, xDeviation),
-                yDeviationSquared = multiply(yDeviation, yDeviation),
-
-                deviationProduct = multiply(xDeviation, yDeviation),
-                r = sum(deviationProduct) / Math.sqrt(sum(xDeviationSquared) * sum(yDeviationSquared));
-
-            return r;
-
-        },
-
-        fromDataSet: function(dataset, correlationPairs) {
-
-            var dataArray = getArray(dataset),
-                propertyValues = {},
-                results = {};
-
-            correlationPairs.forEach(function(pair) {
-
-                var x = pair[0],
-                    y = pair[1],
-                    r;
-
-                addPropertyArrays(dataArray, propertyValues, [x, y]);
-
-                r = insight.correlation.fromValues(propertyValues[x], propertyValues[y]);
-                results[correlationPropertyName(x, y)] = r;
-                results[correlationPropertyName(y, x)] = r;
-
-            });
-
-            return results;
+            throw new Error('correlation.fromValues expects two array parameters of equal length');
 
         }
+
+        var meanX = mean(x),
+            meanY = mean(y),
+            xDeviation = subtract(x, meanX),
+            yDeviation = subtract(y, meanY),
+            xDeviationSquared = multiply(xDeviation, xDeviation),
+            yDeviationSquared = multiply(yDeviation, yDeviation),
+
+            deviationProduct = multiply(xDeviation, yDeviation),
+            r = sum(deviationProduct) / Math.sqrt(sum(xDeviationSquared) * sum(yDeviationSquared));
+
+        return r;
+
+    };
+
+    correlation.fromDataSet = function(dataset, correlationPairs) {
+
+        var dataArray = getArray(dataset),
+            propertyValues = {},
+            results = {};
+
+        correlationPairs.forEach(function(pair) {
+
+            var x = pair[0],
+                y = pair[1],
+                r;
+
+            addPropertyArrays(dataArray, propertyValues, [x, y]);
+
+            r = insight.correlation.fromValues(propertyValues[x], propertyValues[y]);
+            results[correlationPropertyName(x, y)] = r;
+            results[correlationPropertyName(y, x)] = r;
+
+        });
+
+        return results;
+
     };
 
     function correlationPropertyName(x, y) {
@@ -88,6 +88,10 @@ insight.correlation = (function(insight) {
     function sum(array) {
 
         return array.reduce(function(previous, current) {
+
+            if (!insight.Utils.isNumber(current)) {
+                throw new Error('The correlation data contains non-numeric values.');
+            }
 
             return previous + current;
 

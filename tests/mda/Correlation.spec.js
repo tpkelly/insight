@@ -32,7 +32,8 @@ describe('Correlation', function() {
                         36.50619904, -91.19169747, -75.94170661, 31.61356244, 124.6459962, -68.19947738, 143.0487732,
                         203.7841096, 339.4097217, -102.2035722, 227.1428013, 171.3544472, -77.32741018, 40.2348384];
         
-        var paramException = new Error('correlation.fromValues expects two array parameters of equal length');
+        var paramException = new Error('correlation.fromValues expects two array parameters of equal length'),
+            nonNumberException = new Error('The correlation data contains non-numeric values.');
         
         it('calcluates expected correlation', function() {
 
@@ -153,6 +154,36 @@ describe('Correlation', function() {
 
         });
         
+        it('exception if any non-number in first array', function() {
+           
+            // Given
+            var r;
+            
+            // When
+            expect(function() {
+                r = insight.correlation.fromValues([1, 'a', 3], [4, 5, 6]);
+            })
+            .toThrow(nonNumberException);
+
+            expect(r).not.toBeDefined();
+            
+        });
+        
+        it('exception if any non-number in second array', function() {
+           
+            // Given
+            var r;
+            
+            // When
+            expect(function() {
+                r = insight.correlation.fromValues([1, 2, 3], [4, 5, {}]);
+            })
+            .toThrow(nonNumberException);
+
+            expect(r).not.toBeDefined();
+            
+        });
+        
     });
         
     describe('fromDataSet', function() {
@@ -223,13 +254,26 @@ describe('Correlation', function() {
             
         });
         
-        it('calculates correlation of given pairs', function() {
+        it('calculates correlation of given pairs from a DataSet', function() {
        
             // Given
             var dataset = new insight.DataSet(sourceData);
 
             // When
             var result = insight.correlation.fromDataSet(dataset, [['IQ', 'Age'], ['Id', 'Age']]);
+
+            // Then
+            expect(result.IQ_Cor_Age).toBeCloseTo(-0.1246);
+            expect(result.Age_Cor_IQ).toBeCloseTo(-0.1246);
+            expect(result.Id_Cor_Age).toBeCloseTo(0.0712);
+            expect(result.Age_Cor_Id).toBeCloseTo(0.0712);
+
+        });
+        
+        it('calculates correlation of given pairs from an array', function() {
+       
+            // When
+            var result = insight.correlation.fromDataSet(sourceData, [['IQ', 'Age'], ['Id', 'Age']]);
 
             // Then
             expect(result.IQ_Cor_Age).toBeCloseTo(-0.1246);
