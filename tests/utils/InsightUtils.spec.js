@@ -25,7 +25,7 @@ var createElement = function(namespace, tag) {
     return document.createElementNS(namespace, tag);
 }
 
-describe('InsightCharts Utils Tests', function() {
+describe('Utils', function() {
     
     it('correctly identifies arrays', function() {
         
@@ -61,12 +61,12 @@ describe('InsightCharts Utils Tests', function() {
     it('can calculate a dimensional slice', function(){
         // Given 
 
-        var input = { key: 'Scotland', value: 100 };
+        var input = 'Scotland';
 
         // Then
 
         var expectedResult = 'in_Scotland';
-        var actualResult = insight.Utils.keySelector(input, function(d){return d.key});
+        var actualResult = insight.Utils.keySelector(input);
 
         expect(actualResult).toBe(expectedResult);
     });
@@ -371,6 +371,46 @@ describe('InsightCharts Utils Tests', function() {
 
         expect(set).toEqual(expectedResult);
     });  
+    
+    describe('lastElement', function() {
+    
+        it('undefined if passed empty array', function(){
+            
+            expect(insight.Utils.lastElement([])).not.toBeDefined();
+        
+        });
+        
+        it('undefined if passed non array', function(){
+            
+            spyOn(insight.Utils, 'isArray').andReturn(false);
+            
+            var emptyObject = {};
+            
+            expect(insight.Utils.lastElement(emptyObject)).not.toBeDefined();
+            
+            expect(insight.Utils.isArray).toHaveBeenCalledWith(emptyObject);
+        
+        });
+        
+        it('undefined if passed undefied', function(){
+            
+            expect(insight.Utils.lastElement(undefined)).not.toBeDefined();
+        
+        });
+        
+        it('undefined if passed null', function(){
+            
+            expect(insight.Utils.lastElement(null)).not.toBeDefined();
+        
+        });
+        
+        it('returns last element of array', function(){
+            
+            expect(insight.Utils.lastElement([1,2,3])).toBe(3);
+        
+        });
+    
+    });
 
 })
 

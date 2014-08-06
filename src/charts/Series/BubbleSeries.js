@@ -66,7 +66,7 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
 
         var data = this.dataset();
 
-        var func = scale == self.x ? self.xFunction() : self.yFunction();
+        var func = scale === self.x ? self.xFunction() : self.yFunction();
 
         return d3.max(data, func);
     };

@@ -71,7 +71,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
      * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
      */
     this.findMax = function() {
-        var max = d3.max(this.data.getData(), this.seriesMax);
+        var max = d3.max(self.dataset(), self.seriesMax);
 
         return max;
     };
@@ -143,7 +143,7 @@ insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
 
         var groupWidth = self.barWidth(d);
 
-        var width = self.stackedBars() || (self.series.length == 1) ? groupWidth : groupWidth / self.series.length;
+        var width = self.stackedBars() || (self.series.length === 1) ? groupWidth : groupWidth / self.series.length;
 
         return width;
     };

@@ -383,42 +383,117 @@ describe('Grouping', function() {
                 
             });
             
-        });
-        
-        it('will correctly sum a property', function() {
-            var dataset = new insight.DataSet(sourceData);
-
-            var group =  dataset.group('country', function(d){return d.Country;});
-
-            group.sum(['IQ']);
-
-            var data = group.getData();
-
-            var scotland = data.filter(function(country){ return country.key=='Scotland'; })[0];
-            var england = data.filter(function(country){ return country.key=='England'; })[0];
-
-            expect(scotland.value.IQ.Sum).toBe(268);
-            expect(england.value.IQ.Sum).toBe(589);
-        });
-        
-        it('correlation can be calculated on given property pairs', function() {
+            it('sets sum if sum is not set', function() {
+                
+                // verify that sum has not been set
+                expect(countryGroup.sum()).toEqual([]);
+                
+                // When
+                countryGroup.correlationPairs([['IQ', 'Age']]);
+                
+                // Then
+                expect(countryGroup.sum()).toEqual(['IQ', 'Age']);
+                
+            });
             
+            it('adds to sum if sum is already set', function() {
+                
+                // Given
+                countryGroup.sum(['Age', 'shoesize']);
+                
+                // When
+                countryGroup.correlationPairs([['IQ', 'Age']]);
+                
+                // Then
+                expect(countryGroup.sum()).toEqual(['Age', 'shoesize', 'IQ']);
+                
+            });
+            
+        });
+        
+        it('can be calculated on given property pairs', function() {
+            
+            // create a data set with a grouping on country
             var dataset = new insight.DataSet(sourceData);
             var countryGroup =  dataset.group('countryGroup', function(d){ return d.Country; })
                                     .correlationPairs([['IQ', 'Age']]);
 
+            // calling getData will cause the correlation calculations to be performed
             var groupData = countryGroup.getData();
             
+            // get the groups for each country
             var england = groupData.filter(function(country){ return country.key=='England'; })[0];
             var northernIreland = groupData.filter(function(country){ return country.key=='Northern Ireland'; })[0];
             var scotland = groupData.filter(function(country){ return country.key=='Scotland'; })[0];
             var wales = groupData.filter(function(country){ return country.key=='Wales'; })[0];
             
+            // verify that the values are as expected
             expect(england.value.IQ_Cor_Age).toBeCloseTo(-0.765468643);
             expect(northernIreland.value.IQ_Cor_Age).toBeCloseTo(-0.393323745);
             expect(scotland.value.IQ_Cor_Age).toBeCloseTo(0.972167128);
             expect(wales.value.IQ_Cor_Age).toBeCloseTo(0.14985373);
 
+        });
+        
+        it('can be calculated on given property pairs after a ChartGroup filter', function() {
+            
+            // Given
+            
+            // create a data set with a grouping on country
+            var dataset = new insight.DataSet(sourceData);
+            var countryGroup =  dataset.group('countryGroup', function(d){ return d.Country; })
+                                    .correlationPairs([['IQ', 'Age']]);
+            
+            // we're going to filter gender so we need a gender group and a series so groups can be filtered
+            var genderGroup = dataset.group('genderGroup', function(d) { return d.Gender; });
+            var clickedGender = {key:'Male', value:{}};
+                        
+            // add the groups to series
+            var x = new insight.Axis('Country', insight.Scales.Ordinal);
+            var y = new insight.Axis('Values', insight.Scales.Linear);
+            var countrySeries = new insight.ColumnSeries('columns', countryGroup, x, y)
+                .valueFunction(function(d) { return d.value.IQ_Cor_Age; });
+            var genderSeries = new insight.ColumnSeries('genders', genderGroup, x, y);            
+            
+            // create a chart group with a chart containing the two series
+            var chart = new insight.Chart('name', 'element');   
+            chart.xAxis(x);
+            chart.yAxis(y);
+            chart.series([countrySeries, genderSeries]);
+            
+            // prevent the chart from resizing or highlighting
+            var emptyFunction = function() {};
+            chart.resizeChart = emptyFunction;
+            chart.highlight = emptyFunction;
+            
+            var chartGroup = new insight.ChartGroup();
+            chartGroup.add(chart);
+            
+            
+            // When
+            
+            chart.draw();            
+            
+            // filter the chart group to only include Male gender
+            chartGroup.chartFilterHandler(genderGroup, 'Male');            
+            
+            // calling getData will cause the correlation calculations to be performed
+            var groupData = countryGroup.getData();
+            
+            // get the groups for each country
+            var england = groupData.filter(function(country){ return country.key==='England'; })[0];
+            var northernIreland = groupData.filter(function(country){ return country.key==='Northern Ireland'; })[0];
+            var scotland = groupData.filter(function(country){ return country.key==='Scotland'; })[0];
+            var wales = groupData.filter(function(country){ return country.key==='Wales'; })[0];
+            
+            
+            // Then
+            
+            expect(england.value.IQ_Cor_Age).toBeCloseTo(-0.981574155);
+            expect(isNaN(northernIreland.value.IQ_Cor_Age)).toBe(true);
+            expect(scotland.value.IQ_Cor_Age).toBe(1);
+            expect(wales.value.IQ_Cor_Age).toBe(-1);
+            
         });
     
     });

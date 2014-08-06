@@ -22,7 +22,6 @@ insight.Grouping = (function(insight) {
             orderFunction;
 
         // Public variables
-
         self.dimension = dimension;
 
         // Private methods
@@ -100,6 +99,147 @@ insight.Grouping = (function(insight) {
             return totals;
         };
 
+        /*
+         * Calculates correlation coefficient values for all configured property pairs on the grouping.
+         * So after this function has run there will be a number of properties on the grouping value called
+         * 'X_Cor_Y' where X and Y are the configured property names.
+         */
+        var calculateCorrelations = function() {
+
+            /*
+             * Returns a property name for the deviation product array used in the correlation workings
+             */
+            var deviationProductName = function(xName, yName) {
+
+                return xName + '_' + yName + '_DeviationProduct';
+
+            };
+
+            /*
+             * Returns an empty object that will contain the correlation working data
+             */
+            var correlationReduceInitialize = function() {
+
+                return {};
+
+            };
+
+            /*
+             * Returns the function to use for creating a reduciton of all groups in order to calculate correlation
+             * between properties in a group.
+             */
+            var correlationReduceAdd = function(aggregatedData) {
+
+                var globalData = aggregatedData;
+
+                /*
+                 * This is the function that does the reduction to produce working data for correlation calculations.
+                 */
+                return function(workings, addingData) {
+
+                    allCorrelationProperties.forEach(function(propertyName) {
+
+                        if (addingData.hasOwnProperty(propertyName)) {
+
+                            // get this grouping from the global data
+                            var groupData = insight.Utils.takeWhere(globalData, 'key', self.dimension.aggregationFunction(addingData))[0].value;
+
+                            // get the group mean from global data for this grouping 
+                            var groupMean = groupData[propertyName].Average;
+
+                            var value = addingData[propertyName];
+                            var deviation = value - groupMean;
+                            var deviationSquared = deviation * deviation;
+
+                            // we need to track each deviation and its square so add them to workings
+                            if (!workings[propertyName]) {
+                                workings[propertyName] = {
+                                    deviation: [],
+                                    deviationSquared: []
+                                };
+                            }
+
+                            workings[propertyName].deviation.push(deviation);
+                            workings[propertyName].deviationSquared.push(deviationSquared);
+
+                        }
+
+                    });
+
+                    // having added to the deviation and deviationSquared we can now add 
+                    // the product of each pair's deviations to the workings object
+                    correlationPairProperties.forEach(function(pair) {
+
+                        var xName = pair[0],
+                            yName = pair[1],
+                            xDeviation = insight.Utils.lastElement(workings[xName].deviation),
+                            yDeviation = insight.Utils.lastElement(workings[yName].deviation),
+                            correlationName = deviationProductName(xName, yName);
+
+                        if (!workings[correlationName]) {
+                            workings[correlationName] = [];
+                        }
+
+                        workings[correlationName].push(xDeviation * yDeviation);
+
+                    });
+
+                    return workings;
+
+                };
+
+            };
+
+            var correlationReduceRemove = function(aggregatedData) {
+
+                return function() {
+
+                };
+
+            };
+
+            var completeData = self.data.all();
+
+            // the correlationData reduction calculates the deviation squared for 
+            // all properties in allCorrelationProperties (a private variable on Grouping)
+            var correlationWorkingData = self.dimension.crossfilterDimension.group()
+                .reduce(
+                    correlationReduceAdd(completeData),
+                    correlationReduceRemove(completeData),
+                    correlationReduceInitialize)
+                .all();
+
+            correlationWorkingData.forEach(function(d) {
+
+                var sum = function(array) {
+                    return array.reduce(function(previous, current) {
+                        return previous + current;
+                    });
+                };
+
+                correlationPairProperties.forEach(function(pair) {
+
+                    var xName = pair[0];
+                    var yName = pair[1];
+                    var deviationProductName = xName + '_' + yName + '_DeviationProduct';
+                    var sumDeviationProduct = sum(d.value[deviationProductName]);
+                    var sumXDeviationSquared = sum(d.value[xName].deviationSquared);
+                    var sumYDeviationSquared = sum(d.value[yName].deviationSquared);
+
+                    var correlationCoefficient = sumDeviationProduct / Math.sqrt(sumXDeviationSquared * sumYDeviationSquared);
+
+                    var thisGroup = completeData.filter(function(item) {
+                        return item.key === d.key;
+                    })[0];
+
+                    var correlationName = xName + '_Cor_' + yName;
+                    thisGroup.value[correlationName] = correlationCoefficient;
+
+                });
+
+            });
+
+        };
 
         /*
          * Used to calculate any values that need to run after the data set has been aggregated into groups and basic values
@@ -120,124 +260,7 @@ insight.Grouping = (function(insight) {
 
             if (correlationPairProperties.length > 0) {
 
-                var correlationReduceInitialize = function() {
-
-                    return {};
-
-                };
-
-                var correlationReduceAdd = function(aggregatedData) {
-
-                    var globalData = aggregatedData;
-
-                    return function(workings, data) {
-
-                        // calculate sum of deviation squared on each correlation property
-                        allCorrelationProperties.forEach(function(propertyName) {
-
-                            if (data.hasOwnProperty(propertyName)) {
-
-                                // get this grouping from the global data
-                                var groupData = globalData.filter(function(item) {
-
-                                    return item.key === self.dimension.aggregationFunction(data);
-
-                                })[0].value;
-
-                                // get the group mean from global data for this grouping 
-                                var groupMean = groupData[propertyName].Average;
-
-                                var value = data[propertyName];
-                                var deviation = value - groupMean;
-                                var deviationSquared = deviation * deviation;
-
-                                // we need to track each deviation squared for calculating the product of two properties
-                                if (!workings[propertyName]) {
-                                    workings[propertyName] = {
-                                        deviation: [],
-                                        deviationSquared: []
-                                    };
-                                }
-
-                                workings[propertyName].deviation.push(deviation);
-                                workings[propertyName].deviationSquared.push(deviationSquared);
-
-                                // sum of deviation squared can be calculated as we go along
-                                groupData[propertyName].SumDeviationSquared = groupData[propertyName].SumDeviationSquared ? groupData[propertyName].SumDeviationSquared + deviationSquared : deviationSquared;
-
-                            }
-
-                        });
-
-                        correlationPairProperties.forEach(function(pair) {
-
-                            var xName = pair[0],
-                                yName = pair[1],
-                                xDeviation = insight.Utils.lastElement(workings[xName].deviation),
-                                yDeviation = insight.Utils.lastElement(workings[yName].deviation),
-                                correlationName = xName + '_' + yName + '_DeviationProduct';
-
-                            if (!workings[correlationName]) {
-                                workings[correlationName] = [];
-                            }
-
-                            workings[correlationName].push(xDeviation * yDeviation);
-
-                        });
-
-                        return workings;
-
-                    };
-
-                };
-
-                var correlationReduceRemove = function() {
-
-                };
-
-                var completeData = self.data.all();
-
-                var correlationData = self.dimension.crossfilterDimension.group()
-                    .reduce(
-                        correlationReduceAdd(completeData),
-                        correlationReduceRemove,
-                        correlationReduceInitialize
-                    );
-
-                // the correlationData reduction calculates the deviation squared for 
-                // all properties in allCorrelationProperties (a private variable on Grouping)
-                var correlationWorking = correlationData.all();
-
-                correlationWorking.forEach(function(d) {
-
-                    var sum = function(array) {
-                        return array.reduce(function(previous, current) {
-                            return previous + current;
-                        });
-                    };
-
-                    correlationPairProperties.forEach(function(pair) {
-
-                        var xName = pair[0];
-                        var yName = pair[1];
-                        var deviationProductName = xName + '_' + yName + '_DeviationProduct';
-                        var sumDeviationProduct = sum(d.value[deviationProductName]);
-                        var sumXDeviationSquared = sum(d.value[xName].deviationSquared);
-                        var sumYDeviationSquared = sum(d.value[yName].deviationSquared);
-
-                        var correlationCoefficient = sumDeviationProduct / Math.sqrt(sumXDeviationSquared * sumYDeviationSquared);
-
-                        var thisGroup = completeData.filter(function(item) {
-                            return item.key === d.key;
-                        })[0];
-
-                        var correlationName = xName + '_Cor_' + yName;
-                        thisGroup.value[correlationName] = correlationCoefficient;
-
-                    });
-
-                });
-
+                calculateCorrelations();
 
             }
 
@@ -400,7 +423,7 @@ insight.Grouping = (function(insight) {
 
                     if (v.hasOwnProperty(propertyName)) {
                         for (var val in v[propertyName]) {
-                            if (typeof(gIndices[v[propertyName][val]]) != "undefined") {
+                            if (typeof(gIndices[v[propertyName][val]]) !== "undefined") {
                                 var gIndex = gIndices[v[propertyName][val]];
 
                                 p.values[gIndex].value++;
@@ -481,15 +504,16 @@ insight.Grouping = (function(insight) {
         };
 
         /*
-         * Returns the list of properties to be summed on this Grouping * @instance * @memberof!insight.Grouping * @returns {
-         *           string[]
-         *    } - The list of property names that will be summed * @also * Sets the list of property names that will be summed in this Grouping * @instance * @memberof!insight.Grouping * @returns {
-         *       this
-         *     } * @param {
-         *        string[]
-         *    }
-         *    properties - An array of property names to be summed
-         *    for slices in this Grouping.
+         * Returns the list of properties to be summed on this Grouping
+         * @instance
+         * @memberof!insight.Grouping
+         * @returns {string[]} - The list of property names that will be summed
+         * @also
+         * Sets the list of property names that will be summed in this Grouping
+         * @instance
+         * @memberof!insight.Grouping
+         * @returns {this}
+         * @param {string[]} properties - An array of property names to be summed for slices in this Grouping.
          */
         self.sum = function(properties) {
             if (!arguments.length) {
@@ -503,13 +527,13 @@ insight.Grouping = (function(insight) {
          * Returns the list of property pairs whose correlation coefficient should be caclulated in this Grouping
          * @instance
          * @memberof!insight.Grouping
-         * @returns {string[][]} - The list of property pairs that will be summed.Each pair is an array of two strings
+         * @returns {Array<String[]>} - The list of property pairs that will be summed.Each pair is an array of two strings
          * @also
          * Sets the list of property pairs whose correlation coefficient should be caclulated in this Grouping
          * @instance
          * @memberof!insight.Grouping
          * @returns {this}
-         * @param {string[][]} properties - An array of property pairs whose correlation coefficient should
+         * @param {Array<String[]>} properties - An array of property pairs whose correlation coefficient should
          * be caclulated in this Grouping
          */
         self.correlationPairs = function(properties) {

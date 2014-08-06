@@ -16,8 +16,8 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
         seriesName = '',
         seriesFunctions = {};
 
-    this.valueAxis = y;
-    this.keyAxis = x;
+    this.valueAxis = x;
+    this.keyAxis = y;
     this.classValues = [insight.Constants.BarClass];
 
     this.series = [{
@@ -68,7 +68,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
      * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
      */
     this.findMax = function() {
-        var max = d3.max(this.data.getData(), this.seriesMax);
+        var max = d3.max(self.dataset(), self.seriesMax);
 
         return max;
     };
@@ -136,7 +136,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
 
         var groupThickness = self.barThickness(d);
 
-        var width = self.stacked() || (self.series.length == 1) ? groupThickness : groupThickness / self.series.length;
+        var width = self.stacked() || (self.series.length === 1) ? groupThickness : groupThickness / self.series.length;
 
         return width;
     };

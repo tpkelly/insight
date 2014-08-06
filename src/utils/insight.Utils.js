@@ -28,12 +28,12 @@ insight.Utils = (function() {
         var aResult = sortParameter(a),
             bResult = sortParameter(b);
 
-        if (aResult == bResult) {
+        if (aResult === bResult) {
             return recursiveSort(a, b, sorters.slice(1));
         }
 
         var sortResult = (aResult > bResult) ? 1 : -1;
-        return (sortOrder == 'ASC') ? sortResult : -sortResult;
+        return (sortOrder === 'ASC') ? sortResult : -sortResult;
     };
 
 
@@ -97,14 +97,15 @@ insight.Utils = (function() {
      * If the parameter is not an object (just a value in an array) then there is no need for this particular
      * class so an empty string is returned.
      * @returns {string} return - A class name to identify this point and any other points taking the same value in other charts.
-     * @param {object} data - The input point
+     * @param {object} d - The input point
+     * @param {function} keyFunction - An optional keyFunction if the
      */
-    exports.keySelector = function(d, keyFunction) {
-        var keyValue = keyFunction(d),
-            result = '';
+    exports.keySelector = function(d) {
 
-        if (keyValue) {
-            var str = keyValue.toString();
+        var result = '';
+
+        if (d) {
+            var str = d.toString();
             result = 'in_' + str.replace(/[^A-Z0-9]/ig, '_');
         }
 
@@ -121,7 +122,7 @@ insight.Utils = (function() {
     exports.takeWhere = function(array, propertyName, value) {
         var matches = array.filter(function(item) {
             if (item.hasOwnProperty(propertyName)) {
-                return item[propertyName] == value;
+                return item[propertyName] === value;
             } else {
                 return false;
             }
@@ -169,7 +170,17 @@ insight.Utils = (function() {
         return a;
     };
 
+    /*
+     * Returns the last element in an array
+     * @param {Array} Any array
+     * @returns The last element in the array or undefined if the array is empty or the parameter is not an array
+     */
     exports.lastElement = function(array) {
+
+        if (!insight.Utils.isArray(array) || array.length === 0) {
+            return undefined;
+        }
+
         return array.slice(array.length - 1)[0];
     };
 
@@ -254,20 +265,56 @@ insight.Utils = (function() {
     };
 
 
+    exports.valueForKey = function(dictionary, key, keyFunction, valueFunction) {
+        var values = dictionary.filter(function(item) {
+            return keyFunction(item) === key;
+        });
+        return valueFunction(values[0]);
+    };
+
     exports.safeString = function(input) {
         return input.split(' ')
             .join('_');
     };
 
+    exports.tryParseInt = function(str, defaultValue) {
+        var retValue = defaultValue;
+        if (str != null) {
+            if ((str.length > 0) && !isNaN(str)) {
 
-
-
-    exports.valueForKey = function(dictionary, key, keyFunction, valueFunction) {
-        var values = dictionary.filter(function(item) {
-            return keyFunction(item) == key;
-        });
-        return valueFunction(values[0]);
+                retValue = parseInt(str);
+            }
+        }
+        return retValue;
     };
+
+    // Helper functions for text measurement.  Mock out in tests to remove dependency on window and DOM functions
+
+    exports.getElementStyles = function(textElement, styleProperties) {
+
+        var style = window.getComputedStyle(textElement);
+        var properties = {};
+
+        styleProperties.forEach(function(propertyName) {
+            try {
+                properties[propertyName] = style.getPropertyValue(propertyName);
+            } catch (err) {
+                // handle this formally when we have a logging framework
+                console.log(err);
+            }
+        });
+
+        return properties;
+    };
+
+    exports.getDrawingContext = function(canvas, styles) {
+
+        var ctx = canvas.getContext('2d');
+        ctx.font = styles['font-size'] + ' ' + styles['font-family'];
+
+        return ctx;
+    };
+
 
     return exports;
 }());
