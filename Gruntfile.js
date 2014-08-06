@@ -124,6 +124,17 @@ module.exports = function(grunt) {
           livereload: true
       }
     },
+    compress: {
+        zip: {
+            options: {
+                archive: './insight.js.zip',
+                mode: 'zip'
+            },
+            files: [
+                {src: './dist/**', dest:'InsightJS/'},
+                {src: 'Changelog.txt', dest:'InsightJS/'}]
+        }
+    },
     jsdoc : {
         dist : {
             src: ['src/**/*.js'], 
@@ -148,7 +159,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jsbeautifier');
   grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-compress');
+  
 
-  grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'cssmin', 'clean', 'jsdoc']);
+  
+  grunt.registerTask('deploy', ['jsbeautifier', 'jshint', 'jasmine', 'concat', 'uglify', 'cssmin', 'clean', 'jsdoc', 'compress']);
   grunt.registerTask('default', ['deploy', 'connect:server','open','watch']);
 };
