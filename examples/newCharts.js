@@ -29,8 +29,17 @@ $(document)
             chart.xAxis(x);
             chart.yAxes([y1, y2]);
 
-            var series = new insight.ColumnSeries('countryColumn', dataset, x, y1, 'silver');
+            var series = new insight.ColumnSeries('countryColumn', dataset, x, y1, 'silver')
+                .keyFunction(function(d)
+                {
+                    return d.country;
+                });
+
             var line = new insight.LineSeries('valueLine', dataset, x, y2, 'cyan')
+                .keyFunction(function(d)
+                {
+                    return d.country;
+                })
                 .valueFunction(function(d)
                 {
                     return d.pct;
