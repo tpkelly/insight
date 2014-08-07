@@ -1,6 +1,6 @@
 [
     {
-        "name": "simplebar",
+        "name": "bar",
         "pageName": "Bar Chart",     
         "script": "examples/barchart.js",
         "imageUrl": "images/barchart.PNG",
@@ -15,7 +15,7 @@
         "partialCSS": "examples/css/simpleBar.css"
     },
     {
-        "name": "stackedGroupedBar",
+        "name": "stackedgroupedbar",
         "pageName": "Stacked & Grouped Bar Chart", 
         "script": "examples/stackedBar.js",
         "imageUrl": "images/stackedBar.PNG",
@@ -23,7 +23,7 @@
         "partialCSS": "examples/css/example.css"
     },    
     {
-        "name": "barsLines",
+        "name": "barslines",
         "pageName": "Bars & Lines", 
         "script": "examples/barsLines.js",
         "imageUrl": "images/barChart.PNG",
@@ -31,7 +31,7 @@
         "partialCSS": "examples/css/example.css"
     },
     {
-        "name": "markers",
+        "name": "targetsmarkers",
         "pageName": "Targets & Markers", 
         "script": "examples/markers.js",
         "imageUrl": "images/barChart.PNG",
@@ -39,7 +39,7 @@
         "partialCSS": "examples/css/example.css"
     },
     {
-        "name": "timeaxis",
+        "name": "time",
         "pageName": "Time Chart", 
         "script": "examples/lineCharts.js",
         "imageUrl": "images/barChart.PNG",
@@ -55,7 +55,7 @@
          "partialCSS": "examples/css/example.css"
     },
     {
-        "name": "datebar",
+        "name": "yearlybars",
         "pageName": "Yearly Bars", 
         "script": "examples/datebar.js",
         "partial": "examples/partials/example.html",
