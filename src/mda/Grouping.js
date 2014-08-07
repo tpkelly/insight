@@ -4,9 +4,9 @@
  * @constructor
  * @param {dimension} dimension - The dimension to group
  */
-insight.Grouping = (function(insight) {
+(function(insight) {
 
-    function Grouping(dimension) {
+    insight.Grouping = function Grouping(dimension) {
 
         // Private variables
 
@@ -765,8 +765,6 @@ insight.Grouping = (function(insight) {
             return data;
         };
 
-    }
-
-    return Grouping;
+    };
 
 })(insight);

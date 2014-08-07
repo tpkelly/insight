@@ -315,7 +315,7 @@ describe('Axis Tests', function() {
                                .height(300)
                                .margin({top:0, left:0, right: 0, bottom:0});
 
-        var x = new insight.Axis('Key Axis', insight.Scales.Linear).reversed(true);
+        var x = new insight.Axis('Key Axis', insight.Scales.Linear).reversedPosition(true);
         chart.addXAxis(x);
 
         //When:
@@ -357,7 +357,7 @@ describe('Axis Tests', function() {
                                .height(300)
                                .margin({top:0, left:0, right: 0, bottom:0});
 
-        var y = new insight.Axis('Key Axis', insight.Scales.Linear).reversed(true);
+        var y = new insight.Axis('Key Axis', insight.Scales.Linear).reversedPosition(true);
         chart.addYAxis(y);
 
         //When:
@@ -378,7 +378,7 @@ describe('Axis Tests', function() {
                                .height(300)
                                .margin({top:0, left:10, right: 40, bottom:0});
 
-        var y = new insight.Axis('Key Axis', insight.Scales.Linear).reversed(true);
+        var y = new insight.Axis('Key Axis', insight.Scales.Linear).reversedPosition(true);
         chart.addYAxis(y);
 
         //When:

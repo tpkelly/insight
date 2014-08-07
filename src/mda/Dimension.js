@@ -1,4 +1,4 @@
-insight.Dimension = (function(insight) {
+(function(insight) {
     /**
      * A Dimension organizes a dataset along a particular property, or variation of a property.
      * Defining a dimension with a function of:<pre><code>function(d){ return d.Surname; }</code></pre> will slice a dataset by the distinct values of the Surname property.
@@ -11,7 +11,7 @@ insight.Dimension = (function(insight) {
      * @param {boolean} oneToMany - Whether or not this dimension represents a collection of possible values in each item.
      * @class
      */
-    var Dimension = function Dimension(name, crossfilterData, sliceFunction, oneToMany) {
+    insight.Dimension = function Dimension(name, crossfilterData, sliceFunction, oneToMany) {
 
         this.crossfilterDimension = crossfilterData.dimension(sliceFunction);
         this.name = name;
@@ -53,7 +53,5 @@ insight.Dimension = (function(insight) {
         };
 
     };
-
-    return Dimension;
 
 })(insight);

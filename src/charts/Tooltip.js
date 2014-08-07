@@ -1,10 +1,9 @@
-/**
- * A tooltip, displaying values for a series or point when hovered over.
- * @class insight.Tooltip
- */
-insight.Tooltip = (function() {
-
-    function Tooltip() {
+(function(insight) {
+    /**
+     * A tooltip, displaying values for a series or point when hovered over.
+     * @class insight.Tooltip
+     */
+    insight.Tooltip = function Tooltip() {
 
         // Private variables
         var className = insight.Constants.Tooltip,
@@ -170,9 +169,6 @@ insight.Tooltip = (function() {
                 .style('opacity', '0');
         };
 
-    }
-
-
-    return Tooltip;
+    };
 
 })(insight);
