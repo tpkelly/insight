@@ -1,6 +1,5 @@
-/**
- * This module contains some helper functions used throughout the library
- * @namespace insight.Utils
+/*
+ * An internal module containing helper functions used throughout the library
  */
 insight.Utils = (function() {
 
@@ -8,7 +7,7 @@ insight.Utils = (function() {
 
     // Internal Functions
 
-    /**
+    /*
      * This recursive function takes two values a and b, a list of sort objects [{sortFunction: function(a){return a.valueToSortOn;}, order: 'ASC'}] and an index of the current function being used to sort.
      * It returns a ordering value for a and b, as per the normal Javascript sorting rules https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
      * @memberof! insight.Utils
@@ -39,7 +38,7 @@ insight.Utils = (function() {
 
     // Public Functions
 
-    /**
+    /*
      * Checks if an object is an array or not
      * @returns {boolean} return - is the object an array
      * @param {object} input - The object to check
@@ -48,7 +47,7 @@ insight.Utils = (function() {
         return Object.prototype.toString.call(obj) === '[object Array]';
     };
 
-    /**
+    /*
      * Builds the CSS selector used to return chart items that are not selected (and not axes)
      * @returns {string} cssSelector - CSS selector for unselected chart items
      */
@@ -69,7 +68,7 @@ insight.Utils = (function() {
         return Object.prototype.toString.call(obj) === '[object Number]';
     };
 
-    /**
+    /*
      * Returns true/false if an object is inside an array.
      * @memberof! insight.Utils
      * @param {object[]} array - The array to check
@@ -80,7 +79,7 @@ insight.Utils = (function() {
         return array.indexOf(value) !== -1;
     };
 
-    /**
+    /*
      * Adds a value to an array, only if it doesn't already belong to the array.
      * @memberof! insight.Utils
      * @param {object[]} array - The array to insert into
