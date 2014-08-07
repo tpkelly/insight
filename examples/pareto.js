@@ -40,7 +40,7 @@ $(document)
 
             var y2 = new insight.Axis('', insight.Scales.Linear)
                 .labelFormat(insight.Formatters.percentageFormatter)
-                .reversed(true);
+                .reversedPosition(true);
 
             chart.xAxis(x)
                 .yAxes([y, y2]);

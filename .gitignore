@@ -15,4 +15,4 @@ node_modules
 dist/*
 doc
 # Make an exception for the min file
-!insight.min.js
+!InsightJS/dist/insight.min.js
