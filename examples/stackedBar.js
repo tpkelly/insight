@@ -39,13 +39,6 @@ $(document)
         var chart = new insight.Chart('Chart 1', "#exampleChart")
             .width(450)
             .height(400)
-            .margin(
-            {
-                top: 10,
-                left: 150,
-                right: 40,
-                bottom: 90
-            })
             .xAxis(x)
             .yAxis(y);
 

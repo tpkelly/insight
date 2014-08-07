@@ -36,8 +36,8 @@ $(document)
                 .tickRotation(45)
                 .labelFormat(d3.time.format('%Y'));
 
-            var y = new insight.Axis('Avg App Price (£)', insight.Scales.Linear)
-                .labelFormat(d3.format('0,000'));
+            var y = new insight.Axis('Avg App Price', insight.Scales.Linear)
+                .labelFormat(insight.Formatters.currencyFormatter);
 
             chart.xAxis(x)
                 .yAxis(y);
