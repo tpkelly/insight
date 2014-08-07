@@ -29,7 +29,7 @@ $(document)
                 .showGridlines(true);
 
 
-            var chart = new insight.Chart('Chart 1', "#chart1")
+            var chart = new insight.Chart('Chart 1', "#exampleChart")
                 .width(700)
                 .height(350)
                 .margin(
