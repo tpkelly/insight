@@ -13,14 +13,13 @@
             this.name = name;
             this.element = element;
             this.selectedItems = [];
-            var legend = null;
-
-            var zoomAxis = null;
             this.container = null;
             this.chart = null;
             this.measureCanvas = document.createElement('canvas');
+            this.marginMeasurer = new insight.MarginMeasurer();
 
-            this._margin = {
+
+            var margin = {
                 top: 0,
                 left: 0,
                 right: 0,
@@ -29,18 +28,42 @@
 
             this.legendView = null;
 
-            var height = d3.functor(300);
-            var width = d3.functor(300);
-            var zoomable = false;
-            var series = [];
-            var xAxes = [];
-            var yAxes = [];
-            var self = this;
-            var title = '';
-            var autoMargin = true;
+            var height = d3.functor(300),
+                width = d3.functor(300),
+                maxWidth = d3.functor(300),
+                minWidth = d3.functor(300),
+                zoomable = false,
+                series = [],
+                xAxes = [],
+                yAxes = [],
+                self = this,
+                title = '',
+                autoMargin = true,
+                legend = null,
+                zoomInitialized = false,
+                initialized = false,
+                zoomAxis = null,
+                highlightSelector = insight.Utils.highlightSelector();
 
+            // private functions
 
-            this.init = function(create, container) {
+            var onWindowResize = function() {
+
+                var scrollBarWidth = 50;
+                var left = self.container[0][0].offsetLeft;
+
+                var widthWithoutScrollBar =
+                    window.innerWidth -
+                    left -
+                    scrollBarWidth;
+
+                self.resizeWidth(widthWithoutScrollBar);
+
+            };
+
+            var init = function(create, container) {
+
+                window.addEventListener('resize', onWindowResize);
 
                 self.container = create ? d3.select(container)
                     .append('div') : d3.select(self.element)
@@ -58,29 +81,70 @@
                 self.plotArea = self.chartSVG.append('g')
                     .attr('class', insight.Constants.PlotArea);
 
+                // create the empty text element used by the text measuring process
+                self.axisMeasurer = self.plotArea
+                    .append('text')
+                    .attr('class', insight.Constants.AxisTextClass);
+
+                self.labelMeasurer = self.container
+                    .append('text')
+                    .attr('class', insight.Constants.AxisLabelClass);
+
                 self.addClipPath();
 
-                self.draw(false);
+                initialized = true;
+            };
 
-                if (zoomable) {
-                    self.initZoom();
+
+            var initZoom = function() {
+
+                self.zoom = d3.behavior.zoom()
+                    .on('zoom', self.dragging.bind(self));
+
+                self.zoom.x(zoomAxis.scale);
+
+                if (!self.zoomExists()) {
+                    //Draw ourselves as the first element in the plot area
+                    self.plotArea.insert('rect', ':first-child')
+                        .attr('class', 'zoompane')
+                        .attr('width', self.width())
+                        .attr('height', self.height() - self.margin()
+                            .top - self.margin()
+                            .bottom)
+                        .style('fill', 'none')
+                        .style('pointer-events', 'all');
                 }
+
+                self.plotArea.select('.zoompane')
+                    .call(self.zoom);
+
+                zoomInitialized = true;
+            };
+
+            // public methods
+
+            /** 
+             * Empty event handler that is overridden by any listeners who want to know when this Chart's series change
+             * @memberof! insight.Chart
+             * @param {insight.Series[]} series - An array of insight.Series belonging to this Chart
+             */
+            this.seriesChanged = function(series) {
 
             };
 
 
+
             this.draw = function(dragging) {
+
+                if (!initialized) {
+                    init();
+                }
+
                 this.resizeChart();
 
                 var axes = xAxes.concat(yAxes);
 
                 axes.map(function(axis) {
-                    var isZoom = zoomAxis == axis;
-
-                    if (!isZoom) {
-                        axis.initializeScale();
-                    }
-
                     axis.draw(self, dragging);
                 });
 
@@ -91,6 +155,10 @@
 
                 if (legend !== null) {
                     legend.draw(self, self.series());
+                }
+
+                if (zoomable && !zoomInitialized) {
+                    initZoom();
                 }
             };
 
@@ -108,28 +176,58 @@
                         .bottom);
             };
 
+            /**
+             * Resizes the chart width according to the given window width within the chart's own minimum and maximum width
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Number} windowWidth The current window width to resize against
+             */
+            this.resizeWidth = function(windowWidth) {
+
+                var self = this;
+
+
+                if (this.width() > windowWidth && this.width() !== this.minWidth()) {
+
+                    doResize(Math.max(this.minWidth(), windowWidth));
+
+                } else if (this.width() < windowWidth && this.width() !== this.maxWidth()) {
+
+                    doResize(Math.min(this.maxWidth(), windowWidth));
+
+                }
+
+
+                function doResize(newWidth) {
+
+                    self.width(newWidth, true);
+                    self.draw();
+                }
+
+            };
 
             this.resizeChart = function() {
+
                 if (autoMargin) {
-                    self.calculateLabelMargin();
+
+                    var axisStyles = insight.Utils.getElementStyles(self.axisMeasurer.node(), ['font-size', 'line-height', 'font-family']);
+                    var labelStyles = insight.Utils.getElementStyles(self.labelMeasurer.node(), ['font-size', 'line-height', 'font-family']);
+
+                    self.calculateLabelMargin(self.marginMeasurer, axisStyles, labelStyles);
                 }
 
                 var chartMargin = self.margin();
 
                 var context = self.measureCanvas.getContext('2d');
-                context.font = "15pt Open Sans Bold";
-
-                var axisLabelSize = context.measureText(self.yAxis()
-                    .label());
 
                 self.container.style('width', self.width() + 'px');
 
                 self.chartSVG
-                    .attr('width', (self.width() + 100))
+                    .attr('width', self.width())
                     .attr('height', self.height());
 
                 self.plotArea = this.plotArea
-                    .attr('transform', 'translate(' + (axisLabelSize.width * 2) + ',' + chartMargin.top + ')');
+                    .attr('transform', 'translate(' + chartMargin.left + ',' + chartMargin.top + ')');
 
                 self.plotArea.select('#' + self.clipPath())
                     .append('rect')
@@ -140,51 +238,21 @@
             };
 
 
-
-            this.recalculateScales = function() {
-                scales.map(function(scale) {
-                    // don't resize the scale that is being dragged/zoomed, it is done automatically by d3
-                    var notZoomScale = zoomAxis != scale;
-
-                    if (notZoomScale) {
-                        scale.initialize();
-                    }
-                });
-            };
-
             /**
              * Enable zooming for an axis on this chart
-             * @memberof insight.Chart
+             * @memberof! insight.Chart
+             * @instance
              * @param axis The axis to enable zooming for
              * @returns {Chart} Returns this.
              */
             this.zoomable = function(axis) {
                 zoomable = true;
                 zoomAxis = axis;
+                axis.zoomable(true);
                 return this;
             };
 
-            this.initZoom = function() {
-                this.zoom = d3.behavior.zoom()
-                    .on('zoom', self.dragging.bind(self));
 
-                this.zoom.x(zoomAxis.scale);
-
-                if (!this.zoomExists()) {
-                    //Draw ourselves as the first element in the plot area
-                    this.plotArea.insert('rect', ':first-child')
-                        .attr('class', 'zoompane')
-                        .attr('width', this.width())
-                        .attr('height', this.height() - this.margin()
-                            .top - this.margin()
-                            .bottom)
-                        .style('fill', 'none')
-                        .style('pointer-events', 'all');
-                }
-
-                this.plotArea.select('.zoompane')
-                    .call(this.zoom);
-            };
 
             this.zoomExists = function() {
                 var z = this.plotArea.selectAll('.zoompane');
@@ -197,19 +265,25 @@
 
             /**
              * The margins to use around the chart (top, bottom, left, right), each measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {object} - The current margins of the chart.
              *
-             * If no arguments are given, then this returns the current chart margins. Otherwise, it sets the margins to the supplied argument.
-             * @memberof insight.Chart
-             * @param {object} [newMargins] The new margins to use for the chart.
-             * @returns {*} - If no arguments are supplied, returns the current margin. Otherwise returns this.
+             * @also
+             *
+             * Sets the margins to use around the chart (top, bottom, left, right), each measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {object} margins The new margins to use around the chart.
+             * @returns {this}
              */
             this.margin = function(newMargins) {
                 if (!arguments.length) {
-                    return this._margin;
+                    return margin;
                 }
 
                 autoMargin = false;
-                this._margin = newMargins;
+                margin = newMargins;
 
                 return this;
             };
@@ -231,15 +305,28 @@
 
             /**
              * The width of the chart element, measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Number} - The current width of the chart.
              *
-             * If no arguments are given, then this returns the current chart width. Otherwise, it sets the width to the supplied argument.
-             * @memberof insight.Chart
-             * @param {Number} [newWidth] The new width of the chart.
-             * @returns {*} - If no arguments are supplied, returns the current width. Otherwise returns this.
+             * @also
+             *
+             * Sets the width of the chart element, measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Number} newWidth The new width of the chart.
+             * @param {Boolean} dontSetMax If falsey then the maxWidth of the chart will also be set to newWidth.
+             * @returns {this}
              */
-            this.width = function(newWidth) {
+            this.width = function(newWidth, dontSetMax) {
                 if (!arguments.length) {
                     return width();
+                }
+
+                if (!dontSetMax) {
+
+                    this.maxWidth(newWidth);
+
                 }
 
                 width = d3.functor(newWidth);
@@ -248,11 +335,17 @@
 
             /**
              * The height of the chart element, measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Number} - The current height of the chart.
              *
-             * If no arguments are given, then this returns the current chart height. Otherwise, it sets the height to the supplied argument.
-             * @memberof insight.Chart
-             * @param {Number} [newHeight] The new height of the chart.
-             * @returns {*} - If no arguments are supplied, returns the current height. Otherwise returns this.
+             * @also
+             *
+             * Sets the height of the chart element, measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Number} newHeight The new height of the chart, measured in pixels.
+             * @returns {this}
              */
             this.height = function(newHeight) {
                 if (!arguments.length) {
@@ -263,12 +356,64 @@
             };
 
             /**
-             * The series to draw on this chart.
+             * The maximum width of the chart element, measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Number} - The maximum width of the chart.
              *
-             * If no arguments are given, then this returns the current chart width. Otherwise, it sets the width to the supplied argument.
-             * @memberof insight.Chart
-             * @param {Series} [newSeries] The new array of series to draw on the chart.
-             * @returns {*} - If no arguments are supplied, returns the current width. Otherwise returns this.
+             * @also
+             *
+             * Sets the maximum width of the chart element, measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Number} newMaxWidth The new maximum width of the chart, measured in pixels.
+             * @returns {this}
+             */
+            this.maxWidth = function(newMaxWidth) {
+                if (!arguments.length) {
+                    return maxWidth();
+                }
+
+                maxWidth = d3.functor(newMaxWidth);
+                return this;
+            };
+
+            /**
+             * The minimum width of the chart element, measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Number} - The minimum width of the chart.
+             *
+             * @also
+             *
+             * Sets the minimum width of the chart element, measured in pixels.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Number} newMinWidth The new minimum width of the chart, measured in pixels.
+             * @returns {this}
+             */
+            this.minWidth = function(newMinWidth) {
+                if (!arguments.length) {
+                    return minWidth();
+                }
+
+                minWidth = d3.functor(newMinWidth);
+                return this;
+            };
+
+            /**
+             * The series to draw on this chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Series[]} - The current series drawn on the chart.
+             *
+             * @also
+             *
+             * Sets the series to draw on this chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Series[]} newSeries The new series to draw on the chart.
+             * @returns {this}
              */
             this.series = function(newSeries) {
                 if (!arguments.length) {
@@ -276,16 +421,24 @@
                 }
                 series = newSeries;
 
+                self.seriesChanged(self, newSeries);
+
                 return this;
             };
 
             /**
              * The legend to draw on this chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Legend} - The current legend drawn on the chart.
              *
-             * If no arguments are given, then this returns the current chart legend. Otherwise, it sets the legend to the supplied argument.
-             * @memberof insight.Chart
-             * @param {Legend} [newLegend] The new legend to draw on the chart.
-             * @returns {*} - If no arguments are supplied, returns the current legend. Otherwise returns this.
+             * @also
+             *
+             * Sets the legend to draw on this chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Legend} newLegend The new legend to draw on the chart.
+             * @returns {this}
              */
             this.legend = function(newLegend) {
                 if (!arguments.length) {
@@ -300,9 +453,10 @@
             /**
              * Add a new x-axis to the chart.
              *
-             * @memberof insight.Chart
+             * @memberof! insight.Chart
+             * @instance
              * @param {Axis} [axis] The x-axis to add.
-             * @returns {object} - Returns this.
+             * @returns {this}
              */
             this.addXAxis = function(axis) {
                 axis.direction = 'h';
@@ -312,11 +466,17 @@
 
             /**
              * All of the x-axes on the chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Axis[]} - The current x-axes of the chart.
              *
-             * If no arguments are given, then this returns the x-axes. Otherwise, it sets the x-axis array to the supplied argument.
-             * @memberof insight.Chart
-             * @param {Axis} [newXAxes] The x-axes to add.
-             * @returns {*} - If no arguments are supplied, returns the current x-axes. Otherwise returns this.
+             * @also
+             *
+             * Sets the x-axes on the chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Axis[]} newXAxes The new x-axes to draw on the chart.
+             * @returns {this}
              */
             this.xAxes = function(newXAxes) {
                 if (!arguments.length) {
@@ -335,11 +495,17 @@
 
             /**
              * The primary x-axis on the chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Axis} - The current primary x-axis of the chart.
              *
-             * If no arguments are given, then this returns the primary x-axis. Otherwise, it sets the x-axis to the supplied argument.
-             * @memberof insight.Chart
-             * @param {Axis} xAxis The x-axis to add.
-             * @returns {*} - If no arguments are supplied, returns the current x-axis. Otherwise returns this.
+             * @also
+             *
+             * Sets the primary x-axis on the chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Axis} xAxis The new primary x-axis of the chart.
+             * @returns {this}
              */
             this.xAxis = function(xAxis) {
                 if (!arguments.length) {
@@ -354,9 +520,10 @@
             /**
              * Add a new y-axis to the chart.
              *
-             * @memberof insight.Chart
+             * @memberof! insight.Chart
+             * @instance
              * @param {Axis} [axis] The y-axis to add.
-             * @returns {object} - Returns this.
+             * @returns {this}
              */
             this.addYAxis = function(axis) {
                 axis.direction = 'v';
@@ -366,11 +533,17 @@
 
             /**
              * All of the y-axes on the chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Axis[]} - The current y-axes of the chart.
              *
-             * If no arguments are given, then this returns the y-axes. Otherwise, it sets the y-axis array to the supplied argument.
-             * @memberof insight.Chart
-             * @param {Axis} [newYAxes] The y-axes to add.
-             * @returns {*} - If no arguments are supplied, returns the current y-axes. Otherwise returns this.
+             * @also
+             *
+             * Sets the y-axes on the chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Axis[]} newYAxes The new y-axes to draw on the chart.
+             * @returns {this}
              */
             this.yAxes = function(newYAxes) {
                 if (!arguments.length) {
@@ -389,11 +562,17 @@
 
             /**
              * The primary y-axis on the chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @returns {Axis} - The current primary y-axis of the chart.
              *
-             * If no arguments are given, then this returns the primary y-axis. Otherwise, it sets the y-axis to the supplied argument.
-             * @memberof insight.Chart
-             * @param {Axis} yAxis The y-axis to add.
-             * @returns {*} - If no arguments are supplied, returns the current y-axis. Otherwise returns this.
+             * @also
+             *
+             * Sets the primary y-axis on the chart.
+             * @memberof! insight.Chart
+             * @instance
+             * @param {Axis} yAxis The new primary y-axis of the chart.
+             * @returns {this}
              */
             this.yAxis = function(yAxis) {
                 if (!arguments.length) {
@@ -405,15 +584,6 @@
                 return this.yAxes(newYAxes);
             };
 
-            this.addHorizontalScale = function(type, typeString, direction) {
-                var scale = new Scale(this, type, direction, typeString);
-            };
-
-
-            this.addHorizontalAxis = function(scale) {
-                var axis = new Axis(this, scale, 'h', 'left');
-            };
-
 
             this.autoMargin = function(_) {
                 if (!arguments.length) {
@@ -423,11 +593,17 @@
                 return this;
             };
 
-
-            this.highlight = function(selector, value) {
-
-                var clicked = this.plotArea.selectAll('.' + selector);
-                var alreadySelected = clicked.classed('selected');
+            /**
+             * Takes a CSS selector and applies classes to chart elements to show them as selected or not.
+             * in response to a filtering event.
+             * and something else is.
+             * @memberof! insight.Chart
+             * @param {string} selector - a CSS selector matching a slice of a dimension. eg. an entry in a grouping by Country 
+                                          would be 'in_England', which would match that dimensional value in any charts.
+             */
+            this.highlight = function(selector) {
+                var clicked = self.plotArea.selectAll('.' + selector);
+                var alreadySelected = insight.Utils.arrayContains(self.selectedItems, selector);
 
                 if (alreadySelected) {
                     clicked.classed('selected', false);
@@ -438,38 +614,33 @@
                     self.selectedItems.push(selector);
                 }
 
-                var selected = this.plotArea.selectAll('.selected');
-                var notselected = this.plotArea.selectAll('.bar:not(.selected),.bubble:not(.selected)');
 
+                // depending on if anything is selected, we have to update the rest as notselected so that they are coloured differently
+                var selected = self.plotArea.selectAll('.selected');
+                var notselected = self.plotArea.selectAll(highlightSelector);
+
+                // if nothing is selected anymore, clear the .notselected class from any elements (stop showing them as gray)
                 notselected.classed('notselected', selected[0].length > 0);
             };
 
-            insight.addChart(this);
         }
 
+        /**
+         * Sets the margin for the Chart by using a MarginMEasurer to measure the required label and axis widths for
+         * the contents of this Chart
+         * @memberof! insight.Chart
+         * @instance
+         * @param {DOMElement} measurer - A canvas HTML element to use by the measurer.  Specific to each chart as
+         *                                each chart may have specific css rules
+         * @param {object} axisStyles - An associative map between css properties and values for the axis values
+         * @param {object} labelStyles - An associative map between css properties and values for the axis labels
+         */
+        Chart.prototype.calculateLabelMargin = function(measurer, axisStyles, labelStyles) {
 
+            // labelStyles can be optional.  If so, use the same as the axisStyles
+            labelStyles = labelStyles ? labelStyles : axisStyles;
 
-        Chart.prototype.calculateLabelMargin = function() {
-
-            var canvas = this.measureCanvas;
-            var max = 0;
-            var margin = {
-                "top": 0,
-                "left": 0,
-                "bottom": 0,
-                "right": 0
-            };
-
-            this.series()
-                .forEach(function(series) {
-                    var xAxis = series.x;
-                    var yAxis = series.y;
-
-                    var labelDimensions = series.maxLabelDimensions(canvas);
-
-                    margin[xAxis.orientation()] = Math.max(labelDimensions.maxKeyHeight, margin[xAxis.orientation()]);
-                    margin[yAxis.orientation()] = Math.max(labelDimensions.maxValueWidth, margin[yAxis.orientation()]);
-                });
+            var margin = measurer.calculateChartMargins(this.series(), this.measureCanvas, axisStyles, labelStyles);
 
             this.margin(margin);
         };

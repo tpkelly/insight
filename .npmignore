@@ -1,6 +1,9 @@
 # Grunt files
 .grunt
 _SpecRunner.html
+Gruntfile.js
+.travis.yml
+
 
 # Bower files
 bower_components
@@ -12,6 +15,11 @@ node_modules
 .idea
 
 # Generated files
-dist
 doc
-insight.js.zip
+
+#code
+
+tests
+themes
+src
+doctemplate

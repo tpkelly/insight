@@ -10,11 +10,7 @@
 
     var undefinedMessages = [];
 
-    if (isMissing(window, 'd3')) {
 
-        undefinedMessages.push('d3.js');
-
-    }
 
     if (isMissing(window, 'crossfilter')) {
 
@@ -26,15 +22,11 @@
 
     }
 
-    if (undefinedMessages.length > 0) {
+    if (isMissing(window, 'd3')) {
 
-        undefinedMessages.unshift('Insight depends on d3 and d3.tip but the following are not defined:');
+        var message = 'Insight depends on d3. You must include d3 in a script tag. See https://github.com/ScottLogic/insight for how to get started.';
 
-        var fullMessage =
-            undefinedMessages.join('\n\t- ') +
-            '\nYou must include script tags for the missing dependencies. See https://github.com/ScottLogic/insight for how to get started.';
-
-        throw new Error(fullMessage);
+        throw new Error(message);
 
     }
 

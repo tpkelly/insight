@@ -445,9 +445,8 @@ describe('Axis Tests', function() {
 
         it('no gridlines when gridlines are hidden', function () {
             //Given:
-            insight.init();
             createChartElement();
-
+            
             var chart = new insight.Chart('test', '#testChart')
                 .width(650)
                 .height(350)
@@ -477,7 +476,9 @@ describe('Axis Tests', function() {
             var lineSeries = new insight.LineSeries('line', data, x, y);
             chart.series([lineSeries]);
 
-            insight.drawCharts();
+
+            chart.draw();
+            
             removeChartElement();
 
             //Then:
@@ -487,7 +488,6 @@ describe('Axis Tests', function() {
 
         it('multiple gridlines when gridlines are visible', function () {
             //Given:
-            insight.init();
             createChartElement();
 
             var chart = new insight.Chart('test', '#testChart')
@@ -519,7 +519,8 @@ describe('Axis Tests', function() {
             var lineSeries = new insight.LineSeries('line', data, x, y);
             chart.series([lineSeries]);
 
-            insight.drawCharts();
+            chart.draw();
+
             removeChartElement();
 
             //Then:

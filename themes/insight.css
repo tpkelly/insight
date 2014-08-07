@@ -59,6 +59,11 @@
     stroke: none;
 }
 
+.axis-text {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 13px;
+}
+
 /* Table Styles */
 
 .in-table th, in-table td

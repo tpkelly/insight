@@ -24,11 +24,9 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
         if (vertical) {
             pos = self.x.scale(self.keyFunction()(d));
 
-            if (!offset) {
-                offset = self.calculateOffset(d);
-            }
+            offset = self.calculateOffset(d);
 
-            pos = widthFactor != 1 ? pos + offset : pos;
+            pos = widthFactor !== 1 ? pos + offset : pos;
         } else {
             pos = self.x.scale(self.valueFunction()(d));
 
@@ -61,11 +59,9 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
         if (horizontal) {
             position = self.y.scale(self.keyFunction()(d));
 
-            if (!offset) {
-                offset = self.calculateOffset(d);
-            }
+            offset = self.calculateOffset(d);
 
-            position = widthFactor != 1 ? position + offset : position;
+            position = widthFactor !== 1 ? position + offset : position;
 
         } else {
             position = self.y.scale(self.valueFunction()(d));
@@ -89,11 +85,17 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
 
     /**
      * The width of the marker, as a proportion of the column width.
+     * @memberof! insight.MarkerSeries
+     * @instance
+     * @returns {Number} - The current width proportion.
      *
-     * If no arguments are given, then this returns whether the current width proportion. Otherwise, it sets the offset to the supplied argument.
-     * @memberof insight.MarkerSeries
-     * @param {object} [value] The new width proportion.
-     * @returns {*} - If no arguments are supplied, returns the current width proportion. Otherwise returns this.
+     * @also
+     *
+     * Sets the width of the marker, as a proportion of the column width.
+     * @memberof! insight.MarkerSeries
+     * @instance
+     * @param {Number} widthProportion The new width proportion.
+     * @returns {this}
      */
     this.widthFactor = function(_) {
 
@@ -138,17 +140,11 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
 
 
 
-    this.className = function(d) {
-        var dimension = insight.Utils.keySelector(d);
-
-        return self.name + 'class bar ' + dimension + " " + self.dimensionName;
-    };
-
-
-
     this.draw = function(chart, drag) {
 
-        this.initializeTooltip(chart.container.node());
+        self.initializeTooltip(chart.container.node());
+        self.selectedItems = chart.selectedItems;
+        self.rootClassName = self.seriesClassName();
 
         var reset = function(d) {
             d.yPos = 0;
@@ -177,7 +173,7 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
         };
 
         newBars = newGroups.append('rect')
-            .attr('class', self.className)
+            .attr('class', self.itemClassName)
             .attr('y', this.y.bounds[0])
             .attr('height', 0)
             .attr('fill', this.color)
@@ -186,7 +182,7 @@ insight.MarkerSeries = function MarkerSeries(name, data, x, y, color) {
             .on('mouseout', this.mouseOut)
             .on('click', click);
 
-        var bars = groups.selectAll('.' + this.name + 'class.bar');
+        var bars = groups.selectAll('.' + this.name + 'class');
 
         bars
             .transition()

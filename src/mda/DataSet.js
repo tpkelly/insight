@@ -7,12 +7,9 @@ insight.DataSet = (function(insight) {
      */
     function DataSet(data) {
 
-        this._data = data;
+        this.data = data;
 
-        this.Dimensions = [];
-        this.Groups = [];
-
-        this.ndx = null;
+        this.crossfilterData = null;
 
         this._orderFunction = function(a, b) {
             return b.value - a.value;
@@ -35,11 +32,11 @@ insight.DataSet = (function(insight) {
 
     DataSet.prototype.getData = function() {
         var data;
-        if (this._data.all) {
-            data = this._data.all();
+        if (this.data.all) {
+            data = this.data.all();
         } else {
             //not a crossfilter set
-            data = this._data;
+            data = this.data;
         }
 
         if (this._filterFunction) {
@@ -68,7 +65,7 @@ insight.DataSet = (function(insight) {
     DataSet.prototype.getOrderedData = function() {
         var data;
 
-        data = this._data.sort(this._orderFunction);
+        data = this.data.sort(this._orderFunction);
 
         if (this._filterFunction) {
             data = data.filter(this._filterFunction);
@@ -78,18 +75,13 @@ insight.DataSet = (function(insight) {
     };
 
 
-    DataSet.prototype.group = function(name, groupFunction, multi) {
+    DataSet.prototype.group = function(name, groupFunction, oneToMany) {
 
-        this.ndx = !this.ndx ? crossfilter(this._data) : this.ndx;
+        this.crossfilterData = this.crossfilterData || crossfilter(this.data);
 
-        var dim = new insight.Dimension(name, groupFunction, this.ndx.dimension(groupFunction), groupFunction, multi);
+        var dim = new insight.Dimension(name, this.crossfilterData, groupFunction, oneToMany);
 
         var group = new insight.Grouping(dim);
-
-        insight.Dimensions.push(dim);
-        insight.Groups.push(group);
-
-        group.filterHandler = insight.chartFilterHandler.bind(insight);
 
         return group;
     };

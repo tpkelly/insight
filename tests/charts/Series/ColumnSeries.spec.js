@@ -21,37 +21,38 @@ var dataset =
 {'Id':20,'Forename':'Frances','Surname':'Lawson','Country':'Northern Ireland','DisplayColour':'#e739c9','Age':14,'IQ':71}];
 
 
-
-
-var div = document.createElement('div');
-div.id  = 'test';
-
-var createChartElement = function(){
-     
-    document.body.appendChild(div);        
-};
-
-var removeChartElement = function(){
-    document.body.removeChild(div);
-};
-
-
 describe('Column Series Tests', function() {
     
+    var chart,
+        data,
+        div = document.createElement('div');
+
+    div.id  = 'test';
+
+    beforeEach(function() {
+
+        document.body.appendChild(div);  
+
+        data = new insight.DataSet(dataset);
+        chart = new insight.Chart('Chart 1', '#test');
+           
+    });
+
+    afterEach(function(){
+        document.body.removeChild(div);
+    });
+
     it('filtering works with a single item', function() {
         
-        insight.init();
+        chartGroup = new insight.ChartGroup();
+        data = new insight.DataSet(dataset);
+        chart = new insight.Chart('Chart 1', '#test');
 
-        createChartElement();
-
-        var data = new insight.DataSet(dataset);
-
-        var chart = new insight.Chart('Chart 1', '#test');
-                
         var group =  data.group('country',function(d){return d.Country;});
         
         var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
         var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
 
@@ -59,23 +60,20 @@ describe('Column Series Tests', function() {
         
         var data = series.dataset();
 
-        insight.drawCharts();
-
         expect(data.length).toBe(1);
 
-        removeChartElement();
     });
 
     it('filtering works with multiple items', function() {
         
-        var data = new insight.DataSet(dataset);
-
-        var chart = new insight.Chart('Chart 1', '#chart1');
-                
+        data = new insight.DataSet(dataset);
+        chart = new insight.Chart('Chart 1', '#test');
+        
         var group =  data.group('country',function(d){return d.Country;});
 
         var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
         var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
 
@@ -89,11 +87,7 @@ describe('Column Series Tests', function() {
 
 
     it('calculates max with normal series', function() {
-        
-        var data = new insight.DataSet(dataset);
-
-        var chart = new insight.Chart('Chart 1', '#chart1');
-                
+                        
         var group =  data.group('country',function(d){return d.Country;});
 
         var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
@@ -110,11 +104,7 @@ describe('Column Series Tests', function() {
     });
 
     it('calculates max with grouped series', function() {
-        
-        var data = new insight.DataSet(dataset);
-
-        var chart = new insight.Chart('Chart 1', '#chart1');
-                
+                        
         var group =  data.group('country',function(d){return d.Country;}).mean(['Age']);
 
         var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
@@ -152,10 +142,6 @@ describe('Column Series Tests', function() {
     });
 
     it('calculates max with a stacked series', function() {
-        
-        var data = new insight.DataSet(dataset);
-
-        var chart = new insight.Chart('Chart 1', '#chart1');
                 
         var group =  data.group('country',function(d){return d.Country;}).mean(['Age']);
 
@@ -192,5 +178,61 @@ describe('Column Series Tests', function() {
 
         expect(max).toBe(20.857142857142858);        
     });
+    
+    it('ColumnSeries root css is correct', function() {
+        
+        //Given 
+                
+        var group =  data.group('country', function(d){return d.Country;})
+                         .mean(['Age']);
 
+        var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
+        var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        
+        chart.addXAxis(xScale);
+        chart.addYAxis(yScale);
+
+        var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale, 'silver')
+                                .valueFunction(function(d){ return d.Country; });
+
+        // Then
+        var actualData = series.seriesClassName();
+        var expectedData = 'countryColumnclass bar';
+
+        expect(actualData).toBe(expectedData);
+
+    });
+
+    it('ColumnSeries item css is correct', function() {
+        
+        //Given 
+                
+        var group =  data.group('country', function(d){return d.Country;})
+                         .mean(['Age']);
+
+        var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
+        var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        
+        chart.addXAxis(xScale);
+        chart.addYAxis(yScale);
+
+        var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale, 'silver')
+                                .valueFunction(function(d){ return d.Country; });
+        // When 
+        
+        series.currentSeries = {name: 'default', accessor: function(d){ return d.value.Country; }};
+        series.rootClassName = series.seriesClassName();
+
+        // Then
+        var actualData = series.dataset().map(function(data){ return series.seriesSpecificClassName(data); });
+        var expectedData = [
+                            'countryColumnclass bar in_England defaultclass',
+                            'countryColumnclass bar in_Northern_Ireland defaultclass',
+                            'countryColumnclass bar in_Scotland defaultclass',
+                            'countryColumnclass bar in_Wales defaultclass',
+                            ];
+
+        expect(actualData).toEqual(expectedData);
+
+    });
 });

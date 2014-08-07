@@ -4,17 +4,12 @@ insight.Formatters = (function(d3) {
     exports.moduleProperty = 1;
 
     exports.currencyFormatter = function(value) {
-        var format = d3.format("0,000");
-        return '£' + format(value);
-    };
-
-    exports.decimalCurrencyFormatter = function(value) {
-        var format = d3.format("0.2f");
+        var format = d3.format(",.02f");
         return '£' + format(value);
     };
 
     exports.numberFormatter = function(value) {
-        var format = d3.format("0,000.0f");
+        var format = d3.format(",.f");
         return format(value);
     };
 

@@ -11,7 +11,8 @@ insight.AxisGridlines = function AxisGridlines(axis) {
 
     /** Returns the array of all gridlines for this axis.
      *
-     * @memberof insight.AxisGridlines
+     * @memberof! insight.AxisGridlines
+     * @instance
      * @param {Chart} chart The chart to grab the gridlines from.
      * @return {object[]} - All of the gridlines currently added to this chart.
      */
@@ -20,14 +21,18 @@ insight.AxisGridlines = function AxisGridlines(axis) {
         return chart.plotArea.selectAll(gridLineIdentifier);
     };
 
-    /** The getter/setter for the color of the gridlines.
+    /** The color of the gridlines.
+     * @memberof! insight.AxisGridlines
+     * @instance
+     * @returns {Color} - The current line color of the gridlines.
      *
-     * If an argument is provided, the line color will update to the provided value.
-     * Otherwise, the current line color is returned.
+     * @also
      *
-     * @memberof insight.AxisGridlines
-     * @param {Color} [value] The value to set the gridline color to.
-     * @returns {*} - If no arguments are supplied, returns the line color of the gridlines. Otherwise returns this.
+     * Sets the color of the gridlines
+     * @memberof! insight.AxisGridlines
+     * @instance
+     * @param {Color} value The new gridline color.
+     * @returns {this}
      */
     this.lineColor = function(value) {
         if (!arguments.length) {
@@ -37,14 +42,18 @@ insight.AxisGridlines = function AxisGridlines(axis) {
         return this;
     };
 
-    /** The getter/setter for the width of the gridlines.
+    /** The width of the gridlines.
+     * @memberof! insight.AxisGridlines
+     * @instance
+     * @returns {Number} - The current line width of the gridlines.
      *
-     * If an argument is provided, the line width will update to the provided value.
-     * Otherwise, the current line width is returned.
+     * @also
      *
-     * @memberof insight.AxisGridlines
-     * @param {number} [value] The value to set the gridline width to.
-     * @returns {*} - If no arguments are supplied, returns the line width of the gridlines. Otherwise returns this.
+     * Sets the width of the gridlines
+     * @memberof! insight.AxisGridlines
+     * @instance
+     * @param {Number} value The new gridline width.
+     * @returns {this}
      */
     this.lineWidth = function(value) {
         if (!arguments.length) {

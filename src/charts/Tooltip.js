@@ -67,7 +67,7 @@ insight.Tooltip = (function() {
             };
         }
 
-        /**
+        /*
          * Given a coordinate {x,y} position, this method updates the position and visibility of the tooltip to display it.
          * @param {object} point - an {x,y} coordinate, from the top left of the tooltip's container SVG.
          */
@@ -84,12 +84,18 @@ insight.Tooltip = (function() {
         // Public Methods
 
         /**
-         * This method gets or sets the tooltip offset, which moves the tooltip for this series relative to its default point.
+         * The distance to which move the tooltip for this series relative to its default point.
+         * @memberof! insight.Tooltip
+         * @instance
+         * @returns {object} - The {x,y} offset to place the tooltip from the point.
          *
-         * If no arguments are given, then this returns the current tooltip offset. Otherwise, it sets the offset to the supplied argument.
-         * @memberof insight.Tooltip
-         * @param {object} [value] The new {x,y} offset point.
-         * @returns {*} - If no arguments are supplied, returns the current tooltip offset. Otherwise returns this.
+         * @also
+         *
+         * Sets the distance to which move the tooltip for this series relative to its default point.
+         * @memberof! insight.Tooltip
+         * @instance
+         * @param {object} offset The new distance to which move the tooltip for this series relative to its default point.
+         * @returns {this}
          */
         this.offset = function(value) {
             if (!arguments.length) {
@@ -100,13 +106,19 @@ insight.Tooltip = (function() {
             return this;
         };
 
-
         /**
-         * This method gets or sets any styles for the tooltip, in standard {'name': 'value', ...} format.
-         * If no arguments are given, then this returns the current tooltip style. Otherwise, it sets the style to the supplied argument.
-         * @memberof insight.Tooltip
-         * @param {object} [styles] - A dictionary mapping CSS properties to values;
-         * @returns {*} - If no arguments are supplied, returns the current tooltip style. Otherwise returns this.
+         * The current style for the tooltip.
+         * @memberof! insight.Tooltip
+         * @instance
+         * @returns {object} - The style of the tooltip, in standard {'name': 'value', ...} format of CSS values.
+         *
+         * @also
+         *
+         * Sets the current style for the tooltip.
+         * @memberof! insight.Tooltip
+         * @instance
+         * @param {object} style The new style of the tooltip, in standard {'name': 'value', ...} format of CSS values.
+         * @returns {this}
          */
         this.styles = function(value) {
             if (!arguments.length) {
@@ -129,7 +141,8 @@ insight.Tooltip = (function() {
 
         /**
          * Display the tooltip, using the provided element and tooltipText parameters to control the context and position.
-         * @memberof insight.Tooltip
+         * @memberof! insight.Tooltip
+         * @instance
          * @param {element} element The element to attach to.
          * @param {String} tooltipText The text to display on the tooltip.
          */
@@ -149,7 +162,8 @@ insight.Tooltip = (function() {
 
         /**
          * Hide the tooltip
-         * @memberof insight.Tooltip
+         * @memberof! insight.Tooltip
+         * @instance
          */
         this.hide = function() {
             d3.select(self.element)

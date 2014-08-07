@@ -13,11 +13,12 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
 
     var self = this,
         stacked = d3.functor(false),
-        seriesName = "",
+        seriesName = '',
         seriesFunctions = {};
 
-    this.valueAxis = y;
-    this.keyAxis = x;
+    this.valueAxis = x;
+    this.keyAxis = y;
+    this.classValues = [insight.Constants.BarClass];
 
     this.series = [{
         name: 'default',
@@ -31,10 +32,12 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
         label: 'Value'
     }];
 
-    /*
+
+    /**
      * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
      * This function is mapped across the entire data array by the findMax method.
-     * @memberof insight.RowSeries
+     * @memberof! insight.RowSeries
+     * @instance
      * @param {object} data - An item in the object array to query
      * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
      */
@@ -60,23 +63,29 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
 
     /**
      * Extracts the maximum value on an axis for this series.
-     * @memberof insight.RowSeries
+     * @memberof! insight.RowSeries
+     * @instance
      * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
      */
     this.findMax = function() {
-        var max = d3.max(this.data.getData(), this.seriesMax);
+        var max = d3.max(self.dataset(), self.seriesMax);
 
         return max;
     };
 
-
     /**
      * Determines whether the series should stack rows, or line them up side-by-side.
+     * @memberof! insight.RowSeries
+     * @instance
+     * @returns {boolean} - To stack or not to stack.
      *
-     * If no arguments are given, then this returns whether the series is stacked. Otherwise, it sets the stacking to the supplied argument.
-     * @memberof insight.RowSeries
-     * @param {boolean} [stack] To stack or not to stack
-     * @returns {*} - If no arguments are supplied, returns whether the series is currently stacked. Otherwise returns this.
+     * @also
+     *
+     * Sets whether the series should stack rows, or line them up side-by-side.
+     * @memberof! insight.RowSeries
+     * @instance
+     * @param {boolean} stacked Whether the row series should be stacked.
+     * @returns {this}
      */
     this.stacked = function(_) {
         if (!arguments.length) {
@@ -112,7 +121,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
 
     this.xPosition = function(d) {
 
-        var func = self.currentSeries.accessor;
+        var func = self.currentSeries.valueFunction;
 
         var position = self.stacked() ? self.x.scale(self.calculateXPos(func, d)) : 0;
 
@@ -127,7 +136,7 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
 
         var groupThickness = self.barThickness(d);
 
-        var width = self.stacked() || (self.series.length == 1) ? groupThickness : groupThickness / self.series.length;
+        var width = self.stacked() || (self.series.length === 1) ? groupThickness : groupThickness / self.series.length;
 
         return width;
     };
@@ -140,14 +149,11 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
     };
 
     this.barWidth = function(d) {
-        var func = self.currentSeries.accessor;
+        var func = self.currentSeries.valueFunction;
 
         return self.x.scale(func(d));
     };
 
-    this.className = function(d) {
-        return seriesName + 'class bar ' + insight.Utils.keySelector(d);
-    };
 
     var mouseOver = function(data, i) {
 
@@ -157,28 +163,46 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
         self.mouseOver.call(this, data, i, seriesFunction);
     };
 
+
+    this.seriesSpecificClassName = function(d) {
+
+        var additionalClass = ' ' + self.currentSeries.name + 'class';
+        var baseClassName = self.itemClassName(d);
+        var itemClassName = baseClassName + additionalClass;
+
+        return itemClassName;
+    };
+
     this.draw = function(chart, drag) {
 
-        this.initializeTooltip(chart.container.node());
+        self.initializeTooltip(chart.container.node());
+        self.selectedItems = chart.selectedItems;
+        self.rootClassName = self.seriesClassName();
 
         var reset = function(d) {
             d.yPos = 0;
             d.xPos = 0;
         };
 
-        var data = this.dataset();
+        var data = this.dataset(),
+            groupSelector = 'g.' + insight.Constants.BarGroupClass + '.' + this.name,
+            groupClassName = insight.Constants.BarGroupClass + ' ' + this.name,
+            barSelector = 'rect.' + insight.Constants.BarGroupClass;
+
 
         data.forEach(reset);
 
+
         var groups = chart.plotArea
-            .selectAll('g.' + insight.Constants.BarGroupClass + "." + this.name)
-            .data(data, this.keyAccessor);
+            .selectAll(groupSelector)
+            .data(data, this.keyvalueFunction);
+
 
         var newGroups = groups.enter()
             .append('g')
-            .attr('class', insight.Constants.BarGroupClass + " " + this.name);
+            .attr('class', groupClassName);
 
-        var newBars = newGroups.selectAll('rect.bar');
+        var newBars = newGroups.selectAll(barSelector);
 
         var click = function(filter) {
             return self.click(this, filter);
@@ -193,19 +217,21 @@ insight.RowSeries = function RowSeries(name, data, x, y, color) {
             this.currentSeries = this.series[seriesIndex];
 
             seriesName = this.currentSeries.name;
-            seriesFunctions[seriesName] = this.currentSeries.accessor;
+            seriesFunctions[seriesName] = this.currentSeries.valueFunction;
+
+            var seriesSelector = '.' + seriesName + 'class.' + insight.Constants.BarClass;
 
             newBars = newGroups.append('rect')
-                .attr('class', this.className)
+                .attr('class', self.seriesSpecificClassName)
                 .attr('height', 0)
                 .attr('fill', this.currentSeries.color)
                 .attr('in_series', seriesName)
-                .attr("clip-path", "url(#" + chart.clipPath() + ")")
+                .attr('clip-path', 'url(#' + chart.clipPath() + ')')
                 .on('mouseover', mouseOver)
                 .on('mouseout', this.mouseOut)
                 .on('click', click);
 
-            var bars = groups.selectAll('.' + seriesName + 'class.bar')
+            var bars = groups.selectAll(seriesSelector)
                 .transition()
                 .duration(duration)
                 .attr('y', this.offsetYPosition)

@@ -11,34 +11,39 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
 
     insight.Series.call(this, name, data, x, y, color);
 
-    var radiusFunction = d3.functor(10);
-    var self = this;
-    var selector = this.name + insight.Constants.Bubble;
+    // private variables
 
-    var xFunction = function(d) {
-        return d.x;
-    };
+    var self = this,
+        selector = this.name + insight.Constants.Bubble,
+        radiusFunction = d3.functor(10);
 
-    var yFunction = function(d) {
-        return d.y;
-    };
+
+    // public variables
+
+    this.classValues = [insight.Constants.Bubble];
+
 
     this.rangeY = function(d) {
-        var f = self.yFunction();
-
         return self.y.scale(self.yFunction()(d));
     };
 
     this.rangeX = function(d, i) {
-        var f = self.xFunction();
         return self.x.scale(self.xFunction()(d));
     };
 
     /**
      * The function to extract the radius of each bubble from the data objects.
-     * @memberof insight.BubbleSeries
-     * @param {function} [radiusFunc] The new radius function to use to extract the radius from a data object.
-     * @returns {*} - If no arguments are supplied, returns the current radiusFunction. Otherwise returns this.
+     * @memberof! insight.BubbleSeries
+     * @instance
+     * @returns {function} - The current function used to determine the radius of data objects.
+     *
+     * @also
+     *
+     * Sets the function to extract the radius of each bubble from the data objects.
+     * @memberof! insight.BubbleSeries
+     * @instance
+     * @param {boolean} reversed The new function to extract the radius of each bubble from the data objects.
+     * @returns {this}
      */
     this.radiusFunction = function(radiusFunc) {
         if (!arguments.length) {
@@ -49,11 +54,23 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
         return this;
     };
 
+    /**
+     * This method is called when any post aggregation calculations, provided by the computeFunction() setter, need to be recalculated.
+     * @memberof insight.BubbleSeries
+     * @instance
+     * @param {insight.Scale} scale - a scale parameter to check if the values should be taken from x or y functions.
+     * @returns {object} - the maximum value for the series on the provided axis
+     */
+    this.findMax = function(scale) {
+        var self = this;
 
-    var className = function(d) {
+        var data = this.dataset();
 
-        return selector + " " + insight.Constants.Bubble + " " + insight.Utils.keySelector(d) + " " + self.dimensionName;
+        var func = scale === self.x ? self.xFunction() : self.yFunction();
+
+        return d3.max(data, func);
     };
+
 
     this.bubbleData = function(data) {
         var max = d3.max(data, radiusFunction);
@@ -63,8 +80,8 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
         };
 
         //Minimum of pixels-per-axis-unit
-        var xValues = data.map(xFunction);
-        var yValues = data.map(yFunction);
+        var xValues = data.map(self.xFunction());
+        var yValues = data.map(self.yFunction());
         var xBounds = this.x.bounds[1];
         var yBounds = this.y.bounds[0];
         var maxRad = Math.min(xBounds / 10, yBounds / 10);
@@ -91,6 +108,8 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
     this.draw = function(chart, drag) {
 
         this.initializeTooltip(chart.container.node());
+        this.selectedItems = chart.selectedItems;
+        this.rootClassName = self.seriesClassName();
 
         var duration = drag ? 0 : function(d, i) {
             return 200 + (i * 20);
@@ -102,12 +121,12 @@ insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
 
         var bubbleData = this.bubbleData(this.dataset());
 
-        var bubbles = chart.plotArea.selectAll('circle.' + selector)
-            .data(bubbleData, self.keyAccessor);
+        var bubbles = chart.plotArea.selectAll('circle.' + insight.Constants.Bubble)
+            .data(bubbleData, self.keyFunction());
 
         bubbles.enter()
             .append('circle')
-            .attr('class', className)
+            .attr('class', self.itemClassName)
             .on('mouseover', self.mouseOver)
             .on('mouseout', self.mouseOut)
             .on('click', click);
