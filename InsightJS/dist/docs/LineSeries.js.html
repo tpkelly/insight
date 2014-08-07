@@ -55,62 +55,6 @@
             </ul>
         </li>
     
-        <li class="item" data-name="insight.correlation">
-            <span class="title">
-                <a href="insight.correlation.html">insight.correlation</a>
-                
-                <span class="static">static</span>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            <span class="subtitle">Methods</span>
-            
-                <li data-name="insight.correlation.correlation.fromDataSet"><a href="insight.correlation.html#correlation.fromDataSet">correlation.fromDataSet</a></li>
-            
-                <li data-name="insight.correlation.correlation.fromValues"><a href="insight.correlation.html#correlation.fromValues">correlation.fromValues</a></li>
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
-        <li class="item" data-name="insight.Utils">
-            <span class="title">
-                <a href="insight.Utils.html">insight.Utils</a>
-                
-                <span class="static">static</span>
-                
-            </span>
-            <ul class="members itemMembers">
-            
-            </ul>
-            <ul class="typedefs itemMembers">
-            
-            </ul>
-            <ul class="methods itemMembers">
-            
-            <span class="subtitle">Methods</span>
-            
-                <li data-name="insight.Utils.exports.addToSet"><a href="insight.Utils.html#exports.addToSet">exports.addToSet</a></li>
-            
-                <li data-name="insight.Utils.exports.arrayContains"><a href="insight.Utils.html#exports.arrayContains">exports.arrayContains</a></li>
-            
-                <li data-name="insight.Utils.recursiveSort"><a href="insight.Utils.html#recursiveSort">recursiveSort</a></li>
-            
-            </ul>
-            <ul class="events itemMembers">
-            
-            </ul>
-        </li>
-    
         <li class="item" data-name="insight.Axis">
             <span class="title">
                 <a href="insight.Axis.html">insight.Axis</a>
@@ -241,7 +185,7 @@
             
                 <li data-name="insight.Chart.this.seriesChanged"><a href="insight.Chart.html#this.seriesChanged">this.seriesChanged</a></li>
             
-                <li data-name="insight.Chart#Chart#calculateLabelMargin"><a href="insight.Chart.html##Chart#calculateLabelMargin">#Chart#calculateLabelMargin</a></li>
+                <li data-name="insight.Chart#calculateLabelMargin"><a href="insight.Chart.html##calculateLabelMargin">#calculateLabelMargin</a></li>
             
                 <li data-name="insight.Chart#this.addXAxis"><a href="insight.Chart.html##this.addXAxis">#this.addXAxis</a></li>
             
@@ -355,9 +299,28 @@
             </ul>
         </li>
     
-        <li class="item" data-name="insight.Grouping">
+        <li class="item" data-name="insight.DataSet">
             <span class="title">
-                <a href="insight.Grouping.html">insight.Grouping</a>
+                <a href="insight.DataSet.html">insight.DataSet</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.Dimension">
+            <span class="title">
+                <a href="insight.Dimension.html">insight.Dimension</a>
                 
             </span>
             <ul class="members itemMembers">
@@ -370,29 +333,7 @@
             
             <span class="subtitle">Methods</span>
             
-                <li data-name="insight.Grouping#self.count"><a href="insight.Grouping.html##self.count">#self.count</a></li>
-            
-                <li data-name="insight.Grouping#self.count"><a href="insight.Grouping.html##self.count">#self.count</a></li>
-            
-                <li data-name="insight.Grouping#self.cumulative"><a href="insight.Grouping.html##self.cumulative">#self.cumulative</a></li>
-            
-                <li data-name="insight.Grouping#self.cumulative"><a href="insight.Grouping.html##self.cumulative">#self.cumulative</a></li>
-            
-                <li data-name="insight.Grouping#self.getData"><a href="insight.Grouping.html##self.getData">#self.getData</a></li>
-            
-                <li data-name="insight.Grouping#self.mean"><a href="insight.Grouping.html##self.mean">#self.mean</a></li>
-            
-                <li data-name="insight.Grouping#self.mean"><a href="insight.Grouping.html##self.mean">#self.mean</a></li>
-            
-                <li data-name="insight.Grouping#self.ordered"><a href="insight.Grouping.html##self.ordered">#self.ordered</a></li>
-            
-                <li data-name="insight.Grouping#self.ordered"><a href="insight.Grouping.html##self.ordered">#self.ordered</a></li>
-            
-                <li data-name="insight.Grouping#self.orderFunction"><a href="insight.Grouping.html##self.orderFunction">#self.orderFunction</a></li>
-            
-                <li data-name="insight.Grouping#self.orderFunction"><a href="insight.Grouping.html##self.orderFunction">#self.orderFunction</a></li>
-            
-                <li data-name="insight.Grouping#self.recalculate"><a href="insight.Grouping.html##self.recalculate">#self.recalculate</a></li>
+                <li data-name="insight.Dimension.this.createFilterFunction"><a href="insight.Dimension.html#this.createFilterFunction">this.createFilterFunction</a></li>
             
             </ul>
             <ul class="events itemMembers">
@@ -661,156 +602,160 @@
     
     <section>
         <article>
-            <pre class="prettyprint source"><code>/**
- * The LineSeries class extends the Series class and draws horizontal bars on a Chart
- * @class insight.LineSeries
- * @param {string} name - A uniquely identifying name for this chart
- * @param {DataSet} data - The DataSet containing this series' data
- * @param {insight.Scales.Scale} x - the x axis
- * @param {insight.Scales.Scale} y - the y axis
- * @param {object} color - a string or function that defines the color to be used for the items in this series
- */
-insight.LineSeries = function LineSeries(name, data, x, y, color) {
-
-    insight.Series.call(this, name, data, x, y, color);
-
-    var self = this,
-        lineType = 'linear',
-        displayPoints = true;
-
-
-    this.classValues = [insight.Constants.LineClass];
-
-    var lineOver = function(d, item) {
-
-    };
-
-    var lineOut = function(d, item) {
-
-    };
-
-    var lineClick = function(d, item) {
-
-    };
+            <pre class="prettyprint source"><code>(function(insight) {
 
     /**
-     * Whether or not to show circular points on top of the line for each datapoint.
-     * @memberof! insight.LineSeries
-     * @instance
-     * @returns {boolean} - To stack or not to stack.
-     *
-     * @also
-     *
-     * Sets whether or not to show circular points on top of the line for each datapoint.
-     * @memberof! insight.LineSeries
-     * @instance
-     * @param {boolean} showPoints Whether or not to show circular points on top of the line for each datapoint.
-     * @returns {this}
+     * The LineSeries class extends the Series class and draws horizontal bars on a Chart
+     * @class insight.LineSeries
+     * @param {string} name - A uniquely identifying name for this chart
+     * @param {DataSet} data - The DataSet containing this series' data
+     * @param {insight.Scales.Scale} x - the x axis
+     * @param {insight.Scales.Scale} y - the y axis
+     * @param {object} color - a string or function that defines the color to be used for the items in this series
      */
-    this.showPoints = function(value) {
-        if (!arguments.length) {
-            return displayPoints;
-        }
-        displayPoints = value;
-        return this;
-    };
+    insight.LineSeries = function LineSeries(name, data, x, y, color) {
 
-    this.rangeY = function(d) {
-        return self.y.scale(self.valueFunction()(d));
-    };
+        insight.Series.call(this, name, data, x, y, color);
 
-    this.rangeX = function(d, i) {
-        var val = 0;
-
-        if (self.x.scale.rangeBand) {
-            val = self.x.scale(self.keyFunction()(d)) + (self.x.scale.rangeBand() / 2);
-        } else {
-
-            val = self.x.scale(self.keyFunction()(d));
-        }
-
-        return val;
-    };
-
-    this.lineType = function(_) {
-        if (!arguments.length) {
-            return lineType;
-        }
-        lineType = _;
-        return this;
-    };
-
-    this.draw = function(chart, dragging) {
-
-        this.initializeTooltip(chart.container.node());
-
-        var transform = d3.svg.line()
-            .x(self.rangeX)
-            .y(self.rangeY)
-            .interpolate(lineType);
-
-        var data = this.dataset();
-
-        var classValue = this.name + 'line ' + insight.Constants.LineClass;
-        var classSelector = '.' + this.name + 'line.' + insight.Constants.LineClass;
-
-        var rangeIdentifier = "path" + classSelector;
-
-        var rangeElement = chart.plotArea.selectAll(rangeIdentifier);
-
-        if (!this.rangeExists(rangeElement)) {
-            chart.plotArea.append("path")
-                .attr("class", classValue)
-                .attr("stroke", this.color)
-                .attr("fill", "none")
-                .attr("clip-path", "url(#" + chart.clipPath() + ")")
-                .on('mouseover', lineOver)
-                .on('mouseout', lineOut)
-                .on('click', lineClick);
-        }
-
-        var duration = dragging ? 0 : 300;
-
-        chart.plotArea.selectAll(rangeIdentifier)
-            .datum(this.dataset(), this.matcher)
-            .transition()
-            .duration(duration)
-            .attr("d", transform);
-
-        if (displayPoints) {
-            var circles = chart.plotArea.selectAll("circle")
-                .data(this.dataset());
-
-            circles.enter()
-                .append('circle')
-                .attr('class', 'target-point')
-                .attr("clip-path", "url(#" + chart.clipPath() + ")")
-                .attr("cx", self.rangeX)
-                .attr("cy", chart.height() - chart.margin()
-                    .bottom - chart.margin()
-                    .top)
-                .on('mouseover', self.mouseOver)
-                .on('mouseout', self.mouseOut);
+        var self = this,
+            lineType = 'linear',
+            displayPoints = true;
 
 
-            circles
+        this.classValues = [insight.Constants.LineClass];
+
+        var lineOver = function(d, item) {
+
+        };
+
+        var lineOut = function(d, item) {
+
+        };
+
+        var lineClick = function(d, item) {
+
+        };
+
+        /**
+         * Whether or not to show circular points on top of the line for each datapoint.
+         * @memberof! insight.LineSeries
+         * @instance
+         * @returns {boolean} - To stack or not to stack.
+         *
+         * @also
+         *
+         * Sets whether or not to show circular points on top of the line for each datapoint.
+         * @memberof! insight.LineSeries
+         * @instance
+         * @param {boolean} showPoints Whether or not to show circular points on top of the line for each datapoint.
+         * @returns {this}
+         */
+        this.showPoints = function(value) {
+            if (!arguments.length) {
+                return displayPoints;
+            }
+            displayPoints = value;
+            return this;
+        };
+
+        this.rangeY = function(d) {
+            return self.y.scale(self.valueFunction()(d));
+        };
+
+        this.rangeX = function(d, i) {
+            var val = 0;
+
+            if (self.x.scale.rangeBand) {
+                val = self.x.scale(self.keyFunction()(d)) + (self.x.scale.rangeBand() / 2);
+            } else {
+
+                val = self.x.scale(self.keyFunction()(d));
+            }
+
+            return val;
+        };
+
+        this.lineType = function(_) {
+            if (!arguments.length) {
+                return lineType;
+            }
+            lineType = _;
+            return this;
+        };
+
+        this.draw = function(chart, dragging) {
+
+            this.initializeTooltip(chart.container.node());
+
+            var transform = d3.svg.line()
+                .x(self.rangeX)
+                .y(self.rangeY)
+                .interpolate(lineType);
+
+            var data = this.dataset();
+
+            var classValue = this.name + 'line ' + insight.Constants.LineClass;
+            var classSelector = '.' + this.name + 'line.' + insight.Constants.LineClass;
+
+            var rangeIdentifier = "path" + classSelector;
+
+            var rangeElement = chart.plotArea.selectAll(rangeIdentifier);
+
+            if (!this.rangeExists(rangeElement)) {
+                chart.plotArea.append("path")
+                    .attr("class", classValue)
+                    .attr("stroke", this.color)
+                    .attr("fill", "none")
+                    .attr("clip-path", "url(#" + chart.clipPath() + ")")
+                    .on('mouseover', lineOver)
+                    .on('mouseout', lineOut)
+                    .on('click', lineClick);
+            }
+
+            var duration = dragging ? 0 : 300;
+
+            chart.plotArea.selectAll(rangeIdentifier)
+                .datum(this.dataset(), this.matcher)
                 .transition()
                 .duration(duration)
-                .attr("cx", self.rangeX)
-                .attr("cy", self.rangeY)
-                .attr("r", 3)
-                .attr("fill", this.color);
-        }
+                .attr("d", transform);
+
+            if (displayPoints) {
+                var circles = chart.plotArea.selectAll("circle")
+                    .data(this.dataset());
+
+                circles.enter()
+                    .append('circle')
+                    .attr('class', 'target-point')
+                    .attr("clip-path", "url(#" + chart.clipPath() + ")")
+                    .attr("cx", self.rangeX)
+                    .attr("cy", chart.height() - chart.margin()
+                        .bottom - chart.margin()
+                        .top)
+                    .on('mouseover', self.mouseOver)
+                    .on('mouseout', self.mouseOut);
+
+
+                circles
+                    .transition()
+                    .duration(duration)
+                    .attr("cx", self.rangeX)
+                    .attr("cy", self.rangeY)
+                    .attr("r", 3)
+                    .attr("fill", this.color);
+            }
+        };
+
+        this.rangeExists = function(rangeSelector) {
+
+            return rangeSelector[0].length;
+        };
     };
 
-    this.rangeExists = function(rangeSelector) {
+    insight.LineSeries.prototype = Object.create(insight.Series.prototype);
+    insight.LineSeries.prototype.constructor = insight.LineSeries;
 
-        return rangeSelector[0].length;
-    };
-};
-
-insight.LineSeries.prototype = Object.create(insight.Series.prototype);
-insight.LineSeries.prototype.constructor = insight.LineSeries;
+})(insight);
 </code></pre>
         </article>
     </section>

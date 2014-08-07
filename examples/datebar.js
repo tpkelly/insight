@@ -20,14 +20,8 @@ $(document)
             var chart = new insight.Chart('Years', '#exampleChart')
                 .width(500)
                 .height(350)
-                .title('Years')
-                .margin(
-                {
-                    top: 0,
-                    left: 180,
-                    bottom: 60,
-                    right: 0
-                });
+                .title('Years');
+
             var x = new insight.Axis('Country', insight.Scales.Ordinal)
                 .textAnchor('start')
                 .tickSize(5)
