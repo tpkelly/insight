@@ -9,6 +9,7 @@
     <link href="css/prism.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="//bootswatch.com/yeti/bootstrap.min.css">
+    <link rel="stylesheet" href="./InsightJS/dist/insight.min.css">
     <link rel="stylesheet" href="//bootswatch.com/assets/css/bootswatch.min.css">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
@@ -42,27 +43,27 @@
 
                 <a href="#" class="navbar-brand">Insight Charts</a>
             </div>
-            <!-- Weirdly enough, the items defined here are displayed right-to-left -->
             <div id="navbar-main" class="navbar-collapse collapse">
-                <!-- Twitter link -->
-                <div style="float:right; margin:11px; margin-left:50px;">
-                    <a href="https://twitter.com/insight_js">
-                        <img height="22px" src="images/twitter-icon.png" />
-                    </a>
-                </div>
-                <!-- Download button -->
-                <div style="float:right; margin:13px; margin-left:50px;">
-                    <a href="insight.js.zip" download="insight.js.zip" style="color:white">Download</a>
-                </div>
-                <!-- Examples pages -->
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
-                        <a href="" class="dropdown-toggle" data-toggle="dropdown">Demos <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li ng-repeat="example in examples">
-                                <a href="#/example/{{example.name}}">{{example.pageName}}</a>
-                            </li>
-                        </ul>
+                    <li>
+                        <li class="dropdown">
+                            <a href="" class="dropdown-toggle" data-toggle="dropdown">Demos <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li ng-repeat="example in examples">
+                                    <a href="#/example/{{example.name}}">{{example.pageName}}</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </li>
+                    <li>
+                        <!-- Download button -->
+                        <a href="insight.js.zip" download="insight.js.zip">Download</a>
+                    </li>
+                    <li>
+                        <!-- Twitter link -->
+                        <a id="twitter" href="https://twitter.com/insight_js">
+                            <img src="images/twitter-icon.png" />
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -79,8 +80,7 @@
     <script src="lib/angular-route.js"></script>
     <script src="lib/angular-resource.js"></script>
     <script src="lib/prism.js" data-manual></script>
-    <script src="lib/d3.tip.js" data-manual></script>
-    <script type="text/javascript" src="./dist/insight.js"></script>
+    <script type="text/javascript" src="./InsightJS/dist/insight.min.js"></script>
     <script src="js/app.js"></script>
     <script src="js/insightChartsControllers.js"></script>
     <script src="js/insightChartsServices.js"></script>

@@ -14,7 +14,10 @@ $(document)
             data.forEach(function(d)
             {
                 d.releaseDate = new Date(d.releaseDate);
+                d.fileSizeBytes = +d.fileSizeBytes;
             });
+
+            var chartGroup = new insight.ChartGroup();
 
             var dataset = new insight.DataSet(data);
 
@@ -44,22 +47,21 @@ $(document)
                     left: 120,
                     right: 40,
                     bottom: 120
-                })
+                });
 
             var xScale = new insight.Axis('Genre', insight.Scales.Ordinal)
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .tickOrientation('tb')
-                .barPadding(0.3)
                 .ordered(true);
 
             var yScale = new insight.Axis('Apps', insight.Scales.Linear);
 
-            chart.addXAxis(xScale);
-            chart.addYAxis(yScale);
+            chart.xAxis(xScale);
+            chart.yAxis(yScale);
 
-            var series = new insight.ColumnSeries('genre', genres, xScale, yScale, '#aae')
+            var series = new insight.ColumnSeries('genre', genres, xScale, yScale, 'lightblue')
                 .valueFunction(function(d)
                 {
                     return d.value.Count;
@@ -82,15 +84,15 @@ $(document)
                 .tickOrientation('tb')
                 .tickSize(5)
                 .textAnchor('start')
-                .labelFormat(InsightFormatters.dateFormatter);
+                .labelFormat(insight.Formatters.dateFormatter);
 
             var yTime = new insight.Axis('New Apps', insight.Scales.Linear)
                 .tickSize(5);
 
-            timeChart.addXAxis(xTime);
-            timeChart.addYAxis(yTime);
+            timeChart.xAxis(xTime);
+            timeChart.yAxis(yTime);
 
-            var line = new insight.LineSeries('valueLine', dates, xTime, yTime, '#aae')
+            var line = new insight.LineSeries('valueLine', dates, xTime, yTime, 'cyan')
                 .valueFunction(function(d)
                 {
                     return d.value.CountCumulative;
@@ -123,10 +125,10 @@ $(document)
             var bubbleY = new insight.Axis('Average Price', insight.Scales.Linear)
                 .tickSize(5);
 
-            bubbleChart.addXAxis(bubbleX);
-            bubbleChart.addYAxis(bubbleY);
+            bubbleChart.xAxis(bubbleX);
+            bubbleChart.yAxis(bubbleY);
 
-            var bubbles = new insight.BubbleSeries('bubbles', genres, bubbleX, bubbleY, '#aae')
+            var bubbles = new insight.BubbleSeries('bubbles', genres, bubbleX, bubbleY, 'cyan')
                 .xFunction(function(d)
                 {
                     return d.value.userRatingCount.Average;
@@ -146,7 +148,33 @@ $(document)
 
             bubbleChart.series([bubbles]);
 
-            insight.drawCharts();
+            var table = new insight.Table('stats', '#table', genres)
+                .columns([
+                {
+                    label: 'Average Price ($)',
+                    value: function(d)
+                    {
+                        return insight.Formatters.format('00.2f', d.value.price.Average);
+                    }
+                },
+                {
+                    label: 'Average Filesize (Mb)',
+                    value: function(d)
+                    {
+                        return insight.Formatters.format('.2f', d.value.fileSizeBytes.Average / 1024 / 1024);
+                    }
+                }])
+                .descending(function(d)
+                {
+                    return d.value.price.Average
+                });
+
+
+            chartGroup.add(bubbleChart);
+            chartGroup.add(timeChart);
+            chartGroup.add(chart);
+            chartGroup.add(table);
+            chartGroup.draw();
 
 
             $('.btn')
@@ -160,7 +188,7 @@ $(document)
                         return d.value.averageUserRating.Average;
                     });
                     bubbleY.label('Average Rating');
-                    insight.redrawCharts();
+                    chartGroup.draw();
                 });
 
 
@@ -173,7 +201,7 @@ $(document)
                     });
                     bubbleY.label('Average # Ratings');
 
-                    insight.redrawCharts();
+                    chartGroup.draw();
                 });
 
 
@@ -185,7 +213,7 @@ $(document)
                         return d.value.CountCumulative;
                     });
 
-                    insight.redrawCharts();
+                    chartGroup.draw();
                 });
 
             $('#timemonthly')
@@ -196,7 +224,7 @@ $(document)
                         return d.value.Count;
                     });
 
-                    insight.redrawCharts();
+                    chartGroup.draw();
                 });
 
             $('#yavgprice')
@@ -207,7 +235,7 @@ $(document)
                         return d.value.price.Average;
                     });
                     bubbleY.label('Average Price');
-                    insight.redrawCharts();
+                    chartGroup.draw();
                 });
 
             $('#xsumrating')
@@ -218,7 +246,7 @@ $(document)
                         return d.value.userRatingCount.Sum;
                     });
                     bubbleX.label('Total Ratings');
-                    insight.redrawCharts();
+                    chartGroup.draw();
                 });
 
             $('#xavgrating')
@@ -226,11 +254,11 @@ $(document)
                 {
                     bubbles.xFunction(function(d)
                     {
-                        return d.value.userRatingCount.Average;
+                        return d.value.averageUserRating.Average;
                     });
-                    bubbleX.label('Average # Ratings');
+                    bubbleX.label('Average Rating');
 
-                    insight.redrawCharts();
+                    chartGroup.draw();
                 });
 
             $('#xavgsize')
@@ -243,7 +271,7 @@ $(document)
                     });
                     bubbleX.label('Average File Size (Mb)');
 
-                    insight.redrawCharts();
+                    chartGroup.draw();
                 });
 
             $('#radprice')
@@ -255,7 +283,7 @@ $(document)
                         return d.value.price.Average;
                     });
 
-                    insight.redrawCharts();
+                    chartGroup.draw();
                 });
             $('#radcount')
                 .click(function()
@@ -266,7 +294,7 @@ $(document)
                         return d.value.Count;
                     });
 
-                    insight.redrawCharts();
+                    chartGroup.draw();
                 });
 
             $('#radsize')
@@ -278,7 +306,7 @@ $(document)
                         return d.value.fileSizeBytes.Average;
                     });
 
-                    insight.redrawCharts();
+                    chartGroup.draw();
                 });
         });
 

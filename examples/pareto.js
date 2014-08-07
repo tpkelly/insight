@@ -30,74 +30,62 @@ $(document)
                     bottom: 150
                 });
 
-            var x = new insight.Axis('Client', insight.Scales.Ordinal)
+            var x = new insight.Axis('Client', insight.Scales.Ordinal, 'bottom')
                 .textAnchor('start')
                 .tickOrientation('tb')
                 .ordered(true);
 
             var y = new insight.Axis('', insight.Scales.Linear)
-                .labelFormat(InsightFormatters.currencyFormatter);
+                .labelFormat(insight.Formatters.currencyFormatter);
 
             var y2 = new insight.Axis('', insight.Scales.Linear)
-                .labelFormat(InsightFormatters.percentageFormatter)
+                .labelFormat(insight.Formatters.percentageFormatter)
                 .reversed(true);
 
-            chart.addXAxis(x);
-            chart.addYAxis(y);
-            chart.addYAxis(y2);
+            chart.xAxis(x)
+                .yAxes([y, y2]);
 
-            var series = new insight.ColumnSeries('clientColumn', clientData, x, y);
+            var series = new insight.ColumnSeries('clientColumn', clientData, x, y, '#e74c3c')
+                .valueFunction(function(d)
+                {
+                    return d.value.CurrentRevenue.Sum;
+                })
+                .tooltipFunction(function(d)
+                {
+                    return insight.Formatters.currencyFormatter(d.value.CurrentRevenue.Sum);
+                });
 
-            var line = new insight.LineSeries('percentLine', clientData, x, y2, '#aae')
-                .tooltipFormat(InsightFormatters.percentageFormatter)
+            var line = new insight.LineSeries('percentLine', clientData, x, y2, 'cyan')
+                .tooltipFormat(insight.Formatters.percentageFormatter)
                 .valueFunction(function(d)
                 {
                     return d.value.Percentage;
                 });
 
-            series.series = [
-            {
-                name: 'value',
-                accessor: function(d)
-                {
-                    return d.value.CurrentRevenue.Sum;
-                },
-                color: '#e74c3c',
-                tooltipValue: function(d)
-                {
-                    return InsightFormatters.currencyFormatter(d.value.CurrentRevenue.Sum);
-                }
-            }];
-
-
             chart.series([series, line]);
 
-            insight.drawCharts();
+            chart.draw();
         });
     });
 
 
 function computeGroupValues(group)
 {
-    var aggregateFunction = function()
+    var aggregateFunction = function(grouping)
     {
-
-        var self = this;
         var total = 0;
 
-        this.getData()
+        grouping.getData()
             .forEach(function(d)
             {
                 total += d.value.CurrentRevenue.Sum;
             });
-        this.getData()
+        grouping.getData()
             .forEach(function(d)
             {
                 d.value.Percentage = d.value.CurrentRevenue.SumCumulative / total;
             });
+    };
 
-    }.bind(group);
-
-    group.computeFunction(aggregateFunction);
-    group.recalculate();
+    group.postAggregation(aggregateFunction);
 }

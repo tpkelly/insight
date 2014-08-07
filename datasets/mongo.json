@@ -1,0 +1,83 @@
+[
+{
+    "label": "Replica Set",
+    "clients": 1,
+    "write_speed": {
+        "minutes": 14,
+        "seconds": 18
+    },
+    "queries_per_second": 7049.42
+},
+{
+    "label": "Sharded Cluster - added_at key",
+    "clients": 1,
+    "write_speed": {
+        "minutes": 20,
+        "seconds": 43
+    },
+    "queries_per_second": 916.346
+},
+{
+    "label": "Sharded Cluster - composite key",
+    "clients": 1,
+    "write_speed": {
+        "minutes": 27,
+        "seconds": 15
+    },
+    "queries_per_second": 494.72
+},
+{
+    "label": "Replica Set",
+    "clients": 4,
+    "write_speed": {
+        "minutes": 6,
+        "seconds": 4
+    },
+    "queries_per_second": 24889.42
+},
+{
+    "label": "Sharded Cluster - added_at key",
+    "clients": 4,
+    "write_speed": {
+        "minutes": 7,
+        "seconds": 6
+    },
+    "queries_per_second": 2113.8
+},
+{
+    "label": "Sharded Cluster - composite key",
+    "clients": 4,
+    "write_speed": {
+        "minutes": 7,
+        "seconds": 57
+    },
+    "queries_per_second": 1025.72
+},
+{
+    "label": "Replica Set",
+    "clients": 8,
+    "write_speed": {
+        "minutes": 4,
+        "seconds": 18
+    },
+    "queries_per_second": 56597.70
+},
+{
+    "label": "Sharded Cluster - added_at key",
+    "clients": 8,
+    "write_speed": {
+        "minutes": 5,
+        "seconds": 39
+    },
+    "queries_per_second": 3433.18
+},
+{
+    "label": "Sharded Cluster - composite key",
+    "clients": 8,
+    "write_speed": {
+        "minutes": 5,
+        "seconds": 25
+    },
+    "queries_per_second": 2400.40
+}
+]

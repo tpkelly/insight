@@ -1,6 +1,6 @@
 [
     {
-        "name": "simplebar",
+        "name": "bar",
         "pageName": "Bar Chart",     
         "script": "examples/barchart.js",
         "imageUrl": "images/barchart.PNG",
@@ -15,7 +15,7 @@
         "partialCSS": "examples/css/simpleBar.css"
     },
     {
-        "name": "stackedGroupedBar",
+        "name": "stackedgroupedbar",
         "pageName": "Stacked & Grouped Bar Chart", 
         "script": "examples/stackedBar.js",
         "imageUrl": "images/stackedBar.PNG",
@@ -23,15 +23,15 @@
         "partialCSS": "examples/css/example.css"
     },    
     {
-        "name": "newcharts",
+        "name": "barslines",
         "pageName": "Bars & Lines", 
-        "script": "examples/newCharts.js",
+        "script": "examples/barsLines.js",
         "imageUrl": "images/barChart.PNG",
-        "partial": "examples/partials/newCharts.html",
+        "partial": "examples/partials/barsLines.html",
         "partialCSS": "examples/css/example.css"
     },
     {
-        "name": "markers",
+        "name": "targetsmarkers",
         "pageName": "Targets & Markers", 
         "script": "examples/markers.js",
         "imageUrl": "images/barChart.PNG",
@@ -39,7 +39,7 @@
         "partialCSS": "examples/css/example.css"
     },
     {
-        "name": "timeaxis",
+        "name": "time",
         "pageName": "Time Chart", 
         "script": "examples/lineCharts.js",
         "imageUrl": "images/barChart.PNG",
@@ -47,18 +47,18 @@
         "partialCSS": "examples/css/example.css"
     },
     {
-        "name": "datebar",
+         "name": "pareto",
+         "pageName": "Pareto Chart", 
+         "script": "examples/pareto.js",
+         "imageUrl": "images/barChart.PNG",
+         "partial": "examples/partials/newCharts.html",
+         "partialCSS": "examples/css/example.css"
+    },
+    {
+        "name": "yearlybars",
         "pageName": "Yearly Bars", 
         "script": "examples/datebar.js",
         "partial": "examples/partials/example.html",
-        "partialCSS": "examples/css/example.css"
-    },
-    {
-        "name": "pareto",
-        "pageName": "Pareto Chart", 
-        "script": "examples/pareto.js",
-        "imageUrl": "images/barChart.PNG",
-        "partial": "examples/partials/newCharts.html",
         "partialCSS": "examples/css/example.css"
     },
     {

@@ -9,6 +9,8 @@ $(document)
                 d.releaseDate = new Date(d.releaseDate);
             });
 
+            var chartGroup = new insight.ChartGroup();
+
             var dataset = new insight.DataSet(data);
 
             var genres = dataset.group('genre', function(d)
@@ -39,41 +41,28 @@ $(document)
                 .tickSize(5)
                 .tickPadding(0)
                 .tickOrientation('tb')
-                .barPadding(0.3)
                 .ordered(true);
 
             var yScale = new insight.Axis('Apps', insight.Scales.Linear)
                 .tickSize(5);
 
-            chart.addXAxis(xScale);
-            chart.addYAxis(yScale);
+            chart.xAxis(xScale);
+            chart.yAxis(yScale);
 
-
-            var series = new insight.ColumnSeries('genre', genres, xScale, yScale, 'silver')
+            var series = new insight.ColumnSeries('genre', genres, xScale, yScale, '#ACC3EE')
                 .tooltipFunction(function(d)
                 {
                     return d;
                 })
-                .top(10);
-
-            series.series = [
-            {
-                name: 'genre',
-                accessor: function(d)
+                .valueFunction(function(d)
                 {
                     return d.value.Count;
-                },
-                label: function(d)
+                })
+                .tooltipFunction(function(d)
                 {
-                    return '';
-                },
-                color: '#ACC3EE',
-                tooltipValue: function(d)
-                {
-                    return d.value.Count + ' Apps';
-
-                }
-            }];
+                    return d.value.Count + " Apps";
+                })
+                .top(10);
 
             chart.series([series]);
 
@@ -97,40 +86,25 @@ $(document)
 
             var lyScale = new insight.Axis('AppsSupported', insight.Scales.Linear);
 
-            languageChart.addXAxis(lxScale);
-            languageChart.addYAxis(lyScale);
+            languageChart.xAxis(lxScale);
+            languageChart.yAxis(lyScale);
 
-            var lSeries = new insight.ColumnSeries('languages', languageGroup, lxScale, lyScale, 'silver')
+            var lSeries = new insight.ColumnSeries('languages', languageGroup, lxScale, lyScale, '#ACC3EE')
                 .tooltipFunction(function(d)
                 {
                     return d;
                 })
+                .valueFunction(function(d)
+                {
+                    return d.value;
+                })
                 .top(10);
-
-            lSeries.series = [
-            {
-                name: 'language',
-                accessor: function(d)
-                {
-                    return d.value;
-                },
-                label: function(d)
-                {
-                    return '';
-                },
-                color: '#ACC3EE',
-                tooltipValue: function(d)
-                {
-                    return d.value;
-
-                }
-            }];
 
             languageChart.series([lSeries]);
 
+            chartGroup.add(chart)
+                .add(languageChart);
 
-
-            insight.drawCharts();
-
+            chartGroup.draw();
         });
     });

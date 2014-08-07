@@ -1,21 +1,21 @@
 var data = [
 {
-    key: 'England',
+    country: 'England',
     value: 53012456,
     value2: 1023131
 },
 {
-    key: 'Scotland',
+    country: 'Scotland',
     value: 5295000,
     value2: 5675655
 },
 {
-    key: 'Wales',
+    country: 'Wales',
     value: 3063456,
     value2: 2342342
 },
 {
-    key: 'Northern Ireland',
+    country: 'Northern Ireland',
     value: 1810863,
     value2: 1231444
 }];
@@ -23,39 +23,30 @@ var data = [
 $(document)
     .ready(function()
     {
+        var x = new insight.Axis('Population', insight.Scales.Linear)
+            .tickSize(5)
+            .tickOrientation('tb')
+            .tickRotation('45');
 
-        var dataset = new insight.DataSet(data);
+        var y = new insight.Axis('', insight.Scales.Ordinal);
 
         var chart = new insight.Chart('Chart 1', '#exampleChart')
             .width(450)
             .height(400)
-            .margin(
+            .xAxis(x)
+            .yAxis(y);
+
+        var series = new insight.RowSeries('countryColumn', data, x, y, 'silver')
+            .tooltipFormat(insight.Formatters.numberFormatter)
+            .keyFunction(function(d)
             {
-                top: 100,
-                left: 150,
-                right: 40,
-                bottom: 0
+                return d.country;
             });
-
-        var x = new insight.Axis('Population', insight.Scales.Linear)
-            .textAnchor('end')
-            .tickSize(5)
-            .tickOrientation('tb')
-            .tickRotation('45')
-            .reversed(true);
-
-        var y = new insight.Axis('', insight.Scales.Ordinal);
-
-        chart.addXAxis(x);
-        chart.addYAxis(y);
-
-        var series = new insight.RowSeries('countryColumn', dataset, x, y, 'silver')
-            .tooltipFormat(InsightFormatters.numberFormatter);
 
         series.series = [
         {
             name: 'value',
-            accessor: function(d)
+            valueFunction: function(d)
             {
                 return d.value;
             },
@@ -68,7 +59,7 @@ $(document)
         },
         {
             name: 'value2',
-            accessor: function(d)
+            valueFunction: function(d)
             {
                 return d.value2;
             },
@@ -82,7 +73,7 @@ $(document)
 
         chart.series([series]);
 
-        insight.drawCharts();
+        chart.draw();
 
         $('#toggle')
             .click(function(d)
