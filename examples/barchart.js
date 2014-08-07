@@ -19,7 +19,6 @@
  $(document)
      .ready(function()
      {
-
          var chart = new insight.Chart('Chart 1', '#exampleChart')
              .width(450)
              .height(400);
@@ -28,21 +27,12 @@
              .tickOrientation('tb');
 
          var y = new insight.Axis('Population', insight.Scales.Linear)
-             .tickSize(5)
              .labelFormat(d3.format('0,000'));
 
          chart.xAxis(x);
          chart.yAxis(y);
 
-         var series = new insight.ColumnSeries('countryColumn', data, x, y, '#3498db')
-             .valueFunction(function(d)
-             {
-                 return d.value;
-             })
-             .tooltipFormat(function(d)
-             {
-                 return d + 'kajdlajdl';
-             })
+         var series = new insight.ColumnSeries('countryColumn', data, x, y, '#3498db');
 
          chart.series([series]);
 
