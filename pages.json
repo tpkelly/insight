@@ -43,7 +43,7 @@
         "pageName": "Time Chart", 
         "script": "examples/lineCharts.js",
         "imageUrl": "images/barChart.PNG",
-        "partial": "examples/partials/newCharts.html",
+        "partial": "examples/partials/example.html",
         "partialCSS": "examples/css/example.css"
     },
     {
@@ -51,7 +51,7 @@
          "pageName": "Pareto Chart", 
          "script": "examples/pareto.js",
          "imageUrl": "images/barChart.PNG",
-         "partial": "examples/partials/newCharts.html",
+         "partial": "examples/partials/barsLines.html",
          "partialCSS": "examples/css/example.css"
     },
     {
