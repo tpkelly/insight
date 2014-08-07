@@ -30,9 +30,13 @@
             var notifyListeners = function(dimensionName, dimensionSelector) {
                 var listeningObjects = self.dimensionListenerMap[dimensionName];
 
-                listeningObjects.forEach(function(item) {
-                    item.highlight(dimensionSelector);
-                });
+                if (listeningObjects != null) {
+
+                    listeningObjects.forEach(function(item) {
+                        item.highlight(dimensionSelector);
+                    });
+
+                }
             };
 
             /*
@@ -88,7 +92,7 @@
             var addTable = function(table) {
 
                 // wire up the click event of the table to the filter handler of the DataSet
-                table.clickEvent = self.chartFilterHandler.bind(self);
+                table.clickEvent = self.chartFilterHandler;
 
                 addDimensionListener(table.data, table);
 
@@ -182,7 +186,7 @@
              * by applying CSS highlighting etc.
              * @memberof! insight.ChartGroup
              * @instance
-             * @param {object} dataset - The insight.DataSet being filtered
+             * @param {object} dataset - The insight.DataSet or insight.Grouping being filtered
              * @param {string} value - The value that the dimension is being sliced/filtered by.
              */
             this.chartFilterHandler = function(dataset, value) {

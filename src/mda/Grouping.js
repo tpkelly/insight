@@ -8,21 +8,21 @@ insight.Grouping = (function(insight) {
 
     function Grouping(dimension) {
 
-        //private variables
+        // Private variables
 
         var sumProperties = [],
             countProperties = [],
             cumulativeProperties = [],
             averageProperties = [],
+            correlationPairProperties = [],
+            allCorrelationProperties = [],
             ordered = false,
             self = this,
             filterFunction = null,
             orderFunction;
 
-
-        //public variables
-
-        this.dimension = dimension;
+        // Public variables
+        self.dimension = dimension;
 
         // Private methods
 
@@ -31,9 +31,8 @@ insight.Grouping = (function(insight) {
 
         };
 
-
         /*
-         * This function takes an object and a property name in the form of a string, traversing the object until it finds a property with that name and returning
+         * Takes an object and a property name in the form of a string, traversing the object until it finds a property with that name and returning
          * a wrapped object with the immediate parent of the found property and the property's value.
          * @param {object} - The object to search
          * @param {string} propertyName - A string of the property to search, can include sub-properties using a dot notation. Eg. 'value.Revenue.Sum', which cannot be indexed directly in Javascript.
@@ -56,7 +55,7 @@ insight.Grouping = (function(insight) {
         };
 
         /*
-         * This function takes a group object and calculates the mean for any properties configured.
+         * Takes a group object and calculates the mean for any properties configured.
          * @param {object} group - A dimensional slice of a Grouping {key: 'X', value : {}}
          */
         var calculateAverages = function(group) {
@@ -75,7 +74,7 @@ insight.Grouping = (function(insight) {
         };
 
         /*
-         * This method calculates running cumulative values for any properties defined in the cumulative() list.
+         * Calculates running cumulative values for any properties defined in the cumulative() list.
          * @param {object} group - The data group being added to the cumulative running totals list
          * @param {object} totals - The map object of running totals for the defined properties
          */
@@ -101,7 +100,149 @@ insight.Grouping = (function(insight) {
         };
 
         /*
-         * This method is used to calculate any values that need to run after the data set has been aggregated into groups and basic values
+         * Calculates correlation coefficient values for all configured property pairs on the grouping.
+         * So after this function has run there will be a number of properties on the grouping value called
+         * 'X_Cor_Y' where X and Y are the configured property names.
+         */
+        var calculateCorrelations = function() {
+
+            /*
+             * Returns a property name for the deviation product array used in the correlation workings
+             */
+            var deviationProductNameFunction = function(xName, yName) {
+
+                return xName + '_' + yName + '_DeviationProduct';
+
+            };
+
+            /*
+             * Returns an empty object that will contain the correlation working data
+             */
+            var correlationReduceInitialize = function() {
+
+                return {};
+
+            };
+
+            /*
+             * Returns the function to use for creating a reduciton of all groups in order to calculate correlation
+             * between properties in a group.
+             */
+            var correlationReduceAdd = function(aggregatedData) {
+
+                var globalData = aggregatedData;
+
+                /*
+                 * This is the function that does the reduction to produce working data for correlation calculations.
+                 */
+                return function(workings, addingData) {
+
+                    allCorrelationProperties.forEach(function(propertyName) {
+
+                        if (addingData.hasOwnProperty(propertyName)) {
+
+                            // get this grouping from the global data
+                            var groupData = insight.Utils.takeWhere(globalData, 'key', self.dimension.aggregationFunction(addingData))[0].value;
+
+                            // get the group mean from global data for this grouping 
+                            var groupMean = groupData[propertyName].Average;
+
+                            var value = addingData[propertyName];
+                            var deviation = value - groupMean;
+                            var deviationSquared = deviation * deviation;
+
+                            // we need to track each deviation and its square so add them to workings
+                            if (!workings[propertyName]) {
+                                workings[propertyName] = {
+                                    deviation: [],
+                                    deviationSquared: []
+                                };
+                            }
+
+                            workings[propertyName].deviation.push(deviation);
+                            workings[propertyName].deviationSquared.push(deviationSquared);
+
+                        }
+
+                    });
+
+                    // having added to the deviation and deviationSquared we can now add 
+                    // the product of each pair's deviations to the workings object
+                    correlationPairProperties.forEach(function(pair) {
+
+                        var xName = pair[0],
+                            yName = pair[1],
+                            xDeviation = insight.Utils.lastElement(workings[xName].deviation),
+                            yDeviation = insight.Utils.lastElement(workings[yName].deviation),
+                            correlationName = deviationProductNameFunction(xName, yName);
+
+                        if (!workings[correlationName]) {
+                            workings[correlationName] = [];
+                        }
+
+                        workings[correlationName].push(xDeviation * yDeviation);
+
+                    });
+
+                    return workings;
+
+                };
+
+            };
+
+            var correlationReduceRemove = function(aggregatedData) {
+
+                return function() {
+
+                };
+
+            };
+
+            var completeData = self.data.all();
+
+            // the correlationData reduction calculates the deviation squared for 
+            // all properties in allCorrelationProperties (a private variable on Grouping)
+            var correlationWorkingData = self.dimension.crossfilterDimension.group()
+                .reduce(
+                    correlationReduceAdd(completeData),
+                    correlationReduceRemove(completeData),
+                    correlationReduceInitialize)
+                .all();
+
+            correlationWorkingData.forEach(function(d) {
+
+                var sum = function(array) {
+                    return array.reduce(function(previous, current) {
+                        return previous + current;
+                    });
+                };
+
+                correlationPairProperties.forEach(function(pair) {
+
+                    var xName = pair[0];
+                    var yName = pair[1];
+                    var deviationProductName = deviationProductNameFunction(xName, yName);
+                    var sumDeviationProduct = sum(d.value[deviationProductName]);
+                    var sumXDeviationSquared = sum(d.value[xName].deviationSquared);
+                    var sumYDeviationSquared = sum(d.value[yName].deviationSquared);
+
+                    var correlationCoefficient = sumDeviationProduct / Math.sqrt(sumXDeviationSquared * sumYDeviationSquared);
+
+                    var thisGroup = completeData.filter(function(item) {
+                        return item.key === d.key;
+                    })[0];
+
+                    var correlationName = xName + '_Cor_' + yName;
+                    thisGroup.value[correlationName] = correlationCoefficient;
+
+                });
+
+            });
+
+        };
+
+        /*
+         * Used to calculate any values that need to run after the data set has been aggregated into groups and basic values
          */
         var postAggregationCalculations = function() {
 
@@ -117,12 +258,19 @@ insight.Grouping = (function(insight) {
 
             });
 
+            if (correlationPairProperties.length > 0) {
+
+                calculateCorrelations();
+
+            }
+
+
             // Run any user injected functions post aggregation
             postAggregation(self);
         };
 
         /*
-         * This function is called by the map reduce process on a DataSet when an input object is being added to the aggregated group
+         * Called by the map reduce process on a DataSet when an input object is being added to the aggregated group
          * @returns {object} group - The group entry for this slice of the aggregated dataset, modified by the addition of the data object
          * @param {object} group - The group entry for this slice of the aggregated dataset, prior to adding the input data object
          * @param {object} data - The object being added from the aggregated group.
@@ -170,12 +318,11 @@ insight.Grouping = (function(insight) {
                 }
             }
 
-
             return group;
         };
 
         /*
-         * This function is called by the map reduce process on a DataSet when an input object is being filtered out of the group
+         * Called by the map reduce process on a DataSet when an input object is being filtered out of the group
          * @returns {object} group - The group entry for this slice of the aggregated dataset, modified by the removal of the data object
          * @param {object} group - The group entry for this slice of the aggregated dataset, prior to removing the input data object
          * @param {object} data - The object being removed from the aggregated group.
@@ -222,8 +369,9 @@ insight.Grouping = (function(insight) {
         };
 
         /*
-         * This method is called when a slice of an aggrgated DataSet is being initialized, creating initial values for certain properties
-         * @returns {object} return - The initialized slice of this aggreagted DataSet.  The returned object will be of the form {key: 'Distinct Key', value: {}}
+         * Called when a slice of an aggrgated DataSet is being initialized, creating initial values for certain properties
+         * @returns {object} return - The initialized slice of this aggreagted DataSet.  The returned object will be of the form {key: '
+            Distinct Key ', value: {}}
          */
         var reduceInitializeGroup = function() {
             var group = {
@@ -250,12 +398,9 @@ insight.Grouping = (function(insight) {
             return group;
         };
 
-
-
-
         /*
          * This aggregation method is tailored to dimensions that can hold multiple values (in an array), therefore they are counted differently.
-         * For example: a property called supportedDevices : ['iPhone5', 'iPhone4'] where the values inside the array are treated as dimensional slices
+         * For example: a property called supportedDevices : ['iPhone5 ', 'iPhone4 '] where the values inside the array are treated as dimensional slices
          * @returns {object[]} return - the array of dimensional groupings resulting from this dimensional aggregation
          */
         var reduceMultidimension = function() {
@@ -321,7 +466,7 @@ insight.Grouping = (function(insight) {
                 };
             }
 
-            data = self.dimension.crossfilterDimension.groupAll()
+            var data = self.dimension.crossfilterDimension.groupAll()
                 .reduce(reduceAdd, reduceRemove, reduceInitial);
 
             self.orderFunction(function(a, b) {
@@ -335,8 +480,9 @@ insight.Grouping = (function(insight) {
         // Public methods
 
 
-        /**
-         * Gets the function that will run after the map reduce stage of this Grouping's aggregation. This is an empty function by default, and can be overriden by the setter.
+        /*
+         * Gets the function that will run after the map reduce stage of this Grouping's aggregation.This is an empty
+         * function by default, and can be overriden by the setter.
          * @instance
          * @memberof! insight.Grouping
          * @returns {function} - The function that will run after aggregation of this Grouping.
@@ -347,15 +493,15 @@ insight.Grouping = (function(insight) {
          * @returns {this}
          * @param {string[]} postAggregationFunc - A user defined function of the form function(grouping), that the Grouping will run post aggregation.
          */
-        this.postAggregation = function(postAggregationFunc) {
+        self.postAggregation = function(postAggregationFunc) {
             if (!arguments.length) {
                 return postAggregation;
             }
             postAggregation = postAggregationFunc;
-            return this;
+            return self;
         };
 
-        /**
+        /*
          * Returns the list of properties to be summed on this Grouping
          * @instance
          * @memberof! insight.Grouping
@@ -367,12 +513,46 @@ insight.Grouping = (function(insight) {
          * @returns {this}
          * @param {string[]} properties - An array of property names to be summed for slices in this Grouping.
          */
-        this.sum = function(properties) {
+        self.sum = function(properties) {
             if (!arguments.length) {
                 return sumProperties;
             }
             sumProperties = properties;
-            return this;
+            return self;
+        };
+
+        /*
+         * Returns the list of property pairs whose correlation coefficient should be caclulated in this Grouping
+         * @instance
+         * @memberof! insight.Grouping
+         * @returns {Array<String[]>} - The list of property pairs that will be summed.Each pair is an array of two strings
+         * @also
+         * Sets the list of property pairs whose correlation coefficient should be caclulated in this Grouping
+         * @instance
+         * @memberof! insight.Grouping
+         * @returns {this}
+         * @param {Array<String[]>} properties - An array of property pairs whose correlation coefficient should
+         * be caclulated in this Grouping
+         */
+        self.correlationPairs = function(properties) {
+            if (!arguments.length) {
+                return correlationPairProperties;
+            }
+
+            correlationPairProperties = properties;
+
+            for (var i = 0, len = properties.length; i < len; i++) {
+                insight.Utils.addToSet(allCorrelationProperties, properties[i][0]);
+                insight.Utils.addToSet(allCorrelationProperties, properties[i][1]);
+            }
+
+            // need mean for correlation
+            averageProperties = insight.Utils.arrayUnique(averageProperties.concat(allCorrelationProperties));
+
+            // need sum for mean so set that too
+            sumProperties = insight.Utils.arrayUnique(sumProperties.concat(allCorrelationProperties));
+
+            return self;
         };
 
         /**
@@ -387,12 +567,12 @@ insight.Grouping = (function(insight) {
          * @returns {this}
          * @param {string[]} properties - An array of property names to be cumulatively summed over slices in this Grouping.
          */
-        this.cumulative = function(properties) {
+        self.cumulative = function(properties) {
             if (!arguments.length) {
                 return cumulativeProperties;
             }
             cumulativeProperties = properties;
-            return this;
+            return self;
         };
 
         /**
@@ -407,12 +587,12 @@ insight.Grouping = (function(insight) {
          * @returns {this}
          * @param {string[]} properties - An array of properties whose distinct value occurences will be counted during the reduction of this Grouping
          */
-        this.count = function(properties) {
+        self.count = function(properties) {
             if (!arguments.length) {
                 return countProperties;
             }
             countProperties = properties;
-            return this;
+            return self;
         };
 
         /**
@@ -427,7 +607,7 @@ insight.Grouping = (function(insight) {
          * @returns {this}
          * @param {string[]} properties - An array of properties that will be averaged after the map reduce of this Grouping.
          */
-        this.mean = function(properties) {
+        self.mean = function(properties) {
             if (!arguments.length) {
                 return averageProperties;
             }
@@ -435,7 +615,7 @@ insight.Grouping = (function(insight) {
 
             sumProperties = insight.Utils.arrayUnique(sumProperties.concat(averageProperties));
 
-            return this;
+            return self;
         };
 
         /**
@@ -448,14 +628,16 @@ insight.Grouping = (function(insight) {
          * @instance
          * @memberof! insight.Grouping
          * @returns {this}
-         * @param {function} function - The comparison function to be used to sort the elements in this group.  The function should take the form of a standard {@link https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/GlobalvalueObjects/Array/sort|Javascript comparison function}.
+         * @param {function} function - The comparison function to be used to sort the elements in this group.
+         * The function should take the form of a standard
+         * {@link https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/GlobalvalueObjects/Array/sort|Javascript comparison function}.
          */
-        this.orderFunction = function(orderingFunction) {
+        self.orderFunction = function(orderingFunction) {
             if (!arguments.length) {
                 return orderFunction;
             }
             orderFunction = orderingFunction;
-            return this;
+            return self;
         };
 
 
@@ -471,81 +653,85 @@ insight.Grouping = (function(insight) {
          * @returns {this}
          * @param {boolean} ordered - Whether to order this Grouping or not
          */
-        this.ordered = function(value) {
+        self.ordered = function(value) {
             if (!arguments.length) {
                 return ordered;
             }
             ordered = value;
 
-            return this;
+            return self;
         };
 
         /**
-         * The filter method gets or sets the function used to filter the results returned by this grouping.
-         * @param {function} filterFunction - A function taking a parameter representing an object in the list.  The function must return true or false as per <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/GlobalvalueObjects/Array/filter">Array Filter</a>.
+         * Gets or sets the function used to filter the results returned by this grouping.
+         * @param {function} filterFunction - A function taking a parameter representing an object in the list.
+         * The function must return true or false as per
+         * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/GlobalvalueObjects/Array/filter">Array Filter</a>.
          */
-        this.filter = function(f) {
+        self.filter = function(f) {
             if (!arguments.length) {
                 return filterFunction;
             }
             filterFunction = f;
-            return this;
+            return self;
         };
 
 
 
 
         /**
-         * This method is called when any post aggregation calculations need to be recalculated.
+         * Called when any post aggregation calculations need to be recalculated.
          * For example, calculating group percentages after totals have been created during map-reduce.
          * @memberof! insight.Grouping
          * @instance
          */
-        this.recalculate = function() {
+        self.recalculate = function() {
 
             postAggregationCalculations();
         };
 
         /**
-         * This method performs the aggregation of the underlying crossfilter dimension, calculating any additional properties during the map-reduce phase.
+         * Performs the aggregation of the underlying crossfilter dimension, calculating any additional properties during the map-reduce phase.
          * It must be run prior to a group being used
          * @todo This should probably be run during the constructor? If not, lazily evaluated by getData() if it hasn't been run already.
          */
-        this.initialize = function() {
+        self.initialize = function() {
 
-            var data;
+            var basicGroupData;
 
             if (self.dimension.oneToMany) {
                 // Dimensions that are one to many {supportedLanguages: ['EN', 'DE']} as opposed to {supportedLanguage: 'EN'} need to be aggregated differently
-                data = reduceMultidimension();
+                basicGroupData = reduceMultidimension();
             } else {
                 // this is crossfilter code.  It calls the crossfilter.group().reduce() functions on the crossfilter dimension wrapped inside our insight.Dimension
                 // more info at https://github.com/square/crossfilter/wiki/API-Reference
                 // the add, remove and initialie functions are called when crossfilter is aggregating the groups, and is amending the membership of the different 
                 // dimensional slices (groups) 
-                data = self.dimension.crossfilterDimension.group()
+                basicGroupData = self.dimension.crossfilterDimension.group()
                     .reduce(
                         reduceAddToGroup,
                         reduceRemoveFromGroup,
                         reduceInitializeGroup
                 );
+
+
             }
 
-            self.data = data;
+            self.data = basicGroupData;
 
             postAggregationCalculations(self);
 
-            return this;
+            return self;
         };
 
 
         /**
-         * This method is used to return the group's data, without ordering.  It checks if there is any filtering requested and applies the filter to the return array.
+         * Used to return the group's data, without ordering.  It checks if there is any filtering requested and applies the filter to the return array.
          * @memberof! insight.Grouping
          * @instance
          * @returns {object[]} return - The grouping's data in an object array, with an object per slice of the dimension.
          */
-        this.getData = function(orderFunction, top) {
+        self.getData = function(orderFunction, top) {
             var data;
 
             // Set the provided order function if it has been given, otherwise use the inherent grouping order if one has been defined.
@@ -555,7 +741,7 @@ insight.Grouping = (function(insight) {
                 self.initialize();
             }
 
-            if (this.dimension.oneToMany) {
+            if (self.dimension.oneToMany) {
                 data = self.data.value()
                     .values;
             } else {

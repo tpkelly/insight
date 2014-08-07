@@ -15,6 +15,8 @@ Include the required libraries and InsightJS. Include an optional stylesheet the
 Load a dataset and start analyzing and creating charts!
 
 ```
+<link rel="stylesheet" href="insight.min.css">
+
 <script src='crossfilter.js'></script>
 <script src='d3.js'></script>
 <script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/insightjs/0.1.1/insight.min.js'></script>

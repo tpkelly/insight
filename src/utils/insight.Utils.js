@@ -170,6 +170,20 @@ insight.Utils = (function() {
         return a;
     };
 
+    /*
+     * Returns the last element in an array
+     * @param {Array} Any array
+     * @returns The last element in the array or undefined if the array is empty or the parameter is not an array
+     */
+    exports.lastElement = function(array) {
+
+        if (!insight.Utils.isArray(array) || array.length === 0) {
+            return undefined;
+        }
+
+        return array.slice(array.length - 1)[0];
+    };
+
     /**
      * Takes two objects and returns the union, with priority given to the first parameter in the event of clashes.
      * This bias is used for scenarios where user defined CSS properties must not override default values.
