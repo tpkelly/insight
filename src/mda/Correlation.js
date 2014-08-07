@@ -1,6 +1,5 @@
-/**
+/*
  * Module for calculating correlation coefficients on pairs of values.
- * @namespace insight.correlation
  */
 insight.correlation = (function(insight) {
 
