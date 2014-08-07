@@ -274,8 +274,8 @@
          */
         this.mouseOver = function(item, i, valueFunction) {
 
-            var textFunction = valueFunction ? valueFunction : self.tooltipFunction();
-            var tooltipText = textFunction(item);
+            var textFunction = valueFunction || self.valueFunction();
+            var tooltipText = tooltipFormat(textFunction(item));
 
             self.tooltip.show(this, tooltipText);
 
