@@ -57,12 +57,8 @@
             return d;
         };
 
-        var tooltipAccessor = function(d) {
-            return valueFunction(d);
-        };
-
         var tooltipFunction = function(d) {
-            return tooltipFormat(tooltipAccessor(d));
+            return valueFunction(d);
         };
 
         /*
@@ -274,7 +270,7 @@
          */
         this.mouseOver = function(item, i, valueFunction) {
 
-            var textFunction = valueFunction || self.valueFunction();
+            var textFunction = valueFunction || self.tooltipFunction();
             var tooltipText = tooltipFormat(textFunction(item));
 
             self.tooltip.show(this, tooltipText);
