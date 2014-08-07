@@ -1,11 +1,12 @@
-insight.DataSet = (function(insight) {
+(function(insight) {
     /**
      * A DataSet is wrapper around a simple object array, but providing some functions that are required by charts to load and filter data.
      * A DataSet should be used with an array of data that is to be charted without being used in a crossfilter or dimensional dataset.
+     * @class insight.DataSet
      * @constructor
      * @param {object[]} data - The short name used to identify this dimension, and any linked dimensions sharing the same name
      */
-    function DataSet(data) {
+    insight.DataSet = function DataSet(data) {
 
         this.data = data;
 
@@ -16,13 +17,13 @@ insight.DataSet = (function(insight) {
         };
 
         this._filterFunction = null;
-    }
+    };
 
-    DataSet.prototype.initialize = function() {
+    insight.DataSet.prototype.initialize = function() {
 
     };
 
-    DataSet.prototype.filterFunction = function(f) {
+    insight.DataSet.prototype.filterFunction = function(f) {
         if (!arguments.length) {
             return this._filterFunction;
         }
@@ -30,7 +31,7 @@ insight.DataSet = (function(insight) {
         return this;
     };
 
-    DataSet.prototype.getData = function() {
+    insight.DataSet.prototype.getData = function() {
         var data;
         if (this.data.all) {
             data = this.data.all();
@@ -46,7 +47,7 @@ insight.DataSet = (function(insight) {
         return data;
     };
 
-    DataSet.prototype.orderFunction = function(o) {
+    insight.DataSet.prototype.orderFunction = function(o) {
         if (!arguments.length) {
             return this._orderFunction;
         }
@@ -54,7 +55,7 @@ insight.DataSet = (function(insight) {
         return this;
     };
 
-    DataSet.prototype.filterFunction = function(f) {
+    insight.DataSet.prototype.filterFunction = function(f) {
         if (!arguments.length) {
             return this._filterFunction;
         }
@@ -62,7 +63,7 @@ insight.DataSet = (function(insight) {
         return this;
     };
 
-    DataSet.prototype.getOrderedData = function() {
+    insight.DataSet.prototype.getOrderedData = function() {
         var data;
 
         data = this.data.sort(this._orderFunction);
@@ -75,7 +76,7 @@ insight.DataSet = (function(insight) {
     };
 
 
-    DataSet.prototype.group = function(name, groupFunction, oneToMany) {
+    insight.DataSet.prototype.group = function(name, groupFunction, oneToMany) {
 
         this.crossfilterData = this.crossfilterData || crossfilter(this.data);
 
@@ -85,7 +86,5 @@ insight.DataSet = (function(insight) {
 
         return group;
     };
-
-    return DataSet;
 
 })(insight);
