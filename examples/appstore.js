@@ -33,7 +33,7 @@ $(document)
                     return new Date(d.releaseDate.getFullYear(), d.releaseDate.getMonth(), 1);
                 })
                 .cumulative(['Count'])
-                .filter(function(d)
+                .filterFunction(function(d)
                 {
                     return d.key < new Date(2014, 0, 1);
                 });
@@ -126,11 +126,11 @@ $(document)
             bubbleChart.yAxis(bubbleY);
 
             var bubbles = new insight.BubbleSeries('bubbles', genres, bubbleX, bubbleY, 'cyan')
-                .xFunction(function(d)
+                .keyFunction(function(d)
                 {
                     return d.value.userRatingCount.Average;
                 })
-                .yFunction(function(d)
+                .valueFunction(function(d)
                 {
                     return d.value.price.Average;
                 })

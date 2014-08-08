@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Namespace: insight</title>
+    <title>Namespace: Formatters</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -662,7 +662,7 @@
     </ul>
 </div>
     <div class="main">
-        <h1 class="page-title" data-filename="insight.html">Namespace: insight</h1>
+        <h1 class="page-title" data-filename="insight.Formatters.html">Namespace: Formatters</h1>
         
 
 
@@ -671,7 +671,9 @@
     
 <header>
     <h2>
-    insight
+        <span class="ancestors"><a href="insight.html">insight</a>.</span>
+    
+    Formatters
     </h2>
     
 </header>  
@@ -682,7 +684,7 @@
     
     
         
-            <div class="description">This is the global namespace.</div>
+            <div class="description">Convenience formatters for formatting string values.</div>
         
         
         
@@ -722,73 +724,666 @@
     
     
     
-        <h3 class="subsection-title">Classes</h3>
+    
+    
+    
+    
+    
+    
+        <h3 class="subsection-title">Methods</h3>
         
         <dl>
-            <dt><a href="insight.Axis.html">Axis</a></dt>
-            <dd></dd>
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="currencyFormatter">
+            
+            <span class="type-signature static">static</span>insight.Formatters.currencyFormatter<span class="signature">(value)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{String}</span>
+        </h4>
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Format the number with £, thousand-groupings, and 2 decimal places.
+    </div>
+    
+
+    
+    
+    
+    
+    
         
-            <dt><a href="insight.AxisGridlines.html">AxisGridlines</a></dt>
-            <dd></dd>
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The value to be formatted.</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
         
-            <dt><a href="insight.BubbleSeries.html">BubbleSeries</a></dt>
-            <dd></dd>
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+The formatted value.
+<br />
+
+    
+    
+    
+        <h5>Example</h5>
         
-            <dt><a href="insight.Chart.html">Chart</a></dt>
-            <dd></dd>
+
+    
+    <pre class="prettyprint"><code> 2345.2 becomes '£2,345.20'.</code></pre>
+    
+
+    
+</dd>
+
         
-            <dt><a href="insight.ChartGroup.html">ChartGroup</a></dt>
-            <dd></dd>
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="dateFormatter">
+            
+            <span class="type-signature static">static</span>insight.Formatters.dateFormatter<span class="signature">(date)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{String}</span>
+        </h4>
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Format the date as a month and year.
+    </div>
+    
+
+    
+    
+    
+    
+    
         
-            <dt><a href="insight.ColumnSeries.html">ColumnSeries</a></dt>
-            <dd></dd>
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>date</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Date</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The date to be formatted.</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
         
-            <dt><a href="insight.DataSet.html">DataSet</a></dt>
-            <dd></dd>
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+The date formatted as a string.
+<br />
+
+    
+    
+    
+        <h5>Example</h5>
         
-            <dt><a href="insight.Dimension.html">Dimension</a></dt>
-            <dd></dd>
+
+    
+    <pre class="prettyprint"><code> new Date(2014,0,1) becomes 'Jan 2014'.</code></pre>
+    
+
+    
+</dd>
+
         
-            <dt><a href="insight.Legend.html">Legend</a></dt>
-            <dd></dd>
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="format">
+            
+            <span class="type-signature static">static</span>insight.Formatters.format<span class="signature">(format, value)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{String}</span>
+        </h4>
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        A wrapper for d3.format().
+See <a href="https://github.com/mbostock/d3/wiki/Formatting#d3_format">D3 API reference</a> for more information.
+    </div>
+    
+
+    
+    
+    
+    
+    
         
-            <dt><a href="insight.LineSeries.html">LineSeries</a></dt>
-            <dd></dd>
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>format</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The format to apply.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The value to be formatted.</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
         
-            <dt><a href="insight.MarginMeasurer.html">MarginMeasurer</a></dt>
-            <dd></dd>
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+The formatted value.
+<br />
+
+    
+    
+    
+</dd>
+
         
-            <dt><a href="insight.MarkerSeries.html">MarkerSeries</a></dt>
-            <dd></dd>
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="numberFormatter">
+            
+            <span class="type-signature static">static</span>insight.Formatters.numberFormatter<span class="signature">(value)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{String}</span>
+        </h4>
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Format the number with thousand-groupings.
+    </div>
+    
+
+    
+    
+    
+    
+    
         
-            <dt><a href="insight.RowSeries.html">RowSeries</a></dt>
-            <dd></dd>
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The value to be formatted.</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
         
-            <dt><a href="insight.ScatterSeries.html">ScatterSeries</a></dt>
-            <dd></dd>
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+The formatted value.
+<br />
+
+    
+    
+    
+        <h5>Example</h5>
         
-            <dt><a href="insight.Series.html">Series</a></dt>
-            <dd></dd>
+
+    
+    <pre class="prettyprint"><code> 2345.2234 becomes '2,345.2234'.</code></pre>
+    
+
+    
+</dd>
+
         
-            <dt><a href="insight.Table.html">Table</a></dt>
-            <dd></dd>
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="percentageFormatter">
+            
+            <span class="type-signature static">static</span>insight.Formatters.percentageFormatter<span class="signature">(value)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{String}</span>
+        </h4>
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Format the number as a percentage.
+    </div>
+    
+
+    
+    
+    
+    
+    
         
-            <dt><a href="insight.Tooltip.html">Tooltip</a></dt>
-            <dd></dd>
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The number to be formatted.</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+The formatted value.
+<br />
+
+    
+    
+    
+        <h5>Example</h5>
+        
+
+    
+    <pre class="prettyprint"><code> 0.15 becomes '15%'.</code></pre>
+    
+
+    
+</dd>
+
         </dl>
-    
-    
-    
-        <h3 class="subsection-title">Namespaces</h3>
-        
-        <dl>
-            <dt><a href="namespaces.html#insight.Formatters"><a href="insight.Formatters.html">Formatters</a></a></dt>
-            <dd></dd>
-        </dl>
-    
-    
-    
-    
     
     
     

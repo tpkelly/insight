@@ -12,7 +12,4 @@ node_modules
 .idea
 
 # Generated files
-InsightJS/**/*
-
-# Make an exception for the min file
-!InsightJS/dist/insight.min.js
+InsightJS/dist/insight.js
