@@ -26,7 +26,6 @@ $(document)
         var dataset = new insight.DataSet(data);
 
         var x = new insight.Axis('Country', insight.Scales.Ordinal)
-            .tickOrientation('tb')
             .tickRotation(45)
             .tickSize(5);
 

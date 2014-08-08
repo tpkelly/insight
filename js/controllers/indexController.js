@@ -29,7 +29,6 @@
                 });
 
             var bubbleX = new insight.Axis('Average Rating', insight.Scales.Linear)
-                .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .tickOrientation('tb');
@@ -77,7 +76,6 @@
                 });
 
             var x = new insight.Axis('Language', insight.Scales.Ordinal)
-                .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .tickOrientation('tb')
@@ -109,7 +107,6 @@
                 });
 
         var x = new insight.Axis('', insight.Scales.Ordinal)
-            .textAnchor('start')
             .tickSize(5)
             .tickPadding(0)
             .tickOrientation('tb')
@@ -145,7 +142,6 @@
             var xTime = new insight.Axis('', insight.Scales.Time)
                 .tickOrientation('tb')
                 .tickSize(5)
-                .textAnchor('start')
                 .labelFormat(insight.Formatters.dateFormatter);
 
             var yTime = new insight.Axis('Apps', insight.Scales.Linear)
@@ -185,7 +181,6 @@
 
         var x = new insight.Axis('', insight.Scales.Linear)
                            .tickSize(5)
-                           .tickOrientation('tb')
                            .tickRotation(45)
                            .display(false);
 

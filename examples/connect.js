@@ -30,7 +30,6 @@ $(document)
                 .height(350);
 
             var xScale = new insight.Axis('Genre', insight.Scales.Ordinal)
-                .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .tickOrientation('tb')
@@ -60,7 +59,6 @@ $(document)
                 .height(400);
 
             var lxScale = new insight.Axis('Language', insight.Scales.Ordinal)
-                .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .tickOrientation('tb')
