@@ -26,7 +26,6 @@ $(document)
                 .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(5)
-                .tickOrientation('tb')
                 .tickRotation(45)
                 .labelFormat(d3.time.format('%Y'));
 

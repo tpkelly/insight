@@ -185,7 +185,6 @@
 
         var x = new insight.Axis('', insight.Scales.Linear)
                            .tickSize(5)
-                           .tickOrientation('tb')
                            .tickRotation(45)
                            .display(false);
 

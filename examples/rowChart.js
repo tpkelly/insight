@@ -25,7 +25,6 @@ $(document)
     {
         var x = new insight.Axis('Population', insight.Scales.Linear)
             .tickSize(5)
-            .tickOrientation('tb')
             .tickRotation('45');
 
         var y = new insight.Axis('', insight.Scales.Ordinal);
