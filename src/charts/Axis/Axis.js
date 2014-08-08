@@ -383,7 +383,7 @@
             return this;
         };
 
-        /**
+        /*
          * Gets the axis orientation: h = horizontal, v = vertical
          * @memberof! insight.Axis
          * @instance
