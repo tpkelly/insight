@@ -102,7 +102,7 @@
             return vals;
         };
 
-        /**
+        /*
          * Calculates the minimum value to be used in this axis.
          * @returns {object} - The smallest value in the datasets that use this axis
          */
@@ -118,7 +118,7 @@
             return min;
         };
 
-        /**
+        /*
          * Calculates the maximum value to be used in this axis.
          * @returns {object} - The largest value in the datasets that use this axis
          */
@@ -139,6 +139,7 @@
         /**
          * Whether or not the axis is displayed horizontally (true) or vertically (false).
          * @memberof! insight.Axis
+         * @instance
          * @returns {boolean} - Whether the axis is horizontal.
          */
         this.horizontal = function() {
@@ -167,6 +168,20 @@
             return this;
         };
 
+        /**
+         * Gets the function used to order the axis values
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {function} - The current ordering function
+         *
+         * @also
+         *
+         * Sets the function used to order the axis values
+         * @memberof! insight.Axis
+         * @instance
+         * @param {function} value The ordering function
+         * @returns {this}
+         */
         this.orderingFunction = function(value) {
             if (!arguments.length) {
                 return orderingFunction;
@@ -175,6 +190,12 @@
             return this;
         };
 
+        /*
+         * Adds to the list of series that this axis is associated with
+         * @memberof! insight.Axis
+         * @instance
+         * @param {insight.Series} series The series to add
+         */
         this.addSeries = function(series) {
             this.series.push(series);
         };
@@ -183,8 +204,8 @@
         // scale domain and output range methods
 
 
-        /**
-         * This method calculates the domain of values that this axis has, from a minimum to a maximum.
+        /*
+         * Calculates the domain of values that this axis has, from a minimum to a maximum.
          * @memberof! insight.Axis
          * @instance
          * @returns {object[]} bounds - An array with two items, for the lower and upper range of this axis
@@ -204,10 +225,11 @@
         };
 
 
-        /**
-         * This method calculates the output range bound of this axis, taking into account the size and margins of the chart.
+        /*
+         * Calculates the output range bound of this axis, taking into account the size and margins of the chart.
          * @memberof! insight.Axis
          * @instance
+         * @param {insight.Chart} chart The chart to calculate bounds against.
          * @returns {int[]} - An array with two items, for the width and height of the axis, respectively.
          */
         this.calculateAxisBounds = function(chart) {
@@ -227,7 +249,7 @@
          * Returns a boolean value representing if this Axis is zoomable.
          * @instance
          * @memberof! insight.Axis
-         * @returns {boolean}
+         * @returns {boolean} - A value indicating whether the axis is zoomable or not
          *
          * @also
          *
@@ -293,6 +315,20 @@
 
         // label and axis tick methods
 
+        /**
+         * Gets the axis label
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {string} - The axis label
+         *
+         * @also
+         *
+         * Sets the axis label
+         * @memberof! insight.Axis
+         * @instance
+         * @param {string} value The axis label
+         * @returns {this}
+         */
         this.label = function(value) {
             if (!arguments.length) {
                 return label;
@@ -301,7 +337,21 @@
             return this;
         };
 
-
+        /**
+         * Gets the function that will be used to format the axis tick labels.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {function} - A function that accepts the axis tick string and returns the formatted label
+         *
+         * @also
+         *
+         * Sets the function that will be used to format the axis tick labels
+         * See `insight.Formatters` for pre-built examples.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {function} value A function that accepts the axis tick label and returns the formatted label
+         * @returns {this}
+         */
         this.labelFormat = function(value) {
             if (!arguments.length) {
                 return format;
@@ -312,7 +362,7 @@
 
 
         /**
-         * The color of the axis labels and lines.
+         * Gets the color of the axis labels and lines.
          * @memberof! insight.Axis
          * @instance
          * @returns {Color} - The color of the axis labels and lines.
@@ -333,7 +383,20 @@
             return this;
         };
 
-
+        /*
+         * Gets the axis orientation: h = horizontal, v = vertical
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {string} - h = horizontal, v = vertical
+         *
+         * @also
+         *
+         * Sets the axis orientation: h = horizontal, v = vertical
+         * @memberof! insight.Axis
+         * @instance
+         * @param {string} value The the axis orientation: h = horizontal, v = vertical
+         * @returns {this}
+         */
         this.orientation = function(value) {
             if (!arguments.length) {
                 return orientation();
@@ -342,7 +405,20 @@
             return this;
         };
 
-
+        /**
+         * Gets the clockwise angle (degrees), that the each tick label will be rotated from horizontal.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {number} - The clockwise angle (degrees), that the each tick label will be rotated from horizontal.
+         *
+         * @also
+         *
+         * Sets the clockwise angle (degrees), that the each tick label will be rotated from horizontal.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {number} value The clockwise angle (degrees), that the each tick label will be rotated from horizontal.
+         * @returns {this}
+         */
         this.tickRotation = function(value) {
             if (!arguments.length) {
                 return labelRotation;
@@ -351,8 +427,20 @@
             return this;
         };
 
-
-
+        /**
+         * Gets the size of each axis tick in pixels.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {number} - The size of each axis tick, in pixels.
+         *
+         * @also
+         *
+         * Sets the size of each axis tick in, pixels.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {number} value The size of each axis tick, in pixels.
+         * @returns {this}
+         */
         this.tickSize = function(value) {
             if (!arguments.length) {
                 return tickSize();
@@ -361,7 +449,20 @@
             return this;
         };
 
-
+        /**
+         * Gets the padding between the end of a tick and its label, in pixels.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {number} - The padding between the end of a tick and its label, in pixels.
+         *
+         * @also
+         *
+         * Sets the padding between the end of a tick and its label, in pixels.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {number} value The padding between the end of a tick and its label, in pixels.
+         * @returns {this}
+         */
         this.tickPadding = function(value) {
             if (!arguments.length) {
                 return tickPadding();
@@ -370,7 +471,21 @@
             return this;
         };
 
-
+        /**
+         * Gets the text-anchor attribute that will be set on each tick Label.
+         * One of: start/middle/end.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {string} - The the current text-anchor attribute value.
+         *
+         * @also
+         *
+         * Sets the text-anchor attribute that will be set on each tick Label.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {string} value The text-anchor attribute that will be set on each tick Label.
+         * @returns {this}
+         */
         this.textAnchor = function(value) {
             if (!arguments.length) {
                 return textAnchor();
@@ -380,7 +495,21 @@
         };
 
 
-
+        /**
+         * Gets the orientation of the tick labels: 'tb' = top to bottom, 'lr' = left to right.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {string} - 'tb' = top to bottom, 'lr' = left to right.
+         *
+         * @also
+         *
+         * Sets the orientation of the tick labels: 'tb' = top to bottom, 'lr' = left to right.
+         * This is a helper function that sets the tickRotation to either 0 or 90.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {string} value 'tb' = top to bottom, 'lr' = left to right.
+         * @returns {this}
+         */
         this.tickOrientation = function(value) {
             if (!arguments.length) {
                 return tickOrientation();

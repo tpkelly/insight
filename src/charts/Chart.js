@@ -174,7 +174,7 @@
                     .bottom);
         };
 
-        /**
+        /*
          * Resizes the chart width according to the given window width within the chart's own minimum and maximum width
          * @memberof! insight.Chart
          * @instance
@@ -291,13 +291,26 @@
             return insight.Utils.safeString(this.name) + 'clip';
         };
 
-
-        this.title = function(_) {
+        /**
+         * The title of the chart.
+         * @memberof! insight.Chart
+         * @instance
+         * @returns {String} - The title of the chart.
+         *
+         * @also
+         *
+         * Sets the title of the chart.
+         * @memberof! insight.Chart
+         * @instance
+         * @param {String} chartTitle The new title of the chart.
+         * @returns {this}
+         */
+        this.title = function(chartTitle) {
             if (!arguments.length) {
                 return title;
             }
 
-            title = _;
+            title = chartTitle;
             return this;
         };
 
@@ -591,14 +604,14 @@
             return this;
         };
 
-        /**
-             * Takes a CSS selector and applies classes to chart elements to show them as selected or not.
-             * in response to a filtering event.
-             * and something else is.
-             * @memberof! insight.Chart
-             * @param {string} selector - a CSS selector matching a slice of a dimension. eg. an entry in a grouping by Country 
-                                          would be 'in_England', which would match that dimensional value in any charts.
-             */
+        /*
+         * Takes a CSS selector and applies classes to chart elements to show them as selected or not.
+         * in response to a filtering event.
+         * and something else is.
+         * @memberof! insight.Chart
+         * @param {string} selector - a CSS selector matching a slice of a dimension. eg. an entry in a grouping by Country 
+                                      would be 'in_England', which would match that dimensional value in any charts.
+         */
         this.highlight = function(selector) {
             var clicked = self.plotArea.selectAll('.' + selector);
             var alreadySelected = insight.Utils.arrayContains(self.selectedItems, selector);
@@ -623,7 +636,7 @@
 
     };
 
-    /**
+    /*
      * Sets the margin for the Chart by using a MarginMEasurer to measure the required label and axis widths for
      * the contents of this Chart
      * @memberof! insight.Chart

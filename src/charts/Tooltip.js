@@ -138,7 +138,7 @@
         };
 
 
-        /**
+        /*
          * Display the tooltip, using the provided element and tooltipText parameters to control the context and position.
          * @memberof! insight.Tooltip
          * @instance
@@ -159,7 +159,7 @@
         };
 
 
-        /**
+        /*
          * Hide the tooltip
          * @memberof! insight.Tooltip
          * @instance
