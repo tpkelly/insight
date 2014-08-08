@@ -16,7 +16,7 @@
          * @memberof! insight.AxisGridlines
          * @instance
          * @param {Chart} chart The chart to grab the gridlines from.
-         * @return {object[]} - All of the gridlines currently added to this chart.
+         * @returns {object[]} - All of the gridlines currently added to this chart.
          */
         this.allGridlines = function(chart) {
             var gridLineIdentifier = 'line.' + this.parentAxis.label();

@@ -26,11 +26,11 @@
 
 
         this.rangeY = function(d) {
-            return self.y.scale(self.yFunction()(d));
+            return self.y.scale(self.valueFunction()(d));
         };
 
         this.rangeX = function(d, i) {
-            return self.x.scale(self.xFunction()(d));
+            return self.x.scale(self.keyFunction()(d));
         };
 
         /**
@@ -56,7 +56,7 @@
             return this;
         };
 
-        /**
+        /*
          * This method is called when any post aggregation calculations, provided by the computeFunction() setter, need to be recalculated.
          * @memberof insight.BubbleSeries
          * @instance
@@ -68,7 +68,7 @@
 
             var data = this.dataset();
 
-            var func = scale === self.x ? self.xFunction() : self.yFunction();
+            var func = scale === self.x ? self.keyFunction() : self.valueFunction();
 
             return d3.max(data, func);
         };
@@ -82,8 +82,8 @@
             };
 
             //Minimum of pixels-per-axis-unit
-            var xValues = data.map(self.xFunction());
-            var yValues = data.map(self.yFunction());
+            var xValues = data.map(self.keyFunction());
+            var yValues = data.map(self.valueFunction());
             var xBounds = this.x.bounds[1];
             var yBounds = this.y.bounds[0];
             var maxRad = Math.min(xBounds / 10, yBounds / 10);
