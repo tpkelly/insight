@@ -10,12 +10,6 @@ var self = this;
             <?js } ?>
             <?js= data.attribs + (kind === 'class' ? 'new ' : '') + (data.scope === 'static' ? longname : name) + (kind !== 'event' ? data.signature : '') ?>
         </h4>
-    
-        <?js if (data.meta) {?>
-        <div class="tag-source">
-            <?js= self.linkto(meta.filename) ?>, <?js= self.linkto(meta.filename, 'line ' + meta.lineno, null, 'line' + meta.lineno) ?>
-        </div>
-        <?js } ?>
     </div>
 
     <?js if (data.summary) { ?>

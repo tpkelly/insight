@@ -72,15 +72,13 @@
 
 
         var rowClass = function(dataPoint) {
-            return insight.Constants.TableRowClass + ' ' + insight.Utils.keySelector(dataPoint, keyFunction);
+            return insight.Constants.TableRowClass + ' ' + insight.Utils.keySelector(keyFunction(dataPoint));
         };
 
 
         var click = function(dataItem) {
 
-            var selector = insight.Utils.keySelector(dataItem, keyFunction);
-
-            self.clickEvent(self, dataItem, selector);
+            self.clickEvent(self.data, keyFunction(dataItem));
         };
 
         // Adds sorters to this Table's list of sorting methods and orders.

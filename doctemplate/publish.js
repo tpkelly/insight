@@ -385,15 +385,8 @@ exports.publish = function(taffyData, opts, tutorials) {
     });
     
     data().each(function(doclet) {
-        var url = helper.longnameToUrl[doclet.longname];
+        doclet.id = doclet.name;
 
-        if (url.indexOf('#') > -1) {
-            doclet.id = helper.longnameToUrl[doclet.longname].split(/#/).pop();
-        }
-        else {
-            doclet.id = doclet.name;
-        }
-        
         if ( needsSignature(doclet) ) {
             addSignatureParams(doclet);
             addSignatureReturns(doclet);
@@ -432,12 +425,6 @@ exports.publish = function(taffyData, opts, tutorials) {
     view.nav = buildNav(members);
     attachModuleSymbols( find({ kind: ['class', 'function'], longname: {left: 'module:'} }),
         members.modules );
-
-    // only output pretty-printed source files if requested; do this before generating any other
-    // pages, so the other pages can link to the source files
-    if (conf['default'].outputSourceFiles) {
-        generateSourceFiles(sourceFiles);
-    }
 
     if (members.globals.length) { generate('Global', [{kind: 'globalobj'}], globalUrl); }
     

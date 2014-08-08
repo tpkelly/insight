@@ -305,11 +305,11 @@
          * @param {boolean} reversed Whether the axis is drawn at the bottom/left (false) or top/right (true).
          * @returns {this}
          */
-        this.reversed = function(value) {
+        this.reversedPosition = function(reversed) {
             if (!arguments.length) {
                 return reversedPosition;
             }
-            reversedPosition = value;
+            reversedPosition = reversed;
             return this;
         };
 
