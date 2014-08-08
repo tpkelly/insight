@@ -385,15 +385,8 @@ exports.publish = function(taffyData, opts, tutorials) {
     });
     
     data().each(function(doclet) {
-        var url = helper.longnameToUrl[doclet.longname];
+        doclet.id = doclet.name;
 
-        if (url.indexOf('#') > -1) {
-            doclet.id = helper.longnameToUrl[doclet.longname].split(/#/).pop();
-        }
-        else {
-            doclet.id = doclet.name;
-        }
-        
         if ( needsSignature(doclet) ) {
             addSignatureParams(doclet);
             addSignatureReturns(doclet);
