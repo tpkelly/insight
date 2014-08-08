@@ -40,11 +40,11 @@
                        .yAxis(bubbleY);
 
             var bubbles = new insight.BubbleSeries('bubbles', bubbleData, bubbleX, bubbleY, '#336699')
-                .xFunction(function(d)
+                .keyFunction(function(d)
                 {
                     return d.value.averageUserRating.Average;
                 })
-                .yFunction(function(d)
+                .valueFunction(function(d)
                 {
                     return d.value.price.Average;
                 })
@@ -239,7 +239,7 @@
                         return new Date(d.releaseDate.getFullYear(), d.releaseDate.getMonth(), 1);
                     })
                     .cumulative(['Count'])
-                    .filter(function(d)
+                    .filterFunction(function(d)
                     {
                         return d.key < new Date(2014, 0, 1);
                     });
