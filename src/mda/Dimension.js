@@ -33,7 +33,7 @@
             };
         };
 
-        /**
+        /*
          * Local helper function that creates a filter object given an element that has been clicked on a Chart or Table.
          * The filter object creates the function used by crossfilter to remove or add objects to an aggregation after a filter event.
          * It also includes a simple name variable to use for lookups.

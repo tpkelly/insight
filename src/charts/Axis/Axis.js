@@ -190,7 +190,7 @@
             return this;
         };
 
-        /**
+        /*
          * Adds to the list of series that this axis is associated with
          * @memberof! insight.Axis
          * @instance
@@ -204,7 +204,7 @@
         // scale domain and output range methods
 
 
-        /**
+        /*
          * Calculates the domain of values that this axis has, from a minimum to a maximum.
          * @memberof! insight.Axis
          * @instance
@@ -225,7 +225,7 @@
         };
 
 
-        /**
+        /*
          * Calculates the output range bound of this axis, taking into account the size and margins of the chart.
          * @memberof! insight.Axis
          * @instance
@@ -338,17 +338,18 @@
         };
 
         /**
-         * Gets the function that will be used to format the axis label
+         * Gets the function that will be used to format the axis tick labels.
          * @memberof! insight.Axis
          * @instance
-         * @returns {function} - A function that accepts the axis label and returns the formatted label
+         * @returns {function} - A function that accepts the axis tick string and returns the formatted label
          *
          * @also
          *
-         * Sets the function that will be used to format the axis label
+         * Sets the function that will be used to format the axis tick labels
+         * See `insight.Formatters` for pre-built examples.
          * @memberof! insight.Axis
          * @instance
-         * @param {function} value A function that accepts the axis label and returns the formatted label
+         * @param {function} value A function that accepts the axis tick label and returns the formatted label
          * @returns {this}
          */
         this.labelFormat = function(value) {

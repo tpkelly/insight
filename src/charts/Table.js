@@ -191,6 +191,12 @@
             return this;
         };
 
+        /**
+         * Returns the array of data objects used to draw this table.
+         * @memberof! insight.Series
+         * @instance
+         * @returns {object[]} - The data set to be used by the table.
+         */
         this.dataset = function() {
 
             var sorters = sortFunctions;
