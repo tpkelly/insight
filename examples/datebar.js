@@ -23,7 +23,6 @@ $(document)
                 .title('Years');
 
             var x = new insight.Axis('Country', insight.Scales.Ordinal)
-                .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(5)
                 .tickRotation(45)

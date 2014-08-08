@@ -31,7 +31,6 @@ $(document)
                 });
 
             var x = new insight.Axis('Client', insight.Scales.Ordinal, 'bottom')
-                .textAnchor('start')
                 .tickOrientation('tb')
                 .ordered(true);
 
