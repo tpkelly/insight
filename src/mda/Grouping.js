@@ -501,12 +501,14 @@
             return self;
         };
 
-        /*
+        /**
          * Returns the list of properties to be summed on this Grouping
          * @instance
          * @memberof! insight.Grouping
          * @returns {string[]} - The list of property names that will be summed
+         *
          * @also
+         *
          * Sets the list of property names that will be summed in this Grouping
          * @instance
          * @memberof! insight.Grouping
@@ -560,7 +562,9 @@
          * @instance
          * @memberof! insight.Grouping
          * @returns {string[]} - The list of property names that will be cumulatively summed
+         *
          * @also
+         *
          * Sets the list of properties that will be cumulatively summed over this Grouping
          * @instance
          * @memberof! insight.Grouping
@@ -576,11 +580,13 @@
         };
 
         /**
-         * Returns the array of properties whose distinct value occurences will be counted during the reduction of this Grouping
+         * Returns the list of properties whose distinct value occurences will be counted during the reduction of this Grouping
          * @instance
          * @memberof! insight.Grouping
          * @returns {string[]} - The list of property names whose values will be counted
+         *
          * @also
+         *
          * Sets the array of properties whose distinct value occurences will be counted during the reduction of this Grouping
          * @instance
          * @memberof! insight.Grouping
@@ -596,11 +602,13 @@
         };
 
         /**
-         * Returns the array of properties whose mean will be calculated after the map reduce of this Grouping.
+         * Returns the list of properties whose mean will be calculated after the map reduce of this Grouping.
          * @instance
          * @memberof! insight.Grouping
          * @returns {string[]} - The list of property names that will averaged
+         *
          * @also
+         *
          * Sets the array of properties whose mean will be calculated after the map reduce of this Grouping.
          * @instance
          * @memberof! insight.Grouping
@@ -619,11 +627,13 @@
         };
 
         /**
-         * Gets or sets the function used to compare the elements in this grouping if sorting is requested.
+         * The function used to compare the elements in this grouping if sorting is requested.
          * @instance
          * @memberof! insight.Grouping
          * @returns {function} orderingFunction - The function used to compare two values when sort() is called on an array
+         *
          * @also
+         *
          * Sets the function used to compare the elements in this grouping if sorting is requested.
          * @instance
          * @memberof! insight.Grouping
@@ -642,11 +652,13 @@
 
 
         /**
-         * Gets or sets whether the group's data is ordered.
+         * Whether the group's data is ordered.
          * @instance
          * @memberof! insight.Grouping
-         * @returns {boolean}
+         * @returns {boolean} - Whether the group's data is ordered.
+         *
          * @also
+         *
          * Sets if this Grouping will be ordered or not
          * @instance
          * @memberof! insight.Grouping
@@ -663,12 +675,22 @@
         };
 
         /**
-         * Gets or sets the function used to filter the results returned by this grouping.
-         * @param {function} filterFunction - A function taking a parameter representing an object in the list.
-         * The function must return true or false as per
-         * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/GlobalvalueObjects/Array/filter">Array Filter</a>.
+         * The function used to filter the results returned by this grouping.
+         * The function returns true to keep the value, or false to remove it from the final result.
+         * @instance
+         * @memberof! insight.Grouping
+         * @returns {function} - The function used to filter the results returned by this grouping.
+         *
+         * @also
+         *
+         * Sets the function used to filter the results returned by this grouping.
+         * The function returns true to keep the value, or false to remove it from the final result.
+         * @instance
+         * @memberof! insight.Grouping
+         * @param {function} filterFunction - The function used to filter the results returned by this grouping.
+         * @returns {this}
          */
-        self.filter = function(f) {
+        self.filterFunction = function(f) {
             if (!arguments.length) {
                 return filterFunction;
             }
@@ -690,7 +712,7 @@
             postAggregationCalculations();
         };
 
-        /**
+        /*
          * Performs the aggregation of the underlying crossfilter dimension, calculating any additional properties during the map-reduce phase.
          * It must be run prior to a group being used
          * @todo This should probably be run during the constructor? If not, lazily evaluated by getData() if it hasn't been run already.

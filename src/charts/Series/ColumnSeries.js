@@ -66,7 +66,7 @@
         };
 
 
-        /**
+        /*
          * Extracts the maximum value on an axis for this series.
          * @memberof! insight.ColumnSeries
          * @instance
@@ -128,7 +128,7 @@
 
             var func = self.currentSeries.valueFunction;
 
-            var position = self.stackedBars() ? self.y.scale(self.calculateYPos(func, d)) : self.y.scale(func(d));
+            var position = self.stacked() ? self.y.scale(self.calculateYPos(func, d)) : self.y.scale(func(d));
 
             return position;
         };
@@ -145,20 +145,16 @@
 
             var groupWidth = self.barWidth(d);
 
-            var width = self.stackedBars() || (self.series.length === 1) ? groupWidth : groupWidth / self.series.length;
+            var width = self.stacked() || (self.series.length === 1) ? groupWidth : groupWidth / self.series.length;
 
             return width;
         };
 
         this.offsetXPosition = function(d) {
             var width = self.groupedBarWidth(d);
-            var position = self.stackedBars() ? self.xPosition(d) : self.calculateXPos(width, d);
+            var position = self.stacked() ? self.xPosition(d) : self.calculateXPos(width, d);
 
             return position;
-        };
-
-        this.stackedBars = function() {
-            return self.stacked();
         };
 
         var click = function(filter) {

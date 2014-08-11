@@ -34,7 +34,7 @@
         }];
 
 
-        /**
+        /*
          * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
          * This function is mapped across the entire data array by the findMax method.
          * @memberof! insight.RowSeries
@@ -62,7 +62,7 @@
         };
 
 
-        /**
+        /*
          * Extracts the maximum value on an axis for this series.
          * @memberof! insight.RowSeries
          * @instance

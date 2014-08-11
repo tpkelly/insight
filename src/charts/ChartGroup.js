@@ -160,7 +160,7 @@
             return self;
         };
 
-        /**
+        /*
          * Draws all Charts and Tables in this ChartGroup
          * @memberof! insight.ChartGroup
          * @instance
@@ -176,7 +176,7 @@
             });
         };
 
-        /**
+        /*
          * Method handler that is bound by the ChartGroup to the click events of any chart series or table rows,
          * if the DataSets used by those entities are crossfilter enabled.
          * It notifies any other listening charts of the dimensional selection event, which they can respond to

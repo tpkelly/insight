@@ -44,15 +44,6 @@
             return d.value;
         };
 
-        // default x and y to vertical.  Series can override this if needed in their constructors.
-        var xFunction = function(d) {
-            return d.x;
-        };
-
-        var yFunction = function(d) {
-            return d.y;
-        };
-
         var tooltipFormat = function(d) {
             return d;
         };
@@ -204,25 +195,6 @@
                 .map(self.keyFunction());
         };
 
-        this.xFunction = function(_) {
-            if (!arguments.length) {
-                return xFunction;
-            }
-            xFunction = _;
-
-            return this;
-        };
-
-        this.yFunction = function(_) {
-            if (!arguments.length) {
-                return yFunction;
-            }
-            yFunction = _;
-
-            return this;
-
-        };
-
         /**
          * The distance to which move the tooltip for this series relative to its default point.
          * @memberof! insight.Series
@@ -300,20 +272,51 @@
             self.clickEvent(self.data, filterValue);
         };
 
-        this.filterFunction = function(_) {
+        /**
+         * The function to use to filter an object from the series.
+         * The function should return a boolean where false means the object is not included in the series.
+         * @memberof! insight.Series
+         * @instance
+         * @returns {function} - The function to use to filter an object from the series.
+         *
+         * @also
+         *
+         * Sets the function to use to filter an object from the series.
+         * The function should return a boolean where false means the object is not included in the series.
+         * @memberof! insight.Series
+         * @instance
+         * @param {function} filter The new function to use to filter an object from the series.
+         * @returns {this}
+         */
+        this.filterFunction = function(newFilter) {
             if (!arguments.length) {
                 return filter;
             }
-            filter = _;
+            filter = newFilter;
 
             return this;
         };
 
-        this.tooltipFormat = function(_) {
+        /**
+         * Gets the function that will be used to format the tooltip for this series' values.
+         * @memberof! insight.Series
+         * @instance
+         * @returns {function} - A function that accepts the value string and returns the formatted tooltip label.
+         *
+         * @also
+         *
+         * Sets the function that will be used to format the tooltip for this series' values.
+         * See `insight.Formatters` for pre-built examples.
+         * @memberof! insight.Series
+         * @instance
+         * @param {function} format A function that accepts the value string and returns the formatted tooltip label.
+         * @returns {this}
+         */
+        this.tooltipFormat = function(newFormat) {
             if (!arguments.length) {
                 return tooltipFormat;
             }
-            tooltipFormat = _;
+            tooltipFormat = newFormat;
 
             return this;
         };
@@ -327,6 +330,20 @@
             return this;
         };
 
+        /**
+         * The number of results to include. Used in conjunction with ordering of an Axis.
+         * @memberof! insight.Series
+         * @instance
+         * @returns {Number} - The number of results to include. Used in conjunction with ordering of an Axis.
+         *
+         * @also
+         *
+         * Sets the number of results to include. Used in conjunction with ordering of an Axis.
+         * @memberof! insight.Series
+         * @instance
+         * @param {Number} topValues The number of results to include. Used in conjunction with ordering of an Axis.
+         * @returns {this}
+         */
         this.top = function(_) {
             if (!arguments.length) {
                 return this.topValues;
@@ -338,7 +355,7 @@
 
 
 
-        /**
+        /*
          * Extracts the minimum value on an axis for this series.
          * @memberof! insight.Series
          * @instance
@@ -355,7 +372,7 @@
             return d3.min(data, func);
         };
 
-        /**
+        /*
          * Extracts the maximum value on an axis for this series.
          * @memberof! insight.Series
          * @instance

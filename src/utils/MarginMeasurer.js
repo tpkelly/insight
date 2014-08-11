@@ -1,6 +1,6 @@
 (function(insight) {
 
-    /**
+    /*
      * Calculates margins for Charts, given axes and series with datasets.
      * @class insight.MarginMeasurer
      */
@@ -15,7 +15,7 @@
 
             // public methods
 
-            /**
+            /*
              * Calculates the dimensions required for a single series' margin entries
              * @memberof! insight.MarginMeasurer
              * @instance
@@ -118,7 +118,7 @@
             };
 
 
-            /**
+            /*
              * Calculates a margin object {top,left,bottom,right} for a chart given a list of series and associated CSS styles
              * @memberof! insight.MarginMeasurer
              * @instance

@@ -108,6 +108,20 @@
             return this;
         };
 
+        /**
+         * The thickeness of the marker, in pixels.
+         * @memberof! insight.MarkerSeries
+         * @instance
+         * @returns {Number} - The current marker thickness.
+         *
+         * @also
+         *
+         * Sets the thickeness of the marker, in pixels.
+         * @memberof! insight.MarkerSeries
+         * @instance
+         * @param {Number} thickness The new thickeness, in pixels.
+         * @returns {this}
+         */
         this.thickness = function(_) {
             if (!arguments.length) {
                 return thickness;

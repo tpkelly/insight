@@ -23,6 +23,22 @@
 
     };
 
+    /**
+     * The function to use to filter an object from the dataset.
+     * The function should return a boolean where false means the object is not included in the dataset.
+     * @memberof! insight.DataSet
+     * @instance
+     * @returns {function} - The function to use to filter an object from the dataset.
+     *
+     * @also
+     *
+     * Sets the function to use to filter an object from the dataset.
+     * The function should return a boolean where false means the object is not included in the dataset.
+     * @memberof! insight.DataSet
+     * @instance
+     * @param {function} filter The new function to use to filter an object from the dataset.
+     * @returns {this}
+     */
     insight.DataSet.prototype.filterFunction = function(f) {
         if (!arguments.length) {
             return this._filterFunction;
@@ -31,6 +47,11 @@
         return this;
     };
 
+    /** Fetch all the data currently held in this dataset, filtered by the `filterFunction`.
+     * @memberof! insight.DataSet
+     * @instance
+     * @returns {object[]} data All data currently held by the dataset.
+     */
     insight.DataSet.prototype.getData = function() {
         var data;
         if (this.data.all) {
@@ -47,19 +68,25 @@
         return data;
     };
 
-    insight.DataSet.prototype.orderFunction = function(o) {
+    /**
+     * Gets the function used to order the dataset values
+     * @memberof! insight.DataSet
+     * @instance
+     * @returns {function} - The current ordering function
+     *
+     * @also
+     *
+     * Sets the function used to order the dataset values
+     * @memberof! insight.DataSet
+     * @instance
+     * @param {function} orderingFunction The ordering function
+     * @returns {this}
+     */
+    insight.DataSet.prototype.orderingFunction = function(o) {
         if (!arguments.length) {
             return this._orderFunction;
         }
         this._orderFunction = o;
-        return this;
-    };
-
-    insight.DataSet.prototype.filterFunction = function(f) {
-        if (!arguments.length) {
-            return this._filterFunction;
-        }
-        this._filterFunction = f;
         return this;
     };
 
