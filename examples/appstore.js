@@ -180,7 +180,7 @@ $(document)
             $('#yavgrating')
                 .click(function()
                 {
-                    bubbles.yFunction(function(d)
+                    bubbles.valueFunction(function(d)
                     {
                         return d.value.averageUserRating.Average;
                     });
@@ -192,7 +192,7 @@ $(document)
             $('#yavgratings')
                 .click(function()
                 {
-                    bubbles.yFunction(function(d)
+                    bubbles.valueFunction(function(d)
                     {
                         return d.value.userRatingCount.Average;
                     });
@@ -227,7 +227,7 @@ $(document)
             $('#yavgprice')
                 .click(function()
                 {
-                    bubbles.yFunction(function(d)
+                    bubbles.valueFunction(function(d)
                     {
                         return d.value.price.Average;
                     });
@@ -238,7 +238,7 @@ $(document)
             $('#xsumrating')
                 .click(function()
                 {
-                    bubbles.xFunction(function(d)
+                    bubbles.keyFunction(function(d)
                     {
                         return d.value.userRatingCount.Sum;
                     });
@@ -249,7 +249,7 @@ $(document)
             $('#xavgrating')
                 .click(function()
                 {
-                    bubbles.xFunction(function(d)
+                    bubbles.keyFunction(function(d)
                     {
                         return d.value.averageUserRating.Average;
                     });
@@ -262,7 +262,7 @@ $(document)
                 .click(function()
                 {
 
-                    bubbles.xFunction(function(d)
+                    bubbles.keyFunction(function(d)
                     {
                         return d.value.fileSizeBytes.Average / 1024 / 1024;
                     });
