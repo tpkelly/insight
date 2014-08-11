@@ -29,7 +29,7 @@ Load a dataset and start analyzing and creating charts!
 
 <script src='crossfilter.js'></script>
 <script src='d3.js'></script>
-<script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/insightjs/0.1.1/insight.min.js'></script>
+<script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/insightjs/1.0.1/insight.min.js'></script>
 ```
 
 ```javascript
