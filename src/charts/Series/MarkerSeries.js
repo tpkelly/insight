@@ -160,7 +160,6 @@
 
             self.initializeTooltip(chart.container.node());
             self.selectedItems = chart.selectedItems;
-            self.rootClassName = self.seriesClassName();
 
             var reset = function(d) {
                 d.yPos = 0;

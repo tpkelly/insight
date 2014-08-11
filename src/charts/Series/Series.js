@@ -118,7 +118,7 @@
 
             var keySelector = insight.Utils.keySelector(groupKeyFunction(dataItem));
             var selected = selectedClassName(self.selectedItems, keySelector);
-            var value = self.rootClassName + ' ' + keySelector + selected;
+            var value = self.seriesClassName() + ' ' + keySelector + selected;
 
             return value;
         };
