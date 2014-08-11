@@ -40,6 +40,10 @@
             return d.key;
         };
 
+        var groupKeyFunction = function(d) {
+            return d.key;
+        };
+
         var valueFunction = function(d) {
             return d.value;
         };
@@ -112,9 +116,9 @@
          */
         this.itemClassName = function(dataItem, additionalClasses) {
 
-            var keySelector = insight.Utils.keySelector(keyFunction(dataItem));
+            var keySelector = insight.Utils.keySelector(groupKeyFunction(dataItem));
             var selected = selectedClassName(self.selectedItems, keySelector);
-            var value = self.rootClassName + ' ' + keySelector + selected;
+            var value = self.seriesClassName() + ' ' + keySelector + selected;
 
             return value;
         };
@@ -138,6 +142,29 @@
                 return keyFunction;
             }
             keyFunction = keyFunc;
+
+            return this;
+        };
+
+        /**
+         * Gets the function used to retrieve the grouping key from the data object to plot on a chart, used for cross filtering.
+         * @memberof! insight.Series
+         * @instance
+         * @returns {function} The current function used to extract the grouping key.
+         *
+         * @also
+         *
+         * Sets the function used to retrieve the grouping key from the data object to plot on a chart.
+         * @memberof! insight.Series
+         * @instance
+         * @param {function} keyFunc The new function to use to extract the grouping key from a data object.
+         * @returns {this}
+         */
+        this.groupKeyFunction = function(keyFunc) {
+            if (!arguments.length) {
+                return groupKeyFunction;
+            }
+            groupKeyFunction = keyFunc;
 
             return this;
         };
@@ -267,7 +294,7 @@
 
 
         this.click = function(element, filterBy) {
-            var filterValue = keyFunction(filterBy);
+            var filterValue = groupKeyFunction(filterBy);
 
             self.clickEvent(self.data, filterValue);
         };

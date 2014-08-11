@@ -186,7 +186,6 @@
 
             self.initializeTooltip(chart.container.node());
             self.selectedItems = chart.selectedItems;
-            self.rootClassName = self.seriesClassName();
 
             var groupSelector = 'g.' + insight.Constants.BarGroupClass,
                 barSelector = 'rect.' + insight.Constants.BarGroupClass;
