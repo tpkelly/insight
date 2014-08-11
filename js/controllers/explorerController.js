@@ -97,7 +97,6 @@
                 chart.series([series]);
 
                 var xAxis = new Axis(chart, "x", xScale, 'bottom')
-                    .textAnchor('start')
                     .tickSize(5)
                     .tickPadding(0)
                     .labelOrientation('tb');
@@ -165,7 +164,6 @@
                 chart.series([bubbles]);
 
                 var bubbleXAxis = new Axis(chart, "x", bubbleX, 'bottom')
-                    .textAnchor('start')
                     .tickSize(5)
                     .tickPadding(0)
                     .labelOrientation('tb')

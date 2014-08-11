@@ -27,17 +27,9 @@ $(document)
 
             var chart = new insight.Chart('Chart 1', '#genreCount')
                 .width(800)
-                .height(350)
-                .margin(
-                {
-                    top: 10,
-                    left: 100,
-                    right: 40,
-                    bottom: 120
-                });
+                .height(350);
 
             var xScale = new insight.Axis('Genre', insight.Scales.Ordinal)
-                .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .tickOrientation('tb')
@@ -50,17 +42,13 @@ $(document)
             chart.yAxis(yScale);
 
             var series = new insight.ColumnSeries('genre', genres, xScale, yScale, '#ACC3EE')
-                .tooltipFunction(function(d)
-                {
-                    return d;
-                })
                 .valueFunction(function(d)
                 {
                     return d.value.Count;
                 })
-                .tooltipFunction(function(d)
+                .tooltipFormat(function(value)
                 {
-                    return d.value.Count + " Apps";
+                    return value + " Apps";
                 })
                 .top(10);
 
@@ -68,17 +56,9 @@ $(document)
 
             var languageChart = new insight.Chart('Chart 2', '#languages')
                 .width(1200)
-                .height(400)
-                .margin(
-                {
-                    top: 10,
-                    left: 200,
-                    right: 40,
-                    bottom: 50
-                });
+                .height(400);
 
             var lxScale = new insight.Axis('Language', insight.Scales.Ordinal)
-                .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .tickOrientation('tb')
@@ -90,10 +70,6 @@ $(document)
             languageChart.yAxis(lyScale);
 
             var lSeries = new insight.ColumnSeries('languages', languageGroup, lxScale, lyScale, '#ACC3EE')
-                .tooltipFunction(function(d)
-                {
-                    return d;
-                })
                 .valueFunction(function(d)
                 {
                     return d.value;

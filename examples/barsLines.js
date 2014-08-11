@@ -55,11 +55,7 @@ $(document)
                     return d.value;
                 },
                 label: 'Value',
-                color: '#e67e22',
-                tooltipValue: function(d)
-                {
-                    return d.value;
-                }
+                color: '#e67e22'
             },
             {
                 name: 'value2',
@@ -68,11 +64,7 @@ $(document)
                     return d.value2;
                 },
                 label: 'Value 2',
-                color: '#2980b9',
-                tooltipValue: function(d)
-                {
-                    return d.value2;
-                }
+                color: '#2980b9'
             }];
 
 

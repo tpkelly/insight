@@ -29,7 +29,6 @@
                 });
 
             var bubbleX = new insight.Axis('Average Rating', insight.Scales.Linear)
-                .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .tickOrientation('tb');
@@ -41,11 +40,11 @@
                        .yAxis(bubbleY);
 
             var bubbles = new insight.BubbleSeries('bubbles', bubbleData, bubbleX, bubbleY, '#336699')
-                .xFunction(function(d)
+                .keyFunction(function(d)
                 {
                     return d.value.averageUserRating.Average;
                 })
-                .yFunction(function(d)
+                .valueFunction(function(d)
                 {
                     return d.value.price.Average;
                 })
@@ -77,7 +76,6 @@
                 });
 
             var x = new insight.Axis('Language', insight.Scales.Ordinal)
-                .textAnchor('start')
                 .tickSize(5)
                 .tickPadding(0)
                 .tickOrientation('tb')
@@ -109,7 +107,6 @@
                 });
 
         var x = new insight.Axis('', insight.Scales.Ordinal)
-            .textAnchor('start')
             .tickSize(5)
             .tickPadding(0)
             .tickOrientation('tb')
@@ -145,7 +142,6 @@
             var xTime = new insight.Axis('', insight.Scales.Time)
                 .tickOrientation('tb')
                 .tickSize(5)
-                .textAnchor('start')
                 .labelFormat(insight.Formatters.dateFormatter);
 
             var yTime = new insight.Axis('Apps', insight.Scales.Linear)
@@ -185,7 +181,6 @@
 
         var x = new insight.Axis('', insight.Scales.Linear)
                            .tickSize(5)
-                           .tickOrientation('tb')
                            .tickRotation(45)
                            .display(false);
 
@@ -244,7 +239,7 @@
                         return new Date(d.releaseDate.getFullYear(), d.releaseDate.getMonth(), 1);
                     })
                     .cumulative(['Count'])
-                    .filter(function(d)
+                    .filterFunction(function(d)
                     {
                         return d.key < new Date(2014, 0, 1);
                     });

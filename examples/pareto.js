@@ -31,7 +31,6 @@ $(document)
                 });
 
             var x = new insight.Axis('Client', insight.Scales.Ordinal, 'bottom')
-                .textAnchor('start')
                 .tickOrientation('tb')
                 .ordered(true);
 
@@ -46,11 +45,11 @@ $(document)
                 .yAxes([y, y2]);
 
             var series = new insight.ColumnSeries('clientColumn', clientData, x, y, '#e74c3c')
-                .tooltipFormat(insight.Formatters.currencyFormatter)
                 .valueFunction(function(d)
                 {
                     return d.value.CurrentRevenue.Sum;
-                });
+                })
+                .tooltipFormat(insight.Formatters.currencyFormatter);
 
             var line = new insight.LineSeries('percentLine', clientData, x, y2, 'cyan')
                 .tooltipFormat(insight.Formatters.percentageFormatter)
