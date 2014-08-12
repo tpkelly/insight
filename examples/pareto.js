@@ -31,7 +31,7 @@ $(document)
                 });
 
             var x = new insight.Axis('Client', insight.Scales.Ordinal, 'bottom')
-                .tickOrientation('tb')
+                .tickLabelOrientation('tb')
                 .ordered(true);
 
             var y = new insight.Axis('', insight.Scales.Linear)

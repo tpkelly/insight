@@ -30,7 +30,7 @@ $(document)
         var dataset = new insight.DataSet(data);
 
         var x = new insight.Axis('Country', insight.Scales.Ordinal)
-            .tickOrientation('tb');
+            .tickLabelOrientation('tb');
 
         var y = new insight.Axis('Value', insight.Scales.Linear)
             .tickLabelFormat(d3.format("0,000"));

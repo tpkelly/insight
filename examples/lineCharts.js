@@ -20,7 +20,7 @@ $(document)
 
 
             var x = new insight.Axis('Time', insight.Scales.Time)
-                .tickOrientation('tb')
+                .tickLabelOrientation('tb')
                 .tickLabelFormat(insight.Formatters.dateFormatter)
                 .showGridlines(true);
 

@@ -24,7 +24,7 @@
              .height(400);
 
          var x = new insight.Axis('', insight.Scales.Ordinal)
-             .tickOrientation('tb');
+             .tickLabelOrientation('tb');
 
          var y = new insight.Axis('Population', insight.Scales.Linear)
              .tickLabelFormat(d3.format('0,000'));
