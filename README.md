@@ -19,7 +19,7 @@ Using InsightJS requires the following libraries:
 - [d3.js](https://github.com/mbostock/d3)
 - [crossfilter](https://github.com/square/crossfilter/)
 
-Include the required libraries and InsightJS. Include an optional stylesheet theme, or create your own.
+Include the required libraries and InsightJS.
 
 
 Load a dataset and start analyzing and creating charts!
