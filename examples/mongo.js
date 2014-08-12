@@ -32,7 +32,7 @@ $(document)
                 });
 
             var x = new insight.Axis('', insight.Scales.Linear)
-                .tickOrientation('tb');
+                .tickLabelOrientation('tb');
 
             var y = new insight.Axis('Writes/Sec', insight.Scales.Ordinal);
 

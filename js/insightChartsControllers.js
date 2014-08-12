@@ -440,7 +440,7 @@
             var bubbleX = new insight.Axis('Average Rating', insight.Scales.Linear)
                 .tickSize(5)
                 .tickPadding(0)
-                .tickOrientation('tb');
+                .tickLabelOrientation('tb');
 
             var bubbleY = new insight.Axis('$', insight.Scales.Linear)
                 .tickSize(5);
@@ -487,7 +487,7 @@
             var x = new insight.Axis('Language', insight.Scales.Ordinal)
                 .tickSize(5)
                 .tickPadding(0)
-                .tickOrientation('tb')
+                .tickLabelOrientation('tb')
                 .ordered(true);
 
             var y = new insight.Axis('', insight.Scales.Linear);
@@ -518,7 +518,7 @@
         var x = new insight.Axis('', insight.Scales.Ordinal)
             .tickSize(5)
             .tickPadding(0)
-            .tickOrientation('tb')
+            .tickLabelOrientation('tb')
             .ordered(true);
 
         var y = new insight.Axis('Apps', insight.Scales.Linear)
@@ -549,9 +549,9 @@
                 });
 
             var xTime = new insight.Axis('', insight.Scales.Time)
-                .tickOrientation('tb')
+                .tickLabelOrientation('tb')
                 .tickSize(5)
-                .labelFormat(insight.Formatters.dateFormatter);
+                .tickLabelFormat(insight.Formatters.dateFormatter);
 
             var yTime = new insight.Axis('Apps', insight.Scales.Linear)
                 .tickSize(5);
@@ -590,7 +590,7 @@
 
         var x = new insight.Axis('', insight.Scales.Linear)
                            .tickSize(5)
-                           .tickRotation(45)
+                           .tickLabelRotation(45)
                            .display(false);
 
         var y = new insight.Axis('', insight.Scales.Ordinal)

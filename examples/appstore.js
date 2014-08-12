@@ -52,7 +52,7 @@ $(document)
             var xScale = new insight.Axis('Genre', insight.Scales.Ordinal)
                 .tickSize(5)
                 .tickPadding(0)
-                .tickOrientation('tb')
+                .tickLabelOrientation('tb')
                 .ordered(true);
 
             var yScale = new insight.Axis('Apps', insight.Scales.Linear);
@@ -80,9 +80,9 @@ $(document)
                 });
 
             var xTime = new insight.Axis('Month', insight.Scales.Time)
-                .tickOrientation('tb')
+                .tickLabelOrientation('tb')
                 .tickSize(5)
-                .labelFormat(insight.Formatters.dateFormatter);
+                .tickLabelFormat(insight.Formatters.dateFormatter);
 
             var yTime = new insight.Axis('New Apps', insight.Scales.Linear)
                 .tickSize(5);
@@ -117,7 +117,7 @@ $(document)
             var bubbleX = new insight.Axis('Average Number of Ratings', insight.Scales.Linear)
                 .tickSize(5)
                 .tickPadding(0)
-                .tickOrientation('tb');
+                .tickLabelOrientation('tb');
 
             var bubbleY = new insight.Axis('Average Price', insight.Scales.Linear)
                 .tickSize(5);
