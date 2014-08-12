@@ -36,7 +36,7 @@
          * Whether or not to show circular points on top of the line for each datapoint.
          * @memberof! insight.LineSeries
          * @instance
-         * @returns {boolean} - To stack or not to stack.
+         * @returns {boolean} - Whether or not to show circular points on top of the line for each datapoint.
          *
          * @also
          *
@@ -71,11 +71,28 @@
             return val;
         };
 
-        this.lineType = function(_) {
+        /**
+         * The line type that this lineSeries will draw. Defaults to 'linear'.
+         * See https://github.com/mbostock/d3/wiki/SVG-Shapes#line_interpolate for all options.
+         * @memberof! insight.LineSeries
+         * @instance
+         * @returns {String} - The line type that this lineSeries will draw.
+         *
+         * @also
+         *
+         * Sets the line type that this lineSeries will draw..
+         * @memberof! insight.LineSeries
+         * @instance
+         * @param {String} - The line type that this lineSeries will draw.
+         * @returns {this}
+         */
+        this.lineType = function(newType) {
             if (!arguments.length) {
                 return lineType;
             }
-            lineType = _;
+
+            lineType = newType;
+
             return this;
         };
 

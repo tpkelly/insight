@@ -50,7 +50,7 @@
                 // loop through keys and values to measure lengths
                 keys.forEach(function(key) {
                     if (displayKey) {
-                        formatFunction = x === keyAxis ? x.labelFormat() : y.labelFormat();
+                        formatFunction = x === keyAxis ? x.tickLabelFormat() : y.tickLabelFormat();
                         valueString = formatFunction(key);
                         keyDimensions = axisContext.measureText(valueString);
                         maxKeyWidth = Math.max(keyDimensions.width, maxKeyWidth);
@@ -58,7 +58,7 @@
                     if (displayValue) {
 
                         value = insight.Utils.valueForKey(data, key, series.keyFunction(), series.valueFunction());
-                        formatFunction = y === valueAxis ? y.labelFormat() : x.labelFormat();
+                        formatFunction = y === valueAxis ? y.tickLabelFormat() : x.tickLabelFormat();
                         valueString = formatFunction(value);
                         valueDimensions = axisContext.measureText(valueString);
                         maxValueWidth = Math.max(valueDimensions.width, maxValueWidth);
@@ -96,19 +96,19 @@
                 };
 
                 //Handle tick rotation
-                if (keyAxis.tickRotation() !== '0') {
+                if (keyAxis.tickLabelRotation() !== '0') {
                     //Convert Degrees -> Radians
-                    var xSin = Math.sin(keyAxis.tickRotation() * Math.PI / 180);
-                    var xCos = Math.cos(keyAxis.tickRotation() * Math.PI / 180);
+                    var xSin = Math.sin(keyAxis.tickLabelRotation() * Math.PI / 180);
+                    var xCos = Math.cos(keyAxis.tickLabelRotation() * Math.PI / 180);
 
                     maxDimensions.maxKeyWidth = Math.ceil(Math.max(lineHeight * xSin, maxKeyWidth * xCos));
                     maxDimensions.maxKeyHeight = Math.ceil(Math.max(lineHeight * xCos, maxKeyWidth * xSin));
                 }
 
-                if (valueAxis.tickRotation() !== '0') {
+                if (valueAxis.tickLabelRotation() !== '0') {
                     //Convert Degrees -> Radians
-                    var ySin = Math.sin(valueAxis.tickRotation() * Math.PI / 180);
-                    var yCos = Math.cos(valueAxis.tickRotation() * Math.PI / 180);
+                    var ySin = Math.sin(valueAxis.tickLabelRotation() * Math.PI / 180);
+                    var yCos = Math.cos(valueAxis.tickLabelRotation() * Math.PI / 180);
 
                     maxDimensions.maxValueWidth = Math.ceil(Math.max(lineHeight * ySin, maxValueWidth * yCos));
                     maxDimensions.maxValueHeight = Math.ceil(Math.max(lineHeight * yCos, maxValueWidth * ySin));
