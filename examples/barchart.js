@@ -27,7 +27,7 @@
              .tickOrientation('tb');
 
          var y = new insight.Axis('Population', insight.Scales.Linear)
-             .labelFormat(d3.format('0,000'));
+             .tickLabelFormat(d3.format('0,000'));
 
          chart.xAxis(x);
          chart.yAxis(y);

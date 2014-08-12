@@ -30,7 +30,7 @@ $(document)
             .tickSize(5);
 
         var y = new insight.Axis('Population', insight.Scales.Linear)
-            .labelFormat(d3.format("0,000"));
+            .tickLabelFormat(d3.format("0,000"));
 
         var chart = new insight.Chart('Chart 1', "#exampleChart")
             .width(450)

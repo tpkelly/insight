@@ -21,7 +21,7 @@ $(document)
 
             var x = new insight.Axis('Time', insight.Scales.Time)
                 .tickOrientation('tb')
-                .labelFormat(insight.Formatters.dateFormatter)
+                .tickLabelFormat(insight.Formatters.dateFormatter)
                 .showGridlines(true);
 
             var y = new insight.Axis('Revenue', insight.Scales.Linear)

@@ -26,10 +26,10 @@ $(document)
                 .tickSize(5)
                 .tickPadding(5)
                 .tickLabelRotation(45)
-                .labelFormat(d3.time.format('%Y'));
+                .tickLabelFormat(d3.time.format('%Y'));
 
             var y = new insight.Axis('Avg App Price', insight.Scales.Linear)
-                .labelFormat(insight.Formatters.currencyFormatter);
+                .tickLabelFormat(insight.Formatters.currencyFormatter);
 
             chart.xAxis(x)
                 .yAxis(y);

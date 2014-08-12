@@ -82,7 +82,7 @@ $(document)
             var xTime = new insight.Axis('Month', insight.Scales.Time)
                 .tickOrientation('tb')
                 .tickSize(5)
-                .labelFormat(insight.Formatters.dateFormatter);
+                .tickLabelFormat(insight.Formatters.dateFormatter);
 
             var yTime = new insight.Axis('New Apps', insight.Scales.Linear)
                 .tickSize(5);

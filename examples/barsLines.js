@@ -11,7 +11,7 @@ $(document)
             var y1 = new insight.Axis('Value', insight.Scales.Linear);
 
             var y2 = new insight.Axis('Percentage', insight.Scales.Linear)
-                .labelFormat(insight.Formatters.percentageFormatter)
+                .tickLabelFormat(insight.Formatters.percentageFormatter)
                 .reversedPosition(true);
 
 

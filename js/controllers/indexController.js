@@ -142,7 +142,7 @@
             var xTime = new insight.Axis('', insight.Scales.Time)
                 .tickOrientation('tb')
                 .tickSize(5)
-                .labelFormat(insight.Formatters.dateFormatter);
+                .tickLabelFormat(insight.Formatters.dateFormatter);
 
             var yTime = new insight.Axis('Apps', insight.Scales.Linear)
                 .tickSize(5);

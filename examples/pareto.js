@@ -35,10 +35,10 @@ $(document)
                 .ordered(true);
 
             var y = new insight.Axis('', insight.Scales.Linear)
-                .labelFormat(insight.Formatters.currencyFormatter);
+                .tickLabelFormat(insight.Formatters.currencyFormatter);
 
             var y2 = new insight.Axis('', insight.Scales.Linear)
-                .labelFormat(insight.Formatters.percentageFormatter)
+                .tickLabelFormat(insight.Formatters.percentageFormatter)
                 .reversedPosition(true);
 
             chart.xAxis(x)
