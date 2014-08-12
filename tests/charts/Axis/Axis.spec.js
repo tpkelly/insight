@@ -407,7 +407,7 @@ describe('Axis Tests', function() {
         
         //Given:        
         var y = new insight.Axis('Key Axis', insight.Scales.Linear)
-                           .tickOrientation('tb')
+                           .tickLabelOrientation('tb')
                            .tickSize(0);
 
         //Then:
@@ -435,7 +435,7 @@ describe('Axis Tests', function() {
         it('gridlines hidden by default', function () {
             //Given:
             var y = new insight.Axis('Key Axis', insight.Scales.Linear)
-                .tickOrientation('tb')
+                .tickLabelOrientation('tb')
                 .tickSize(0);
 
             //Then:
@@ -459,10 +459,10 @@ describe('Axis Tests', function() {
                 });
 
             var x = new insight.Axis('ValueAxis', insight.Scales.Linear)
-                .tickOrientation('lr');
+                .tickLabelOrientation('lr');
 
             var y = new insight.Axis('KeyAxis', insight.Scales.Linear)
-                .tickOrientation('lr')
+                .tickLabelOrientation('lr')
                 .showGridlines(false);
 
             chart.addXAxis(x);
@@ -502,10 +502,10 @@ describe('Axis Tests', function() {
                 });
 
             var x = new insight.Axis('ValueAxis', insight.Scales.Linear)
-                .tickOrientation('lr');
+                .tickLabelOrientation('lr');
 
             var y = new insight.Axis('KeyAxis', insight.Scales.Linear)
-                .tickOrientation('lr')
+                .tickLabelOrientation('lr')
                 .showGridlines(true);
 
             chart.addXAxis(x);

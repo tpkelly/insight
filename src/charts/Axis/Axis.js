@@ -23,7 +23,7 @@
             tickSize = d3.functor(1),
             tickPadding = d3.functor(10),
             labelRotation = '0',
-            tickOrientation = d3.functor('lr'),
+            tickLabelOrientation = d3.functor('lr'),
             showGridLines = false,
             colorFunction = d3.functor('#777'),
             display = true,
@@ -510,9 +510,9 @@
          * @param {string} value 'tb' = top to bottom, 'lr' = left to right.
          * @returns {this}
          */
-        this.tickOrientation = function(value) {
+        this.tickLabelOrientation = function(value) {
             if (!arguments.length) {
-                return tickOrientation();
+                return tickLabelOrientation();
             }
 
             if (value === 'tb') {
@@ -521,7 +521,7 @@
                 labelRotation = '0';
             }
 
-            tickOrientation = d3.functor(value);
+            tickLabelOrientation = d3.functor(value);
 
             return this;
         };

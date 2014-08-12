@@ -49,7 +49,7 @@ d3.json('appstore.json', function(data)
         .autoMargin(true);
 
     var x = new insight.Axis('Genre', insight.Scales.Ordinal)
-             .tickOrientation('tb');
+             .tickLabelOrientation('tb');
 
     var y = new insight.Axis('#Apps', insight.Scales.Linear);
     
