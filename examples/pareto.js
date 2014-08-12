@@ -31,14 +31,14 @@ $(document)
                 });
 
             var x = new insight.Axis('Client', insight.Scales.Ordinal, 'bottom')
-                .tickOrientation('tb')
+                .tickLabelOrientation('tb')
                 .ordered(true);
 
             var y = new insight.Axis('', insight.Scales.Linear)
-                .labelFormat(insight.Formatters.currencyFormatter);
+                .tickLabelFormat(insight.Formatters.currencyFormatter);
 
             var y2 = new insight.Axis('', insight.Scales.Linear)
-                .labelFormat(insight.Formatters.percentageFormatter)
+                .tickLabelFormat(insight.Formatters.percentageFormatter)
                 .reversedPosition(true);
 
             chart.xAxis(x)

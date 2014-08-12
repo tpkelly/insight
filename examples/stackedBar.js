@@ -30,10 +30,10 @@ $(document)
         var dataset = new insight.DataSet(data);
 
         var x = new insight.Axis('Country', insight.Scales.Ordinal)
-            .tickOrientation('tb');
+            .tickLabelOrientation('tb');
 
         var y = new insight.Axis('Value', insight.Scales.Linear)
-            .labelFormat(d3.format("0,000"));
+            .tickLabelFormat(d3.format("0,000"));
 
 
         var chart = new insight.Chart('Chart 1', "#exampleChart")

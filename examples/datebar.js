@@ -25,11 +25,11 @@ $(document)
             var x = new insight.Axis('Country', insight.Scales.Ordinal)
                 .tickSize(5)
                 .tickPadding(5)
-                .tickRotation(45)
-                .labelFormat(d3.time.format('%Y'));
+                .tickLabelRotation(45)
+                .tickLabelFormat(d3.time.format('%Y'));
 
             var y = new insight.Axis('Avg App Price', insight.Scales.Linear)
-                .labelFormat(insight.Formatters.currencyFormatter);
+                .tickLabelFormat(insight.Formatters.currencyFormatter);
 
             chart.xAxis(x)
                 .yAxis(y);

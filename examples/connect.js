@@ -32,7 +32,7 @@ $(document)
             var xScale = new insight.Axis('Genre', insight.Scales.Ordinal)
                 .tickSize(5)
                 .tickPadding(0)
-                .tickOrientation('tb')
+                .tickLabelOrientation('tb')
                 .ordered(true);
 
             var yScale = new insight.Axis('Apps', insight.Scales.Linear)
@@ -61,7 +61,7 @@ $(document)
             var lxScale = new insight.Axis('Language', insight.Scales.Ordinal)
                 .tickSize(5)
                 .tickPadding(0)
-                .tickOrientation('tb')
+                .tickLabelOrientation('tb')
                 .ordered(true);
 
             var lyScale = new insight.Axis('AppsSupported', insight.Scales.Linear);
