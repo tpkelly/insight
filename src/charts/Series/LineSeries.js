@@ -80,17 +80,19 @@
          *
          * @also
          *
-         * Sets whether or not to show circular points on top of the line for each datapoint.
+         * Sets the line type that this lineSeries will draw..
          * @memberof! insight.LineSeries
          * @instance
-         * @param {boolean} showPoints Whether or not to show circular points on top of the line for each datapoint.
+         * @param {String} - The line type that this lineSeries will draw.
          * @returns {this}
          */
-        this.lineType = function(_) {
+        this.lineType = function(newType) {
             if (!arguments.length) {
                 return lineType;
             }
-            lineType = _;
+
+            lineType = newType;
+
             return this;
         };
 
