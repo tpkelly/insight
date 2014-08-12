@@ -590,7 +590,7 @@
 
         var x = new insight.Axis('', insight.Scales.Linear)
                            .tickSize(5)
-                           .tickRotation(45)
+                           .tickLabelRotation(45)
                            .display(false);
 
         var y = new insight.Axis('', insight.Scales.Ordinal)

@@ -25,7 +25,7 @@ $(document)
             var x = new insight.Axis('Country', insight.Scales.Ordinal)
                 .tickSize(5)
                 .tickPadding(5)
-                .tickRotation(45)
+                .tickLabelRotation(45)
                 .labelFormat(d3.time.format('%Y'));
 
             var y = new insight.Axis('Avg App Price', insight.Scales.Linear)
