@@ -28,7 +28,7 @@
     insightChartsControllers.controller('MainCtrl', ['$scope', 'Examples',
         function($scope, Examples)
         {
-            $scope.title = "Insight Charts";
+            $scope.title = "InsightJS";
             $scope.examples = Examples.query();
         }
     ]);
