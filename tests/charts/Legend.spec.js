@@ -23,10 +23,10 @@ describe('Legend', function() {
             .height(450);
 
         var x = new insight.Axis('ValueAxis', insight.Scales.Linear)
-            .tickOrientation('lr');
+            .tickLabelOrientation('lr');
 
         var y = new insight.Axis('KeyAxis', insight.Scales.Linear)
-            .tickOrientation('lr')
+            .tickLabelOrientation('lr')
             .showGridlines(true);
 
         chart.addXAxis(x);

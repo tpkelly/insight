@@ -397,7 +397,7 @@ describe('Axis Tests', function() {
         var y = new insight.Axis('Key Axis', insight.Scales.Linear);
 
         //Then:
-        var observedResult = y.tickRotationTransform();
+        var observedResult = y.tickLabelRotationTransform();
         var expectedResult = ' rotate(0,0,12)';
 
         expect(observedResult).toEqual(expectedResult);
@@ -407,11 +407,11 @@ describe('Axis Tests', function() {
         
         //Given:        
         var y = new insight.Axis('Key Axis', insight.Scales.Linear)
-                           .tickOrientation('tb')
+                           .tickLabelOrientation('tb')
                            .tickSize(0);
 
         //Then:
-        var observedResult = y.tickRotationTransform();
+        var observedResult = y.tickLabelRotationTransform();
         var expectedResult = ' rotate(90,0,10)';
 
         expect(observedResult).toEqual(expectedResult);
@@ -435,7 +435,7 @@ describe('Axis Tests', function() {
         it('gridlines hidden by default', function () {
             //Given:
             var y = new insight.Axis('Key Axis', insight.Scales.Linear)
-                .tickOrientation('tb')
+                .tickLabelOrientation('tb')
                 .tickSize(0);
 
             //Then:
@@ -459,10 +459,10 @@ describe('Axis Tests', function() {
                 });
 
             var x = new insight.Axis('ValueAxis', insight.Scales.Linear)
-                .tickOrientation('lr');
+                .tickLabelOrientation('lr');
 
             var y = new insight.Axis('KeyAxis', insight.Scales.Linear)
-                .tickOrientation('lr')
+                .tickLabelOrientation('lr')
                 .showGridlines(false);
 
             chart.addXAxis(x);
@@ -502,10 +502,10 @@ describe('Axis Tests', function() {
                 });
 
             var x = new insight.Axis('ValueAxis', insight.Scales.Linear)
-                .tickOrientation('lr');
+                .tickLabelOrientation('lr');
 
             var y = new insight.Axis('KeyAxis', insight.Scales.Linear)
-                .tickOrientation('lr')
+                .tickLabelOrientation('lr')
                 .showGridlines(true);
 
             chart.addXAxis(x);

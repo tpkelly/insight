@@ -23,7 +23,7 @@
             tickSize = d3.functor(1),
             tickPadding = d3.functor(10),
             labelRotation = '0',
-            tickOrientation = d3.functor('lr'),
+            tickLabelOrientation = d3.functor('lr'),
             showGridLines = false,
             colorFunction = d3.functor('#777'),
             display = true,
@@ -352,7 +352,7 @@
          * @param {function} value A function that accepts the axis tick label and returns the formatted label
          * @returns {this}
          */
-        this.labelFormat = function(value) {
+        this.tickLabelFormat = function(value) {
             if (!arguments.length) {
                 return format;
             }
@@ -419,7 +419,7 @@
          * @param {number} value The clockwise angle (degrees), that the each tick label will be rotated from horizontal.
          * @returns {this}
          */
-        this.tickRotation = function(value) {
+        this.tickLabelRotation = function(value) {
             if (!arguments.length) {
                 return labelRotation;
             }
@@ -504,15 +504,15 @@
          * @also
          *
          * Sets the orientation of the tick labels: 'tb' = top to bottom, 'lr' = left to right.
-         * This is a helper function that sets the tickRotation to either 0 or 90.
+         * This is a helper function that sets the ticklabelRotation to either 0 or 90.
          * @memberof! insight.Axis
          * @instance
          * @param {string} value 'tb' = top to bottom, 'lr' = left to right.
          * @returns {this}
          */
-        this.tickOrientation = function(value) {
+        this.tickLabelOrientation = function(value) {
             if (!arguments.length) {
-                return tickOrientation();
+                return tickLabelOrientation();
             }
 
             if (value === 'tb') {
@@ -521,16 +521,16 @@
                 labelRotation = '0';
             }
 
-            tickOrientation = d3.functor(value);
+            tickLabelOrientation = d3.functor(value);
 
             return this;
         };
 
-        this.tickRotationTransform = function() {
+        this.tickLabelRotationTransform = function() {
             var offset = self.tickPadding() + (self.tickSize() * 2);
             offset = (reversedPosition && !self.horizontal()) ? 0 - offset : offset;
 
-            var rotation = ' rotate(' + self.tickRotation() + ',0,' + offset + ')';
+            var rotation = ' rotate(' + self.tickLabelRotation() + ',0,' + offset + ')';
 
             return rotation;
         };
@@ -613,7 +613,7 @@
                 .orient(self.orientation())
                 .tickSize(self.tickSize())
                 .tickPadding(self.tickPadding())
-                .tickFormat(self.labelFormat());
+                .tickFormat(self.tickLabelFormat());
 
             this.axisElement = chart.plotArea.append('g');
 
@@ -624,7 +624,7 @@
                 .selectAll('text')
                 .attr('class', insight.Constants.AxisTextClass)
                 .style('text-anchor', self.textAnchor())
-                .style('transform', self.tickRotationTransform());
+                .style('transform', self.tickLabelRotationTransform());
 
             this.labelElement = chart.container
                 .append('div')
@@ -656,7 +656,7 @@
                 .orient(self.orientation())
                 .tickSize(self.tickSize())
                 .tickPadding(self.tickPadding())
-                .tickFormat(self.labelFormat());
+                .tickFormat(self.tickLabelFormat());
 
             this.axisElement
                 .attr('transform', self.axisPosition())
@@ -667,7 +667,7 @@
 
             this.axisElement
                 .selectAll('text')
-                .attr('transform', self.tickRotationTransform())
+                .attr('transform', self.tickLabelRotationTransform())
                 .style('text-anchor', self.textAnchor());
 
             this.labelElement
