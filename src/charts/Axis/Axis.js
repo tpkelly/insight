@@ -419,7 +419,7 @@
          * @param {number} value The clockwise angle (degrees), that the each tick label will be rotated from horizontal.
          * @returns {this}
          */
-        this.tickRotation = function(value) {
+        this.tickLabelRotation = function(value) {
             if (!arguments.length) {
                 return labelRotation;
             }
@@ -504,7 +504,7 @@
          * @also
          *
          * Sets the orientation of the tick labels: 'tb' = top to bottom, 'lr' = left to right.
-         * This is a helper function that sets the tickRotation to either 0 or 90.
+         * This is a helper function that sets the ticklabelRotation to either 0 or 90.
          * @memberof! insight.Axis
          * @instance
          * @param {string} value 'tb' = top to bottom, 'lr' = left to right.
@@ -526,11 +526,11 @@
             return this;
         };
 
-        this.tickRotationTransform = function() {
+        this.tickLabelRotationTransform = function() {
             var offset = self.tickPadding() + (self.tickSize() * 2);
             offset = (reversedPosition && !self.horizontal()) ? 0 - offset : offset;
 
-            var rotation = ' rotate(' + self.tickRotation() + ',0,' + offset + ')';
+            var rotation = ' rotate(' + self.tickLabelRotation() + ',0,' + offset + ')';
 
             return rotation;
         };
@@ -624,7 +624,7 @@
                 .selectAll('text')
                 .attr('class', insight.Constants.AxisTextClass)
                 .style('text-anchor', self.textAnchor())
-                .style('transform', self.tickRotationTransform());
+                .style('transform', self.tickLabelRotationTransform());
 
             this.labelElement = chart.container
                 .append('div')
@@ -667,7 +667,7 @@
 
             this.axisElement
                 .selectAll('text')
-                .attr('transform', self.tickRotationTransform())
+                .attr('transform', self.tickLabelRotationTransform())
                 .style('text-anchor', self.textAnchor());
 
             this.labelElement

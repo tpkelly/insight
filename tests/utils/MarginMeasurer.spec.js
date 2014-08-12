@@ -143,7 +143,7 @@ describe("MarginMeasurer", function() {
 
             // Given
 
-            x.tickPadding(10).tickSize(5).tickRotation(90);
+            x.tickPadding(10).tickSize(5).tickLabelRotation(90);
             y.tickPadding(30).tickSize(10);
 
             // When 
@@ -232,7 +232,7 @@ describe("MarginMeasurer", function() {
 
             // Given
 
-            x.tickPadding(20).tickSize(10).tickRotation(90);
+            x.tickPadding(20).tickSize(10).tickLabelRotation(90);
             y.tickPadding(0).tickSize(5);
 
             // When 
