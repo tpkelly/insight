@@ -50,7 +50,7 @@
                 // loop through keys and values to measure lengths
                 keys.forEach(function(key) {
                     if (displayKey) {
-                        formatFunction = x === keyAxis ? x.labelFormat() : y.labelFormat();
+                        formatFunction = x === keyAxis ? x.tickLabelFormat() : y.tickLabelFormat();
                         valueString = formatFunction(key);
                         keyDimensions = axisContext.measureText(valueString);
                         maxKeyWidth = Math.max(keyDimensions.width, maxKeyWidth);
@@ -58,7 +58,7 @@
                     if (displayValue) {
 
                         value = insight.Utils.valueForKey(data, key, series.keyFunction(), series.valueFunction());
-                        formatFunction = y === valueAxis ? y.labelFormat() : x.labelFormat();
+                        formatFunction = y === valueAxis ? y.tickLabelFormat() : x.tickLabelFormat();
                         valueString = formatFunction(value);
                         valueDimensions = axisContext.measureText(valueString);
                         maxValueWidth = Math.max(valueDimensions.width, maxValueWidth);

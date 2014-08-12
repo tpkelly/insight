@@ -352,7 +352,7 @@
          * @param {function} value A function that accepts the axis tick label and returns the formatted label
          * @returns {this}
          */
-        this.labelFormat = function(value) {
+        this.tickLabelFormat = function(value) {
             if (!arguments.length) {
                 return format;
             }
@@ -613,7 +613,7 @@
                 .orient(self.orientation())
                 .tickSize(self.tickSize())
                 .tickPadding(self.tickPadding())
-                .tickFormat(self.labelFormat());
+                .tickFormat(self.tickLabelFormat());
 
             this.axisElement = chart.plotArea.append('g');
 
@@ -656,7 +656,7 @@
                 .orient(self.orientation())
                 .tickSize(self.tickSize())
                 .tickPadding(self.tickPadding())
-                .tickFormat(self.labelFormat());
+                .tickFormat(self.tickLabelFormat());
 
             this.axisElement
                 .attr('transform', self.axisPosition())
