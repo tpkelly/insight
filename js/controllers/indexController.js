@@ -211,7 +211,7 @@
         function($scope, Examples)
         {
             $scope.examples = Examples.query();
-            $scope.$parent.title = 'Insight Charts - An open source analytics and visualization library for JavaScript';
+            $scope.$parent.title = 'InsightJS - Open Source Analytics and Visualization for JavaScript';
 
             // need to improve dependency management here, to allow the controller to know that it will need to load d3 and insight instead of just assuming they'll be there
             d3.json('datasets/appstore.json', function(data)
