@@ -6,6 +6,8 @@ var insight = (function() {
 
     return {
 
+        helpers: {}
+
     };
 
 })();
