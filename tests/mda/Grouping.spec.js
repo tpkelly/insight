@@ -495,10 +495,35 @@ describe('Grouping', function() {
             expect(wales.value.IQ_Cor_Age).toBe(-1);
             
         });
-    
+
+        it("handles fetching empty data when one-to-one", function() {
+            //Given:
+            var oneToMany = false;
+            var dataset = new insight.DataSet([]);
+            var group = dataset.group('OneToOne', function(d){ return d.key; }, oneToMany);
+
+            //When:
+            var data = group.getData();
+
+            //Then:
+            expect(data).toEqual([]);
+
+        });
+
+        it("handles fetching empty data when one-to-many", function() {
+            //Given:
+            var oneToMany = true;
+            var dataset = new insight.DataSet([]);
+            var group = dataset.group('OneToMany', function(d){ return d.key; }, oneToMany);
+
+            //When:
+            var data = group.getData();
+
+            //Then:
+            expect(data).toEqual([]);
+        });
+
     });
-    
-    
-    
+
 });
 
