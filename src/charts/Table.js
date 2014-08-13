@@ -234,6 +234,18 @@
         };
 
 
+        /**
+         * Applies all properties from a theme the table.
+         * @memberof! insight.Table
+         * @instance
+         * @todo Extract relevant properties and save them to the table.
+         * @param {insight.Theme} theme The theme to apply to the table.
+         * @returns {this}
+         */
+        this.applyTheme = function(theme) {
+            return self;
+        };
+
         // The public drawing method for the Table. It will also initialize the <table> element if required.
         this.draw = function() {
 

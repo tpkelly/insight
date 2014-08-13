@@ -96,6 +96,13 @@
             return this;
         };
 
+        this.applyTheme = function(theme) {
+            lineType = theme.seriesStyle.lineStyle;
+            displayPoints = theme.seriesStyle.showPoints;
+
+            return self;
+        };
+
         this.draw = function(chart, dragging) {
 
             this.initializeTooltip(chart.container.node());

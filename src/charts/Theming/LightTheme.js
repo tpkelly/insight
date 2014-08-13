@@ -1,5 +1,10 @@
 (function(insight) {
 
+    /**
+     * A Theme for drawing on a lightly coloured background. Sets a number of the properties defined in the Theme base
+     * class.
+     * @class insight.LightTheme
+     */
     insight.LightTheme = function LightTheme() {
         insight.Theme.call(this);
 

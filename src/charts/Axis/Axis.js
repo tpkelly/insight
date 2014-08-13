@@ -24,7 +24,7 @@
             tickPadding = d3.functor(10),
             labelRotation = '0',
             tickLabelOrientation = d3.functor('lr'),
-            showGridLines = false,
+            showGridlines = false,
             colorFunction = d3.functor('#777'),
             display = true,
             barPadding = d3.functor(0.1),
@@ -586,9 +586,9 @@
          */
         this.showGridlines = function(showLines) {
             if (!arguments.length) {
-                return showGridLines;
+                return showGridlines;
             }
-            showGridLines = showLines;
+            showGridlines = showLines;
 
             return this;
         };
@@ -631,6 +631,33 @@
                 .attr('class', insight.Constants.AxisLabelClass)
                 .style('position', 'absolute')
                 .text(this.label());
+        };
+
+        /**
+         * Applies all properties from a theme to the axis.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {insight.Theme} theme The theme to apply to the axis.
+         * @returns {this}
+         */
+        this.applyTheme = function(theme) {
+            tickSize = d3.functor(theme.axisStyle.tickSize);
+            tickPadding = d3.functor(theme.axisStyle.tickPadding);
+            self.color = d3.functor(theme.axisStyle.axisLineColor);
+
+            /* TODO: Tick and axis label font/colours
+             tickLabelFont: undefined,
+             tickLabelColor: undefined,
+
+             axisLabelFont: undefined,
+             axisLabelColor: undefined
+             */
+
+            showGridlines = theme.axisStyle.showGridlines;
+
+            self.gridlines.applyTheme(theme);
+
+            return self;
         };
 
         this.draw = function(chart, dragging) {
@@ -676,7 +703,7 @@
             this.positionLabel();
 
 
-            if (showGridLines) {
+            if (showGridlines) {
                 this.gridlines.drawGridLines(chart, this.scale.ticks());
             }
         };

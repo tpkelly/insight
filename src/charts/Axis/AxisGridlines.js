@@ -65,6 +65,13 @@
             return this;
         };
 
+        this.applyTheme = function(theme) {
+            lineWidth = theme.axisStyle.gridlineWidth;
+            lineColor = theme.axisStyle.gridlineColor;
+
+            return self;
+        };
+
         this.drawGridLines = function(chart, ticks) {
             var attributes = {
                 'class': this.parentAxis.label(),

@@ -148,7 +148,7 @@
          * depending on the type.
          * @memberof! insight.ChartGroup
          * @instance
-         * @param {object} widget - An insight.Table or insight.Chart
+         * @param {object} widget An insight.Table or insight.Chart
          * @returns {this}
          */
         this.add = function(widget) {
@@ -157,6 +157,25 @@
             } else if (widget instanceof insight.Table) {
                 addTable(widget);
             }
+            return self;
+        };
+
+        /**
+         * Applies all properties from a theme to all charts and tables contained within the ChartGroup.
+         * @memberof! insight.ChartGroup
+         * @instance
+         * @param {insight.Theme} theme The theme to apply to all charts and tables within the group.
+         * @returns {this}
+         */
+        this.applyTheme = function(theme) {
+            self.charts.forEach(function(chart) {
+                chart.applyTheme(theme);
+            });
+
+            self.tables.forEach(function(table) {
+                table.applyTheme(theme);
+            });
+
             return self;
         };
 
