@@ -32,8 +32,8 @@
             minWidth = d3.functor(300),
             zoomable = false,
             series = [],
-            xAxes = [],
-            yAxes = [],
+            xAxes = [new insight.Axis('x-axis', insight.Scales.Linear)],
+            yAxes = [new insight.Axis('y-axis', insight.Scales.Linear)],
             self = this,
             title = '',
             autoMargin = true,
@@ -60,6 +60,8 @@
         };
 
         var init = function(create, container) {
+
+            initialized = true;
 
             window.addEventListener('resize', onWindowResize);
 
@@ -90,7 +92,6 @@
 
             self.addClipPath();
 
-            initialized = true;
         };
 
 
