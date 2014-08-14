@@ -14,19 +14,19 @@ describe('ErrorContainer', function() {
         
             it('message property to be null', function() {
                 
-                expect(errorContainer.message).toBeNull();
+                expect(errorContainer.message()).toBeNull();
                 
             });
             
             it('data property to be null', function() {
                 
-                expect(errorContainer.data).toBeNull();
+                expect(errorContainer.data()).toBeNull();
                 
             });
             
             it('state property to be \'success\'', function() {
                 
-                expect(errorContainer.state).toBe(insight.ErrorContainer.State.success);
+                expect(errorContainer.state()).toBe(insight.ErrorContainer.State.success);
                 
             });
         
@@ -53,19 +53,19 @@ describe('ErrorContainer', function() {
             
             it('sets message', function() {
                 
-                expect(errorContainer.message).toBe(errorMessage);
+                expect(errorContainer.message()).toBe(errorMessage);
                 
             });
             
             it('sets data', function() {
                 
-                expect(errorContainer.data).toBe(errorData);
+                expect(errorContainer.data()).toBe(errorData);
                 
             });
             
             it('sets state', function() {
                 
-                expect(errorContainer.state).toBe(insight.ErrorContainer.State.error);
+                expect(errorContainer.state()).toBe(insight.ErrorContainer.State.error);
                 
             });
             
@@ -82,19 +82,19 @@ describe('ErrorContainer', function() {
 
                 it('sets message', function() {
 
-                    expect(errorContainer.message).toBe(secondErrorMessage);
+                    expect(errorContainer.message()).toBe(secondErrorMessage);
 
                 });
 
                 it('sets data', function() {
 
-                    expect(errorContainer.data).toBeNull();
+                    expect(errorContainer.data()).toBeNull();
 
                 });
 
                 it('sets state', function() {
 
-                    expect(errorContainer.state).toBe(insight.ErrorContainer.State.error);
+                    expect(errorContainer.state()).toBe(insight.ErrorContainer.State.error);
 
                 });
 
@@ -113,19 +113,19 @@ describe('ErrorContainer', function() {
 
                 it('doesn\'t set message', function() {
 
-                    expect(errorContainer.message).toBe(errorMessage);
+                    expect(errorContainer.message()).toBe(errorMessage);
 
                 });
 
                 it('doesn\'t set data', function() {
 
-                    expect(errorContainer.data).toBe(errorData);
+                    expect(errorContainer.data()).toBe(errorData);
 
                 });
 
                 it('doesn\'t set state', function() {
 
-                    expect(errorContainer.state).toBe(insight.ErrorContainer.State.error);
+                    expect(errorContainer.state()).toBe(insight.ErrorContainer.State.error);
 
                 });
 
@@ -144,19 +144,19 @@ describe('ErrorContainer', function() {
             
             it('sets message', function() {
                 
-                expect(errorContainer.message).toBe(errorMessage);
+                expect(errorContainer.message()).toBe(errorMessage);
                 
             });
             
             it('sets data null', function() {
                 
-                expect(errorContainer.data).toBeNull();
+                expect(errorContainer.data()).toBeNull();
                 
             });
             
             it('sets state', function() {
                 
-                expect(errorContainer.state).toBe(insight.ErrorContainer.State.error);
+                expect(errorContainer.state()).toBe(insight.ErrorContainer.State.error);
                 
             });
         
@@ -183,19 +183,19 @@ describe('ErrorContainer', function() {
             
             it('sets message', function() {
                 
-                expect(errorContainer.message).toBe(warningMessage);
+                expect(errorContainer.message()).toBe(warningMessage);
                 
             });
             
             it('sets data', function() {
                 
-                expect(errorContainer.data).toBe(warningData);
+                expect(errorContainer.data()).toBe(warningData);
                 
             });
             
             it('sets state', function() {
                 
-                expect(errorContainer.state).toBe(insight.ErrorContainer.State.warning);
+                expect(errorContainer.state()).toBe(insight.ErrorContainer.State.warning);
                 
             });
             
@@ -212,19 +212,19 @@ describe('ErrorContainer', function() {
 
                 it('sets message', function() {
 
-                    expect(errorContainer.message).toBe(secondWarningMessage);
+                    expect(errorContainer.message()).toBe(secondWarningMessage);
 
                 });
 
                 it('sets data', function() {
 
-                    expect(errorContainer.data).toBeNull();
+                    expect(errorContainer.data()).toBeNull();
 
                 });
 
                 it('sets state', function() {
 
-                    expect(errorContainer.state).toBe(insight.ErrorContainer.State.warning);
+                    expect(errorContainer.state()).toBe(insight.ErrorContainer.State.warning);
 
                 });
 
@@ -243,19 +243,19 @@ describe('ErrorContainer', function() {
             
             it('sets message', function() {
                 
-                expect(errorContainer.message).toBe(warningMessage);
+                expect(errorContainer.message()).toBe(warningMessage);
                 
             });
             
             it('sets data null', function() {
                 
-                expect(errorContainer.data).toBeNull();
+                expect(errorContainer.data()).toBeNull();
                 
             });
             
             it('sets state', function() {
                 
-                expect(errorContainer.state).toBe(insight.ErrorContainer.State.warning);
+                expect(errorContainer.state()).toBe(insight.ErrorContainer.State.warning);
                 
             });
         

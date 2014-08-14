@@ -20,8 +20,39 @@ var sourceData =
 {'Id':19,'Forename':'Ryan','Surname':'Freeman','Country':'Scotland','DisplayColour':'#6cbc04','Age':12,'IQ':96, 'Interests':['Football', 'Music', 'Kayaking'], 'Gender':'Male'},
 {'Id':20,'Forename':'Frances','Surname':'Lawson','Country':'Northern Ireland','DisplayColour':'#e739c9','Age':14,'IQ':71, 'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'}];
 
-describe('Correlation', function() {
+describe('Correlation', function() {    
+    
+    var errorContainer;
+    
+    var expectInvalidPairs = function(errorContainer, expectedData) {
+    
+        var messageInvalidPairs = 
+            'At least one invalid pair of values was found. ' +
+            'All values used in the correlation calculation must be numeric. ' +
+            'See the data for the details of all invalid pairs.';
+        
+        expect(errorContainer.message()).toBe(messageInvalidPairs);
+        expect(errorContainer.state()).toBe(insight.ErrorContainer.State.warning);
+        expect(errorContainer.data()).toEqual(expectedData);
+        
+    };
+    
+    var expectNonArrayError = function(errorContainer) {
+    
+        var expectedMessage = 'insight.correlation.fromValues expects two arrays.';
 
+        expect(errorContainer.message()).toBe(expectedMessage);
+        expect(errorContainer.data()).toBeNull();
+        expect(errorContainer.state()).toBe(insight.ErrorContainer.State.error);
+        
+    };
+    
+    beforeEach(function() {
+    
+        errorContainer = new insight.ErrorContainer();
+    
+    });
+    
     describe('fromValues', function() {
 
         var xValues = [93.74846191, 67.21919571, 56.60784983, 29.78526138, 81.7769724, 99.53157838, 38.48298085,
@@ -34,6 +65,7 @@ describe('Correlation', function() {
             203.7841096, 339.4097217, -102.2035722, 227.1428013, 171.3544472, -77.32741018, 40.2348384
         ];
 
+    
         it('calculates expected correlation', function() {
 
             var r = insight.correlation.fromValues(xValues, yValues);
@@ -103,7 +135,74 @@ describe('Correlation', function() {
             expect(insight.Utils.isArray).toHaveBeenCalledWith(notArray);
 
         });
+        
+        it('sets error in error container if no parameters', function() {
 
+            // When
+            var r = insight.correlation.fromValues(undefined, undefined, errorContainer);
+
+            // Then
+            expect(r).not.toBeDefined();
+            expectNonArrayError(errorContainer);
+
+        });
+
+        it('sets error in error container if null parameters', function() {
+
+            // When
+            var r = insight.correlation.fromValues(null, null, errorContainer);
+
+            // Then
+            expect(r).not.toBeDefined();
+            expectNonArrayError(errorContainer);
+
+        });
+
+        it('sets error in error container if one parameter', function() {
+
+            // Given
+            var r = insight.correlation.fromValues(xValues, undefined, errorContainer);
+
+            // Then
+            expect(r).not.toBeDefined();
+            expectNonArrayError(errorContainer);
+
+        });
+
+        it('sets error in error container if first parameter not array', function() {
+
+            // Given
+            var notArray = {};
+            spyOn(insight.Utils, 'isArray').andCallThrough();
+
+            // When
+            var r = insight.correlation.fromValues(notArray, yValues, errorContainer);
+
+            // Then
+            expect(r).not.toBeDefined();
+            expect(insight.Utils.isArray).toHaveBeenCalledWith(notArray);
+            expect(insight.Utils.isArray).not.toHaveBeenCalledWith(yValues);
+            expectNonArrayError(errorContainer);
+
+        });
+
+        it('sets error in error container if second parameter not array', function() {
+
+            // Given
+            var notArray = {};
+            spyOn(insight.Utils, 'isArray').andCallThrough();
+
+            // When
+            var r = insight.correlation.fromValues(xValues, notArray, errorContainer);
+
+            // Then
+            expect(r).not.toBeDefined();
+            expect(insight.Utils.isArray).toHaveBeenCalledWith(xValues);
+            expect(insight.Utils.isArray).toHaveBeenCalledWith(notArray);
+            expectNonArrayError(errorContainer);
+
+        });
+        
         it('returns undefined if arrays not equal length', function() {
 
             // When
@@ -111,6 +210,25 @@ describe('Correlation', function() {
 
             // Then
             expect(r).not.toBeDefined();
+
+        });
+
+        it('sets error in error container if arrays not equal length', function() {
+
+            // When
+            var r = insight.correlation.fromValues([1, 2, 3], [1, 2, 3, 4], errorContainer);
+
+            // Then
+            var errorData = {
+                xLength : 3,
+                yLength : 4
+            };
+
+            expect(r).not.toBeDefined();
+            
+            expect(errorContainer.state()).toBe(insight.ErrorContainer.State.error);
+            expect(errorContainer.data()).toEqual(errorData);
+            expect(errorContainer.message()).toBe('insight.correlation.fromValues expects two arrays of equal length.');
 
         });
 
@@ -154,10 +272,7 @@ describe('Correlation', function() {
 
         });
 
-        it('updates error container if arrays only contain one valid pair', function() {
-
-            // Given
-            var errorContainer = {};
+        it('sets warning in error container if arrays only contain one valid pair', function() {
 
             // When
             var r = insight.correlation.fromValues(['a', 2, 3], [1, 'b', 1], errorContainer);
@@ -174,14 +289,11 @@ describe('Correlation', function() {
             }];
 
             expect(r).toBe(1);
-            expect(errorContainer.ignoredValues).toEqual(ignoredValueExpectation);
+            expectInvalidPairs(errorContainer, ignoredValueExpectation);
 
         });
 
-        it('updates error container if both arrays contain zero valid pairs', function() {
-
-            // Given
-            var errorContainer = {};
+        it('sets warning in error container if both arrays contain zero valid pairs', function() {
 
             // When
             var r = insight.correlation.fromValues(['a', 2], [1, 'b'], errorContainer);
@@ -198,43 +310,41 @@ describe('Correlation', function() {
             }];
 
             expect(r).toBe(0);
-            expect(errorContainer.ignoredValues).toEqual(ignoredValueExpectation);
+            expectInvalidPairs(errorContainer, ignoredValueExpectation);
 
         });
 
-        it('updates error container if any non-number in first array', function() {
-
-            // Given
-            var errorContainer = {};
+        it('sets warning in error container if any non-number in first array', function() {
 
             // When
             var result = insight.correlation.fromValues([1, 'a', 3, 8, 14, 22], [4, 5, 62, 11, 17, 23], errorContainer);
 
             // Then
-            expect(result).toBeCloseTo(-0.1302);
-            expect(errorContainer.ignoredValues).toEqual([{
+            var expectedWarningData = [{
                 x: 'a',
                 y: 5,
                 index: 1
-            }]);
+            }];
+            
+            expect(result).toBeCloseTo(-0.1302);
+            expectInvalidPairs(errorContainer, expectedWarningData);
 
         });
 
-        it('updates error container if any non-number in second array', function() {
-
-            // Given
-            var errorContainer = {};
+        it('sets warning in error container if any non-number in second array', function() {
 
             // When
             var result = insight.correlation.fromValues([1, 1, 3, 8, 14, 22], [4, 'b', 62, 11, 17, 23], errorContainer);
 
             // Then
-            expect(result).toBeCloseTo(-0.1302);
-            expect(errorContainer.ignoredValues).toEqual([{
+            var expectedWarningData = [{
                 x: 1,
                 y: 'b',
                 index: 1
-            }]);
+            }];
+            
+            expect(result).toBeCloseTo(-0.1302);
+            expectInvalidPairs(errorContainer, expectedWarningData);
 
         });
 
@@ -319,13 +429,13 @@ describe('Correlation', function() {
 
         });
 
-        it('updates error container if first argument not insight.DataSet or Array', function() {
+        it('sets error in error container if first argument not insight.DataSet or Array', function() {
 
             // Given
             var notDatasetOrArray = {
                 an: 'object'
             };
-            var errorContainer = {};
+            
             var result;
 
             // When
@@ -333,7 +443,9 @@ describe('Correlation', function() {
 
             // Then
             expect(result).not.toBeDefined();
-            expect(errorContainer.message).toBe('insight.correlation.fromDataSet expects first argument to be an insight.DataSet or an object Array.');
+            expect(errorContainer.state()).toBe(insight.ErrorContainer.State.error);
+            expect(errorContainer.data()).toBeNull();
+            expect(errorContainer.message()).toBe('insight.correlation.fromDataSet expects first argument to be an insight.DataSet or an object Array.');
 
         });
 
@@ -341,13 +453,14 @@ describe('Correlation', function() {
 
             // Given
             var arrayData = sourceData;
-            var errorContainer = {};
 
             // When
             var result = insight.correlation.fromDataSet(arrayData, idFunc, ageFunc, errorContainer);
 
             // Then
-            expect(errorContainer.message).not.toBeDefined();
+            expect(errorContainer.message()).toBeNull();
+            expect(errorContainer.data()).toBeNull();
+            expect(errorContainer.state()).toBe(insight.ErrorContainer.State.success);
 
         });
 
@@ -383,12 +496,11 @@ describe('Correlation', function() {
 
         });
 
-        it('updates error container if xFunction is not a function', function() {
+        it('sets error in error container if xFunction is not a function', function() {
 
             // Given
             var arrayData = sourceData;
             var notAFunction = ['An Array'];
-            var errorContainer = {};
 
             // When
             var result = insight.correlation.fromDataSet(arrayData, notAFunction, ageFunc, errorContainer);
@@ -396,18 +508,18 @@ describe('Correlation', function() {
             // Then
             expect(result).not.toBeDefined();
             expect(insight.Utils.isFunction).toHaveBeenCalledWith(notAFunction);
-            expect(errorContainer.message).toBe(notAFunctionMessage);
+            
+            expect(errorContainer.message()).toBe(notAFunctionMessage);
+            expect(errorContainer.data()).toBeNull();
+            expect(errorContainer.state()).toBe(insight.ErrorContainer.State.error);
 
         });
 
-        it('updates error container if yFunction is not a function', function() {
+        it('sets error in error container if yFunction is not a function', function() {
 
             // Given
             var arrayData = sourceData;
-            var notAFunction = {
-                an: 'object'
-            };
-            var errorContainer = {};
+            var notAFunction = ['An Array'];
 
             // When
             var result = insight.correlation.fromDataSet(arrayData, ageFunc, notAFunction, errorContainer);
@@ -415,7 +527,10 @@ describe('Correlation', function() {
             // Then
             expect(result).not.toBeDefined();
             expect(insight.Utils.isFunction).toHaveBeenCalledWith(notAFunction);
-            expect(errorContainer.message).toBe(notAFunctionMessage);
+            
+            expect(errorContainer.message()).toBe(notAFunctionMessage);
+            expect(errorContainer.data()).toBeNull();
+            expect(errorContainer.state()).toBe(insight.ErrorContainer.State.error);
 
         });
     });

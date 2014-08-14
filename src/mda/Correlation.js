@@ -6,6 +6,12 @@ insight.correlation = (function(insight) {
 
     var correlation = {};
 
+    var invalidPairsMessage = 'At least one invalid pair of values was found. ' +
+        'All values used in the correlation calculation must be numeric. ' +
+        'See the data for the details of all invalid pairs.';
+
+    var notArrayInputMessage = 'insight.correlation.fromValues expects two arrays.';
+    var unequalArrayLengthsMessage = 'insight.correlation.fromValues expects two arrays of equal length.';
 
     /**
      * Calculates the pearson correlation coefficient for two arrays of numbers.
@@ -19,16 +25,30 @@ insight.correlation = (function(insight) {
      */
     correlation.fromValues = function(x, y, errorContainer) {
 
-        if (!insight.Utils.isArray(x) || !insight.Utils.isArray(y) ||
-            x.length !== y.length) {
+        if (!(errorContainer instanceof insight.ErrorContainer)) {
+            errorContainer = new insight.ErrorContainer();
+        }
 
-            if (typeof errorContainer === 'object') {
-                errorContainer.error = "Expects two arrays of equal length.";
-            }
+        if (!insight.Utils.isArray(x) || !insight.Utils.isArray(y)) {
+
+            errorContainer.setError(notArrayInputMessage);
+
             return undefined;
 
         }
 
+        if (x.length !== y.length) {
+
+            var inputLengths = {
+                xLength: x.length,
+                yLength: y.length
+            };
+
+            errorContainer.setError(unequalArrayLengthsMessage, inputLengths);
+
+            return undefined;
+
+        }
 
         var xyPairs = zipTwoArrays(x, y);
         var invalidPairs = xyPairs.filter(isNotPairOfNumbers);
@@ -40,8 +60,8 @@ insight.correlation = (function(insight) {
             return element.y;
         });
 
-        if (typeof errorContainer === 'object') {
-            errorContainer.ignoredValues = invalidPairs;
+        if (invalidPairs.length > 0) {
+            errorContainer.setWarning(invalidPairsMessage, invalidPairs);
         }
 
         if (validX.length < 2) {
@@ -75,14 +95,15 @@ insight.correlation = (function(insight) {
      * @returns {Number} - The pearson correlation coefficient for the given property pair in the dataset.
      */
     correlation.fromDataSet = function(dataset, xFunction, yFunction, errorContainer) {
+        if (!(errorContainer instanceof insight.ErrorContainer)) {
+            errorContainer = new insight.ErrorContainer();
+        }
 
         var dataArray = getArray(dataset);
 
         if (!insight.Utils.isArray(dataArray)) {
 
-            if (typeof errorContainer === 'object') {
-                errorContainer.message = 'insight.correlation.fromDataSet expects first argument to be an insight.DataSet or an object Array.';
-            }
+            errorContainer.setError('insight.correlation.fromDataSet expects first argument to be an insight.DataSet or an object Array.');
 
             return undefined;
 
@@ -90,9 +111,7 @@ insight.correlation = (function(insight) {
 
         if (!insight.Utils.isFunction(xFunction) || !insight.Utils.isFunction(yFunction)) {
 
-            if (typeof errorContainer === 'object') {
-                errorContainer.message = 'insight.correlation.fromDataSet expects second and third arguments to be functions.';
-            }
+            errorContainer.setError('insight.correlation.fromDataSet expects second and third arguments to be functions.');
 
             return undefined;
         }
@@ -100,7 +119,7 @@ insight.correlation = (function(insight) {
         var x = dataArray.map(xFunction);
         var y = dataArray.map(yFunction);
 
-        var r = insight.correlation.fromValues(x, y);
+        var r = insight.correlation.fromValues(x, y, errorContainer);
 
         return r;
     };
