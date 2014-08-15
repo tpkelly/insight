@@ -65,9 +65,9 @@
 
                 var propertyName = averageProperties[i];
                 var propertyValue = group.value[propertyName];
-                var mean = propertyValue.Sum / group.value.Count;
+                var mean = propertyValue.Sum / propertyValue.Count;
 
-                mean = insight.Utils.isNumber(mean) && isFinite(mean) ? mean : 0;
+                mean = insight.Utils.isNumber(mean) && isFinite(mean) ? mean : undefined;
 
                 group.value[propertyName].Average = mean;
             }
@@ -288,6 +288,7 @@
 
                 if (data.hasOwnProperty(propertyName)) {
                     group[propertyName].Sum += data[propertyName];
+                    group[propertyName].Count++;
                 }
             }
 
@@ -340,6 +341,7 @@
 
                 if (data.hasOwnProperty(propertyName)) {
                     group[propertyName].Sum -= data[propertyName];
+                    group[propertyName].Count--;
                 }
             }
 
@@ -387,6 +389,7 @@
 
                 group[propertyName] = group[propertyName] ? group[propertyName] : {};
                 group[propertyName].Sum = 0;
+                group[propertyName].Count = 0;
             }
 
             for (i = 0, len = countProperties.length; i < len; i++) {
