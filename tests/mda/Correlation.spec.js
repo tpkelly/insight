@@ -20,28 +20,21 @@ var sourceData =
 {'Id':19,'Forename':'Ryan','Surname':'Freeman','Country':'Scotland','DisplayColour':'#6cbc04','Age':12,'IQ':96, 'Interests':['Football', 'Music', 'Kayaking'], 'Gender':'Male'},
 {'Id':20,'Forename':'Frances','Surname':'Lawson','Country':'Northern Ireland','DisplayColour':'#e739c9','Age':14,'IQ':71, 'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'}];
 
-describe('Correlation', function() {    
+describe('Correlation', function() {
     
     var errorContainer;
     
     var expectInvalidPairs = function(errorContainer, expectedData) {
-    
-        var messageInvalidPairs = 
-            'At least one invalid pair of values was found. ' +
-            'All values used in the correlation calculation must be numeric. ' +
-            'See the data for the details of all invalid pairs.';
-        
-        expect(errorContainer.message()).toBe(messageInvalidPairs);
+
+        expect(errorContainer.message()).toBe(insight.ErrorMessages.nonNumericalPairsException);
         expect(errorContainer.state()).toBe(insight.ErrorContainer.State.warning);
         expect(errorContainer.data()).toEqual(expectedData);
         
     };
     
     var expectNonArrayError = function(errorContainer) {
-    
-        var expectedMessage = 'insight.correlation.fromValues expects two arrays.';
 
-        expect(errorContainer.message()).toBe(expectedMessage);
+        expect(errorContainer.message()).toBe(insight.ErrorMessages.invalidArrayParameterException);
         expect(errorContainer.data()).toBeNull();
         expect(errorContainer.state()).toBe(insight.ErrorContainer.State.error);
         
@@ -228,7 +221,7 @@ describe('Correlation', function() {
             
             expect(errorContainer.state()).toBe(insight.ErrorContainer.State.error);
             expect(errorContainer.data()).toEqual(errorData);
-            expect(errorContainer.message()).toBe('insight.correlation.fromValues expects two arrays of equal length.');
+            expect(errorContainer.message()).toBe(insight.ErrorMessages.unequalLengthArraysException);
 
         });
 
@@ -381,7 +374,6 @@ describe('Correlation', function() {
         var idFunc = function(d) {
             return d.Id;
         };
-        var notAFunctionMessage = 'insight.correlation.fromDataSet expects second and third arguments to be functions.';
 
         beforeEach(function() {
             spyOn(insight.Utils, 'isFunction').andCallThrough();
@@ -445,7 +437,7 @@ describe('Correlation', function() {
             expect(result).not.toBeDefined();
             expect(errorContainer.state()).toBe(insight.ErrorContainer.State.error);
             expect(errorContainer.data()).toBeNull();
-            expect(errorContainer.message()).toBe('insight.correlation.fromDataSet expects first argument to be an insight.DataSet or an object Array.');
+            expect(errorContainer.message()).toBe(insight.ErrorMessages.invalidDataSetOrArrayParameterException);
 
         });
 
@@ -509,7 +501,7 @@ describe('Correlation', function() {
             expect(result).not.toBeDefined();
             expect(insight.Utils.isFunction).toHaveBeenCalledWith(notAFunction);
             
-            expect(errorContainer.message()).toBe(notAFunctionMessage);
+            expect(errorContainer.message()).toBe(insight.ErrorMessages.invalidFunctionParameterException);
             expect(errorContainer.data()).toBeNull();
             expect(errorContainer.state()).toBe(insight.ErrorContainer.State.error);
 
@@ -528,7 +520,7 @@ describe('Correlation', function() {
             expect(result).not.toBeDefined();
             expect(insight.Utils.isFunction).toHaveBeenCalledWith(notAFunction);
             
-            expect(errorContainer.message()).toBe(notAFunctionMessage);
+            expect(errorContainer.message()).toBe(insight.ErrorMessages.invalidFunctionParameterException);
             expect(errorContainer.data()).toBeNull();
             expect(errorContainer.state()).toBe(insight.ErrorContainer.State.error);
 

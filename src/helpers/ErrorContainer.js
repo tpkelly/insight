@@ -9,7 +9,7 @@
 
         var data = null;
         var message = null;
-        var state = 'success';
+        var state = insight.ErrorContainer.State.success;
 
 
         /*

@@ -6,13 +6,6 @@ insight.correlation = (function(insight) {
 
     var correlation = {};
 
-    var invalidPairsMessage = 'At least one invalid pair of values was found. ' +
-        'All values used in the correlation calculation must be numeric. ' +
-        'See the data for the details of all invalid pairs.';
-
-    var notArrayInputMessage = 'insight.correlation.fromValues expects two arrays.';
-    var unequalArrayLengthsMessage = 'insight.correlation.fromValues expects two arrays of equal length.';
-
     /**
      * Calculates the pearson correlation coefficient for two arrays of numbers.
      * The two arrays must be equal in length and must only contain numbers.
@@ -31,7 +24,7 @@ insight.correlation = (function(insight) {
 
         if (!insight.Utils.isArray(x) || !insight.Utils.isArray(y)) {
 
-            errorContainer.setError(notArrayInputMessage);
+            errorContainer.setError(insight.ErrorMessages.invalidArrayParameterException);
 
             return undefined;
 
@@ -44,7 +37,7 @@ insight.correlation = (function(insight) {
                 yLength: y.length
             };
 
-            errorContainer.setError(unequalArrayLengthsMessage, inputLengths);
+            errorContainer.setError(insight.ErrorMessages.unequalLengthArraysException, inputLengths);
 
             return undefined;
 
@@ -61,7 +54,7 @@ insight.correlation = (function(insight) {
         });
 
         if (invalidPairs.length > 0) {
-            errorContainer.setWarning(invalidPairsMessage, invalidPairs);
+            errorContainer.setWarning(insight.ErrorMessages.nonNumericalPairsException, invalidPairs);
         }
 
         if (validX.length < 2) {
@@ -103,7 +96,7 @@ insight.correlation = (function(insight) {
 
         if (!insight.Utils.isArray(dataArray)) {
 
-            errorContainer.setError('insight.correlation.fromDataSet expects first argument to be an insight.DataSet or an object Array.');
+            errorContainer.setError(insight.ErrorMessages.invalidDataSetOrArrayParameterException);
 
             return undefined;
 
@@ -111,7 +104,7 @@ insight.correlation = (function(insight) {
 
         if (!insight.Utils.isFunction(xFunction) || !insight.Utils.isFunction(yFunction)) {
 
-            errorContainer.setError('insight.correlation.fromDataSet expects second and third arguments to be functions.');
+            errorContainer.setError(insight.ErrorMessages.invalidFunctionParameterException);
 
             return undefined;
         }
