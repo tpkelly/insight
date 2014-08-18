@@ -23,7 +23,7 @@
         this.axisStyle.axisLabelColor = '#777';
 
         //Configure for chart
-        this.chartStyle.seriesPalette = ['red', 'green', 'blue'];
+        this.chartStyle.seriesPalette = ['#3182bd', '#c6dbed', '#6baed6', '#08519c', '#9ecae1'];
         this.chartStyle.fillColor = '#fff';
         this.chartStyle.titleFont = 'Helvetica Neue 16pt';
         this.chartStyle.titleColor = '#000';
