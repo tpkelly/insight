@@ -416,20 +416,9 @@
             return d3.max(data, func);
         };
 
-        /*
-         * Applies all properties from a theme to the series.
-         * @memberof! insight.Series
-         * @instance
-         * @param {insight.Theme} theme The theme to apply to this series.
-         * @returns {this}
-         */
-        this.applyTheme = function(theme) {
-            return self;
-        };
-
         this.draw = function(chart, drag) {};
 
-        return this;
+        this.applyTheme(insight.defaultTheme);
     };
 
     /* Skeleton event overriden by a Dashboard to subscribe to this series' clicks.
@@ -440,5 +429,17 @@
     insight.Series.prototype.clickEvent = function(series, filter, selection) {
 
     };
+
+    /*
+     * Applies all properties from a theme to the series.
+     * @memberof! insight.Series
+     * @instance
+     * @param {insight.Theme} theme The theme to apply to this series.
+     * @returns {this}
+     */
+    insight.Series.prototype.applyTheme = function(theme) {
+        return this;
+    };
+
 
 })(insight);

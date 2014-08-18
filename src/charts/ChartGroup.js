@@ -160,25 +160,6 @@
             return self;
         };
 
-        /**
-         * Applies all properties from a theme to all charts and tables contained within the ChartGroup.
-         * @memberof! insight.ChartGroup
-         * @instance
-         * @param {insight.Theme} theme The theme to apply to all charts and tables within the group.
-         * @returns {this}
-         */
-        this.applyTheme = function(theme) {
-            self.charts.forEach(function(chart) {
-                chart.applyTheme(theme);
-            });
-
-            self.tables.forEach(function(table) {
-                table.applyTheme(theme);
-            });
-
-            return self;
-        };
-
         /*
          * Draws all Charts and Tables in this ChartGroup
          * @memberof! insight.ChartGroup
@@ -282,6 +263,28 @@
             self.draw();
 
         };
+
+        //Apply the default look-and-feel
+        this.applyTheme(insight.defaultTheme);
+    };
+
+    /**
+     * Applies all properties from a theme to all charts and tables contained within the ChartGroup.
+     * @memberof! insight.ChartGroup
+     * @instance
+     * @param {insight.Theme} theme The theme to apply to all charts and tables within the group.
+     * @returns {this}
+     */
+    insight.ChartGroup.prototype.applyTheme = function(theme) {
+        this.charts.forEach(function(chart) {
+            chart.applyTheme(theme);
+        });
+
+        this.tables.forEach(function(table) {
+            table.applyTheme(theme);
+        });
+
+        return self;
     };
 
 })(insight);

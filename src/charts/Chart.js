@@ -60,6 +60,7 @@
         };
 
         var init = function(create, container) {
+            initialized = true;
 
             window.addEventListener('resize', onWindowResize);
 
@@ -89,8 +90,6 @@
                 .attr('class', insight.Constants.AxisLabelClass);
 
             self.addClipPath();
-
-            initialized = true;
         };
 
 
@@ -128,36 +127,6 @@
          */
         this.seriesChanged = function(series) {
 
-        };
-
-
-        /**
-         * Applies all properties from a theme to the chart, and all axes and series of the chart.
-         * @memberof! insight.Chart
-         * @instance
-         * @param {insight.Theme} theme The theme to apply to all properties of the chart, and all axes and series of the chart.
-         * @returns {this}
-         */
-        this.applyTheme = function(theme) {
-            var axes = xAxes.concat(yAxes);
-
-            //TODO: Apply title colour/font. Currently titles are not actively supported.
-            var seriesPaletteIndex = 0;
-
-            axes.map(function(axis) {
-                axis.applyTheme(theme);
-            });
-
-            self.series()
-                .map(function(series) {
-                    series.applyTheme(theme);
-                    series.color = d3.functor(theme.chartStyle.seriesPalette[seriesPaletteIndex]);
-
-                    //Modular addition; wrap around if we go above seriesPalette.length
-                    seriesPaletteIndex = (seriesPaletteIndex + 1) % theme.chartStyle.seriesPalette.length;
-                });
-
-            return self;
         };
 
         this.draw = function(dragging) {
@@ -662,6 +631,8 @@
             notselected.classed('notselected', selected[0].length > 0);
         };
 
+        //Apply the default look-and-feel
+        this.applyTheme(insight.defaultTheme);
     };
 
     /*
@@ -682,6 +653,36 @@
         var margin = measurer.calculateChartMargins(this.series(), this.measureCanvas, axisStyles, labelStyles);
 
         this.margin(margin);
+    };
+
+    /**
+     * Applies all properties from a theme to the chart, and all axes and series of the chart.
+     * @memberof! insight.Chart
+     * @instance
+     * @param {insight.Theme} theme The theme to apply to all properties of the chart, and all axes and series of the chart.
+     * @returns {this}
+     */
+    insight.Chart.prototype.applyTheme = function(theme) {
+        var axes = this.xAxes()
+            .concat(this.yAxes());
+
+        //TODO: Apply title colour/font. Currently titles are not actively supported.
+        var seriesPaletteIndex = 0;
+
+        axes.map(function(axis) {
+            axis.applyTheme(theme);
+        });
+
+        this.series()
+            .map(function(series) {
+                series.applyTheme(theme);
+                series.color = d3.functor(theme.chartStyle.seriesPalette[seriesPaletteIndex]);
+
+                //Modular addition; wrap around if we go above seriesPalette.length
+                seriesPaletteIndex = (seriesPaletteIndex + 1) % theme.chartStyle.seriesPalette.length;
+            });
+
+        return self;
     };
 
 })(insight);

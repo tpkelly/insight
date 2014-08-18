@@ -79,8 +79,8 @@ describe("Theme", function(){
             chartGroup.applyTheme(dummyTheme);
 
             //Then:
-            expect(chart.xAxis().color()).toBe('#345');
-            expect(chart.yAxis().color()).toBe('#345');
+            expect(chart.xAxis().color()()).toBe('#345');
+            expect(chart.yAxis().color()()).toBe('#345');
         });
 
         it("Gridline color to be set by theme", function() {
@@ -140,5 +140,101 @@ describe("Theme", function(){
             //Then:
             expect(lineSeries.showPoints()).toBe(true);
         });
-    })
+    });
+
+    describe("Initial theme", function() {
+        var method;
+        var spy;
+        var prototype;
+
+        beforeEach(function() {
+            spy = jasmine.createSpy('applyTheme');
+        });
+
+        afterEach(function() {
+            prototype.applyTheme = method;
+        });
+
+        it ("to be set on initialising ChartGroup", function() {
+            //Given:
+            prototype = insight.ChartGroup.prototype;
+            method = prototype.applyTheme;
+            prototype.applyTheme = spy;
+
+            //When:
+            var chartgroup = new insight.ChartGroup();
+
+            //Then:
+            expect(spy).toHaveBeenCalled();
+        });
+
+        it ("to be set on initialising Chart", function() {
+            //Given:
+            prototype = insight.Chart.prototype;
+            method = prototype.applyTheme;
+            prototype.applyTheme = spy;
+
+            //When:
+            var chart = new insight.Chart();
+
+            //Then:
+            expect(spy).toHaveBeenCalled();
+        });
+
+        it ("to be set on initialising Series", function() {
+            //Given:
+            prototype = insight.Series.prototype;
+            method = prototype.applyTheme;
+            prototype.applyTheme = spy;
+
+            var xAxis = new insight.Axis('Axis', insight.Scales.Linear);
+            var yAxis = new insight.Axis('Axis', insight.Scales.Linear);
+
+            //When:
+            var series = new insight.Series('Series', [], xAxis, yAxis);
+
+            //Then:
+            expect(spy).toHaveBeenCalled();
+        });
+
+        it ("to be set on initialising Axis", function() {
+            //Given:
+            prototype = insight.Axis.prototype;
+            method = prototype.applyTheme;
+            prototype.applyTheme = spy;
+
+            //When:
+            var axis = new insight.Axis('Axis', insight.Scales.Linear);
+
+            //Then:
+            expect(spy).toHaveBeenCalled();
+        });
+
+        it ("to be set on initialising Gridlines", function() {
+            //Given:
+            prototype = insight.AxisGridlines.prototype;
+            method = prototype.applyTheme;
+            prototype.applyTheme = spy;
+
+            //When:
+            var axis = new insight.AxisGridlines();
+
+            //Then:
+            expect(spy).toHaveBeenCalled();
+        });
+
+
+        it ("to be set on initialising Table", function() {
+            //Given:
+            prototype = insight.Table.prototype;
+            method = prototype.applyTheme;
+            prototype.applyTheme = spy;
+
+            //When:
+            var table = new insight.Table();
+
+            //Then:
+            expect(spy).toHaveBeenCalled();
+        });
+    });
 });

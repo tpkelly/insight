@@ -633,33 +633,6 @@
                 .text(this.label());
         };
 
-        /**
-         * Applies all properties from a theme to the axis.
-         * @memberof! insight.Axis
-         * @instance
-         * @param {insight.Theme} theme The theme to apply to the axis.
-         * @returns {this}
-         */
-        this.applyTheme = function(theme) {
-            tickSize = d3.functor(theme.axisStyle.tickSize);
-            tickPadding = d3.functor(theme.axisStyle.tickPadding);
-            self.color = d3.functor(theme.axisStyle.axisLineColor);
-
-            /* TODO: Tick and axis label font/colours
-             tickLabelFont: undefined,
-             tickLabelColor: undefined,
-
-             axisLabelFont: undefined,
-             axisLabelColor: undefined
-             */
-
-            showGridlines = theme.axisStyle.showGridlines;
-
-            self.gridlines.applyTheme(theme);
-
-            return self;
-        };
-
         this.draw = function(chart, dragging) {
 
             // Scale range and bounds need to be initialized regardless of whether the axis will be displayed
@@ -703,11 +676,39 @@
             this.positionLabel();
 
 
-            if (showGridlines) {
+            if (this.showGridlines()) {
                 this.gridlines.drawGridLines(chart, this.scale.ticks());
             }
         };
+
+        this.applyTheme(insight.defaultTheme);
     };
 
+    /**
+     * Applies all properties from a theme to the axis.
+     * @memberof! insight.Axis
+     * @instance
+     * @param {insight.Theme} theme The theme to apply to the axis.
+     * @returns {this}
+     */
+    insight.Axis.prototype.applyTheme = function(theme) {
+        this.tickSize(theme.axisStyle.tickSize);
+        this.tickPadding(theme.axisStyle.tickPadding);
+        this.color(theme.axisStyle.axisLineColor);
+
+        /* TODO: Tick and axis label font/colours
+         tickLabelFont: undefined,
+         tickLabelColor: undefined,
+
+         axisLabelFont: undefined,
+         axisLabelColor: undefined
+         */
+
+        this.showGridlines(theme.axisStyle.showGridlines);
+
+        this.gridlines.applyTheme(theme);
+
+        return this;
+    };
 
 })(insight);
