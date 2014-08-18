@@ -1,43 +1,44 @@
-//Create a dummy theme object
-var dummyTheme = ({axisStyle : {
-    gridlineWidth:3.1,
-    gridlineColor: '#204',
-    showGridlines: true,
-
-    tickSize: 1.4,
-    tickPadding: 6.4,
-
-    axisLineColor: '#345',
-
-    tickLabelFont: 'Sans serif 72pt',
-    tickLabelColor: '#eac',
-
-    axisLabelFont: 'Sans serif 73pt',
-    axisLabelColor: '#abc'
-},
-
-chartStyle : {
-    seriesPalette: ['#eee', '#aaa', '#a42'],
-    fillColor: '#24a',
-    titleFont: 'Sans serif 71pt',
-    titleColor: '#cab'
-},
-
-seriesStyle : {
-    showPoints: true,
-    lineStyle: 'cardinal'
-},
-
-tableStyle : {
-
-}});
-
 describe("Theme", function(){
+    var dummyTheme;
     var chartGroup;
     var chart;
     var lineSeries, rowSeries, columnSeries, bubbleSeries;
 
     beforeEach(function() {
+        //Create a new theme to be applied
+        dummyTheme = ({axisStyle : {
+            gridlineWidth:3.1,
+            gridlineColor: '#204',
+            showGridlines: true,
+
+            tickSize: 1.4,
+            tickPadding: 6.4,
+
+            axisLineColor: '#345',
+
+            tickLabelFont: 'Sans serif 72pt',
+            tickLabelColor: '#eac',
+
+            axisLabelFont: 'Sans serif 73pt',
+            axisLabelColor: '#abc'
+        },
+
+            chartStyle : {
+                seriesPalette: ['#eee', '#aaa', '#a42'],
+                fillColor: '#24a',
+                titleFont: 'Sans serif 71pt',
+                titleColor: '#cab'
+            },
+
+            seriesStyle : {
+                showPoints: true,
+                lineStyle: 'cardinal'
+            },
+
+            tableStyle : {
+
+            }});
+
         var xAxis = new insight.Axis('x-axis', insight.Scales.Linear);
         var yAxis = new insight.Axis('y-axis', insight.Scales.Linear);
 
@@ -119,7 +120,7 @@ describe("Theme", function(){
             //Then:
             var seriesColours = chart.series().map(function(d) {
                 return d.color();
-            })
+            });
             expect(seriesColours).toEqual(['#eee', '#aaa', '#a42', '#eee']);
         });
     });
@@ -237,4 +238,18 @@ describe("Theme", function(){
             expect(spy).toHaveBeenCalled();
         });
     });
+
+    it("Chart handles empty colour palette", function() {
+        //Given:
+        dummyTheme.chartStyle.seriesPalette = [];
+
+        //When:
+        chart.applyTheme(dummyTheme);
+
+        //Then:
+        var seriesColours = chart.series().map(function(d) {
+            return d.color();
+        });
+        expect(seriesColours).toEqual([undefined, undefined, undefined, undefined]);
+    })
 });
