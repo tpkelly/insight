@@ -8,8 +8,6 @@
     insight.AxisGridlines = function AxisGridlines(axis) {
 
         this.parentAxis = axis;
-        var lineColor = '#777';
-        var lineWidth = 1;
 
         /** Returns the array of all gridlines for this axis.
          *

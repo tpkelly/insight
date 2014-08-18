@@ -20,12 +20,10 @@
             label = name,
             ordered = d3.functor(false),
             orderingFunction = null,
-            tickSize = d3.functor(1),
-            tickPadding = d3.functor(10),
+            tickSize = d3.functor(0),
+            tickPadding = d3.functor(0),
             labelRotation = '0',
             tickLabelOrientation = d3.functor('lr'),
-            showGridlines = false,
-            colorFunction = d3.functor('#777'),
             display = true,
             barPadding = d3.functor(0.1),
             initialisedAxisView = false,
@@ -608,29 +606,20 @@
 
             this.initializeScale();
 
-            this.axis = d3.svg.axis()
-                .scale(this.scale)
-                .orient(self.orientation())
-                .tickSize(self.tickSize())
-                .tickPadding(self.tickPadding())
-                .tickFormat(self.tickLabelFormat());
+            this.axis = d3.svg.axis();
 
             this.axisElement = chart.plotArea.append('g');
 
             this.axisElement
                 .attr('class', insight.Constants.AxisClass)
-                .attr('transform', self.axisPosition())
                 .call(this.axis)
                 .selectAll('text')
-                .attr('class', insight.Constants.AxisTextClass)
-                .style('text-anchor', self.textAnchor())
-                .style('transform', self.tickLabelRotationTransform());
+                .attr('class', insight.Constants.AxisTextClass);
 
             this.labelElement = chart.container
                 .append('div')
                 .attr('class', insight.Constants.AxisLabelClass)
-                .style('position', 'absolute')
-                .text(this.label());
+                .style('position', 'absolute');
         };
 
         this.draw = function(chart, dragging) {

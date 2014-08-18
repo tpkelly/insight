@@ -682,7 +682,7 @@
                 seriesPaletteIndex = (seriesPaletteIndex + 1) % theme.chartStyle.seriesPalette.length;
             });
 
-        return self;
+        return this;
     };
 
 })(insight);
