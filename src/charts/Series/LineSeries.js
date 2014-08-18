@@ -164,6 +164,8 @@
         };
 
         this.rangeExists = function(rangeSelector) {
+            if (rangeSelector.length === 0)
+                return 0;
 
             return rangeSelector[0].length;
         };
