@@ -287,7 +287,7 @@
     };
 
     /**
-     * Applies all properties from a theme the table.
+     * Applies all properties from a theme to the table.
      * @memberof! insight.Table
      * @instance
      * @todo Extract relevant properties and save them to the table.

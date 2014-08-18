@@ -669,12 +669,12 @@
         //TODO: Apply title colour/font. Currently titles are not actively supported.
         var seriesPaletteIndex = 0;
 
-        axes.map(function(axis) {
+        axes.forEach(function(axis) {
             axis.applyTheme(theme);
         });
 
         this.series()
-            .map(function(series) {
+            .forEach(function(series) {
                 series.applyTheme(theme);
                 series.color = d3.functor(theme.chartStyle.seriesPalette[seriesPaletteIndex]);
 

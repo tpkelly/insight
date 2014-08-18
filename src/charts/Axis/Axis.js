@@ -24,6 +24,8 @@
             tickPadding = d3.functor(0),
             labelRotation = '0',
             tickLabelOrientation = d3.functor('lr'),
+            showGridlines = false,
+            colorFunction = d3.functor('#000'),
             display = true,
             barPadding = d3.functor(0.1),
             initialisedAxisView = false,
