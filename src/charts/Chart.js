@@ -15,7 +15,7 @@
         this.chart = null;
         this.measureCanvas = document.createElement('canvas');
         this.marginMeasurer = new insight.MarginMeasurer();
-
+        this.seriesPalette = [];
 
         var margin = {
             top: 0,
@@ -143,9 +143,15 @@
                 axis.draw(self, dragging);
             });
 
+            var seriesPaletteIndex = 0;
+
             this.series()
                 .map(function(series) {
+                    series.color = d3.functor(self.seriesPalette[seriesPaletteIndex]);
                     series.draw(self, dragging);
+
+                    //Modular addition; wrap around if we go above seriesPalette.length
+                    seriesPaletteIndex = (seriesPaletteIndex + 1) % self.seriesPalette.length;
                 });
 
             if (legend !== null) {
@@ -667,19 +673,15 @@
             .concat(this.yAxes());
 
         //TODO: Apply title colour/font. Currently titles are not actively supported.
-        var seriesPaletteIndex = 0;
-
         axes.forEach(function(axis) {
             axis.applyTheme(theme);
         });
 
+        this.seriesPalette = theme.chartStyle.seriesPalette;
+
         this.series()
             .forEach(function(series) {
                 series.applyTheme(theme);
-                series.color = d3.functor(theme.chartStyle.seriesPalette[seriesPaletteIndex]);
-
-                //Modular addition; wrap around if we go above seriesPalette.length
-                seriesPaletteIndex = (seriesPaletteIndex + 1) % theme.chartStyle.seriesPalette.length;
             });
 
         return this;

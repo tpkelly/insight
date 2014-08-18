@@ -96,13 +96,6 @@
             return this;
         };
 
-        this.applyTheme = function(theme) {
-            lineType = theme.seriesStyle.lineStyle;
-            displayPoints = theme.seriesStyle.showPoints;
-
-            return self;
-        };
-
         this.draw = function(chart, dragging) {
 
             this.initializeTooltip(chart.container.node());
@@ -155,24 +148,39 @@
                     .on('mouseover', self.mouseOver)
                     .on('mouseout', self.mouseOut);
 
-
-                circles
-                    .transition()
-                    .duration(duration)
-                    .attr("cx", self.rangeX)
-                    .attr("cy", self.rangeY)
-                    .attr("r", 3)
-                    .attr("fill", this.color);
             }
+
+            var colorFunc = (displayPoints) ? this.color : d3.functor(undefined);
+            var allCircles = chart.plotArea.selectAll("circle");
+
+            allCircles
+                .transition()
+                .duration(duration)
+                .attr("cx", self.rangeX)
+                .attr("cy", self.rangeY)
+                .attr("r", 5)
+                .style("fill", colorFunc)
+                .style("stroke-width", 0);
         };
 
         this.rangeExists = function(rangeSelector) {
 
             return rangeSelector[0].length;
         };
+
+        this.applyTheme(insight.defaultTheme);
     };
 
     insight.LineSeries.prototype = Object.create(insight.Series.prototype);
     insight.LineSeries.prototype.constructor = insight.LineSeries;
+
+
+    insight.LineSeries.prototype.applyTheme = function(theme) {
+        this.lineType(theme.seriesStyle.lineStyle);
+        this.showPoints(theme.seriesStyle.showPoints);
+
+        return this;
+    };
+
 
 })(insight);

@@ -418,7 +418,6 @@
 
         this.draw = function(chart, drag) {};
 
-        this.applyTheme(insight.defaultTheme);
     };
 
     /* Skeleton event overriden by a Dashboard to subscribe to this series' clicks.

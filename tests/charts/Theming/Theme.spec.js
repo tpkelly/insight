@@ -116,6 +116,7 @@ describe("Theme", function(){
         it("Series palette to be set by theme", function() {
             //When:
             chartGroup.applyTheme(dummyTheme);
+            chartGroup.draw();
 
             //Then:
             var seriesColours = chart.series().map(function(d) {
@@ -184,7 +185,7 @@ describe("Theme", function(){
 
         it ("to be set on initialising Series", function() {
             //Given:
-            prototype = insight.Series.prototype;
+            prototype = insight.LineSeries.prototype;
             method = prototype.applyTheme;
             prototype.applyTheme = spy;
 
@@ -192,7 +193,7 @@ describe("Theme", function(){
             var yAxis = new insight.Axis('Axis', insight.Scales.Linear);
 
             //When:
-            var series = new insight.Series('Series', [], xAxis, yAxis);
+            var series = new insight.LineSeries('Series', [], xAxis, yAxis);
 
             //Then:
             expect(spy).toHaveBeenCalled();
