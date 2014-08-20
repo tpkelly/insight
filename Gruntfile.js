@@ -6,6 +6,8 @@ module.exports = function(grunt) {
     'src/helpers/*.js',
     'src/tests/**/*.spec.js',
     'src/mda/*.js', 
+    'src/charts/Theming/Theme.js',
+    'src/charts/Theming/LightTheme.js',
     'src/charts/ChartGroup.js',
     'src/charts/Chart.js',
     'src/charts/Table.js',

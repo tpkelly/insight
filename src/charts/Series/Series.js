@@ -7,16 +7,15 @@
      * @param {DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
      * @param {insight.Scales.Scale} y - the y axis
-     * @param {object} color - a string or function that defines the color to be used for the items in this series
      */
-    insight.Series = function Series(name, data, x, y, color) {
+    insight.Series = function Series(name, data, x, y) {
 
         this.data = data;
         this.usesCrossfilter = (data instanceof insight.DataSet) || (data instanceof insight.Grouping);
         this.x = x;
         this.y = y;
         this.name = name;
-        this.color = d3.functor(color);
+        this.color = d3.functor('lightblue'); // Redefined by the theme in applyTheme()
         this.animationDuration = 300;
         this.topValues = null;
         this.classValues = [];
@@ -418,7 +417,6 @@
 
         this.draw = function(chart, drag) {};
 
-        return this;
     };
 
     /* Skeleton event overriden by a Dashboard to subscribe to this series' clicks.
@@ -429,5 +427,17 @@
     insight.Series.prototype.clickEvent = function(series, filter, selection) {
 
     };
+
+    /*
+     * Applies all properties from a theme to the series.
+     * @memberof! insight.Series
+     * @instance
+     * @param {insight.Theme} theme The theme to apply to this series.
+     * @returns {this}
+     */
+    insight.Series.prototype.applyTheme = function(theme) {
+        return this;
+    };
+
 
 })(insight);

@@ -7,11 +7,10 @@
      * @param {DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
      * @param {insight.Scales.Scale} y - the y axis
-     * @param {object} color - a string or function that defines the color to be used for the items in this series
      */
-    insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
+    insight.BubbleSeries = function BubbleSeries(name, data, x, y) {
 
-        insight.Series.call(this, name, data, x, y, color);
+        insight.Series.call(this, name, data, x, y);
 
         // private variables
 
@@ -137,13 +136,25 @@
                 return d.radius;
             };
 
+            var opacity = function() {
+                // If we are using selected/notSelected, then make selected more opaque than notSelected
+                if (this.classList && this.classList.contains("selected"))
+                    return 0.8;
+
+                if (this.classList && this.classList.contains("notselected"))
+                    return 0.3;
+
+                //If not using selected/notSelected, make everything semi-transparent
+                return 0.5;
+            };
+
             bubbles.transition()
                 .duration(duration)
                 .attr('r', rad)
                 .attr('cx', self.rangeX)
                 .attr('cy', self.rangeY)
-                .attr('opacity', 0.5)
-                .attr('fill', this.color);
+                .attr('opacity', opacity)
+                .style('fill', this.color);
         };
     };
 

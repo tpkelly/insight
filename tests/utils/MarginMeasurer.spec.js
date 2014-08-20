@@ -59,7 +59,7 @@ describe("MarginMeasurer", function() {
            x = new insight.Axis('X', insight.Scales.Linear);
            y = new insight.Axis('Y Label', insight.Scales.Ordinal);
 
-          series = new insight.RowSeries('rowseries', data, x, y, 'silver');
+          series = new insight.RowSeries('rowseries', data, x, y);
 
           spyOn(axisContext, 'measureText').andCallFake(basicLengthFunction);
           spyOn(labelContext, 'measureText').andCallFake(basicLengthFunction);
@@ -171,7 +171,7 @@ describe("MarginMeasurer", function() {
            x = new insight.Axis('X', insight.Scales.Ordinal);
            y = new insight.Axis('Y Label', insight.Scales.Linear);
 
-          series = new insight.ColumnSeries('columnseries', data, x, y, 'silver');
+          series = new insight.ColumnSeries('columnseries', data, x, y);
 
           spyOn(axisContext, 'measureText').andCallFake(basicLengthFunction);
           spyOn(labelContext, 'measureText').andCallFake(basicLengthFunction);

@@ -43,7 +43,7 @@ describe('Bubble Series Tests', function() {
         chart.addXAxis(xAxis);
         chart.addYAxis(yAxis);
 
-        var series = new insight.BubbleSeries('BubbleSeries', dataset, xAxis, yAxis, 'silver')
+        var series = new insight.BubbleSeries('BubbleSeries', dataset, xAxis, yAxis)
             .radiusFunction(function(d) {
                 return d.radius;
             });
@@ -80,7 +80,7 @@ describe('Bubble Series Tests', function() {
         chart.addXAxis(xAxis);
         chart.addYAxis(yAxis);
 
-        var series = new insight.BubbleSeries('BubbleSeries', dataset, xAxis, yAxis, 'silver')
+        var series = new insight.BubbleSeries('BubbleSeries', dataset, xAxis, yAxis)
             .radiusFunction(function(d) {
                 return d.radius;
             });
@@ -114,7 +114,7 @@ describe('Bubble Series Tests', function() {
         chart.addXAxis(xAxis);
         chart.addYAxis(yAxis);
 
-        var series = new insight.BubbleSeries('BubbleSeries', dataset, xAxis, yAxis, 'silver')
+        var series = new insight.BubbleSeries('BubbleSeries', dataset, xAxis, yAxis)
             .radiusFunction(function(d) {
                 return d.radius;
             });
@@ -152,7 +152,7 @@ describe('Bubble Series Tests', function() {
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
 
-        var series = new insight.BubbleSeries('countryBubbles', group, xScale, yScale, 'silver')
+        var series = new insight.BubbleSeries('countryBubbles', group, xScale, yScale)
                                 .radiusFunction(function(d) {
                                     return d.radius;
                                 });

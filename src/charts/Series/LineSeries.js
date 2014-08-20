@@ -7,11 +7,10 @@
      * @param {DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
      * @param {insight.Scales.Scale} y - the y axis
-     * @param {object} color - a string or function that defines the color to be used for the items in this series
      */
-    insight.LineSeries = function LineSeries(name, data, x, y, color) {
+    insight.LineSeries = function LineSeries(name, data, x, y) {
 
-        insight.Series.call(this, name, data, x, y, color);
+        insight.Series.call(this, name, data, x, y);
 
         var self = this,
             lineType = 'linear',
@@ -117,7 +116,7 @@
             if (!this.rangeExists(rangeElement)) {
                 chart.plotArea.append("path")
                     .attr("class", classValue)
-                    .attr("stroke", this.color)
+                    .style("stroke", this.color)
                     .attr("fill", "none")
                     .attr("clip-path", "url(#" + chart.clipPath() + ")")
                     .on('mouseover', lineOver)
@@ -148,24 +147,41 @@
                     .on('mouseover', self.mouseOver)
                     .on('mouseout', self.mouseOut);
 
-
-                circles
-                    .transition()
-                    .duration(duration)
-                    .attr("cx", self.rangeX)
-                    .attr("cy", self.rangeY)
-                    .attr("r", 3)
-                    .attr("fill", this.color);
             }
+
+            var colorFunc = (displayPoints) ? this.color : d3.functor(undefined);
+            var allCircles = chart.plotArea.selectAll("circle");
+
+            allCircles
+                .transition()
+                .duration(duration)
+                .attr("cx", self.rangeX)
+                .attr("cy", self.rangeY)
+                .attr("r", 5)
+                .style("fill", colorFunc)
+                .style("stroke-width", 0);
         };
 
         this.rangeExists = function(rangeSelector) {
+            if (rangeSelector.length === 0)
+                return 0;
 
             return rangeSelector[0].length;
         };
+
+        this.applyTheme(insight.defaultTheme);
     };
 
     insight.LineSeries.prototype = Object.create(insight.Series.prototype);
     insight.LineSeries.prototype.constructor = insight.LineSeries;
+
+
+    insight.LineSeries.prototype.applyTheme = function(theme) {
+        this.lineType(theme.seriesStyle.lineStyle);
+        this.showPoints(theme.seriesStyle.showPoints);
+
+        return this;
+    };
+
 
 })(insight);

@@ -20,12 +20,13 @@
             label = name,
             ordered = d3.functor(false),
             orderingFunction = null,
-            tickSize = d3.functor(1),
-            tickPadding = d3.functor(10),
+            tickSize = d3.functor(0),
+            tickPadding = d3.functor(0),
+            lineWidth = 1,
             labelRotation = '0',
             tickLabelOrientation = d3.functor('lr'),
-            showGridLines = false,
-            colorFunction = d3.functor('#777'),
+            showGridlines = false,
+            colorFunction = d3.functor('#000'),
             display = true,
             barPadding = d3.functor(0.1),
             initialisedAxisView = false,
@@ -360,6 +361,27 @@
             return this;
         };
 
+        /**
+         * Gets the width of the axis line.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Number} - The width of the axis line.
+         *
+         * @also
+         *
+         * Sets the width of the axis line.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Number} width The new width of the axis line.
+         * @returns {this}
+         */
+        this.lineWidth = function(width) {
+            if (!arguments.length) {
+                return lineWidth;
+            }
+            lineWidth = width;
+            return this;
+        };
 
         /**
          * Gets the color of the axis labels and lines.
@@ -586,9 +608,9 @@
          */
         this.showGridlines = function(showLines) {
             if (!arguments.length) {
-                return showGridLines;
+                return showGridlines;
             }
-            showGridLines = showLines;
+            showGridlines = showLines;
 
             return this;
         };
@@ -608,29 +630,20 @@
 
             this.initializeScale();
 
-            this.axis = d3.svg.axis()
-                .scale(this.scale)
-                .orient(self.orientation())
-                .tickSize(self.tickSize())
-                .tickPadding(self.tickPadding())
-                .tickFormat(self.tickLabelFormat());
+            this.axis = d3.svg.axis();
 
             this.axisElement = chart.plotArea.append('g');
 
             this.axisElement
                 .attr('class', insight.Constants.AxisClass)
-                .attr('transform', self.axisPosition())
                 .call(this.axis)
                 .selectAll('text')
-                .attr('class', insight.Constants.AxisTextClass)
-                .style('text-anchor', self.textAnchor())
-                .style('transform', self.tickLabelRotationTransform());
+                .attr('class', insight.Constants.AxisTextClass);
 
             this.labelElement = chart.container
                 .append('div')
                 .attr('class', insight.Constants.AxisLabelClass)
-                .style('position', 'absolute')
-                .text(this.label());
+                .style('position', 'absolute');
         };
 
         this.draw = function(chart, dragging) {
@@ -661,6 +674,8 @@
             this.axisElement
                 .attr('transform', self.axisPosition())
                 .style('stroke', self.color())
+                .style('stroke-width', self.lineWidth())
+                .style('fill', 'none')
                 .transition()
                 .duration(animationDuration)
                 .call(this.axis);
@@ -676,11 +691,40 @@
             this.positionLabel();
 
 
-            if (showGridLines) {
+            if (this.showGridlines()) {
                 this.gridlines.drawGridLines(chart, this.scale.ticks());
             }
         };
+
+        this.applyTheme(insight.defaultTheme);
     };
 
+    /**
+     * Applies all properties from a theme to the axis.
+     * @memberof! insight.Axis
+     * @instance
+     * @param {insight.Theme} theme The theme to apply to the axis.
+     * @returns {this}
+     */
+    insight.Axis.prototype.applyTheme = function(theme) {
+        this.tickSize(theme.axisStyle.tickSize);
+        this.tickPadding(theme.axisStyle.tickPadding);
+        this.color(theme.axisStyle.axisLineColor);
+        this.lineWidth(theme.axisStyle.axisLineWidth);
+
+        /* TODO: Tick and axis label font/colours
+         tickLabelFont: undefined,
+         tickLabelColor: undefined,
+
+         axisLabelFont: undefined,
+         axisLabelColor: undefined
+         */
+
+        this.showGridlines(theme.axisStyle.showGridlines);
+
+        this.gridlines.applyTheme(theme);
+
+        return this;
+    };
 
 })(insight);

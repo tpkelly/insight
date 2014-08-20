@@ -144,6 +144,10 @@
 
                 var lineHeightString = axisStyles['line-height'];
 
+                if (!lineHeightString) {
+                    return margin;
+                }
+
                 // remove 'px' from end
                 var lineHeight = insight.Utils.tryParseInt(lineHeightString.slice(0, lineHeightString.length - 2), 16);
 

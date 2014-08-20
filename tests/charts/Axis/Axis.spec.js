@@ -114,7 +114,7 @@ describe('Axis Tests', function() {
         var x = new insight.Axis('Key Axis', insight.Scales.Ordinal);
         var y = new insight.Axis('Value Axis', insight.Scales.Linear);
 
-        var series = new insight.ColumnSeries('chart', dataset, x, y, 'blue')
+        var series = new insight.ColumnSeries('chart', dataset, x, y)
                                 .valueFunction(function(d){return d.value;});
 
         //Then:
@@ -132,7 +132,7 @@ describe('Axis Tests', function() {
         var x = new insight.Axis('Key Axis', insight.Scales.Ordinal);
         var y = new insight.Axis('Value Axis', insight.Scales.Linear);
 
-        var series = new insight.ColumnSeries('chart', dataset, x, y, 'blue')
+        var series = new insight.ColumnSeries('chart', dataset, x, y)
                                 .valueFunction(function(d){return d.value;});
 
         //Then:
@@ -150,7 +150,7 @@ describe('Axis Tests', function() {
         var x = new insight.Axis('Key Axis', insight.Scales.Time);
         var y = new insight.Axis('Value Axis', insight.Scales.Linear);
 
-        var series = new insight.Series('chart', dataset, x, y, 'blue')
+        var series = new insight.Series('chart', dataset, x, y)
                                 .keyFunction(function(d){return d.date;});
 
         //Then:
@@ -175,7 +175,7 @@ describe('Axis Tests', function() {
         chart.addXAxis(x);
         chart.addYAxis(y);
 
-        var series = new insight.ColumnSeries('chart', dataset, x, y, 'blue');
+        var series = new insight.ColumnSeries('chart', dataset, x, y);
 
         //When:
         y.calculateAxisBounds(chart);
@@ -201,7 +201,7 @@ describe('Axis Tests', function() {
         chart.addXAxis(x);
         chart.addYAxis(y);
 
-        var series = new insight.ColumnSeries('chart', dataset, x, y, 'blue');
+        var series = new insight.ColumnSeries('chart', dataset, x, y);
 
         //When:
         y.calculateAxisBounds(chart);
@@ -227,7 +227,7 @@ describe('Axis Tests', function() {
         chart.addXAxis(x);
         chart.addYAxis(y);
 
-        var series = new insight.RowSeries('chart', dataset, x, y, 'blue');
+        var series = new insight.RowSeries('chart', dataset, x, y);
 
         //When:
         x.calculateAxisBounds(chart);
@@ -253,7 +253,7 @@ describe('Axis Tests', function() {
         chart.addXAxis(x);
         chart.addYAxis(y);
 
-        var series = new insight.RowSeries('chart', dataset, x, y, 'blue');
+        var series = new insight.RowSeries('chart', dataset, x, y);
 
         //When:
         x.calculateAxisBounds(chart);

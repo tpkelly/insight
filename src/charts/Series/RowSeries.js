@@ -8,9 +8,9 @@
      * @param {insight.Scales.Scale} y - the y axis
      * @param {object} color - a string or function that defines the color to be used for the items in this series
      */
-    insight.RowSeries = function RowSeries(name, data, x, y, color) {
+    insight.RowSeries = function RowSeries(name, data, x, y) {
 
-        insight.Series.call(this, name, data, x, y, color);
+        insight.Series.call(this, name, data, x, y);
 
         var self = this,
             stacked = d3.functor(false),
@@ -29,7 +29,7 @@
             tooltipValue: function(d) {
                 return self.tooltipFunction()(d);
             },
-            color: d3.functor(color),
+            color: this.color,
             label: 'Value'
         }];
 
@@ -212,6 +212,16 @@
                 return 200 + (i * 20);
             };
 
+            var opacity = function() {
+                // If we are using selected/notSelected, then make selected more opaque than notSelected
+                if (this.classList && this.classList.contains("notselected"))
+                    return 0.5;
+
+                //If not using selected/notSelected, make everything semi-transparent
+                return 1;
+            };
+
+
             for (var seriesIndex in this.series) {
 
                 this.currentSeries = this.series[seriesIndex];
@@ -237,7 +247,8 @@
                     .attr('y', this.offsetYPosition)
                     .attr('x', this.xPosition)
                     .attr('height', this.groupedbarThickness)
-                    .attr('width', this.barWidth);
+                    .attr('width', this.barWidth)
+                    .style('opacity', opacity);
             }
 
             groups.exit()

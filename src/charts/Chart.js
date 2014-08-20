@@ -15,7 +15,7 @@
         this.chart = null;
         this.measureCanvas = document.createElement('canvas');
         this.marginMeasurer = new insight.MarginMeasurer();
-
+        this.seriesPalette = [];
 
         var margin = {
             top: 0,
@@ -60,6 +60,7 @@
         };
 
         var init = function(create, container) {
+            initialized = true;
 
             window.addEventListener('resize', onWindowResize);
 
@@ -89,8 +90,6 @@
                 .attr('class', insight.Constants.AxisLabelClass);
 
             self.addClipPath();
-
-            initialized = true;
         };
 
 
@@ -130,8 +129,6 @@
 
         };
 
-
-
         this.draw = function(dragging) {
 
             if (!initialized) {
@@ -147,7 +144,8 @@
             });
 
             this.series()
-                .map(function(series) {
+                .forEach(function(series, index) {
+                    series.color = d3.functor(self.seriesPalette[index % self.seriesPalette.length]);
                     series.draw(self, dragging);
                 });
 
@@ -634,6 +632,8 @@
             notselected.classed('notselected', selected[0].length > 0);
         };
 
+        //Apply the default look-and-feel
+        this.applyTheme(insight.defaultTheme);
     };
 
     /*
@@ -654,6 +654,32 @@
         var margin = measurer.calculateChartMargins(this.series(), this.measureCanvas, axisStyles, labelStyles);
 
         this.margin(margin);
+    };
+
+    /**
+     * Applies all properties from a theme to the chart, and all axes and series of the chart.
+     * @memberof! insight.Chart
+     * @instance
+     * @param {insight.Theme} theme The theme to apply to all properties of the chart, and all axes and series of the chart.
+     * @returns {this}
+     */
+    insight.Chart.prototype.applyTheme = function(theme) {
+        var axes = this.xAxes()
+            .concat(this.yAxes());
+
+        //TODO: Apply title colour/font. Currently titles are not actively supported.
+        axes.forEach(function(axis) {
+            axis.applyTheme(theme);
+        });
+
+        this.seriesPalette = theme.chartStyle.seriesPalette;
+
+        this.series()
+            .forEach(function(series) {
+                series.applyTheme(theme);
+            });
+
+        return this;
     };
 
 })(insight);

@@ -8,8 +8,8 @@
     insight.AxisGridlines = function AxisGridlines(axis) {
 
         this.parentAxis = axis;
-        var lineColor = '#777';
-        var lineWidth = 1;
+        var lineColor = '#000';
+        var lineWidth = 0;
 
         /** Returns the array of all gridlines for this axis.
          *
@@ -106,6 +106,15 @@
 
         };
 
+        this.applyTheme(insight.defaultTheme);
+    };
+
+
+    insight.AxisGridlines.prototype.applyTheme = function(theme) {
+        this.lineWidth(theme.axisStyle.gridlineWidth);
+        this.lineColor(theme.axisStyle.gridlineColor);
+
+        return this;
     };
 
 })(insight);

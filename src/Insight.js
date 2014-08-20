@@ -6,7 +6,8 @@ var insight = (function() {
 
     return {
 
-        helpers: {}
+        helpers: {},
+        defaultTheme: {}
 
     };
 

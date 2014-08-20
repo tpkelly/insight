@@ -148,7 +148,7 @@
          * depending on the type.
          * @memberof! insight.ChartGroup
          * @instance
-         * @param {object} widget - An insight.Table or insight.Chart
+         * @param {object} widget An insight.Table or insight.Chart
          * @returns {this}
          */
         this.add = function(widget) {
@@ -263,6 +263,28 @@
             self.draw();
 
         };
+
+        //Apply the default look-and-feel
+        this.applyTheme(insight.defaultTheme);
+    };
+
+    /**
+     * Applies all properties from a theme to all charts and tables contained within the ChartGroup.
+     * @memberof! insight.ChartGroup
+     * @instance
+     * @param {insight.Theme} theme The theme to apply to all charts and tables within the group.
+     * @returns {this}
+     */
+    insight.ChartGroup.prototype.applyTheme = function(theme) {
+        this.charts.forEach(function(chart) {
+            chart.applyTheme(theme);
+        });
+
+        this.tables.forEach(function(table) {
+            table.applyTheme(theme);
+        });
+
+        return this;
     };
 
 })(insight);

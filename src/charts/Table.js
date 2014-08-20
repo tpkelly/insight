@@ -233,7 +233,6 @@
             notselected.classed('notselected', selected[0].length > 0);
         };
 
-
         // The public drawing method for the Table. It will also initialize the <table> element if required.
         this.draw = function() {
 
@@ -276,7 +275,7 @@
                 .remove();
         };
 
-        return this;
+        this.applyTheme(insight.defaultTheme);
     };
 
     /* Skeleton event overriden by any listening objects to subscribe to the click event of the table rows
@@ -285,6 +284,18 @@
      */
     insight.Table.prototype.clickEvent = function(series, filter) {
 
+    };
+
+    /**
+     * Applies all properties from a theme to the table.
+     * @memberof! insight.Table
+     * @instance
+     * @todo Extract relevant properties and save them to the table.
+     * @param {insight.Theme} theme The theme to apply to the table.
+     * @returns {this}
+     */
+    insight.Table.prototype.applyTheme = function(theme) {
+        return this;
     };
 
 })(insight);

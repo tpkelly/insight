@@ -373,7 +373,7 @@ describe('Chart', function() {
 
         it('margins are 0 when series has no data', function() {
             //Given:
-            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
+            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
             
             var expectedDimensions = {
                     "maxKeyWidth": 0,
@@ -397,7 +397,7 @@ describe('Chart', function() {
 
         it('bottom margins are expanded when x-axis has labels', function() {
             //Given:
-            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
+            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
             
             var expectedDimensions = {
                     "maxKeyWidth": 5,
@@ -420,7 +420,7 @@ describe('Chart', function() {
 
         it('left margins are expanded when y-axis has labels', function() {
             //Given:
-            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
+            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
             
             var expectedDimensions = {
                     "maxKeyWidth": 0,
@@ -444,7 +444,7 @@ describe('Chart', function() {
         it('right margins are expanded when y-axis is reversed', function() {
             //Given:
             yAxis = new insight.Axis('', insight.Scales.Linear).reversedPosition(true);
-            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
+            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
             
             var maxDimensions = {
                     "maxKeyWidth": 0,
@@ -468,7 +468,7 @@ describe('Chart', function() {
         it('top margins are expanded when x-axis is reversed', function() {
             //Given:
             xAxis = new insight.Axis('', insight.Scales.Linear).reversedPosition(true);
-            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis, 'silver');
+            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
             
             var maxDimensions = {
                 "maxKeyWidth": 5,
