@@ -25,75 +25,102 @@ var seriesDataSet =
         {'Id':19,'Forename':'Ryan','Surname':'Freeman','Country':'Scotland','DisplayColour':'#6cbc04','Age':12,'IQ':96},
         {'Id':20,'Forename':'Frances','Surname':'Lawson','Country':'Northern Ireland','DisplayColour':'#e739c9','Age':14,'IQ':71}];
 
-describe("Series Tests", function(){
+describe("Series", function(){
 
     var chart;
-    var xScale;
-    var yScale;
+    var xAxis;
+    var yAxis;
 
-    beforeEach(function() {
-        chart = new insight.Chart('Chart', '#chart');
-        xScale = new insight.Axis('x-axis', insight.Scales.Linear, 'bottom');
-        yScale = new insight.Axis('y-axis', insight.Scales.Linear, 'left');
-        chart.addXAxis(xScale);
-        chart.addYAxis(yScale);
+    describe('dataset', function() {
+
+        beforeEach(function() {
+            chart = new insight.Chart('Chart', '#chart');
+            xAxis = new insight.Axis('x-axis', insight.Scales.Linear, 'bottom');
+            yAxis = new insight.Axis('y-axis', insight.Scales.Linear, 'left');
+            chart.addXAxis(xAxis);
+            chart.addYAxis(yAxis);
+        });
+
+        it("returns empty when no data given", function(){
+            //Given:
+            var data = new insight.DataSet([]);
+            var series = new insight.Series('Test series', data, xAxis, yAxis, 'red');
+
+            //Then:
+            var expectedData = [];
+            var observedData = series.dataset();
+            expect(observedData).toEqual(expectedData);
+        });
+
+        it("returns un-ordered data by default", function(){
+            //Given:
+            var data = new insight.DataSet([3, 1, 5, 1, 4, 6]);
+            var series = new insight.Series('Test series', data, xAxis, yAxis, 'red');
+
+            //Then:
+            var expectedData = [3, 1, 5, 1, 4, 6];
+            var observedData = series.dataset();
+            expect(observedData).toEqual(expectedData);
+        });
+
+        it("returns ordered data if an orderFunction is provided with an insight.DataSet", function(){
+
+            // Given:
+            var data = new insight.DataSet([3, 1, 5, 1, 4, 6]);
+            var series = new insight.Series('Test series', data, xAxis, yAxis, 'red');
+
+            var orderFunction = function(a, b) {
+                return a - b;
+            };
+
+            // Then:
+            var expectedData = [1, 1, 3, 4, 5, 6];
+            var observedData = series.dataset(orderFunction);
+            expect(observedData).toEqual(expectedData);
+
+        });
+
+        it("returns ordered data if an orderFunction is provided without a plain array", function(){
+
+            // Given:
+            var data = [12, 3, 672, 45, 8];
+            var series = new insight.Series('Test series', data, xAxis, yAxis, 'red');
+
+            var orderFunction = function(a, b) {
+                return a - b;
+            };
+
+            // Then:
+            var expectedData = [3, 8, 12, 45, 672];
+            var observedData = series.dataset(orderFunction);
+            expect(observedData).toEqual(expectedData);
+
+        });
+
+        it("returns filtered data if given a filterFunction", function(){
+            //Given:
+            var data = new insight.DataSet([3, 1, 5, 1, 4, 6]);
+            var series = new insight.Series('Test series', data, xAxis, yAxis, 'red').filterFunction(function(d){return d > 3});
+
+            //Then:
+            var expectedData = [5, 4, 6];
+            var observedData = series.dataset();
+            expect(observedData).toEqual(expectedData);
+        });
+
+        it("returns empty if all data is filtered by the filterFunction", function(){
+            //Given:
+            var data = new insight.DataSet([3, 1, 5, 1, 4, 6]);
+            var series = new insight.Series('Test series', data, xAxis, yAxis, 'red').filterFunction(function(d){return d > 6});
+
+            //Then:
+            var expectedData = [];
+            var observedData = series.dataset();
+            expect(observedData).toEqual(expectedData);
+        });
     });
 
-   it("Dataset is empty when no data given", function(){
-       //Given:
-       var data = new insight.DataSet([]);
-       var series = new insight.Series('Test series', data, xScale, yScale, 'red');
 
-       //Then:
-       var expectedData = [];
-       var observedData = series.dataset();
-       expect(observedData).toEqual(expectedData);
-   });
-
-    it("Dataset is not ordered by default", function(){
-        //Given:
-        var data = new insight.DataSet([3, 1, 5, 1, 4, 6]);
-        var series = new insight.Series('Test series', data, xScale, yScale, 'red');
-
-        //Then:
-        var expectedData = [3, 1, 5, 1, 4, 6];
-        var observedData = series.dataset();
-        expect(observedData).toEqual(expectedData);
-    });
-
-    it("Dataset can be ordered", function(){
-        //Given:
-        xScale.ordered(true);
-        var data = new insight.DataSet([3, 1, 5, 1, 4, 6]);
-        var series = new insight.Series('Test series', data, xScale, yScale, 'red');
-
-        //Then:
-        var expectedData = [3, 1, 5, 1, 4, 6];
-        var observedData = series.dataset();
-        expect(observedData).toEqual(expectedData);
-    });
-
-    it("Dataset can be filtered", function(){
-        //Given:
-        var data = new insight.DataSet([3, 1, 5, 1, 4, 6]);
-        var series = new insight.Series('Test series', data, xScale, yScale, 'red').filterFunction(function(d){return d > 3});
-
-        //Then:
-        var expectedData = [5, 4, 6];
-        var observedData = series.dataset();
-        expect(observedData).toEqual(expectedData);
-    });
-
-    it("All values can be filtered", function(){
-        //Given:
-        var data = new insight.DataSet([3, 1, 5, 1, 4, 6]);
-        var series = new insight.Series('Test series', data, xScale, yScale, 'red').filterFunction(function(d){return d > 6});
-
-        //Then:
-        var expectedData = [];
-        var observedData = series.dataset();
-        expect(observedData).toEqual(expectedData);
-    });
 
    
 
@@ -103,30 +130,30 @@ describe("Series Tests", function(){
     it("Last value can be extracted", function(){
         //Given:
         var chart = new insight.Chart('Chart', '#chart');
-        var xScale = new insight.Scale(chart, 'x-axis', 'h', insight.Scales.Linear);
-        var yScale = new insight.Scale(chart, 'y-axis', 'v', insight.Scales.Linear);
+        var xAxis = new insight.Scale(chart, 'x-axis', 'h', insight.Scales.Linear);
+        var yAxis = new insight.Scale(chart, 'y-axis', 'v', insight.Scales.Linear);
 
         var data = new insight.DataSet([3, 1, 5, 1, 7, 6]);
-        var series = new insight.Series('Test series', chart, data, xScale, yScale, 'red');
+        var series = new insight.Series('Test series', chart, data, xAxis, yAxis, 'red');
 
         //Then:
         var expectedMaximum = 6;
-        var observedMaximum = series.findMax(xScale);
+        var observedMaximum = series.findMax(xAxis);
         expect(observedMaximum).toEqual(expectedMaximum);
     });
 
     it("Maximum value can be extracted", function(){
         //Given:
         var chart = new insight.Chart('Chart', '#chart');
-        var xScale = new insight.Scale(chart, 'x-axis', 'h', insight.Scales.Linear);
-        var yScale = new insight.Scale(chart, 'y-axis', 'v', insight.Scales.Linear);
+        var xAxis = new insight.Scale(chart, 'x-axis', 'h', insight.Scales.Linear);
+        var yAxis = new insight.Scale(chart, 'y-axis', 'v', insight.Scales.Linear);
 
         var data = new insight.DataSet([3, 1, 5, 1, 7, 6]);
-        var series = new insight.Series('Test series', chart, data, xScale, yScale, 'red');
+        var series = new insight.Series('Test series', chart, data, xAxis, yAxis, 'red');
 
         //Then:
         var expectedMaximum = 7;
-        var observedMaximum = series.findMax(yScale);
+        var observedMaximum = series.findMax(yAxis);
         expect(observedMaximum).toEqual(expectedMaximum);
     });*/
 
