@@ -251,6 +251,7 @@ describe("Theme", function(){
         var seriesColours = chart.series().map(function(d) {
             return d.color();
         });
-        expect(seriesColours).toEqual([undefined, undefined, undefined, undefined]);
+        //Expect default series colour palette
+        expect(seriesColours).toEqual(['lightblue', 'lightblue', 'lightblue', 'lightblue']);
     })
 });

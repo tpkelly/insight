@@ -7,11 +7,10 @@
      * @param {DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
      * @param {insight.Scales.Scale} y - the y axis
-     * @param {object} color - a string or function that defines the color to be used for the items in this series
      */
-    insight.BubbleSeries = function BubbleSeries(name, data, x, y, color) {
+    insight.BubbleSeries = function BubbleSeries(name, data, x, y) {
 
-        insight.Series.call(this, name, data, x, y, color);
+        insight.Series.call(this, name, data, x, y);
 
         // private variables
 

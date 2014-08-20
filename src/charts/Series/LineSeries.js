@@ -7,11 +7,10 @@
      * @param {DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
      * @param {insight.Scales.Scale} y - the y axis
-     * @param {object} color - a string or function that defines the color to be used for the items in this series
      */
-    insight.LineSeries = function LineSeries(name, data, x, y, color) {
+    insight.LineSeries = function LineSeries(name, data, x, y) {
 
-        insight.Series.call(this, name, data, x, y, color);
+        insight.Series.call(this, name, data, x, y);
 
         var self = this,
             lineType = 'linear',
@@ -117,7 +116,7 @@
             if (!this.rangeExists(rangeElement)) {
                 chart.plotArea.append("path")
                     .attr("class", classValue)
-                    .attr("stroke", this.color)
+                    .style("stroke", this.color)
                     .attr("fill", "none")
                     .attr("clip-path", "url(#" + chart.clipPath() + ")")
                     .on('mouseover', lineOver)

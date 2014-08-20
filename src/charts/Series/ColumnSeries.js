@@ -7,11 +7,10 @@
      * @param {DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
      * @param {insight.Scales.Scale} y - the y axis
-     * @param {object} color - a string or function that defines the color to be used for the items in this series
      */
-    insight.ColumnSeries = function ColumnSeries(name, data, x, y, color) {
+    insight.ColumnSeries = function ColumnSeries(name, data, x, y) {
 
-        insight.Series.call(this, name, data, x, y, color);
+        insight.Series.call(this, name, data, x, y);
 
         var self = this,
             stacked = d3.functor(false),
@@ -29,7 +28,7 @@
             tooltipValue: function(d) {
                 return self.tooltipFunction()(d);
             },
-            color: d3.functor(color),
+            color: this.color,
             label: 'Value'
         }];
 
