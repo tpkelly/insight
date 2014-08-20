@@ -43,11 +43,42 @@
             </span>
             <ul class="members itemMembers">
             
+            <span class="subtitle">Members</span>
+            
+                <li data-name="insight.ErrorMessages"><a href="insight.html#ErrorMessages">ErrorMessages</a></li>
+            
             </ul>
             <ul class="typedefs itemMembers">
             
             </ul>
             <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.correlation">
+            <span class="title">
+                <a href="insight.correlation.html">insight.correlation</a>
+                
+                <span class="static">static</span>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.correlation.correlation.fromDataSet"><a href="insight.correlation.html#correlation.fromDataSet">correlation.fromDataSet</a></li>
+            
+                <li data-name="insight.correlation.correlation.fromValues"><a href="insight.correlation.html#correlation.fromValues">correlation.fromValues</a></li>
             
             </ul>
             <ul class="events itemMembers">
@@ -81,6 +112,31 @@
                 <li data-name="insight.Formatters.numberFormatter"><a href="insight.Formatters.html#numberFormatter">numberFormatter</a></li>
             
                 <li data-name="insight.Formatters.percentageFormatter"><a href="insight.Formatters.html#percentageFormatter">percentageFormatter</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.helpers.functions">
+            <span class="title">
+                <a href="insight.helpers.functions.html">insight.helpers.functions</a>
+                
+                <span class="static">static</span>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.helpers.functions.createPropertyAccessor"><a href="insight.helpers.functions.html#createPropertyAccessor">createPropertyAccessor</a></li>
             
             </ul>
             <ul class="events itemMembers">
@@ -391,6 +447,37 @@
             
             </ul>
             <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="insight.ErrorContainer">
+            <span class="title">
+                <a href="insight.ErrorContainer.html">insight.ErrorContainer</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="insight.ErrorContainer.State"><a href="insight.ErrorContainer.html#State">State</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="insight.ErrorContainer#this.data"><a href="insight.ErrorContainer.html##this.data">#this.data</a></li>
+            
+                <li data-name="insight.ErrorContainer#this.message"><a href="insight.ErrorContainer.html##this.message">#this.message</a></li>
+            
+                <li data-name="insight.ErrorContainer#this.state"><a href="insight.ErrorContainer.html##this.state">#this.state</a></li>
             
             </ul>
             <ul class="events itemMembers">
@@ -757,6 +844,9 @@
             <dt><a href="insight.Dimension.html">Dimension</a></dt>
             <dd></dd>
         
+            <dt><a href="insight.ErrorContainer.html">ErrorContainer</a></dt>
+            <dd></dd>
+        
             <dt><a href="insight.Legend.html">Legend</a></dt>
             <dd></dd>
         
@@ -790,11 +880,238 @@
         <h3 class="subsection-title">Namespaces</h3>
         
         <dl>
+            <dt><a href="namespaces.html#insight.correlation"><a href="insight.correlation.html">correlation</a></a></dt>
+            <dd></dd>
+        
             <dt><a href="namespaces.html#insight.Formatters"><a href="insight.Formatters.html">Formatters</a></a></dt>
             <dd></dd>
         </dl>
     
     
+    
+        <h3 class="subsection-title">Members</h3>
+        
+        <dl>
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="ErrorMessages"><span class="type-signature static">static</span>insight.ErrorMessages<span class="type-signature type string">String</span> </h4>
+    </div>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Error messages used throughout the library
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+        <h5 class="subsection-title">Properties:</h5>
+        
+        <dl>
+
+<table class="props">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>invalidArrayParameterException</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    Expects array parameter.
+                
+                </td>
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>invalidDataSetOrArrayParameterException</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    Expects insight.DataSet or an object Array parameter.
+                
+                </td>
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>invalidFunctionParameterException</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    Expects function parameter.
+                
+                </td>
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>nonNumericalPairsException</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    ADD
+                
+                </td>
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>unequalLengthArraysException</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    Expects both arrays to have equal length.
+                
+                </td>
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	</tbody>
+</table></dl>
+        
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        </dl>
     
     
     
