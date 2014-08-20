@@ -284,7 +284,7 @@
             table.applyTheme(theme);
         });
 
-        return self;
+        return this;
     };
 
 })(insight);

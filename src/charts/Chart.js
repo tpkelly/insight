@@ -143,15 +143,10 @@
                 axis.draw(self, dragging);
             });
 
-            var seriesPaletteIndex = 0;
-
             this.series()
-                .map(function(series) {
-                    series.color = d3.functor(self.seriesPalette[seriesPaletteIndex]);
+                .forEach(function(series, index) {
+                    series.color = d3.functor(self.seriesPalette[index % self.seriesPalette.length]);
                     series.draw(self, dragging);
-
-                    //Modular addition; wrap around if we go above seriesPalette.length
-                    seriesPaletteIndex = (seriesPaletteIndex + 1) % self.seriesPalette.length;
                 });
 
             if (legend !== null) {
