@@ -1,0 +1,44 @@
+<div class="row">
+    <div class="col-md-12">
+        <h2>Pareto chart</h2>
+    </div>
+</div>
+</div>
+<div class="row">
+    <div class="col-md-6 description" >
+        <p>
+            The <code>LineSeries</code> on this pareto chart is created using a custom aggregation function. The data
+            is grouped by client and each client's contribution to total revenue is calculated using
+            <code>group.postAggregation(aggregateFunction)</code>. The result of the custom aggregation function is a
+            <code>Percentage</code> property on each group which can be accessed by the <code>valueFunction()</code> of
+            the <code>LineSeries</code>.
+        </p>
+
+            <code class="language-javascript">
+function customAggregation(group)
+{
+    var aggregateFunction = function(grouping)
+    {
+        var total = 0;
+
+        grouping.getData()
+            .forEach(function(d) {
+                total += d.value.CurrentRevenue.Sum;
+            });
+
+        grouping.getData()
+            .forEach(function(d) {
+                d.value.Percentage = d.value.CurrentRevenue.SumCumulative / total;
+            });
+    };
+
+    group.postAggregation(aggregateFunction);
+}
+            </code>
+
+    </div>
+
+    <div id="pareto" class="exampleChart col-md-6">
+
+    </div>
+</div>

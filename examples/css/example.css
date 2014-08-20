@@ -75,3 +75,17 @@ rect.bar
 {
     transition: 0.2s ease all;
 }
+
+/* Example descriptions */
+
+.description {
+    padding-top: 1em;
+}
+
+.description code {
+    font-weight: bolder;
+}
+
+.description p {
+    padding-bottom: 1.5em;
+}

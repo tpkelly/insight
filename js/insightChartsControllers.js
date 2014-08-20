@@ -112,18 +112,20 @@
                 url: 'datasets/revenuereport.json'
             }];
 
-            $scope.dataset = {};
-            $scope.dataset.dummy = null;
-            $scope.dataset.selectedItem = datasets[0];
-            $scope.dataset.dimensions = [];
-            $scope.dataset.groupings = [];
-            $scope.dataset.ndx = {};
-            $scope.dataset.measures = [];
-            $scope.dataset.charts = [];
+            $scope.dataset = {
+                dummy: null,
+                selectedItem : datasets[0],
+                dimensions : [],
+                groupings : [],
+                ndx : {},
+                measures : [],
+                charts : [],
+                selectedDimensions : [],
+                selectedMeasures : []
+            };
+            
             $scope.chartId = 1;
             $scope.list1 = true;
-            $scope.dataset.selectedDimensions = [];
-            $scope.dataset.selectedMeasures = [];
 
             $scope.chartName = function(chart)
             {
