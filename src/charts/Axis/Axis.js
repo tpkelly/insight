@@ -22,6 +22,7 @@
             orderingFunction = null,
             tickSize = d3.functor(0),
             tickPadding = d3.functor(0),
+            lineWidth = 1,
             labelRotation = '0',
             tickLabelOrientation = d3.functor('lr'),
             showGridlines = false,
@@ -360,6 +361,27 @@
             return this;
         };
 
+        /**
+         * Gets the width of the axis line.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Number} - The width of the axis line.
+         *
+         * @also
+         *
+         * Sets the width of the axis line.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Number} width The new width of the axis line.
+         * @returns {this}
+         */
+        this.lineWidth = function(width) {
+            if (!arguments.length) {
+                return lineWidth;
+            }
+            lineWidth = width;
+            return this;
+        };
 
         /**
          * Gets the color of the axis labels and lines.
@@ -652,6 +674,8 @@
             this.axisElement
                 .attr('transform', self.axisPosition())
                 .style('stroke', self.color())
+                .style('stroke-width', self.lineWidth())
+                .style('fill', 'none')
                 .transition()
                 .duration(animationDuration)
                 .call(this.axis);
@@ -686,6 +710,7 @@
         this.tickSize(theme.axisStyle.tickSize);
         this.tickPadding(theme.axisStyle.tickPadding);
         this.color(theme.axisStyle.axisLineColor);
+        this.lineWidth(theme.axisStyle.axisLineWidth);
 
         /* TODO: Tick and axis label font/colours
          tickLabelFont: undefined,

@@ -16,6 +16,7 @@
         this.axisStyle.tickSize = 1;
         this.axisStyle.tickPadding = 10;
 
+        this.axisStyle.axislineWidth = 1;
         this.axisStyle.axisLineColor = '#777';
         this.axisStyle.tickLabelFont = 'Helvetica Neue 11pt';
         this.axisStyle.tickLabelColor = '#777';

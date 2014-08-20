@@ -18,6 +18,7 @@
             tickSize: undefined,
             tickPadding: undefined,
 
+            axisLineWidth: undefined,
             axisLineColor: undefined,
 
             tickLabelFont: undefined,
