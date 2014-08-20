@@ -94,7 +94,7 @@
             var data = self.data.slice(0);
 
             if (orderFunction) {
-                data = data.sort(orderFunc);
+                data = data.sort(orderFunction);
             }
             if (topValues) {
                 data = data.slice(0, top);
