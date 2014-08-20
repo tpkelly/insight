@@ -50,15 +50,20 @@
     /** Fetch all the data currently held in this dataset, filtered by the `filterFunction`.
      * @memberof! insight.DataSet
      * @instance
+     * @param {Function} [orderFunc] If provided then the data will be returned ordered using this function.
      * @returns {object[]} data All data currently held by the dataset.
      */
-    insight.DataSet.prototype.getData = function() {
+    insight.DataSet.prototype.getData = function(orderFunc) {
         var data;
         if (this.data.all) {
             data = this.data.all();
         } else {
             //not a crossfilter set
             data = this.data;
+        }
+
+        if (orderFunc) {
+            data = data.sort(orderFunc);
         }
 
         if (this._filterFunction) {
