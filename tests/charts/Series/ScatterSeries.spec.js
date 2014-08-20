@@ -23,7 +23,7 @@ describe('ScatterSeries', function() {
         chart.addXAxis(xAxis);
         chart.addYAxis(yAxis);
 
-        series = new insight.ScatterSeries('ScatterSeries', dataset, xAxis, yAxis, 'silver');
+        series = new insight.ScatterSeries('ScatterSeries', dataset, xAxis, yAxis);
         chart.series([series]);
 
     });

@@ -102,7 +102,7 @@ describe('Chart Group Tests', function() {
         chart.xAxis(x);
         chart.yAxis(y);
 
-        var series = new insight.ColumnSeries('columns', countries, x, y, 'blue')
+        var series = new insight.ColumnSeries('columns', countries, x, y)
                                 .valueFunction(function(d){ return d.value.Count; });
 
         chart.series([series]);
@@ -137,10 +137,10 @@ describe('Chart Group Tests', function() {
         chart.xAxis(x);
         chart.yAxis(y);
 
-        var series = new insight.ColumnSeries('columns', countries, x, y, 'blue')
+        var series = new insight.ColumnSeries('columns', countries, x, y)
                                 .valueFunction(function(d){return d.value.Count;});
         
-        var series2 = new insight.ColumnSeries('columns2', countries, x, y, 'red')
+        var series2 = new insight.ColumnSeries('columns2', countries, x, y)
                                 .valueFunction(function(d){return d.value.Count + 1;});
         
         chart.series([series, series2]);
@@ -170,7 +170,7 @@ describe('Chart Group Tests', function() {
         chart.xAxis(x);
         chart.yAxis(y);
 
-        var series = new insight.ColumnSeries('columns', countries, x, y, 'blue')
+        var series = new insight.ColumnSeries('columns', countries, x, y)
                                 .valueFunction(function(d){return d.value.Count;});
         
         chart.series([series]);
@@ -203,7 +203,7 @@ describe('Chart Group Tests', function() {
         chart.xAxis(x);
         chart.yAxis(y);
 
-        var series = new insight.ColumnSeries('columns', countries, x, y, 'blue')
+        var series = new insight.ColumnSeries('columns', countries, x, y)
                                 .valueFunction(function(d){return d.value.Count;});
         
         chart.series([series]);
@@ -246,7 +246,7 @@ describe('Chart Group Tests', function() {
             chart.xAxis(x);
             chart.yAxis(y);
 
-            series = new insight.ColumnSeries('columns', countries, x, y, 'blue')
+            series = new insight.ColumnSeries('columns', countries, x, y)
                                     .valueFunction(function(d){return d.value.Count;});
             
             chart.series([series]);
@@ -261,7 +261,7 @@ describe('Chart Group Tests', function() {
             chart2.xAxis(x2);
             chart2.yAxis(y2);
 
-            series2 = new insight.ColumnSeries('columns', countries, x2, y2, 'blue')
+            series2 = new insight.ColumnSeries('columns', countries, x2, y2)
                                     .valueFunction(function(d){return d.value.Count;});
             
             chart2.series([series2]);
@@ -348,7 +348,7 @@ describe('Chart Group Tests', function() {
             chart.xAxis(x);
             chart.yAxis(y);
 
-            series = new insight.ColumnSeries('columns', countries, x, y, 'blue')
+            series = new insight.ColumnSeries('columns', countries, x, y)
                                     .valueFunction(function(d){return d.value.Count;});
             
             chart.series([series]);

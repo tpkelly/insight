@@ -56,7 +56,7 @@ describe('Column Series Tests', function() {
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
 
-        var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale, 'silver').filterFunction(function(d){return d.key=='Scotland';});
+        var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale).filterFunction(function(d){return d.key=='Scotland';});
         
         var data = series.dataset();
 
@@ -77,7 +77,7 @@ describe('Column Series Tests', function() {
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
 
-        var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale, 'silver')
+        var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale)
                             .filterFunction(function(d){return d.key=='Scotland' || d.key=='England';});
         
 
@@ -95,7 +95,7 @@ describe('Column Series Tests', function() {
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
 
-        var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale, 'silver')
+        var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale)
                             .valueFunction(function(d){return d.value.Count;});
         
         var max = series.findMax(yScale);
@@ -112,7 +112,7 @@ describe('Column Series Tests', function() {
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
 
-        var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale, 'silver');
+        var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale);
 
         series.series = [
         {
@@ -150,7 +150,7 @@ describe('Column Series Tests', function() {
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
 
-        var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale, 'silver').stacked(true);
+        var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale).stacked(true);
 
         series.series = [
         {
@@ -192,7 +192,7 @@ describe('Column Series Tests', function() {
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
 
-        var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale, 'silver')
+        var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale)
                                 .valueFunction(function(d){ return d.Country; });
 
         // Then
@@ -216,7 +216,7 @@ describe('Column Series Tests', function() {
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
 
-        var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale, 'silver')
+        var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale)
                                 .valueFunction(function(d){ return d.Country; });
         // When 
         

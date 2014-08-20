@@ -37,7 +37,7 @@ describe('Row Series Tests', function() {
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
 
-        var series = new insight.RowSeries('countryColumn', group, xScale, yScale, 'silver')
+        var series = new insight.RowSeries('countryColumn', group, xScale, yScale)
                             .valueFunction(function(d){return d.value.Count;});        
         
     });
@@ -59,7 +59,7 @@ describe('Row Series Tests', function() {
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
 
-        var series = new insight.RowSeries('countryRows', group, xScale, yScale, 'silver')
+        var series = new insight.RowSeries('countryRows', group, xScale, yScale)
                                 .valueFunction(function(d){ return d.Country; });
         // When 
         
