@@ -48,6 +48,15 @@ insight.Utils = (function() {
     };
 
     /*
+     * Checks if an object is an function or not
+     * @returns {boolean} return - is the object a function
+     * @param {object} input - The object to check
+     */
+    exports.isFunction = function(obj) {
+        return obj instanceof Function;
+    };
+
+    /*
      * Builds the CSS selector used to return chart items that are not selected (and not axes)
      * @returns {string} cssSelector - CSS selector for unselected chart items
      */

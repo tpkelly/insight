@@ -1,8 +1,9 @@
 module.exports = function(grunt) {
   var sourceFiles = [
-    'src/insight-dependencies.js', 
-    'src/Insight.js', 
-    'src/utils/*.js', 
+    'src/insight-dependencies.js',
+    'src/Insight.js',
+    'src/utils/*.js',
+    'src/helpers/*.js',
     'src/tests/**/*.spec.js',
     'src/mda/*.js', 
     'src/charts/ChartGroup.js',

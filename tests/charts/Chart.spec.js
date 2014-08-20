@@ -243,6 +243,7 @@ describe('Chart', function() {
                 spyOn(chart, 'calculateLabelMargin');
                 spyOn(chart, 'draw').andCallThrough();
                 spyOn(chart, 'addClipPath').andCallThrough();
+                spyOn(window, 'getComputedStyle');
 
                 chart.draw();
             };
