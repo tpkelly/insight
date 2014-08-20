@@ -39,7 +39,7 @@
             bubbleChart.xAxis(bubbleX)
                        .yAxis(bubbleY);
 
-            var bubbles = new insight.BubbleSeries('bubbles', bubbleData, bubbleX, bubbleY, '#336699')
+            var bubbles = new insight.BubbleSeries('bubbles', bubbleData, bubbleX, bubbleY)
                 .keyFunction(function(d)
                 {
                     return d.value.averageUserRating.Average;
@@ -86,7 +86,7 @@
             chart.xAxis(x)
                  .yAxis(y);
 
-            var lSeries = new insight.ColumnSeries('languages', languages, x, y, '#336699')
+            var lSeries = new insight.ColumnSeries('languages', languages, x, y)
                 .top(10);
 
             chart.series([lSeries]);
@@ -118,7 +118,7 @@
         chart.xAxis(x)
              .yAxis(y);
 
-        var series = new insight.ColumnSeries('genre', genreData, x, y, '#336699')
+        var series = new insight.ColumnSeries('genre', genreData, x, y)
                                 .valueFunction(function(d){ return d.value.Count; });
 
         chart.series([series]);
@@ -150,7 +150,7 @@
             timeChart.xAxis(xTime)
                      .yAxis(yTime);
 
-            var cumulative = new insight.LineSeries('valueLine', timeData, xTime, yTime, '#336699')
+            var cumulative = new insight.LineSeries('valueLine', timeData, xTime, yTime)
                 .valueFunction(function(d)
                 {
                     return d.value.CountCumulative;
@@ -195,7 +195,7 @@
         chart.xAxis(x)
              .yAxis(y);
 
-        var rowSeries = new insight.RowSeries('content', contentRating, x, y, '#336699')
+        var rowSeries = new insight.RowSeries('content', contentRating, x, y)
                                    .valueFunction(function(d){ return d.value.Count;});
         
         chart.series().push(rowSeries);

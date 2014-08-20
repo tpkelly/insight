@@ -43,7 +43,7 @@ $(document)
             chart.xAxis(x);
             chart.yAxis(y);
 
-            var line = new insight.LineSeries('Revenue', dateData, x, y, '#aae')
+            var line = new insight.LineSeries('Revenue', dateData, x, y)
                 .tooltipFormat(insight.Formatters.currencyFormatter)
                 .lineType('monotone')
                 .valueFunction(function(d)

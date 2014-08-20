@@ -43,7 +43,7 @@ $(document)
             .yAxis(y);
 
 
-        var series = new insight.ColumnSeries('countryColumn', dataset, x, y, 'silver');
+        var series = new insight.ColumnSeries('countryColumn', dataset, x, y);
 
         series.series = [
         {

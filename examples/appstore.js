@@ -60,7 +60,7 @@ $(document)
             chart.xAxis(xScale);
             chart.yAxis(yScale);
 
-            var series = new insight.ColumnSeries('genre', genres, xScale, yScale, 'lightblue')
+            var series = new insight.ColumnSeries('genre', genres, xScale, yScale)
                 .valueFunction(function(d)
                 {
                     return d.value.Count;
@@ -90,7 +90,7 @@ $(document)
             timeChart.xAxis(xTime);
             timeChart.yAxis(yTime);
 
-            var line = new insight.LineSeries('valueLine', dates, xTime, yTime, 'cyan')
+            var line = new insight.LineSeries('valueLine', dates, xTime, yTime)
                 .valueFunction(function(d)
                 {
                     return d.value.CountCumulative;
@@ -125,7 +125,7 @@ $(document)
             bubbleChart.xAxis(bubbleX);
             bubbleChart.yAxis(bubbleY);
 
-            var bubbles = new insight.BubbleSeries('bubbles', genres, bubbleX, bubbleY, 'cyan')
+            var bubbles = new insight.BubbleSeries('bubbles', genres, bubbleX, bubbleY)
                 .keyFunction(function(d)
                 {
                     return d.value.userRatingCount.Average;
