@@ -23,8 +23,8 @@
     {
     "name": "stackedbars",
     "pageName": "Stacked bars",
-    "script": "examples/stackedbars.js",
-    "partial": "examples/partials/stackedbars.html",
+    "script": "examples/stackedBar.js",
+    "partial": "examples/partials/stacked.html",
     "partialCSS": "examples/css/example.css"
     },
     {
