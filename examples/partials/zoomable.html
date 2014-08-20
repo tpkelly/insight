@@ -1,0 +1,16 @@
+<div class="row">
+    <div class="col-md-6 description" >
+        <p>Sometimes it can be easier to display a small window of the data, and allow the user to pan the window through
+            the data. Axes can be made to allow panning by telling the chart to allow zooming with <code>chart.zoomable(zoomAxis)</code>.</p>
+
+        <p>Use the mousewheel to zoom in/out of the chart, and click-drag to pan through the data.</p>
+
+        <code class="language-javascript">
+var xAxis = new insight.Axis('AppCount', insight.Scales.Linear)
+chart.zoomable(xAxis);
+        </code>
+    </div>
+
+<div id="exampleChart" class="exampleChart col-md-6">
+
+</div>
