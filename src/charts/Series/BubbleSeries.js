@@ -136,13 +136,25 @@
                 return d.radius;
             };
 
+            var opacity = function() {
+                // If we are using selected/notSelected, then make selected more opaque than notSelected
+                if (this.classList.contains("selected"))
+                    return 0.8;
+
+                if (this.classList.contains("notselected"))
+                    return 0.3;
+
+                //If not using selected/notSelected, make everything semi-transparent
+                return 0.5;
+            };
+
             bubbles.transition()
                 .duration(duration)
                 .attr('r', rad)
                 .attr('cx', self.rangeX)
                 .attr('cy', self.rangeY)
-                .attr('opacity', 0.5)
-                .attr('fill', this.color);
+                .attr('opacity', opacity)
+                .style('fill', this.color);
         };
     };
 

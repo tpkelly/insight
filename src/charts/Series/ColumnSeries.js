@@ -216,6 +216,15 @@
                     .bottom) - self.y.scale(func(d));
             };
 
+            var opacity = function() {
+                // If we are using selected/notSelected, then make selected more opaque than notSelected
+                if (this.classList.contains("notselected"))
+                    return 0.5;
+
+                //If not using selected/notSelected, make everything semi-transparent
+                return 1;
+            };
+
             for (var seriesIndex in self.series) {
 
                 self.currentSeries = self.series[seriesIndex];
@@ -247,7 +256,8 @@
                     .attr('y', self.yPosition)
                     .attr('x', self.offsetXPosition)
                     .attr('width', self.groupedBarWidth)
-                    .attr('height', barHeight);
+                    .attr('height', barHeight)
+                    .style('opacity', opacity);
             }
 
             // Remove groups no longer in the data set
