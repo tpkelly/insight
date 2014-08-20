@@ -1,5 +1,6 @@
-/*
+/**
  * Module for calculating correlation coefficients on pairs of values.
+ * @namespace insight.correlation
  */
 insight.correlation = (function(insight) {
 
@@ -11,98 +12,110 @@ insight.correlation = (function(insight) {
      * @memberof! insight.correlation
      * @param {Array<Number>} x The x values
      * @param {Array<Number>} y The y values
-     * @returns {Number} The pearson correlation coefficient for two arrays of numbers
-     * @todo Improve handling of dirty data and error logging
+     * @param {Object} [errorContainer] An object that will contain
+     * information about any errors that were encountered with the operation.
+     * @returns {Number} - The pearson correlation coefficient for two arrays of numbers
      */
-    correlation.fromValues = function(x, y) {
+    correlation.fromValues = function(x, y, errorContainer) {
 
-        if (!insight.Utils.isArray(x) || !insight.Utils.isArray(y) ||
-            x.length !== y.length) {
+        if (!(errorContainer instanceof insight.ErrorContainer)) {
+            errorContainer = new insight.ErrorContainer();
+        }
+
+        if (!insight.Utils.isArray(x) || !insight.Utils.isArray(y)) {
+
+            errorContainer.setError(insight.ErrorMessages.invalidArrayParameterException);
 
             return undefined;
 
         }
 
-        if (x.length < 2) {
-            return x.length;
+        if (x.length !== y.length) {
+
+            var inputLengths = {
+                xLength: x.length,
+                yLength: y.length
+            };
+
+            errorContainer.setError(insight.ErrorMessages.unequalLengthArraysException, inputLengths);
+
+            return undefined;
+
         }
 
-        var meanX = mean(x),
-            meanY = mean(y),
-            xDeviation = subtract(x, meanX),
-            yDeviation = subtract(y, meanY),
-            xDeviationSquared = multiply(xDeviation, xDeviation),
-            yDeviationSquared = multiply(yDeviation, yDeviation),
+        var xyPairs = zipTwoArrays(x, y);
+        var invalidPairs = xyPairs.filter(isNotPairOfNumbers);
+        var validPairs = xyPairs.filter(isPairOfNumbers);
+        var validX = validPairs.map(function(element) {
+            return element.x;
+        });
+        var validY = validPairs.map(function(element) {
+            return element.y;
+        });
 
-            deviationProduct = multiply(xDeviation, yDeviation),
-            r = sum(deviationProduct) / Math.sqrt(sum(xDeviationSquared) * sum(yDeviationSquared));
+        if (invalidPairs.length > 0) {
+            errorContainer.setWarning(insight.ErrorMessages.nonNumericalPairsException, invalidPairs);
+        }
+
+        if (validX.length < 2) {
+            return validX.length;
+        }
+
+        var meanX = mean(validX);
+        var meanY = mean(validY);
+        var xDeviation = subtract(validX, meanX);
+        var yDeviation = subtract(validY, meanY);
+        var xDeviationSquared = multiply(xDeviation, xDeviation);
+        var yDeviationSquared = multiply(yDeviation, yDeviation);
+
+        var deviationProduct = multiply(xDeviation, yDeviation);
+        var r = sum(deviationProduct) / Math.sqrt(sum(xDeviationSquared) * sum(yDeviationSquared));
 
         return r;
 
     };
 
     /**
-     * Calculates the pearson correlation coefficients for all given property pairs in the given dataset.
+     * Calculates the pearson correlation coefficients for a given property pair in the dataset.
      * @memberof! insight.correlation
-     * @param {insight.DatSet|Array<Object>} dataset The insight.DataSet or
-     * array to calclulate correlation coefficients for.
-     * @param {Array<String[]>} correlationPairs An array of pairs of property names to calculate correlation coefficients
-     * for. Each element of the array must be an array of two strings.
-     * @returns {Object} An object containing properties for all correlation pairs e.g. { X_Cor_Y: 0.75 }
+     * @param {insight.DatSet|Object[]} dataset The insight.DataSet or array to calculate correlation coefficients for.
+     * @param {Function} xFunction A function that will return a value from one element in the dataset.
+     * The value that the function returns will be used in the correlation calculation.
+     * @param {Function} yFunction A function that will return a value from one element in the dataset.
+     * The value that the function returns will be used in the correlation calculation.
+     * @param {Object} [errorContainer] An object that will contain
+     * information about any errors that were encountered with the operation.
+     * @returns {Number} - The pearson correlation coefficient for the given property pair in the dataset.
      */
-    correlation.fromDataSet = function(dataset, correlationPairs) {
+    correlation.fromDataSet = function(dataset, xFunction, yFunction, errorContainer) {
+        if (!(errorContainer instanceof insight.ErrorContainer)) {
+            errorContainer = new insight.ErrorContainer();
+        }
 
-        var dataArray = getArray(dataset),
-            propertyValues = {},
-            results = {};
+        var dataArray = getArray(dataset);
 
-        correlationPairs.forEach(function(pair) {
+        if (!insight.Utils.isArray(dataArray)) {
 
-            var x = pair[0],
-                y = pair[1],
-                r;
+            errorContainer.setError(insight.ErrorMessages.invalidDataSetOrArrayParameterException);
 
-            addPropertyArrays(dataArray, propertyValues, [x, y]);
+            return undefined;
 
-            r = insight.correlation.fromValues(propertyValues[x], propertyValues[y]);
-            results[correlationPropertyName(x, y)] = r;
-            results[correlationPropertyName(y, x)] = r;
+        }
 
-        });
+        if (!insight.Utils.isFunction(xFunction) || !insight.Utils.isFunction(yFunction)) {
 
-        return results;
+            errorContainer.setError(insight.ErrorMessages.invalidFunctionParameterException);
 
+            return undefined;
+        }
+
+        var x = dataArray.map(xFunction);
+        var y = dataArray.map(yFunction);
+
+        var r = insight.correlation.fromValues(x, y, errorContainer);
+
+        return r;
     };
-
-    /*
-     * Returns the property name to use for a correlation between two properties, x and y.
-     */
-    function correlationPropertyName(x, y) {
-
-        return x + '_Cor_' + y;
-
-    }
-
-    /*
-     * Adds an array to the container for each element in propertyNames.
-     * An array will not be added to the container object if it has been added before.
-     * Each array will contain the 'propertyName' property from the object in dataArray.
-     */
-    function addPropertyArrays(dataArray, container, propertyNames) {
-
-        propertyNames.forEach(function(propertyName) {
-
-            if (!container.hasOwnProperty(propertyName)) {
-
-                container[propertyName] = dataArray.map(function(d) {
-                    return d[propertyName];
-                });
-
-            }
-
-        });
-
-    }
 
     /*
      * Returns an array based on the given object.
@@ -114,12 +127,35 @@ insight.correlation = (function(insight) {
             return obj.getData();
         }
 
-        if (!insight.Utils.isArray(obj)) {
-            throw new Error('correlation.fromDataSet expects an insight.DataSet or Array');
-        }
-
         return obj;
 
+    }
+
+    /*
+     * Takes two input sequences and produces an output sequence where elements with the same index are stored in a single object.
+     * Assumes that both arrays have the same length.
+     */
+    function zipTwoArrays(x, y) {
+        var results = x.map(function(xValue, index) {
+            var yValue = y[index];
+            return {
+                x: xValue,
+                y: yValue,
+                index: index
+            };
+        });
+
+        return results;
+    }
+
+    function isPairOfNumbers(element) {
+        var result = insight.Utils.isNumber(element.x) && insight.Utils.isNumber(element.y);
+
+        return result;
+    }
+
+    function isNotPairOfNumbers(element) {
+        return !isPairOfNumbers(element);
     }
 
     /*
@@ -128,11 +164,6 @@ insight.correlation = (function(insight) {
     function sum(array) {
 
         return array.reduce(function(previous, current) {
-
-            if (!insight.Utils.isNumber(current)) {
-                throw new Error('The correlation data contains non-numeric values.');
-            }
-
             return previous + current;
 
         });
