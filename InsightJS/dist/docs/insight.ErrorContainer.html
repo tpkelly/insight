@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Namespace: insight</title>
+    <title>Class: ErrorContainer</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -807,7 +807,7 @@
     </ul>
 </div>
     <div class="main">
-        <h1 class="page-title" data-filename="insight.html">Namespace: insight</h1>
+        <h1 class="page-title" data-filename="insight.ErrorContainer.html">Class: ErrorContainer</h1>
         
 
 
@@ -816,7 +816,9 @@
     
 <header>
     <h2>
-    insight
+        <span class="ancestors"><a href="insight.html">insight</a>.</span>
+    
+    ErrorContainer
     </h2>
     
 </header>  
@@ -827,10 +829,32 @@
     
     
         
-            <div class="description">This is the global namespace.</div>
-        
-        
-        
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="ErrorContainer">
+            
+            new insight.ErrorContainer<span class="signature">()</span>
+        </h4>
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        The ErrorContainer class is used to capture errors in operations within InsightJs.
+An instance of the ErrorContainer class must only be passed to one function.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
 <dl class="details">
     
         
@@ -855,8 +879,20 @@
     
 </dl>
 
-        
-        
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
     
     </div>
     
@@ -867,81 +903,7 @@
     
     
     
-        <h3 class="subsection-title">Classes</h3>
-        
-        <dl>
-            <dt><a href="insight.Axis.html">Axis</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.AxisGridlines.html">AxisGridlines</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.BubbleSeries.html">BubbleSeries</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.Chart.html">Chart</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.ChartGroup.html">ChartGroup</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.ColumnSeries.html">ColumnSeries</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.DataSet.html">DataSet</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.Dimension.html">Dimension</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.ErrorContainer.html">ErrorContainer</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.Legend.html">Legend</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.LightTheme.html">LightTheme</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.LineSeries.html">LineSeries</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.MarginMeasurer.html">MarginMeasurer</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.MarkerSeries.html">MarkerSeries</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.RowSeries.html">RowSeries</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.ScatterSeries.html">ScatterSeries</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.Series.html">Series</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.Table.html">Table</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.Theme.html">Theme</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.Tooltip.html">Tooltip</a></dt>
-            <dd></dd>
-        </dl>
     
-    
-    
-        <h3 class="subsection-title">Namespaces</h3>
-        
-        <dl>
-            <dt><a href="namespaces.html#insight.correlation"><a href="insight.correlation.html">correlation</a></a></dt>
-            <dd></dd>
-        
-            <dt><a href="namespaces.html#insight.Formatters"><a href="insight.Formatters.html">Formatters</a></a></dt>
-            <dd></dd>
-        </dl>
     
     
     
@@ -951,7 +913,7 @@
             
 <dt>
     <div class="nameContainer">
-        <h4 class="name" id="ErrorMessages"><span class="type-signature static">static</span>insight.ErrorMessages<span class="type-signature type string">String</span> </h4>
+        <h4 class="name" id="State"><span class="type-signature static">static</span>insight.ErrorContainer.State<span class="type-signature type string">String</span> </h4>
     </div>
     
     
@@ -959,7 +921,7 @@
 <dd>
     
     <div class="description">
-        Error messages used throughout the library
+        The ErrorContainer State object (enum) is used describe the state of an error container.
     </div>
     
     
@@ -995,7 +957,7 @@
 	
         <tr>
             
-                <td class="name"><code>invalidArrayParameterException</code></td>
+                <td class="name"><code>error</code></td>
             
             
             <td class="type">
@@ -1012,19 +974,19 @@
             
                 <td class="default">
                 
-                    Expects array parameter.
+                    error
                 
                 </td>
             
             
-            <td class="description last"></td>
+            <td class="description last">Indicates an error has taken place, any subsequent warnings are ignored by the ErrorContainer</td>
         </tr>
 	
 	
 	
         <tr>
             
-                <td class="name"><code>invalidDataSetOrArrayParameterException</code></td>
+                <td class="name"><code>success</code></td>
             
             
             <td class="type">
@@ -1041,19 +1003,19 @@
             
                 <td class="default">
                 
-                    Expects insight.DataSet or an object Array parameter.
+                    success
                 
                 </td>
             
             
-            <td class="description last"></td>
+            <td class="description last">The initial state of an ErrorContainer.  Used to indicate that an operation was successful - no warnings or errors set</td>
         </tr>
 	
 	
 	
         <tr>
             
-                <td class="name"><code>invalidFunctionParameterException</code></td>
+                <td class="name"><code>warning</code></td>
             
             
             <td class="type">
@@ -1070,70 +1032,12 @@
             
                 <td class="default">
                 
-                    Expects function parameter.
+                    warning
                 
                 </td>
             
             
-            <td class="description last"></td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>nonNumericalPairsException</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-                <td class="default">
-                
-                    ADD
-                
-                </td>
-            
-            
-            <td class="description last"></td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>unequalLengthArraysException</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-                <td class="default">
-                
-                    Expects both arrays to have equal length.
-                
-                </td>
-            
-            
-            <td class="description last"></td>
+            <td class="description last">Indicates an warning has taken place, any subsequent errors will over-write the warning in the ErrorContainer</td>
         </tr>
 	
 	
@@ -1170,6 +1074,233 @@
         </dl>
     
     
+    
+        <h3 class="subsection-title">Methods</h3>
+        
+        <dl>
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="#this.data">
+            
+            #this.data<span class="signature">()</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{Object}</span>
+        </h4>
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        The data associated with the error or warning.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+The data associated with the error or warning.
+<br />
+
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="#this.message">
+            
+            #this.message<span class="signature">()</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{String}</span>
+        </h4>
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        The descriptive message associated with the error or warning.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+The descriptive message associated with the error or warning.
+<br />
+
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="#this.state">
+            
+            #this.state<span class="signature">()</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{String}</span>
+        </h4>
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        The state of the ErrorContainer.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+The state of the ErrorContainer.
+This will be one of the values of <code>insight.ErrorContainer.State</code>.
+<br />
+
+    
+    
+    
+</dd>
+
+        </dl>
     
     
     

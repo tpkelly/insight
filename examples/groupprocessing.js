@@ -22,14 +22,18 @@ $(document)
                 .tickLabelFormat(insight.Formatters.percentageFormatter)
                 .reversedPosition(true);
 
-            var clientRevenues = new insight.ColumnSeries('clientColumn', clientData, x, clientRevenueAxis, '#3182bd')
+            var clientRevenues = new insight.ColumnSeries('clientColumn', clientData, x, clientRevenueAxis)
                 .valueFunction(function(d)
                 {
                     return d.value.CurrentRevenue.Sum;
                 })
                 .tooltipFormat(insight.Formatters.currencyFormatter);
 
-            var cumulativeRevenue = new insight.LineSeries('percentLine', clientData, x, cumulativeRevenueAxis, '#c6dbed')
+            // set ColumnSeries to first color in the default series palette
+            //  - workaround until ColumnSeries has sub-series removed
+            clientRevenues.series[0].color = d3.functor(insight.defaultTheme.chartStyle.seriesPalette[0]);
+
+            var cumulativeRevenue = new insight.LineSeries('percentLine', clientData, x, cumulativeRevenueAxis)
                 .tooltipFormat(insight.Formatters.percentageFormatter)
                 .valueFunction(function(d)
                 {

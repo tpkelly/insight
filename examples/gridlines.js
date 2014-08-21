@@ -47,7 +47,7 @@ $(document)
         chart.xAxis(x);
         chart.yAxis(y);
 
-        var populations = new insight.ColumnSeries('Population', populationData, x, y, '#3182bd')
+        var populations = new insight.ColumnSeries('Population', populationData, x, y)
             .keyFunction(function(d)
             {
                 return d.country;
@@ -57,6 +57,10 @@ $(document)
                 return d.population;
             })
             .tooltipFormat(insight.Formatters.numberFormatter);
+
+        // set ColumnSeries to first color in the default series palette
+        //  - workaround until ColumnSeries has sub-series removed
+        populations.series[0].color = d3.functor(insight.defaultTheme.chartStyle.seriesPalette[0]);
 
         chart.series([populations]);
 
