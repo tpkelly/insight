@@ -54,5 +54,12 @@
         "script": "examples/groupprocessing.js",
         "partial": "examples/partials/groupprocessing.html",
         "partialCSS": "examples/css/example.css"
+    },
+    {
+        "name": "correlation",
+        "pageName": "Correlation",
+        "script": "examples/correlation.js",
+        "partial": "examples/partials/correlation.html",
+        "partialCSS": "examples/css/example.css"
     }
 ]
