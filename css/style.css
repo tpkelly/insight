@@ -229,4 +229,10 @@ button.selected {
   border-color: #aaa;
 }
 
+#correlationDiv {
+  width:90%;
+  text-align:right;
+  position:absolute;
+  z-index:100;
+}
 
