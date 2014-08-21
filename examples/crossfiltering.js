@@ -84,7 +84,7 @@ $(document)
             bubbleChart.xAxis(bubbleX)
                 .yAxis(bubbleY);
 
-            var bubbles = new insight.BubbleSeries('bubbles', bubbleData, bubbleX, bubbleY, '#3182bd')
+            var bubbles = new insight.BubbleSeries('bubbles', bubbleData, bubbleX, bubbleY)
                 .keyFunction(function(d)
                 {
                     return d.value.averageUserRating.Average;
@@ -101,6 +101,10 @@ $(document)
                 {
                     return d.key + " <br/> Average App Size (Mb) = " + Math.round(d.value.fileSizeBytes.Average / 1024 / 1024);
                 });
+
+            // set RowSeries to first color in the default series palette
+            //  - workaround until ColumnSeries has sub-series removed
+            bubbles.color = d3.functor(insight.defaultTheme.chartStyle.seriesPalette[0]);
 
             bubbleChart.series([bubbles]);
 
@@ -170,14 +174,17 @@ $(document)
             chart.xAxis(x)
                 .yAxis(y);
 
-            var rowSeries = new insight.RowSeries('content', ratings, x, y, '#3182bd')
+            var rowSeries = new insight.RowSeries('content', ratings, x, y)
                 .valueFunction(function(d)
                 {
                     return d.value.Count;
                 });
 
-            chart.series()
-                .push(rowSeries);
+            // set RowSeries to first color in the default series palette
+            //  - workaround until ColumnSeries has sub-series removed
+            rowSeries.series[0].color = d3.functor(insight.defaultTheme.chartStyle.seriesPalette[0]);
+
+            chart.series([rowSeries]);
 
             return chart;
         }
