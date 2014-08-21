@@ -21,17 +21,17 @@
 
         var self = this;
 
-        var oneToManyFilterFunction = function(filterValue) {
+        function oneToManyFilterFunction(filterValue) {
             return function(d) {
                 return insight.Utils.arrayContains(d, filterValue);
             };
-        };
+        }
 
-        var filterFunction = function(filterValue) {
+        function filterFunction(filterValue) {
             return function(d) {
                 return String(d) === String(filterValue);
             };
-        };
+        }
 
         /*
          * Local helper function that creates a filter object given an element that has been clicked on a Chart or Table.

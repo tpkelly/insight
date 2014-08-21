@@ -27,9 +27,9 @@
         // Private methods
 
         // The default post aggregation step is blank, and can be overriden by users if they want to calculate additional values with this Grouping
-        var postAggregation = function(grouping) {
+        function postAggregation(grouping) {
 
-        };
+        }
 
         /*
          * Takes an object and a property name in the form of a string, traversing the object until it finds a property with that name and returning
@@ -37,7 +37,7 @@
          * @param {object} - The object to search
          * @param {string} propertyName - A string of the property to search, can include sub-properties using a dot notation. Eg. 'value.Revenue.Sum', which cannot be indexed directly in Javascript.
          */
-        var getDescendant = function(obj, propertyName) {
+        function getDescendant(obj, propertyName) {
             var arr = propertyName.split(".");
             var name = propertyName;
             var container = null;
@@ -52,13 +52,13 @@
                 value: obj,
                 propertyName: name
             };
-        };
+        }
 
         /*
          * Takes a group object and calculates the mean for any properties configured.
          * @param {object} group - A dimensional slice of a Grouping {key: 'X', value : {}}
          */
-        var calculateAverages = function(group) {
+        function calculateAverages(group) {
 
 
             for (var i = 0, len = averageProperties.length; i < len; i++) {
@@ -71,14 +71,14 @@
 
                 group.value[propertyName].Average = mean;
             }
-        };
+        }
 
         /*
          * Calculates running cumulative values for any properties defined in the cumulative() list.
          * @param {object} group - The data group being added to the cumulative running totals list
          * @param {object} totals - The map object of running totals for the defined properties
          */
-        var calculateCumulativeValues = function(group, totals) {
+        function calculateCumulativeValues(group, totals) {
 
             var propertyName,
                 descendant;
@@ -97,38 +97,38 @@
             }
 
             return totals;
-        };
+        }
 
         /*
          * Calculates correlation coefficient values for all configured property pairs on the grouping.
          * So after this function has run there will be a number of properties on the grouping value called
          * 'X_Cor_Y' where X and Y are the configured property names.
          */
-        var calculateCorrelations = function() {
+        function calculateCorrelations() {
 
             /*
              * Returns a property name for the deviation product array used in the correlation workings
              */
-            var deviationProductNameFunction = function(xName, yName) {
+            function deviationProductNameFunction(xName, yName) {
 
                 return xName + '_' + yName + '_DeviationProduct';
 
-            };
+            }
 
             /*
              * Returns an empty object that will contain the correlation working data
              */
-            var correlationReduceInitialize = function() {
+            function correlationReduceInitialize() {
 
                 return {};
 
-            };
+            }
 
             /*
              * Returns the function to use for creating a reduciton of all groups in order to calculate correlation
              * between properties in a group.
              */
-            var correlationReduceAdd = function(aggregatedData) {
+            function correlationReduceAdd(aggregatedData) {
 
                 var globalData = aggregatedData;
 
@@ -188,15 +188,15 @@
 
                 };
 
-            };
+            }
 
-            var correlationReduceRemove = function(aggregatedData) {
+            function correlationReduceRemove(aggregatedData) {
 
                 return function() {
 
                 };
 
-            };
+            }
 
             var completeData = self.data.all();
 
@@ -211,11 +211,11 @@
 
             correlationWorkingData.forEach(function(d) {
 
-                var sum = function(array) {
+                function sum(array) {
                     return array.reduce(function(previous, current) {
                         return previous + current;
                     });
-                };
+                }
 
                 correlationPairProperties.forEach(function(pair) {
 
@@ -239,12 +239,12 @@
 
             });
 
-        };
+        }
 
         /*
          * Used to calculate any values that need to run after the data set has been aggregated into groups and basic values
          */
-        var postAggregationCalculations = function() {
+        function postAggregationCalculations() {
 
             var totals = {};
 
@@ -267,7 +267,7 @@
 
             // Run any user injected functions post aggregation
             postAggregation(self);
-        };
+        }
 
         /*
          * Called by the map reduce process on a DataSet when an input object is being added to the aggregated group
@@ -275,7 +275,7 @@
          * @param {object} group - The group entry for this slice of the aggregated dataset, prior to adding the input data object
          * @param {object} data - The object being added from the aggregated group.
          */
-        var reduceAddToGroup = function(group, data) {
+        function reduceAddToGroup(group, data) {
 
             group.Count++;
 
@@ -320,7 +320,7 @@
             }
 
             return group;
-        };
+        }
 
         /*
          * Called by the map reduce process on a DataSet when an input object is being filtered out of the group
@@ -328,7 +328,7 @@
          * @param {object} group - The group entry for this slice of the aggregated dataset, prior to removing the input data object
          * @param {object} data - The object being removed from the aggregated group.
          */
-        var reduceRemoveFromGroup = function(group, data) {
+        function reduceRemoveFromGroup(group, data) {
 
             group.Count--;
 
@@ -368,14 +368,14 @@
             }
 
             return group;
-        };
+        }
 
         /*
          * Called when a slice of an aggrgated DataSet is being initialized, creating initial values for certain properties
          * @returns {object} return - The initialized slice of this aggreagted DataSet.  The returned object will be of the form {key: '
             Distinct Key ', value: {}}
          */
-        var reduceInitializeGroup = function() {
+        function reduceInitializeGroup() {
             var group = {
                     Count: 0
                 },
@@ -399,14 +399,14 @@
             }
 
             return group;
-        };
+        }
 
         /*
          * This aggregation method is tailored to dimensions that can hold multiple values (in an array), therefore they are counted differently.
          * For example: a property called supportedDevices : ['iPhone5 ', 'iPhone4 '] where the values inside the array are treated as dimensional slices
          * @returns {object[]} return - the array of dimensional groupings resulting from this dimensional aggregation
          */
-        var reduceMultidimension = function() {
+        function reduceMultidimension() {
 
             var propertiesToCount = self.count();
 
@@ -477,7 +477,7 @@
             });
 
             return data;
-        };
+        }
 
 
         // Public methods

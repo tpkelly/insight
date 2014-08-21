@@ -76,9 +76,9 @@
         this.bubbleData = function(data) {
             var max = d3.max(data, radiusFunction);
 
-            var rad = function(d) {
+            function rad(d) {
                 return d.radius;
-            };
+            }
 
             //Minimum of pixels-per-axis-unit
             var xValues = data.map(self.keyFunction());
@@ -115,9 +115,9 @@
                 return 200 + (i * 20);
             };
 
-            var click = function(filter) {
+            function click(filter) {
                 return self.click(this, filter);
-            };
+            }
 
             var bubbleData = this.bubbleData(this.dataset());
 
@@ -132,11 +132,11 @@
                 .on('click', click);
 
 
-            var rad = function(d) {
+            function rad(d) {
                 return d.radius;
-            };
+            }
 
-            var opacity = function() {
+            function opacity() {
                 // If we are using selected/notSelected, then make selected more opaque than notSelected
                 if (this.classList && this.classList.contains("selected"))
                     return 0.8;
@@ -146,7 +146,7 @@
 
                 //If not using selected/notSelected, make everything semi-transparent
                 return 0.5;
-            };
+            }
 
             bubbles.transition()
                 .duration(duration)

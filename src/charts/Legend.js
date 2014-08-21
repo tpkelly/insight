@@ -7,21 +7,21 @@
 
         var initialised = false;
 
-        var blobPositionY = function(item, index) {
+        function blobPositionY(item, index) {
             return index * 20 + 5;
-        };
+        }
 
-        var blobFillColor = function(item) {
+        function blobFillColor(item) {
             return item.color();
-        };
+        }
 
-        var textPositionY = function(item, index) {
+        function textPositionY(item, index) {
             return index * 20 + 14;
-        };
+        }
 
-        var textContent = function(item) {
+        function textContent(item) {
             return item.name;
-        };
+        }
 
 
         this.init = function(chart) {

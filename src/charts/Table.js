@@ -30,17 +30,19 @@
 
         // private methods
 
-        var labelFunction = function(d) {
+        function labelFunction(d) {
             return d.label;
-        };
-        var keyFunction = function(d) {
-            return d.key;
-        };
-        var valueFunction = function(d) {
-            return d.value;
-        };
+        }
 
-        var columnBuilder = function(row) {
+        function keyFunction(d) {
+            return d.key;
+        }
+
+        function valueFunction(d) {
+            return d.value;
+        }
+
+        function columnBuilder(row) {
 
             return self.columns()
                 .map(function(column) {
@@ -49,11 +51,11 @@
                         value: column.value(row)
                     };
                 });
-        };
+        }
 
 
         // Creates the main <table>, <thead> and <tbody> sections of this Table
-        var initializeTable = function() {
+        function initializeTable() {
             self.tableElement = d3.select(self.element)
                 .append('table')
                 .attr('class', insight.Constants.TableClass);
@@ -68,29 +70,29 @@
             self.tableBody = self.tableElement.append('tbody');
 
             tableInitialized = true;
-        };
+        }
 
 
-        var rowClass = function(dataPoint) {
+        function rowClass(dataPoint) {
             return insight.Constants.TableRowClass + ' ' + insight.Utils.keySelector(keyFunction(dataPoint));
-        };
+        }
 
 
-        var click = function(dataItem) {
+        function click(dataItem) {
 
             self.clickEvent(self.data, keyFunction(dataItem));
-        };
+        }
 
         // Adds sorters to this Table's list of sorting methods and orders.
         // @param {string} order - 'ASC' or 'DESC'
-        var addSortOrder = function(func, order) {
+        function addSortOrder(func, order) {
             var sort = {
                 sortParameter: func,
                 order: order
             };
 
             sortFunctions.push(sort);
-        };
+        }
 
         // Public methods
 

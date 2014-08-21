@@ -160,10 +160,10 @@
             self.initializeTooltip(chart.container.node());
             self.selectedItems = chart.selectedItems;
 
-            var reset = function(d) {
+            function reset(d) {
                 d.yPos = 0;
                 d.xPos = 0;
-            };
+            }
 
             var d = this.dataset()
                 .forEach(reset);
@@ -178,13 +178,13 @@
 
             var newBars = newGroups.selectAll('rect.bar');
 
-            var click = function(filter) {
+            function click(filter) {
                 return self.click(this, filter);
-            };
+            }
 
-            var duration = function(d, i) {
+            function duration(d, i) {
                 return 200 + (i * 20);
-            };
+            }
 
             newBars = newGroups.append('rect')
                 .attr('class', self.itemClassName)

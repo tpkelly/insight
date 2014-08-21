@@ -35,25 +35,25 @@
 
         // private functions used internally, set by functions below that are exposed on the object
 
-        var keyFunction = function(d) {
+        function keyFunction(d) {
             return d.key;
-        };
+        }
 
-        var groupKeyFunction = function(d) {
+        function groupKeyFunction(d) {
             return d.key;
-        };
+        }
 
-        var valueFunction = function(d) {
+        function valueFunction(d) {
             return d.value;
-        };
+        }
 
-        var tooltipFormat = function(d) {
+        function tooltipFormat(d) {
             return d;
-        };
+        }
 
-        var tooltipFunction = function(d) {
+        function tooltipFunction(d) {
             return valueFunction(d);
-        };
+        }
 
         /*
          * Checks whether individual chart items should be marked as selected or not.
@@ -62,7 +62,7 @@
          * @param {string[]}selectedItems - A list of CSS selectors for currently selected items
          * @param {string} selector - The selector for the item being drawn
          */
-        var selectedClassName = function(selectedItems, selector) {
+        function selectedClassName(selectedItems, selector) {
             var selected = '';
 
             if (selectedItems.length) {
@@ -70,7 +70,7 @@
             }
 
             return selected;
-        };
+        }
 
 
         /*
@@ -88,7 +88,7 @@
         };
 
 
-        var arrayDataSet = function(orderFunction, topValues) {
+        function arrayDataSet(orderFunction, topValues) {
 
             // Take a shallow copy of the data array
             var data = self.data.slice(0);
@@ -101,7 +101,7 @@
             }
 
             return data;
-        };
+        }
 
 
         // Public methods

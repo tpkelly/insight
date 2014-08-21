@@ -33,10 +33,10 @@
         }];
 
 
-        var tooltipFunction = function(d) {
+        function tooltipFunction(d) {
             var func = self.currentSeries.valueFunction;
             return self.tooltipFormat()(func(d));
-        };
+        }
 
         /*
          * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
@@ -156,20 +156,20 @@
             return position;
         };
 
-        var click = function(filter) {
+        function click(filter) {
             return self.click(this, filter);
-        };
+        }
 
-        var duration = function(d, i) {
+        function duration(d, i) {
             return 200 + (i * 20);
-        };
+        }
 
-        var mouseOver = function(data, i) {
+        function mouseOver(data, i) {
             var seriesName = this.getAttribute('in_series');
             var seriesFunction = seriesFunctions[seriesName];
 
             self.mouseOver.call(this, data, i, seriesFunction);
-        };
+        }
 
 
         this.seriesSpecificClassName = function(d) {
@@ -189,10 +189,10 @@
             var groupSelector = 'g.' + insight.Constants.BarGroupClass,
                 barSelector = 'rect.' + insight.Constants.BarGroupClass;
 
-            var reset = function(d) {
+            function reset(d) {
                 d.yPos = 0;
                 d.xPos = 0;
-            };
+            }
 
             var data = self.dataset();
 
@@ -208,22 +208,22 @@
 
             var newBars = newGroups.selectAll(barSelector);
 
-            var barHeight = function(d) {
+            function barHeight(d) {
                 var func = self.currentSeries.valueFunction;
 
                 return (chart.height() - chart.margin()
                     .top - chart.margin()
                     .bottom) - self.y.scale(func(d));
-            };
+            }
 
-            var opacity = function() {
+            function opacity() {
                 // If we are using selected/notSelected, then make selected more opaque than notSelected
                 if (this.classList && this.classList.contains("notselected"))
                     return 0.5;
 
                 //If not using selected/notSelected, make everything semi-transparent
                 return 1;
-            };
+            }
 
             for (var seriesIndex in self.series) {
 

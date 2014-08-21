@@ -1,12 +1,12 @@
 (function() {
 
-    var isMissing = function(that, name) {
+    function isMissing(that, name) {
         return that[name] === undefined;
-    };
+    }
 
-    var isDefined = function(that, name) {
+    function isDefined(that, name) {
         return !isMissing(that, name);
-    };
+    }
 
     var undefinedMessages = [];
 

@@ -16,7 +16,7 @@ insight.Utils = (function() {
      * @param {object} b - Description
      * @param {object[]} sorters - A list of sorting rules [{sortFunction: function(a){return a.valueToSortOn;}, order: 'ASC'}]
      */
-    var recursiveSort = function(a, b, sorters) {
+    function recursiveSort(a, b, sorters) {
         if (sorters.length === 0)
             return 0;
 
@@ -33,7 +33,7 @@ insight.Utils = (function() {
 
         var sortResult = (aResult > bResult) ? 1 : -1;
         return (sortOrder === 'ASC') ? sortResult : -sortResult;
-    };
+    }
 
 
     // Public Functions
@@ -225,10 +225,10 @@ insight.Utils = (function() {
 
         // create a comparison function that takes two values, and tries to sort them according to the provided sorting functions and orders.
         // the sorting functions will be recursively tested if the values a and b are equal until an ordering is established or all or the sorter list is exhausted.
-        var sortFunction = function(a, b) {
+        function sortFunction(a, b) {
             var result = recursiveSort(a, b, sorters, 0);
             return result;
-        };
+        }
 
         return array.sort(sortFunction);
     };
