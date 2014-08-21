@@ -54,12 +54,5 @@
         "script": "examples/groupprocessing.js",
         "partial": "examples/partials/groupprocessing.html",
         "partialCSS": "examples/css/example.css"
-    },
-    {
-        "name": "crossfiltering",
-        "pageName": "Crossfiltering", 
-        "script": "examples/crossfiltering.js",
-        "partial": "examples/partials/crossfiltering.html",
-        "partialCSS": "examples/css/example.css"
     }
 ]
