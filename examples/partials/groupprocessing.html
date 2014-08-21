@@ -1,0 +1,64 @@
+<div class="row">
+    <div class="col-md-6 description" >
+        <p>
+            This pareto chart shows the cumulative contribution of a list of clients to total revenue, as a percentage
+            of total revenue.
+        </p>
+        <p>
+            The <code>dataset</code> in this example is an <code>insight.DataSet</code> containing employee objects with
+            <code>Client</code> and <code>CurrentRevenue</code> properties.
+        </p>
+        <p>
+            The client group is created like this:
+
+            <code class="language-javascript">
+var clientGroup = dataset.group('clients', function(d) {
+    return d.Client;
+})
+.sum(['CurrentRevenue'])
+.cumulative(['CurrentRevenue.Sum'])
+.orderFunction(function(a, b) {
+    return b.value.CurrentRevenue.Sum - a.value.CurrentRevenue.Sum;
+});
+            </code>
+        </p>
+
+        <p>
+            This causes the data to be grouped by <code>Client</code> with each client group containing a
+            <code>CurrentRevenue.Sum</code> property and a <code>CurrentRevenue.SumCumulative</code> property.
+        </p>
+        <p>
+            Calling <code>clientGroup.postAggregation(someFunction)</code> on a group allows further processing to be
+            done on the group. This pareto chart uses the <code>CurrentRevenue.Sum</code> and
+            <code>CurrentRevenue.SumCumulative</code> properties of each client, in order to calculate the percentage
+            that the client contributed to total revenue and store it in the <code>Percentage</code> property for each
+            client:
+
+            <code class="language-javascript">
+
+var aggregateFunction = function(clientGrouping)
+{
+    var total = 0;
+
+    clientGrouping.getData()
+        .forEach(function(client) {
+            total += client.value.CurrentRevenue.Sum;
+        });
+
+    clientGrouping.getData()
+        .forEach(function(client) {
+            client.value.Percentage = client.value.CurrentRevenue.SumCumulative / total;
+        });
+};
+
+clientGroup.postAggregation(aggregateFunction);
+
+            </code>
+        </p>
+
+    </div>
+
+    <div id="pareto" class="exampleChart col-md-6">
+
+    </div>
+</div>
