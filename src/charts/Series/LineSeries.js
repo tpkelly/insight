@@ -19,17 +19,17 @@
 
         this.classValues = [insight.Constants.LineClass];
 
-        var lineOver = function(d, item) {
+        function lineOver(d, item) {
 
-        };
+        }
 
-        var lineOut = function(d, item) {
+        function lineOut(d, item) {
 
-        };
+        }
 
-        var lineClick = function(d, item) {
+        function lineClick(d, item) {
 
-        };
+        }
 
         /**
          * Whether or not to show circular points on top of the line for each datapoint.

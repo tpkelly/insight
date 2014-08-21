@@ -33,22 +33,22 @@
             reversedPosition = false,
             zoomable = false;
 
-        var orientation = function() {
+        function orientation() {
             if (self.horizontal()) {
                 return (reversedPosition) ? 'top' : 'bottom';
             } else {
                 return (reversedPosition) ? 'right' : 'left';
             }
-        };
+        }
 
-        var textAnchor = function() {
+        function textAnchor() {
             var orientation = self.orientation();
             if (orientation === 'left' || orientation === 'top') {
                 return 'end';
             } else {
                 return 'start';
             }
-        };
+        }
 
         // private functions
 
@@ -57,15 +57,15 @@
          * @returns {object} tickPoint - The axis data for a particular tick
          * @param {object} ticklabel - The output string to be displayed
          */
-        var format = function(d) {
+        function format(d) {
             return d;
-        };
+        }
 
         /*
          * This method calculates the scale ranges for this axis, given a range type function and using the calculated output bounds for this axis.
          * @param {rangeType} rangeType - a d3 range function, which can either be in bands (for columns) or a continuous range
          */
-        var applyScaleRange = function(rangeType) {
+        function applyScaleRange(rangeType) {
 
             // x-axis goes from 0 (left) to max (right)
             // y-axis goes from max (top) to 0 (bottom)
@@ -74,7 +74,7 @@
             rangeType.apply(this, [
                 rangeBounds, self.barPadding()
             ]);
-        };
+        }
 
         this.barPadding = function(_) {
             if (!arguments.length) {
@@ -88,7 +88,7 @@
          * For an ordinal/categorical axis, this method queries all series that use this axis to get the list of available values
          * @returns {object[]} values - the values for this ordinal axis
          */
-        var findOrdinalValues = function() {
+        function findOrdinalValues() {
             var vals = [];
 
             // Build a list of values used by this axis by checking all Series using this axis
@@ -101,13 +101,13 @@
             vals = insight.Utils.arrayUnique(vals);
 
             return vals;
-        };
+        }
 
         /*
          * Calculates the minimum value to be used in this axis.
          * @returns {object} - The smallest value in the datasets that use this axis
          */
-        var findMin = function() {
+        function findMin() {
             var min = Number.MAX_VALUE;
 
             self.series.map(function(series) {
@@ -117,13 +117,13 @@
             });
 
             return min;
-        };
+        }
 
         /*
          * Calculates the maximum value to be used in this axis.
          * @returns {object} - The largest value in the datasets that use this axis
          */
-        var findMax = function() {
+        function findMax() {
             var max = 0;
 
             self.series.map(function(series) {
@@ -133,7 +133,7 @@
             });
 
             return max;
-        };
+        }
 
         // public functions
 

@@ -24,7 +24,7 @@
          * alerting any other elements using the same Dimension that they need to
          * update to highlight the selected slices of the Dimension
          */
-        var notifyListeners = function(dimensionName, dimensionSelector) {
+        function notifyListeners(dimensionName, dimensionSelector) {
             var listeningObjects = self.dimensionListenerMap[dimensionName];
 
             if (listeningObjects != null) {
@@ -34,13 +34,13 @@
                 });
 
             }
-        };
+        }
 
         /*
          * This function takes a list of series and binds the click events of each one to the ChartGroup
          * filtering handler. It also adds the series' dataset to the internal list.
          */
-        var addSeries = function(chart) {
+        function addSeries(chart) {
             chart.series()
                 .forEach(function(series) {
 
@@ -50,24 +50,24 @@
 
                     addDataSet(series.data);
                 });
-        };
+        }
 
         /* 
          * This function is called when a Chart belonging to this ChartGroup updates its list of Series.
          * The ChartGroup needs to register the click events and any crossfilter dimensions belonging to
          * the Series.
          */
-        var newSeries = function(chart, series) {
+        function newSeries(chart, series) {
 
             addSeries(chart, series);
-        };
+        }
 
 
         /* 
          * This function checks if the provided DataSet is crossfilter enabled,
          * and if so, adds its components to internal lists of Groupings and Dimensions.
          */
-        var addDataSet = function(dataset) {
+        function addDataSet(dataset) {
 
             // If this is a crossfilter enabled DataSet (aggregated and filter enabled)
             var crossfilterEnabled = dataset.dimension;
@@ -78,7 +78,7 @@
                 insight.Utils.addToSet(self.groupings, dataset);
                 insight.Utils.addToSet(self.dimensions, dataset.dimension);
             }
-        };
+        }
 
         /*
          * Adds a Table to this ChartGroup, wiring up the Table's events to any
@@ -86,7 +86,7 @@
          * @memberof! insight.ChartGroup
          * @instance
          */
-        var addTable = function(table) {
+        function addTable(table) {
 
             // wire up the click event of the table to the filter handler of the DataSet
             table.clickEvent = self.chartFilterHandler;
@@ -96,7 +96,7 @@
             self.tables.push(table);
 
             return table;
-        };
+        }
 
 
         /*
@@ -104,7 +104,7 @@
          * @memberof! insight.ChartGroup
          * @instance
          */
-        var addChart = function(chart) {
+        function addChart(chart) {
 
             chart.seriesChanged = newSeries;
 
@@ -113,7 +113,7 @@
             self.charts.push(chart);
 
             return chart;
-        };
+        }
 
 
         /*
@@ -121,7 +121,7 @@
          * to the map of items subscribed to events on that Dimension,
          * only if the provided DataSet is a crossfilter enabled one that exposes a dimension property.
          */
-        var addDimensionListener = function(dataset, widget) {
+        function addDimensionListener(dataset, widget) {
             var dimension = dataset ? dataset.dimension : null;
 
             if (dimension) {
@@ -138,7 +138,7 @@
                     self.dimensionListenerMap[dimension.name] = [widget];
                 }
             }
-        };
+        }
 
         // public methods
 

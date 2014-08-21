@@ -45,7 +45,7 @@
 
         // private functions
 
-        var onWindowResize = function() {
+        function onWindowResize() {
 
             var scrollBarWidth = 50;
             var left = self.container[0][0].offsetLeft;
@@ -57,9 +57,9 @@
 
             self.resizeWidth(widthWithoutScrollBar);
 
-        };
+        }
 
-        var init = function(create, container) {
+        function init(create, container) {
             initialized = true;
 
             window.addEventListener('resize', onWindowResize);
@@ -90,10 +90,10 @@
                 .attr('class', insight.Constants.AxisLabelClass);
 
             self.addClipPath();
-        };
+        }
 
 
-        var initZoom = function() {
+        function initZoom() {
 
             self.zoom = d3.behavior.zoom()
                 .on('zoom', self.dragging.bind(self));
@@ -116,7 +116,7 @@
                 .call(self.zoom);
 
             zoomInitialized = true;
-        };
+        }
 
         // public methods
 

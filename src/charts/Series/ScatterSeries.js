@@ -99,10 +99,10 @@
             return this;
         };
 
-        var className = function(d) {
+        function className(d) {
 
             return selector + " " + insight.Constants.Scatter + " " + self.dimensionName;
-        };
+        }
 
         this.scatterData = function(data) {
             var max = d3.max(data, radiusFunction);
@@ -130,9 +130,9 @@
                 return 200 + (i * 20);
             };
 
-            var click = function(filter) {
+            function click(filter) {
                 return self.click(this, filter);
-            };
+            }
 
             var scatterData = this.scatterData(this.dataset());
 
