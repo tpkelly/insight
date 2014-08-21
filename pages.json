@@ -61,5 +61,12 @@
         "script": "examples/crossfiltering.js",
         "partial": "examples/partials/crossfiltering.html",
         "partialCSS": "examples/css/example.css"
+    },
+    {
+        "name": "correlation",
+        "pageName": "Correlation",
+        "script": "examples/correlation.js",
+        "partial": "examples/partials/correlation.html",
+        "partialCSS": "examples/css/example.css"
     }
 ]
