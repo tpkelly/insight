@@ -1,9 +1,21 @@
 <div class="row">
-    <div class="col-md-4">
-        <ul>
-            <li>Click some bubbles or table rows to filter the ratings chart by genre.</li>
-            <li>Click an age rating bar to filter the bubble chart and table by age rating.</li>
-        </ul>
+    <div class="col-md-4 description">
+        <p>
+            Add charts or tables to a <code>ChartGroup</code> to see crossfiltering in action.
+            <code class="language-javascript">
+var chartGroup = new insight.ChartGroup();
+chartGroup.add(genreColumnChart);
+chartGroup.add(ageRatingsRowChart);
+chartGroup.add(genreTable);
+            </code>
+        </p>
+        <p>
+            Clicking a genre bubble or row will cause that genre to be highlighted across all charts and tables that are
+            grouped by genre, and the age rating row chart will be filtered to only include the selected genres.
+        </p>
+        <p>
+            Try filtering the data in these charts. What is the average price of an entertainment app that is rated 17+?
+        </p>
     </div>
     <div id="bubbles" class="col-md-4">
     </div>
