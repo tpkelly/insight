@@ -119,11 +119,11 @@ insight.correlation = (function(insight) {
 
     /*
      * Returns an array based on the given object.
-     * If the object is an insight.DataSet then its data is returned, otherwise the array id returned directly.
+     * If the object is an insight.DataSet or an insight.Grouping then its data is returned, otherwise the array id returned directly.
      */
     function getArray(obj) {
 
-        if (obj instanceof insight.DataSet) {
+        if (obj instanceof insight.DataSet || obj instanceof insight.Grouping) {
             return obj.getData();
         }
 
