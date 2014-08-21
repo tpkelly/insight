@@ -39,7 +39,7 @@
             bubbleChart.xAxis(bubbleX)
                        .yAxis(bubbleY);
 
-            var bubbles = new insight.BubbleSeries('bubbles', bubbleData, bubbleX, bubbleY, '#336699')
+            var bubbles = new insight.BubbleSeries('bubbles', bubbleData, bubbleX, bubbleY)
                 .keyFunction(function(d)
                 {
                     return d.value.averageUserRating.Average;
@@ -56,6 +56,10 @@
                 {
                     return d.key + " <br/> Average App Size (Mb) = " + Math.round(d.value.fileSizeBytes.Average/1024/1024);
                 });
+
+            // set RowSeries to first color in the default series palette
+            //  - workaround until ColumnSeries has sub-series removed
+            bubbles.color = d3.functor(insight.defaultTheme.chartStyle.seriesPalette[0]);
 
             bubbleChart.series([bubbles]);
             chartGroup.add(bubbleChart);
@@ -86,8 +90,12 @@
             chart.xAxis(x)
                  .yAxis(y);
 
-            var lSeries = new insight.ColumnSeries('languages', languages, x, y, '#336699')
+            var lSeries = new insight.ColumnSeries('languages', languages, x, y)
                 .top(10);
+
+            // set ColumnSeries to first color in the default series palette
+            //  - workaround until ColumnSeries has sub-series removed
+            lSeries.series[0].color = d3.functor(insight.defaultTheme.chartStyle.seriesPalette[0]);
 
             chart.series([lSeries]);
             chartGroup.add(chart);
@@ -118,8 +126,12 @@
         chart.xAxis(x)
              .yAxis(y);
 
-        var series = new insight.ColumnSeries('genre', genreData, x, y, '#336699')
+        var series = new insight.ColumnSeries('genre', genreData, x, y)
                                 .valueFunction(function(d){ return d.value.Count; });
+
+        // set ColumnSeries to first color in the default series palette
+        //  - workaround until ColumnSeries has sub-series removed
+        series.series[0].color = d3.functor(insight.defaultTheme.chartStyle.seriesPalette[0]);
 
         chart.series([series]);
         chartGroup.add(chart);
@@ -150,7 +162,7 @@
             timeChart.xAxis(xTime)
                      .yAxis(yTime);
 
-            var cumulative = new insight.LineSeries('valueLine', timeData, xTime, yTime, '#336699')
+            var cumulative = new insight.LineSeries('valueLine', timeData, xTime, yTime)
                 .valueFunction(function(d)
                 {
                     return d.value.CountCumulative;
@@ -195,9 +207,13 @@
         chart.xAxis(x)
              .yAxis(y);
 
-        var rowSeries = new insight.RowSeries('content', contentRating, x, y, '#336699')
+        var rowSeries = new insight.RowSeries('content', contentRating, x, y)
                                    .valueFunction(function(d){ return d.value.Count;});
-        
+
+        // set ColumnSeries to first color in the default series palette
+        //  - workaround until ColumnSeries has sub-series removed
+        rowSeries.series[0].color = d3.functor(insight.defaultTheme.chartStyle.seriesPalette[0]);
+
         chart.series().push(rowSeries);
         chartGroup.add(chart);
         
