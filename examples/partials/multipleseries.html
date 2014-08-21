@@ -17,11 +17,10 @@ var targetPoints = new insight.MarkerSeries('Target', leaguePlaces, x, y)
         return d.targetPoints;
     })
     .widthFactor(0.7);
+
+// add all series as one array
+chart.series([currentPoints, targetPoints]);
             </code>
-        </p>
-        <p>
-            Series are added to a chart as an array. So to use multiple series, use
-            <code>chart.series([currentPoints, targetPoints])</code>.
         </p>
     </div>
 
