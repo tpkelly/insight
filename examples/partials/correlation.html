@@ -7,11 +7,10 @@
         <p>
             Correlations can either be on raw data using <code>insight.correlation.fromValues(xValues, yValues)</code>,
             or on a dataset using <code>insight.correlation.fromDataSet(dataset, xFunction, yFunction)</code>. Both of
-            these can also take an additional <code>errorContainer</code> argument, which is populated with data about
+            these can also take an additional <code>insight.ErrorContainer</code> argument, which is populated with data about
             any errors encountered when processing the data.
         </p>
         <p>Change the axis measurements to see how the correlation coefficient changes.</p>
-        <p><b>Correlation coefficient</b>: <span id="correlationCoefficient">0</span></p>
         <div>
             <div>
                 <h4>
@@ -40,6 +39,6 @@
 
 
     <div id="bubbleChart" class="exampleChart col-md-6">
-
+        <p><b>Correlation coefficient</b>: <span id="correlationCoefficient">0</span></p>
     </div>
 </div>

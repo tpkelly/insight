@@ -69,9 +69,32 @@ $(document)
                 var correlation = insight.correlation.fromDataSet(genres, scatter.keyFunction(), scatter.valueFunction());
                 var coefficientDiv = document.getElementById('correlationCoefficient');
                 coefficientDiv.innerHTML = correlation.toFixed(3);
-                console.log(correlation);
 
                 scatterChart.draw();
+            }
+
+            function selectButton(selectedButton, deselectedButtons)
+            {
+                //Select the selected button
+                if (!$(selectedButton)
+                    .hasClass('selected'))
+                {
+                    $(selectedButton)
+                        .addClass('selected')
+                }
+
+                //Deselect the other buttons
+                deselectedButtons.forEach(function(button)
+                {
+                    if ($(button)
+                        .hasClass('selected'))
+                    {
+                        $(button)
+                            .removeClass('selected')
+                    }
+                });
+
+                buttonClick();
             }
 
             $('#yavgrating')
@@ -82,7 +105,8 @@ $(document)
                         return d.value.averageUserRating.Average;
                     });
                     yAxis.label('Average Rating');
-                    buttonClick();
+
+                    selectButton('#yavgrating', ['#yavgratings', '#yavgprice']);
                 });
 
 
@@ -94,7 +118,8 @@ $(document)
                         return d.value.userRatingCount.Average;
                     });
                     yAxis.label('Avg # Ratings');
-                    buttonClick();
+
+                    selectButton('#yavgratings', ['#yavgrating', '#yavgprice']);
                 });
 
             $('#yavgprice')
@@ -105,7 +130,8 @@ $(document)
                         return d.value.price.Average;
                     });
                     yAxis.label('Average Price');
-                    buttonClick();
+
+                    selectButton('#yavgprice', ['#yavgrating', '#yavgratings']);
                 });
 
             $('#xsumrating')
@@ -116,7 +142,8 @@ $(document)
                         return d.value.userRatingCount.Sum;
                     });
                     xAxis.label('Total Ratings');
-                    buttonClick();
+
+                    selectButton('#xsumrating', ['#xavgrating', '#xavgsize']);
                 });
 
             $('#xavgrating')
@@ -127,7 +154,8 @@ $(document)
                         return d.value.averageUserRating.Average;
                     });
                     xAxis.label('Average Rating');
-                    buttonClick();
+
+                    selectButton('#xavgrating', ['#xsumrating', '#xavgsize']);
                 });
 
             $('#xavgsize')
@@ -139,7 +167,8 @@ $(document)
                         return d.value.fileSizeBytes.Average / 1024 / 1024;
                     });
                     xAxis.label('Average File Size (Mb)');
-                    buttonClick();
+
+                    selectButton('#xavgsize', ['#xavgrating', '#xsumrating']);
                 });
         });
 

@@ -218,4 +218,15 @@ img
 
 }
 
+button {
+  border-width:0
+}
+
+
+button.selected {
+  background-color: #ccc;
+  border-width: 1;
+  border-color: #aaa;
+}
+
 
