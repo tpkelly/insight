@@ -15,9 +15,9 @@ $(document)
             var y = new insight.Axis('', insight.Scales.Linear)
                 .tickLabelFormat(function(tickValue)
                 {
-                    var thousands = tickValue / 1000;
-                    var thousandsNoDecimal = insight.Formatters.format('d', thousands);
-                    return '£' + thousandsNoDecimal + 'k';
+                    var thousands = (tickValue / 1000)
+                        .toFixed(0);
+                    return '£' + thousands + 'k';
                 });
 
             var clientRevenues = new insight.ColumnSeries('clientColumn', clientData, x, y)
