@@ -151,7 +151,7 @@
                 .attr('cx', self.rangeX)
                 .attr('cy', self.rangeY)
                 .attr('opacity', opacityFunction)
-                .attr('fill', this.color);
+                .style('fill', this.color);
         };
     };
 
