@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Namespace: insight</title>
+    <title>Class: Theme</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -807,7 +807,7 @@
     </ul>
 </div>
     <div class="main">
-        <h1 class="page-title" data-filename="insight.html">Namespace: insight</h1>
+        <h1 class="page-title" data-filename="insight.Theme.html">Class: Theme</h1>
         
 
 
@@ -816,7 +816,9 @@
     
 <header>
     <h2>
-    insight
+        <span class="ancestors"><a href="insight.html">insight</a>.</span>
+    
+    Theme
     </h2>
     
 </header>  
@@ -827,319 +829,35 @@
     
     
         
-            <div class="description">This is the global namespace.</div>
-        
-        
-        
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-        
-        
-    
-    </div>
-    
-    
-    
-    
-    
-    
-    
-    
-        <h3 class="subsection-title">Classes</h3>
-        
-        <dl>
-            <dt><a href="insight.Axis.html">Axis</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.AxisGridlines.html">AxisGridlines</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.BubbleSeries.html">BubbleSeries</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.Chart.html">Chart</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.ChartGroup.html">ChartGroup</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.ColumnSeries.html">ColumnSeries</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.DataSet.html">DataSet</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.Dimension.html">Dimension</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.ErrorContainer.html">ErrorContainer</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.Legend.html">Legend</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.LightTheme.html">LightTheme</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.LineSeries.html">LineSeries</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.MarginMeasurer.html">MarginMeasurer</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.MarkerSeries.html">MarkerSeries</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.RowSeries.html">RowSeries</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.ScatterSeries.html">ScatterSeries</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.Series.html">Series</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.Table.html">Table</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.Theme.html">Theme</a></dt>
-            <dd></dd>
-        
-            <dt><a href="insight.Tooltip.html">Tooltip</a></dt>
-            <dd></dd>
-        </dl>
-    
-    
-    
-        <h3 class="subsection-title">Namespaces</h3>
-        
-        <dl>
-            <dt><a href="namespaces.html#insight.correlation"><a href="insight.correlation.html">correlation</a></a></dt>
-            <dd></dd>
-        
-            <dt><a href="namespaces.html#insight.Formatters"><a href="insight.Formatters.html">Formatters</a></a></dt>
-            <dd></dd>
-        </dl>
-    
-    
-    
-        <h3 class="subsection-title">Members</h3>
-        
-        <dl>
-            
 <dt>
     <div class="nameContainer">
-        <h4 class="name" id="ErrorMessages"><span class="type-signature static">static</span>insight.ErrorMessages<span class="type-signature type string">String</span> </h4>
+        <h4 class="name" id="Theme">
+            
+            new insight.Theme<span class="signature">()</span>
+        </h4>
     </div>
-    
+
     
 </dt>
 <dd>
     
+    
     <div class="description">
-        Error messages used throughout the library
+        The Theme base class provides the basic structure of a theme, to allow the Chart, Series or Axis to extract values
+from it to style themselves.
+
+All values are `undefined`, being properly set in the subclasses of Theme.
     </div>
+    
+
+    
+    
+    
+    
     
     
     
 <dl class="details">
-    
-        
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
-
-<table class="props">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		<th>Default</th>
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>invalidArrayParameterException</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-                <td class="default">
-                
-                    Expects array parameter.
-                
-                </td>
-            
-            
-            <td class="description last"></td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>invalidDataSetOrArrayParameterException</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-                <td class="default">
-                
-                    Expects insight.DataSet or an object Array parameter.
-                
-                </td>
-            
-            
-            <td class="description last"></td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>invalidFunctionParameterException</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-                <td class="default">
-                
-                    Expects function parameter.
-                
-                </td>
-            
-            
-            <td class="description last"></td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>nonNumericalPairsException</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-                <td class="default">
-                
-                    ADD
-                
-                </td>
-            
-            
-            <td class="description last"></td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>unequalLengthArraysException</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-                <td class="default">
-                
-                    Expects both arrays to have equal length.
-                
-                </td>
-            
-            
-            <td class="description last"></td>
-        </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
     
         
     
@@ -1165,9 +883,31 @@
 
     
     
+
+    
+
+    
+    
+    
+    
+    
+    
+    
 </dd>
 
-        </dl>
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
