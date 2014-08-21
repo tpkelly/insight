@@ -68,5 +68,12 @@
         "script": "examples/correlation.js",
         "partial": "examples/partials/correlation.html",
         "partialCSS": "examples/css/example.css"
+    },
+    {
+        "name": "grouping",
+        "pageName": "Grouping data",
+        "script": "examples/grouping.js",
+        "partial": "examples/partials/grouping.html",
+        "partialCSS": "examples/css/example.css"
     }
 ]
