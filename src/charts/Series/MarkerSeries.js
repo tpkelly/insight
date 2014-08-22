@@ -12,12 +12,16 @@
 
         insight.Series.call(this, name, data, x, y);
 
+        // Private variables ------------------------------------------------------------------------------------------
+
         var self = this,
             thickness = 5,
             widthFactor = 1,
             offset = 0,
             horizontal = false,
             vertical = true;
+
+        // Internal functions -----------------------------------------------------------------------------------------
 
         this.xPosition = function(d) {
             var pos = 0;
@@ -84,51 +88,6 @@
             return this;
         };
 
-        /**
-         * The width of the marker, as a proportion of the column width.
-         * @memberof! insight.MarkerSeries
-         * @instance
-         * @returns {Number} - The current width proportion.
-         *
-         * @also
-         *
-         * Sets the width of the marker, as a proportion of the column width.
-         * @memberof! insight.MarkerSeries
-         * @instance
-         * @param {Number} widthProportion The new width proportion.
-         * @returns {this}
-         */
-        this.widthFactor = function(_) {
-
-            if (!arguments.length) {
-                return widthFactor;
-            }
-            widthFactor = _;
-            return this;
-        };
-
-        /**
-         * The thickeness of the marker, in pixels.
-         * @memberof! insight.MarkerSeries
-         * @instance
-         * @returns {Number} - The current marker thickness.
-         *
-         * @also
-         *
-         * Sets the thickeness of the marker, in pixels.
-         * @memberof! insight.MarkerSeries
-         * @instance
-         * @param {Number} thickness The new thickeness, in pixels.
-         * @returns {this}
-         */
-        this.thickness = function(_) {
-            if (!arguments.length) {
-                return thickness;
-            }
-            thickness = _;
-            return this;
-        };
-
         this.markerWidth = function(d) {
             var w = 0;
 
@@ -152,8 +111,6 @@
 
             return h;
         };
-
-
 
         this.draw = function(chart, drag) {
 
@@ -210,7 +167,53 @@
                 .remove();
         };
 
-        return this;
+        // Public functions -------------------------------------------------------------------------------------------
+
+        /**
+         * The width of the marker, as a proportion of the column width.
+         * @memberof! insight.MarkerSeries
+         * @instance
+         * @returns {Number} - The current width proportion.
+         *
+         * @also
+         *
+         * Sets the width of the marker, as a proportion of the column width.
+         * @memberof! insight.MarkerSeries
+         * @instance
+         * @param {Number} widthProportion The new width proportion.
+         * @returns {this}
+         */
+        this.widthFactor = function(_) {
+
+            if (!arguments.length) {
+                return widthFactor;
+            }
+            widthFactor = _;
+            return this;
+        };
+
+        /**
+         * The thickeness of the marker, in pixels.
+         * @memberof! insight.MarkerSeries
+         * @instance
+         * @returns {Number} - The current marker thickness.
+         *
+         * @also
+         *
+         * Sets the thickeness of the marker, in pixels.
+         * @memberof! insight.MarkerSeries
+         * @instance
+         * @param {Number} thickness The new thickeness, in pixels.
+         * @returns {this}
+         */
+        this.thickness = function(_) {
+            if (!arguments.length) {
+                return thickness;
+            }
+            thickness = _;
+            return this;
+        };
+
     };
 
     insight.MarkerSeries.prototype = Object.create(insight.Series.prototype);

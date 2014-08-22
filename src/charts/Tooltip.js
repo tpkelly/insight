@@ -5,22 +5,25 @@
      */
     insight.Tooltip = function Tooltip() {
 
-        // Private variables
+        // Private variables ------------------------------------------------------------------------------------------
+
         var className = insight.Constants.Tooltip,
             self = this,
             chartContainer = null,
-            styles = {},
-            offset = {
-                x: 0,
-                y: 0
-            },
-            baseStyles = {
-                'position': 'absolute',
-                'opacity': '0',
-                'top': '0',
-                'pointer-events': 'none',
-                'box-sizing': 'border-box'
-            };
+            styles = {};
+
+        var offset = {
+            x: 0,
+            y: 0
+        };
+
+        var baseStyles = {
+            'position': 'absolute',
+            'opacity': '0',
+            'top': '0',
+            'pointer-events': 'none',
+            'box-sizing': 'border-box'
+        };
 
 
 

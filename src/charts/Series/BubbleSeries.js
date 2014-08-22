@@ -12,17 +12,17 @@
 
         insight.Series.call(this, name, data, x, y);
 
-        // private variables
+        // Private variables ------------------------------------------------------------------------------------------
 
         var self = this,
             selector = this.name + insight.Constants.Bubble,
             radiusFunction = d3.functor(10);
 
-
-        // public variables
+        // Internal variables -------------------------------------------------------------------------------------------
 
         this.classValues = [insight.Constants.Bubble];
 
+        // Internal functions -----------------------------------------------------------------------------------------
 
         this.rangeY = function(d) {
             return self.y.scale(self.valueFunction()(d));
@@ -30,29 +30,6 @@
 
         this.rangeX = function(d, i) {
             return self.x.scale(self.keyFunction()(d));
-        };
-
-        /**
-         * The function to extract the radius of each bubble from the data objects.
-         * @memberof! insight.BubbleSeries
-         * @instance
-         * @returns {function} - The current function used to determine the radius of data objects.
-         *
-         * @also
-         *
-         * Sets the function to extract the radius of each bubble from the data objects.
-         * @memberof! insight.BubbleSeries
-         * @instance
-         * @param {boolean} reversed The new function to extract the radius of each bubble from the data objects.
-         * @returns {this}
-         */
-        this.radiusFunction = function(radiusFunc) {
-            if (!arguments.length) {
-                return radiusFunction;
-            }
-            radiusFunction = radiusFunc;
-
-            return this;
         };
 
         /*
@@ -71,7 +48,6 @@
 
             return d3.max(data, func);
         };
-
 
         this.bubbleData = function(data) {
             var max = d3.max(data, radiusFunction);
@@ -156,6 +132,32 @@
                 .attr('opacity', opacity)
                 .style('fill', this.color);
         };
+
+        // Public functions -------------------------------------------------------------------------------------------
+
+        /**
+         * The function to extract the radius of each bubble from the data objects.
+         * @memberof! insight.BubbleSeries
+         * @instance
+         * @returns {function} - The current function used to determine the radius of data objects.
+         *
+         * @also
+         *
+         * Sets the function to extract the radius of each bubble from the data objects.
+         * @memberof! insight.BubbleSeries
+         * @instance
+         * @param {boolean} reversed The new function to extract the radius of each bubble from the data objects.
+         * @returns {this}
+         */
+        this.radiusFunction = function(radiusFunc) {
+            if (!arguments.length) {
+                return radiusFunction;
+            }
+            radiusFunction = radiusFunc;
+
+            return this;
+        };
+
     };
 
     insight.BubbleSeries.prototype = Object.create(insight.Series.prototype);

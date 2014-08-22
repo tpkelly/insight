@@ -12,11 +12,21 @@
 
         insight.Series.call(this, name, data, x, y);
 
+        // Private variables ------------------------------------------------------------------------------------------
+
         var radiusFunction = d3.functor(3),
             opacityFunction = d3.functor(1),
             self = this,
             selector = this.name + insight.Constants.Scatter;
 
+        // Private functions ------------------------------------------------------------------------------------------
+
+        function className(d) {
+
+            return selector + " " + insight.Constants.Scatter + " " + self.dimensionName;
+        }
+
+        // Internal functions -----------------------------------------------------------------------------------------
 
         this.findMax = function(scale) {
             var self = this;
@@ -50,59 +60,6 @@
 
             return this;
         };
-
-        /**
-         * The radius of each point, in pixels.
-         * @memberof! insight.ScatterSeries
-         * @instance
-         * @returns {Number} - The current radius of each point, in pixels.
-         *
-         * @also
-         *
-         * Sets the radius of each point, in pixels.
-         * @memberof! insight.ScatterSeries
-         * @instance
-         * @param {Number} radius The new radius of each point, in pixels.
-         * @returns {this}
-         */
-        this.pointRadius = function(radius) {
-            if (!arguments.length) {
-                return radiusFunction();
-            }
-            radiusFunction = d3.functor(radius);
-
-            return this;
-        };
-
-        /**
-         * The opacity of each point. A number between 0.0 and 1.0 where
-         * 0.0 is completely transparent and 1.0 is completely opaque.
-         * @memberof! insight.ScatterSeries
-         * @instance
-         * @returns {Number} - The current opacity of each point (0.0 - 1.0).
-         *
-         * @also
-         *
-         * Sets the opacity of each point. A number between 0.0 and 1.0 where
-         * 0.0 is completely transparent and 1.0 is completely opaque.
-         * @memberof! insight.ScatterSeries
-         * @instance
-         * @param {Number} opacity The new opacity of each point.
-         * @returns {this}
-         */
-        this.pointOpacity = function(opacity) {
-            if (!arguments.length) {
-                return opacityFunction();
-            }
-            opacityFunction = d3.functor(opacity);
-
-            return this;
-        };
-
-        function className(d) {
-
-            return selector + " " + insight.Constants.Scatter + " " + self.dimensionName;
-        }
 
         this.scatterData = function(data) {
             var max = d3.max(data, radiusFunction);
@@ -153,6 +110,57 @@
                 .attr('opacity', opacityFunction)
                 .style('fill', this.color);
         };
+
+        // Public functions -------------------------------------------------------------------------------------------
+
+        /**
+         * The radius of each point, in pixels.
+         * @memberof! insight.ScatterSeries
+         * @instance
+         * @returns {Number} - The current radius of each point, in pixels.
+         *
+         * @also
+         *
+         * Sets the radius of each point, in pixels.
+         * @memberof! insight.ScatterSeries
+         * @instance
+         * @param {Number} radius The new radius of each point, in pixels.
+         * @returns {this}
+         */
+        this.pointRadius = function(radius) {
+            if (!arguments.length) {
+                return radiusFunction();
+            }
+            radiusFunction = d3.functor(radius);
+
+            return this;
+        };
+
+        /**
+         * The opacity of each point. A number between 0.0 and 1.0 where
+         * 0.0 is completely transparent and 1.0 is completely opaque.
+         * @memberof! insight.ScatterSeries
+         * @instance
+         * @returns {Number} - The current opacity of each point (0.0 - 1.0).
+         *
+         * @also
+         *
+         * Sets the opacity of each point. A number between 0.0 and 1.0 where
+         * 0.0 is completely transparent and 1.0 is completely opaque.
+         * @memberof! insight.ScatterSeries
+         * @instance
+         * @param {Number} opacity The new opacity of each point.
+         * @returns {this}
+         */
+        this.pointOpacity = function(opacity) {
+            if (!arguments.length) {
+                return opacityFunction();
+            }
+            opacityFunction = d3.functor(opacity);
+
+            return this;
+        };
+
     };
 
     insight.ScatterSeries.prototype = Object.create(insight.Series.prototype);

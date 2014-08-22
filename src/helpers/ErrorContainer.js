@@ -7,10 +7,13 @@
      */
     insight.ErrorContainer = function ErrorContainer() {
 
-        var data = null;
-        var message = null;
-        var state = insight.ErrorContainer.State.success;
+        // Private variables ------------------------------------------------------------------------------------------
 
+        var data = null,
+            message = null,
+            state = insight.ErrorContainer.State.success;
+
+        // Internal functions -----------------------------------------------------------------------------------------
 
         /*
          * Records an error message with optional data.
@@ -45,6 +48,8 @@
             state = insight.ErrorContainer.State.warning;
 
         };
+
+        // Public functions -------------------------------------------------------------------------------------------
 
         /**
          * The data associated with the error or warning.

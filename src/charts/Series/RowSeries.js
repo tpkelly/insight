@@ -12,10 +12,14 @@
 
         insight.Series.call(this, name, data, x, y);
 
+        // Private variables ------------------------------------------------------------------------------------------
+
         var self = this,
             stacked = d3.functor(false),
             seriesName = '',
             seriesFunctions = {};
+
+        // Internal variables -------------------------------------------------------------------------------------------
 
         this.valueAxis = x;
         this.keyAxis = y;
@@ -33,6 +37,17 @@
             label: 'Value'
         }];
 
+        // Private functions ------------------------------------------------------------------------------------------
+
+        function mouseOver(data, i) {
+
+            var seriesName = this.getAttribute('in_series');
+            var seriesFunction = seriesFunctions[seriesName];
+
+            self.mouseOver.call(this, data, i, seriesFunction);
+        }
+
+        // Internal functions -----------------------------------------------------------------------------------------
 
         /*
          * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
@@ -61,7 +76,6 @@
             return max;
         };
 
-
         /*
          * Extracts the maximum value on an axis for this series.
          * @memberof! insight.RowSeries
@@ -72,28 +86,6 @@
             var max = d3.max(self.dataset(), self.seriesMax);
 
             return max;
-        };
-
-        /**
-         * Determines whether the series should stack rows, or line them up side-by-side.
-         * @memberof! insight.RowSeries
-         * @instance
-         * @returns {boolean} - To stack or not to stack.
-         *
-         * @also
-         *
-         * Sets whether the series should stack rows, or line them up side-by-side.
-         * @memberof! insight.RowSeries
-         * @instance
-         * @param {boolean} stacked Whether the row series should be stacked.
-         * @returns {this}
-         */
-        this.stacked = function(_) {
-            if (!arguments.length) {
-                return stacked();
-            }
-            stacked = d3.functor(_);
-            return this;
         };
 
         this.calculateXPos = function(func, d) {
@@ -154,16 +146,6 @@
 
             return self.x.scale(func(d));
         };
-
-
-        function mouseOver(data, i) {
-
-            var seriesName = this.getAttribute('in_series');
-            var seriesFunction = seriesFunctions[seriesName];
-
-            self.mouseOver.call(this, data, i, seriesFunction);
-        }
-
 
         this.seriesSpecificClassName = function(d) {
 
@@ -255,9 +237,31 @@
                 .remove();
         };
 
-        return this;
-    };
+        // Public functions -------------------------------------------------------------------------------------------
 
+        /**
+         * Determines whether the series should stack rows, or line them up side-by-side.
+         * @memberof! insight.RowSeries
+         * @instance
+         * @returns {boolean} - To stack or not to stack.
+         *
+         * @also
+         *
+         * Sets whether the series should stack rows, or line them up side-by-side.
+         * @memberof! insight.RowSeries
+         * @instance
+         * @param {boolean} stacked Whether the row series should be stacked.
+         * @returns {this}
+         */
+        this.stacked = function(_) {
+            if (!arguments.length) {
+                return stacked();
+            }
+            stacked = d3.functor(_);
+            return this;
+        };
+
+    };
 
     insight.RowSeries.prototype = Object.create(insight.Series.prototype);
     insight.RowSeries.prototype.constructor = insight.RowSeries;

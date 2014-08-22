@@ -5,7 +5,7 @@ insight.Utils = (function() {
 
     var exports = {};
 
-    // Internal Functions
+    // Private functions -----------------------------------------------------------------------------------------
 
     /*
      * This recursive function takes two values a and b, a list of sort objects [{sortFunction: function(a){return a.valueToSortOn;}, order: 'ASC'}] and an index of the current function being used to sort.
@@ -35,8 +35,7 @@ insight.Utils = (function() {
         return (sortOrder === 'ASC') ? sortResult : -sortResult;
     }
 
-
-    // Public Functions
+    // Internal functions -------------------------------------------------------------------------------------------
 
     /*
      * Checks if an object is an array or not
@@ -156,15 +155,12 @@ insight.Utils = (function() {
         });
     };
 
-
-
     exports.removeItemFromArray = function(array, item) {
         var index = array.indexOf(item);
         if (index > -1) {
             array.splice(index, 1);
         }
     };
-
 
     exports.arrayUnique = function(array) {
         var a = array.concat();
@@ -211,7 +207,6 @@ insight.Utils = (function() {
         }
         return merged;
     };
-
 
     /**
      * Takes an array and a list of sort objects, sorting the array (in place) using the provided priorities and returning that array at the end.
@@ -272,7 +267,6 @@ insight.Utils = (function() {
         return bbox;
     };
 
-
     exports.valueForKey = function(dictionary, key, keyFunction, valueFunction) {
         var values = dictionary.filter(function(item) {
             return keyFunction(item) === key;
@@ -323,6 +317,6 @@ insight.Utils = (function() {
         return ctx;
     };
 
-
     return exports;
+
 }());

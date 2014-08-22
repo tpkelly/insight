@@ -5,7 +5,11 @@
      */
     insight.Legend = function Legend() {
 
+        // Private variables ------------------------------------------------------------------------------------------
+
         var initialised = false;
+
+        // Private functions ------------------------------------------------------------------------------------------
 
         function blobPositionY(item, index) {
             return index * 20 + 5;
@@ -23,6 +27,7 @@
             return item.name;
         }
 
+        // Internal functions -----------------------------------------------------------------------------------------
 
         this.init = function(chart) {
             initialised = true;
@@ -93,7 +98,7 @@
                 legendWidth = Math.max(legendWidth, seriesTextWidth + 25);
             }
 
-            //Adjust legend to tightly wrap items
+            // Adjust legend to tightly wrap items
             chart.legendBox
                 .attr("width", legendWidth)
                 .attr("height", legendHeight);
@@ -102,6 +107,7 @@
                 .attr("width", legendWidth)
                 .attr("height", legendHeight);
         };
+
     };
 
 })(insight);

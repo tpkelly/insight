@@ -12,13 +12,41 @@
 
         insight.Series.call(this, name, data, x, y);
 
+        // Private variables -----------------------------------------------------------------------------------------
+
         var self = this,
             stacked = d3.functor(false),
             seriesName = '',
             seriesFunctions = {},
             barWidthFunction = this.x.rangeType;
 
+        // Internal variables ------------------------------------------------------------------------------------------
+
         this.classValues = [insight.Constants.BarClass];
+
+        // Private functions -----------------------------------------------------------------------------------------
+
+        function tooltipFunction(d) {
+            var func = self.currentSeries.valueFunction;
+            return self.tooltipFormat()(func(d));
+        }
+
+        function click(filter) {
+            return self.click(this, filter);
+        }
+
+        function duration(d, i) {
+            return 200 + (i * 20);
+        }
+
+        function mouseOver(data, i) {
+            var seriesName = this.getAttribute('in_series');
+            var seriesFunction = seriesFunctions[seriesName];
+
+            self.mouseOver.call(this, data, i, seriesFunction);
+        }
+
+        // Internal functions ----------------------------------------------------------------------------------------
 
         this.series = [{
             name: 'default',
@@ -31,12 +59,6 @@
             color: this.color,
             label: 'Value'
         }];
-
-
-        function tooltipFunction(d) {
-            var func = self.currentSeries.valueFunction;
-            return self.tooltipFormat()(func(d));
-        }
 
         /*
          * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
@@ -64,7 +86,6 @@
             return max;
         };
 
-
         /*
          * Extracts the maximum value on an axis for this series.
          * @memberof! insight.ColumnSeries
@@ -75,29 +96,6 @@
             var max = d3.max(self.dataset(), self.seriesMax);
 
             return max;
-        };
-
-
-        /**
-         * Determines whether the series should stack columns, or line them up side-by-side.
-         * @memberof! insight.ColumnSeries
-         * @instance
-         * @returns {boolean} - To stack or not to stack.
-         *
-         * @also
-         *
-         * Sets whether the series should stack columns, or line them up side-by-side.
-         * @memberof! insight.ColumnSeries
-         * @instance
-         * @param {boolean} stacked Whether the column series should be stacked.
-         * @returns {this}
-         */
-        this.stacked = function(stack) {
-            if (!arguments.length) {
-                return stacked();
-            }
-            stacked = d3.functor(stack);
-            return this;
         };
 
         this.calculateYPos = function(func, d) {
@@ -132,8 +130,6 @@
             return position;
         };
 
-
-
         this.barWidth = function(d) {
             // comment for tom, this is the bit that is currently breaking the linear x axis, because d3 linear scales don't support the rangeBand() function, whereas ordinal ones do.
             // in js, you can separate the scale and range function using rangeBandFunction.call(self.x.scale, d), where rangeBandFunction can point to the appropriate function for the type of scale being used.
@@ -155,22 +151,6 @@
 
             return position;
         };
-
-        function click(filter) {
-            return self.click(this, filter);
-        }
-
-        function duration(d, i) {
-            return 200 + (i * 20);
-        }
-
-        function mouseOver(data, i) {
-            var seriesName = this.getAttribute('in_series');
-            var seriesFunction = seriesFunctions[seriesName];
-
-            self.mouseOver.call(this, data, i, seriesFunction);
-        }
-
 
         this.seriesSpecificClassName = function(d) {
 
@@ -265,7 +245,30 @@
                 .remove();
         };
 
-        return this;
+        // Public functions -------------------------------------------------------------------------------------------
+
+        /**
+         * Determines whether the series should stack columns, or line them up side-by-side.
+         * @memberof! insight.ColumnSeries
+         * @instance
+         * @returns {boolean} - To stack or not to stack.
+         *
+         * @also
+         *
+         * Sets whether the series should stack columns, or line them up side-by-side.
+         * @memberof! insight.ColumnSeries
+         * @instance
+         * @param {boolean} stacked Whether the column series should be stacked.
+         * @returns {this}
+         */
+        this.stacked = function(stack) {
+            if (!arguments.length) {
+                return stacked();
+            }
+            stacked = d3.functor(stack);
+            return this;
+        };
+
     };
 
     insight.ColumnSeries.prototype = Object.create(insight.Series.prototype);

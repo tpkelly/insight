@@ -10,6 +10,18 @@
      */
     insight.Series = function Series(name, data, x, y) {
 
+        // Private variables ------------------------------------------------------------------------------------------
+
+        var self = this,
+            filter = null;
+
+        var tooltipOffset = {
+            x: 0,
+            y: -10
+        };
+
+        // Internal variables -----------------------------------------------------------------------------------------
+
         this.data = data;
         this.usesCrossfilter = (data instanceof insight.DataSet) || (data instanceof insight.Grouping);
         this.x = x;
@@ -26,14 +38,7 @@
         x.addSeries(this);
         y.addSeries(this);
 
-        var self = this,
-            filter = null,
-            tooltipOffset = {
-                x: 0,
-                y: -10
-            };
-
-        // private functions used internally, set by functions below that are exposed on the object
+        // Private functions ------------------------------------------------------------------------------------------
 
         function keyFunction(d) {
             return d.key;
@@ -72,22 +77,6 @@
             return selected;
         }
 
-
-        /*
-         * Generates the base class name to be used for items in this series.It can be extended upon by individual items to show
-         * if they are selected or to mark them out in other ways.
-         * @memberof insight.Series
-         * @returns {string} baseClassName - A root valuefor the class attribute used for items in this Series.
-         */
-        this.seriesClassName = function() {
-
-            var seriesName = [self.name + 'class'].concat(self.classValues)
-                .join(' ');
-
-            return seriesName;
-        };
-
-
         function arrayDataSet(orderFunction, topValues) {
 
             // Take a shallow copy of the data array
@@ -103,8 +92,21 @@
             return data;
         }
 
+        // Internal functions -----------------------------------------------------------------------------------------
 
-        // Public methods
+        /*
+         * Generates the base class name to be used for items in this series.It can be extended upon by individual items to show
+         * if they are selected or to mark them out in other ways.
+         * @memberof insight.Series
+         * @returns {string} baseClassName - A root valuefor the class attribute used for items in this Series.
+         */
+        this.seriesClassName = function() {
+
+            var seriesName = [self.name + 'class'].concat(self.classValues)
+                .join(' ');
+
+            return seriesName;
+        };
 
         /*
          * Constructs the text for the class attribute for a specific data point, using the base value for this Series and any additional values.
@@ -121,6 +123,112 @@
 
             return value;
         };
+
+        this.keys = function(orderFunction) {
+            return this.dataset(orderFunction)
+                .map(self.keyFunction());
+        };
+
+        /*
+         * Creates the tooltip for this Series, checking if it exists already first.
+         * @memberof! insight.Series
+         * @param {DOMElement} container - The DOM Element that the tooltip should be drawn inside.
+         */
+        this.initializeTooltip = function(container) {
+            if (!this.tooltip) {
+                this.tooltip = new insight.Tooltip()
+                    .container(container)
+                    .offset(self.tooltipOffset());
+            }
+        };
+
+        /*
+         * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouse over. Tooltips are shown and CSS updated.
+         * The *this* context will reference the DOMElement raising the event.
+         * @memberof! insight.Series
+         * @param {object} item - The data point for the hovered item.
+         * @param {int} index - The index of the hovered item in the data set.  This is required at the moment as we need to provide the valueFunction until stacked series are refactored.
+         * @param {function} valueFunction - If provided, this function will be used to generate the tooltip text, otherwise the series default valueFunction will be used.
+         *                                   This is only for stacked charts that currently have multiple valueFunctions.
+         */
+        this.mouseOver = function(item, i, valueFunction) {
+
+            var textFunction = valueFunction || self.tooltipFunction();
+            var tooltipText = tooltipFormat(textFunction(item));
+
+            self.tooltip.show(this, tooltipText);
+
+            d3.select(this)
+                .classed('active', true);
+        };
+
+        /*
+         * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouseout event. Tooltips are hidden and CSS updated.
+         * The *this* context will reference the DOMElement raising the event.
+         * @memberof! insight.Series
+         */
+        this.mouseOut = function() {
+
+            self.tooltip.hide();
+
+            d3.select(this)
+                .classed('active', false);
+        };
+
+
+
+        this.click = function(element, filterBy) {
+            var filterValue = groupKeyFunction(filterBy);
+
+            self.clickEvent(self.data, filterValue);
+        };
+
+        this.tooltipFunction = function(_) {
+            if (!arguments.length) {
+                return tooltipFunction;
+            }
+            tooltipFunction = _;
+
+            return this;
+        };
+
+        /*
+         * Extracts the minimum value on an axis for this series.
+         * @memberof! insight.Series
+         * @instance
+         * @param scale The corresponding x or y axis
+         * @returns {Number} - The minimum value within the range of the values for this series on the given axis.
+         */
+        this.findMin = function(scale) {
+            var self = this;
+
+            var data = this.dataset();
+
+            var func = scale === self.x ? self.keyFunction() : self.valueFunction();
+
+            return d3.min(data, func);
+        };
+
+        /*
+         * Extracts the maximum value on an axis for this series.
+         * @memberof! insight.Series
+         * @instance
+         * @param scale The corresponding x or y axis
+         * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
+         */
+        this.findMax = function(scale) {
+            var self = this;
+
+            var data = this.dataset();
+
+            var func = scale === self.x ? self.keyFunction() : self.valueFunction();
+
+            return d3.max(data, func);
+        };
+
+        this.draw = function(chart, drag) {};
+
+        // Public functions -------------------------------------------------------------------------------------------
 
         /**
          * Gets the function used to retrieve the x-value from the data object to plot on a chart.
@@ -216,10 +324,7 @@
             return data;
         };
 
-        this.keys = function(orderFunction) {
-            return this.dataset(orderFunction)
-                .map(self.keyFunction());
-        };
+
 
         /**
          * The distance to which move the tooltip for this series relative to its default point.
@@ -244,59 +349,7 @@
             return this;
         };
 
-        /*
-         * Creates the tooltip for this Series, checking if it exists already first.
-         * @memberof! insight.Series
-         * @param {DOMElement} container - The DOM Element that the tooltip should be drawn inside.
-         */
-        this.initializeTooltip = function(container) {
-            if (!this.tooltip) {
-                this.tooltip = new insight.Tooltip()
-                    .container(container)
-                    .offset(self.tooltipOffset());
-            }
-        };
 
-        /*
-         * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouse over. Tooltips are shown and CSS updated.
-         * The *this* context will reference the DOMElement raising the event.
-         * @memberof! insight.Series
-         * @param {object} item - The data point for the hovered item.
-         * @param {int} index - The index of the hovered item in the data set.  This is required at the moment as we need to provide the valueFunction until stacked series are refactored.
-         * @param {function} valueFunction - If provided, this function will be used to generate the tooltip text, otherwise the series default valueFunction will be used.
-         *                                   This is only for stacked charts that currently have multiple valueFunctions.
-         */
-        this.mouseOver = function(item, i, valueFunction) {
-
-            var textFunction = valueFunction || self.tooltipFunction();
-            var tooltipText = tooltipFormat(textFunction(item));
-
-            self.tooltip.show(this, tooltipText);
-
-            d3.select(this)
-                .classed('active', true);
-        };
-
-        /*
-         * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouseout event. Tooltips are hidden and CSS updated.
-         * The *this* context will reference the DOMElement raising the event.
-         * @memberof! insight.Series
-         */
-        this.mouseOut = function() {
-
-            self.tooltip.hide();
-
-            d3.select(this)
-                .classed('active', false);
-        };
-
-
-
-        this.click = function(element, filterBy) {
-            var filterValue = groupKeyFunction(filterBy);
-
-            self.clickEvent(self.data, filterValue);
-        };
 
         /**
          * The function to use to filter an object from the series.
@@ -347,15 +400,6 @@
             return this;
         };
 
-        this.tooltipFunction = function(_) {
-            if (!arguments.length) {
-                return tooltipFunction;
-            }
-            tooltipFunction = _;
-
-            return this;
-        };
-
         /**
          * The number of results to include. Used in conjunction with ordering of an Axis.
          * @memberof! insight.Series
@@ -378,44 +422,6 @@
 
             return this;
         };
-
-
-
-        /*
-         * Extracts the minimum value on an axis for this series.
-         * @memberof! insight.Series
-         * @instance
-         * @param scale The corresponding x or y axis
-         * @returns {Number} - The minimum value within the range of the values for this series on the given axis.
-         */
-        this.findMin = function(scale) {
-            var self = this;
-
-            var data = this.dataset();
-
-            var func = scale === self.x ? self.keyFunction() : self.valueFunction();
-
-            return d3.min(data, func);
-        };
-
-        /*
-         * Extracts the maximum value on an axis for this series.
-         * @memberof! insight.Series
-         * @instance
-         * @param scale The corresponding x or y axis
-         * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
-         */
-        this.findMax = function(scale) {
-            var self = this;
-
-            var data = this.dataset();
-
-            var func = scale === self.x ? self.keyFunction() : self.valueFunction();
-
-            return d3.max(data, func);
-        };
-
-        this.draw = function(chart, drag) {};
 
     };
 

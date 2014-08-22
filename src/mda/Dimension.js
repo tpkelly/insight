@@ -13,13 +13,19 @@
      */
     insight.Dimension = function Dimension(name, crossfilterData, sliceFunction, oneToMany) {
 
+        // Private variables ------------------------------------------------------------------------------------------
+
+        var self = this;
+
+        // Internal variables -----------------------------------------------------------------------------------------
+
         this.crossfilterDimension = crossfilterData.dimension(sliceFunction);
         this.name = name;
         this.filters = [];
         this.oneToMany = oneToMany;
         this.aggregationFunction = sliceFunction;
 
-        var self = this;
+        // Private functions ------------------------------------------------------------------------------------------
 
         function oneToManyFilterFunction(filterValue) {
             return function(d) {
@@ -32,6 +38,8 @@
                 return String(d) === String(filterValue);
             };
         }
+
+        // Internal functions -----------------------------------------------------------------------------------------
 
         /*
          * Local helper function that creates a filter object given an element that has been clicked on a Chart or Table.
