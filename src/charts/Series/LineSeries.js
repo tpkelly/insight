@@ -12,12 +12,17 @@
 
         insight.Series.call(this, name, data, x, y);
 
+        // Private variables ------------------------------------------------------------------------------------------
+
         var self = this,
             lineType = 'linear',
             displayPoints = true;
 
+        // Internal variables -----------------------------------------------------------------------------------------
 
         this.classValues = [insight.Constants.LineClass];
+
+        // Private functions ------------------------------------------------------------------------------------------
 
         function lineOver(d, item) {
 
@@ -31,27 +36,7 @@
 
         }
 
-        /**
-         * Whether or not to show circular points on top of the line for each datapoint.
-         * @memberof! insight.LineSeries
-         * @instance
-         * @returns {boolean} - Whether or not to show circular points on top of the line for each datapoint.
-         *
-         * @also
-         *
-         * Sets whether or not to show circular points on top of the line for each datapoint.
-         * @memberof! insight.LineSeries
-         * @instance
-         * @param {boolean} showPoints Whether or not to show circular points on top of the line for each datapoint.
-         * @returns {this}
-         */
-        this.showPoints = function(value) {
-            if (!arguments.length) {
-                return displayPoints;
-            }
-            displayPoints = value;
-            return this;
-        };
+        // Internal functions -----------------------------------------------------------------------------------------
 
         this.rangeY = function(d) {
             return self.y.scale(self.valueFunction()(d));
@@ -70,29 +55,11 @@
             return val;
         };
 
-        /**
-         * The line type that this lineSeries will draw. Defaults to 'linear'.
-         * See https://github.com/mbostock/d3/wiki/SVG-Shapes#line_interpolate for all options.
-         * @memberof! insight.LineSeries
-         * @instance
-         * @returns {String} - The line type that this lineSeries will draw.
-         *
-         * @also
-         *
-         * Sets the line type that this lineSeries will draw..
-         * @memberof! insight.LineSeries
-         * @instance
-         * @param {String} - The line type that this lineSeries will draw.
-         * @returns {this}
-         */
-        this.lineType = function(newType) {
-            if (!arguments.length) {
-                return lineType;
-            }
+        this.rangeExists = function(rangeSelector) {
+            if (rangeSelector.length === 0)
+                return 0;
 
-            lineType = newType;
-
-            return this;
+            return rangeSelector[0].length;
         };
 
         this.draw = function(chart, dragging) {
@@ -162,11 +129,53 @@
                 .style("stroke-width", 0);
         };
 
-        this.rangeExists = function(rangeSelector) {
-            if (rangeSelector.length === 0)
-                return 0;
+        // Public functions -------------------------------------------------------------------------------------------
 
-            return rangeSelector[0].length;
+        /**
+         * Whether or not to show circular points on top of the line for each datapoint.
+         * @memberof! insight.LineSeries
+         * @instance
+         * @returns {boolean} - Whether or not to show circular points on top of the line for each datapoint.
+         *
+         * @also
+         *
+         * Sets whether or not to show circular points on top of the line for each datapoint.
+         * @memberof! insight.LineSeries
+         * @instance
+         * @param {boolean} showPoints Whether or not to show circular points on top of the line for each datapoint.
+         * @returns {this}
+         */
+        this.showPoints = function(value) {
+            if (!arguments.length) {
+                return displayPoints;
+            }
+            displayPoints = value;
+            return this;
+        };
+
+        /**
+         * The line type that this lineSeries will draw. Defaults to 'linear'.
+         * See https://github.com/mbostock/d3/wiki/SVG-Shapes#line_interpolate for all options.
+         * @memberof! insight.LineSeries
+         * @instance
+         * @returns {String} - The line type that this lineSeries will draw.
+         *
+         * @also
+         *
+         * Sets the line type that this lineSeries will draw..
+         * @memberof! insight.LineSeries
+         * @instance
+         * @param {String} - The line type that this lineSeries will draw.
+         * @returns {this}
+         */
+        this.lineType = function(newType) {
+            if (!arguments.length) {
+                return lineType;
+            }
+
+            lineType = newType;
+
+            return this;
         };
 
         this.applyTheme(insight.defaultTheme);
@@ -175,13 +184,11 @@
     insight.LineSeries.prototype = Object.create(insight.Series.prototype);
     insight.LineSeries.prototype.constructor = insight.LineSeries;
 
-
     insight.LineSeries.prototype.applyTheme = function(theme) {
         this.lineType(theme.seriesStyle.lineStyle);
         this.showPoints(theme.seriesStyle.showPoints);
 
         return this;
     };
-
 
 })(insight);

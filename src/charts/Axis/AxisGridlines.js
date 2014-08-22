@@ -7,9 +7,59 @@
      */
     insight.AxisGridlines = function AxisGridlines(axis) {
 
+        // Private variables ------------------------------------------------------------------------------------------
+
+        var lineColor = '#000',
+            lineWidth = 0;
+
+        // Internal variables -------------------------------------------------------------------------------------------
+
         this.parentAxis = axis;
-        var lineColor = '#000';
-        var lineWidth = 0;
+
+        // Internal functions ----------------------------------------------------------------------------------------
+
+        this.drawGridLines = function(chart, ticks) {
+            var attributes = {
+                'class': this.parentAxis.label(),
+                'fill': 'none',
+                'shape-rendering': 'crispEdges',
+                'stroke': lineColor,
+                'stroke-width': lineWidth
+            };
+
+            var axis = this.parentAxis;
+
+            if (this.parentAxis.horizontal()) {
+                attributes.x1 = this.parentAxis.pixelValueForValue;
+                attributes.x2 = this.parentAxis.pixelValueForValue;
+                attributes.y1 = 0;
+                attributes.y2 = this.parentAxis.bounds[1];
+            } else {
+                attributes.x1 = 0;
+                attributes.x2 = this.parentAxis.bounds[0];
+                attributes.y1 = this.parentAxis.pixelValueForValue;
+                attributes.y2 = this.parentAxis.pixelValueForValue;
+            }
+
+            //Get all lines, and add new datapoints.
+            var gridLines = this.allGridlines(chart)
+                .data(ticks);
+
+            //Add lines for all new datapoints
+            gridLines
+                .enter()
+                .append('line');
+
+            //Update position of all lines
+            gridLines.attr(attributes);
+
+            //Remove any lines which are no longer in the data
+            gridLines.exit()
+                .remove();
+
+        };
+
+        // Public functions -------------------------------------------------------------------------------------------
 
         /** Returns the array of all gridlines for this axis.
          *
@@ -65,50 +115,8 @@
             return this;
         };
 
-        this.drawGridLines = function(chart, ticks) {
-            var attributes = {
-                'class': this.parentAxis.label(),
-                'fill': 'none',
-                'shape-rendering': 'crispEdges',
-                'stroke': lineColor,
-                'stroke-width': lineWidth
-            };
-
-            var axis = this.parentAxis;
-
-            if (this.parentAxis.horizontal()) {
-                attributes.x1 = this.parentAxis.pixelValueForValue;
-                attributes.x2 = this.parentAxis.pixelValueForValue;
-                attributes.y1 = 0;
-                attributes.y2 = this.parentAxis.bounds[1];
-            } else {
-                attributes.x1 = 0;
-                attributes.x2 = this.parentAxis.bounds[0];
-                attributes.y1 = this.parentAxis.pixelValueForValue;
-                attributes.y2 = this.parentAxis.pixelValueForValue;
-            }
-
-            //Get all lines, and add new datapoints.
-            var gridLines = this.allGridlines(chart)
-                .data(ticks);
-
-            //Add lines for all new datapoints
-            gridLines
-                .enter()
-                .append('line');
-
-            //Update position of all lines
-            gridLines.attr(attributes);
-
-            //Remove any lines which are no longer in the data
-            gridLines.exit()
-                .remove();
-
-        };
-
         this.applyTheme(insight.defaultTheme);
     };
-
 
     insight.AxisGridlines.prototype.applyTheme = function(theme) {
         this.lineWidth(theme.axisStyle.gridlineWidth);
