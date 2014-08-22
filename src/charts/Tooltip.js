@@ -1,4 +1,5 @@
 (function(insight) {
+
     /**
      * A tooltip, displaying values for a series or point when hovered over.
      * @class insight.Tooltip
@@ -7,8 +8,8 @@
 
         // Private variables ------------------------------------------------------------------------------------------
 
-        var className = insight.Constants.Tooltip,
-            self = this,
+        var self = this,
+            className = insight.Constants.Tooltip,
             chartContainer = null,
             styles = {};
 
@@ -24,11 +25,6 @@
             'pointer-events': 'none',
             'box-sizing': 'border-box'
         };
-
-
-
-        // Private methods
-
 
         // Creates the tooltip element inside the defined container element.  It sets this.element.
         function createElement() {
@@ -47,7 +43,6 @@
             d3.select(self.element)
                 .html(content);
         }
-
 
         // Calculates the position that the tooltip should be drawn at, relative to the provided HTML element.
         // It currently just returns the position centrally above the provided DOM element, however the coordinate system is in place to allow customization around the element.
@@ -99,13 +94,13 @@
          * @param {object} offset The new distance to which move the tooltip for this series relative to its default point.
          * @returns {this}
          */
-        this.offset = function(value) {
+        self.offset = function(value) {
             if (!arguments.length) {
                 return offset;
             }
 
             offset = value;
-            return this;
+            return self;
         };
 
         /**
@@ -122,24 +117,23 @@
          * @param {object} style The new style of the tooltip, in standard {'name': 'value', ...} format of CSS values.
          * @returns {this}
          */
-        this.styles = function(value) {
+        self.styles = function(value) {
             if (!arguments.length) {
                 return insight.Utils.objectUnion(baseStyles, styles);
             }
             styles = value;
-            return this;
+            return self;
         };
 
         // Gets or sets the DOM element that this tooltip will be created inside, usually a div.
-        this.container = function(container) {
+        self.container = function(container) {
             if (!arguments.length) {
                 return chartContainer;
             }
 
             chartContainer = container;
-            return this;
+            return self;
         };
-
 
         /*
          * Display the tooltip, using the provided element and tooltipText parameters to control the context and position.
@@ -148,9 +142,9 @@
          * @param {element} element The element to attach to.
          * @param {String} tooltipText The text to display on the tooltip.
          */
-        this.show = function(element, tooltipText) {
+        self.show = function(element, tooltipText) {
 
-            if (!this.element) {
+            if (!self.element) {
                 createElement();
             }
 
@@ -167,7 +161,7 @@
          * @memberof! insight.Tooltip
          * @instance
          */
-        this.hide = function() {
+        self.hide = function() {
             d3.select(self.element)
                 .style('opacity', '0');
         };

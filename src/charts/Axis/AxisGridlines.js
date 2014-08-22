@@ -9,40 +9,41 @@
 
         // Private variables ------------------------------------------------------------------------------------------
 
-        var lineColor = '#000',
+        var self = this,
+            lineColor = '#000',
             lineWidth = 0;
 
         // Internal variables -------------------------------------------------------------------------------------------
 
-        this.parentAxis = axis;
+        self.parentAxis = axis;
 
         // Internal functions ----------------------------------------------------------------------------------------
 
-        this.drawGridLines = function(chart, ticks) {
+        self.drawGridLines = function(chart, ticks) {
             var attributes = {
-                'class': this.parentAxis.label(),
+                'class': self.parentAxis.label(),
                 'fill': 'none',
                 'shape-rendering': 'crispEdges',
                 'stroke': lineColor,
                 'stroke-width': lineWidth
             };
 
-            var axis = this.parentAxis;
+            var axis = self.parentAxis;
 
-            if (this.parentAxis.horizontal()) {
-                attributes.x1 = this.parentAxis.pixelValueForValue;
-                attributes.x2 = this.parentAxis.pixelValueForValue;
+            if (self.parentAxis.horizontal()) {
+                attributes.x1 = self.parentAxis.pixelValueForValue;
+                attributes.x2 = self.parentAxis.pixelValueForValue;
                 attributes.y1 = 0;
-                attributes.y2 = this.parentAxis.bounds[1];
+                attributes.y2 = self.parentAxis.bounds[1];
             } else {
                 attributes.x1 = 0;
-                attributes.x2 = this.parentAxis.bounds[0];
-                attributes.y1 = this.parentAxis.pixelValueForValue;
-                attributes.y2 = this.parentAxis.pixelValueForValue;
+                attributes.x2 = self.parentAxis.bounds[0];
+                attributes.y1 = self.parentAxis.pixelValueForValue;
+                attributes.y2 = self.parentAxis.pixelValueForValue;
             }
 
             //Get all lines, and add new datapoints.
-            var gridLines = this.allGridlines(chart)
+            var gridLines = self.allGridlines(chart)
                 .data(ticks);
 
             //Add lines for all new datapoints
@@ -68,8 +69,8 @@
          * @param {Chart} chart The chart to grab the gridlines from.
          * @returns {object[]} - All of the gridlines currently added to this chart.
          */
-        this.allGridlines = function(chart) {
-            var gridLineIdentifier = 'line.' + this.parentAxis.label();
+        self.allGridlines = function(chart) {
+            var gridLineIdentifier = 'line.' + self.parentAxis.label();
             return chart.plotArea.selectAll(gridLineIdentifier);
         };
 
@@ -86,12 +87,12 @@
          * @param {Color} value The new gridline color.
          * @returns {this}
          */
-        this.lineColor = function(value) {
+        self.lineColor = function(value) {
             if (!arguments.length) {
                 return lineColor;
             }
             lineColor = value;
-            return this;
+            return self;
         };
 
         /** The width of the gridlines.
@@ -107,15 +108,15 @@
          * @param {Number} value The new gridline width.
          * @returns {this}
          */
-        this.lineWidth = function(value) {
+        self.lineWidth = function(value) {
             if (!arguments.length) {
                 return lineWidth;
             }
             lineWidth = value;
-            return this;
+            return self;
         };
 
-        this.applyTheme(insight.defaultTheme);
+        self.applyTheme(insight.defaultTheme);
     };
 
     insight.AxisGridlines.prototype.applyTheme = function(theme) {

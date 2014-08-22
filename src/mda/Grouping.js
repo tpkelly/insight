@@ -10,14 +10,14 @@
 
         // Private variables ------------------------------------------------------------------------------------------
 
-        var sumProperties = [],
+        var self = this,
+            sumProperties = [],
             countProperties = [],
             cumulativeProperties = [],
             averageProperties = [],
             correlationPairProperties = [],
             allCorrelationProperties = [],
             ordered = false,
-            self = this,
             filterFunction = null,
             orderFunction;
 

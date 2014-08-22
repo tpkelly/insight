@@ -15,20 +15,20 @@
         // Private variables ------------------------------------------------------------------------------------------
 
         var self = this,
-            selector = this.name + insight.Constants.Bubble,
+            selector = self.name + insight.Constants.Bubble,
             radiusFunction = d3.functor(10);
 
         // Internal variables -------------------------------------------------------------------------------------------
 
-        this.classValues = [insight.Constants.Bubble];
+        self.classValues = [insight.Constants.Bubble];
 
         // Internal functions -----------------------------------------------------------------------------------------
 
-        this.rangeY = function(d) {
+        self.rangeY = function(d) {
             return self.y.scale(self.valueFunction()(d));
         };
 
-        this.rangeX = function(d, i) {
+        self.rangeX = function(d, i) {
             return self.x.scale(self.keyFunction()(d));
         };
 
@@ -39,17 +39,16 @@
          * @param {insight.Scale} scale - a scale parameter to check if the values should be taken from x or y functions.
          * @returns {object} - the maximum value for the series on the provided axis
          */
-        this.findMax = function(scale) {
-            var self = this;
+        self.findMax = function(scale) {
 
-            var data = this.dataset();
+            var data = self.dataset();
 
             var func = scale === self.x ? self.keyFunction() : self.valueFunction();
 
             return d3.max(data, func);
         };
 
-        this.bubbleData = function(data) {
+        self.bubbleData = function(data) {
             var max = d3.max(data, radiusFunction);
 
             function rad(d) {
@@ -59,8 +58,8 @@
             //Minimum of pixels-per-axis-unit
             var xValues = data.map(self.keyFunction());
             var yValues = data.map(self.valueFunction());
-            var xBounds = this.x.bounds[1];
-            var yBounds = this.y.bounds[0];
+            var xBounds = self.x.bounds[1];
+            var yBounds = self.y.bounds[0];
             var maxRad = Math.min(xBounds / 10, yBounds / 10);
 
             // create radius for each item
@@ -82,20 +81,20 @@
             return data;
         };
 
-        this.draw = function(chart, drag) {
+        self.draw = function(chart, drag) {
 
-            this.initializeTooltip(chart.container.node());
-            this.selectedItems = chart.selectedItems;
+            self.initializeTooltip(chart.container.node());
+            self.selectedItems = chart.selectedItems;
 
             var duration = drag ? 0 : function(d, i) {
                 return 200 + (i * 20);
             };
 
             function click(filter) {
-                return self.click(this, filter);
+                return self.click(self, filter);
             }
 
-            var bubbleData = this.bubbleData(this.dataset());
+            var bubbleData = self.bubbleData(self.dataset());
 
             var bubbles = chart.plotArea.selectAll('circle.' + insight.Constants.Bubble)
                 .data(bubbleData, self.keyFunction());
@@ -149,13 +148,13 @@
          * @param {boolean} reversed The new function to extract the radius of each bubble from the data objects.
          * @returns {this}
          */
-        this.radiusFunction = function(radiusFunc) {
+        self.radiusFunction = function(radiusFunc) {
             if (!arguments.length) {
                 return radiusFunction;
             }
             radiusFunction = radiusFunc;
 
-            return this;
+            return self;
         };
 
     };

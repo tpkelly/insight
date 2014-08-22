@@ -19,11 +19,11 @@
 
         // Internal variables -----------------------------------------------------------------------------------------
 
-        this.crossfilterDimension = crossfilterData.dimension(sliceFunction);
-        this.name = name;
-        this.filters = [];
-        this.oneToMany = oneToMany;
-        this.aggregationFunction = sliceFunction;
+        self.crossfilterDimension = crossfilterData.dimension(sliceFunction);
+        self.name = name;
+        self.filters = [];
+        self.oneToMany = oneToMany;
+        self.aggregationFunction = sliceFunction;
 
         // Private functions ------------------------------------------------------------------------------------------
 
@@ -49,7 +49,7 @@
          * @param {object} filteredValue - The value to create a crossfilter filter function for.
          * @returns {function} - A function that a crossfilterdimension.filter() operation can use to map-reduce crossfilter aggregations.
          */
-        this.createFilterFunction = function(filteredValue) {
+        self.createFilterFunction = function(filteredValue) {
 
             // create the appropriate type of filter function for this Dimension
             var filterFunc = self.oneToMany ? oneToManyFilterFunction(filteredValue) : filterFunction(filteredValue);

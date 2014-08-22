@@ -1,4 +1,5 @@
 (function(insight) {
+
     /**
      * The RowSeries class extends the Series class and draws horizontal bars on a Chart
      * @class insight.RowSeries
@@ -21,11 +22,11 @@
 
         // Internal variables -------------------------------------------------------------------------------------------
 
-        this.valueAxis = x;
-        this.keyAxis = y;
-        this.classValues = [insight.Constants.BarClass];
+        self.valueAxis = x;
+        self.keyAxis = y;
+        self.classValues = [insight.Constants.BarClass];
 
-        this.series = [{
+        self.series = [{
             name: 'default',
             valueFunction: function(d) {
                 return self.valueFunction()(d);
@@ -33,7 +34,7 @@
             tooltipValue: function(d) {
                 return self.tooltipFunction()(d);
             },
-            color: this.color,
+            color: self.color,
             label: 'Value'
         }];
 
@@ -57,7 +58,7 @@
          * @param {object} data - An item in the object array to query
          * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
          */
-        this.seriesMax = function(d) {
+        self.seriesMax = function(d) {
             var max = 0;
             var seriesMax = 0;
 
@@ -82,13 +83,13 @@
          * @instance
          * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
          */
-        this.findMax = function() {
+        self.findMax = function() {
             var max = d3.max(self.dataset(), self.seriesMax);
 
             return max;
         };
 
-        this.calculateXPos = function(func, d) {
+        self.calculateXPos = function(func, d) {
             if (!d.xPos) {
                 d.xPos = 0;
             }
@@ -99,11 +100,11 @@
             return myPosition;
         };
 
-        this.yPosition = function(d) {
+        self.yPosition = function(d) {
             return self.y.scale(self.keyFunction()(d));
         };
 
-        this.calculateYPos = function(thickness, d) {
+        self.calculateYPos = function(thickness, d) {
             if (!d.yPos) {
                 d.yPos = self.yPosition(d);
             } else {
@@ -112,7 +113,7 @@
             return d.yPos;
         };
 
-        this.xPosition = function(d) {
+        self.xPosition = function(d) {
 
             var func = self.currentSeries.valueFunction;
 
@@ -121,11 +122,11 @@
             return position;
         };
 
-        this.barThickness = function(d) {
+        self.barThickness = function(d) {
             return self.y.scale.rangeBand(d);
         };
 
-        this.groupedbarThickness = function(d) {
+        self.groupedbarThickness = function(d) {
 
             var groupThickness = self.barThickness(d);
 
@@ -134,20 +135,20 @@
             return width;
         };
 
-        this.offsetYPosition = function(d) {
+        self.offsetYPosition = function(d) {
             var thickness = self.groupedbarThickness(d);
             var position = self.stacked() ? self.yPosition(d) : self.calculateYPos(thickness, d);
 
             return position;
         };
 
-        this.barWidth = function(d) {
+        self.barWidth = function(d) {
             var func = self.currentSeries.valueFunction;
 
             return self.x.scale(func(d));
         };
 
-        this.seriesSpecificClassName = function(d) {
+        self.seriesSpecificClassName = function(d) {
 
             var additionalClass = ' ' + self.currentSeries.name + 'class';
             var baseClassName = self.itemClassName(d);
@@ -156,7 +157,7 @@
             return itemClassName;
         };
 
-        this.draw = function(chart, drag) {
+        self.draw = function(chart, drag) {
 
             self.initializeTooltip(chart.container.node());
             self.selectedItems = chart.selectedItems;
@@ -166,18 +167,17 @@
                 d.xPos = 0;
             }
 
-            var data = this.dataset(),
-                groupSelector = 'g.' + insight.Constants.BarGroupClass + '.' + this.name,
-                groupClassName = insight.Constants.BarGroupClass + ' ' + this.name,
+            var data = self.dataset(),
+                groupSelector = 'g.' + insight.Constants.BarGroupClass + '.' + self.name,
+                groupClassName = insight.Constants.BarGroupClass + ' ' + self.name,
                 barSelector = 'rect.' + insight.Constants.BarGroupClass;
 
 
             data.forEach(reset);
 
-
             var groups = chart.plotArea
                 .selectAll(groupSelector)
-                .data(data, this.keyvalueFunction);
+                .data(data);
 
 
             var newGroups = groups.enter()
@@ -187,7 +187,7 @@
             var newBars = newGroups.selectAll(barSelector);
 
             function click(filter) {
-                return self.click(this, filter);
+                return self.click(self, filter);
             }
 
             function duration(d, i) {
@@ -204,32 +204,32 @@
             }
 
 
-            for (var seriesIndex in this.series) {
+            for (var seriesIndex in self.series) {
 
-                this.currentSeries = this.series[seriesIndex];
+                self.currentSeries = self.series[seriesIndex];
 
-                seriesName = this.currentSeries.name;
-                seriesFunctions[seriesName] = this.currentSeries.valueFunction;
+                seriesName = self.currentSeries.name;
+                seriesFunctions[seriesName] = self.currentSeries.valueFunction;
 
                 var seriesSelector = '.' + seriesName + 'class.' + insight.Constants.BarClass;
 
                 newBars = newGroups.append('rect')
                     .attr('class', self.seriesSpecificClassName)
                     .attr('height', 0)
-                    .attr('fill', this.currentSeries.color)
+                    .attr('fill', self.currentSeries.color)
                     .attr('in_series', seriesName)
                     .attr('clip-path', 'url(#' + chart.clipPath() + ')')
                     .on('mouseover', mouseOver)
-                    .on('mouseout', this.mouseOut)
+                    .on('mouseout', self.mouseOut)
                     .on('click', click);
 
                 var bars = groups.selectAll(seriesSelector)
                     .transition()
                     .duration(duration)
-                    .attr('y', this.offsetYPosition)
-                    .attr('x', this.xPosition)
-                    .attr('height', this.groupedbarThickness)
-                    .attr('width', this.barWidth)
+                    .attr('y', self.offsetYPosition)
+                    .attr('x', self.xPosition)
+                    .attr('height', self.groupedbarThickness)
+                    .attr('width', self.barWidth)
                     .style('opacity', opacity);
             }
 
@@ -253,12 +253,12 @@
          * @param {boolean} stacked Whether the row series should be stacked.
          * @returns {this}
          */
-        this.stacked = function(_) {
+        self.stacked = function(_) {
             if (!arguments.length) {
                 return stacked();
             }
             stacked = d3.functor(_);
-            return this;
+            return self;
         };
 
     };

@@ -9,7 +9,8 @@
 
         // Private variables ------------------------------------------------------------------------------------------
 
-        var data = null,
+        var self = this,
+            data = null,
             message = null,
             state = insight.ErrorContainer.State.success;
 
@@ -22,7 +23,7 @@
          * @param {String} errorMessage
          * @param {Object} [errorData]
          */
-        this.setError = function(errorMessage, errorData) {
+        self.setError = function(errorMessage, errorData) {
 
             message = errorMessage;
             data = errorData === undefined ? null : errorData;
@@ -37,7 +38,7 @@
          * @param {String} errorMessage
          * @param {Object} [errorData]
          */
-        this.setWarning = function(warningMessage, warningData) {
+        self.setWarning = function(warningMessage, warningData) {
 
             if (state === insight.ErrorContainer.State.error) {
                 return;
@@ -57,7 +58,7 @@
          * @instance
          * @returns {Object} - The data associated with the error or warning.
          */
-        this.data = function() {
+        self.data = function() {
             return data;
         };
 
@@ -67,7 +68,7 @@
          * @instance
          * @returns {String} - The descriptive message associated with the error or warning.
          */
-        this.message = function() {
+        self.message = function() {
             return message;
         };
 
@@ -78,7 +79,7 @@
          * @returns {String} - The state of the ErrorContainer.
          * This will be one of the values of <code>insight.ErrorContainer.State</code>.
          */
-        this.state = function() {
+        self.state = function() {
             return state;
         };
 

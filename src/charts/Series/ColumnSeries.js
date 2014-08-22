@@ -18,11 +18,11 @@
             stacked = d3.functor(false),
             seriesName = '',
             seriesFunctions = {},
-            barWidthFunction = this.x.rangeType;
+            barWidthFunction = self.x.rangeType;
 
         // Internal variables ------------------------------------------------------------------------------------------
 
-        this.classValues = [insight.Constants.BarClass];
+        self.classValues = [insight.Constants.BarClass];
 
         // Private functions -----------------------------------------------------------------------------------------
 
@@ -32,7 +32,7 @@
         }
 
         function click(filter) {
-            return self.click(this, filter);
+            return self.click(self, filter);
         }
 
         function duration(d, i) {
@@ -48,7 +48,7 @@
 
         // Internal functions ----------------------------------------------------------------------------------------
 
-        this.series = [{
+        self.series = [{
             name: 'default',
             valueFunction: function(d) {
                 return self.valueFunction()(d);
@@ -56,7 +56,7 @@
             tooltipValue: function(d) {
                 return self.tooltipFunction()(d);
             },
-            color: this.color,
+            color: self.color,
             label: 'Value'
         }];
 
@@ -67,7 +67,7 @@
          * @param {object} data An item in the object array to query
          * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
          */
-        this.seriesMax = function(d) {
+        self.seriesMax = function(d) {
             var max = 0;
             var seriesMax = 0;
 
@@ -92,13 +92,13 @@
          * @instance
          * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
          */
-        this.findMax = function() {
+        self.findMax = function() {
             var max = d3.max(self.dataset(), self.seriesMax);
 
             return max;
         };
 
-        this.calculateYPos = function(func, d) {
+        self.calculateYPos = function(func, d) {
             if (!d.yPos) {
                 d.yPos = 0;
             }
@@ -108,11 +108,11 @@
             return d.yPos;
         };
 
-        this.xPosition = function(d) {
+        self.xPosition = function(d) {
             return self.x.scale(self.keyFunction()(d));
         };
 
-        this.calculateXPos = function(width, d) {
+        self.calculateXPos = function(width, d) {
             if (!d.xPos) {
                 d.xPos = self.xPosition(d);
             } else {
@@ -121,7 +121,7 @@
             return d.xPos;
         };
 
-        this.yPosition = function(d) {
+        self.yPosition = function(d) {
 
             var func = self.currentSeries.valueFunction;
 
@@ -130,13 +130,13 @@
             return position;
         };
 
-        this.barWidth = function(d) {
+        self.barWidth = function(d) {
             // comment for tom, this is the bit that is currently breaking the linear x axis, because d3 linear scales don't support the rangeBand() function, whereas ordinal ones do.
             // in js, you can separate the scale and range function using rangeBandFunction.call(self.x.scale, d), where rangeBandFunction can point to the appropriate function for the type of scale being used.
             return self.x.scale.rangeBand(d);
         };
 
-        this.groupedBarWidth = function(d) {
+        self.groupedBarWidth = function(d) {
 
             var groupWidth = self.barWidth(d);
 
@@ -145,14 +145,14 @@
             return width;
         };
 
-        this.offsetXPosition = function(d) {
+        self.offsetXPosition = function(d) {
             var width = self.groupedBarWidth(d);
             var position = self.stacked() ? self.xPosition(d) : self.calculateXPos(width, d);
 
             return position;
         };
 
-        this.seriesSpecificClassName = function(d) {
+        self.seriesSpecificClassName = function(d) {
 
             var additionalClass = ' ' + self.currentSeries.name + 'class';
             var baseClassName = self.itemClassName(d);
@@ -161,7 +161,7 @@
             return itemClassName;
         };
 
-        this.draw = function(chart, drag) {
+        self.draw = function(chart, drag) {
 
             self.initializeTooltip(chart.container.node());
             self.selectedItems = chart.selectedItems;
@@ -261,12 +261,12 @@
          * @param {boolean} stacked Whether the column series should be stacked.
          * @returns {this}
          */
-        this.stacked = function(stack) {
+        self.stacked = function(stack) {
             if (!arguments.length) {
                 return stacked();
             }
             stacked = d3.functor(stack);
-            return this;
+            return self;
         };
 
     };

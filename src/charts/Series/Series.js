@@ -22,21 +22,21 @@
 
         // Internal variables -----------------------------------------------------------------------------------------
 
-        this.data = data;
-        this.usesCrossfilter = (data instanceof insight.DataSet) || (data instanceof insight.Grouping);
-        this.x = x;
-        this.y = y;
-        this.name = name;
-        this.color = d3.functor('lightblue'); // Redefined by the theme in applyTheme()
-        this.animationDuration = 300;
-        this.topValues = null;
-        this.classValues = [];
-        this.valueAxis = y;
-        this.keyAxis = x;
-        this.selectedItems = [];
+        self.data = data;
+        self.usesCrossfilter = (data instanceof insight.DataSet) || (data instanceof insight.Grouping);
+        self.x = x;
+        self.y = y;
+        self.name = name;
+        self.color = d3.functor('lightblue'); // Redefined by the theme in applyTheme()
+        self.animationDuration = 300;
+        self.topValues = null;
+        self.classValues = [];
+        self.valueAxis = y;
+        self.keyAxis = x;
+        self.selectedItems = [];
 
-        x.addSeries(this);
-        y.addSeries(this);
+        x.addSeries(self);
+        y.addSeries(self);
 
         // Private functions ------------------------------------------------------------------------------------------
 
@@ -100,7 +100,7 @@
          * @memberof insight.Series
          * @returns {string} baseClassName - A root valuefor the class attribute used for items in this Series.
          */
-        this.seriesClassName = function() {
+        self.seriesClassName = function() {
 
             var seriesName = [self.name + 'class'].concat(self.classValues)
                 .join(' ');
@@ -115,7 +115,7 @@
          * @param {string[]} additionalClasses - Any additional values this Series needs appending to the class value.Used by stacked Series to differentiate between Series.
          * @returns {string} classValue - A class value for a particular data item being bound in this Series.
          */
-        this.itemClassName = function(dataItem, additionalClasses) {
+        self.itemClassName = function(dataItem, additionalClasses) {
 
             var keySelector = insight.Utils.keySelector(groupKeyFunction(dataItem));
             var selected = selectedClassName(self.selectedItems, keySelector);
@@ -124,8 +124,8 @@
             return value;
         };
 
-        this.keys = function(orderFunction) {
-            return this.dataset(orderFunction)
+        self.keys = function(orderFunction) {
+            return self.dataset(orderFunction)
                 .map(self.keyFunction());
         };
 
@@ -134,9 +134,9 @@
          * @memberof! insight.Series
          * @param {DOMElement} container - The DOM Element that the tooltip should be drawn inside.
          */
-        this.initializeTooltip = function(container) {
-            if (!this.tooltip) {
-                this.tooltip = new insight.Tooltip()
+        self.initializeTooltip = function(container) {
+            if (!self.tooltip) {
+                self.tooltip = new insight.Tooltip()
                     .container(container)
                     .offset(self.tooltipOffset());
             }
@@ -151,7 +151,7 @@
          * @param {function} valueFunction - If provided, this function will be used to generate the tooltip text, otherwise the series default valueFunction will be used.
          *                                   This is only for stacked charts that currently have multiple valueFunctions.
          */
-        this.mouseOver = function(item, i, valueFunction) {
+        self.mouseOver = function(item, i, valueFunction) {
 
             var textFunction = valueFunction || self.tooltipFunction();
             var tooltipText = tooltipFormat(textFunction(item));
@@ -167,7 +167,7 @@
          * The *this* context will reference the DOMElement raising the event.
          * @memberof! insight.Series
          */
-        this.mouseOut = function() {
+        self.mouseOut = function() {
 
             self.tooltip.hide();
 
@@ -177,19 +177,19 @@
 
 
 
-        this.click = function(element, filterBy) {
+        self.click = function(element, filterBy) {
             var filterValue = groupKeyFunction(filterBy);
 
             self.clickEvent(self.data, filterValue);
         };
 
-        this.tooltipFunction = function(_) {
+        self.tooltipFunction = function(_) {
             if (!arguments.length) {
                 return tooltipFunction;
             }
             tooltipFunction = _;
 
-            return this;
+            return self;
         };
 
         /*
@@ -199,10 +199,9 @@
          * @param scale The corresponding x or y axis
          * @returns {Number} - The minimum value within the range of the values for this series on the given axis.
          */
-        this.findMin = function(scale) {
-            var self = this;
+        self.findMin = function(scale) {
 
-            var data = this.dataset();
+            var data = self.dataset();
 
             var func = scale === self.x ? self.keyFunction() : self.valueFunction();
 
@@ -216,17 +215,16 @@
          * @param scale The corresponding x or y axis
          * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
          */
-        this.findMax = function(scale) {
-            var self = this;
+        self.findMax = function(scale) {
 
-            var data = this.dataset();
+            var data = self.dataset();
 
             var func = scale === self.x ? self.keyFunction() : self.valueFunction();
 
             return d3.max(data, func);
         };
 
-        this.draw = function(chart, drag) {};
+        self.draw = function(chart, drag) {};
 
         // Public functions -------------------------------------------------------------------------------------------
 
@@ -244,13 +242,13 @@
          * @param {function} keyFunc The new key function to use to extract the x-value from a data object.
          * @returns {this}
          */
-        this.keyFunction = function(keyFunc) {
+        self.keyFunction = function(keyFunc) {
             if (!arguments.length) {
                 return keyFunction;
             }
             keyFunction = keyFunc;
 
-            return this;
+            return self;
         };
 
         /**
@@ -267,13 +265,13 @@
          * @param {function} keyFunc The new function to use to extract the grouping key from a data object.
          * @returns {this}
          */
-        this.groupKeyFunction = function(keyFunc) {
+        self.groupKeyFunction = function(keyFunc) {
             if (!arguments.length) {
                 return groupKeyFunction;
             }
             groupKeyFunction = keyFunc;
 
-            return this;
+            return self;
         };
 
         /**
@@ -290,13 +288,13 @@
          * @param {function} valueFunc The new key function to use to extract the y-value from a data object.
          * @returns {this}
          */
-        this.valueFunction = function(valueFunc) {
+        self.valueFunction = function(valueFunc) {
             if (!arguments.length) {
                 return valueFunction;
             }
             valueFunction = valueFunc;
 
-            return this;
+            return self;
         };
 
         /**
@@ -305,7 +303,7 @@
          * @instance
          * @returns {object[]} - The data set to be used by the series
          */
-        this.dataset = function(orderFunction) {
+        self.dataset = function(orderFunction) {
 
             // If the keyAxis is ordered but no function has been provided, create one based on the Series' valueFunction
             if (self.keyAxis.ordered() && !orderFunction) {
@@ -315,7 +313,7 @@
                 };
             }
 
-            var data = this.usesCrossfilter ? self.data.getData(orderFunction, self.topValues) : arrayDataSet(orderFunction, self.topValues);
+            var data = self.usesCrossfilter ? self.data.getData(orderFunction, self.topValues) : arrayDataSet(orderFunction, self.topValues);
 
             if (filter) {
                 data = data.filter(filter);
@@ -340,13 +338,13 @@
          * @param {object} offset The new distance to which move the tooltip for this series relative to its default point.
          * @returns {this}
          */
-        this.tooltipOffset = function(value) {
+        self.tooltipOffset = function(value) {
             if (!arguments.length) {
                 return tooltipOffset;
             }
             tooltipOffset = value;
 
-            return this;
+            return self;
         };
 
 
@@ -367,13 +365,13 @@
          * @param {function} filter The new function to use to filter an object from the series.
          * @returns {this}
          */
-        this.filterFunction = function(newFilter) {
+        self.filterFunction = function(newFilter) {
             if (!arguments.length) {
                 return filter;
             }
             filter = newFilter;
 
-            return this;
+            return self;
         };
 
         /**
@@ -391,13 +389,13 @@
          * @param {function} format A function that accepts the value string and returns the formatted tooltip label.
          * @returns {this}
          */
-        this.tooltipFormat = function(newFormat) {
+        self.tooltipFormat = function(newFormat) {
             if (!arguments.length) {
                 return tooltipFormat;
             }
             tooltipFormat = newFormat;
 
-            return this;
+            return self;
         };
 
         /**
@@ -414,13 +412,13 @@
          * @param {Number} topValues The number of results to include. Used in conjunction with ordering of an Axis.
          * @returns {this}
          */
-        this.top = function(_) {
+        self.top = function(_) {
             if (!arguments.length) {
-                return this.topValues;
+                return self.topValues;
             }
-            this.topValues = _;
+            self.topValues = _;
 
-            return this;
+            return self;
         };
 
     };

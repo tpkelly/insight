@@ -17,7 +17,7 @@
         var radiusFunction = d3.functor(3),
             opacityFunction = d3.functor(1),
             self = this,
-            selector = this.name + insight.Constants.Scatter;
+            selector = self.name + insight.Constants.Scatter;
 
         // Private functions ------------------------------------------------------------------------------------------
 
@@ -28,11 +28,10 @@
 
         // Internal functions -----------------------------------------------------------------------------------------
 
-        this.findMax = function(scale) {
-            var self = this;
+        self.findMax = function(scale) {
 
             var max = 0;
-            var data = this.data.getData();
+            var data = self.data.getData();
 
             var func = scale === self.x ? self.keyFunction() : self.valueFunction();
 
@@ -44,31 +43,31 @@
         };
 
 
-        this.rangeY = function(d) {
+        self.rangeY = function(d) {
             return self.y.scale(self.valueFunction()(d));
         };
 
-        this.rangeX = function(d, i) {
+        self.rangeX = function(d, i) {
             return self.x.scale(self.keyFunction()(d));
         };
 
-        this.radiusFunction = function(_) {
+        self.radiusFunction = function(_) {
             if (!arguments.length) {
                 return radiusFunction;
             }
             radiusFunction = _;
 
-            return this;
+            return self;
         };
 
-        this.scatterData = function(data) {
+        self.scatterData = function(data) {
             var max = d3.max(data, radiusFunction);
 
             //Minimum of pixels-per-axis-unit
             var xValues = data.map(self.keyFunction());
             var yValues = data.map(self.valueFunction());
-            var xBounds = this.x.bounds[1];
-            var yBounds = this.y.bounds[0];
+            var xBounds = self.x.bounds[1];
+            var yBounds = self.y.bounds[0];
 
             // create radius for each item
             data.forEach(function(d) {
@@ -78,7 +77,7 @@
             return data;
         };
 
-        this.draw = function(chart, drag) {
+        self.draw = function(chart, drag) {
 
             self.initializeTooltip(chart.container.node());
             self.selectedItems = chart.selectedItems;
@@ -88,10 +87,10 @@
             };
 
             function click(filter) {
-                return self.click(this, filter);
+                return self.click(self, filter);
             }
 
-            var scatterData = this.scatterData(this.dataset());
+            var scatterData = self.scatterData(self.dataset());
 
             var points = chart.plotArea.selectAll('circle.' + selector)
                 .data(scatterData, self.keyFunction());
@@ -99,8 +98,8 @@
             points.enter()
                 .append('circle')
                 .attr('class', className)
-                .on('mouseover', this.mouseOver)
-                .on('mouseout', this.mouseOut)
+                .on('mouseover', self.mouseOver)
+                .on('mouseout', self.mouseOut)
                 .on('click', click);
 
             points
@@ -108,7 +107,7 @@
                 .attr('cx', self.rangeX)
                 .attr('cy', self.rangeY)
                 .attr('opacity', opacityFunction)
-                .style('fill', this.color);
+                .style('fill', self.color);
         };
 
         // Public functions -------------------------------------------------------------------------------------------
@@ -127,13 +126,13 @@
          * @param {Number} radius The new radius of each point, in pixels.
          * @returns {this}
          */
-        this.pointRadius = function(radius) {
+        self.pointRadius = function(radius) {
             if (!arguments.length) {
                 return radiusFunction();
             }
             radiusFunction = d3.functor(radius);
 
-            return this;
+            return self;
         };
 
         /**
@@ -152,13 +151,13 @@
          * @param {Number} opacity The new opacity of each point.
          * @returns {this}
          */
-        this.pointOpacity = function(opacity) {
+        self.pointOpacity = function(opacity) {
             if (!arguments.length) {
                 return opacityFunction();
             }
             opacityFunction = d3.functor(opacity);
 
-            return this;
+            return self;
         };
 
     };
