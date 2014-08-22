@@ -134,6 +134,16 @@
         // Internal functions -------------------------------------------------------------------------------------
 
         /*
+         * Adds to the list of series that this axis is associated with
+         * @memberof! insight.Axis
+         * @instance
+         * @param {insight.Series} series The series to add
+         */
+        this.addSeries = function(series) {
+            this.series.push(series);
+        };
+
+        /*
          * Calculates the domain of values that this axis has, from a minimum to a maximum.
          * @memberof! insight.Axis
          * @instance
@@ -357,16 +367,6 @@
             }
             orderingFunction = value;
             return this;
-        };
-
-        /**
-         * Adds to the list of series that this axis is associated with
-         * @memberof! insight.Axis
-         * @instance
-         * @param {insight.Series} series The series to add
-         */
-        this.addSeries = function(series) {
-            this.series.push(series);
         };
 
         /**
