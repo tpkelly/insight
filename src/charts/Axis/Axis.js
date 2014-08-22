@@ -94,7 +94,7 @@
             // Build a list of values used by this axis by checking all Series using this axis
             // Optionally provide an ordering function to sort the results by.  If the axis is ordered but no custom ordering is defined,
             // then the series value function will be used by default.
-            self.series.map(function(series) {
+            self.series.forEach(function(series) {
                 vals = vals.concat(series.keys(self.orderingFunction()));
             });
 
@@ -110,7 +110,7 @@
         function findMin() {
             var min = Number.MAX_VALUE;
 
-            self.series.map(function(series) {
+            self.series.forEach(function(series) {
                 var m = series.findMin(self);
 
                 min = m < min ? m : min;
@@ -126,7 +126,7 @@
         function findMax() {
             var max = 0;
 
-            self.series.map(function(series) {
+            self.series.forEach(function(series) {
                 var m = series.findMax(self);
 
                 max = m > max ? m : max;

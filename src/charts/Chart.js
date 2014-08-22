@@ -139,7 +139,7 @@
 
             var axes = xAxes.concat(yAxes);
 
-            axes.map(function(axis) {
+            axes.forEach(function(axis) {
                 axis.draw(self, dragging);
             });
 
