@@ -177,7 +177,7 @@
             }
 
             // loop through the matching dimensions to filter them all
-            dims.map(function(dim) {
+            dims.forEach(function(dim) {
 
                 var filterExists = insight.Utils.takeWhere(dim.filters, nameProperty, filterFunc.name)
                     .length;

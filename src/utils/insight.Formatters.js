@@ -1,6 +1,6 @@
 /**
  * Convenience formatters for formatting string values.
- * @namespace insight.Formatters
+ * @namespace insight.formatters
  */
 insight.Formatters = (function(d3) {
 
