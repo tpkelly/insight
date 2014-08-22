@@ -58,6 +58,7 @@ module.exports = function(grunt) {
       options: {
         eqeqeq: true,
         eqnull: true,
+        curly: true,
         // options here to override JSHint defaults
         globals: {
           jQuery: true,

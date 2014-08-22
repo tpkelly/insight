@@ -42,7 +42,7 @@
             return self.y.scale(self.valueFunction()(d));
         };
 
-        self.rangeX = function(d, i) {
+        self.rangeX = function(d) {
             var val = 0;
 
             if (self.x.scale.rangeBand) {
@@ -56,8 +56,11 @@
         };
 
         self.rangeExists = function(rangeSelector) {
-            if (rangeSelector.length === 0)
+
+            if (rangeSelector.length === 0) {
                 return 0;
+            }
+
 
             return rangeSelector[0].length;
         };

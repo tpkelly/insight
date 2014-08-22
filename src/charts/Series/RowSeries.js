@@ -196,8 +196,9 @@
 
             function opacity() {
                 // If we are using selected/notSelected, then make selected more opaque than notSelected
-                if (this.classList && this.classList.contains("notselected"))
+                if (this.classList && this.classList.contains("notselected")) {
                     return 0.5;
+                }
 
                 //If not using selected/notSelected, make everything semi-transparent
                 return 1;

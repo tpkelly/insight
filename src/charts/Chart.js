@@ -122,6 +122,44 @@
 
         // Internal functions -----------------------------------------------------------------------------------------
 
+        /** 
+         * Empty event handler that is overridden by any listeners who want to know when this Chart's series change
+         * @memberof! insight.Chart
+         * @param {insight.Series[]} series - An array of insight.Series belonging to this Chart
+         */
+        self.seriesChanged = function(series) {
+
+        };
+
+        self.draw = function(dragging) {
+
+            if (!initialized) {
+                init();
+            }
+
+            self.resizeChart();
+
+            var axes = xAxes.concat(yAxes);
+
+            axes.forEach(function(axis) {
+                axis.draw(self, dragging);
+            });
+
+            self.series()
+                .forEach(function(series, index) {
+                    series.color = d3.functor(self.seriesPalette[index % self.seriesPalette.length]);
+                    series.draw(self, dragging);
+                });
+
+            if (legend !== null) {
+                legend.draw(self, self.series());
+            }
+
+            if (zoomable && !zoomInitialized) {
+                initZoom();
+            }
+        };
+
         self.addClipPath = function() {
             self.plotArea.append('clipPath')
                 .attr('id', self.clipPath())
@@ -248,7 +286,7 @@
 
             var axes = xAxes.concat(yAxes);
 
-            axes.map(function(axis) {
+            axes.forEach(function(axis) {
                 axis.draw(self, dragging);
             });
 
@@ -283,7 +321,7 @@
          * @memberof! insight.Chart
          * @instance
          * @param axis The axis to enable zooming for
-         * @returns {this}
+         * @returns {Chart} Returns this.
          */
         self.zoomable = function(axis) {
             zoomable = true;
