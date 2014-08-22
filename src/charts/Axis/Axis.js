@@ -24,7 +24,7 @@
             display = true,
             barPadding = d3.functor(0.1),
             initialisedAxisView = false,
-            reversedPosition = false,
+            shouldReversePosition = false,
             zoomable = false;
 
         // Internal variables ---------------------------------------------------------------------------------------
@@ -41,9 +41,9 @@
 
         function orientation() {
             if (self.horizontal()) {
-                return (reversedPosition) ? 'top' : 'bottom';
+                return (shouldReversePosition) ? 'top' : 'bottom';
             } else {
-                return (reversedPosition) ? 'right' : 'left';
+                return (shouldReversePosition) ? 'right' : 'left';
             }
         }
 
@@ -184,7 +184,7 @@
 
         self.tickLabelRotationTransform = function() {
             var offset = self.tickPadding() + (self.tickSize() * 2);
-            offset = (reversedPosition && !self.horizontal()) ? 0 - offset : offset;
+            offset = (shouldReversePosition && !self.horizontal()) ? 0 - offset : offset;
 
             var rotation = ' rotate(' + self.tickLabelRotation() + ',0,' + offset + ')';
 
@@ -264,7 +264,7 @@
                 .style('position', 'absolute');
         };
 
-        self.draw = function(chart, dragging) {
+        self.draw = function(chart, isDragging) {
 
             // Scale range and bounds need to be initialized regardless of whether the axis will be displayed
 
@@ -280,7 +280,7 @@
 
             self.setupAxisView(chart);
 
-            var animationDuration = dragging ? 0 : 200;
+            var animationDuration = isDragging ? 0 : 200;
 
             self.axis = d3.svg.axis()
                 .scale(self.scale)
@@ -426,14 +426,14 @@
          * Sets whether the axis is drawn in a reversed position.
          * @memberof! insight.Axis
          * @instance
-         * @param {boolean} reversed Whether the axis is drawn at the bottom/left (false) or top/right (true).
+         * @param {boolean} isReversed Whether the axis is drawn at the bottom/left (false) or top/right (true).
          * @returns {this}
          */
-        self.reversedPosition = function(reversed) {
+        self.reversedPosition = function(isReversed) {
             if (!arguments.length) {
-                return reversedPosition;
+                return shouldReversePosition;
             }
-            reversedPosition = reversed;
+            shouldReversePosition = isReversed;
             return self;
         };
 

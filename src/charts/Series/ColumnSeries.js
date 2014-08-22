@@ -15,7 +15,7 @@
         // Private variables -----------------------------------------------------------------------------------------
 
         var self = this,
-            stacked = d3.functor(false),
+            stacked = false,
             seriesName = '',
             seriesFunctions = {},
             barWidthFunction = self.x.rangeType;
@@ -71,14 +71,12 @@
             var max = 0;
             var seriesMax = 0;
 
-            var stacked = self.stacked();
-
             for (var series in self.series) {
                 var s = self.series[series];
 
                 var seriesValue = s.valueFunction(d);
 
-                seriesMax = stacked ? seriesMax + seriesValue : seriesValue;
+                seriesMax = self.stacked() ? seriesMax + seriesValue : seriesValue;
 
                 max = seriesMax > max ? seriesMax : max;
             }
@@ -161,7 +159,7 @@
             return itemClassName;
         };
 
-        self.draw = function(chart, drag) {
+        self.draw = function(chart, isDragging) {
 
             self.initializeTooltip(chart.container.node());
             self.selectedItems = chart.selectedItems;
@@ -259,14 +257,14 @@
          * Sets whether the series should stack columns, or line them up side-by-side.
          * @memberof! insight.ColumnSeries
          * @instance
-         * @param {boolean} stacked Whether the column series should be stacked.
+         * @param {boolean} shouldStack Whether the column series should be stacked.
          * @returns {this}
          */
-        self.stacked = function(stack) {
+        self.stacked = function(shouldStack) {
             if (!arguments.length) {
-                return stacked();
+                return stacked;
             }
-            stacked = d3.functor(stack);
+            stacked = shouldStack;
             return self;
         };
 

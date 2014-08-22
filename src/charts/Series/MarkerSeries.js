@@ -112,7 +112,7 @@
             return h;
         };
 
-        self.draw = function(chart, drag) {
+        self.draw = function(chart, isDragging) {
 
             self.initializeTooltip(chart.container.node());
             self.selectedItems = chart.selectedItems;
@@ -183,12 +183,12 @@
          * @param {Number} widthProportion The new width proportion.
          * @returns {this}
          */
-        self.widthFactor = function(_) {
+        self.widthFactor = function(widthProportion) {
 
             if (!arguments.length) {
                 return widthFactor;
             }
-            widthFactor = _;
+            widthFactor = widthProportion;
             return self;
         };
 
@@ -203,14 +203,14 @@
          * Sets the thickeness of the marker, in pixels.
          * @memberof! insight.MarkerSeries
          * @instance
-         * @param {Number} thickness The new thickeness, in pixels.
+         * @param {Number} markerThickness The new thickeness, in pixels.
          * @returns {this}
          */
-        self.thickness = function(_) {
+        self.thickness = function(markerThickness) {
             if (!arguments.length) {
                 return thickness;
             }
-            thickness = _;
+            thickness = markerThickness;
             return self;
         };
 

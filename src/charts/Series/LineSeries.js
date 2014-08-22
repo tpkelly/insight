@@ -65,7 +65,7 @@
             return rangeSelector[0].length;
         };
 
-        self.draw = function(chart, dragging) {
+        self.draw = function(chart, isDragging) {
 
             self.initializeTooltip(chart.container.node());
 
@@ -94,7 +94,7 @@
                     .on('click', lineClick);
             }
 
-            var duration = dragging ? 0 : 300;
+            var duration = isDragging ? 0 : 300;
 
             chart.plotArea.selectAll(rangeIdentifier)
                 .datum(self.dataset())
@@ -145,14 +145,14 @@
          * Sets whether or not to show circular points on top of the line for each datapoint.
          * @memberof! insight.LineSeries
          * @instance
-         * @param {boolean} showPoints Whether or not to show circular points on top of the line for each datapoint.
+         * @param {boolean} shouldShowPoints Whether or not to show circular points on top of the line for each datapoint.
          * @returns {this}
          */
-        self.showPoints = function(value) {
+        self.showPoints = function(shouldShowPoints) {
             if (!arguments.length) {
                 return displayPoints;
             }
-            displayPoints = value;
+            displayPoints = shouldShowPoints;
             return self;
         };
 
@@ -168,15 +168,15 @@
          * Sets the line type that this lineSeries will draw..
          * @memberof! insight.LineSeries
          * @instance
-         * @param {String} - The line type that this lineSeries will draw.
+         * @param {String} newLineType The line type that this lineSeries will draw.
          * @returns {this}
          */
-        self.lineType = function(newType) {
+        self.lineType = function(newLineType) {
             if (!arguments.length) {
                 return lineType;
             }
 
-            lineType = newType;
+            lineType = newLineType;
 
             return self;
         };

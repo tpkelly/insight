@@ -20,7 +20,7 @@
             xAxes = [],
             yAxes = [],
             title = '',
-            autoMargin = true,
+            shouldAutoMargin = true,
             legend = null,
             zoomInitialized = false,
             initialized = false,
@@ -203,7 +203,7 @@
 
         self.resizeChart = function() {
 
-            if (autoMargin) {
+            if (shouldAutoMargin) {
 
                 var axisStyles = insight.Utils.getElementStyles(self.axisMeasurer.node(), ['font-size', 'line-height', 'font-family']);
                 var labelStyles = insight.Utils.getElementStyles(self.labelMeasurer.node(), ['font-size', 'line-height', 'font-family']);
@@ -276,7 +276,7 @@
             notselected.classed('notselected', selected[0].length > 0);
         };
 
-        self.draw = function(dragging) {
+        self.draw = function(isDragging) {
 
             if (!initialized) {
                 init();
@@ -287,13 +287,13 @@
             var axes = xAxes.concat(yAxes);
 
             axes.forEach(function(axis) {
-                axis.draw(self, dragging);
+                axis.draw(self, isDragging);
             });
 
             self.series()
                 .forEach(function(series, index) {
                     series.color = d3.functor(self.seriesPalette[index % self.seriesPalette.length]);
-                    series.draw(self, dragging);
+                    series.draw(self, isDragging);
                 });
 
             if (legend !== null) {
@@ -349,7 +349,7 @@
                 return margin;
             }
 
-            autoMargin = false;
+            shouldAutoMargin = false;
             margin = newMargins;
 
             return self;
@@ -675,9 +675,9 @@
          */
         self.autoMargin = function(auto) {
             if (!arguments.length) {
-                return autoMargin;
+                return shouldAutoMargin;
             }
-            autoMargin = auto;
+            shouldAutoMargin = auto;
             return self;
         };
 

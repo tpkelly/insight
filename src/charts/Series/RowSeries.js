@@ -16,7 +16,7 @@
         // Private variables ------------------------------------------------------------------------------------------
 
         var self = this,
-            stacked = d3.functor(false),
+            stacked = false,
             seriesName = '',
             seriesFunctions = {};
 
@@ -157,7 +157,7 @@
             return itemClassName;
         };
 
-        self.draw = function(chart, drag) {
+        self.draw = function(chart, isDragging) {
 
             self.initializeTooltip(chart.container.node());
             self.selectedItems = chart.selectedItems;
@@ -251,14 +251,14 @@
          * Sets whether the series should stack rows, or line them up side-by-side.
          * @memberof! insight.RowSeries
          * @instance
-         * @param {boolean} stacked Whether the row series should be stacked.
+         * @param {boolean} shouldStack Whether the row series should be stacked.
          * @returns {this}
          */
-        self.stacked = function(_) {
+        self.stacked = function(shouldStack) {
             if (!arguments.length) {
-                return stacked();
+                return stacked;
             }
-            stacked = d3.functor(_);
+            stacked = shouldStack;
             return self;
         };
 
