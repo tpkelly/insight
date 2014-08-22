@@ -144,8 +144,9 @@
                 .data(columnBuilder);
 
             cells.enter()
-                .append('td')
-                .html(valueFunction);
+                .append('td');
+
+            cells.html(valueFunction);
 
             // remove any DOM elements no longer in the data set
             cells.exit()
