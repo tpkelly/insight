@@ -8,23 +8,7 @@
      */
     insight.Chart = function Chart(name, element) {
 
-        this.name = name;
-        this.element = element;
-        this.selectedItems = [];
-        this.container = null;
-        this.chart = null;
-        this.measureCanvas = document.createElement('canvas');
-        this.marginMeasurer = new insight.MarginMeasurer();
-        this.seriesPalette = [];
-
-        var margin = {
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0
-        };
-
-        this.legendView = null;
+        // Private variables ------------------------------------------------------------------------------------------
 
         var height = d3.functor(300),
             width = d3.functor(300),
@@ -43,7 +27,26 @@
             zoomAxis = null,
             highlightSelector = insight.Utils.highlightSelector();
 
-        // private functions
+        var margin = {
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0
+        };
+
+        // Internal variables -----------------------------------------------------------------------------------------
+
+        this.name = name;
+        this.element = element;
+        this.selectedItems = [];
+        this.container = null;
+        this.chart = null;
+        this.measureCanvas = document.createElement('canvas');
+        this.marginMeasurer = new insight.MarginMeasurer();
+        this.seriesPalette = [];
+        this.legendView = null;
+
+        // Private functions ------------------------------------------------------------------------------------------
 
         function onWindowResize() {
 
@@ -92,7 +95,6 @@
             self.addClipPath();
         }
 
-
         function initZoom() {
 
             self.zoom = d3.behavior.zoom()
@@ -118,45 +120,7 @@
             zoomInitialized = true;
         }
 
-        // public methods
-
-        /** 
-         * Empty event handler that is overridden by any listeners who want to know when this Chart's series change
-         * @memberof! insight.Chart
-         * @param {insight.Series[]} series - An array of insight.Series belonging to this Chart
-         */
-        this.seriesChanged = function(series) {
-
-        };
-
-        this.draw = function(dragging) {
-
-            if (!initialized) {
-                init();
-            }
-
-            this.resizeChart();
-
-            var axes = xAxes.concat(yAxes);
-
-            axes.map(function(axis) {
-                axis.draw(self, dragging);
-            });
-
-            this.series()
-                .forEach(function(series, index) {
-                    series.color = d3.functor(self.seriesPalette[index % self.seriesPalette.length]);
-                    series.draw(self, dragging);
-                });
-
-            if (legend !== null) {
-                legend.draw(self, self.series());
-            }
-
-            if (zoomable && !zoomInitialized) {
-                initZoom();
-            }
-        };
+        // Internal functions -----------------------------------------------------------------------------------------
 
         this.addClipPath = function() {
             this.plotArea.append('clipPath')
@@ -233,6 +197,89 @@
                 .attr('height', self.height() - chartMargin.top - chartMargin.bottom);
         };
 
+        this.zoomExists = function() {
+            var z = this.plotArea.selectAll('.zoompane');
+            return z[0].length;
+        };
+
+        this.dragging = function() {
+            self.draw(true);
+        };
+
+        this.clipPath = function() {
+
+            return insight.Utils.safeString(this.name) + 'clip';
+        };
+
+        /*
+         * Takes a CSS selector and applies classes to chart elements to show them as selected or not.
+         * in response to a filtering event.
+         * and something else is.
+         * @memberof! insight.Chart
+         * @param {string} selector - a CSS selector matching a slice of a dimension. eg. an entry in a grouping by Country
+         would be 'in_England', which would match that dimensional value in any charts.
+         */
+        this.highlight = function(selector) {
+            var clicked = self.plotArea.selectAll('.' + selector);
+            var alreadySelected = insight.Utils.arrayContains(self.selectedItems, selector);
+
+            if (alreadySelected) {
+                clicked.classed('selected', false);
+                insight.Utils.removeItemFromArray(self.selectedItems, selector);
+            } else {
+                clicked.classed('selected', true)
+                    .classed('notselected', false);
+                self.selectedItems.push(selector);
+            }
+
+
+            // depending on if anything is selected, we have to update the rest as notselected so that they are coloured differently
+            var selected = self.plotArea.selectAll('.selected');
+            var notselected = self.plotArea.selectAll(highlightSelector);
+
+            // if nothing is selected anymore, clear the .notselected class from any elements (stop showing them as gray)
+            notselected.classed('notselected', selected[0].length > 0);
+        };
+
+        this.draw = function(dragging) {
+
+            if (!initialized) {
+                init();
+            }
+
+            this.resizeChart();
+
+            var axes = xAxes.concat(yAxes);
+
+            axes.map(function(axis) {
+                axis.draw(self, dragging);
+            });
+
+            this.series()
+                .forEach(function(series, index) {
+                    series.color = d3.functor(self.seriesPalette[index % self.seriesPalette.length]);
+                    series.draw(self, dragging);
+                });
+
+            if (legend !== null) {
+                legend.draw(self, self.series());
+            }
+
+            if (zoomable && !zoomInitialized) {
+                initZoom();
+            }
+        };
+
+        // Public functions -------------------------------------------------------------------------------------------
+
+        /** 
+         * Empty event handler that is overridden by any listeners who want to know when this Chart's series change
+         * @memberof! insight.Chart
+         * @param {insight.Series[]} series - An array of insight.Series belonging to this Chart
+         */
+        this.seriesChanged = function(series) {
+
+        };
 
         /**
          * Enable zooming for an axis on this chart
@@ -246,17 +293,6 @@
             zoomAxis = axis;
             axis.zoomable(true);
             return this;
-        };
-
-
-
-        this.zoomExists = function() {
-            var z = this.plotArea.selectAll('.zoompane');
-            return z[0].length;
-        };
-
-        this.dragging = function() {
-            self.draw(true);
         };
 
         /**
@@ -282,11 +318,6 @@
             margin = newMargins;
 
             return this;
-        };
-
-        this.clipPath = function() {
-
-            return insight.Utils.safeString(this.name) + 'clip';
         };
 
         /**
@@ -593,43 +624,26 @@
             return this.yAxes(newYAxes);
         };
 
-
-        this.autoMargin = function(_) {
+        /**
+         * Whether chart margins will be calculated automatically.
+         * @memberof! insight.Chart
+         * @instance
+         * @returns {Boolean} - Whether chart margins will currently be calculated automatically.
+         *
+         * @also
+         *
+         * Sets whether chart margins will be calculated automatically.
+         * @memberof! insight.Chart
+         * @instance
+         * @param {Boolean} auto The new value indicating whether chart margins will be calculated automatically.
+         * @returns {this}
+         */
+        this.autoMargin = function(auto) {
             if (!arguments.length) {
                 return autoMargin;
             }
-            autoMargin = _;
+            autoMargin = auto;
             return this;
-        };
-
-        /*
-         * Takes a CSS selector and applies classes to chart elements to show them as selected or not.
-         * in response to a filtering event.
-         * and something else is.
-         * @memberof! insight.Chart
-         * @param {string} selector - a CSS selector matching a slice of a dimension. eg. an entry in a grouping by Country 
-                                      would be 'in_England', which would match that dimensional value in any charts.
-         */
-        this.highlight = function(selector) {
-            var clicked = self.plotArea.selectAll('.' + selector);
-            var alreadySelected = insight.Utils.arrayContains(self.selectedItems, selector);
-
-            if (alreadySelected) {
-                clicked.classed('selected', false);
-                insight.Utils.removeItemFromArray(self.selectedItems, selector);
-            } else {
-                clicked.classed('selected', true)
-                    .classed('notselected', false);
-                self.selectedItems.push(selector);
-            }
-
-
-            // depending on if anything is selected, we have to update the rest as notselected so that they are coloured differently
-            var selected = self.plotArea.selectAll('.selected');
-            var notselected = self.plotArea.selectAll(highlightSelector);
-
-            // if nothing is selected anymore, clear the .notselected class from any elements (stop showing them as gray)
-            notselected.classed('notselected', selected[0].length > 0);
         };
 
         //Apply the default look-and-feel

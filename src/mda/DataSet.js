@@ -8,15 +8,19 @@
      */
     insight.DataSet = function DataSet(data) {
 
-        this.data = data;
+        // Internal variables -----------------------------------------------------------------------------------------
 
+        this.data = data;
         this.crossfilterData = null;
+
+        // Internal functions -----------------------------------------------------------------------------------------
 
         this._orderFunction = function(a, b) {
             return b.value - a.value;
         };
 
         this._filterFunction = null;
+
     };
 
     insight.DataSet.prototype.initialize = function() {

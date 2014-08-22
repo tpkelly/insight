@@ -7,6 +7,12 @@
      */
     insight.ChartGroup = function ChartGroup() {
 
+        // Private variables ------------------------------------------------------------------------------------------
+
+        var self = this;
+
+        // Internal variables -----------------------------------------------------------------------------------------
+
         this.charts = [];
         this.tables = [];
         this.groupings = [];
@@ -14,10 +20,7 @@
         this.filteredDimensions = [];
         this.dimensionListenerMap = {};
 
-        // private variables
-        var self = this;
-
-        // private methods
+        // Private functions ------------------------------------------------------------------------------------------
 
         /*
          * This internal function responds to click events on Series and Tables,
@@ -52,7 +55,7 @@
                 });
         }
 
-        /* 
+        /*
          * This function is called when a Chart belonging to this ChartGroup updates its list of Series.
          * The ChartGroup needs to register the click events and any crossfilter dimensions belonging to
          * the Series.
@@ -62,8 +65,7 @@
             addSeries(chart, series);
         }
 
-
-        /* 
+        /*
          * This function checks if the provided DataSet is crossfilter enabled,
          * and if so, adds its components to internal lists of Groupings and Dimensions.
          */
@@ -74,7 +76,7 @@
 
             if (crossfilterEnabled) {
 
-                // Add Grouping and Dimension to internal lists if they are not already there             
+                // Add Grouping and Dimension to internal lists if they are not already there
                 insight.Utils.addToSet(self.groupings, dataset);
                 insight.Utils.addToSet(self.dimensions, dataset.dimension);
             }
@@ -98,7 +100,6 @@
             return table;
         }
 
-
         /*
          * Adds a Chart to this ChartGroup, wiring up the click events of each Series to the filter handler
          * @memberof! insight.ChartGroup
@@ -114,7 +115,6 @@
 
             return chart;
         }
-
 
         /*
          * Given a DataSet and a widget (Table or Chart), this function adds the widget
@@ -140,41 +140,7 @@
             }
         }
 
-        // public methods
-
-
-        /**
-         * Adds an item to this ChartGroup, calling the appropriate internal addChart or addTable function
-         * depending on the type.
-         * @memberof! insight.ChartGroup
-         * @instance
-         * @param {object} widget An insight.Table or insight.Chart
-         * @returns {this}
-         */
-        this.add = function(widget) {
-            if (widget instanceof insight.Chart) {
-                addChart(widget);
-            } else if (widget instanceof insight.Table) {
-                addTable(widget);
-            }
-            return self;
-        };
-
-        /*
-         * Draws all Charts and Tables in this ChartGroup
-         * @memberof! insight.ChartGroup
-         * @instance
-         */
-        this.draw = function() {
-
-            self.charts.forEach(function(chart) {
-                chart.draw();
-            });
-
-            self.tables.forEach(function(table) {
-                table.draw();
-            });
-        };
+        // Internal functions -----------------------------------------------------------------------------------------
 
         /*
          * Method handler that is bound by the ChartGroup to the click events of any chart series or table rows,
@@ -235,7 +201,7 @@
                 } else {
                     dim.crossfilterDimension.filter(function(d) {
 
-                        // apply all of the filters on this dimension to the current value, returning an array of 
+                        // apply all of the filters on this dimension to the current value, returning an array of
                         // true/false values (which filters does it satisfy)
                         var vals = dim.filters
                             .map(function(func) {
@@ -262,6 +228,41 @@
 
             self.draw();
 
+        };
+
+        /*
+         * Draws all Charts and Tables in this ChartGroup
+         * @memberof! insight.ChartGroup
+         * @instance
+         */
+        this.draw = function() {
+
+            self.charts.forEach(function(chart) {
+                chart.draw();
+            });
+
+            self.tables.forEach(function(table) {
+                table.draw();
+            });
+        };
+
+        // Public functions -------------------------------------------------------------------------------------------
+
+        /**
+         * Adds an item to this ChartGroup, calling the appropriate internal addChart or addTable function
+         * depending on the type.
+         * @memberof! insight.ChartGroup
+         * @instance
+         * @param {object} widget An insight.Table or insight.Chart
+         * @returns {this}
+         */
+        this.add = function(widget) {
+            if (widget instanceof insight.Chart) {
+                addChart(widget);
+            } else if (widget instanceof insight.Table) {
+                addTable(widget);
+            }
+            return self;
         };
 
         //Apply the default look-and-feel

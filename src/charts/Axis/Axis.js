@@ -8,13 +8,7 @@
      */
     insight.Axis = function Axis(name, scale) {
 
-        this.scaleType = scale.name;
-        this.scale = scale.scale();
-        this.rangeType = this.scale.rangeRoundBands ? this.scale.rangeRoundBands : this.scale.rangeRound;
-        this.bounds = [0, 0];
-        this.series = [];
-        this.direction = '';
-        this.gridlines = new insight.AxisGridlines(this);
+        // Private variables --------------------------------------------------------------------------------------
 
         var self = this,
             label = name,
@@ -33,6 +27,18 @@
             reversedPosition = false,
             zoomable = false;
 
+        // Internal variables ---------------------------------------------------------------------------------------
+
+        this.scaleType = scale.name;
+        this.scale = scale.scale();
+        this.rangeType = this.scale.rangeRoundBands ? this.scale.rangeRoundBands : this.scale.rangeRound;
+        this.bounds = [0, 0];
+        this.series = [];
+        this.direction = '';
+        this.gridlines = new insight.AxisGridlines(this);
+
+        // Private functions -------------------------------------------------------------------------------------
+
         function orientation() {
             if (self.horizontal()) {
                 return (reversedPosition) ? 'top' : 'bottom';
@@ -49,8 +55,6 @@
                 return 'start';
             }
         }
-
-        // private functions
 
         /*
          * The default axis tick format, just returns the input
@@ -75,14 +79,6 @@
                 rangeBounds, self.barPadding()
             ]);
         }
-
-        this.barPadding = function(_) {
-            if (!arguments.length) {
-                return barPadding();
-            }
-            barPadding = d3.functor(_);
-            return this;
-        };
 
         /*
          * For an ordinal/categorical axis, this method queries all series that use this axis to get the list of available values
@@ -135,7 +131,179 @@
             return max;
         }
 
-        // public functions
+        // Internal functions -------------------------------------------------------------------------------------
+
+        /*
+         * Calculates the domain of values that this axis has, from a minimum to a maximum.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {object[]} bounds - An array with two items, for the lower and upper range of this axis
+         */
+        this.domain = function() {
+            var domain = [];
+
+            if (this.scaleType === insight.Scales.Linear.name) {
+                domain = [0, findMax()];
+            } else if (this.scaleType === insight.Scales.Ordinal.name) {
+                domain = findOrdinalValues();
+            } else if (this.scaleType === insight.Scales.Time.name) {
+                domain = [new Date(findMin()), new Date(findMax())];
+            }
+
+            return domain;
+        };
+
+        /*
+         * Calculates the output range bound of this axis, taking into account the size and margins of the chart.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {insight.Chart} chart The chart to calculate bounds against.
+         * @returns {int[]} - An array with two items, for the width and height of the axis, respectively.
+         */
+        this.calculateAxisBounds = function(chart) {
+            var bounds = [];
+            var margin = chart.margin();
+
+            bounds[0] = chart.width() - margin.right - margin.left;
+            bounds[1] = chart.height() - margin.top - margin.bottom;
+
+            self.bounds = bounds;
+
+            return self.bounds;
+        };
+
+        this.tickLabelRotationTransform = function() {
+            var offset = self.tickPadding() + (self.tickSize() * 2);
+            offset = (reversedPosition && !self.horizontal()) ? 0 - offset : offset;
+
+            var rotation = ' rotate(' + self.tickLabelRotation() + ',0,' + offset + ')';
+
+            return rotation;
+        };
+
+        this.axisPosition = function() {
+            var transform = 'translate(';
+
+            if (self.horizontal()) {
+                var transX = 0;
+                var transY = self.orientation() === 'top' ? 0 : self.bounds[1];
+
+                transform += transX + ',' + transY + ')';
+
+            } else {
+                var xShift = self.orientation() === 'left' ? 0 : self.bounds[0];
+                transform += xShift + ',0)';
+            }
+
+            return transform;
+        };
+
+        this.pixelValueForValue = function(d) {
+            return self.scale(d);
+        };
+
+        this.positionLabel = function() {
+
+            if (self.horizontal()) {
+                this.labelElement.style('left', 0)
+                    .style(self.orientation(), 0)
+                    .style('width', '100%')
+                    .style('text-align', 'center');
+            } else {
+                this.labelElement.style(self.orientation(), '0')
+                    .style('top', '35%');
+            }
+        };
+
+        this.barPadding = function(_) {
+            if (!arguments.length) {
+                return barPadding();
+            }
+            barPadding = d3.functor(_);
+            return this;
+        };
+
+        this.initializeScale = function() {
+            applyScaleRange.call(this.scale.domain(this.domain()), this.rangeType);
+
+        };
+
+        this.setupAxisView = function(chart) {
+
+            if (initialisedAxisView)
+                return;
+
+            initialisedAxisView = true;
+
+            this.initializeScale();
+
+            this.axis = d3.svg.axis();
+
+            this.axisElement = chart.plotArea.append('g');
+
+            this.axisElement
+                .attr('class', insight.Constants.AxisClass)
+                .call(this.axis)
+                .selectAll('text')
+                .attr('class', insight.Constants.AxisTextClass);
+
+            this.labelElement = chart.container
+                .append('div')
+                .attr('class', insight.Constants.AxisLabelClass)
+                .style('position', 'absolute');
+        };
+
+        this.draw = function(chart, dragging) {
+
+            // Scale range and bounds need to be initialized regardless of whether the axis will be displayed
+
+            this.calculateAxisBounds(chart);
+
+            if (!this.zoomable()) {
+                this.initializeScale();
+            }
+
+            if (!this.display()) {
+                return;
+            }
+
+            this.setupAxisView(chart);
+
+            var animationDuration = dragging ? 0 : 200;
+
+            this.axis = d3.svg.axis()
+                .scale(this.scale)
+                .orient(self.orientation())
+                .tickSize(self.tickSize())
+                .tickPadding(self.tickPadding())
+                .tickFormat(self.tickLabelFormat());
+
+            this.axisElement
+                .attr('transform', self.axisPosition())
+                .style('stroke', self.color())
+                .style('stroke-width', self.lineWidth())
+                .style('fill', 'none')
+                .transition()
+                .duration(animationDuration)
+                .call(this.axis);
+
+            this.axisElement
+                .selectAll('text')
+                .attr('transform', self.tickLabelRotationTransform())
+                .style('text-anchor', self.textAnchor());
+
+            this.labelElement
+                .text(this.label());
+
+            this.positionLabel();
+
+
+            if (this.showGridlines()) {
+                this.gridlines.drawGridLines(chart, this.scale.ticks());
+            }
+        };
+
+        // Public functions --------------------------------------------------------------------------------------
 
         /**
          * Whether or not the axis is displayed horizontally (true) or vertically (false).
@@ -191,7 +359,7 @@
             return this;
         };
 
-        /*
+        /**
          * Adds to the list of series that this axis is associated with
          * @memberof! insight.Axis
          * @instance
@@ -200,51 +368,6 @@
         this.addSeries = function(series) {
             this.series.push(series);
         };
-
-
-        // scale domain and output range methods
-
-
-        /*
-         * Calculates the domain of values that this axis has, from a minimum to a maximum.
-         * @memberof! insight.Axis
-         * @instance
-         * @returns {object[]} bounds - An array with two items, for the lower and upper range of this axis
-         */
-        this.domain = function() {
-            var domain = [];
-
-            if (this.scaleType === insight.Scales.Linear.name) {
-                domain = [0, findMax()];
-            } else if (this.scaleType === insight.Scales.Ordinal.name) {
-                domain = findOrdinalValues();
-            } else if (this.scaleType === insight.Scales.Time.name) {
-                domain = [new Date(findMin()), new Date(findMax())];
-            }
-
-            return domain;
-        };
-
-
-        /*
-         * Calculates the output range bound of this axis, taking into account the size and margins of the chart.
-         * @memberof! insight.Axis
-         * @instance
-         * @param {insight.Chart} chart The chart to calculate bounds against.
-         * @returns {int[]} - An array with two items, for the width and height of the axis, respectively.
-         */
-        this.calculateAxisBounds = function(chart) {
-            var bounds = [];
-            var margin = chart.margin();
-
-            bounds[0] = chart.width() - margin.right - margin.left;
-            bounds[1] = chart.height() - margin.top - margin.bottom;
-
-            self.bounds = bounds;
-
-            return self.bounds;
-        };
-
 
         /**
          * Returns a boolean value representing if this Axis is zoomable.
@@ -290,7 +413,6 @@
             display = value;
             return this;
         };
-
 
         /**
          * Whether the axis is drawn in a reversed position.
@@ -516,7 +638,6 @@
             return this;
         };
 
-
         /**
          * Gets the orientation of the tick labels: 'tb' = top to bottom, 'lr' = left to right.
          * @memberof! insight.Axis
@@ -548,50 +669,6 @@
             return this;
         };
 
-        this.tickLabelRotationTransform = function() {
-            var offset = self.tickPadding() + (self.tickSize() * 2);
-            offset = (reversedPosition && !self.horizontal()) ? 0 - offset : offset;
-
-            var rotation = ' rotate(' + self.tickLabelRotation() + ',0,' + offset + ')';
-
-            return rotation;
-        };
-
-
-        this.axisPosition = function() {
-            var transform = 'translate(';
-
-            if (self.horizontal()) {
-                var transX = 0;
-                var transY = self.orientation() === 'top' ? 0 : self.bounds[1];
-
-                transform += transX + ',' + transY + ')';
-
-            } else {
-                var xShift = self.orientation() === 'left' ? 0 : self.bounds[0];
-                transform += xShift + ',0)';
-            }
-
-            return transform;
-        };
-
-        this.pixelValueForValue = function(d) {
-            return self.scale(d);
-        };
-
-        this.positionLabel = function() {
-
-            if (self.horizontal()) {
-                this.labelElement.style('left', 0)
-                    .style(self.orientation(), 0)
-                    .style('width', '100%')
-                    .style('text-align', 'center');
-            } else {
-                this.labelElement.style(self.orientation(), '0')
-                    .style('top', '35%');
-            }
-        };
-
         /**
          * Whether the axis has gridlines drawn from its major ticks.
          * @memberof! insight.Axis
@@ -613,87 +690,6 @@
             showGridlines = showLines;
 
             return this;
-        };
-
-        this.initializeScale = function() {
-            applyScaleRange.call(this.scale.domain(this.domain()), this.rangeType);
-
-        };
-
-
-        this.setupAxisView = function(chart) {
-
-            if (initialisedAxisView)
-                return;
-
-            initialisedAxisView = true;
-
-            this.initializeScale();
-
-            this.axis = d3.svg.axis();
-
-            this.axisElement = chart.plotArea.append('g');
-
-            this.axisElement
-                .attr('class', insight.Constants.AxisClass)
-                .call(this.axis)
-                .selectAll('text')
-                .attr('class', insight.Constants.AxisTextClass);
-
-            this.labelElement = chart.container
-                .append('div')
-                .attr('class', insight.Constants.AxisLabelClass)
-                .style('position', 'absolute');
-        };
-
-        this.draw = function(chart, dragging) {
-
-            // Scale range and bounds need to be initialized regardless of whether the axis will be displayed
-
-            this.calculateAxisBounds(chart);
-
-            if (!this.zoomable()) {
-                this.initializeScale();
-            }
-
-            if (!this.display()) {
-                return;
-            }
-
-            this.setupAxisView(chart);
-
-            var animationDuration = dragging ? 0 : 200;
-
-            this.axis = d3.svg.axis()
-                .scale(this.scale)
-                .orient(self.orientation())
-                .tickSize(self.tickSize())
-                .tickPadding(self.tickPadding())
-                .tickFormat(self.tickLabelFormat());
-
-            this.axisElement
-                .attr('transform', self.axisPosition())
-                .style('stroke', self.color())
-                .style('stroke-width', self.lineWidth())
-                .style('fill', 'none')
-                .transition()
-                .duration(animationDuration)
-                .call(this.axis);
-
-            this.axisElement
-                .selectAll('text')
-                .attr('transform', self.tickLabelRotationTransform())
-                .style('text-anchor', self.textAnchor());
-
-            this.labelElement
-                .text(this.label());
-
-            this.positionLabel();
-
-
-            if (this.showGridlines()) {
-                this.gridlines.drawGridLines(chart, this.scale.ticks());
-            }
         };
 
         this.applyTheme(insight.defaultTheme);

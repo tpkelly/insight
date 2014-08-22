@@ -8,7 +8,7 @@
 
     insight.Grouping = function Grouping(dimension) {
 
-        // Private variables
+        // Private variables ------------------------------------------------------------------------------------------
 
         var sumProperties = [],
             countProperties = [],
@@ -21,10 +21,11 @@
             filterFunction = null,
             orderFunction;
 
-        // Public variables
+        // Internal variables -----------------------------------------------------------------------------------------
+
         self.dimension = dimension;
 
-        // Private methods
+        // Private functions ------------------------------------------------------------------------------------------
 
         // The default post aggregation step is blank, and can be overriden by users if they want to calculate additional values with this Grouping
         function postAggregation(grouping) {
@@ -144,7 +145,7 @@
                             // get this grouping from the global data
                             var groupData = insight.Utils.takeWhere(globalData, 'key', self.dimension.aggregationFunction(addingData))[0].value;
 
-                            // get the group mean from global data for this grouping 
+                            // get the group mean from global data for this grouping
                             var groupMean = groupData[propertyName].Average;
 
                             var value = addingData[propertyName];
@@ -166,7 +167,7 @@
 
                     });
 
-                    // having added to the deviation and deviationSquared we can now add 
+                    // having added to the deviation and deviationSquared we can now add
                     // the product of each pair's deviations to the workings object
                     correlationPairProperties.forEach(function(pair) {
 
@@ -200,7 +201,7 @@
 
             var completeData = self.data.all();
 
-            // the correlationData reduction calculates the deviation squared for 
+            // the correlationData reduction calculates the deviation squared for
             // all properties in allCorrelationProperties (a private variable on Grouping)
             var correlationWorkingData = self.dimension.crossfilterDimension.group()
                 .reduce(
@@ -292,7 +293,7 @@
                 }
             }
 
-            // Increment the counts of the different occurences of any properties defined. E.g: if a property 'Country' can take multiple string values, 
+            // Increment the counts of the different occurences of any properties defined. E.g: if a property 'Country' can take multiple string values,
             // this counts the occurences of each distinct value the property takes
             for (i = 0, len = countProperties.length; i < len; i++) {
                 propertyName = countProperties[i];
@@ -373,7 +374,7 @@
         /*
          * Called when a slice of an aggrgated DataSet is being initialized, creating initial values for certain properties
          * @returns {object} return - The initialized slice of this aggreagted DataSet.  The returned object will be of the form {key: '
-            Distinct Key ', value: {}}
+         Distinct Key ', value: {}}
          */
         function reduceInitializeGroup() {
             var group = {
@@ -479,9 +480,7 @@
             return data;
         }
 
-
-        // Public methods
-
+        // Internal functions -----------------------------------------------------------------------------------------
 
         /*
          * Gets the function that will run after the map reduce stage of this Grouping's aggregation.This is an empty
@@ -503,6 +502,53 @@
             postAggregation = postAggregationFunc;
             return self;
         };
+
+        /*
+         * Called when any post aggregation calculations need to be recalculated.
+         * For example, calculating group percentages after totals have been created during map-reduce.
+         * @memberof! insight.Grouping
+         * @instance
+         */
+        self.recalculate = function() {
+
+            postAggregationCalculations();
+        };
+
+        /*
+         * Performs the aggregation of the underlying crossfilter dimension, calculating any additional properties during the map-reduce phase.
+         * It must be run prior to a group being used
+         * @todo This should probably be run during the constructor? If not, lazily evaluated by getData() if it hasn't been run already.
+         */
+        self.initialize = function() {
+
+            var basicGroupData;
+
+            if (self.dimension.oneToMany) {
+                // Dimensions that are one to many {supportedLanguages: ['EN', 'DE']} as opposed to {supportedLanguage: 'EN'} need to be aggregated differently
+                basicGroupData = reduceMultidimension();
+            } else {
+                // this is crossfilter code.  It calls the crossfilter.group().reduce() functions on the crossfilter dimension wrapped inside our insight.Dimension
+                // more info at https://github.com/square/crossfilter/wiki/API-Reference
+                // the add, remove and initialie functions are called when crossfilter is aggregating the groups, and is amending the membership of the different
+                // dimensional slices (groups)
+                basicGroupData = self.dimension.crossfilterDimension.group()
+                    .reduce(
+                        reduceAddToGroup,
+                        reduceRemoveFromGroup,
+                        reduceInitializeGroup
+                );
+
+
+            }
+
+            self.data = basicGroupData;
+
+            postAggregationCalculations(self);
+
+            return self;
+        };
+
+        // Public functions -------------------------------------------------------------------------------------------
 
         /**
          * Returns the list of properties to be summed on this Grouping
@@ -653,7 +699,6 @@
             return self;
         };
 
-
         /**
          * Whether the group's data is ordered.
          * @instance
@@ -700,55 +745,6 @@
             filterFunction = f;
             return self;
         };
-
-
-
-
-        /**
-         * Called when any post aggregation calculations need to be recalculated.
-         * For example, calculating group percentages after totals have been created during map-reduce.
-         * @memberof! insight.Grouping
-         * @instance
-         */
-        self.recalculate = function() {
-
-            postAggregationCalculations();
-        };
-
-        /*
-         * Performs the aggregation of the underlying crossfilter dimension, calculating any additional properties during the map-reduce phase.
-         * It must be run prior to a group being used
-         * @todo This should probably be run during the constructor? If not, lazily evaluated by getData() if it hasn't been run already.
-         */
-        self.initialize = function() {
-
-            var basicGroupData;
-
-            if (self.dimension.oneToMany) {
-                // Dimensions that are one to many {supportedLanguages: ['EN', 'DE']} as opposed to {supportedLanguage: 'EN'} need to be aggregated differently
-                basicGroupData = reduceMultidimension();
-            } else {
-                // this is crossfilter code.  It calls the crossfilter.group().reduce() functions on the crossfilter dimension wrapped inside our insight.Dimension
-                // more info at https://github.com/square/crossfilter/wiki/API-Reference
-                // the add, remove and initialie functions are called when crossfilter is aggregating the groups, and is amending the membership of the different 
-                // dimensional slices (groups) 
-                basicGroupData = self.dimension.crossfilterDimension.group()
-                    .reduce(
-                        reduceAddToGroup,
-                        reduceRemoveFromGroup,
-                        reduceInitializeGroup
-                );
-
-
-            }
-
-            self.data = basicGroupData;
-
-            postAggregationCalculations(self);
-
-            return self;
-        };
-
 
         /**
          * Used to return the group's data, without ordering.  It checks if there is any filtering requested and applies the filter to the return array.
