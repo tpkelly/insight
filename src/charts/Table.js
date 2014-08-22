@@ -120,8 +120,9 @@
             var data = this.dataset();
             var columns = this.columns();
 
-            if (!tableInitialized)
+            if (!tableInitialized) {
                 initializeTable();
+            }
 
             // draw column headers for properties
             header.selectAll('th.column')
