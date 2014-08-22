@@ -42,15 +42,15 @@
         "partialCSS": "examples/css/example.css"
     },
     {
-        "name": "customgroupings",
-        "pageName": "Custom groupings",
-        "script": "examples/customgroupings.js",
-        "partial": "examples/partials/customgroupings.html",
+        "name": "grouping",
+        "pageName": "Grouping data",
+        "script": "examples/grouping.js",
+        "partial": "examples/partials/grouping.html",
         "partialCSS": "examples/css/example.css"
     },
     {
         "name": "groupprocessing",
-        "pageName": "Processing group data",
+        "pageName": "Processing grouped data",
         "script": "examples/groupprocessing.js",
         "partial": "examples/partials/groupprocessing.html",
         "partialCSS": "examples/css/example.css"
