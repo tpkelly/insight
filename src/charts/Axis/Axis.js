@@ -240,8 +240,9 @@
 
         this.setupAxisView = function(chart) {
 
-            if (initialisedAxisView)
+            if (initialisedAxisView) {
                 return;
+            }
 
             initialisedAxisView = true;
 

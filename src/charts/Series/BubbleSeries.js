@@ -67,10 +67,11 @@
             data.forEach(function(d) {
                 var radiusInput = radiusFunction(d);
 
-                if (radiusInput === 0)
+                if (radiusInput === 0) {
                     d.radius = 0;
-                else
+                } else {
                     d.radius = (radiusInput * maxRad) / max;
+                }
             });
 
             //this sort ensures that smaller bubbles are on top of larger ones, so that they are always selectable.  Without changing original array (hence concat which creates a copy)
@@ -114,11 +115,13 @@
 
             function opacity() {
                 // If we are using selected/notSelected, then make selected more opaque than notSelected
-                if (this.classList && this.classList.contains("selected"))
+                if (this.classList && this.classList.contains("selected")) {
                     return 0.8;
+                }
 
-                if (this.classList && this.classList.contains("notselected"))
+                if (this.classList && this.classList.contains("notselected")) {
                     return 0.3;
+                }
 
                 //If not using selected/notSelected, make everything semi-transparent
                 return 0.5;

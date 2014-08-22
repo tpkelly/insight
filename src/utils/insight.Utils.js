@@ -17,8 +17,9 @@ insight.Utils = (function() {
      * @param {object[]} sorters - A list of sorting rules [{sortFunction: function(a){return a.valueToSortOn;}, order: 'ASC'}]
      */
     function recursiveSort(a, b, sorters) {
-        if (sorters.length === 0)
+        if (sorters.length === 0) {
             return 0;
+        }
 
         var current = sorters[0];
         var sortParameter = current.sortParameter;
@@ -166,8 +167,9 @@ insight.Utils = (function() {
         var a = array.concat();
         for (var i = 0; i < a.length; ++i) {
             for (var j = i + 1; j < a.length; ++j) {
-                if (a[i] === a[j])
+                if (a[i] === a[j]) {
                     a.splice(j--, 1);
+                }
             }
         }
 
@@ -215,8 +217,9 @@ insight.Utils = (function() {
      * @param {object[]} sorters - A list of sorting rules [{sortFunction: function(a){return a.valueToSortOn;}, order: 'ASC'}]
      */
     exports.multiSort = function(array, sorters) {
-        if (!sorters.length)
+        if (!sorters.length) {
             return array;
+        }
 
         // create a comparison function that takes two values, and tries to sort them according to the provided sorting functions and orders.
         // the sorting functions will be recursively tested if the values a and b are equal until an ordering is established or all or the sorter list is exhausted.
