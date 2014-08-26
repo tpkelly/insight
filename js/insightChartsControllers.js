@@ -582,7 +582,7 @@
 
             timeChart.series([cumulative]);
 
-            timeChart.zoomable(xTime);
+            timeChart.setInteractiveAxis(xTime);
             chartGroup.add(timeChart);
     }
 
