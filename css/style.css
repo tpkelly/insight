@@ -78,7 +78,7 @@ img
   display: inline-block;
 }
 
-#container-body div {
+#container-body div:not(.d3-tip) {
   margin-top: 20px;
 }
 
@@ -235,4 +235,3 @@ button.selected {
   position:absolute;
   z-index:100;
 }
-
