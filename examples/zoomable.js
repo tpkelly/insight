@@ -51,7 +51,7 @@ $(document)
 
             timeChart.series([series]);
 
-            timeChart.zoomable(xTime);
+            timeChart.setInteractiveAxis(xTime);
             timeChart.draw();
         });
     });

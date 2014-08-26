@@ -35,8 +35,8 @@
         "partialCSS": "examples/css/example.css"
     },
     {
-        "name": "zoomable",
-        "pageName": "Zoomable axes",
+        "name": "interactive",
+        "pageName": "Interactive axes",
         "script": "examples/zoomable.js",
         "partial": "examples/partials/zoomable.html",
         "partialCSS": "examples/css/example.css"
