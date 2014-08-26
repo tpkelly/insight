@@ -39,7 +39,7 @@ describe('Axis Tests', function() {
         chart.xAxis(axis);
 
         //Then:
-        var observedResult = axis.horizontal();
+        var observedResult = axis.isHorizontal();
         var expectedResult = true;
         expect(observedResult).toBe(expectedResult);
         
@@ -53,7 +53,7 @@ describe('Axis Tests', function() {
         chart.yAxis(axis);
 
         //Then:
-        var observedResult = axis.horizontal();
+        var observedResult = axis.isHorizontal();
         var expectedResult = false;
         expect(observedResult).toBe(expectedResult);
     });
@@ -64,7 +64,7 @@ describe('Axis Tests', function() {
         var axis = new insight.Axis('Value Axis', insight.Scales.Linear);
 
         //Then:
-        var observedResult = axis.display();
+        var observedResult = axis.shouldDisplay();
         var expectedResult = true;
         expect(observedResult).toBe(expectedResult);
     });
@@ -73,10 +73,10 @@ describe('Axis Tests', function() {
         
         //Given:
         var axis = new insight.Axis('Value Axis', insight.Scales.Linear)
-                              .display(false);
+                              .shouldDisplay(false);
 
         //Then:
-        var observedResult = axis.display();
+        var observedResult = axis.shouldDisplay();
         var expectedResult = false;
         expect(observedResult).toBe(expectedResult);
     });
@@ -87,7 +87,7 @@ describe('Axis Tests', function() {
         var axis = new insight.Axis('Value Axis', insight.Scales.Linear);
 
         //Then:
-        var observedResult = axis.ordered();
+        var observedResult = axis.isOrdered();
         var expectedResult = false;
         expect(observedResult).toBe(expectedResult);
     });
@@ -97,10 +97,10 @@ describe('Axis Tests', function() {
         
         //Given:
         var axis = new insight.Axis('Value Axis', insight.Scales.Linear)
-                              .ordered(true);
+                              .isOrdered(true);
 
         //Then:
-        var observedResult = axis.ordered();
+        var observedResult = axis.isOrdered();
         var expectedResult = true;
         expect(observedResult).toBe(expectedResult);
     });
@@ -315,7 +315,7 @@ describe('Axis Tests', function() {
                                .height(300)
                                .margin({top:0, left:0, right: 0, bottom:0});
 
-        var x = new insight.Axis('Key Axis', insight.Scales.Linear).reversedPosition(true);
+        var x = new insight.Axis('Key Axis', insight.Scales.Linear).hasReversedPosition(true);
         chart.addXAxis(x);
 
         //When:
@@ -357,7 +357,7 @@ describe('Axis Tests', function() {
                                .height(300)
                                .margin({top:0, left:0, right: 0, bottom:0});
 
-        var y = new insight.Axis('Key Axis', insight.Scales.Linear).reversedPosition(true);
+        var y = new insight.Axis('Key Axis', insight.Scales.Linear).hasReversedPosition(true);
         chart.addYAxis(y);
 
         //When:
@@ -378,7 +378,7 @@ describe('Axis Tests', function() {
                                .height(300)
                                .margin({top:0, left:10, right: 40, bottom:0});
 
-        var y = new insight.Axis('Key Axis', insight.Scales.Linear).reversedPosition(true);
+        var y = new insight.Axis('Key Axis', insight.Scales.Linear).hasReversedPosition(true);
         chart.addYAxis(y);
 
         //When:
@@ -439,7 +439,7 @@ describe('Axis Tests', function() {
                 .tickSize(0);
 
             //Then:
-            var gridlinesVisible = y.showGridlines();
+            var gridlinesVisible = y.shouldShowGridlines();
             expect(gridlinesVisible).toBe(false);
         });
 
@@ -463,7 +463,7 @@ describe('Axis Tests', function() {
 
             var y = new insight.Axis('KeyAxis', insight.Scales.Linear)
                 .tickLabelOrientation('lr')
-                .showGridlines(false);
+                .shouldShowGridlines(false);
 
             chart.addXAxis(x);
             chart.addYAxis(y);
@@ -506,7 +506,7 @@ describe('Axis Tests', function() {
 
             var y = new insight.Axis('KeyAxis', insight.Scales.Linear)
                 .tickLabelOrientation('lr')
-                .showGridlines(true);
+                .shouldShowGridlines(true);
 
             chart.addXAxis(x);
             chart.addYAxis(y);

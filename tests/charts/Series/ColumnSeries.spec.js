@@ -150,7 +150,7 @@ describe('Column Series Tests', function() {
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
 
-        var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale).stacked(true);
+        var series = new insight.ColumnSeries('countryColumn', group, xScale, yScale).isStacked(true);
 
         series.series = [
         {

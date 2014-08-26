@@ -117,8 +117,8 @@ describe("Theme", function(){
             chartGroup.applyTheme(dummyTheme);
 
             //Then:
-            expect(chart.xAxis().showGridlines()).toBe(true);
-            expect(chart.yAxis().showGridlines()).toBe(true);
+            expect(chart.xAxis().shouldShowGridlines()).toBe(true);
+            expect(chart.yAxis().shouldShowGridlines()).toBe(true);
         });
     });
 
@@ -150,7 +150,7 @@ describe("Theme", function(){
             chartGroup.applyTheme(dummyTheme);
 
             //Then:
-            expect(lineSeries.showPoints()).toBe(true);
+            expect(lineSeries.shouldShowPoints()).toBe(true);
         });
     });
 

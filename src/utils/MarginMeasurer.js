@@ -37,8 +37,8 @@
                 keys = series.keys(),
                 x = series.x,
                 y = series.y,
-                displayKey = keyAxis.display(),
-                displayValue = valueAxis.display(),
+                displayKey = keyAxis.shouldDisplay(),
+                displayValue = valueAxis.shouldDisplay(),
                 formatFunction,
                 valueString,
                 keyDimensions,
@@ -79,7 +79,7 @@
                     var valueAxisLabelWidth = labelContext.measureText(valueAxis.label()).width;
                     var valueLabelAdditions = valueAxisPadding + valueAxisLabelWidth + labelPadding;
 
-                    maxValueWidth = valueAxis.display() ? maxValueWidth + valueLabelAdditions : maxValueWidth;
+                    maxValueWidth = valueAxis.shouldDisplay() ? maxValueWidth + valueLabelAdditions : maxValueWidth;
                     valueLabelHeight = lineHeight;
                 }
             }
@@ -152,8 +152,8 @@
 
                 var labelDimensions = self.seriesLabelDimensions(series, lineHeight, axisMeasuringContext, labelMeasuringContext);
 
-                var keyProperty = keyAxis.horizontal() ? 'maxKeyHeight' : 'maxKeyWidth';
-                var valueProperty = valueAxis.horizontal() ? 'maxValueHeight' : 'maxValueWidth';
+                var keyProperty = keyAxis.isHorizontal() ? 'maxKeyHeight' : 'maxKeyWidth';
+                var valueProperty = valueAxis.isHorizontal() ? 'maxValueHeight' : 'maxValueWidth';
 
                 margin[keyAxis.orientation()] = Math.max(labelDimensions[keyProperty], margin[keyAxis.orientation()]);
                 margin[valueAxis.orientation()] = Math.max(labelDimensions[valueProperty], margin[valueAxis.orientation()]);

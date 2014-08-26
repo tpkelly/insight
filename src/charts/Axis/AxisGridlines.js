@@ -30,7 +30,7 @@
 
             var axis = self.parentAxis;
 
-            if (self.parentAxis.horizontal()) {
+            if (self.parentAxis.isHorizontal()) {
                 attributes.x1 = self.parentAxis.pixelValueForValue;
                 attributes.x2 = self.parentAxis.pixelValueForValue;
                 attributes.y1 = 0;
@@ -82,14 +82,14 @@
          * Sets the color of the gridlines
          * @memberof! insight.AxisGridlines
          * @instance
-         * @param {Color} value The new gridline color.
+         * @param {Color} gridlineColor The new gridline color.
          * @returns {this}
          */
-        self.lineColor = function(value) {
+        self.lineColor = function(gridlineColor) {
             if (!arguments.length) {
                 return lineColor;
             }
-            lineColor = value;
+            lineColor = gridlineColor;
             return self;
         };
 
@@ -103,14 +103,14 @@
          * Sets the width of the gridlines
          * @memberof! insight.AxisGridlines
          * @instance
-         * @param {Number} value The new gridline width.
+         * @param {Number} gridlineWidth The new gridline width.
          * @returns {this}
          */
-        self.lineWidth = function(value) {
+        self.lineWidth = function(gridlineWidth) {
             if (!arguments.length) {
                 return lineWidth;
             }
-            lineWidth = value;
+            lineWidth = gridlineWidth;
             return self;
         };
 
