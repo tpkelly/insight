@@ -24,7 +24,7 @@
             display = true,
             barPadding = d3.functor(0.1),
             initialisedAxisView = false,
-            reversedPosition = false,
+            shouldReversePosition = false,
             zoomable = false;
 
         // Internal variables ---------------------------------------------------------------------------------------
@@ -40,10 +40,10 @@
         // Private functions -------------------------------------------------------------------------------------
 
         function orientation() {
-            if (self.horizontal()) {
-                return (reversedPosition) ? 'top' : 'bottom';
+            if (self.isHorizontal()) {
+                return (shouldReversePosition) ? 'top' : 'bottom';
             } else {
-                return (reversedPosition) ? 'right' : 'left';
+                return (shouldReversePosition) ? 'right' : 'left';
             }
         }
 
@@ -73,7 +73,7 @@
 
             // x-axis goes from 0 (left) to max (right)
             // y-axis goes from max (top) to 0 (bottom)
-            var rangeBounds = (self.horizontal()) ? [0, self.bounds[0]] : [self.bounds[1], 0];
+            var rangeBounds = (self.isHorizontal()) ? [0, self.bounds[0]] : [self.bounds[1], 0];
 
             rangeType.apply(self, [
                 rangeBounds, self.barPadding()
@@ -184,7 +184,7 @@
 
         self.tickLabelRotationTransform = function() {
             var offset = self.tickPadding() + (self.tickSize() * 2);
-            offset = (reversedPosition && !self.horizontal()) ? 0 - offset : offset;
+            offset = (shouldReversePosition && !self.isHorizontal()) ? 0 - offset : offset;
 
             var rotation = ' rotate(' + self.tickLabelRotation() + ',0,' + offset + ')';
 
@@ -194,7 +194,7 @@
         self.axisPosition = function() {
             var transform = 'translate(';
 
-            if (self.horizontal()) {
+            if (self.isHorizontal()) {
                 var transX = 0;
                 var transY = self.orientation() === 'top' ? 0 : self.bounds[1];
 
@@ -214,7 +214,7 @@
 
         self.positionLabel = function() {
 
-            if (self.horizontal()) {
+            if (self.isHorizontal()) {
                 self.labelElement.style('left', 0)
                     .style(self.orientation(), 0)
                     .style('width', '100%')
@@ -263,23 +263,23 @@
                 .style('position', 'absolute');
         };
 
-        self.draw = function(chart, dragging) {
+        self.draw = function(chart, isDragging) {
 
             // Scale range and bounds need to be initialized regardless of whether the axis will be displayed
 
             self.calculateAxisBounds(chart);
 
-            if (!self.zoomable()) {
+            if (!self.isZoomable()) {
                 self.initializeScale();
             }
 
-            if (!self.display()) {
+            if (!self.shouldDisplay()) {
                 return;
             }
 
             self.setupAxisView(chart);
 
-            var animationDuration = dragging ? 0 : 200;
+            var animationDuration = isDragging ? 0 : 200;
 
             self.axis = d3.svg.axis()
                 .scale(self.scale)
@@ -308,7 +308,7 @@
             self.positionLabel();
 
 
-            if (self.showGridlines()) {
+            if (self.shouldShowGridlines()) {
                 self.gridlines.drawGridLines(chart, self.scale.ticks());
             }
         };
@@ -321,7 +321,7 @@
          * @instance
          * @returns {boolean} - Whether the axis is horizontal.
          */
-        self.horizontal = function() {
+        self.isHorizontal = function() {
             return self.direction === 'h';
         };
 
@@ -339,7 +339,7 @@
          * @param {boolean} value Whether or not the axis will be ordered.
          * @returns {this}
          */
-        self.ordered = function(value) {
+        self.isOrdered = function(value) {
             if (!arguments.length) {
                 return ordered();
             }
@@ -383,7 +383,7 @@
          * @param {boolean} value - A true/false value to set this Axis as zoomable or not.
          * @returns {this}
          */
-        self.zoomable = function(value) {
+        self.isZoomable = function(value) {
             if (!arguments.length) {
                 return zoomable;
             }
@@ -406,7 +406,7 @@
          * @param {boolean} displayed Whether or not the axis will be drawn.
          * @returns {this}
          */
-        self.display = function(value) {
+        self.shouldDisplay = function(value) {
             if (!arguments.length) {
                 return display;
             }
@@ -425,14 +425,14 @@
          * Sets whether the axis is drawn in a reversed position.
          * @memberof! insight.Axis
          * @instance
-         * @param {boolean} reversed Whether the axis is drawn at the bottom/left (false) or top/right (true).
+         * @param {boolean} isReversed Whether the axis is drawn at the bottom/left (false) or top/right (true).
          * @returns {this}
          */
-        self.reversedPosition = function(reversed) {
+        self.hasReversedPosition = function(isReversed) {
             if (!arguments.length) {
-                return reversedPosition;
+                return shouldReversePosition;
             }
-            reversedPosition = reversed;
+            shouldReversePosition = isReversed;
             return self;
         };
 
@@ -680,10 +680,10 @@
          * Sets whether the axis has gridlines drawn from its major ticks.
          * @memberof! insight.Axis
          * @instance
-         * @param {boolean} reversed Whether the axis has gridlines drawn from its major ticks.
+         * @param {boolean} showGridlines Whether the axis has gridlines drawn from its major ticks.
          * @returns {this}
          */
-        self.showGridlines = function(showLines) {
+        self.shouldShowGridlines = function(showLines) {
             if (!arguments.length) {
                 return showGridlines;
             }
@@ -716,7 +716,7 @@
          axisLabelColor: undefined
          */
 
-        this.showGridlines(theme.axisStyle.showGridlines);
+        this.shouldShowGridlines(theme.axisStyle.showGridlines);
 
         this.gridlines.applyTheme(theme);
 

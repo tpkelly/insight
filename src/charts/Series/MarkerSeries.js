@@ -18,23 +18,22 @@
             thickness = 5,
             widthFactor = 1,
             offset = 0,
-            horizontal = false,
-            vertical = true;
+            isHorizontal = false;
 
         // Internal functions -----------------------------------------------------------------------------------------
 
         self.xPosition = function(d) {
             var pos = 0;
 
-            if (vertical) {
+            if (self.isHorizontal()) {
+                pos = self.x.scale(self.valueFunction()(d));
+
+            } else {
                 pos = self.x.scale(self.keyFunction()(d));
 
                 offset = self.calculateOffset(d);
 
                 pos = widthFactor !== 1 ? pos + offset : pos;
-            } else {
-                pos = self.x.scale(self.valueFunction()(d));
-
             }
 
             return pos;
@@ -50,8 +49,8 @@
 
         self.calculateOffset = function(d) {
 
-            var thickness = horizontal ? self.markerHeight(d) : self.markerWidth(d);
-            var scalePos = horizontal ? self.y.scale.rangeBand(d) : self.x.scale.rangeBand(d);
+            var thickness = self.isHorizontal() ? self.markerHeight(d) : self.markerWidth(d);
+            var scalePos = self.isHorizontal() ? self.y.scale.rangeBand(d) : self.x.scale.rangeBand(d);
 
             return (scalePos - thickness) * 0.5;
         };
@@ -60,7 +59,7 @@
 
             var position = 0;
 
-            if (horizontal) {
+            if (self.isHorizontal()) {
                 position = self.y.scale(self.keyFunction()(d));
 
                 offset = self.calculateOffset(d);
@@ -74,23 +73,18 @@
             return position;
         };
 
-        self.horizontal = function() {
-            horizontal = true;
-            vertical = false;
-
-            return self;
-        };
-
-        self.vertical = function() {
-            vertical = true;
-            horizontal = false;
+        self.isHorizontal = function(shouldBeHorizontal) {
+            if (!arguments.length) {
+                return isHorizontal;
+            }
+            isHorizontal = shouldBeHorizontal;
             return self;
         };
 
         self.markerWidth = function(d) {
             var w = 0;
 
-            if (horizontal) {
+            if (self.isHorizontal()) {
                 w = self.thickness();
             } else {
                 w = self.x.scale.rangeBand(d) * widthFactor;
@@ -102,7 +96,7 @@
         self.markerHeight = function(d) {
             var h = 0;
 
-            if (horizontal) {
+            if (self.isHorizontal()) {
                 h = self.y.scale.rangeBand(d) * widthFactor;
             } else {
                 h = self.thickness();
@@ -111,7 +105,7 @@
             return h;
         };
 
-        self.draw = function(chart, drag) {
+        self.draw = function(chart, isDragging) {
 
             self.initializeTooltip(chart.container.node());
             self.selectedItems = chart.selectedItems;
@@ -180,12 +174,12 @@
          * @param {Number} widthProportion The new width proportion.
          * @returns {this}
          */
-        self.widthFactor = function(_) {
+        self.widthFactor = function(widthProportion) {
 
             if (!arguments.length) {
                 return widthFactor;
             }
-            widthFactor = _;
+            widthFactor = widthProportion;
             return self;
         };
 
@@ -200,14 +194,14 @@
          * Sets the thickeness of the marker, in pixels.
          * @memberof! insight.MarkerSeries
          * @instance
-         * @param {Number} thickness The new thickeness, in pixels.
+         * @param {Number} markerThickness The new thickeness, in pixels.
          * @returns {this}
          */
-        self.thickness = function(_) {
+        self.thickness = function(markerThickness) {
             if (!arguments.length) {
                 return thickness;
             }
-            thickness = _;
+            thickness = markerThickness;
             return self;
         };
 
