@@ -20,7 +20,7 @@
 
         // Internal variables -----------------------------------------------------------------------------------------
 
-        this.classValues = [insight.Constants.LineClass];
+        self.classValues = [insight.Constants.LineClass];
 
         // Private functions ------------------------------------------------------------------------------------------
 
@@ -38,11 +38,11 @@
 
         // Internal functions -----------------------------------------------------------------------------------------
 
-        this.rangeY = function(d) {
+        self.rangeY = function(d) {
             return self.y.scale(self.valueFunction()(d));
         };
 
-        this.rangeX = function(d, i) {
+        self.rangeX = function(d) {
             var val = 0;
 
             if (self.x.scale.rangeBand) {
@@ -55,36 +55,38 @@
             return val;
         };
 
-        this.rangeExists = function(rangeSelector) {
+        self.rangeExists = function(rangeSelector) {
+
             if (rangeSelector.length === 0) {
                 return 0;
             }
 
+
             return rangeSelector[0].length;
         };
 
-        this.draw = function(chart, dragging) {
+        self.draw = function(chart, dragging) {
 
-            this.initializeTooltip(chart.container.node());
+            self.initializeTooltip(chart.container.node());
 
             var transform = d3.svg.line()
                 .x(self.rangeX)
                 .y(self.rangeY)
                 .interpolate(lineType);
 
-            var data = this.dataset();
+            var data = self.dataset();
 
-            var classValue = this.name + 'line ' + insight.Constants.LineClass;
-            var classSelector = '.' + this.name + 'line.' + insight.Constants.LineClass;
+            var classValue = self.name + 'line ' + insight.Constants.LineClass;
+            var classSelector = '.' + self.name + 'line.' + insight.Constants.LineClass;
 
             var rangeIdentifier = "path" + classSelector;
 
             var rangeElement = chart.plotArea.selectAll(rangeIdentifier);
 
-            if (!this.rangeExists(rangeElement)) {
+            if (!self.rangeExists(rangeElement)) {
                 chart.plotArea.append("path")
                     .attr("class", classValue)
-                    .style("stroke", this.color)
+                    .style("stroke", self.color)
                     .attr("fill", "none")
                     .attr("clip-path", "url(#" + chart.clipPath() + ")")
                     .on('mouseover', lineOver)
@@ -95,14 +97,14 @@
             var duration = dragging ? 0 : 300;
 
             chart.plotArea.selectAll(rangeIdentifier)
-                .datum(this.dataset(), this.matcher)
+                .datum(self.dataset())
                 .transition()
                 .duration(duration)
                 .attr("d", transform);
 
             if (displayPoints) {
                 var circles = chart.plotArea.selectAll("circle")
-                    .data(this.dataset());
+                    .data(self.dataset());
 
                 circles.enter()
                     .append('circle')
@@ -117,7 +119,7 @@
 
             }
 
-            var colorFunc = (displayPoints) ? this.color : d3.functor(undefined);
+            var colorFunc = (displayPoints) ? self.color : d3.functor(undefined);
             var allCircles = chart.plotArea.selectAll("circle");
 
             allCircles
@@ -146,12 +148,12 @@
          * @param {boolean} showPoints Whether or not to show circular points on top of the line for each datapoint.
          * @returns {this}
          */
-        this.showPoints = function(value) {
+        self.showPoints = function(value) {
             if (!arguments.length) {
                 return displayPoints;
             }
             displayPoints = value;
-            return this;
+            return self;
         };
 
         /**
@@ -169,17 +171,17 @@
          * @param {String} - The line type that this lineSeries will draw.
          * @returns {this}
          */
-        this.lineType = function(newType) {
+        self.lineType = function(newType) {
             if (!arguments.length) {
                 return lineType;
             }
 
             lineType = newType;
 
-            return this;
+            return self;
         };
 
-        this.applyTheme(insight.defaultTheme);
+        self.applyTheme(insight.defaultTheme);
     };
 
     insight.LineSeries.prototype = Object.create(insight.Series.prototype);

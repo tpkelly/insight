@@ -13,12 +13,12 @@
 
         // Internal variables -----------------------------------------------------------------------------------------
 
-        this.charts = [];
-        this.tables = [];
-        this.groupings = [];
-        this.dimensions = [];
-        this.filteredDimensions = [];
-        this.dimensionListenerMap = {};
+        self.charts = [];
+        self.tables = [];
+        self.groupings = [];
+        self.dimensions = [];
+        self.filteredDimensions = [];
+        self.dimensionListenerMap = {};
 
         // Private functions ------------------------------------------------------------------------------------------
 
@@ -152,7 +152,7 @@
          * @param {object} dataset - The insight.DataSet or insight.Grouping being filtered
          * @param {string} value - The value that the dimension is being sliced/filtered by.
          */
-        this.chartFilterHandler = function(dataset, value) {
+        self.chartFilterHandler = function(dataset, value) {
 
             var dimensionSelector = insight.Utils.keySelector(value);
 
@@ -235,7 +235,7 @@
          * @memberof! insight.ChartGroup
          * @instance
          */
-        this.draw = function() {
+        self.draw = function() {
 
             self.charts.forEach(function(chart) {
                 chart.draw();
@@ -256,7 +256,7 @@
          * @param {object} widget An insight.Table or insight.Chart
          * @returns {this}
          */
-        this.add = function(widget) {
+        self.add = function(widget) {
             if (widget instanceof insight.Chart) {
                 addChart(widget);
             } else if (widget instanceof insight.Table) {
@@ -266,7 +266,7 @@
         };
 
         //Apply the default look-and-feel
-        this.applyTheme(insight.defaultTheme);
+        self.applyTheme(insight.defaultTheme);
     };
 
     /**

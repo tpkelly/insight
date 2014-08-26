@@ -41,7 +41,7 @@
             var expectedDataset = tableData;
             var actualDataset = table.dataset();
 
-            expect(actualDataset).toBe(expectedDataset);
+            expect(actualDataset).toEqual(expectedDataset);
 
         });
 

@@ -8,9 +8,12 @@
      * @class insight.Theme
      */
     insight.Theme = function Theme() {
+
         //Do nothing, just be a base class
 
-        this.axisStyle = {
+        var self = this;
+
+        self.axisStyle = {
             gridlineWidth: undefined,
             gridlineColor: undefined,
             showGridlines: undefined,
@@ -28,19 +31,19 @@
             axisLabelColor: undefined
         };
 
-        this.chartStyle = {
+        self.chartStyle = {
             seriesPalette: undefined,
             fillColor: undefined,
             titleFont: undefined,
             titleColor: undefined
         };
 
-        this.seriesStyle = {
+        self.seriesStyle = {
             showPoints: undefined,
             lineStyle: undefined
         };
 
-        this.tableStyle = {
+        self.tableStyle = {
 
         };
     };

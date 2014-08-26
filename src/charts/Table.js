@@ -1,7 +1,5 @@
 (function(insight) {
 
-
-
     /**
      * The Table class draws HTML tables from DataSets
      * @class insight.Table
@@ -22,10 +20,10 @@
 
         // Internal variables -----------------------------------------------------------------------------------------
 
-        this.name = name;
-        this.element = element;
-        this.data = dataset;
-        this.selectedItems = [];
+        self.name = name;
+        self.element = element;
+        self.data = dataset;
+        self.selectedItems = [];
 
         // Private functions ------------------------------------------------------------------------------------------
 
@@ -94,7 +92,7 @@
 
         // Toggle highlighting on items in this table.
         // The provided cssSelector is used to activate or deactivate highlighting on one or more selected rows.
-        this.highlight = function(selector) {
+        self.highlight = function(selector) {
 
             var clicked = self.tableBody.selectAll('.' + selector);
             var alreadySelected = clicked.classed('selected');
@@ -108,17 +106,17 @@
                 self.selectedItems.push(selector);
             }
 
-            var selected = this.tableBody.selectAll('.selected');
-            var notselected = this.tableBody.selectAll('tr:not(.selected)');
+            var selected = self.tableBody.selectAll('.selected');
+            var notselected = self.tableBody.selectAll('tr:not(.selected)');
 
             notselected.classed('notselected', selected[0].length > 0);
         };
 
         // The public drawing method for the Table. It will also initialize the <table> element if required.
-        this.draw = function() {
+        self.draw = function() {
 
-            var data = this.dataset();
-            var columns = this.columns();
+            var data = self.dataset();
+            var columns = self.columns();
 
             if (!tableInitialized) {
                 initializeTable();
@@ -132,7 +130,7 @@
                 .attr('class', 'column')
                 .html(labelFunction);
 
-            var rows = this.tableBody.selectAll('tr.' + insight.Constants.TableRowClass)
+            var rows = self.tableBody.selectAll('tr.' + insight.Constants.TableRowClass)
                 .data(data, keyFunction);
 
             rows.enter()
@@ -146,8 +144,9 @@
                 .data(columnBuilder);
 
             cells.enter()
-                .append('td')
-                .html(valueFunction);
+                .append('td');
+
+            cells.html(valueFunction);
 
             // remove any DOM elements no longer in the data set
             cells.exit()
@@ -174,12 +173,12 @@
          * @param {object[]} columnProperties - The new properties to use as columns, of the form {'label':... , 'value':... }.
          * @returns {this}
          */
-        this.columns = function(value) {
+        self.columns = function(value) {
             if (!arguments.length) {
                 return columnProperties;
             }
             columnProperties = value;
-            return this;
+            return self;
         };
 
         /**
@@ -196,12 +195,12 @@
          * @param {function} keyFunc - The function to use as the key accessor for this Table
          * @returns {this}
          */
-        this.keyFunction = function(keyFunc) {
+        self.keyFunction = function(keyFunc) {
             if (!arguments.length) {
                 return keyFunction;
             }
             keyFunction = keyFunc;
-            return this;
+            return self;
         };
 
         /**
@@ -211,11 +210,11 @@
          * @param {function} sortFunction A function extracting the property to sort on from a data object.
          * @returns {object} this Returns the Table object
          */
-        this.ascending = function(sortFunction) {
+        self.ascending = function(sortFunction) {
 
             addSortOrder(sortFunction, 'ASC');
 
-            return this;
+            return self;
         };
 
         /**
@@ -225,11 +224,11 @@
          * @param {function} sortFunction A function extracting the property to sort on from a data object.
          * @returns {object} this Returns the Table object.
          */
-        this.descending = function(sortFunction) {
+        self.descending = function(sortFunction) {
 
             addSortOrder(sortFunction, 'DESC');
 
-            return this;
+            return self;
         };
 
         /**
@@ -246,13 +245,13 @@
          * @param {Number} topValueCount How many values to display in the Table.
          * @returns {this}
          */
-        this.top = function(top) {
+        self.top = function(top) {
             if (!arguments.length) {
                 return topValues;
             }
             topValues = top;
 
-            return this;
+            return self;
         };
 
         /**
@@ -261,7 +260,7 @@
          * @instance
          * @returns {object[]} - The data set to be used by the table.
          */
-        this.dataset = function() {
+        self.dataset = function() {
 
             var sorters = sortFunctions;
 
@@ -269,14 +268,14 @@
 
             data = insight.Utils.multiSort(data, sorters);
 
-            if (this.top()) {
-                data = data.slice(0, this.top());
+            if (self.top()) {
+                data = data.slice(0, self.top());
             }
 
             return data;
         };
 
-        this.applyTheme(insight.defaultTheme);
+        self.applyTheme(insight.defaultTheme);
 
     };
 
