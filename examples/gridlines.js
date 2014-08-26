@@ -42,7 +42,7 @@ $(document)
                 var millions = tickValue / 1000000;
                 return millions + 'M';
             })
-            .showGridlines(true);
+            .shouldShowGridlines(true);
 
         chart.xAxis(x);
         chart.yAxis(y);

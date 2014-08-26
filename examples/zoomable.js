@@ -46,7 +46,7 @@ $(document)
                 {
                     return d.value.Count;
                 })
-                .showPoints(false);
+                .shouldShowPoints(false);
 
 
             timeChart.series([series]);

@@ -13,14 +13,14 @@ $(document)
 
             var x = new insight.Axis('', insight.Scales.Ordinal, 'bottom')
                 .tickLabelOrientation('tb')
-                .ordered(true);
+                .isOrdered(true);
 
             var clientRevenueAxis = new insight.Axis('', insight.Scales.Linear)
                 .tickLabelFormat(insight.Formatters.currencyFormatter);
 
             var cumulativeRevenueAxis = new insight.Axis('', insight.Scales.Linear)
                 .tickLabelFormat(insight.Formatters.percentageFormatter)
-                .reversedPosition(true);
+                .hasReversedPosition(true);
 
             var clientRevenues = new insight.ColumnSeries('clientColumn', clientData, x, clientRevenueAxis)
                 .valueFunction(function(d)
