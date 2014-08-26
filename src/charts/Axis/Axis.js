@@ -352,21 +352,21 @@
          * Gets the function used to order the axis values
          * @memberof! insight.Axis
          * @instance
-         * @returns {function} - The current ordering function
+         * @returns {Function} - The current ordering function
          *
          * @also
          *
          * Sets the function used to order the axis values
          * @memberof! insight.Axis
          * @instance
-         * @param {function} value The ordering function
+         * @param {Function} orderFunc The ordering function
          * @returns {this}
          */
-        self.orderingFunction = function(value) {
+        self.orderingFunction = function(orderFunc) {
             if (!arguments.length) {
                 return orderingFunction;
             }
-            orderingFunction = value;
+            orderingFunction = orderFunc;
             return self;
         };
 
@@ -465,7 +465,7 @@
          * Gets the function that will be used to format the axis tick labels.
          * @memberof! insight.Axis
          * @instance
-         * @returns {function} - A function that accepts the axis tick string and returns the formatted label
+         * @returns {Function} - A function that accepts the axis tick string and returns the formatted label
          *
          * @also
          *
@@ -473,14 +473,14 @@
          * See `insight.Formatters` for pre-built examples.
          * @memberof! insight.Axis
          * @instance
-         * @param {function} value A function that accepts the axis tick label and returns the formatted label
+         * @param {Function} value A function that accepts the axis tick label and returns the formatted label
          * @returns {this}
          */
-        self.tickLabelFormat = function(value) {
+        self.tickLabelFormat = function(formatFunc) {
             if (!arguments.length) {
                 return format;
             }
-            format = value;
+            format = formatFunc;
             return self;
         };
 

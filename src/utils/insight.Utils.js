@@ -106,7 +106,6 @@ insight.Utils = (function() {
      * class so an empty string is returned.
      * @returns {string} return - A class name to identify this point and any other points taking the same value in other charts.
      * @param {object} d - The input point
-     * @param {function} keyFunction - An optional keyFunction if the
      */
     exports.keySelector = function(d) {
 

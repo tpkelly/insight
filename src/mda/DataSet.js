@@ -32,7 +32,7 @@
      * The function should return a boolean where false means the object is not included in the dataset.
      * @memberof! insight.DataSet
      * @instance
-     * @returns {function} - The function to use to filter an object from the dataset.
+     * @returns {Function} - The function to use to filter an object from the dataset.
      *
      * @also
      *
@@ -40,14 +40,14 @@
      * The function should return a boolean where false means the object is not included in the dataset.
      * @memberof! insight.DataSet
      * @instance
-     * @param {function} filter The new function to use to filter an object from the dataset.
+     * @param {Function} filterFunc The new function to use to filter an object from the dataset.
      * @returns {this}
      */
-    insight.DataSet.prototype.filterFunction = function(f) {
+    insight.DataSet.prototype.filterFunction = function(filterFunc) {
         if (!arguments.length) {
             return this._filterFunction;
         }
-        this._filterFunction = f;
+        this._filterFunction = filterFunc;
         return this;
     };
 
@@ -81,21 +81,21 @@
      * Gets the function used to order the dataset values
      * @memberof! insight.DataSet
      * @instance
-     * @returns {function} - The current ordering function
+     * @returns {Function} - The current ordering function
      *
      * @also
      *
      * Sets the function used to order the dataset values
      * @memberof! insight.DataSet
      * @instance
-     * @param {function} orderingFunction The ordering function
+     * @param {Function} orderFunc The ordering function
      * @returns {this}
      */
-    insight.DataSet.prototype.orderingFunction = function(o) {
+    insight.DataSet.prototype.orderingFunction = function(orderFunc) {
         if (!arguments.length) {
             return this._orderFunction;
         }
-        this._orderFunction = o;
+        this._orderFunction = orderFunc;
         return this;
     };
 
@@ -110,7 +110,6 @@
 
         return data;
     };
-
 
     insight.DataSet.prototype.group = function(name, groupFunction, oneToMany) {
 

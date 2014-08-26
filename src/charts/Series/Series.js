@@ -177,17 +177,17 @@
 
 
 
-        self.click = function(element, filterBy) {
-            var filterValue = groupKeyFunction(filterBy);
+        self.click = function(element, filterFunc) {
+            var filterValue = groupKeyFunction(filterFunc);
 
             self.clickEvent(self.data, filterValue);
         };
 
-        self.tooltipFunction = function(_) {
+        self.tooltipFunction = function(tooltipFunc) {
             if (!arguments.length) {
                 return tooltipFunction;
             }
-            tooltipFunction = _;
+            tooltipFunction = tooltipFunc;
 
             return self;
         };
@@ -301,6 +301,7 @@
          * Returns the array of data objects used to plot this Series.
          * @memberof! insight.Series
          * @instance
+         * @param {Function} orderFunction The function used to compare objects in the dataset for ordering.
          * @returns {object[]} - The data set to be used by the series
          */
         self.dataset = function(orderFunction) {
@@ -321,8 +322,6 @@
 
             return data;
         };
-
-
 
         /**
          * The distance to which move the tooltip for this series relative to its default point.
@@ -347,14 +346,12 @@
             return self;
         };
 
-
-
         /**
          * The function to use to filter an object from the series.
          * The function should return a boolean where false means the object is not included in the series.
          * @memberof! insight.Series
          * @instance
-         * @returns {function} - The function to use to filter an object from the series.
+         * @returns {Function} - The function to use to filter an object from the series.
          *
          * @also
          *
@@ -362,14 +359,14 @@
          * The function should return a boolean where false means the object is not included in the series.
          * @memberof! insight.Series
          * @instance
-         * @param {function} filter The new function to use to filter an object from the series.
+         * @param {Function} filterFunc The new function to use to filter an object from the series.
          * @returns {this}
          */
-        self.filterFunction = function(newFilter) {
+        self.filterFunction = function(filterFunc) {
             if (!arguments.length) {
                 return filter;
             }
-            filter = newFilter;
+            filter = filterFunc;
 
             return self;
         };
@@ -378,7 +375,7 @@
          * Gets the function that will be used to format the tooltip for this series' values.
          * @memberof! insight.Series
          * @instance
-         * @returns {function} - A function that accepts the value string and returns the formatted tooltip label.
+         * @returns {Function} - A function that accepts the value string and returns the formatted tooltip label.
          *
          * @also
          *
@@ -386,14 +383,14 @@
          * See `insight.Formatters` for pre-built examples.
          * @memberof! insight.Series
          * @instance
-         * @param {function} format A function that accepts the value string and returns the formatted tooltip label.
+         * @param {Function} formatFunc A function that accepts the value string and returns the formatted tooltip label.
          * @returns {this}
          */
-        self.tooltipFormat = function(newFormat) {
+        self.tooltipFormat = function(formatFunc) {
             if (!arguments.length) {
                 return tooltipFormat;
             }
-            tooltipFormat = newFormat;
+            tooltipFormat = formatFunc;
 
             return self;
         };
@@ -412,11 +409,11 @@
          * @param {Number} topValues The number of results to include. Used in conjunction with ordering of an Axis.
          * @returns {this}
          */
-        self.top = function(_) {
+        self.top = function(topValues) {
             if (!arguments.length) {
                 return self.topValues;
             }
-            self.topValues = _;
+            self.topValues = topValues;
 
             return self;
         };

@@ -98,12 +98,12 @@
             return max;
         };
 
-        self.calculateYPos = function(func, d) {
+        self.calculateYPos = function(valueFunc, d) {
             if (!d.yPos) {
                 d.yPos = 0;
             }
 
-            d.yPos += func(d);
+            d.yPos += valueFunc(d);
 
             return d.yPos;
         };
@@ -123,9 +123,9 @@
 
         self.yPosition = function(d) {
 
-            var func = self.currentSeries.valueFunction;
+            var seriesValueFunc = self.currentSeries.valueFunction;
 
-            var position = self.stacked() ? self.y.scale(self.calculateYPos(func, d)) : self.y.scale(func(d));
+            var position = self.stacked() ? self.y.scale(self.calculateYPos(seriesValueFunc, d)) : self.y.scale(seriesValueFunc(d));
 
             return position;
         };

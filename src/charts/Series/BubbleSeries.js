@@ -141,14 +141,14 @@
          * The function to extract the radius of each bubble from the data objects.
          * @memberof! insight.BubbleSeries
          * @instance
-         * @returns {function} - The current function used to determine the radius of data objects.
+         * @returns {Function} - The current function used to determine the radius of data objects.
          *
          * @also
          *
          * Sets the function to extract the radius of each bubble from the data objects.
          * @memberof! insight.BubbleSeries
          * @instance
-         * @param {boolean} reversed The new function to extract the radius of each bubble from the data objects.
+         * @param {Function} radiusFunc The new function to extract the radius of each bubble from the data objects.
          * @returns {this}
          */
         self.radiusFunction = function(radiusFunc) {
