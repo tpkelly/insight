@@ -1,4 +1,5 @@
 (function(insight) {
+
     /**
      * A Legend listing out the series on a chart
      * @class insight.Legend
@@ -7,7 +8,8 @@
 
         // Private variables ------------------------------------------------------------------------------------------
 
-        var initialised = false;
+        var self = this,
+            initialised = false;
 
         // Private functions ------------------------------------------------------------------------------------------
 
@@ -29,7 +31,7 @@
 
         // Internal functions -----------------------------------------------------------------------------------------
 
-        this.init = function(chart) {
+        self.init = function(chart) {
             initialised = true;
 
             //Get rid of any previous legend objects
@@ -52,9 +54,9 @@
                 .attr("class", insight.Constants.Legend);
         };
 
-        this.draw = function(chart) {
+        self.draw = function(chart) {
             if (!initialised) {
-                this.init(chart);
+                self.init(chart);
             }
 
             var series = chart.series();

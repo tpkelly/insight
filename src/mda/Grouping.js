@@ -10,14 +10,14 @@
 
         // Private variables ------------------------------------------------------------------------------------------
 
-        var sumProperties = [],
+        var self = this,
+            sumProperties = [],
             countProperties = [],
             cumulativeProperties = [],
             averageProperties = [],
             correlationPairProperties = [],
             allCorrelationProperties = [],
             ordered = false,
-            self = this,
             filterFunction = null,
             orderFunction;
 
@@ -264,7 +264,6 @@
                 calculateCorrelations();
 
             }
-
 
             // Run any user injected functions post aggregation
             postAggregation(self);
@@ -679,7 +678,7 @@
          * The function used to compare the elements in this grouping if sorting is requested.
          * @instance
          * @memberof! insight.Grouping
-         * @returns {function} orderingFunction - The function used to compare two values when sort() is called on an array
+         * @returns {Function} orderingFunction - The function used to compare two values when sort() is called on an array
          *
          * @also
          *
@@ -687,7 +686,7 @@
          * @instance
          * @memberof! insight.Grouping
          * @returns {this}
-         * @param {function} function - The comparison function to be used to sort the elements in this group.
+         * @param {Function} orderingFunction - The comparison function to be used to sort the elements in this group.
          * The function should take the form of a standard
          * {@link https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/GlobalvalueObjects/Array/sort|Javascript comparison function}.
          */
@@ -727,7 +726,7 @@
          * The function returns true to keep the value, or false to remove it from the final result.
          * @instance
          * @memberof! insight.Grouping
-         * @returns {function} - The function used to filter the results returned by this grouping.
+         * @returns {Function} - The function used to filter the results returned by this grouping.
          *
          * @also
          *
@@ -735,14 +734,14 @@
          * The function returns true to keep the value, or false to remove it from the final result.
          * @instance
          * @memberof! insight.Grouping
-         * @param {function} filterFunction - The function used to filter the results returned by this grouping.
+         * @param {Function} filterFunc - The function used to filter the results returned by this grouping.
          * @returns {this}
          */
-        self.filterFunction = function(f) {
+        self.filterFunction = function(filterFunc) {
             if (!arguments.length) {
                 return filterFunction;
             }
-            filterFunction = f;
+            filterFunction = filterFunc;
             return self;
         };
 

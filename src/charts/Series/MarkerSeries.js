@@ -23,7 +23,7 @@
 
         // Internal functions -----------------------------------------------------------------------------------------
 
-        this.xPosition = function(d) {
+        self.xPosition = function(d) {
             var pos = 0;
 
             if (vertical) {
@@ -41,7 +41,7 @@
         };
 
 
-        this.keys = function() {
+        self.keys = function() {
 
             var f = self.keyFunction();
 
@@ -49,7 +49,7 @@
                 .map(f);
         };
 
-        this.calculateOffset = function(d) {
+        self.calculateOffset = function(d) {
 
             var thickness = horizontal ? self.markerHeight(d) : self.markerWidth(d);
             var scalePos = horizontal ? self.y.scale.rangeBand(d) : self.x.scale.rangeBand(d);
@@ -57,7 +57,7 @@
             return (scalePos - thickness) * 0.5;
         };
 
-        this.yPosition = function(d) {
+        self.yPosition = function(d) {
 
             var position = 0;
 
@@ -75,20 +75,20 @@
             return position;
         };
 
-        this.horizontal = function() {
+        self.horizontal = function() {
             horizontal = true;
             vertical = false;
 
-            return this;
+            return self;
         };
 
-        this.vertical = function() {
+        self.vertical = function() {
             vertical = true;
             horizontal = false;
-            return this;
+            return self;
         };
 
-        this.markerWidth = function(d) {
+        self.markerWidth = function(d) {
             var w = 0;
 
             if (horizontal) {
@@ -100,7 +100,7 @@
             return w;
         };
 
-        this.markerHeight = function(d) {
+        self.markerHeight = function(d) {
             var h = 0;
 
             if (horizontal) {
@@ -112,7 +112,7 @@
             return h;
         };
 
-        this.draw = function(chart, drag) {
+        self.draw = function(chart, drag) {
 
             self.initializeTooltip(chart.container.node());
             self.selectedItems = chart.selectedItems;
@@ -122,21 +122,21 @@
                 d.xPos = 0;
             }
 
-            var d = this.dataset()
+            var d = self.dataset()
                 .forEach(reset);
 
             var groups = chart.plotArea
-                .selectAll('g.' + insight.Constants.BarGroupClass + "." + this.name)
-                .data(this.dataset(), this.keyAccessor);
+                .selectAll('g.' + insight.Constants.BarGroupClass + "." + self.name)
+                .data(self.dataset(), self.keyAccessor);
 
             var newGroups = groups.enter()
                 .append('g')
-                .attr('class', insight.Constants.BarGroupClass + " " + this.name);
+                .attr('class', insight.Constants.BarGroupClass + " " + self.name);
 
             var newBars = newGroups.selectAll('rect.bar');
 
             function click(filter) {
-                return self.click(this, filter);
+                return self.click(self, filter);
             }
 
             function duration(d, i) {
@@ -145,23 +145,23 @@
 
             newBars = newGroups.append('rect')
                 .attr('class', self.itemClassName)
-                .attr('y', this.y.bounds[0])
+                .attr('y', self.y.bounds[0])
                 .attr('height', 0)
-                .attr('fill', this.color)
+                .attr('fill', self.color)
                 .attr('clip-path', 'url(#' + chart.clipPath() + ')')
-                .on('mouseover', this.mouseOver)
-                .on('mouseout', this.mouseOut)
+                .on('mouseover', self.mouseOver)
+                .on('mouseout', self.mouseOut)
                 .on('click', click);
 
-            var bars = groups.selectAll('.' + this.name + 'class');
+            var bars = groups.selectAll('.' + self.name + 'class');
 
             bars
                 .transition()
                 .duration(duration)
-                .attr('y', this.yPosition)
-                .attr('x', this.xPosition)
-                .attr('width', this.markerWidth)
-                .attr('height', this.markerHeight);
+                .attr('y', self.yPosition)
+                .attr('x', self.xPosition)
+                .attr('width', self.markerWidth)
+                .attr('height', self.markerHeight);
 
             groups.exit()
                 .remove();
@@ -183,13 +183,13 @@
          * @param {Number} widthProportion The new width proportion.
          * @returns {this}
          */
-        this.widthFactor = function(_) {
+        self.widthFactor = function(_) {
 
             if (!arguments.length) {
                 return widthFactor;
             }
             widthFactor = _;
-            return this;
+            return self;
         };
 
         /**
@@ -206,12 +206,12 @@
          * @param {Number} thickness The new thickeness, in pixels.
          * @returns {this}
          */
-        this.thickness = function(_) {
+        self.thickness = function(_) {
             if (!arguments.length) {
                 return thickness;
             }
             thickness = _;
-            return this;
+            return self;
         };
 
     };

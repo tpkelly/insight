@@ -10,7 +10,8 @@
 
         // Private variables ------------------------------------------------------------------------------------------
 
-        var height = d3.functor(300),
+        var self = this,
+            height = d3.functor(300),
             width = d3.functor(300),
             maxWidth = d3.functor(300),
             minWidth = d3.functor(300),
@@ -18,7 +19,6 @@
             series = [],
             xAxes = [],
             yAxes = [],
-            self = this,
             title = '',
             autoMargin = true,
             legend = null,
@@ -36,15 +36,15 @@
 
         // Internal variables -----------------------------------------------------------------------------------------
 
-        this.name = name;
-        this.element = element;
-        this.selectedItems = [];
-        this.container = null;
-        this.chart = null;
-        this.measureCanvas = document.createElement('canvas');
-        this.marginMeasurer = new insight.MarginMeasurer();
-        this.seriesPalette = [];
-        this.legendView = null;
+        self.name = name;
+        self.element = element;
+        self.selectedItems = [];
+        self.container = null;
+        self.chart = null;
+        self.measureCanvas = document.createElement('canvas');
+        self.marginMeasurer = new insight.MarginMeasurer();
+        self.seriesPalette = [];
+        self.legendView = null;
 
         // Private functions ------------------------------------------------------------------------------------------
 
@@ -127,17 +127,17 @@
          * @memberof! insight.Chart
          * @param {insight.Series[]} series - An array of insight.Series belonging to this Chart
          */
-        this.seriesChanged = function(series) {
+        self.seriesChanged = function(series) {
 
         };
 
-        this.draw = function(dragging) {
+        self.draw = function(dragging) {
 
             if (!initialized) {
                 init();
             }
 
-            this.resizeChart();
+            self.resizeChart();
 
             var axes = xAxes.concat(yAxes);
 
@@ -145,7 +145,7 @@
                 axis.draw(self, dragging);
             });
 
-            this.series()
+            self.series()
                 .forEach(function(series, index) {
                     series.color = d3.functor(self.seriesPalette[index % self.seriesPalette.length]);
                     series.draw(self, dragging);
@@ -160,17 +160,17 @@
             }
         };
 
-        this.addClipPath = function() {
-            this.plotArea.append('clipPath')
-                .attr('id', this.clipPath())
+        self.addClipPath = function() {
+            self.plotArea.append('clipPath')
+                .attr('id', self.clipPath())
                 .append('rect')
                 .attr('x', 1)
                 .attr('y', 0)
-                .attr('width', this.width() - this.margin()
-                    .left - this.margin()
+                .attr('width', self.width() - self.margin()
+                    .left - self.margin()
                     .right)
-                .attr('height', this.height() - this.margin()
-                    .top - this.margin()
+                .attr('height', self.height() - self.margin()
+                    .top - self.margin()
                     .bottom);
         };
 
@@ -180,18 +180,15 @@
          * @instance
          * @param {Number} windowWidth The current window width to resize against
          */
-        this.resizeWidth = function(windowWidth) {
+        self.resizeWidth = function(windowWidth) {
 
-            var self = this;
+            if (self.width() > windowWidth && self.width() !== self.minWidth()) {
 
+                doResize(Math.max(self.minWidth(), windowWidth));
 
-            if (this.width() > windowWidth && this.width() !== this.minWidth()) {
+            } else if (self.width() < windowWidth && self.width() !== self.maxWidth()) {
 
-                doResize(Math.max(this.minWidth(), windowWidth));
-
-            } else if (this.width() < windowWidth && this.width() !== this.maxWidth()) {
-
-                doResize(Math.min(this.maxWidth(), windowWidth));
+                doResize(Math.min(self.maxWidth(), windowWidth));
 
             }
 
@@ -204,7 +201,7 @@
 
         };
 
-        this.resizeChart = function() {
+        self.resizeChart = function() {
 
             if (autoMargin) {
 
@@ -224,7 +221,7 @@
                 .attr('width', self.width())
                 .attr('height', self.height());
 
-            self.plotArea = this.plotArea
+            self.plotArea = self.plotArea
                 .attr('transform', 'translate(' + chartMargin.left + ',' + chartMargin.top + ')');
 
             self.plotArea.select('#' + self.clipPath())
@@ -235,18 +232,18 @@
                 .attr('height', self.height() - chartMargin.top - chartMargin.bottom);
         };
 
-        this.zoomExists = function() {
-            var z = this.plotArea.selectAll('.zoompane');
+        self.zoomExists = function() {
+            var z = self.plotArea.selectAll('.zoompane');
             return z[0].length;
         };
 
-        this.dragging = function() {
+        self.dragging = function() {
             self.draw(true);
         };
 
-        this.clipPath = function() {
+        self.clipPath = function() {
 
-            return insight.Utils.safeString(this.name) + 'clip';
+            return insight.Utils.safeString(self.name) + 'clip';
         };
 
         /*
@@ -257,7 +254,7 @@
          * @param {string} selector - a CSS selector matching a slice of a dimension. eg. an entry in a grouping by Country
          would be 'in_England', which would match that dimensional value in any charts.
          */
-        this.highlight = function(selector) {
+        self.highlight = function(selector) {
             var clicked = self.plotArea.selectAll('.' + selector);
             var alreadySelected = insight.Utils.arrayContains(self.selectedItems, selector);
 
@@ -279,13 +276,13 @@
             notselected.classed('notselected', selected[0].length > 0);
         };
 
-        this.draw = function(dragging) {
+        self.draw = function(dragging) {
 
             if (!initialized) {
                 init();
             }
 
-            this.resizeChart();
+            self.resizeChart();
 
             var axes = xAxes.concat(yAxes);
 
@@ -293,7 +290,7 @@
                 axis.draw(self, dragging);
             });
 
-            this.series()
+            self.series()
                 .forEach(function(series, index) {
                     series.color = d3.functor(self.seriesPalette[index % self.seriesPalette.length]);
                     series.draw(self, dragging);
@@ -315,7 +312,7 @@
          * @memberof! insight.Chart
          * @param {insight.Series[]} series - An array of insight.Series belonging to this Chart
          */
-        this.seriesChanged = function(series) {
+        self.seriesChanged = function(series) {
 
         };
 
@@ -326,11 +323,11 @@
          * @param axis The axis to enable zooming for
          * @returns {Chart} Returns this.
          */
-        this.zoomable = function(axis) {
+        self.zoomable = function(axis) {
             zoomable = true;
             zoomAxis = axis;
             axis.zoomable(true);
-            return this;
+            return self;
         };
 
         /**
@@ -347,7 +344,7 @@
          * @param {object} margins The new margins to use around the chart.
          * @returns {this}
          */
-        this.margin = function(newMargins) {
+        self.margin = function(newMargins) {
             if (!arguments.length) {
                 return margin;
             }
@@ -355,7 +352,7 @@
             autoMargin = false;
             margin = newMargins;
 
-            return this;
+            return self;
         };
 
         /**
@@ -372,13 +369,13 @@
          * @param {String} chartTitle The new title of the chart.
          * @returns {this}
          */
-        this.title = function(chartTitle) {
+        self.title = function(chartTitle) {
             if (!arguments.length) {
                 return title;
             }
 
             title = chartTitle;
-            return this;
+            return self;
         };
 
         /**
@@ -396,19 +393,19 @@
          * @param {Boolean} dontSetMax If falsey then the maxWidth of the chart will also be set to newWidth.
          * @returns {this}
          */
-        this.width = function(newWidth, dontSetMax) {
+        self.width = function(newWidth, dontSetMax) {
             if (!arguments.length) {
                 return width();
             }
 
             if (!dontSetMax) {
 
-                this.maxWidth(newWidth);
+                self.maxWidth(newWidth);
 
             }
 
             width = d3.functor(newWidth);
-            return this;
+            return self;
         };
 
         /**
@@ -425,12 +422,12 @@
          * @param {Number} newHeight The new height of the chart, measured in pixels.
          * @returns {this}
          */
-        this.height = function(newHeight) {
+        self.height = function(newHeight) {
             if (!arguments.length) {
                 return height();
             }
             height = d3.functor(newHeight);
-            return this;
+            return self;
         };
 
         /**
@@ -447,13 +444,13 @@
          * @param {Number} newMaxWidth The new maximum width of the chart, measured in pixels.
          * @returns {this}
          */
-        this.maxWidth = function(newMaxWidth) {
+        self.maxWidth = function(newMaxWidth) {
             if (!arguments.length) {
                 return maxWidth();
             }
 
             maxWidth = d3.functor(newMaxWidth);
-            return this;
+            return self;
         };
 
         /**
@@ -470,13 +467,13 @@
          * @param {Number} newMinWidth The new minimum width of the chart, measured in pixels.
          * @returns {this}
          */
-        this.minWidth = function(newMinWidth) {
+        self.minWidth = function(newMinWidth) {
             if (!arguments.length) {
                 return minWidth();
             }
 
             minWidth = d3.functor(newMinWidth);
-            return this;
+            return self;
         };
 
         /**
@@ -493,7 +490,7 @@
          * @param {Series[]} newSeries The new series to draw on the chart.
          * @returns {this}
          */
-        this.series = function(newSeries) {
+        self.series = function(newSeries) {
             if (!arguments.length) {
                 return series;
             }
@@ -501,7 +498,7 @@
 
             self.seriesChanged(self, newSeries);
 
-            return this;
+            return self;
         };
 
         /**
@@ -518,14 +515,14 @@
          * @param {Legend} newLegend The new legend to draw on the chart.
          * @returns {this}
          */
-        this.legend = function(newLegend) {
+        self.legend = function(newLegend) {
             if (!arguments.length) {
                 return legend;
             }
 
             legend = newLegend;
 
-            return this;
+            return self;
         };
 
         /**
@@ -536,10 +533,10 @@
          * @param {Axis} [axis] The x-axis to add.
          * @returns {this}
          */
-        this.addXAxis = function(axis) {
+        self.addXAxis = function(axis) {
             axis.direction = 'h';
             xAxes.push(axis);
-            return this;
+            return self;
         };
 
         /**
@@ -556,7 +553,7 @@
          * @param {Axis[]} newXAxes The new x-axes to draw on the chart.
          * @returns {this}
          */
-        this.xAxes = function(newXAxes) {
+        self.xAxes = function(newXAxes) {
             if (!arguments.length) {
                 return xAxes;
             }
@@ -568,7 +565,7 @@
                 self.addXAxis(newXAxes[index]);
             }
 
-            return this;
+            return self;
         };
 
         /**
@@ -585,14 +582,14 @@
          * @param {Axis} xAxis The new primary x-axis of the chart.
          * @returns {this}
          */
-        this.xAxis = function(xAxis) {
+        self.xAxis = function(xAxis) {
             if (!arguments.length) {
                 return xAxes[0];
             }
 
             var newXAxes = xAxes.slice(0);
             newXAxes[0] = xAxis;
-            return this.xAxes(newXAxes);
+            return self.xAxes(newXAxes);
         };
 
         /**
@@ -603,10 +600,10 @@
          * @param {Axis} [axis] The y-axis to add.
          * @returns {this}
          */
-        this.addYAxis = function(axis) {
+        self.addYAxis = function(axis) {
             axis.direction = 'v';
             yAxes.push(axis);
-            return this;
+            return self;
         };
 
         /**
@@ -623,7 +620,7 @@
          * @param {Axis[]} newYAxes The new y-axes to draw on the chart.
          * @returns {this}
          */
-        this.yAxes = function(newYAxes) {
+        self.yAxes = function(newYAxes) {
             if (!arguments.length) {
                 return yAxes;
             }
@@ -635,7 +632,7 @@
                 self.addYAxis(newYAxes[index]);
             }
 
-            return this;
+            return self;
         };
 
         /**
@@ -652,14 +649,14 @@
          * @param {Axis} yAxis The new primary y-axis of the chart.
          * @returns {this}
          */
-        this.yAxis = function(yAxis) {
+        self.yAxis = function(yAxis) {
             if (!arguments.length) {
                 return yAxes[0];
             }
 
             var newYAxes = yAxes.slice(0);
             newYAxes[0] = yAxis;
-            return this.yAxes(newYAxes);
+            return self.yAxes(newYAxes);
         };
 
         /**
@@ -676,16 +673,16 @@
          * @param {Boolean} auto The new value indicating whether chart margins will be calculated automatically.
          * @returns {this}
          */
-        this.autoMargin = function(auto) {
+        self.autoMargin = function(auto) {
             if (!arguments.length) {
                 return autoMargin;
             }
             autoMargin = auto;
-            return this;
+            return self;
         };
 
         //Apply the default look-and-feel
-        this.applyTheme(insight.defaultTheme);
+        self.applyTheme(insight.defaultTheme);
     };
 
     /*

@@ -6,38 +6,41 @@
      * @class insight.LightTheme
      */
     insight.LightTheme = function LightTheme() {
-        insight.Theme.apply(this);
+
+        var self = this;
+
+        insight.Theme.apply(self);
 
         //Configure for axis
-        this.axisStyle.gridlineWidth = 1;
-        this.axisStyle.gridlineColor = '#888';
-        this.axisStyle.showGridlines = false;
+        self.axisStyle.gridlineWidth = 1;
+        self.axisStyle.gridlineColor = '#888';
+        self.axisStyle.showGridlines = false;
 
-        this.axisStyle.tickSize = 1;
-        this.axisStyle.tickPadding = 10;
+        self.axisStyle.tickSize = 1;
+        self.axisStyle.tickPadding = 10;
 
-        this.axisStyle.axislineWidth = 1;
-        this.axisStyle.axisLineColor = '#777';
-        this.axisStyle.tickLabelFont = 'Helvetica Neue 11pt';
-        this.axisStyle.tickLabelColor = '#777';
-        this.axisStyle.axisLabelFont = 'Helvetica Neue 12pt';
-        this.axisStyle.axisLabelColor = '#777';
+        self.axisStyle.axislineWidth = 1;
+        self.axisStyle.axisLineColor = '#777';
+        self.axisStyle.tickLabelFont = 'Helvetica Neue 11pt';
+        self.axisStyle.tickLabelColor = '#777';
+        self.axisStyle.axisLabelFont = 'Helvetica Neue 12pt';
+        self.axisStyle.axisLabelColor = '#777';
 
         //Configure for chart
-        this.chartStyle.seriesPalette = ['#3182bd', '#c6dbed', '#6baed6', '#08519c', '#9ecae1'];
-        this.chartStyle.fillColor = '#fff';
-        this.chartStyle.titleFont = 'Helvetica Neue 16pt';
-        this.chartStyle.titleColor = '#000';
+        self.chartStyle.seriesPalette = ['#3182bd', '#c6dbed', '#6baed6', '#08519c', '#9ecae1'];
+        self.chartStyle.fillColor = '#fff';
+        self.chartStyle.titleFont = 'Helvetica Neue 16pt';
+        self.chartStyle.titleColor = '#000';
 
         //Configure series
-        this.seriesStyle.showPoints = false;
-        this.seriesStyle.lineStyle = 'linear';
+        self.seriesStyle.showPoints = false;
+        self.seriesStyle.lineStyle = 'linear';
     };
 
     insight.LightTheme.prototype = Object.create(insight.Theme.prototype);
     insight.LightTheme.prototype.constructor = insight.LightTheme;
 
-    //Set this as the default theme
+    //Set LightTheme as the default theme
     insight.defaultTheme = new insight.LightTheme();
 
 })(insight);
