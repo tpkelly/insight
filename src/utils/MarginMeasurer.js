@@ -127,11 +127,13 @@
 
             labelStyles = labelStyles ? labelStyles : axisStyles;
 
+            var minimalMargin = 10;
+
             var margin = {
-                "top": 0,
-                "left": 0,
-                "bottom": 0,
-                "right": 0
+                "top": minimalMargin,
+                "left": minimalMargin,
+                "bottom": minimalMargin,
+                "right": minimalMargin
             };
 
             var axisMeasuringContext = insight.Utils.getDrawingContext(measuringCanvas, axisStyles);
