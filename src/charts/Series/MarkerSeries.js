@@ -45,8 +45,7 @@
 
             var f = self.keyFunction();
 
-            return self.dataset()
-                .map(f);
+            return self.dataset().map(f);
         };
 
         self.calculateOffset = function(d) {
@@ -122,8 +121,7 @@
                 d.xPos = 0;
             }
 
-            var d = self.dataset()
-                .forEach(reset);
+            var d = self.dataset().forEach(reset);
 
             var groups = chart.plotArea
                 .selectAll('g.' + insight.Constants.BarGroupClass + "." + self.name)
@@ -163,8 +161,7 @@
                 .attr('width', self.markerWidth)
                 .attr('height', self.markerHeight);
 
-            groups.exit()
-                .remove();
+            groups.exit().remove();
         };
 
         // Public functions -------------------------------------------------------------------------------------------

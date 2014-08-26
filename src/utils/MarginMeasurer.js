@@ -68,8 +68,7 @@
 
                 if (displayKey) {
                     var keyAxisPadding = keyAxis.tickPadding() + keyAxis.tickSize();
-                    var keyAxisLabelWidth = labelContext.measureText(keyAxis.label())
-                        .width;
+                    var keyAxisLabelWidth = labelContext.measureText(keyAxis.label()).width;
                     var axisLabelAdditions = keyAxisPadding + keyAxisLabelWidth + labelPadding;
 
                     maxKeyWidth = maxKeyWidth + axisLabelAdditions;
@@ -77,8 +76,7 @@
                 }
                 if (displayValue) {
                     var valueAxisPadding = valueAxis.tickPadding() + valueAxis.tickSize();
-                    var valueAxisLabelWidth = labelContext.measureText(valueAxis.label())
-                        .width;
+                    var valueAxisLabelWidth = labelContext.measureText(valueAxis.label()).width;
                     var valueLabelAdditions = valueAxisPadding + valueAxisLabelWidth + labelPadding;
 
                     maxValueWidth = valueAxis.display() ? maxValueWidth + valueLabelAdditions : maxValueWidth;

@@ -56,7 +56,8 @@
                 .append('table')
                 .attr('class', insight.Constants.TableClass);
 
-            header = self.tableElement.append('thead')
+            header = self.tableElement
+                .append('thead')
                 .append('tr');
 
             header.append('th')

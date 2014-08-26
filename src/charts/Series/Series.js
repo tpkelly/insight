@@ -102,7 +102,8 @@
          */
         self.seriesClassName = function() {
 
-            var seriesName = [self.name + 'class'].concat(self.classValues)
+            var seriesName = [self.name + 'class']
+                .concat(self.classValues)
                 .join(' ');
 
             return seriesName;
@@ -158,8 +159,7 @@
 
             self.tooltip.show(this, tooltipText);
 
-            d3.select(this)
-                .classed('active', true);
+            d3.select(this).classed('active', true);
         };
 
         /*
@@ -171,8 +171,7 @@
 
             self.tooltip.hide();
 
-            d3.select(this)
-                .classed('active', false);
+            d3.select(this).classed('active', false);
         };
 
 

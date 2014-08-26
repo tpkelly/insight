@@ -220,8 +220,7 @@
                     .style('width', '100%')
                     .style('text-align', 'center');
             } else {
-                self.labelElement.style(self.orientation(), '0')
-                    .style('top', '35%');
+                self.labelElement.style(self.orientation(), '0').style('top', '35%');
             }
         };
 
