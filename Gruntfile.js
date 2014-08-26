@@ -79,7 +79,7 @@ module.exports = function(grunt) {
         indentChart: ' ',
         indentSize: 4,
         evalCode: true,
-        breakChainedMethods: true
+        breakChainedMethods: false
       }
     }
   },

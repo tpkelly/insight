@@ -84,8 +84,7 @@
                 .attr("x", 20)
                 .attr("y", textPositionY)
                 .attr("width", function(item) {
-                    return ctx.measureText(item.name)
-                        .width;
+                    return ctx.measureText(item.name).width;
                 })
                 .attr("height", 20)
                 .text(textContent)

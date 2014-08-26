@@ -762,8 +762,7 @@
             }
 
             if (self.dimension.oneToMany) {
-                data = self.data.value()
-                    .values;
+                data = self.data.value().values;
             } else {
                 data = self.data.all();
             }

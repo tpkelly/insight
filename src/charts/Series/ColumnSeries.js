@@ -191,9 +191,7 @@
             function barHeight(d) {
                 var func = self.currentSeries.valueFunction;
 
-                return (chart.height() - chart.margin()
-                    .top - chart.margin()
-                    .bottom) - self.y.scale(func(d));
+                return (chart.height() - chart.margin().top - chart.margin().bottom) - self.y.scale(func(d));
             }
 
             function opacity() {
@@ -242,8 +240,7 @@
             }
 
             // Remove groups no longer in the data set
-            groups.exit()
-                .remove();
+            groups.exit().remove();
         };
 
         // Public functions -------------------------------------------------------------------------------------------

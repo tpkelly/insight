@@ -67,9 +67,7 @@
 
             window.addEventListener('resize', onWindowResize);
 
-            self.container = create ? d3.select(container)
-                .append('div') : d3.select(self.element)
-                .append('div');
+            self.container = create ? d3.select(container).append('div') : d3.select(self.element).append('div');
 
             self.container
                 .attr('class', insight.Constants.ContainerClass)
@@ -107,9 +105,7 @@
                 self.plotArea.insert('rect', ':first-child')
                     .attr('class', 'zoompane')
                     .attr('width', self.width())
-                    .attr('height', self.height() - self.margin()
-                        .top - self.margin()
-                        .bottom)
+                    .attr('height', self.height() - self.margin().top - self.margin().bottom)
                     .style('fill', 'none')
                     .style('pointer-events', 'all');
             }
@@ -166,12 +162,8 @@
                 .append('rect')
                 .attr('x', 1)
                 .attr('y', 0)
-                .attr('width', self.width() - self.margin()
-                    .left - self.margin()
-                    .right)
-                .attr('height', self.height() - self.margin()
-                    .top - self.margin()
-                    .bottom);
+                .attr('width', self.width() - self.margin().left - self.margin().right)
+                .attr('height', self.height() - self.margin().top - self.margin().bottom);
         };
 
         /*
