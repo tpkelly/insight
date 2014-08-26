@@ -317,13 +317,13 @@
         };
 
         /**
-         * Enable zooming for an axis on this chart
+         * Enable zooming and panning for an axis on this chart
          * @memberof! insight.Chart
          * @instance
-         * @param axis The axis to enable zooming for
+         * @param axis The axis to enable zooming and panning for
          * @returns {Chart} Returns this.
          */
-        self.zoomable = function(axis) {
+        self.setInteractiveAxis = function(axis) {
             zoomable = true;
             zoomAxis = axis;
             axis.isZoomable(true);
