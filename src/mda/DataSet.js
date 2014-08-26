@@ -8,118 +8,130 @@
      */
     insight.DataSet = function DataSet(data) {
 
+        // Private variables ------------------------------------------------------------------------------------------
+
+        var self = this;
+
         // Internal variables -----------------------------------------------------------------------------------------
 
-        this.data = data;
-        this.crossfilterData = null;
+        self.data = data;
+        self.crossfilterData = null;
 
-        // Internal functions -----------------------------------------------------------------------------------------
+        // Private functions ------------------------------------------------------------------------------------------
 
-        this._orderFunction = function(a, b) {
+        function orderFunction(a, b) {
             return b.value - a.value;
+        }
+
+        function filterFunction(d) {
+            return true;
+        }
+
+        // Public functions -------------------------------------------------------------------------------------------
+
+        self.initialize = function() {
+
         };
 
-        this._filterFunction = null;
+        /**
+         * The function to use to filter an object from the dataset.
+         * The function should return a boolean where false means the object is not included in the dataset.
+         * @memberof! insight.DataSet
+         * @instance
+         * @returns {Function} - The function to use to filter an object from the dataset.
+         *
+         * @also
+         *
+         * Sets the function to use to filter an object from the dataset.
+         * The function should return a boolean where false means the object is not included in the dataset.
+         * @memberof! insight.DataSet
+         * @instance
+         * @param {Function} filterFunc The new function to use to filter an object from the dataset.
+         * @returns {this}
+         */
+        self.filterFunction = function(filterFunc) {
 
-    };
+            if (!arguments.length) {
+                return filterFunction;
+            }
 
-    insight.DataSet.prototype.initialize = function() {
+            filterFunction = filterFunc;
 
-    };
+            return self;
+        };
 
-    /**
-     * The function to use to filter an object from the dataset.
-     * The function should return a boolean where false means the object is not included in the dataset.
-     * @memberof! insight.DataSet
-     * @instance
-     * @returns {Function} - The function to use to filter an object from the dataset.
-     *
-     * @also
-     *
-     * Sets the function to use to filter an object from the dataset.
-     * The function should return a boolean where false means the object is not included in the dataset.
-     * @memberof! insight.DataSet
-     * @instance
-     * @param {Function} filterFunc The new function to use to filter an object from the dataset.
-     * @returns {this}
-     */
-    insight.DataSet.prototype.filterFunction = function(filterFunc) {
-        if (!arguments.length) {
-            return this._filterFunction;
-        }
-        this._filterFunction = filterFunc;
-        return this;
-    };
+        /** Fetch all the data currently held in this dataset, filtered by the `filterFunction`.
+         * @memberof! insight.DataSet
+         * @instance
+         * @param {Function} [orderFunc] If provided then the data will be returned ordered using this function.
+         * @returns {object[]} data All data currently held by the dataset.
+         */
+        self.getData = function(orderFunc) {
 
-    /** Fetch all the data currently held in this dataset, filtered by the `filterFunction`.
-     * @memberof! insight.DataSet
-     * @instance
-     * @param {Function} [orderFunc] If provided then the data will be returned ordered using this function.
-     * @returns {object[]} data All data currently held by the dataset.
-     */
-    insight.DataSet.prototype.getData = function(orderFunc) {
-        var data;
-        if (this.data.all) {
-            data = this.data.all();
-        } else {
-            //not a crossfilter set
-            data = this.data;
-        }
+            var data;
 
-        if (orderFunc) {
-            data = data.sort(orderFunc);
-        }
+            if (self.data.all) {
+                data = self.data.all();
+            } else {
+                //not a crossfilter set
+                data = self.data;
+            }
 
-        if (this._filterFunction) {
-            data = data.filter(this._filterFunction);
-        }
+            if (orderFunc) {
+                data = data.sort(orderFunc);
+            }
 
-        return data;
-    };
+            data = data.filter(filterFunction);
 
-    /**
-     * Gets the function used to order the dataset values
-     * @memberof! insight.DataSet
-     * @instance
-     * @returns {Function} - The current ordering function
-     *
-     * @also
-     *
-     * Sets the function used to order the dataset values
-     * @memberof! insight.DataSet
-     * @instance
-     * @param {Function} orderFunc The ordering function
-     * @returns {this}
-     */
-    insight.DataSet.prototype.orderingFunction = function(orderFunc) {
-        if (!arguments.length) {
-            return this._orderFunction;
-        }
-        this._orderFunction = orderFunc;
-        return this;
-    };
+            return data;
+        };
 
-    insight.DataSet.prototype.getOrderedData = function() {
-        var data;
+        /**
+         * Gets the function used to order the dataset values
+         * @memberof! insight.DataSet
+         * @instance
+         * @returns {Function} - The current ordering function
+         *
+         * @also
+         *
+         * Sets the function used to order the dataset values
+         * @memberof! insight.DataSet
+         * @instance
+         * @param {Function} orderFunc The ordering function
+         * @returns {this}
+         */
+        self.orderingFunction = function(orderFunc) {
 
-        data = this.data.sort(this._orderFunction);
+            if (!arguments.length) {
+                return orderFunction;
+            }
 
-        if (this._filterFunction) {
-            data = data.filter(this._filterFunction);
-        }
+            orderFunction = orderFunc;
 
-        return data;
-    };
+            return self;
+        };
 
-    insight.DataSet.prototype.group = function(name, groupFunction, oneToMany) {
+        self.getOrderedData = function() {
+            var data;
 
-        this.crossfilterData = this.crossfilterData || crossfilter(this.data);
+            data = self.data
+                .filter(filterFunction)
+                .sort(orderFunction);
 
-        var dim = new insight.Dimension(name, this.crossfilterData, groupFunction, oneToMany);
+            return data;
+        };
 
-        var group = new insight.Grouping(dim);
+        self.group = function(name, groupFunction, oneToMany) {
 
-        return group;
+            self.crossfilterData = self.crossfilterData || crossfilter(self.data);
+
+            var dim = new insight.Dimension(name, self.crossfilterData, groupFunction, oneToMany);
+
+            var group = new insight.Grouping(dim);
+
+            return group;
+        };
+
     };
 
 })(insight);
