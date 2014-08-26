@@ -83,7 +83,7 @@
                 .tickSize(5)
                 .tickPadding(0)
                 .tickLabelOrientation('tb')
-                .ordered(true);
+                .isOrdered(true);
 
             var y = new insight.Axis('', insight.Scales.Linear);
 
@@ -118,10 +118,10 @@
             .tickSize(5)
             .tickPadding(0)
             .tickLabelOrientation('tb')
-            .ordered(true);
+            .isOrdered(true);
 
         var y = new insight.Axis('Apps', insight.Scales.Linear)
-                        .display(false);
+                        .shouldDisplay(false);
 
         chart.xAxis(x)
              .yAxis(y);
@@ -166,7 +166,7 @@
                 .valueFunction(function(d)
                 {
                     return d.value.CountCumulative;
-                }).showPoints(false);
+                }).shouldShowPoints(false);
 
 
             timeChart.series([cumulative]);
@@ -194,10 +194,10 @@
         var x = new insight.Axis('', insight.Scales.Linear)
                            .tickSize(5)
                            .tickLabelRotation(45)
-                           .display(false);
+                           .shouldDisplay(false);
 
         var y = new insight.Axis('', insight.Scales.Ordinal)
-                           .ordered(true)
+                           .isOrdered(true)
                            .orderingFunction(function(a,b) {
                                 var aIndex = axisOrder.indexOf(a.key),
                                     bIndex = axisOrder.indexOf(b.key);

@@ -46,12 +46,12 @@ $(document)
                 {
                     return d.value.Count;
                 })
-                .showPoints(false);
+                .shouldShowPoints(false);
 
 
             timeChart.series([series]);
 
-            timeChart.zoomable(xTime);
+            timeChart.setInteractiveAxis(xTime);
             timeChart.draw();
         });
     });

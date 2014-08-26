@@ -88,7 +88,7 @@ $(document)
         $('#toggle')
             .click(function(d)
             {
-                series.stacked(!series.stacked());
+                series.isStacked(!series.isStacked());
                 chart.draw();
             });
     });
