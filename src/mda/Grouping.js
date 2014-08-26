@@ -249,7 +249,7 @@
 
             var totals = {};
 
-            var data = self.ordered() ? self.getData(self.orderFunction()) : self.getData();
+            var data = self.isOrdered() ? self.getData(self.orderFunction()) : self.getData();
 
             data.forEach(function(d) {
 
@@ -712,7 +712,7 @@
          * @returns {this}
          * @param {boolean} ordered - Whether to order this Grouping or not
          */
-        self.ordered = function(value) {
+        self.isOrdered = function(value) {
             if (!arguments.length) {
                 return ordered;
             }

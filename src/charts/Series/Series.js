@@ -307,7 +307,7 @@
         self.dataset = function(orderFunction) {
 
             // If the keyAxis is ordered but no function has been provided, create one based on the Series' valueFunction
-            if (self.keyAxis.ordered() && !orderFunction) {
+            if (self.keyAxis.isOrdered() && !orderFunction) {
 
                 orderFunction = function(a, b) {
                     return self.valueFunction()(b) - self.valueFunction()(a);

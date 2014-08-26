@@ -220,7 +220,7 @@ describe('Grouping', function() {
 
             // When
             var group =  dataset.group('country', function(d){return d.Country;})
-                            .ordered(true);
+                            .isOrdered(true);
 
             var data = group.getData(function(a,b){return b.value.Count - a.value.Count;});
 
@@ -237,7 +237,7 @@ describe('Grouping', function() {
 
             // When
             var group =  dataset.group('country', function(d){return d.Country;})
-                             .ordered(true);
+                             .isOrdered(true);
 
             var data = group.getData(function(a,b){return b.value.Count - a.value.Count;});
 

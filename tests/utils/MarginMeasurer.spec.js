@@ -97,8 +97,8 @@ describe("MarginMeasurer", function() {
 
             // Given
 
-            x.display(false);
-            y.display(false);
+            x.shouldDisplay(false);
+            y.shouldDisplay(false);
 
             // When 
 

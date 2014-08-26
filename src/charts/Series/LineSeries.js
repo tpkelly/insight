@@ -145,14 +145,14 @@
          * Sets whether or not to show circular points on top of the line for each datapoint.
          * @memberof! insight.LineSeries
          * @instance
-         * @param {boolean} shouldShowPoints Whether or not to show circular points on top of the line for each datapoint.
+         * @param {boolean} showPoints Whether or not to show circular points on top of the line for each datapoint.
          * @returns {this}
          */
-        self.showPoints = function(shouldShowPoints) {
+        self.shouldShowPoints = function(showPoints) {
             if (!arguments.length) {
                 return displayPoints;
             }
-            displayPoints = shouldShowPoints;
+            displayPoints = showPoints;
             return self;
         };
 
@@ -189,7 +189,7 @@
 
     insight.LineSeries.prototype.applyTheme = function(theme) {
         this.lineType(theme.seriesStyle.lineStyle);
-        this.showPoints(theme.seriesStyle.showPoints);
+        this.shouldShowPoints(theme.seriesStyle.showPoints);
 
         return this;
     };

@@ -76,7 +76,7 @@
 
                 var seriesValue = s.valueFunction(d);
 
-                seriesMax = self.stacked() ? seriesMax + seriesValue : seriesValue;
+                seriesMax = self.isStacked() ? seriesMax + seriesValue : seriesValue;
 
                 max = seriesMax > max ? seriesMax : max;
             }
@@ -123,7 +123,7 @@
 
             var seriesValueFunc = self.currentSeries.valueFunction;
 
-            var position = self.stacked() ? self.y.scale(self.calculateYPos(seriesValueFunc, d)) : self.y.scale(seriesValueFunc(d));
+            var position = self.isStacked() ? self.y.scale(self.calculateYPos(seriesValueFunc, d)) : self.y.scale(seriesValueFunc(d));
 
             return position;
         };
@@ -138,14 +138,14 @@
 
             var groupWidth = self.barWidth(d);
 
-            var width = self.stacked() || (self.series.length === 1) ? groupWidth : groupWidth / self.series.length;
+            var width = self.isStacked() || (self.series.length === 1) ? groupWidth : groupWidth / self.series.length;
 
             return width;
         };
 
         self.offsetXPosition = function(d) {
             var width = self.groupedBarWidth(d);
-            var position = self.stacked() ? self.xPosition(d) : self.calculateXPos(width, d);
+            var position = self.isStacked() ? self.xPosition(d) : self.calculateXPos(width, d);
 
             return position;
         };
@@ -260,7 +260,7 @@
          * @param {boolean} shouldStack Whether the column series should be stacked.
          * @returns {this}
          */
-        self.stacked = function(shouldStack) {
+        self.isStacked = function(shouldStack) {
             if (!arguments.length) {
                 return stacked;
             }

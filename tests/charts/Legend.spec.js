@@ -27,7 +27,7 @@ describe('Legend', function() {
 
         var y = new insight.Axis('KeyAxis', insight.Scales.Linear)
             .tickLabelOrientation('lr')
-            .showGridlines(true);
+            .shouldShowGridlines(true);
 
         chart.addXAxis(x);
         chart.addYAxis(y);

@@ -326,7 +326,7 @@
         self.zoomable = function(axis) {
             zoomable = true;
             zoomAxis = axis;
-            axis.zoomable(true);
+            axis.isZoomable(true);
             return self;
         };
 

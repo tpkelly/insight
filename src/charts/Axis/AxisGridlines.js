@@ -30,7 +30,7 @@
 
             var axis = self.parentAxis;
 
-            if (self.parentAxis.horizontal()) {
+            if (self.parentAxis.isHorizontal()) {
                 attributes.x1 = self.parentAxis.pixelValueForValue;
                 attributes.x2 = self.parentAxis.pixelValueForValue;
                 attributes.y1 = 0;
