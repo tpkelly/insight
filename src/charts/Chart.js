@@ -205,8 +205,6 @@
 
             var chartMargin = self.margin();
 
-            var context = self.measureCanvas.getContext('2d');
-
             self.container.style('width', self.width() + 'px');
 
             self.chartSVG
