@@ -344,7 +344,8 @@ describe('Chart', function() {
             yAxis,
             textElement,
             styles,
-            measurer;
+            measurer,
+            minimalMargins = 10;
 
         //Set up tests
         beforeEach(function() {
@@ -360,7 +361,7 @@ describe('Chart', function() {
 
         });
 
-        it('margins are 0 when no series on chart', function() {
+        it('margins are set to minimal value when no series on chart', function() {
             //Given:
             chart.series([]);
             
@@ -368,10 +369,15 @@ describe('Chart', function() {
             chart.calculateLabelMargin(measurer, styles);
 
             //Then:
-            expect(chart.margin()).toEqual({"top":0,"left":0,"right":0,"bottom":0});
+            expect(chart.margin()).toEqual({
+                "top":minimalMargins,
+                "left":minimalMargins,
+                "right":minimalMargins,
+                "bottom":minimalMargins
+            });
         });
 
-        it('margins are 0 when series has no data', function() {
+        it('margins are set to minimal value when series has no data', function() {
             //Given:
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
             
@@ -391,7 +397,12 @@ describe('Chart', function() {
 
             //Then:
             
-            expect(chart.margin()).toEqual({"top":0, "left":0, "right":0, "bottom":0});
+            expect(chart.margin()).toEqual({
+                "top":minimalMargins,
+                "left":minimalMargins,
+                "right":minimalMargins,
+                "bottom":minimalMargins
+            });
 
         });
 
@@ -400,9 +411,9 @@ describe('Chart', function() {
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
             
             var expectedDimensions = {
-                    "maxKeyWidth": 5,
+                    "maxKeyWidth": 15,
                     "maxValueWidth": 0,
-                    "maxKeyHeight": 10,
+                    "maxKeyHeight": 20,
                     "maxValueHeight": 0
             };
 
@@ -414,7 +425,12 @@ describe('Chart', function() {
             chart.calculateLabelMargin(measurer, styles);
 
             //Then:
-            expect(chart.margin()).toEqual({"top":0, "left":0, "right":0, "bottom":10});
+            expect(chart.margin()).toEqual({
+                "top":minimalMargins,
+                "left":minimalMargins,
+                "right":minimalMargins,
+                "bottom":20
+            });
 
         });
 
@@ -424,9 +440,9 @@ describe('Chart', function() {
             
             var expectedDimensions = {
                     "maxKeyWidth": 0,
-                    "maxValueWidth": 5,
+                    "maxValueWidth": 15,
                     "maxKeyHeight": 0,
-                    "maxValueHeight": 10
+                    "maxValueHeight": 20
                 };
 
             spyOn(measurer, 'seriesLabelDimensions').andReturn(expectedDimensions);
@@ -437,7 +453,12 @@ describe('Chart', function() {
             chart.calculateLabelMargin(measurer, styles);
 
             //Then:
-            expect(chart.margin()).toEqual({"top":0, "left":5, "right":0, "bottom":0});
+            expect(chart.margin()).toEqual({
+                "top":minimalMargins,
+                "left":15,
+                "right":minimalMargins,
+                "bottom":minimalMargins
+            });
 
         });
 
@@ -448,9 +469,9 @@ describe('Chart', function() {
             
             var maxDimensions = {
                     "maxKeyWidth": 0,
-                    "maxValueWidth": 5,
+                    "maxValueWidth": 15,
                     "maxKeyHeight": 0,
-                    "maxValueHeight": 10
+                    "maxValueHeight": 20
                 };
 
             spyOn(measurer, 'seriesLabelDimensions').andReturn(maxDimensions);
@@ -462,18 +483,23 @@ describe('Chart', function() {
             chart.calculateLabelMargin(measurer, styles);
 
             //Then:
-            expect(chart.margin()).toEqual({"top":0, "left":0, "right":5, "bottom":0});
+            expect(chart.margin()).toEqual({
+                "top":minimalMargins,
+                "left":minimalMargins,
+                "right":15,
+                "bottom":minimalMargins
+            });
         });
 
         it('top margins are expanded when x-axis is reversed', function() {
             //Given:
             xAxis = new insight.Axis('', insight.Scales.Linear).hasReversedPosition(true);
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
-            
+
             var maxDimensions = {
-                "maxKeyWidth": 5,
+                "maxKeyWidth": 15,
                 "maxValueWidth":0,
-                "maxKeyHeight": 10,
+                "maxKeyHeight": 20,
                 "maxValueHeight": 0
             };
 
@@ -487,7 +513,40 @@ describe('Chart', function() {
             chart.calculateLabelMargin(measurer, styles);
 
             //Then:
-            expect(chart.margin()).toEqual({"top":10, "left":0, "right":0, "bottom":0});
+            expect(chart.margin()).toEqual({
+                "top":20,
+                "left":minimalMargins,
+                "right":minimalMargins,
+                "bottom":minimalMargins
+            });
+        });
+
+        it('margins are not expanded for margins smaller than minimal value', function() {
+            //Given:
+            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
+
+            var expectedDimensions = {
+                "maxKeyWidth": 5,
+                "maxValueWidth": 0,
+                "maxKeyHeight": 8,
+                "maxValueHeight": 0
+            };
+
+            spyOn(measurer, 'seriesLabelDimensions').andReturn(expectedDimensions);
+
+            chart.series([series]);
+
+            //When:
+            chart.calculateLabelMargin(measurer, styles);
+
+            //Then:
+            expect(chart.margin()).toEqual({
+                "top":minimalMargins,
+                "left":minimalMargins,
+                "right":minimalMargins,
+                "bottom":minimalMargins
+            });
+
         });
     });
 
