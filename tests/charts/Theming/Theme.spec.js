@@ -1,4 +1,5 @@
 describe("Theme", function(){
+
     var dummyTheme;
     var chartGroup;
     var chart;
@@ -6,25 +7,27 @@ describe("Theme", function(){
 
     beforeEach(function() {
         //Create a new theme to be applied
-        dummyTheme = ({axisStyle : {
-            gridlineWidth:3.1,
-            gridlineColor: '#204',
-            showGridlines: true,
+        dummyTheme = {
 
-            tickSize: 1.4,
-            tickPadding: 6.4,
+            axisStyle: {
+                gridlineWidth:3.1,
+                gridlineColor: '#204',
+                showGridlines: true,
 
-            axisLineColor: '#345',
-            axisLineWidth: 12.5,
+                tickSize: 1.4,
+                tickPadding: 6.4,
 
-            tickLabelFont: 'Sans serif 72pt',
-            tickLabelColor: '#eac',
+                axisLineColor: '#345',
+                axisLineWidth: 12.5,
 
-            axisLabelFont: 'Sans serif 73pt',
-            axisLabelColor: '#abc'
-        },
+                tickLabelFont: 'Sans serif 72pt',
+                tickLabelColor: '#eac',
 
-            chartStyle : {
+                axisLabelFont: 'Sans serif 73pt',
+                axisLabelColor: '#abc'
+            },
+
+            chartStyle: {
                 seriesPalette: ['#eee', '#aaa', '#a42'],
                 fillColor: '#24a',
                 titleFont: 'Sans serif 71pt',
@@ -38,7 +41,8 @@ describe("Theme", function(){
 
             tableStyle : {
 
-            }});
+            }
+        };
 
         var xAxis = new insight.Axis('x-axis', insight.Scales.Linear);
         var yAxis = new insight.Axis('y-axis', insight.Scales.Linear);
@@ -55,6 +59,10 @@ describe("Theme", function(){
 
         chartGroup = new insight.ChartGroup();
         chartGroup.charts = [chart];
+
+        // we don't care about resizing the chart for theme tests and there are browser specific
+        // differences so a spy will prevent the chart from being resized and thus prevent the side effects
+        spyOn(chart, 'resizeChart');
     });
 
     describe("Axis", function() {
