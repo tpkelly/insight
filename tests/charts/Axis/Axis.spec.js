@@ -179,235 +179,65 @@ describe('Axis', function() {
         });
     });
 
-    describe('calculateAxisBounds', function() {
-        it('calculates bounds for a vertical column series, with zero margin', function () {
-
-            //Given:
-            var dataset = new insight.DataSet(data);
-            var chart = new insight.Chart('test', '#test', 'ada')
-                .width(300)
-                .height(400)
-                .margin({top: 0, left: 0, right: 0, bottom: 0});
-
-            var x = new insight.Axis('Key Axis', insight.Scales.Ordinal);
-            var y = new insight.Axis('Value Axis', insight.Scales.Linear);
-            chart.addXAxis(x);
-            chart.addYAxis(y);
-
-            var series = new insight.ColumnSeries('chart', dataset, x, y);
-
-            //When:
-            y.calculateAxisBounds(chart);
-
-            //Then:
-            var observedResult = y.bounds;
-            var expectedResult = [300, 400];
-
-            expect(observedResult).toEqual(expectedResult);
-        });
-
-        it('calculates bounds for a vertical linear scale, with a margin', function () {
-
-            //Given:
-            var dataset = new insight.DataSet(data);
-            var chart = new insight.Chart('test', '#test', 'ada')
-                .width(300)
-                .height(400)
-                .margin({top: 50, left: 0, right: 0, bottom: 100});
-
-            var x = new insight.Axis('Key Axis', insight.Scales.Ordinal);
-            var y = new insight.Axis('Value Axis', insight.Scales.Linear);
-            chart.addXAxis(x);
-            chart.addYAxis(y);
-
-            var series = new insight.ColumnSeries('chart', dataset, x, y);
-
-            //When:
-            y.calculateAxisBounds(chart);
-
-            //Then:
-            var observedResult = y.bounds;
-            var expectedResult = [300, 250];
-
-            expect(observedResult).toEqual(expectedResult);
-        });
-
-        it('calculates output bounds for a horizontal scale, with no margin', function () {
-
-            //Given:
-            var dataset = new insight.DataSet(data);
-            var chart = new insight.Chart('test', '#test', 'ada')
-                .width(400)
-                .height(300)
-                .margin({top: 0, left: 0, right: 0, bottom: 0});
-
-            var x = new insight.Axis('Key Axis', insight.Scales.Linear);
-            var y = new insight.Axis('Value Axis', insight.Scales.Ordinal);
-            chart.addXAxis(x);
-            chart.addYAxis(y);
-
-            var series = new insight.RowSeries('chart', dataset, x, y);
-
-            //When:
-            x.calculateAxisBounds(chart);
-
-            //Then:
-            var observedResult = x.bounds;
-            var expectedResult = [400, 300];
-
-            expect(observedResult).toEqual(expectedResult);
-        });
-
-        it('calculates output bounds for a horizontal scale, with a margin', function () {
-
-            //Given:
-            var dataset = new insight.DataSet(data);
-            var chart = new insight.Chart('test', '#test', 'ada')
-                .width(400)
-                .height(300)
-                .margin({top: 0, left: 100, right: 10, bottom: 0});
-
-            var x = new insight.Axis('Key Axis', insight.Scales.Linear);
-            var y = new insight.Axis('Value Axis', insight.Scales.Ordinal);
-            chart.addXAxis(x);
-            chart.addYAxis(y);
-
-            var series = new insight.RowSeries('chart', dataset, x, y);
-
-            //When:
-            x.calculateAxisBounds(chart);
-
-            //Then:
-            var observedResult = x.bounds;
-            var expectedResult = [290, 300];
-
-            expect(observedResult).toEqual(expectedResult);
+    describe('axisPosition', function() {
+        var axis;
+        beforeEach(function() {
+            axis = new insight.Axis('Key Axis', insight.Scales.Linear);
+            axis.bounds = [300, 400];
         });
 
         it('bottom anchored horizontal axis is positioned correctly', function () {
 
-            //Given:
-            var chart = new insight.Chart('test', '#test', 'ada')
-                .width(400)
-                .height(300)
-                .margin({top: 0, left: 0, right: 0, bottom: 0});
+            // Given
+            axis.isHorizontal = d3.functor(true);
 
-            var x = new insight.Axis('Key Axis', insight.Scales.Linear);
-            chart.addXAxis(x);
+            // When
+            var axisPosition = axis.axisPosition();
+            var expectedResult = 'translate(0,400)';
 
-            //When:
-            x.calculateAxisBounds(chart);
-
-            //Then:
-            var observedResult = x.axisPosition();
-            var expectedResult = 'translate(0,300)';
-
-            expect(observedResult).toEqual(expectedResult);
+            // Then
+            expect(axisPosition).toEqual(expectedResult);
         });
 
-        it('bottom anchored horizontal axis is positioned correctly with margin', function () {
+        it('top anchored horizontal axis is positioned correctly', function () {
 
-            //Given:
-            var chart = new insight.Chart('test', '#test', 'ada')
-                .width(400)
-                .height(300)
-                .margin({top: 10, left: 100, right: 10, bottom: 50});
+            // Given
+            axis.hasReversedPosition(true);
+            axis.isHorizontal = d3.functor(true);
 
-            var x = new insight.Axis('Key Axis', insight.Scales.Linear);
-            chart.addXAxis(x);
-
-            //When:
-            x.calculateAxisBounds(chart);
-
-            //Then:
-            var observedResult = x.axisPosition();
-            var expectedResult = 'translate(0,240)';
-
-            expect(observedResult).toEqual(expectedResult);
-        });
-
-        it('top anchored horizontal axis is positioned correctly with no margin', function () {
-
-            //Given:
-            var chart = new insight.Chart('test', '#test', 'ada')
-                .width(400)
-                .height(300)
-                .margin({top: 0, left: 0, right: 0, bottom: 0});
-
-            var x = new insight.Axis('Key Axis', insight.Scales.Linear).hasReversedPosition(true);
-            chart.addXAxis(x);
-
-            //When:
-            x.calculateAxisBounds(chart);
-
-            //Then:
-            var observedResult = x.axisPosition();
+            // When
+            var axisPosition = axis.axisPosition();
             var expectedResult = 'translate(0,0)';
 
-            expect(observedResult).toEqual(expectedResult);
+            // Then
+            expect(axisPosition).toEqual(expectedResult);
         });
 
-        it('left anchored vertical axis is positioned correctly with no margin', function () {
+        it('left anchored vertical axis is positioned correctly', function () {
 
-            //Given:
-            var chart = new insight.Chart('test', '#test', 'ada')
-                .width(400)
-                .height(300)
-                .margin({top: 0, left: 0, right: 0, bottom: 0});
+            // Given
+            axis.isHorizontal = d3.functor(false);
 
-            var y = new insight.Axis('Key Axis', insight.Scales.Linear);
-            chart.addYAxis(y);
-
-            //When:
-            y.calculateAxisBounds(chart);
-
-            //Then:
-            var observedResult = y.axisPosition();
+            // When
+            var axisPosition = axis.axisPosition();
             var expectedResult = 'translate(0,0)';
 
-            expect(observedResult).toEqual(expectedResult);
+            // Then
+            expect(axisPosition).toEqual(expectedResult);
         });
 
-        it('right anchored vertical axis is positioned correctly with no margin', function () {
+        it('right anchored vertical axis is positioned correctly', function () {
 
-            //Given:
-            var chart = new insight.Chart('test', '#test', 'ada')
-                .width(400)
-                .height(300)
-                .margin({top: 0, left: 0, right: 0, bottom: 0});
+            // Given
+            axis.hasReversedPosition(true);
+            axis.isHorizontal = d3.functor(false);
 
-            var y = new insight.Axis('Key Axis', insight.Scales.Linear).hasReversedPosition(true);
-            chart.addYAxis(y);
+            // When
+            var axisPosition = axis.axisPosition();
+            var expectedResult = 'translate(300,0)';
 
-            //When:
-            y.calculateAxisBounds(chart);
-
-            //Then:
-            var observedResult = y.axisPosition();
-            var expectedResult = 'translate(400,0)';
-
-            expect(observedResult).toEqual(expectedResult);
-        });
-
-        it('right anchored vertical axis is positioned correctly with margin', function () {
-
-            //Given:
-            var chart = new insight.Chart('test', '#test', 'ada')
-                .width(400)
-                .height(300)
-                .margin({top: 0, left: 10, right: 40, bottom: 0});
-
-            var y = new insight.Axis('Key Axis', insight.Scales.Linear).hasReversedPosition(true);
-            chart.addYAxis(y);
-
-            //When:
-            y.calculateAxisBounds(chart);
-
-            //Then:
-            var observedResult = y.axisPosition();
-            var expectedResult = 'translate(350,0)';
-
-            expect(observedResult).toEqual(expectedResult);
+            // Then
+            expect(axisPosition).toEqual(expectedResult);
         });
     });
 

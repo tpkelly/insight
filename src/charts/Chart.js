@@ -127,6 +127,23 @@
 
         };
 
+        /*
+         * Calculates the plot area of this chart, taking into account the size and margins of the chart.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {int[]} - An array with two items, for the width and height of the axis, respectively.
+         */
+        self.calculatePlotAreaSize = function() {
+            var bounds = [];
+            var margin = self.margin();
+
+            bounds[0] = self.width() - margin.right - margin.left;
+            bounds[1] = self.height() - margin.top - margin.bottom;
+
+            return bounds;
+
+        };
+
         self.draw = function(dragging) {
 
             if (!initialized) {

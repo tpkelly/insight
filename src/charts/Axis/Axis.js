@@ -163,25 +163,6 @@
             return domain;
         };
 
-        /*
-         * Calculates the output range bound of this axis, taking into account the size and margins of the chart.
-         * @memberof! insight.Axis
-         * @instance
-         * @param {insight.Chart} chart The chart to calculate bounds against.
-         * @returns {int[]} - An array with two items, for the width and height of the axis, respectively.
-         */
-        self.calculateAxisBounds = function(chart) {
-            var bounds = [];
-            var margin = chart.margin();
-
-            bounds[0] = chart.width() - margin.right - margin.left;
-            bounds[1] = chart.height() - margin.top - margin.bottom;
-
-            self.bounds = bounds;
-
-            return self.bounds;
-        };
-
         self.tickLabelRotationTransform = function() {
             var offset = self.tickPadding() + (self.tickSize() * 2);
             offset = (shouldReversePosition && !self.isHorizontal()) ? 0 - offset : offset;
@@ -263,11 +244,15 @@
                 .style('position', 'absolute');
         };
 
+        self.updateAxisBounds = function(chart) {
+            self.bounds = chart.calculatePlotAreaSize();
+        };
+
         self.draw = function(chart, isDragging) {
 
             // Scale range and bounds need to be initialized regardless of whether the axis will be displayed
 
-            self.calculateAxisBounds(chart);
+            self.updateAxisBounds(chart);
 
             if (!self.isZoomable()) {
                 self.initializeScale();

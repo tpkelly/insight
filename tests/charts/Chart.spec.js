@@ -809,4 +809,102 @@ describe('Chart', function() {
         });
 
     });
+
+    describe('calculatePlotAreaSize', function() {
+        var chart,
+            dataSet;
+
+        beforeEach(function() {
+            var data = [
+                { key:'a', value:0,  date: new Date(2014, 0,  1) },
+                { key:'b', value:3,  date: new Date(2014, 0,  3) },
+                { key:'c', value:12, date: new Date(2014, 0,  2) },
+                { key:'d', value:20, date: new Date(2014, 0, 14) },
+                { key:'e', value:13, date: new Date(2013, 4, 15) }
+            ];
+
+            dataSet = new insight.DataSet(data);
+
+            chart = new insight.Chart('test', '#test', 'ada')
+                .width(300)
+                .height(400);
+        });
+
+        describe('for a vertical column series', function() {
+
+            beforeEach(function() {
+                var x = new insight.Axis('Key Axis', insight.Scales.Ordinal);
+                var y = new insight.Axis('Value Axis', insight.Scales.Linear);
+                chart.addXAxis(x);
+                chart.addYAxis(y);
+
+                var series = new insight.ColumnSeries('chart', dataSet, x, y);
+            });
+
+            it('calculates bounds with zero margin', function () {
+
+                //Given:
+                chart.margin({top: 0, left: 0, right: 0, bottom: 0});
+
+                //When:
+                var plotSizeResult = chart.calculatePlotAreaSize();
+                var expectedResult = [300, 400];
+
+                //Then:
+                expect(plotSizeResult).toEqual(expectedResult);
+            });
+
+            it('calculates bounds with a margin', function () {
+
+                //Given:
+                chart.margin({top: 50, left: 0, right: 0, bottom: 100});
+
+                //When:
+                var plotSizeResult = chart.calculatePlotAreaSize();
+                var expectedResult = [300, 250];
+
+                //Then:
+                expect(plotSizeResult).toEqual(expectedResult);
+            });
+        });
+
+        describe('for a horizontal row series', function() {
+
+            beforeEach(function() {
+                var x = new insight.Axis('Key Axis', insight.Scales.Linear);
+                var y = new insight.Axis('Value Axis', insight.Scales.Ordinal);
+                chart.addXAxis(x);
+                chart.addYAxis(y);
+
+                var series = new insight.RowSeries('chart', dataSet, x, y);
+            });
+
+            it('calculates bounds with no margin', function () {
+
+                //Given:
+                chart.margin({top: 0, left: 0, right: 0, bottom: 0});
+
+                //When:
+                var plotSizeResult = chart.calculatePlotAreaSize();
+                var expectedResult = [300, 400];
+
+                //Then:
+                expect(plotSizeResult).toEqual(expectedResult);
+            });
+
+            it('calculates bounds with a margin', function () {
+
+                //Given:
+                chart.margin({top: 0, left: 100, right: 10, bottom: 0});
+
+                //When:
+                var plotSizeResult = chart.calculatePlotAreaSize();
+                var expectedResult = [190, 400];
+
+                //Then:
+                expect(plotSizeResult).toEqual(expectedResult);
+            });
+        });
+
+    });
 });
