@@ -40,30 +40,28 @@ describe('Axis', function() {
         it('returns true for horizontal axis', function() {
 
             //Given:
-            var chart = new insight.Chart('somename', 'somelement', 'ada');
             var axis = new insight.Axis('Value Axis', insight.Scales.Linear);
-            chart.xAxis(axis);
+            axis.direction = 'h';
+
+            // When
+            var observedResult = axis.isHorizontal();
 
             //Then:
-            var observedResult = axis.isHorizontal();
-            var expectedResult = true;
-            expect(observedResult).toBe(expectedResult);
+            expect(observedResult).toBe(true);
 
         });
-    });
 
-    describe('vertical', function() {
-        it('returns true for vertical axis', function() {
+        it('returns false for vertical axis', function() {
 
             //Given:
-            var chart = new insight.Chart('somename', 'somelement', 'ada');
             var axis = new insight.Axis('Value Axis', insight.Scales.Linear);
-            chart.yAxis(axis);
+            axis.direction = 'v';
+
+            // When
+            var observedResult = axis.isHorizontal();
 
             //Then:
-            var observedResult = axis.isHorizontal();
-            var expectedResult = false;
-            expect(observedResult).toBe(expectedResult);
+            expect(observedResult).toBe(false);
         });
     });
 

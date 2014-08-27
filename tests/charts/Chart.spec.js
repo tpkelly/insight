@@ -550,20 +550,31 @@ describe('Chart', function() {
         });
     });
 
-    describe("adding axes", function() {
-       it("Adding x-axis adds to the axis array", function() {
-           //Given:
-           var chart = new insight.Chart('asda', 'asdads', 'ada');
-           var xAxis = new insight.Axis('', insight.Scales.Linear);
+    describe('xAxis', function() {
+        it("returns empty array when no axis set", function () {
+            //Given:
+            var chart = new insight.Chart('asda', 'asdads', 'ada');
 
-           //When:
-           chart.xAxis(xAxis);
+            //When:
+            var axes = chart.xAxes();
 
-           //Then:
-           expect(chart.xAxes()).toEqual([xAxis]);
-       });
+            //Then:
+            expect(axes).toEqual([]);
+        });
 
-        it("Adding x-axis twice only adds to the axis array once", function() {
+        it("Adding x-axis adds to the axis array", function () {
+            //Given:
+            var chart = new insight.Chart('asda', 'asdads', 'ada');
+            var xAxis = new insight.Axis('', insight.Scales.Linear);
+
+            //When:
+            chart.xAxis(xAxis);
+
+            //Then:
+            expect(chart.xAxes()).toEqual([xAxis]);
+        });
+
+        it("Adding x-axis twice only adds to the axis array once", function () {
             //Given:
             var chart = new insight.Chart('asda', 'asdads', 'ada');
             var xAxis = new insight.Axis('', insight.Scales.Linear);
@@ -576,7 +587,7 @@ describe('Chart', function() {
             expect(chart.xAxes()).toEqual([xAxis]);
         });
 
-        it("Adding x-axes adds to the axis array", function() {
+        it("Adding x-axes adds to the axis array", function () {
             //Given:
             var chart = new insight.Chart('asda', 'asdads', 'ada');
             var xAxis = new insight.Axis('', insight.Scales.Linear);
@@ -588,7 +599,7 @@ describe('Chart', function() {
             expect(chart.xAxes()).toEqual([xAxis]);
         });
 
-        it("Adding x-axes twice only adds to the axis array once", function() {
+        it("Adding x-axes twice only adds to the axis array once", function () {
             //Given:
             var chart = new insight.Chart('asda', 'asdads', 'ada');
             var xAxis = new insight.Axis('', insight.Scales.Linear);
@@ -601,55 +612,87 @@ describe('Chart', function() {
             expect(chart.xAxes()).toEqual([xAxis]);
         });
 
-            it("Adding y-axis adds to the axis array", function() {
-                //Given:
-                var chart = new insight.Chart('asda', 'asdads', 'ada');
-                var yAxis = new insight.Axis('', insight.Scales.Linear);
+        it('Adding x-axis updates axis direction to "h"', function() {
 
-                //When:
-                chart.yAxis(yAxis);
+            //Given:
+            var chart = new insight.Chart('somename', 'somelement', 'ada');
+            var axis = new insight.Axis('Value Axis', insight.Scales.Linear);
 
-                //Then:
-                expect(chart.yAxes()).toEqual([yAxis]);
-            });
+            // When
+            chart.xAxis(axis);
+            var observedResult = axis.direction;
 
-            it("Adding y-axis twice only adds to the axis array once", function() {
-                //Given:
-                var chart = new insight.Chart('asda', 'asdads', 'ada');
-                var yAxis = new insight.Axis('', insight.Scales.Linear);
+            //Then:
+            expect(observedResult).toBe('h');
 
-                //When:
-                chart.yAxis(yAxis);
-                chart.yAxis(yAxis);
+        });
+    });
 
-                //Then:
-                expect(chart.yAxes()).toEqual([yAxis]);
-            });
+    describe('yAxis', function() {
 
-            it("Adding x-axes adds to the axis array", function() {
-                //Given:
-                var chart = new insight.Chart('asda', 'asdads', 'ada');
-                var yAxis = new insight.Axis('', insight.Scales.Linear);
+        it("Adding y-axis adds to the axis array", function() {
+            //Given:
+            var chart = new insight.Chart('asda', 'asdads', 'ada');
+            var yAxis = new insight.Axis('', insight.Scales.Linear);
 
-                //When:
-                chart.yAxes([yAxis]);
+            //When:
+            chart.yAxis(yAxis);
 
-                //Then:
-                expect(chart.yAxes()).toEqual([yAxis]);
-            });
+            //Then:
+            expect(chart.yAxes()).toEqual([yAxis]);
+        });
 
-            it("Adding x-axes twice only adds to the axis array once", function() {
-                //Given:
-                var chart = new insight.Chart('asda', 'asdads', 'ada');
-                var yAxis = new insight.Axis('', insight.Scales.Linear);
+        it("Adding y-axis twice only adds to the axis array once", function() {
+            //Given:
+            var chart = new insight.Chart('asda', 'asdads', 'ada');
+            var yAxis = new insight.Axis('', insight.Scales.Linear);
 
-                //When:
-                chart.yAxes([yAxis]);
-                chart.yAxes([yAxis]);
+            //When:
+            chart.yAxis(yAxis);
+            chart.yAxis(yAxis);
 
-                //Then:
-                expect(chart.yAxes()).toEqual([yAxis]);
-            });
+            //Then:
+            expect(chart.yAxes()).toEqual([yAxis]);
+        });
+
+        it("Adding y-axes adds to the axis array", function() {
+            //Given:
+            var chart = new insight.Chart('asda', 'asdads', 'ada');
+            var yAxis = new insight.Axis('', insight.Scales.Linear);
+
+            //When:
+            chart.yAxes([yAxis]);
+
+            //Then:
+            expect(chart.yAxes()).toEqual([yAxis]);
+        });
+
+        it("Adding y-axes twice only adds to the axis array once", function() {
+            //Given:
+            var chart = new insight.Chart('asda', 'asdads', 'ada');
+            var yAxis = new insight.Axis('', insight.Scales.Linear);
+
+            //When:
+            chart.yAxes([yAxis]);
+            chart.yAxes([yAxis]);
+
+            //Then:
+            expect(chart.yAxes()).toEqual([yAxis]);
+        });
+
+        it('Adding y-axis updates axis direction to "v"', function() {
+
+            //Given:
+            var chart = new insight.Chart('somename', 'somelement', 'ada');
+            var axis = new insight.Axis('Value Axis', insight.Scales.Linear);
+
+            // When
+            chart.yAxis(axis);
+            var observedResult = axis.direction;
+
+            //Then:
+            expect(observedResult).toBe('v');
+        });
     });
 
     describe('resizeWidth', function() {
