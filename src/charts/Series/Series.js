@@ -211,16 +211,15 @@
          * Extracts the maximum value on an axis for this series.
          * @memberof! insight.Series
          * @instance
-         * @param scale The corresponding x or y axis
-         * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
+         * @param {insight.Axis} axis The corresponding x or y axis
+         * @returns {Object} - The maximum value within the range of the values for this series on the given axis.
          */
-        self.findMax = function(scale) {
+        self.findMax = function(axis) {
 
-            var data = self.dataset();
+            var func = axis === self.keyAxis ? self.keyFunction() : self.valueFunction();
+            var max = d3.max(self.dataset(), func);
+            return max;
 
-            var func = scale === self.x ? self.keyFunction() : self.valueFunction();
-
-            return d3.max(data, func);
         };
 
         self.draw = function(chart, drag) {};

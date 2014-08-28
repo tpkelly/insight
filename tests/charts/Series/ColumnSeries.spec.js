@@ -103,7 +103,7 @@ describe('Column Series Tests', function() {
         expect(max).toBe(7);        
     });
 
-    it('calculates max with grouped series', function() {
+    xit('calculates max with grouped series', function() {
                         
         var group =  data.group('country',function(d){return d.Country;}).mean(['Age']);
 
@@ -141,7 +141,7 @@ describe('Column Series Tests', function() {
         expect(max).toBe(13.857142857142858);        
     });
 
-    it('calculates max with a stacked series', function() {
+    xit('calculates max with a stacked series', function() {
                 
         var group =  data.group('country',function(d){return d.Country;}).mean(['Age']);
 

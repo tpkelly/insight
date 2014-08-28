@@ -60,42 +60,6 @@
             label: 'Value'
         }];
 
-        /*
-         * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
-         * This function is mapped across the entire data array by the findMax method.
-         * @memberof insight.ColumnSeries
-         * @param {object} data An item in the object array to query
-         * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
-         */
-        self.seriesMax = function(d) {
-            var max = 0;
-            var seriesMax = 0;
-
-            for (var series in self.series) {
-                var s = self.series[series];
-
-                var seriesValue = s.valueFunction(d);
-
-                seriesMax = self.isStacked() ? seriesMax + seriesValue : seriesValue;
-
-                max = seriesMax > max ? seriesMax : max;
-            }
-
-            return max;
-        };
-
-        /*
-         * Extracts the maximum value on an axis for this series.
-         * @memberof! insight.ColumnSeries
-         * @instance
-         * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
-         */
-        self.findMax = function() {
-            var max = d3.max(self.dataset(), self.seriesMax);
-
-            return max;
-        };
-
         self.calculateYPos = function(valueFunc, d) {
             if (!d.yPos) {
                 d.yPos = 0;
