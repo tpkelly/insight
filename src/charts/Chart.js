@@ -118,6 +118,23 @@
 
         // Internal functions -----------------------------------------------------------------------------------------
 
+        /*
+         * Gets the index of the series in the chart compared to other series in the chart of the same type.
+         * @memberof! insight.Chart
+         * @instance
+         * @param {insight.Series} targetSeries The series to find the index of.
+         * @returns {Number} - The index of the series in the chart compared with other series of the same type.
+         */
+        self.seriesIndexByType = function(targetSeries) {
+
+            var seriesOfType = self.series().filter(function(s) {
+                return s.constructor === targetSeries.constructor;
+            });
+
+            return seriesOfType.indexOf(targetSeries);
+
+        };
+
         /** 
          * Empty event handler that is overridden by any listeners who want to know when this Chart's series change
          * @memberof! insight.Chart
