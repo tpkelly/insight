@@ -19,6 +19,7 @@
             stacked = false,
             seriesName = '',
             seriesFunctions = {};
+        barThicknessFunction = self.y.scale.rangeBand;
 
         // Internal variables -------------------------------------------------------------------------------------------
 
@@ -122,13 +123,9 @@
             return position;
         };
 
-        self.barThickness = function(d) {
-            return self.y.scale.rangeBand(d);
-        };
-
         self.groupedbarThickness = function(d) {
 
-            var groupThickness = self.barThickness(d);
+            var groupThickness = barThicknessFunction(d);
 
             var width = self.isStacked() || (self.series.length === 1) ? groupThickness : groupThickness / self.series.length;
 

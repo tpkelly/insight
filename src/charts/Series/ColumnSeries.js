@@ -18,7 +18,7 @@
             stacked = false,
             seriesName = '',
             seriesFunctions = {},
-            barWidthFunction = self.x.rangeType;
+            barWidthFunction = self.x.scale.rangeRoundBands;
 
         // Internal variables ------------------------------------------------------------------------------------------
 
