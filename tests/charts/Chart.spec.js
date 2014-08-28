@@ -243,7 +243,7 @@ describe('Chart', function() {
                 spyOn(chart, 'calculateLabelMargin');
                 spyOn(chart, 'draw').andCallThrough();
                 spyOn(chart, 'addClipPath').andCallThrough();
-                spyOn(window, 'getComputedStyle');
+                spyOn(insight.Utils, 'getElementStyles').andReturn({});
 
                 chart.draw();
             };
@@ -700,6 +700,8 @@ describe('Chart', function() {
         var chart, element;
 
         beforeEach(function() {
+
+            spyOn(insight.Utils, 'getElementStyles').andReturn({});
 
             element = document.createElement('div');
             element.id = 'testElement';

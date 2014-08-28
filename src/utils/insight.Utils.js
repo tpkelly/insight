@@ -291,20 +291,20 @@ insight.Utils = (function() {
         return retValue;
     };
 
-    // Helper functions for text measurement.  Mock out in tests to remove dependency on window and DOM functions
+    exports.getNativeComputedStyle = function(element) {
+        return window.getComputedStyle(element);
+    };
+
+    // Helper functions for text measurement.
+    // Mock out in tests to remove dependency on window and DOM functions
 
     exports.getElementStyles = function(textElement, styleProperties) {
 
-        var style = window.getComputedStyle(textElement);
+        var style = exports.getNativeComputedStyle(textElement);
         var properties = {};
 
         styleProperties.forEach(function(propertyName) {
-            try {
-                properties[propertyName] = style.getPropertyValue(propertyName);
-            } catch (err) {
-                // handle this formally when we have a logging framework
-                console.log(err);
-            }
+            properties[propertyName] = style.getPropertyValue(propertyName);
         });
 
         return properties;

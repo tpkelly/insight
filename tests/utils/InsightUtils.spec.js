@@ -412,5 +412,92 @@ describe('Utils', function() {
     
     });
 
+    describe('getElementStyles', function() {
+        var errorContainer,
+            getComputedStyleResult,
+            propertiesOnElement;
+
+        beforeEach(function() {
+            propertiesOnElement = [];
+
+            getComputedStyleResult = {
+                getPropertyValue: jasmine.createSpy('getPropertyValue').andCallFake(function(property) {
+                    var matchedProperties = propertiesOnElement.filter(function(p) {
+                        return p.propertyName === property;
+                    });
+
+                    if(matchedProperties.length > 0) {
+                        return matchedProperties[0].value;
+                    }
+
+                    // It is tricky to know what the canonical response should be:
+                    // - Under Chrome it is ""
+                    // - Under Firefox it is null
+                    // In either case, it is not a truthy value
+                    return "";
+                })
+            }
+
+            spyOn(insight.Utils, 'getNativeComputedStyle').andReturn(getComputedStyleResult);
+
+            errorContainer = new insight.ErrorContainer();
+
+        });
+
+        it('returns an empty object when given no properties', function() {
+
+            // Given
+            var aMockElement = {};
+
+            // When
+            var result = insight.Utils.getElementStyles(aMockElement, []);
+
+            // Then
+            expect(getComputedStyleResult.getPropertyValue).not.toHaveBeenCalled();
+            expect(result).toEqual({});
+
+        });
+
+        describe('when provided with a named property', function() {
+            var property;
+
+            beforeEach(function() {
+                property = {
+                    propertyName: 'height',
+                    value: '22px'
+                };
+                propertiesOnElement.push(property);
+            });
+
+            it('returns object with property when property exists on element', function () {
+
+                // Given
+                var aMockElement = {};
+
+                // When
+                var result = insight.Utils.getElementStyles(aMockElement, [property.propertyName]);
+
+                // Then
+                expect(getComputedStyleResult.getPropertyValue).toHaveBeenCalled();
+                expect(result[property.propertyName]).toEqual(property.value);
+
+            });
+
+            it('returns object with property falsely when property does not exists on element', function () {
+
+                // Given
+                var aMockElement = {};
+
+                // When
+                var lookForProperty = 'font-size';
+                var result = insight.Utils.getElementStyles(aMockElement, [lookForProperty]);
+
+                // Then
+                expect(getComputedStyleResult.getPropertyValue).toHaveBeenCalled();
+                expect(result[lookForProperty]).toBeFalsy();
+            });
+       });
+
+    })
 })
 
