@@ -84,7 +84,7 @@
             return position;
         };
 
-        self.groupedbarThickness = function(d) {
+        self.groupedBarThickness = function(d) {
 
             var groupThickness = barThicknessFunction(d);
 
@@ -94,7 +94,7 @@
         };
 
         self.offsetYPosition = function(d) {
-            var thickness = self.groupedbarThickness(d);
+            var thickness = self.groupedBarThickness(d);
             var position = self.isStacked() ? self.yPosition(d) : self.calculateYPos(thickness, d);
 
             return position;
@@ -187,7 +187,7 @@
                     .duration(duration)
                     .attr('y', self.offsetYPosition)
                     .attr('x', self.xPosition)
-                    .attr('height', self.groupedbarThickness)
+                    .attr('height', self.groupedBarThickness)
                     .attr('width', self.barWidth)
                     .style('opacity', opacity);
             }
