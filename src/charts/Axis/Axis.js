@@ -133,6 +133,13 @@
 
         // Internal functions -------------------------------------------------------------------------------------
 
+        self.calculateLabelDimensions = function(axisStyles, labelStyles) {
+
+            var tickLabelLineHeight = labelStyles['line-height'];
+
+            return tickLabelLineHeight;
+        };
+
         /*
          * Adds to the list of series that this axis is associated with
          * @memberof! insight.Axis

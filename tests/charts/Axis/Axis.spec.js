@@ -381,4 +381,43 @@ describe('Axis', function() {
         });
 
     });
+
+    describe('calculateLabelDimensions', function() {
+        var axisLabelStyles,
+            tickLabelStyles;
+
+        beforeEach(function() {
+            axisLabelStyles = {
+                'line-height': 20
+            };
+            tickLabelStyles = {
+                'line-height': 20
+            };
+        });
+
+        describe('when no title', function() {
+
+            describe('tick size and tick padding is 0', function() {
+
+                it('returns height equal to tick label "line-height"', function() {
+
+                    // Given
+                    var xAxis = new insight.Axis('X', insight.Scales.Linear);
+                    var yAxis = new insight.Axis('Y Label', insight.Scales.Ordinal);
+
+                    // When
+                    var result = xAxis.calculateLabelDimensions(axisLabelStyles, tickLabelStyles);
+
+                    // Then
+                    var expectedResult = tickLabelStyles['line-height'];
+                    expect(result).toBe(expectedResult);
+
+                });
+
+            });
+
+        });
+
+    });
+
 });
