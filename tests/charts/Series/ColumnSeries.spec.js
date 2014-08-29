@@ -224,12 +224,12 @@ describe('Column Series Tests', function() {
         series.rootClassName = series.seriesClassName();
 
         // Then
-        var actualData = series.dataset().map(function(data){ return series.seriesSpecificClassName(data); });
+        var actualData = series.dataset().map(function(data){ return series.itemClassName(data); });
         var expectedData = [
-                            'countryColumnclass bar in_England defaultclass',
-                            'countryColumnclass bar in_Northern_Ireland defaultclass',
-                            'countryColumnclass bar in_Scotland defaultclass',
-                            'countryColumnclass bar in_Wales defaultclass',
+                            'countryColumnclass bar in_England',
+                            'countryColumnclass bar in_Northern_Ireland',
+                            'countryColumnclass bar in_Scotland',
+                            'countryColumnclass bar in_Wales',
                             ];
 
         expect(actualData).toEqual(expectedData);

@@ -14,11 +14,7 @@
 
         // Private variables -----------------------------------------------------------------------------------------
 
-        var self = this,
-            stacked = false,
-            seriesName = '',
-            seriesFunctions = {},
-            barWidthFunction = self.x.scale.rangeRoundBands;
+        var self = this;
 
         // Internal variables ------------------------------------------------------------------------------------------
 
@@ -27,8 +23,7 @@
         // Private functions -----------------------------------------------------------------------------------------
 
         function tooltipFunction(d) {
-            var func = self.currentSeries.valueFunction;
-            return self.tooltipFormat()(func(d));
+            return self.tooltipFormat()(self.valueFunction()(d));
         }
 
         function click(filter) {
@@ -41,104 +36,31 @@
 
         function mouseOver(data, i) {
             var seriesName = this.getAttribute('in_series');
-            var seriesFunction = seriesFunctions[seriesName];
 
-            self.mouseOver.call(this, data, i, seriesFunction);
+            self.mouseOver.call(this, data, i, self.valueFunction());
+        }
+
+        function opacity() {
+            // If we are using selected/notSelected, then make selected more opaque than notSelected
+            if (this.classList && this.classList.contains("notselected")) {
+                return 0.5;
+            }
+
+            //If not using selected/notSelected, make everything opaque
+            return 1;
         }
 
         // Internal functions ----------------------------------------------------------------------------------------
-
-        self.series = [{
-            name: 'default',
-            valueFunction: function(d) {
-                return self.valueFunction()(d);
-            },
-            tooltipValue: function(d) {
-                return self.tooltipFunction()(d);
-            },
-            color: self.color,
-            label: 'Value'
-        }];
-
-        self.calculateYPos = function(valueFunc, d) {
-            if (!d.yPos) {
-                d.yPos = 0;
-            }
-
-            d.yPos += valueFunc(d);
-
-            return d.yPos;
-        };
-
-        self.xPosition = function(d) {
-            return self.x.scale(self.keyFunction()(d));
-        };
-
-        self.calculateXPos = function(width, d) {
-            if (!d.xPos) {
-                d.xPos = self.xPosition(d);
-            } else {
-                d.xPos += width;
-            }
-            return d.xPos;
-        };
-
-        self.yPosition = function(d) {
-
-            var seriesValueFunc = self.currentSeries.valueFunction;
-
-            var position = self.isStacked() ? self.y.scale(self.calculateYPos(seriesValueFunc, d)) : self.y.scale(seriesValueFunc(d));
-
-            return position;
-        };
-
-        self.barWidth = function(d) {
-            // comment for tom, this is the bit that is currently breaking the linear x axis, because d3 linear scales don't support the rangeBand() function, whereas ordinal ones do.
-            // in js, you can separate the scale and range function using rangeBandFunction.call(self.x.scale, d), where rangeBandFunction can point to the appropriate function for the type of scale being used.
-            return self.x.scale.rangeBand(d);
-        };
-
-        self.groupedBarWidth = function(d) {
-
-            var groupWidth = self.barWidth(d);
-
-            var width = self.isStacked() || (self.series.length === 1) ? groupWidth : groupWidth / self.series.length;
-
-            return width;
-        };
-
-        self.offsetXPosition = function(d) {
-            var width = self.groupedBarWidth(d);
-            var position = self.isStacked() ? self.xPosition(d) : self.calculateXPos(width, d);
-
-            return position;
-        };
-
-        self.seriesSpecificClassName = function(d) {
-
-            var additionalClass = ' ' + self.currentSeries.name + 'class';
-            var baseClassName = self.itemClassName(d);
-            var itemClassName = baseClassName + additionalClass;
-
-            return itemClassName;
-        };
 
         self.draw = function(chart, isDragging) {
 
             self.initializeTooltip(chart.container.node());
             self.selectedItems = chart.selectedItems;
 
-            var groupSelector = 'g.' + insight.Constants.BarGroupClass,
-                barSelector = 'rect.' + insight.Constants.BarGroupClass;
-
-            function reset(d) {
-                d.yPos = 0;
-                d.xPos = 0;
-            }
+            var groupSelector = 'g.' + self.name + '.' + insight.Constants.BarGroupClass,
+                barSelector = 'rect.' + self.name + '.' + insight.Constants.BarGroupClass;
 
             var data = self.dataset();
-
-            data.forEach(reset);
 
             var groups = chart.plotArea
                 .selectAll(groupSelector)
@@ -146,87 +68,85 @@
 
             var newGroups = groups.enter()
                 .append('g')
-                .attr('class', insight.Constants.BarGroupClass);
+                .classed(self.name, true)
+                .classed(insight.Constants.BarGroupClass, true);
 
             var newBars = newGroups.selectAll(barSelector);
 
-            function barHeight(d) {
-                var func = self.currentSeries.valueFunction;
+            newBars = newGroups.append('rect')
+                .attr('class', self.itemClassName)
+                .attr('in_series', self.name)
+                .attr('fill', self.color)
+                .attr('clip-path', 'url(#' + chart.clipPath() + ')')
+                .on('mouseover', mouseOver)
+                .on('mouseout', self.mouseOut)
+                .on('click', click);
 
-                return (chart.height() - chart.margin().top - chart.margin().bottom) - self.y.scale(func(d));
-            }
+            var seriesTypeCount = chart.countSeriesOfType(self);
+            var seriesIndex = chart.seriesIndexByType(self);
+            var groupIndex = 0;
 
-            function opacity() {
-                // If we are using selected/notSelected, then make selected more opaque than notSelected
-                if (this.classList && this.classList.contains("notselected")) {
-                    return 0.5;
-                }
+            // Select and update all bars
+            var seriesSelector = '.' + self.name + 'class.' + insight.Constants.BarClass;
+            var bars = groups.selectAll(seriesSelector);
 
-                //If not using selected/notSelected, make everything semi-transparent
-                return 1;
-            }
-
-            for (var seriesIndex in self.series) {
-
-                self.currentSeries = self.series[seriesIndex];
-
-                seriesName = self.currentSeries.name;
-                seriesFunctions[seriesName] = self.currentSeries.valueFunction;
-
-                var seriesSelector = '.' + seriesName + 'class.' + insight.Constants.BarClass;
-
-                // Add any new bars
-
-                newBars = newGroups.append('rect')
-                    .attr('class', self.seriesSpecificClassName)
-                    .attr('y', self.y.bounds[0])
-                    .attr('height', 0)
-                    .attr('in_series', seriesName)
-                    .attr('fill', self.currentSeries.color)
-                    .attr('clip-path', 'url(#' + chart.clipPath() + ')')
-                    .on('mouseover', mouseOver)
-                    .on('mouseout', self.mouseOut)
-                    .on('click', click);
-
-                // Select and update all bars
-                var bars = groups.selectAll(seriesSelector);
-
-                bars
-                    .transition()
-                    .duration(duration)
-                    .attr('y', self.yPosition)
-                    .attr('x', self.offsetXPosition)
-                    .attr('width', self.groupedBarWidth)
-                    .attr('height', barHeight)
-                    .style('opacity', opacity);
-            }
+            bars
+                .transition()
+                .duration(duration)
+                .attr('y', yPosition)
+                .attr('x', xPosition)
+                .attr('width', barWidth)
+                .attr('height', barHeight)
+                .style('opacity', opacity);
 
             // Remove groups no longer in the data set
             groups.exit().remove();
-        };
 
-        // Public functions -------------------------------------------------------------------------------------------
+            // draw helper functions ----------------------------------
 
-        /**
-         * Determines whether the series should stack columns, or line them up side-by-side.
-         * @memberof! insight.ColumnSeries
-         * @instance
-         * @returns {boolean} - To stack or not to stack.
-         *
-         * @also
-         *
-         * Sets whether the series should stack columns, or line them up side-by-side.
-         * @memberof! insight.ColumnSeries
-         * @instance
-         * @param {boolean} shouldStack Whether the column series should be stacked.
-         * @returns {this}
-         */
-        self.isStacked = function(shouldStack) {
-            if (!arguments.length) {
-                return stacked;
+            function barHeight(d) {
+
+                var barValue = self.valueFunction()(d);
+                var height = (chart.height() - chart.margin().top - chart.margin().bottom) - self.y.scale(barValue);
+
+                return height;
             }
-            stacked = shouldStack;
-            return self;
+
+            function groupWidth(d) {
+                var w = self.x.scale.rangeBand(d);
+                return w;
+            }
+
+            function barWidth(d) {
+
+                var widthOfGroup = groupWidth(d);
+                var width = widthOfGroup / seriesTypeCount;
+                return width;
+
+            }
+
+            function xPosition(d) {
+
+                var widthOfGroup = groupWidth(d);
+                var widthOfBar = barWidth(d);
+                var groupPadding = (widthOfGroup * self.keyAxis.barPadding()) / 2;
+                var widthOfGroupWithPadding = widthOfGroup + groupPadding;
+                var position =
+                    (groupPadding * 2) +
+                    ((widthOfGroupWithPadding + seriesTypeCount) * groupIndex) +
+                    (widthOfBar * seriesIndex);
+
+                groupIndex++;
+
+                return position;
+
+            }
+
+            function yPosition(d) {
+                var position = self.y.scale(self.valueFunction()(d));
+                return position;
+            }
+
         };
 
     };
