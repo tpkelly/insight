@@ -25,7 +25,7 @@
     {'Id':20,'Forename':'Frances','Surname':'Lawson','Country':'Northern Ireland','DisplayColour':'#e739c9','Age':14,'IQ':71}];
 
 
-describe('Bubble Series Tests', function() {
+describe('BubbleSeries', function() {
 
     it('Points with same radius have radius greater than 0', function () {
         //Given:
@@ -171,4 +171,48 @@ describe('Bubble Series Tests', function() {
         expect(actualData).toEqual(expectedData);
 
     });
+
+    describe('findMax', function() {
+
+        var xAxis,
+            yAxis,
+            series;
+
+        beforeEach(function() {
+
+            xAxis = new insight.Axis('x', insight.Scales.Linear);
+            yAxis = new insight.Axis('y', insight.Scales.Linear);
+
+            series = new insight.BubbleSeries('bubbles', bubbleDataSet, xAxis, yAxis)
+                .keyFunction(function(d) {
+                    return d.Age;
+                })
+                .valueFunction(function(d) {
+                    return d.IQ;
+                });
+
+        });
+
+        it('returns maximum value on x-axis', function() {
+
+            // When
+            var result = series.findMax(xAxis);
+
+            // Then
+            expect(result).toBe(20);
+
+        });
+
+        it('returns maximum value on y-axis', function() {
+
+            // When
+            var result = series.findMax(yAxis);
+
+            // Then
+            expect(result).toBe(106);
+
+        });
+
+    });
+
 });

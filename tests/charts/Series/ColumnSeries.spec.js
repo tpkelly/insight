@@ -1,4 +1,4 @@
-var dataset = 
+var testData =
 [{'Id':1,'Forename':'Martin','Surname':'Watkins','Country':'Scotland','DisplayColour':'#38d33c','Age':1,'IQ':69},
 {'Id':2,'Forename':'Teresa','Surname':'Knight','Country':'Scotland','DisplayColour':'#6ee688','Age':20,'IQ':103},
 {'Id':3,'Forename':'Mary','Surname':'Lee','Country':'Wales','DisplayColour':'#8e6bc2','Age':3,'IQ':96},
@@ -21,7 +21,7 @@ var dataset =
 {'Id':20,'Forename':'Frances','Surname':'Lawson','Country':'Northern Ireland','DisplayColour':'#e739c9','Age':14,'IQ':71}];
 
 
-describe('Column Series Tests', function() {
+describe('ColumnSeries', function() {
     
     var chart,
         data,
@@ -33,7 +33,7 @@ describe('Column Series Tests', function() {
 
         document.body.appendChild(div);  
 
-        data = new insight.DataSet(dataset);
+        data = new insight.DataSet(testData);
         chart = new insight.Chart('Chart 1', '#test');
            
     });
@@ -45,7 +45,7 @@ describe('Column Series Tests', function() {
     it('filtering works with a single item', function() {
         
         chartGroup = new insight.ChartGroup();
-        data = new insight.DataSet(dataset);
+        data = new insight.DataSet(testData);
         chart = new insight.Chart('Chart 1', '#test');
 
         var group =  data.group('country',function(d){return d.Country;});
@@ -66,7 +66,7 @@ describe('Column Series Tests', function() {
 
     it('filtering works with multiple items', function() {
         
-        data = new insight.DataSet(dataset);
+        data = new insight.DataSet(testData);
         chart = new insight.Chart('Chart 1', '#test');
         
         var group =  data.group('country',function(d){return d.Country;});
@@ -235,4 +235,51 @@ describe('Column Series Tests', function() {
         expect(actualData).toEqual(expectedData);
 
     });
+
+    describe('findMax', function() {
+
+        var xAxis,
+            yAxis,
+            series;
+
+        beforeEach(function() {
+
+            xAxis = new insight.Axis('x', insight.Scales.Ordinal);
+            yAxis = new insight.Axis('y', insight.Scales.Linear);
+
+            var dataset = new insight.DataSet(testData);
+            var countryGroup = dataset.group('countries', function(d) { return d.Country; });
+
+            series = new insight.ColumnSeries('columns', countryGroup, xAxis, yAxis)
+                .keyFunction(function(group) {
+                    return group.key;
+                })
+                .valueFunction(function(group) {
+                    return group.value.Count;
+                });
+
+        });
+
+        it('returns maximum value on x-axis', function() {
+
+            // When
+            var result = series.findMax(xAxis);
+
+            // Then
+            expect(result).toBe('Wales');
+
+        });
+
+        it('returns maximum value on y-axis', function() {
+
+            // When
+            var result = series.findMax(yAxis);
+
+            // Then
+            expect(result).toBe(7);
+
+        });
+
+    });
+
 });
