@@ -383,41 +383,175 @@ describe('Axis', function() {
     });
 
     describe('calculateLabelDimensions', function() {
-        var axisLabelStyles,
-            tickLabelStyles;
+        var axisFontSize = 18,
+            axisLabel = 'Axis Label',
+            tickPadding = 5,
+            tickLabelFontSize = 12,
+            tickSize = 10;
+
+        var axis, axisLabelStyles, tickLabelStyles;
+
+        function mockGetDrawingContext(canvas, styles) {
+            var textSize = styles['font-size'];
+            return {
+                measureText: function(text) {
+                    return {
+                        width: text.length * textSize
+                    };
+                }
+            };
+        }
+
+        var data = [
+            {key: 'Largest', value: 700},
+            {key: 'Medium', value: 600},
+            {key: 'Tiny', value: 400}
+        ];
 
         beforeEach(function() {
+            axis = new insight.Axis('', insight.Scales.Ordinal);
+            var secondaryAxis = new insight.Axis('Y Label', insight.Scales.Linear);
+
+            series = new insight.ColumnSeries('testSeries', data, axis, secondaryAxis);
+
             axisLabelStyles = {
-                'line-height': 20
+                'font-size': axisFontSize,
+                'font-family': 'Helvetica'
             };
+
             tickLabelStyles = {
-                'line-height': 20
+                'font-size': tickLabelFontSize,
+                'font-family': 'Helvetica'
             };
+
+            spyOn(insight.Utils, 'getDrawingContext').andCallFake(mockGetDrawingContext);
         });
 
-        describe('when no title', function() {
+        describe('horizontal axis', function() {
 
-            describe('tick size and tick padding is 0', function() {
+            beforeEach(function() {
+                axis.isHorizontal = d3.functor(true);
+            });
 
-                it('returns height equal to tick label "line-height"', function() {
+            it('returns correct value when no title and zero tick size and tick padding', function () {
 
-                    // Given
-                    var xAxis = new insight.Axis('X', insight.Scales.Linear);
-                    var yAxis = new insight.Axis('Y Label', insight.Scales.Ordinal);
+                // Given
+                axis.tickPadding(0).tickSize(0);
 
-                    // When
-                    var result = xAxis.calculateLabelDimensions(axisLabelStyles, tickLabelStyles);
+                // When
+                var result = axis.calculateLabelDimensions(axisLabelStyles, tickLabelStyles);
 
-                    // Then
-                    var expectedResult = tickLabelStyles['line-height'];
-                    expect(result).toBe(expectedResult);
+                // Then
+                var expectedResult = tickLabelFontSize;
+                expect(result).toBe(expectedResult);
 
-                });
+            });
 
+            it('returns correct value when no title and non-zero tick size and tick padding', function () {
+
+                // Given
+                axis.tickPadding(tickPadding).tickSize(tickSize);
+
+                // When
+                var result = axis.calculateLabelDimensions(axisLabelStyles, tickLabelStyles);
+
+                // Then
+                var expectedResult = tickLabelFontSize + tickPadding + tickSize;
+                expect(result).toBe(expectedResult);
+
+            });
+
+            it('returns correct value when title provided and non-zero tick size and tick padding', function () {
+
+                // Given
+                axis.tickPadding(tickPadding).tickSize(tickSize);
+                axis.label(axisLabel);
+
+                // When
+                var result = axis.calculateLabelDimensions(axisLabelStyles, tickLabelStyles);
+
+                // Then
+                var expectedResult = tickLabelFontSize
+                    + tickPadding
+                    + tickSize
+                    + axisLabelStyles['font-size'];
+
+                expect(result).toBe(expectedResult);
+
+            });
+
+            xit('handles label rotation', function() {
+                throw 'not implement yet!'
             });
 
         });
 
+        describe('vertical axis', function() {
+
+            var expectedMaxTickLabelLength,
+                expectedAxisLabelLength;
+
+            beforeEach(function() {
+                axis.isHorizontal = d3.functor(false);
+
+                var largestTickValue = 'Largest';
+
+                expectedMaxTickLabelLength = largestTickValue.length * tickLabelFontSize;
+                expectedAxisLabelLength = axisLabel.length * axisFontSize;
+            });
+
+            it('returns correct value when no title and zero tick size and tick padding', function () {
+
+                // Given
+                axis.tickPadding(0).tickSize(0);
+
+                // When
+                var result = axis.calculateLabelDimensions(axisLabelStyles, tickLabelStyles);
+
+                // Then
+                var expectedResult = expectedMaxTickLabelLength;
+                expect(result).toBe(expectedResult);
+
+            });
+
+            it('returns correct value when no title and non-zero tick size and tick padding', function () {
+
+                // Given
+                axis.tickPadding(tickPadding).tickSize(tickSize);
+
+                // When
+                var result = axis.calculateLabelDimensions(axisLabelStyles, tickLabelStyles);
+
+                // Then
+                var expectedResult = expectedMaxTickLabelLength + tickPadding + tickSize;
+                expect(result).toBe(expectedResult);
+
+            });
+
+            it('returns correct value when title provided and non-zero tick size and tick padding', function () {
+
+                // Given
+                axis.tickPadding(tickPadding).tickSize(tickSize);
+                axis.label(axisLabel);
+
+                // When
+                var result = axis.calculateLabelDimensions(axisLabelStyles, tickLabelStyles);
+
+                // Then
+                var expectedResult = expectedMaxTickLabelLength
+                    + tickPadding
+                    + tickSize
+                    + expectedAxisLabelLength;
+
+                expect(result).toBe(expectedResult);
+
+            });
+
+            xit('handles label rotation', function() {
+                throw 'not implement yet!'
+            });
+
+        });
     });
 
 });

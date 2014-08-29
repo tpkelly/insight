@@ -29,6 +29,7 @@
 
         // Internal variables ---------------------------------------------------------------------------------------
 
+        self.measureCanvas = document.createElement('canvas');
         self.scaleType = scale.name;
         self.scale = scale.scale();
         self.rangeType = self.scale.rangeRoundBands ? self.scale.rangeRoundBands : self.scale.rangeRound;
@@ -134,10 +135,37 @@
         // Internal functions -------------------------------------------------------------------------------------
 
         self.calculateLabelDimensions = function(axisStyles, labelStyles) {
+            var tickLabelLineLength = 0,
+                axisLabelLineLength = 0;
 
-            var tickLabelLineHeight = labelStyles['line-height'];
+            var axisLabelMeasuringContext = insight.Utils.getDrawingContext(self.measureCanvas, axisStyles);
+            var tickLabelMeasuringContext = insight.Utils.getDrawingContext(self.measureCanvas, labelStyles);
 
-            return tickLabelLineHeight;
+
+            if (self.isHorizontal()) {
+
+                tickLabelLineLength = labelStyles['font-size'];
+
+                axisLabelLineLength = axisStyles['font-size'];
+
+            } else {
+
+                var tickValues = self.domain();
+                tickLabelLineLength = d3.max(tickValues.map(function(tickValue) {
+                    return tickLabelMeasuringContext.measureText(tickValue).width;
+                }));
+
+                axisLabelLineLength = axisLabelMeasuringContext.measureText(self.label()).width;
+            }
+
+            var totalLength = self.tickPadding() + self.tickSize();
+            totalLength += tickLabelLineLength;
+
+            if (label !== '') {
+                return totalLength + axisLabelLineLength;
+            }
+
+            return totalLength;
         };
 
         /*
