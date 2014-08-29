@@ -18,8 +18,8 @@
         var self = this,
             stacked = false,
             seriesName = '',
-            seriesFunctions = {};
-        barThicknessFunction = self.y.scale.rangeBand;
+            seriesFunctions = {},
+            barThicknessFunction = self.y.scale.rangeBand;
 
         // Internal variables -------------------------------------------------------------------------------------------
 
