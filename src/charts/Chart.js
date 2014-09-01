@@ -20,6 +20,8 @@
             xAxes = [],
             yAxes = [],
             title = '',
+            titleColor = '#000',
+            titleFont = '16pt Helvetica Neue',
             shouldAutoMargin = true,
             legend = null,
             zoomInitialized = false,
@@ -188,10 +190,11 @@
             self.titleContainer
                 .style('position', 'absolute')
                 .style('top', '-20px')
-                .style('left', margin.left + 'px') //Center on plot area
+                .style('left', margin.left + 'px')
                 .style('width', width() - margin.left - margin.right + 'px')
                 .style('text-align', 'center')
-                .style("font-size", "16px")
+                .style("font", titleFont)
+                .style("color", titleColor)
                 .text(title);
         };
 
@@ -407,6 +410,52 @@
             }
 
             title = chartTitle;
+            return self;
+        };
+
+        /**
+         * The font of the chart title.
+         * @memberof! insight.Chart
+         * @instance
+         * @returns {String} - The font of the chart title.
+         *
+         * @also
+         *
+         * Sets the font of the chart title.
+         * @memberof! insight.Chart
+         * @instance
+         * @param {String} chartTitleFont The new font of the chart title.
+         * @returns {this}
+         */
+        self.titleFont = function(chartTitleFont) {
+            if (!arguments.length) {
+                return titleFont;
+            }
+
+            titleFont = chartTitleFont;
+            return self;
+        };
+
+        /**
+         * The text color of the chart title.
+         * @memberof! insight.Chart
+         * @instance
+         * @returns {Color} - The text color of the chart title.
+         *
+         * @also
+         *
+         * Sets the text color of the chart title.
+         * @memberof! insight.Chart
+         * @instance
+         * @param {Color} chartTitleColor The new text color of the chart title.
+         * @returns {this}
+         */
+        self.titleColor = function(chartTitleColor) {
+            if (!arguments.length) {
+                return titleColor;
+            }
+
+            titleColor = chartTitleColor;
             return self;
         };
 
@@ -748,7 +797,9 @@
         var axes = this.xAxes()
             .concat(this.yAxes());
 
-        //TODO: Apply title colour/font. Currently titles are not actively supported.
+        this.titleFont(theme.chartStyle.titleFont);
+        this.titleColor(theme.chartStyle.titleColor);
+
         axes.forEach(function(axis) {
             axis.applyTheme(theme);
         });

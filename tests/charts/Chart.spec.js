@@ -93,6 +93,19 @@ describe('Chart', function() {
             expect(chart.title()).toBe('');
 
         });
+
+
+        it('title color black', function() {
+
+            expect(chart.titleColor()).toEqual('#000');
+
+        });
+
+        it('title font Helvetica 16pt', function() {
+
+            expect(chart.titleFont()).toBe('Helvetica Neue 16pt');
+
+        });
     });
 
     describe('gets and sets', function() {
