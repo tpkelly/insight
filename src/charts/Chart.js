@@ -119,13 +119,19 @@
         // Internal functions -----------------------------------------------------------------------------------------
 
         /*
-         * Returns a copy of the chart's series array with all series
-         * that are not the same type as the target series removed.
+         * Gets the position of the given series in this chart compared to other series in the chart that have the
+         * same type as the given series.
+         *
+         * For example:
+         *  chart.series([lineSeries, bubbleSeries0, rowSeries, bubbleSeries1]);
+         *  index = chart.seriesIndexByType(bubbleSeries0); // index === 0
+         *  index = chart.seriesIndexByType(bubbleSeries1); // index === 1
+         *
          * @memberof! insight.Chart
          * @instance
-         * @param {insight.Series} targetSeries The series type to check for.
-         * @returns {Number} - A copy of the chart's series array with all series
-         * that are not the same type as the target series removed.
+         * @param {insight.Series} targetSeries The series to find the index of.
+         * @returns {Number} - The position of the given series in this chart compared to other series in the chart
+         * that have the same type as the given series.
          */
         self.filterSeriesByType = function(targetSeries) {
 
