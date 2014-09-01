@@ -90,6 +90,10 @@
                 .append('text')
                 .attr('class', insight.Constants.AxisLabelClass);
 
+            self.titleContainer = self.container
+                .append('text')
+                .attr('class', insight.Constants.ChartTitleClass);
+
             self.addClipPath();
         }
 
@@ -178,6 +182,17 @@
          */
         self.seriesChanged = function(series) {
 
+        };
+
+        self.drawTitle = function() {
+            self.titleContainer
+                .style('position', 'absolute')
+                .style('top', '-20px')
+                .style('left', margin.left + 'px') //Center on plot area
+                .style('width', width() - margin.left - margin.right + 'px')
+                .style('text-align', 'center')
+                .style("font-size", "16px")
+                .text(title);
         };
 
         self.addClipPath = function() {
@@ -314,6 +329,8 @@
             if (legend !== null) {
                 legend.draw(self, self.series());
             }
+
+            self.drawTitle();
 
             if (zoomable && !zoomInitialized) {
                 initZoom();
