@@ -133,14 +133,11 @@
 
             function yPosition(d) {
 
-                var heightOfGroup = groupHeight(d);
+                var groupPositions = self.keyAxis.scale.range();
+                var groupY = groupPositions[groupIndex];
+
                 var heightOfBar = barHeight(d);
-                var groupPadding = (heightOfGroup * self.keyAxis.barPadding()) / 2;
-                var heightOfGroupWithPadding = heightOfGroup + groupPadding;
-                var position =
-                    (groupPadding * 2) +
-                    ((heightOfGroupWithPadding + seriesTypeCount) * groupIndex) +
-                    (heightOfBar * seriesIndex);
+                var position = groupY + (heightOfBar * (seriesTypeCount - seriesIndex - 1));
 
                 groupIndex++;
 

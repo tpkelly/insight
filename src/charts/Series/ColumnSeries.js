@@ -127,14 +127,11 @@
 
             function xPosition(d) {
 
-                var widthOfGroup = groupWidth(d);
+                var groupPositions = self.keyAxis.scale.range();
+                var groupX = groupPositions[groupIndex];
+
                 var widthOfBar = barWidth(d);
-                var groupPadding = (widthOfGroup * self.keyAxis.barPadding()) / 2;
-                var widthOfGroupWithPadding = widthOfGroup + groupPadding;
-                var position =
-                    (groupPadding * 2) +
-                    ((widthOfGroupWithPadding + seriesTypeCount) * groupIndex) +
-                    (widthOfBar * seriesIndex);
+                var position = groupX + (widthOfBar * seriesIndex);
 
                 groupIndex++;
 
