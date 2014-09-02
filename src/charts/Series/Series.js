@@ -310,7 +310,7 @@
                     orderFunction ||
                     self.keyAxis.orderingFunction() ||
                     function(a, b) {
-                        return self.valueFunction()(a) - self.valueFunction()(b);
+                        return self.valueFunction()(b) - self.valueFunction()(a);
                 };
 
             } else {

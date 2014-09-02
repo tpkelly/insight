@@ -98,7 +98,7 @@ describe('Series', function(){
 
             });
 
-            it('returns data ordered by the series value function if no order function is available', function(){
+            it('returns data ordered by the series value function in descending order if no order function is available', function(){
 
                 // Given
                 data = [
@@ -119,9 +119,9 @@ describe('Series', function(){
 
                 // Then
                 var expectedData = [
-                    { a: 67, b: 334 },
+                    { a: -23, b: 569 },
                     { a: 12, b: 537 },
-                    { a: -23, b: 569 }
+                    { a: 67, b: 334 }
                 ];
 
                 expect(result).toEqual(expectedData);
