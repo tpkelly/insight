@@ -261,14 +261,17 @@ describe('Axis', function() {
     describe('tickLabelRotationTransform', function() {
         it('returns no tick rotation by default', function () {
 
-            //Given:
-            var y = new insight.Axis('Key Axis', insight.Scales.Linear);
+            // Given
+            var y = new insight.Axis('Key Axis', insight.Scales.Linear)
+                .tickSize(0)
+                .tickPadding(0);
 
-            //Then:
+            // When
             var observedResult = y.tickLabelRotationTransform();
-            var expectedResult = ' rotate(0,0,12)';
 
-            expect(observedResult).toEqual(expectedResult);
+            // Then
+            expect(observedResult).toEqual(' rotate(0,0,6)');
+
         });
 
         it('returns 90 degree tick rotation when top to bottom specified', function () {
@@ -276,11 +279,12 @@ describe('Axis', function() {
             //Given:
             var y = new insight.Axis('Key Axis', insight.Scales.Linear)
                 .tickLabelOrientation('tb')
-                .tickSize(0);
+                .tickSize(0)
+                .tickPadding(0);
 
             //Then:
             var observedResult = y.tickLabelRotationTransform();
-            var expectedResult = ' rotate(90,0,10)';
+            var expectedResult = ' rotate(90,0,6)';
 
             expect(observedResult).toEqual(expectedResult);
         });

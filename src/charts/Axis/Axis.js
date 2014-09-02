@@ -224,6 +224,7 @@
         };
 
         self.tickLabelRotationTransform = function() {
+
             var offset = self.tickPadding() + (self.tickSize() * 2);
             var measurer = new insight.TextMeasurer(self.measureCanvas);
             var textHeight = Math.ceil(measurer.measureText("aa").width);
@@ -231,9 +232,9 @@
             offset = (shouldReversePosition ^ !self.isHorizontal()) ? -offset : offset;
 
             if (self.isHorizontal()) {
-                return ' rotate(' + self.tickLabelRotation() + ',' + (textHeight / 2) + ', ' + offset + ')';
+                return ' rotate(' + self.tickLabelRotation() + ',' + (textHeight / 2) + ',' + offset + ')';
             } else {
-                return ' rotate(' + self.tickLabelRotation() + ', ' + offset + ',' + (textHeight / 2) + ')';
+                return ' rotate(' + self.tickLabelRotation() + ',' + offset + ',' + (textHeight / 2) + ')';
             }
         };
 
