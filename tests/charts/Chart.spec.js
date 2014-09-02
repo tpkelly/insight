@@ -97,13 +97,13 @@ describe('Chart', function() {
 
         it('title color black', function() {
 
-            expect(chart.titleColor()).toEqual('#000');
+            expect(chart.titleColor()()).toBe('#000');
 
         });
 
-        it('title font Helvetica 16pt', function() {
+        it('title font 16pt Helvetica', function() {
 
-            expect(chart.titleFont()).toBe('Helvetica Neue 16pt');
+            expect(chart.titleFont()).toBe('16pt Helvetica Neue');
 
         });
     });

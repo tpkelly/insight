@@ -20,7 +20,7 @@
             xAxes = [],
             yAxes = [],
             title = '',
-            titleColor = '#000',
+            titleColor = d3.functor('#000'),
             titleFont = '16pt Helvetica Neue',
             shouldAutoMargin = true,
             legend = null,
@@ -190,11 +190,11 @@
             self.titleContainer
                 .style('position', 'absolute')
                 .style('top', '-20px')
-                .style('left', margin.left + 'px')
-                .style('width', width() - margin.left - margin.right + 'px')
+                .style('left', self.margin.left + 'px')
+                .style('width', self.width() - self.margin().left - self.margin().right + 'px')
                 .style('text-align', 'center')
-                .style("font", titleFont)
-                .style("color", titleColor)
+                .style("font", self.titleFont)
+                .style("color", self.titleColor)
                 .text(title);
         };
 
@@ -440,14 +440,14 @@
          * The text color of the chart title.
          * @memberof! insight.Chart
          * @instance
-         * @returns {Color} - The text color of the chart title.
+         * @returns {Function} - The text color of the chart title.
          *
          * @also
          *
          * Sets the text color of the chart title.
          * @memberof! insight.Chart
          * @instance
-         * @param {Color} chartTitleColor The new text color of the chart title.
+         * @param {Function} chartTitleColor The new text color of the chart title.
          * @returns {this}
          */
         self.titleColor = function(chartTitleColor) {
@@ -455,7 +455,7 @@
                 return titleColor;
             }
 
-            titleColor = chartTitleColor;
+            titleColor = d3.functor(chartTitleColor);
             return self;
         };
 
