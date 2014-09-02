@@ -60,11 +60,6 @@
 
         function gridlineClass() {
 
-            var axisLabel = self.parentAxis.label();
-            if (axisLabel && axisLabel.length > 0) {
-                return axisLabel;
-            }
-
             return self.parentAxis.orientation();
         }
 
