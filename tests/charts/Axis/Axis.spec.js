@@ -24,6 +24,23 @@ describe('Axis', function() {
         });
     });
 
+    describe('tickLabelRotation', function() {
+
+        it('has initial value of 0', function() {
+
+            // Given
+            var axis = new insight.Axis('SomeAxis', insight.Scales.Ordinal);
+
+            // When
+            var result = axis.tickLabelRotation();
+
+            // Then
+            expect(result).toBe(0);
+
+        });
+
+    });
+
     describe('barPadding', function() {
 
         it('has initial value of 0.1', function() {
@@ -383,27 +400,42 @@ describe('Axis', function() {
     });
 
     describe('calculateLabelDimensions', function() {
-        var axisFontSize = insight.Utils.fontSizeFromFont(insight.defaultTheme.axisStyle.axisLabelFont),
+        var axis,
+            axisFont = insight.defaultTheme.axisStyle.axisLabelFont,
+            axisFontSize = insight.Utils.fontSizeFromFont(axisFont),
             axisLabel = 'Axis Label',
             tickPadding = 5,
-            tickLabelFontSize = insight.Utils.fontSizeFromFont(insight.defaultTheme.axisStyle.tickLabelFont),
+            tickLabelFont = insight.defaultTheme.axisStyle.tickLabelFont,
+            tickLabelFontSize = insight.Utils.fontSizeFromFont(tickLabelFont),
             tickSize = 10;
 
-        var axis, axisLabelStyles, tickLabelStyles;
+        var fakeMeasurer = {
+            measureText: function(text, font, angleDegrees) {
+
+                if (!text) {
+                    return { width: 0, height: 0 };
+                }
+
+                if (!angleDegrees) {
+                    angleDegrees = 0;
+                }
+
+                var fontSize = insight.Utils.fontSizeFromFont(font);
+
+                var width = text.length * fontSize + angleDegrees;
+                var height = text.length * fontSize + angleDegrees * 2;
+
+                return {
+                    width: width,
+                    height: height
+                };
+
+            }
+        };
 
         function mockCreateTextMeasurer() {
 
-            return {
-                measureTextWidth: function(text, font) {
-                    var fontSize = insight.Utils.fontSizeFromFont(font);
-                    return text.length * fontSize;
-                },
-
-                measureFontHeight: function(font) {
-                    var fontSize = insight.Utils.fontSizeFromFont(font);
-                    return fontSize;
-                }
-            };
+            return fakeMeasurer;
 
         }
 
@@ -431,26 +463,33 @@ describe('Axis', function() {
             it('returns correct value when no title and zero tick size and tick padding', function () {
 
                 // Given
-                axis.tickPadding(0).tickSize(0);
+                axis.label('')
+                    .tickPadding(0)
+                    .tickSize(0);
 
                 // When
                 var result = axis.calculateLabelDimensions();
 
                 // Then
-                expect(result.height).toBe(tickLabelFontSize);
+                var expectedResult = fakeMeasurer.measureText('Largest', tickLabelFont).height;
+                expect(result.height).toBe(expectedResult);
 
             });
 
             it('returns correct value when no title and non-zero tick size and tick padding', function () {
 
                 // Given
-                axis.tickPadding(tickPadding).tickSize(tickSize);
+                axis.label('')
+                    .tickPadding(tickPadding)
+                    .tickSize(tickSize);
 
                 // When
                 var result = axis.calculateLabelDimensions();
 
                 // Then
-                var expectedResult = tickLabelFontSize
+                var expectedTickLabelHeight = fakeMeasurer.measureText('Largest', tickLabelFont).height;
+
+                var expectedResult = expectedTickLabelHeight
                     + tickPadding * 2
                     + tickSize;
 
@@ -461,52 +500,73 @@ describe('Axis', function() {
             it('returns correct value when title provided and non-zero tick size and tick padding', function () {
 
                 // Given
-                axis.tickPadding(tickPadding).tickSize(tickSize);
-                axis.label(axisLabel);
+                axis.label(axisLabel)
+                    .tickPadding(tickPadding)
+                    .tickSize(tickSize);
 
                 // When
                 var result = axis.calculateLabelDimensions();
 
                 // Then
-                var expectedResult = tickLabelFontSize
+                var expectedTickLabelHeight = fakeMeasurer.measureText('Largest', tickLabelFont).height;
+                var expectedAxisLabelHeight = fakeMeasurer.measureText(axisLabel, axisFont).height;
+
+                var expectedResult = expectedTickLabelHeight
                     + tickPadding * 2
                     + tickSize
-                    + axisFontSize
+                    + expectedAxisLabelHeight;
 
                 expect(result.height).toBe(expectedResult);
 
             });
 
-            xit('handles label rotation', function() {
-                throw 'not implement yet!'
+            it('handles tick label rotation', function() {
+
+                // Given
+                var tickLabelRotation = 30;
+
+                axis.tickSize(tickSize)
+                    .tickPadding(tickPadding)
+                    .label(axisLabel)
+                    .tickLabelRotation(tickLabelRotation);
+
+                // When
+                var result = axis.calculateLabelDimensions();
+
+                // Then
+                var expectedTickLabelHeight = fakeMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).height;
+                var expectedAxisLabelHeight = fakeMeasurer.measureText(axisLabel, axisFont).height;
+
+                var expectedResult =
+                    tickSize +
+                    tickPadding * 2 +
+                    expectedTickLabelHeight +
+                    expectedAxisLabelHeight;
+
+                expect(result.height).toBe(expectedResult);
+
             });
 
         });
 
         describe('vertical axis', function() {
 
-            var expectedMaxTickLabelLength,
-                expectedAxisLabelLength;
-
             beforeEach(function() {
                 axis.isHorizontal = d3.functor(false);
-
-                var largestTickValue = 'Largest';
-
-                expectedMaxTickLabelLength = largestTickValue.length * tickLabelFontSize;
-                expectedAxisLabelLength = axisLabel.length * axisFontSize;
             });
 
             it('returns correct value when no title and zero tick size and tick padding', function () {
 
                 // Given
-                axis.tickPadding(0).tickSize(0);
+                axis.label('')
+                    .tickPadding(0)
+                    .tickSize(0);
 
                 // When
                 var result = axis.calculateLabelDimensions();
 
                 // Then
-                var expectedResult = expectedMaxTickLabelLength;
+                var expectedResult = fakeMeasurer.measureText('Largest', tickLabelFont).width;
                 expect(result.width).toBe(expectedResult);
 
             });
@@ -520,7 +580,9 @@ describe('Axis', function() {
                 var result = axis.calculateLabelDimensions();
 
                 // Then
-                var expectedResult = expectedMaxTickLabelLength
+                var expectedMaxTickLabelWidth = fakeMeasurer.measureText('Largest', tickLabelFont).width;
+
+                var expectedResult = expectedMaxTickLabelWidth
                     + tickPadding * 2
                     + tickSize;
 
@@ -531,24 +593,50 @@ describe('Axis', function() {
             it('returns correct value when title provided and non-zero tick size and tick padding', function () {
 
                 // Given
-                axis.tickPadding(tickPadding).tickSize(tickSize);
-                axis.label(axisLabel);
+                axis.label(axisLabel)
+                    .tickPadding(tickPadding)
+                    .tickSize(tickSize);
 
                 // When
                 var result = axis.calculateLabelDimensions();
 
                 // Then
-                var expectedResult = expectedMaxTickLabelLength
+                var expectedMaxTickLabelWidth = fakeMeasurer.measureText('Largest', tickLabelFont).width;
+                var expectedAxisLabelWidth = fakeMeasurer.measureText(axisLabel, axisFont).width;
+
+                var expectedResult = expectedMaxTickLabelWidth
                     + tickPadding * 2
                     + tickSize
-                    + expectedAxisLabelLength;
+                    + expectedAxisLabelWidth;
 
                 expect(result.width).toBe(expectedResult);
 
             });
 
-            xit('handles label rotation', function() {
-                throw 'not implement yet!'
+            it('handles tick label rotation', function() {
+
+                // Given
+                var tickLabelRotation = 30;
+
+                axis.tickSize(tickSize)
+                    .tickPadding(tickPadding)
+                    .label(axisLabel)
+                    .tickLabelRotation(tickLabelRotation);
+
+                // When
+                var result = axis.calculateLabelDimensions();
+
+                // Then
+                var expectedMaxTickLabelWidth = fakeMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).width;
+                var expectedAxisLabelWidth = fakeMeasurer.measureText(axisLabel, axisFont).width;
+
+                var expectedResult = expectedMaxTickLabelWidth
+                    + tickPadding * 2
+                    + tickSize
+                    + expectedAxisLabelWidth;
+
+                expect(result.width).toBe(expectedResult);
+
             });
 
         });

@@ -17,7 +17,7 @@
             tickSize = d3.functor(0),
             tickPadding = d3.functor(0),
             lineWidth = 1,
-            labelRotation = '0',
+            labelRotation = 0,
             tickLabelFont = 'Helvetica Neue 11pt',
             tickLabelColor = d3.functor('Black'),
             axisLabelFont = 'Helvetica Neue 12pt',
@@ -149,31 +149,41 @@
 
             var textMeasurer = insight.TextMeasurer.create(self.measureCanvas);
 
-            var axisLabelHeight = textMeasurer.measureFontHeight(self.axisLabelFont());
-            var tickLabelHeight = textMeasurer.measureFontHeight(self.tickLabelFont());
+            var axisLabelHeight = textMeasurer.measureText(self.label(), self.axisLabelFont()).height;
 
             var tickValues = self.domain();
-            var tickLabelLineWidth = d3.max(tickValues.map(function(tickValue) {
-                return Math.ceil(textMeasurer.measureTextWidth(tickValue, self.tickLabelFont()));
-            }));
+            var tickLabelSizes = tickValues.map(function(tickValue) {
+                return textMeasurer.measureText(
+                    tickValue,
+                    self.tickLabelFont(),
+                    self.tickLabelRotation());
+            });
 
-            var axisLabelLineWidth = Math.ceil(textMeasurer.measureTextWidth(self.label(), self.axisLabelFont()));
+            var maxTickLabelWidth = d3.max(tickLabelSizes, function(d) {
+                return d.width;
+            });
 
-            if (tickLabelLineWidth === 0) {
-                tickLabelHeight = 0;
+            var maxTickLabelHeight = d3.max(tickLabelSizes, function(d) {
+                return d.height;
+            });
+
+            var axisLabelWidth = Math.ceil(textMeasurer.measureText(self.label(), self.axisLabelFont()).width);
+
+            if (maxTickLabelWidth === 0) {
+                maxTickLabelHeight = 0;
             }
 
-            if (axisLabelLineWidth === 0) {
+            if (axisLabelWidth === 0) {
                 axisLabelHeight = 0;
             }
 
             var totalWidth =
                 self.tickPadding() * 2 +
                 self.tickSize() +
-                tickLabelLineWidth +
-                axisLabelLineWidth;
+                maxTickLabelWidth +
+                axisLabelWidth;
 
-            var labelHeight = (self.isHorizontal()) ? tickLabelHeight + axisLabelHeight : Math.max(tickLabelHeight, axisLabelHeight);
+            var labelHeight = (self.isHorizontal()) ? maxTickLabelHeight + axisLabelHeight : Math.max(maxTickLabelHeight, axisLabelHeight);
 
             var totalHeight = labelHeight + self.tickPadding() * 2 + self.tickSize();
 
@@ -215,11 +225,16 @@
 
         self.tickLabelRotationTransform = function() {
             var offset = self.tickPadding() + (self.tickSize() * 2);
-            offset = (shouldReversePosition && !self.isHorizontal()) ? 0 - offset : offset;
+            var measurer = new insight.TextMeasurer(self.measureCanvas);
+            var textHeight = Math.ceil(measurer.measureText("aa").width);
 
-            var rotation = ' rotate(' + self.tickLabelRotation() + ',0,' + offset + ')';
+            offset = (shouldReversePosition ^ !self.isHorizontal()) ? -offset : offset;
 
-            return rotation;
+            if (self.isHorizontal()) {
+                return ' rotate(' + self.tickLabelRotation() + ',' + (textHeight / 2) + ', ' + offset + ')';
+            } else {
+                return ' rotate(' + self.tickLabelRotation() + ', ' + offset + ',' + (textHeight / 2) + ')';
+            }
         };
 
         self.axisPosition = function() {
