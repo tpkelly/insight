@@ -20,6 +20,8 @@
             xAxes = [],
             yAxes = [],
             title = '',
+            titleColor = d3.functor('#000'),
+            titleFont = '16pt Helvetica Neue',
             shouldAutoMargin = true,
             legend = null,
             zoomInitialized = false,
@@ -89,6 +91,10 @@
             self.labelMeasurer = self.container
                 .append('text')
                 .attr('class', insight.Constants.AxisLabelClass);
+
+            self.titleContainer = self.container
+                .append('text')
+                .attr('class', insight.Constants.ChartTitleClass);
 
             self.addClipPath();
         }
@@ -178,6 +184,18 @@
          */
         self.seriesChanged = function(series) {
 
+        };
+
+        self.drawTitle = function() {
+            self.titleContainer
+                .style('position', 'absolute')
+                .style('top', '-20px')
+                .style('left', self.margin.left + 'px')
+                .style('width', self.width() - self.margin().left - self.margin().right + 'px')
+                .style('text-align', 'center')
+                .style("font", self.titleFont)
+                .style("color", self.titleColor)
+                .text(title);
         };
 
         self.addClipPath = function() {
@@ -315,6 +333,8 @@
                 legend.draw(self, self.series());
             }
 
+            self.drawTitle();
+
             if (zoomable && !zoomInitialized) {
                 initZoom();
             }
@@ -390,6 +410,52 @@
             }
 
             title = chartTitle;
+            return self;
+        };
+
+        /**
+         * The font of the chart title.
+         * @memberof! insight.Chart
+         * @instance
+         * @returns {String} - The font of the chart title.
+         *
+         * @also
+         *
+         * Sets the font of the chart title.
+         * @memberof! insight.Chart
+         * @instance
+         * @param {String} chartTitleFont The new font of the chart title.
+         * @returns {this}
+         */
+        self.titleFont = function(chartTitleFont) {
+            if (!arguments.length) {
+                return titleFont;
+            }
+
+            titleFont = chartTitleFont;
+            return self;
+        };
+
+        /**
+         * The text color of the chart title.
+         * @memberof! insight.Chart
+         * @instance
+         * @returns {Function} - The text color of the chart title.
+         *
+         * @also
+         *
+         * Sets the text color of the chart title.
+         * @memberof! insight.Chart
+         * @instance
+         * @param {Function} chartTitleColor The new text color of the chart title.
+         * @returns {this}
+         */
+        self.titleColor = function(chartTitleColor) {
+            if (!arguments.length) {
+                return titleColor;
+            }
+
+            titleColor = d3.functor(chartTitleColor);
             return self;
         };
 
@@ -731,7 +797,9 @@
         var axes = this.xAxes()
             .concat(this.yAxes());
 
-        //TODO: Apply title colour/font. Currently titles are not actively supported.
+        this.titleFont(theme.chartStyle.titleFont);
+        this.titleColor(theme.chartStyle.titleColor);
+
         axes.forEach(function(axis) {
             axis.applyTheme(theme);
         });

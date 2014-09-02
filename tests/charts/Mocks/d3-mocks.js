@@ -25,6 +25,13 @@ D3Match.prototype.style = function(name, value) {
     
 };
 
+D3Match.prototype.text = function(text) {
+
+    this.attr['text'] = text;
+    return this;
+
+};
+
 D3Match.prototype.node = function() {
 
     var el = document.createElement("text");
