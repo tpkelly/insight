@@ -62,12 +62,12 @@
 
         }
 
-        function init(create, container) {
+        function init() {
             initialized = true;
 
             window.addEventListener('resize', onWindowResize);
 
-            self.container = create ? d3.select(container).append('div') : d3.select(self.element).append('div');
+            self.container = d3.select(self.element).append('div');
 
             self.container
                 .attr('class', insight.Constants.ContainerClass)
@@ -133,17 +133,45 @@
          * @returns {Number} - The position of the given series in this chart compared to other series in the chart
          * that have the same type as the given series.
          */
-        self.seriesIndexByType = function(targetSeries) {
+        self.filterSeriesByType = function(targetSeries) {
 
             var seriesOfType = self.series().filter(function(s) {
                 return s.constructor === targetSeries.constructor;
             });
 
+            return seriesOfType;
+
+        };
+
+        /*
+         * Gets the index of the series in the chart compared to other series in the chart of the same type.
+         * @memberof! insight.Chart
+         * @instance
+         * @param {insight.Series} targetSeries The series to find the index of.
+         * @returns {Number} - The index of the series in the chart compared with other series of the same type.
+         */
+        self.seriesIndexByType = function(targetSeries) {
+
+            var seriesOfType = self.filterSeriesByType(targetSeries);
             return seriesOfType.indexOf(targetSeries);
 
         };
 
-        /** 
+        /*
+         * Gets the number of series in the chart which are the same type as the target series.
+         * @memberof! insight.Chart
+         * @instance
+         * @param {insight.Series} targetSeries The series type to check for.
+         * @returns {Number} - The number of series in the chart which are the same type as the target series.
+         */
+        self.countSeriesOfType = function(targetSeries) {
+
+            var seriesOfType = self.filterSeriesByType(targetSeries);
+            return seriesOfType.length;
+
+        };
+
+        /**
          * Empty event handler that is overridden by any listeners who want to know when this Chart's series change
          * @memberof! insight.Chart
          * @param {insight.Series[]} series - An array of insight.Series belonging to this Chart
@@ -152,36 +180,8 @@
 
         };
 
-        self.draw = function(dragging) {
-
-            if (!initialized) {
-                init();
-            }
-
-            self.resizeChart();
-
-            var axes = xAxes.concat(yAxes);
-
-            axes.forEach(function(axis) {
-                axis.draw(self, dragging);
-            });
-
-            self.series()
-                .forEach(function(series, index) {
-                    series.color = d3.functor(self.seriesPalette[index % self.seriesPalette.length]);
-                    series.draw(self, dragging);
-                });
-
-            if (legend !== null) {
-                legend.draw(self, self.series());
-            }
-
-            if (zoomable && !zoomInitialized) {
-                initZoom();
-            }
-        };
-
         self.addClipPath = function() {
+
             self.plotArea.append('clipPath')
                 .attr('id', self.clipPath())
                 .append('rect')
@@ -322,7 +322,7 @@
 
         // Public functions -------------------------------------------------------------------------------------------
 
-        /** 
+        /**
          * Empty event handler that is overridden by any listeners who want to know when this Chart's series change
          * @memberof! insight.Chart
          * @param {insight.Series[]} series - An array of insight.Series belonging to this Chart

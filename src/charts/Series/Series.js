@@ -304,12 +304,19 @@
          */
         self.dataset = function(orderFunction) {
 
-            // If the keyAxis is ordered but no function has been provided, create one based on the Series' valueFunction
-            if (self.keyAxis.isOrdered() && !orderFunction) {
+            if (self.keyAxis.isOrdered()) {
 
-                orderFunction = function(a, b) {
-                    return self.valueFunction()(b) - self.valueFunction()(a);
+                orderFunction =
+                    orderFunction ||
+                    self.keyAxis.orderingFunction() ||
+                    function(a, b) {
+                        return self.valueFunction()(a) - self.valueFunction()(b);
                 };
+
+            } else {
+
+                orderFunction = null;
+
             }
 
             var data = self.usesCrossfilter ? self.data.getData(orderFunction, self.topValues) : arrayDataSet(orderFunction, self.topValues);
