@@ -27,20 +27,18 @@
                 angleDegrees = 0;
             }
 
-            var width, height, angleRadians;
-
             var measurer = insight.Utils.getDrawingContext(measureCanvas, font);
-            var horizontalWidth = measurer.measureText(text).width;
-            var horizontalHeight = measurer.measureText("aa").width;
+            var actualTextWidth = measurer.measureText(text).width;
+            var roughTextHeight = measurer.measureText('aa').width;
 
-            angleRadians = degreesToRadians(angleDegrees);
+            var angleRadians = degreesToRadians(angleDegrees);
 
-            height = horizontalWidth * Math.sin(angleRadians) + horizontalHeight * Math.cos(angleRadians);
-            width = horizontalWidth * Math.cos(angleRadians) + horizontalHeight * Math.sin(angleRadians);
+            var height = actualTextWidth * Math.sin(angleRadians) + roughTextHeight * Math.cos(angleRadians);
+            var width = actualTextWidth * Math.cos(angleRadians) + roughTextHeight * Math.sin(angleRadians);
 
             return {
-                width: width,
-                height: height
+                width: Math.ceil(Math.abs(width)),
+                height: Math.ceil(Math.abs(height))
             };
 
         };
