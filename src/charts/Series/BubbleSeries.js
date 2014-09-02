@@ -32,22 +32,6 @@
             return self.x.scale(self.keyFunction()(d));
         };
 
-        /*
-         * This method is called when any post aggregation calculations, provided by the computeFunction() setter, need to be recalculated.
-         * @memberof insight.BubbleSeries
-         * @instance
-         * @param {insight.Scale} scale - a scale parameter to check if the values should be taken from x or y functions.
-         * @returns {object} - the maximum value for the series on the provided axis
-         */
-        self.findMax = function(scale) {
-
-            var data = self.dataset();
-
-            var func = scale === self.x ? self.keyFunction() : self.valueFunction();
-
-            return d3.max(data, func);
-        };
-
         self.bubbleData = function(data) {
             var max = d3.max(data, radiusFunction);
 

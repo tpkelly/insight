@@ -36,7 +36,6 @@
         self.measureCanvas = document.createElement('canvas');
         self.scaleType = scale.name;
         self.scale = scale.scale();
-        self.rangeType = self.scale.rangeRoundBands ? self.scale.rangeRoundBands : self.scale.rangeRound;
         self.bounds = [0, 0];
         self.series = [];
         self.direction = '';
@@ -71,18 +70,26 @@
         }
 
         /*
-         * This method calculates the scale ranges for this axis, given a range type function and using the calculated output bounds for this axis.
-         * @param {rangeType} rangeType - a d3 range function, which can either be in bands (for columns) or a continuous range
+         * This method calculates the scale ranges for this axis using the calculated output bounds for this axis.
          */
-        function applyScaleRange(rangeType) {
+        function applyScaleRange() {
 
             // x-axis goes from 0 (left) to max (right)
             // y-axis goes from max (top) to 0 (bottom)
             var rangeBounds = (self.isHorizontal()) ? [0, self.bounds[0]] : [self.bounds[1], 0];
 
-            rangeType.apply(self, [
-                rangeBounds, self.barPadding()
-            ]);
+            if (self.scale.rangeRoundBands) {
+
+                // ordinal, so use rangeRoundBands, passing the axis bounds and bar padding
+                self.scale.rangeRoundBands(rangeBounds, self.barPadding());
+
+            } else {
+
+                // linear/date so use rangeBands, passing the axis bounds only
+                self.scale.rangeRound(rangeBounds);
+
+            }
+
         }
 
         /*
@@ -257,7 +264,9 @@
         };
 
         self.initializeScale = function() {
-            applyScaleRange.call(self.scale.domain(self.domain()), self.rangeType);
+
+            self.scale.domain(self.domain());
+            applyScaleRange();
 
         };
 

@@ -870,4 +870,103 @@ describe('Chart', function() {
         });
 
     });
+
+    describe('seriesIndexByType', function() {
+
+        var chart,
+            seriesData,
+            xAxis,
+            yAxis;
+
+        beforeEach(function() {
+
+            chart = new insight.Chart('somechart', '#someelement');
+            seriesData = [1, 2, 3, 4, 5];
+
+            xAxis = new insight.Axis('x', insight.Scales.Linear);
+            yAxis = new insight.Axis('y', insight.Scales.Linear);
+
+        });
+
+        it('returns -1 if no series in chart', function() {
+
+            // Given
+            var series = new insight.BubbleSeries('bubbles', seriesData, xAxis, yAxis);
+
+            chart.series([]);
+
+            // When
+            var result = chart.seriesIndexByType(series);
+
+            // Then
+            expect(result).toBe(-1);
+
+        });
+
+        it('returns -1 if series not in chart', function() {
+
+            // Given
+            var targetSeries = new insight.BubbleSeries('bubbles', seriesData, xAxis, yAxis);
+            var otherSeries = new insight.BubbleSeries('someOtherSeries', seriesData, xAxis, yAxis);
+
+            chart.series([otherSeries]);
+
+            // When
+            var result = chart.seriesIndexByType(targetSeries);
+
+            // Then
+            expect(result).toBe(-1);
+
+        });
+
+        it('returns 0 if target series is the only series in the chart', function() {
+
+            // Given
+            var targetSeries = new insight.BubbleSeries('bubbles', seriesData, xAxis, yAxis);
+
+            chart.series([targetSeries]);
+
+            // When
+            var result = chart.seriesIndexByType(targetSeries);
+
+            // Then
+            expect(result).toBe(0);
+
+        });
+
+        it('returns 0 if target series is the first series of its type in the chart', function() {
+
+            // Given
+            var bubbleSeries = new insight.BubbleSeries('bubbles', seriesData, xAxis, yAxis);
+            var lineSeries = new insight.LineSeries('line', seriesData, xAxis, yAxis);
+
+            chart.series([lineSeries, bubbleSeries]);
+
+            // When
+            var result = chart.seriesIndexByType(bubbleSeries);
+
+            // Then
+            expect(result).toBe(0);
+
+        });
+
+        it('returns 1 if target series is the second series of its type in the chart', function() {
+
+            // Given
+            var bubbleSeries = new insight.BubbleSeries('bubbles', seriesData, xAxis, yAxis);
+            var moreBubbles = new insight.BubbleSeries('moreBubbles', seriesData, xAxis, yAxis);
+            var lineSeries = new insight.LineSeries('bubbles', seriesData, xAxis, yAxis);
+
+            chart.series([moreBubbles, lineSeries, bubbleSeries]);
+
+            // When
+            var result = chart.seriesIndexByType(bubbleSeries);
+
+            // Then
+            expect(result).toBe(1);
+
+        });
+
+    });
+
 });
