@@ -94,10 +94,6 @@ $(document)
                 return d.currentPoints;
             });
 
-        // set ColumnSeries to first color in the default series palette
-        //  - workaround until ColumnSeries has sub-series removed
-        currentPoints.series[0].color = d3.functor(insight.defaultTheme.chartStyle.seriesPalette[0]);
-
         var targetPoints = new insight.MarkerSeries('Target', leaguePlaces, x, y)
             .keyFunction(teamNameFunc)
             .valueFunction(function(d)

@@ -13,7 +13,11 @@ $(document)
 
             var x = new insight.Axis('', insight.Scales.Ordinal, 'bottom')
                 .tickLabelOrientation('tb')
-                .isOrdered(true);
+                .isOrdered(true)
+                .orderingFunction(function(a, b)
+                {
+                    return b.value.CurrentRevenue.Sum - a.value.CurrentRevenue.Sum;
+                });
 
             var clientRevenueAxis = new insight.Axis('', insight.Scales.Linear)
                 .tickLabelFormat(insight.Formatters.currencyFormatter);
@@ -28,10 +32,6 @@ $(document)
                     return d.value.CurrentRevenue.Sum;
                 })
                 .tooltipFormat(insight.Formatters.currencyFormatter);
-
-            // set ColumnSeries to first color in the default series palette
-            //  - workaround until ColumnSeries has sub-series removed
-            clientRevenues.series[0].color = d3.functor(insight.defaultTheme.chartStyle.seriesPalette[0]);
 
             var cumulativeRevenue = new insight.LineSeries('percentLine', clientData, x, cumulativeRevenueAxis)
                 .tooltipFormat(insight.Formatters.percentageFormatter)
