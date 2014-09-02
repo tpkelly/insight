@@ -111,9 +111,7 @@
                     .attr('class', 'target-point')
                     .attr("clip-path", "url(#" + chart.clipPath() + ")")
                     .attr("cx", self.rangeX)
-                    .attr("cy", chart.height() - chart.margin()
-                        .bottom - chart.margin()
-                        .top)
+                    .attr("cy", chart.height() - chart.margin().bottom - chart.margin().top)
                     .on('mouseover', self.mouseOver)
                     .on('mouseout', self.mouseOut);
 

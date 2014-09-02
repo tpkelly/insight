@@ -68,8 +68,7 @@
 
                 if (displayKey) {
                     var keyAxisPadding = keyAxis.tickPadding() + keyAxis.tickSize();
-                    var keyAxisLabelWidth = labelContext.measureText(keyAxis.label())
-                        .width;
+                    var keyAxisLabelWidth = labelContext.measureText(keyAxis.label()).width;
                     var axisLabelAdditions = keyAxisPadding + keyAxisLabelWidth + labelPadding;
 
                     maxKeyWidth = maxKeyWidth + axisLabelAdditions;
@@ -77,8 +76,7 @@
                 }
                 if (displayValue) {
                     var valueAxisPadding = valueAxis.tickPadding() + valueAxis.tickSize();
-                    var valueAxisLabelWidth = labelContext.measureText(valueAxis.label())
-                        .width;
+                    var valueAxisLabelWidth = labelContext.measureText(valueAxis.label()).width;
                     var valueLabelAdditions = valueAxisPadding + valueAxisLabelWidth + labelPadding;
 
                     maxValueWidth = valueAxis.shouldDisplay() ? maxValueWidth + valueLabelAdditions : maxValueWidth;
@@ -129,11 +127,13 @@
 
             labelStyles = labelStyles ? labelStyles : axisStyles;
 
+            var minimalMargin = 10;
+
             var margin = {
-                "top": 0,
-                "left": 0,
-                "bottom": 0,
-                "right": 0
+                "top": minimalMargin,
+                "left": minimalMargin,
+                "bottom": minimalMargin,
+                "right": minimalMargin
             };
 
             var axisMeasuringContext = insight.Utils.getDrawingContext(measuringCanvas, axisStyles);

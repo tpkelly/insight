@@ -1,22 +1,39 @@
 describe('Legend', function() {
-    var chart;
-    var lineSeries;
 
-    var div = document.createElement('div');
-    div.id  = 'testChart';
+    var chart,
+        lineSeries,
+        div;
 
-    var createChartElement = function(){
-
+    function setupDiv() {
+        div = document.createElement('div');
+        div.id  = 'testChart';
         document.body.appendChild(div);
-    };
+    }
 
-    var removeChartElement = function(){
+    function destroyDiv() {
         document.body.removeChild(div);
-    };
+        div = null;
+    }
+
+    function mockTextMeasurer() {
+
+        // the fakeMeasurer object will stand in for the canvas.getContext('2d') return value
+        var fakeMeasurer = {
+            measureText: function (text) {
+                return { width: text.length };
+            }
+        };
+
+        // replace the chart's measureCanvas object with a fake that will return our fakeMeasurer
+        chart.measureCanvas = {
+            getContext: function() { return fakeMeasurer; }
+        };
+
+    }
 
     beforeEach(function() {
 
-        createChartElement();
+        setupDiv();
 
         chart = new insight.Chart('test', '#testChart')
             .width(550)
@@ -40,10 +57,17 @@ describe('Legend', function() {
 
         lineSeries = new insight.LineSeries('line', data, x, y);
 
+        mockTextMeasurer();
+
         chart.draw();
-        
-        removeChartElement();
+
     });
+
+    afterEach(function() {
+
+        destroyDiv();
+
+    })
 
     it('legend size is 0,0 when no series on the chart', function() {
 
@@ -72,9 +96,13 @@ describe('Legend', function() {
         legend.draw(chart);
 
         //Then:
-        expect(chart.legendBox.attr('width')).toEqual('45');
+
+        // expected width from the fake text measurer plus a hard-coded value
+        var expectedWidth = (lineSeries.name.length + 25) + '';
+
+        expect(chart.legendBox.attr('width')).toEqual(expectedWidth);
         expect(chart.legendBox.attr('height')).toEqual('60');
-        expect(chart.legendItems.attr('width')).toEqual('45');
+        expect(chart.legendItems.attr('width')).toEqual(expectedWidth);
         expect(chart.legendItems.attr('height')).toEqual('60');
     });
 
@@ -116,15 +144,20 @@ describe('Legend', function() {
         //Then:
         var allRects = chart.legendItems.selectAll('text')[0];
         var allPositions = allRects.map(function(item) {
-            return [item["attributes"]["x"].value,
+            return [
+                item["attributes"]["x"].value,
                 item["attributes"]["y"].value,
                 item["attributes"]["width"].value,
-                item["attributes"]["height"].value];
+                item["attributes"]["height"].value
+            ];
         });
 
-        var expectedPositions = [['20','14','20','20'],
-                                 ['20','34','20','20'],
-                                 ['20','54','20','20']];
+        // expected width from the fake text measurer
+        var expectedWidth = lineSeries.name.length + '';
+
+        var expectedPositions = [['20','14',expectedWidth,'20'],
+                                 ['20','34',expectedWidth,'20'],
+                                 ['20','54',expectedWidth,'20']];
         expect(allPositions).toEqual(expectedPositions);
     });
 

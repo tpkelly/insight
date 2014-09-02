@@ -102,7 +102,8 @@
          */
         self.seriesClassName = function() {
 
-            var seriesName = [self.name + 'class'].concat(self.classValues)
+            var seriesName = [self.name + 'class']
+                .concat(self.classValues)
                 .join(' ');
 
             return seriesName;
@@ -158,8 +159,7 @@
 
             self.tooltip.show(this, tooltipText);
 
-            d3.select(this)
-                .classed('active', true);
+            d3.select(this).classed('active', true);
         };
 
         /*
@@ -171,8 +171,7 @@
 
             self.tooltip.hide();
 
-            d3.select(this)
-                .classed('active', false);
+            d3.select(this).classed('active', false);
         };
 
 
@@ -212,16 +211,15 @@
          * Extracts the maximum value on an axis for this series.
          * @memberof! insight.Series
          * @instance
-         * @param scale The corresponding x or y axis
-         * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
+         * @param {insight.Axis} axis The corresponding x or y axis
+         * @returns {Object} - The maximum value within the range of the values for this series on the given axis.
          */
-        self.findMax = function(scale) {
+        self.findMax = function(axis) {
 
-            var data = self.dataset();
+            var func = axis === self.keyAxis ? self.keyFunction() : self.valueFunction();
+            var max = d3.max(self.dataset(), func);
+            return max;
 
-            var func = scale === self.x ? self.keyFunction() : self.valueFunction();
-
-            return d3.max(data, func);
         };
 
         self.draw = function(chart, drag) {};
@@ -306,12 +304,19 @@
          */
         self.dataset = function(orderFunction) {
 
-            // If the keyAxis is ordered but no function has been provided, create one based on the Series' valueFunction
-            if (self.keyAxis.isOrdered() && !orderFunction) {
+            if (self.keyAxis.isOrdered()) {
 
-                orderFunction = function(a, b) {
-                    return self.valueFunction()(b) - self.valueFunction()(a);
+                orderFunction =
+                    orderFunction ||
+                    self.keyAxis.orderingFunction() ||
+                    function(a, b) {
+                        return self.valueFunction()(a) - self.valueFunction()(b);
                 };
+
+            } else {
+
+                orderFunction = null;
+
             }
 
             var data = self.usesCrossfilter ? self.data.getData(orderFunction, self.topValues) : arrayDataSet(orderFunction, self.topValues);

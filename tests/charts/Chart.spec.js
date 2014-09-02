@@ -344,7 +344,8 @@ describe('Chart', function() {
             yAxis,
             textElement,
             styles,
-            measurer;
+            measurer,
+            minimalMargins = 10;
 
         //Set up tests
         beforeEach(function() {
@@ -360,7 +361,7 @@ describe('Chart', function() {
 
         });
 
-        it('margins are 0 when no series on chart', function() {
+        it('margins are set to minimal value when no series on chart', function() {
             //Given:
             chart.series([]);
             
@@ -368,10 +369,15 @@ describe('Chart', function() {
             chart.calculateLabelMargin(measurer, styles);
 
             //Then:
-            expect(chart.margin()).toEqual({"top":0,"left":0,"right":0,"bottom":0});
+            expect(chart.margin()).toEqual({
+                "top":minimalMargins,
+                "left":minimalMargins,
+                "right":minimalMargins,
+                "bottom":minimalMargins
+            });
         });
 
-        it('margins are 0 when series has no data', function() {
+        it('margins are set to minimal value when series has no data', function() {
             //Given:
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
             
@@ -391,7 +397,12 @@ describe('Chart', function() {
 
             //Then:
             
-            expect(chart.margin()).toEqual({"top":0, "left":0, "right":0, "bottom":0});
+            expect(chart.margin()).toEqual({
+                "top":minimalMargins,
+                "left":minimalMargins,
+                "right":minimalMargins,
+                "bottom":minimalMargins
+            });
 
         });
 
@@ -400,9 +411,9 @@ describe('Chart', function() {
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
             
             var expectedDimensions = {
-                    "maxKeyWidth": 5,
+                    "maxKeyWidth": 15,
                     "maxValueWidth": 0,
-                    "maxKeyHeight": 10,
+                    "maxKeyHeight": 20,
                     "maxValueHeight": 0
             };
 
@@ -414,7 +425,12 @@ describe('Chart', function() {
             chart.calculateLabelMargin(measurer, styles);
 
             //Then:
-            expect(chart.margin()).toEqual({"top":0, "left":0, "right":0, "bottom":10});
+            expect(chart.margin()).toEqual({
+                "top":minimalMargins,
+                "left":minimalMargins,
+                "right":minimalMargins,
+                "bottom":20
+            });
 
         });
 
@@ -424,9 +440,9 @@ describe('Chart', function() {
             
             var expectedDimensions = {
                     "maxKeyWidth": 0,
-                    "maxValueWidth": 5,
+                    "maxValueWidth": 15,
                     "maxKeyHeight": 0,
-                    "maxValueHeight": 10
+                    "maxValueHeight": 20
                 };
 
             spyOn(measurer, 'seriesLabelDimensions').andReturn(expectedDimensions);
@@ -437,7 +453,12 @@ describe('Chart', function() {
             chart.calculateLabelMargin(measurer, styles);
 
             //Then:
-            expect(chart.margin()).toEqual({"top":0, "left":5, "right":0, "bottom":0});
+            expect(chart.margin()).toEqual({
+                "top":minimalMargins,
+                "left":15,
+                "right":minimalMargins,
+                "bottom":minimalMargins
+            });
 
         });
 
@@ -448,9 +469,9 @@ describe('Chart', function() {
             
             var maxDimensions = {
                     "maxKeyWidth": 0,
-                    "maxValueWidth": 5,
+                    "maxValueWidth": 15,
                     "maxKeyHeight": 0,
-                    "maxValueHeight": 10
+                    "maxValueHeight": 20
                 };
 
             spyOn(measurer, 'seriesLabelDimensions').andReturn(maxDimensions);
@@ -462,18 +483,23 @@ describe('Chart', function() {
             chart.calculateLabelMargin(measurer, styles);
 
             //Then:
-            expect(chart.margin()).toEqual({"top":0, "left":0, "right":5, "bottom":0});
+            expect(chart.margin()).toEqual({
+                "top":minimalMargins,
+                "left":minimalMargins,
+                "right":15,
+                "bottom":minimalMargins
+            });
         });
 
         it('top margins are expanded when x-axis is reversed', function() {
             //Given:
             xAxis = new insight.Axis('', insight.Scales.Linear).hasReversedPosition(true);
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
-            
+
             var maxDimensions = {
-                "maxKeyWidth": 5,
+                "maxKeyWidth": 15,
                 "maxValueWidth":0,
-                "maxKeyHeight": 10,
+                "maxKeyHeight": 20,
                 "maxValueHeight": 0
             };
 
@@ -487,7 +513,40 @@ describe('Chart', function() {
             chart.calculateLabelMargin(measurer, styles);
 
             //Then:
-            expect(chart.margin()).toEqual({"top":10, "left":0, "right":0, "bottom":0});
+            expect(chart.margin()).toEqual({
+                "top":20,
+                "left":minimalMargins,
+                "right":minimalMargins,
+                "bottom":minimalMargins
+            });
+        });
+
+        it('margins are not expanded for margins smaller than minimal value', function() {
+            //Given:
+            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
+
+            var expectedDimensions = {
+                "maxKeyWidth": 5,
+                "maxValueWidth": 0,
+                "maxKeyHeight": 8,
+                "maxValueHeight": 0
+            };
+
+            spyOn(measurer, 'seriesLabelDimensions').andReturn(expectedDimensions);
+
+            chart.series([series]);
+
+            //When:
+            chart.calculateLabelMargin(measurer, styles);
+
+            //Then:
+            expect(chart.margin()).toEqual({
+                "top":minimalMargins,
+                "left":minimalMargins,
+                "right":minimalMargins,
+                "bottom":minimalMargins
+            });
+
         });
     });
 
@@ -707,4 +766,104 @@ describe('Chart', function() {
         });
 
     });
+
+
+    describe('seriesIndexByType', function() {
+
+        var chart,
+            seriesData,
+            xAxis,
+            yAxis;
+
+        beforeEach(function() {
+
+            chart = new insight.Chart('somechart', '#someelement');
+            seriesData = [1, 2, 3, 4, 5];
+
+            xAxis = new insight.Axis('x', insight.Scales.Linear);
+            yAxis = new insight.Axis('y', insight.Scales.Linear);
+
+        });
+
+        it('returns -1 if no series in chart', function() {
+
+            // Given
+            var series = new insight.BubbleSeries('bubbles', seriesData, xAxis, yAxis);
+
+            chart.series([]);
+
+            // When
+            var result = chart.seriesIndexByType(series);
+
+            // Then
+            expect(result).toBe(-1);
+
+        });
+
+        it('returns -1 if series not in chart', function() {
+
+            // Given
+            var targetSeries = new insight.BubbleSeries('bubbles', seriesData, xAxis, yAxis);
+            var otherSeries = new insight.BubbleSeries('someOtherSeries', seriesData, xAxis, yAxis);
+
+            chart.series([otherSeries]);
+
+            // When
+            var result = chart.seriesIndexByType(targetSeries);
+
+            // Then
+            expect(result).toBe(-1);
+
+        });
+
+        it('returns 0 if target series is the only series in the chart', function() {
+
+            // Given
+            var targetSeries = new insight.BubbleSeries('bubbles', seriesData, xAxis, yAxis);
+
+            chart.series([targetSeries]);
+
+            // When
+            var result = chart.seriesIndexByType(targetSeries);
+
+            // Then
+            expect(result).toBe(0);
+
+        });
+
+        it('returns 0 if target series is the first series of its type in the chart', function() {
+
+            // Given
+            var bubbleSeries = new insight.BubbleSeries('bubbles', seriesData, xAxis, yAxis);
+            var lineSeries = new insight.LineSeries('line', seriesData, xAxis, yAxis);
+
+            chart.series([lineSeries, bubbleSeries]);
+
+            // When
+            var result = chart.seriesIndexByType(bubbleSeries);
+
+            // Then
+            expect(result).toBe(0);
+
+        });
+
+        it('returns 1 if target series is the second series of its type in the chart', function() {
+
+            // Given
+            var bubbleSeries = new insight.BubbleSeries('bubbles', seriesData, xAxis, yAxis);
+            var moreBubbles = new insight.BubbleSeries('moreBubbles', seriesData, xAxis, yAxis);
+            var lineSeries = new insight.LineSeries('bubbles', seriesData, xAxis, yAxis);
+
+            chart.series([moreBubbles, lineSeries, bubbleSeries]);
+
+            // When
+            var result = chart.seriesIndexByType(bubbleSeries);
+
+            // Then
+            expect(result).toBe(1);
+
+        });
+
+    });
+
 });

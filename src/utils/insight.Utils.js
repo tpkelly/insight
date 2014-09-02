@@ -277,8 +277,7 @@ insight.Utils = (function() {
     };
 
     exports.safeString = function(input) {
-        return input.split(' ')
-            .join('_');
+        return input.split(' ').join('_');
     };
 
     exports.tryParseInt = function(str, defaultValue) {

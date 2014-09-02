@@ -43,8 +43,7 @@
             }
 
             //Get all lines, and add new datapoints.
-            var gridLines = self.allGridlines(chart)
-                .data(ticks);
+            var gridLines = self.allGridlines(chart).data(ticks);
 
             //Add lines for all new datapoints
             gridLines
@@ -55,8 +54,7 @@
             gridLines.attr(attributes);
 
             //Remove any lines which are no longer in the data
-            gridLines.exit()
-                .remove();
+            gridLines.exit().remove();
 
         };
 

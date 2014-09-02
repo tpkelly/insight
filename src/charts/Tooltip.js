@@ -162,8 +162,7 @@
          * @instance
          */
         self.hide = function() {
-            d3.select(self.element)
-                .style('opacity', '0');
+            d3.select(self.element).style('opacity', '0');
         };
 
     };
