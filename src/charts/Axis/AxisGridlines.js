@@ -21,7 +21,7 @@
 
         self.drawGridLines = function(chart, ticks) {
             var attributes = {
-                'class': self.parentAxis.label(),
+                'class': gridlineClass(),
                 'fill': 'none',
                 'shape-rendering': 'crispEdges',
                 'stroke': lineColor,
@@ -58,6 +58,16 @@
 
         };
 
+        function gridlineClass() {
+
+            var axisLabel = self.parentAxis.label();
+            if (axisLabel && axisLabel.length > 0) {
+                return axisLabel;
+            }
+
+            return self.parentAxis.orientation();
+        }
+
         // Public functions -------------------------------------------------------------------------------------------
 
         /** Returns the array of all gridlines for this axis.
@@ -68,7 +78,7 @@
          * @returns {object[]} - All of the gridlines currently added to this chart.
          */
         self.allGridlines = function(chart) {
-            var gridLineIdentifier = 'line.' + self.parentAxis.label();
+            var gridLineIdentifier = 'line.' + gridlineClass();
             return chart.plotArea.selectAll(gridLineIdentifier);
         };
 
