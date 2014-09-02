@@ -13,11 +13,7 @@ $(document)
 
             var x = new insight.Axis('', insight.Scales.Ordinal, 'bottom')
                 .tickLabelOrientation('tb')
-                .isOrdered(true)
-                .orderingFunction(function(a, b)
-                {
-                    return b.value.CurrentRevenue.Sum - a.value.CurrentRevenue.Sum;
-                });
+                .isOrdered(true);
 
             var clientRevenueAxis = new insight.Axis('', insight.Scales.Linear)
                 .tickLabelFormat(insight.Formatters.currencyFormatter);

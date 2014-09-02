@@ -71,11 +71,7 @@ $(document)
 
         var x = new insight.Axis('Team', insight.Scales.Ordinal)
             .tickLabelRotation(45)
-            .isOrdered(true)
-            .orderingFunction(function(a, b)
-            {
-                return a.currentPosition - b.currentPosition;
-            });
+            .isOrdered(true);
 
         var y = new insight.Axis('Points', insight.Scales.Linear);
 

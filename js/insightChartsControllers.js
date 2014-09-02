@@ -490,10 +490,7 @@
                 .tickSize(5)
                 .tickPadding(0)
                 .tickLabelOrientation('tb')
-                .isOrdered(true)
-                .orderingFunction(function(a, b) {
-                    return b.value - a.value;
-                });
+                .isOrdered(true);
 
             var y = new insight.Axis('', insight.Scales.Linear);
 
