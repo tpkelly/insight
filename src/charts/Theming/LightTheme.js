@@ -21,15 +21,15 @@
 
         self.axisStyle.axislineWidth = 1;
         self.axisStyle.axisLineColor = '#777';
-        self.axisStyle.tickLabelFont = 'Helvetica Neue 11pt';
-        self.axisStyle.tickLabelColor = '#777';
-        self.axisStyle.axisLabelFont = 'Helvetica Neue 12pt';
-        self.axisStyle.axisLabelColor = '#777';
+        self.axisStyle.tickLabelFont = '11pt Helvetica Neue';
+        self.axisStyle.tickLabelColor = '#333';
+        self.axisStyle.axisLabelFont = '12pt Helvetica Neue';
+        self.axisStyle.axisLabelColor = '#333';
 
         //Configure for chart
         self.chartStyle.seriesPalette = ['#3182bd', '#c6dbed', '#6baed6', '#08519c', '#9ecae1'];
         self.chartStyle.fillColor = '#fff';
-        self.chartStyle.titleFont = 'Helvetica Neue 16pt';
+        self.chartStyle.titleFont = '16pt Helvetica Neue';
         self.chartStyle.titleColor = '#000';
 
         //Configure series

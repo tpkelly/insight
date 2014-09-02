@@ -26,7 +26,89 @@ var createElement = function(namespace, tag) {
 }
 
 describe('Utils', function() {
-    
+
+    describe('fontSizeFromFont', function() {
+
+        it('extracts font size from end of font string', function() {
+
+            // Given
+            var testString = 'Comic Sans 11px';
+
+            // When
+            var result = insight.Utils.fontSizeFromFont(testString);
+
+            // Then
+            expect(result).toBe(11);
+
+        });
+
+        it('extracts font size from start of font string', function() {
+
+            // Given
+            var testString = '11pt Comic Sans';
+
+            // When
+            var result = insight.Utils.fontSizeFromFont(testString);
+
+            // Then
+            expect(result).toBe(11);
+
+        });
+
+        it('extracts the first font size from font string', function() {
+
+            // Given
+            var testString = '14pt Comic Sans 25px';
+
+            // When
+            var result = insight.Utils.fontSizeFromFont(testString);
+
+            // Then
+            expect(result).toBe(14);
+
+        });
+
+        it('returns 12 if the given font contains no size', function() {
+
+            // Given
+            var testString = 'Comic Sans';
+
+            // When
+            var result = insight.Utils.fontSizeFromFont(testString);
+
+            // Then
+            expect(result).toBe(12);
+
+        });
+
+        it('returns 12 if empty font string provided', function() {
+
+            // Given
+            var testString = '';
+
+            // When
+            var result = insight.Utils.fontSizeFromFont(testString);
+
+            // Then
+            expect(result).toBe(12);
+
+        });
+
+        it('returns 12 if undefined font provided', function() {
+
+            // Given
+            var testString = undefined;
+
+            // When
+            var result = insight.Utils.fontSizeFromFont(testString);
+
+            // Then
+            expect(result).toBe(12);
+
+        });
+
+    });
+
     it('correctly identifies arrays', function() {
         
         var data = {

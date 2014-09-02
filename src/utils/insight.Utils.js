@@ -310,12 +310,33 @@ insight.Utils = (function() {
         return properties;
     };
 
-    exports.getDrawingContext = function(canvas, styles) {
+    exports.getDrawingContext = function(canvas, font) {
 
         var ctx = canvas.getContext('2d');
-        ctx.font = styles['font-size'] + ' ' + styles['font-family'];
+        ctx.font = font;
 
         return ctx;
+    };
+
+    exports.fontSizeFromFont = function(font) {
+
+        var defaultSize = 12;
+        if (!font) {
+            return defaultSize;
+        }
+
+        var fontComponents = font.split(' ');
+
+        for (var i = 0; i < fontComponents.length; i++) {
+            var parsed = parseInt(fontComponents[i]);
+
+            if (!isNaN(parsed)) {
+                return parsed;
+            }
+        }
+
+        return defaultSize;
+
     };
 
     return exports;

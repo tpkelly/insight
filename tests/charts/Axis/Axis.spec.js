@@ -383,23 +383,28 @@ describe('Axis', function() {
     });
 
     describe('calculateLabelDimensions', function() {
-        var axisFontSize = 18,
+        var axisFontSize = insight.Utils.fontSizeFromFont(insight.defaultTheme.axisStyle.axisLabelFont),
             axisLabel = 'Axis Label',
             tickPadding = 5,
-            tickLabelFontSize = 12,
+            tickLabelFontSize = insight.Utils.fontSizeFromFont(insight.defaultTheme.axisStyle.tickLabelFont),
             tickSize = 10;
 
         var axis, axisLabelStyles, tickLabelStyles;
 
-        function mockGetDrawingContext(canvas, styles) {
-            var textSize = styles['font-size'];
+        function mockCreateTextMeasurer() {
+
             return {
-                measureText: function(text) {
-                    return {
-                        width: text.length * textSize
-                    };
+                measureTextWidth: function(text, font) {
+                    var fontSize = insight.Utils.fontSizeFromFont(font);
+                    return text.length * fontSize;
+                },
+
+                measureFontHeight: function(font) {
+                    var fontSize = insight.Utils.fontSizeFromFont(font);
+                    return fontSize;
                 }
             };
+
         }
 
         var data = [
@@ -414,17 +419,7 @@ describe('Axis', function() {
 
             series = new insight.ColumnSeries('testSeries', data, axis, secondaryAxis);
 
-            axisLabelStyles = {
-                'font-size': axisFontSize,
-                'font-family': 'Helvetica'
-            };
-
-            tickLabelStyles = {
-                'font-size': tickLabelFontSize,
-                'font-family': 'Helvetica'
-            };
-
-            spyOn(insight.Utils, 'getDrawingContext').andCallFake(mockGetDrawingContext);
+            spyOn(insight.TextMeasurer, 'create').andCallFake(mockCreateTextMeasurer);
         });
 
         describe('horizontal axis', function() {
@@ -439,11 +434,10 @@ describe('Axis', function() {
                 axis.tickPadding(0).tickSize(0);
 
                 // When
-                var result = axis.calculateLabelDimensions(axisLabelStyles, tickLabelStyles);
+                var result = axis.calculateLabelDimensions();
 
                 // Then
-                var expectedResult = tickLabelFontSize;
-                expect(result).toBe(expectedResult);
+                expect(result.height).toBe(tickLabelFontSize);
 
             });
 
@@ -453,11 +447,14 @@ describe('Axis', function() {
                 axis.tickPadding(tickPadding).tickSize(tickSize);
 
                 // When
-                var result = axis.calculateLabelDimensions(axisLabelStyles, tickLabelStyles);
+                var result = axis.calculateLabelDimensions();
 
                 // Then
-                var expectedResult = tickLabelFontSize + tickPadding + tickSize;
-                expect(result).toBe(expectedResult);
+                var expectedResult = tickLabelFontSize
+                    + tickPadding * 2
+                    + tickSize;
+
+                expect(result.height).toBe(expectedResult);
 
             });
 
@@ -468,15 +465,15 @@ describe('Axis', function() {
                 axis.label(axisLabel);
 
                 // When
-                var result = axis.calculateLabelDimensions(axisLabelStyles, tickLabelStyles);
+                var result = axis.calculateLabelDimensions();
 
                 // Then
                 var expectedResult = tickLabelFontSize
-                    + tickPadding
+                    + tickPadding * 2
                     + tickSize
-                    + axisLabelStyles['font-size'];
+                    + axisFontSize
 
-                expect(result).toBe(expectedResult);
+                expect(result.height).toBe(expectedResult);
 
             });
 
@@ -506,11 +503,11 @@ describe('Axis', function() {
                 axis.tickPadding(0).tickSize(0);
 
                 // When
-                var result = axis.calculateLabelDimensions(axisLabelStyles, tickLabelStyles);
+                var result = axis.calculateLabelDimensions();
 
                 // Then
                 var expectedResult = expectedMaxTickLabelLength;
-                expect(result).toBe(expectedResult);
+                expect(result.width).toBe(expectedResult);
 
             });
 
@@ -520,11 +517,14 @@ describe('Axis', function() {
                 axis.tickPadding(tickPadding).tickSize(tickSize);
 
                 // When
-                var result = axis.calculateLabelDimensions(axisLabelStyles, tickLabelStyles);
+                var result = axis.calculateLabelDimensions();
 
                 // Then
-                var expectedResult = expectedMaxTickLabelLength + tickPadding + tickSize;
-                expect(result).toBe(expectedResult);
+                var expectedResult = expectedMaxTickLabelLength
+                    + tickPadding * 2
+                    + tickSize;
+
+                expect(result.width).toBe(expectedResult);
 
             });
 
@@ -535,15 +535,15 @@ describe('Axis', function() {
                 axis.label(axisLabel);
 
                 // When
-                var result = axis.calculateLabelDimensions(axisLabelStyles, tickLabelStyles);
+                var result = axis.calculateLabelDimensions();
 
                 // Then
                 var expectedResult = expectedMaxTickLabelLength
-                    + tickPadding
+                    + tickPadding * 2
                     + tickSize
                     + expectedAxisLabelLength;
 
-                expect(result).toBe(expectedResult);
+                expect(result.width).toBe(expectedResult);
 
             });
 

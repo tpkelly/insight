@@ -18,6 +18,10 @@
             tickPadding = d3.functor(0),
             lineWidth = 1,
             labelRotation = '0',
+            tickLabelFont = 'Helvetica Neue 11pt',
+            tickLabelColor = d3.functor('Black'),
+            axisLabelFont = 'Helvetica Neue 12pt',
+            axisLabelColor = d3.functor('Black'),
             tickLabelOrientation = d3.functor('lr'),
             showGridlines = false,
             colorFunction = d3.functor('#000'),
@@ -134,38 +138,42 @@
 
         // Internal functions -------------------------------------------------------------------------------------
 
-        self.calculateLabelDimensions = function(axisStyles, labelStyles) {
-            var tickLabelLineLength = 0,
-                axisLabelLineLength = 0;
+        self.calculateLabelDimensions = function() {
 
-            var axisLabelMeasuringContext = insight.Utils.getDrawingContext(self.measureCanvas, axisStyles);
-            var tickLabelMeasuringContext = insight.Utils.getDrawingContext(self.measureCanvas, labelStyles);
+            var textMeasurer = insight.TextMeasurer.create(self.measureCanvas);
 
+            var axisLabelHeight = textMeasurer.measureFontHeight(self.axisLabelFont());
+            var tickLabelHeight = textMeasurer.measureFontHeight(self.tickLabelFont());
 
-            if (self.isHorizontal()) {
+            var tickValues = self.domain();
+            var tickLabelLineWidth = d3.max(tickValues.map(function(tickValue) {
+                return Math.ceil(textMeasurer.measureTextWidth(tickValue, self.tickLabelFont()));
+            }));
 
-                tickLabelLineLength = labelStyles['font-size'];
+            var axisLabelLineWidth = Math.ceil(textMeasurer.measureTextWidth(self.label(), self.axisLabelFont()));
 
-                axisLabelLineLength = axisStyles['font-size'];
-
-            } else {
-
-                var tickValues = self.domain();
-                tickLabelLineLength = d3.max(tickValues.map(function(tickValue) {
-                    return tickLabelMeasuringContext.measureText(tickValue).width;
-                }));
-
-                axisLabelLineLength = axisLabelMeasuringContext.measureText(self.label()).width;
+            if (tickLabelLineWidth === 0) {
+                tickLabelHeight = 0;
             }
 
-            var totalLength = self.tickPadding() + self.tickSize();
-            totalLength += tickLabelLineLength;
-
-            if (label !== '') {
-                return totalLength + axisLabelLineLength;
+            if (axisLabelLineWidth === 0) {
+                axisLabelHeight = 0;
             }
 
-            return totalLength;
+            var totalWidth =
+                self.tickPadding() * 2 +
+                self.tickSize() +
+                tickLabelLineWidth +
+                axisLabelLineWidth;
+
+            var labelHeight = (self.isHorizontal()) ? tickLabelHeight + axisLabelHeight : Math.max(tickLabelHeight, axisLabelHeight);
+
+            var totalHeight = labelHeight + self.tickPadding() * 2 + self.tickSize();
+
+            return {
+                height: totalHeight,
+                width: totalWidth
+            };
         };
 
         /*
@@ -322,7 +330,12 @@
                 .attr('transform', self.tickLabelRotationTransform())
                 .style('text-anchor', self.textAnchor());
 
+            d3.selectAll(".tick > text")
+                .style('font', self.tickLabelFont());
+
             self.labelElement
+                .style('font', self.axisLabelFont())
+                .style('color', self.axisLabelColor())
                 .text(self.label());
 
             self.positionLabel();
@@ -334,6 +347,94 @@
         };
 
         // Public functions --------------------------------------------------------------------------------------
+
+        /**
+         * The font to use for the axis tick labels.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {String} - The font to use for the axis tick labels.
+         *
+         * @also
+         *
+         * Sets the font to use for the axis tick labels.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {String} value The font to use for the axis tick labels.
+         * @returns {this}
+         */
+        self.tickLabelFont = function(value) {
+            if (!arguments.length) {
+                return tickLabelFont;
+            }
+            tickLabelFont = value;
+            return self;
+        };
+
+        /**
+         * The font to use for the axis label.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {String} - The font to use for the axis label.
+         *
+         * @also
+         *
+         * Sets the font to use for the axis label.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {String} value The font to use for the axis label.
+         * @returns {this}
+         */
+        self.axisLabelFont = function(value) {
+            if (!arguments.length) {
+                return axisLabelFont;
+            }
+            axisLabelFont = value;
+            return self;
+        };
+
+        /**
+         * The color to use for the axis tick label.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Function} - A function that returns the color of an axis tick label.
+         *
+         * @also
+         *
+         * Sets the color to use for the axis tick label.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Function} value A function that will be used to return the color of an axis tick label.
+         * @returns {this}
+         */
+        self.tickLabelColor = function(value) {
+            if (!arguments.length) {
+                return tickLabelColor;
+            }
+            tickLabelColor = d3.functor(value);
+            return self;
+        };
+
+        /**
+         * The color to use for the axis label.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Function} - A function that returns the color of an axis label.
+         *
+         * @also
+         *
+         * Sets the color to use for the axis label.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Function} value A function that will be used to return the color of an axis label.
+         * @returns {this}
+         */
+        self.axisLabelColor = function(value) {
+            if (!arguments.length) {
+                return axisLabelColor;
+            }
+            axisLabelColor = d3.functor(value);
+            return self;
+        };
 
         /**
          * Whether or not the axis is displayed horizontally (true) or vertically (false).
@@ -728,13 +829,10 @@
         this.color(theme.axisStyle.axisLineColor);
         this.lineWidth(theme.axisStyle.axisLineWidth);
 
-        /* TODO: Tick and axis label font/colours
-         tickLabelFont: undefined,
-         tickLabelColor: undefined,
-
-         axisLabelFont: undefined,
-         axisLabelColor: undefined
-         */
+        this.tickLabelFont(theme.axisStyle.tickLabelFont);
+        this.tickLabelColor(theme.axisStyle.tickLabelColor);
+        this.axisLabelFont(theme.axisStyle.axisLabelFont);
+        this.axisLabelColor(theme.axisStyle.axisLabelColor);
 
         this.shouldShowGridlines(theme.axisStyle.showGridlines);
 

@@ -42,7 +42,6 @@
         self.container = null;
         self.chart = null;
         self.measureCanvas = document.createElement('canvas');
-        self.marginMeasurer = new insight.MarginMeasurer();
         self.seriesPalette = [];
         self.legendView = null;
 
@@ -213,11 +212,7 @@
         self.resizeChart = function() {
 
             if (shouldAutoMargin) {
-
-                var axisStyles = insight.Utils.getElementStyles(self.axisMeasurer.node(), ['font-size', 'line-height', 'font-family']);
-                var labelStyles = insight.Utils.getElementStyles(self.labelMeasurer.node(), ['font-size', 'line-height', 'font-family']);
-
-                self.calculateLabelMargin(self.marginMeasurer, axisStyles, labelStyles);
+                self.calculateChartMargin();
             }
 
             var chartMargin = self.margin();
@@ -702,14 +697,26 @@
      * @param {object} axisStyles - An associative map between css properties and values for the axis values
      * @param {object} labelStyles - An associative map between css properties and values for the axis labels
      */
-    insight.Chart.prototype.calculateLabelMargin = function(measurer, axisStyles, labelStyles) {
+    insight.Chart.prototype.calculateChartMargin = function() {
 
-        // labelStyles can be optional.  If so, use the same as the axisStyles
-        labelStyles = labelStyles ? labelStyles : axisStyles;
+        var allAxes = this.xAxes().concat(this.yAxes());
 
-        var margin = measurer.calculateChartMargins(this.series(), this.measureCanvas, axisStyles, labelStyles);
+        var margin = {
+            'top': 10,
+            'left': 10,
+            'bottom': 10,
+            'right': 10
+        };
+        allAxes.forEach(function(axis) {
+            var labelDimensions = axis.calculateLabelDimensions();
+
+            var axisMargin = (axis.isHorizontal()) ? labelDimensions.height : labelDimensions.width;
+
+            margin[axis.orientation()] = Math.max(axisMargin, margin[axis.orientation()]);
+        });
 
         this.margin(margin);
+
     };
 
     /**
