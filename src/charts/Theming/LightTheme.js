@@ -22,9 +22,9 @@
         self.axisStyle.axislineWidth = 1;
         self.axisStyle.axisLineColor = '#777';
         self.axisStyle.tickLabelFont = '11pt Helvetica Neue';
-        self.axisStyle.tickLabelColor = '#333';
+        self.axisStyle.tickLabelColor = '#777';
         self.axisStyle.axisLabelFont = '12pt Helvetica Neue';
-        self.axisStyle.axisLabelColor = '#333';
+        self.axisStyle.axisLabelColor = '#777';
 
         //Configure for chart
         self.chartStyle.seriesPalette = ['#3182bd', '#c6dbed', '#6baed6', '#08519c', '#9ecae1'];
