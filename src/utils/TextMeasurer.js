@@ -15,7 +15,7 @@
 
         function degreesToRadians(angle) {
 
-            return angle * (Math.PI / 180);
+            return angle * Math.PI / 180;
 
         }
 
@@ -35,6 +35,10 @@
 
             var height = actualTextWidth * Math.sin(angleRadians) + roughTextHeight * Math.cos(angleRadians);
             var width = actualTextWidth * Math.cos(angleRadians) + roughTextHeight * Math.sin(angleRadians);
+
+            // avoid rounding errors
+            height = height.toFixed(10);
+            width = width.toFixed(10);
 
             return {
                 width: Math.ceil(Math.abs(width)),
