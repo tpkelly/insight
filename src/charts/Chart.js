@@ -118,6 +118,31 @@
 
         // Internal functions -----------------------------------------------------------------------------------------
 
+        /*
+         * Gets the position of the given series in this chart compared to other series in the chart that have the
+         * same type as the given series.
+         *
+         * For example:
+         *  chart.series([lineSeries, bubbleSeries0, rowSeries, bubbleSeries1]);
+         *  index = chart.seriesIndexByType(bubbleSeries0); // index === 0
+         *  index = chart.seriesIndexByType(bubbleSeries1); // index === 1
+         *
+         * @memberof! insight.Chart
+         * @instance
+         * @param {insight.Series} targetSeries The series to find the index of.
+         * @returns {Number} - The position of the given series in this chart compared to other series in the chart
+         * that have the same type as the given series.
+         */
+        self.seriesIndexByType = function(targetSeries) {
+
+            var seriesOfType = self.series().filter(function(s) {
+                return s.constructor === targetSeries.constructor;
+            });
+
+            return seriesOfType.indexOf(targetSeries);
+
+        };
+
         /** 
          * Empty event handler that is overridden by any listeners who want to know when this Chart's series change
          * @memberof! insight.Chart

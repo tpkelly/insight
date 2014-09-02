@@ -79,4 +79,50 @@ describe('Row Series Tests', function() {
 
     });
 
+    describe('findMax', function() {
+
+        var xAxis,
+            yAxis,
+            series;
+
+        beforeEach(function() {
+
+            xAxis = new insight.Axis('x', insight.Scales.Linear);
+            yAxis = new insight.Axis('y', insight.Scales.Ordinal);
+
+            var dataset = new insight.DataSet(rowdata);
+            var countryGroup = dataset.group('countries', function(d) { return d.Country; });
+
+            series = new insight.RowSeries('columns', countryGroup, xAxis, yAxis)
+                .keyFunction(function(group) {
+                    return group.key;
+                })
+                .valueFunction(function(group) {
+                    return group.value.Count;
+                });
+
+        });
+
+        it('returns maximum value on y-axis', function() {
+
+            // When
+            var result = series.findMax(yAxis);
+
+            // Then
+            expect(result).toBe('Wales');
+
+        });
+
+        it('returns maximum value on x-axis', function() {
+
+            // When
+            var result = series.findMax(xAxis);
+
+            // Then
+            expect(result).toBe(7);
+
+        });
+
+    });
+
 });

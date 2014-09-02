@@ -28,21 +28,6 @@
 
         // Internal functions -----------------------------------------------------------------------------------------
 
-        self.findMax = function(scale) {
-
-            var max = 0;
-            var data = self.data.getData();
-
-            var func = scale === self.x ? self.keyFunction() : self.valueFunction();
-
-            var m = d3.max(data, func);
-
-            max = m > max ? m : max;
-
-            return max;
-        };
-
-
         self.rangeY = function(d) {
             return self.y.scale(self.valueFunction()(d));
         };

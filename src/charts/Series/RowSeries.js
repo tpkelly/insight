@@ -18,7 +18,8 @@
         var self = this,
             stacked = false,
             seriesName = '',
-            seriesFunctions = {};
+            seriesFunctions = {},
+            barThicknessFunction = self.y.scale.rangeBand;
 
         // Internal variables -------------------------------------------------------------------------------------------
 
@@ -49,45 +50,6 @@
         }
 
         // Internal functions -----------------------------------------------------------------------------------------
-
-        /*
-         * Given an object representing a data item, this method returns the largest value across all of the series in the ColumnSeries.
-         * This function is mapped across the entire data array by the findMax method.
-         * @memberof! insight.RowSeries
-         * @instance
-         * @param {object} data - An item in the object array to query
-         * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
-         */
-        self.seriesMax = function(d) {
-            var max = 0;
-            var seriesMax = 0;
-
-            var stacked = self.isStacked();
-
-            for (var series in self.series) {
-                var s = self.series[series];
-
-                var seriesValue = s.valueFunction(d);
-
-                seriesMax = stacked ? seriesMax + seriesValue : seriesValue;
-
-                max = seriesMax > max ? seriesMax : max;
-            }
-
-            return max;
-        };
-
-        /*
-         * Extracts the maximum value on an axis for this series.
-         * @memberof! insight.RowSeries
-         * @instance
-         * @returns {Number} - The maximum value within the range of the values for this series on the given axis.
-         */
-        self.findMax = function() {
-            var max = d3.max(self.dataset(), self.seriesMax);
-
-            return max;
-        };
 
         self.calculateXPos = function(func, d) {
             if (!d.xPos) {
@@ -122,13 +84,9 @@
             return position;
         };
 
-        self.barThickness = function(d) {
-            return self.y.scale.rangeBand(d);
-        };
+        self.groupedBarThickness = function(d) {
 
-        self.groupedbarThickness = function(d) {
-
-            var groupThickness = self.barThickness(d);
+            var groupThickness = barThicknessFunction(d);
 
             var width = self.isStacked() || (self.series.length === 1) ? groupThickness : groupThickness / self.series.length;
 
@@ -136,7 +94,7 @@
         };
 
         self.offsetYPosition = function(d) {
-            var thickness = self.groupedbarThickness(d);
+            var thickness = self.groupedBarThickness(d);
             var position = self.isStacked() ? self.yPosition(d) : self.calculateYPos(thickness, d);
 
             return position;
@@ -229,7 +187,7 @@
                     .duration(duration)
                     .attr('y', self.offsetYPosition)
                     .attr('x', self.xPosition)
-                    .attr('height', self.groupedbarThickness)
+                    .attr('height', self.groupedBarThickness)
                     .attr('width', self.barWidth)
                     .style('opacity', opacity);
             }
