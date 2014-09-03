@@ -151,10 +151,13 @@
 
             var axisLabelHeight = textMeasurer.measureText(self.label(), self.axisLabelFont()).height;
 
-            var tickValues = self.domain();
-            var tickLabelSizes = tickValues.map(function(tickValue) {
+            var formattedTickValues = self.domain().map(function(tickValue) {
+                return self.tickLabelFormat()(tickValue);
+            });
+
+            var tickLabelSizes = formattedTickValues.map(function(formattedTickValue) {
                 return textMeasurer.measureText(
-                    tickValue,
+                    formattedTickValue,
                     self.tickLabelFont(),
                     self.tickLabelRotation());
             });

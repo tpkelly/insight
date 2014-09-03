@@ -637,6 +637,36 @@ describe('Axis', function() {
 
             });
 
+            it('handles formatted tick labels', function() {
+
+                // Given
+                var tickLabelRotation = 30;
+
+                axis.tickSize(tickSize)
+                    .tickPadding(tickPadding)
+                    .label(axisLabel)
+                    .tickLabelRotation(tickLabelRotation)
+                    .tickLabelFormat(function(tickLabel) {
+                        return tickLabel + '!!!';
+                    });
+
+                // When
+                var result = axis.calculateLabelDimensions();
+
+                // Then
+                var expectedTickLabelHeight = fakeMeasurer.measureText('Largest!!!', tickLabelFont, tickLabelRotation).height;
+                var expectedAxisLabelHeight = fakeMeasurer.measureText(axisLabel, axisFont).height;
+
+                var expectedResult =
+                    tickSize +
+                    tickPadding * 2 +
+                    expectedTickLabelHeight +
+                    expectedAxisLabelHeight;
+
+                expect(result.height).toBe(expectedResult);
+
+            });
+
         });
 
         describe('vertical axis', function() {
@@ -718,6 +748,35 @@ describe('Axis', function() {
 
                 // Then
                 var expectedMaxTickLabelWidth = fakeMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).width;
+                var expectedAxisLabelWidth = fakeMeasurer.measureText(axisLabel, axisFont).width;
+
+                var expectedResult = expectedMaxTickLabelWidth
+                    + tickPadding * 2
+                    + tickSize
+                    + expectedAxisLabelWidth;
+
+                expect(result.width).toBe(expectedResult);
+
+            });
+
+            it('handles formatted tick labels', function() {
+
+                // Given
+                var tickLabelRotation = 30;
+
+                axis.tickSize(tickSize)
+                    .tickPadding(tickPadding)
+                    .label(axisLabel)
+                    .tickLabelRotation(tickLabelRotation)
+                    .tickLabelFormat(function(tickValue) {
+                        return '_' + tickValue + '_';
+                    });
+
+                // When
+                var result = axis.calculateLabelDimensions();
+
+                // Then
+                var expectedMaxTickLabelWidth = fakeMeasurer.measureText('_Largest_', tickLabelFont, tickLabelRotation).width;
                 var expectedAxisLabelWidth = fakeMeasurer.measureText(axisLabel, axisFont).width;
 
                 var expectedResult = expectedMaxTickLabelWidth
