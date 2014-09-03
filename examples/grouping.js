@@ -42,10 +42,6 @@ $(document)
                 })
                 .tooltipFormat(insight.Formatters.currencyFormatter);
 
-            // set ColumnSeries to first color in the default series palette
-            // - workaround until ColumnSeries has sub-series removed
-            columns.series[0].color = d3.functor(insight.defaultTheme.chartStyle.seriesPalette[0]);
-
             chart.series([columns]);
 
             chart.draw();
