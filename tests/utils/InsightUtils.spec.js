@@ -26,7 +26,89 @@ var createElement = function(namespace, tag) {
 }
 
 describe('Utils', function() {
-    
+
+    describe('fontSizeFromFont', function() {
+
+        it('extracts font size from end of font string', function() {
+
+            // Given
+            var testString = 'Comic Sans 11px';
+
+            // When
+            var result = insight.Utils.fontSizeFromFont(testString);
+
+            // Then
+            expect(result).toBe(11);
+
+        });
+
+        it('extracts font size from start of font string', function() {
+
+            // Given
+            var testString = '11pt Comic Sans';
+
+            // When
+            var result = insight.Utils.fontSizeFromFont(testString);
+
+            // Then
+            expect(result).toBe(11);
+
+        });
+
+        it('extracts the first font size from font string', function() {
+
+            // Given
+            var testString = '14pt Comic Sans 25px';
+
+            // When
+            var result = insight.Utils.fontSizeFromFont(testString);
+
+            // Then
+            expect(result).toBe(14);
+
+        });
+
+        it('returns 12 if the given font contains no size', function() {
+
+            // Given
+            var testString = 'Comic Sans';
+
+            // When
+            var result = insight.Utils.fontSizeFromFont(testString);
+
+            // Then
+            expect(result).toBe(12);
+
+        });
+
+        it('returns 12 if empty font string provided', function() {
+
+            // Given
+            var testString = '';
+
+            // When
+            var result = insight.Utils.fontSizeFromFont(testString);
+
+            // Then
+            expect(result).toBe(12);
+
+        });
+
+        it('returns 12 if undefined font provided', function() {
+
+            // Given
+            var testString = undefined;
+
+            // When
+            var result = insight.Utils.fontSizeFromFont(testString);
+
+            // Then
+            expect(result).toBe(12);
+
+        });
+
+    });
+
     it('correctly identifies arrays', function() {
         
         var data = {
@@ -412,5 +494,92 @@ describe('Utils', function() {
     
     });
 
+    describe('getElementStyles', function() {
+        var errorContainer,
+            getComputedStyleResult,
+            propertiesOnElement;
+
+        beforeEach(function() {
+            propertiesOnElement = [];
+
+            getComputedStyleResult = {
+                getPropertyValue: jasmine.createSpy('getPropertyValue').andCallFake(function(property) {
+                    var matchedProperties = propertiesOnElement.filter(function(p) {
+                        return p.propertyName === property;
+                    });
+
+                    if(matchedProperties.length > 0) {
+                        return matchedProperties[0].value;
+                    }
+
+                    // It is tricky to know what the canonical response should be:
+                    // - Under Chrome it is ""
+                    // - Under Firefox it is null
+                    // In either case, it is not a truthy value
+                    return "";
+                })
+            }
+
+            spyOn(insight.Utils, 'getNativeComputedStyle').andReturn(getComputedStyleResult);
+
+            errorContainer = new insight.ErrorContainer();
+
+        });
+
+        it('returns an empty object when given no properties', function() {
+
+            // Given
+            var aMockElement = {};
+
+            // When
+            var result = insight.Utils.getElementStyles(aMockElement, []);
+
+            // Then
+            expect(getComputedStyleResult.getPropertyValue).not.toHaveBeenCalled();
+            expect(result).toEqual({});
+
+        });
+
+        describe('when provided with a named property', function() {
+            var property;
+
+            beforeEach(function() {
+                property = {
+                    propertyName: 'height',
+                    value: '22px'
+                };
+                propertiesOnElement.push(property);
+            });
+
+            it('returns object with property when property exists on element', function () {
+
+                // Given
+                var aMockElement = {};
+
+                // When
+                var result = insight.Utils.getElementStyles(aMockElement, [property.propertyName]);
+
+                // Then
+                expect(getComputedStyleResult.getPropertyValue).toHaveBeenCalled();
+                expect(result[property.propertyName]).toEqual(property.value);
+
+            });
+
+            it('returns object with property falsely when property does not exists on element', function () {
+
+                // Given
+                var aMockElement = {};
+
+                // When
+                var lookForProperty = 'font-size';
+                var result = insight.Utils.getElementStyles(aMockElement, [lookForProperty]);
+
+                // Then
+                expect(getComputedStyleResult.getPropertyValue).toHaveBeenCalled();
+                expect(result[lookForProperty]).toBeFalsy();
+            });
+       });
+
+    })
 })
 

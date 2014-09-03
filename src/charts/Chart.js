@@ -44,7 +44,6 @@
         self.container = null;
         self.chart = null;
         self.measureCanvas = document.createElement('canvas');
-        self.marginMeasurer = new insight.MarginMeasurer();
         self.seriesPalette = [];
         self.legendView = null;
 
@@ -124,6 +123,33 @@
 
         // Internal functions -----------------------------------------------------------------------------------------
 
+        self.filterSeriesByType = function(targetSeries) {
+
+            var seriesOfType = self.series().filter(function(s) {
+                return s.constructor === targetSeries.constructor;
+            });
+
+            return seriesOfType;
+
+        };
+
+        /*
+         * Calculates the plot area of this chart, taking into account the size and margins of the chart.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {int[]} - An array with two items, for the width and height of the axis, respectively.
+         */
+        self.calculatePlotAreaSize = function() {
+            var bounds = [];
+            var margin = self.margin();
+
+            bounds[0] = self.width() - margin.right - margin.left;
+            bounds[1] = self.height() - margin.top - margin.bottom;
+
+            return bounds;
+
+        };
+
         /*
          * Gets the position of the given series in this chart compared to other series in the chart that have the
          * same type as the given series.
@@ -138,23 +164,6 @@
          * @param {insight.Series} targetSeries The series to find the index of.
          * @returns {Number} - The position of the given series in this chart compared to other series in the chart
          * that have the same type as the given series.
-         */
-        self.filterSeriesByType = function(targetSeries) {
-
-            var seriesOfType = self.series().filter(function(s) {
-                return s.constructor === targetSeries.constructor;
-            });
-
-            return seriesOfType;
-
-        };
-
-        /*
-         * Gets the index of the series in the chart compared to other series in the chart of the same type.
-         * @memberof! insight.Chart
-         * @instance
-         * @param {insight.Series} targetSeries The series to find the index of.
-         * @returns {Number} - The index of the series in the chart compared with other series of the same type.
          */
         self.seriesIndexByType = function(targetSeries) {
 
@@ -239,11 +248,7 @@
         self.resizeChart = function() {
 
             if (shouldAutoMargin) {
-
-                var axisStyles = insight.Utils.getElementStyles(self.axisMeasurer.node(), ['font-size', 'line-height', 'font-family']);
-                var labelStyles = insight.Utils.getElementStyles(self.labelMeasurer.node(), ['font-size', 'line-height', 'font-family']);
-
-                self.calculateLabelMargin(self.marginMeasurer, axisStyles, labelStyles);
+                self.calculateChartMargin();
             }
 
             var chartMargin = self.margin();
@@ -776,14 +781,26 @@
      * @param {object} axisStyles - An associative map between css properties and values for the axis values
      * @param {object} labelStyles - An associative map between css properties and values for the axis labels
      */
-    insight.Chart.prototype.calculateLabelMargin = function(measurer, axisStyles, labelStyles) {
+    insight.Chart.prototype.calculateChartMargin = function() {
 
-        // labelStyles can be optional.  If so, use the same as the axisStyles
-        labelStyles = labelStyles ? labelStyles : axisStyles;
+        var allAxes = this.xAxes().concat(this.yAxes());
 
-        var margin = measurer.calculateChartMargins(this.series(), this.measureCanvas, axisStyles, labelStyles);
+        var margin = {
+            'top': 10,
+            'left': 10,
+            'bottom': 10,
+            'right': 10
+        };
+        allAxes.forEach(function(axis) {
+            var labelDimensions = axis.calculateLabelDimensions();
+
+            var axisMargin = (axis.isHorizontal()) ? labelDimensions.height : labelDimensions.width;
+
+            margin[axis.orientation()] = Math.max(axisMargin, margin[axis.orientation()]);
+        });
 
         this.margin(margin);
+
     };
 
     /**

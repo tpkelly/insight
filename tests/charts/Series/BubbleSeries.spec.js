@@ -50,8 +50,8 @@ describe('BubbleSeries', function() {
         chart.series([series]);
 
         //When:
-        xAxis.calculateAxisBounds(chart);
-        yAxis.calculateAxisBounds(chart);
+        xAxis.updateAxisBounds(chart);
+        yAxis.updateAxisBounds(chart);
         var bubbleData = series.bubbleData(series.dataset());
 
         //Then:
@@ -87,8 +87,8 @@ describe('BubbleSeries', function() {
         chart.series([series]);
 
         //When:
-        xAxis.calculateAxisBounds(chart);
-        yAxis.calculateAxisBounds(chart);
+        xAxis.updateAxisBounds(chart);
+        yAxis.updateAxisBounds(chart);
         var bubbleData = series.bubbleData(series.dataset());
 
         //Then:
@@ -121,8 +121,9 @@ describe('BubbleSeries', function() {
         chart.series([series]);
 
         //When:
-        xAxis.calculateAxisBounds(chart);
-        yAxis.calculateAxisBounds(chart);
+        xAxis.updateAxisBounds(chart);
+        yAxis.updateAxisBounds(chart);
+        xAxis.bounds = chart.calculatePlotAreaSize();
         var bubbleData = series.bubbleData(series.dataset());
 
         //Then:

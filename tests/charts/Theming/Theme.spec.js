@@ -89,8 +89,8 @@ describe("Theme", function(){
             chartGroup.applyTheme(dummyTheme);
 
             //Then:
-            expect(chart.xAxis().color()()).toBe('#345');
-            expect(chart.yAxis().color()()).toBe('#345');
+            expect(chart.xAxis().lineColor()()).toBe('#345');
+            expect(chart.yAxis().lineColor()()).toBe('#345');
         });
 
         it("Line width to be set by theme", function() {

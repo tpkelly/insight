@@ -12,16 +12,20 @@
 
         var self = this,
             label = name,
-            ordered = d3.functor(false),
+            shouldBeOrdered = d3.functor(false),
             orderingFunction = null,
             tickSize = d3.functor(0),
             tickPadding = d3.functor(0),
             lineWidth = 1,
-            labelRotation = '0',
+            labelRotation = 0,
+            tickLabelFont = '11pt Helvetica Neue',
+            tickLabelColor = d3.functor('Black'),
+            axisLabelFont = '12pt Helvetica Neue',
+            axisLabelColor = d3.functor('Black'),
             tickLabelOrientation = d3.functor('lr'),
-            showGridlines = false,
+            shouldShowGridlines = false,
             colorFunction = d3.functor('#000'),
-            display = true,
+            shouldDisplay = true,
             barPadding = d3.functor(0.1),
             initialisedAxisView = false,
             shouldReversePosition = false,
@@ -29,6 +33,7 @@
 
         // Internal variables ---------------------------------------------------------------------------------------
 
+        self.measureCanvas = document.createElement('canvas');
         self.scaleType = scale.name;
         self.scale = scale.scale();
         self.bounds = [0, 0];
@@ -140,6 +145,54 @@
 
         // Internal functions -------------------------------------------------------------------------------------
 
+        self.calculateLabelDimensions = function() {
+
+            var textMeasurer = insight.TextMeasurer.create(self.measureCanvas);
+
+            var axisLabelHeight = textMeasurer.measureText(self.label(), self.axisLabelFont()).height;
+
+            var tickValues = self.domain();
+            var tickLabelSizes = tickValues.map(function(tickValue) {
+                return textMeasurer.measureText(
+                    tickValue,
+                    self.tickLabelFont(),
+                    self.tickLabelRotation());
+            });
+
+            var maxTickLabelWidth = d3.max(tickLabelSizes, function(d) {
+                return d.width;
+            });
+
+            var maxTickLabelHeight = d3.max(tickLabelSizes, function(d) {
+                return d.height;
+            });
+
+            var axisLabelWidth = Math.ceil(textMeasurer.measureText(self.label(), self.axisLabelFont()).width);
+
+            if (maxTickLabelWidth === 0) {
+                maxTickLabelHeight = 0;
+            }
+
+            if (axisLabelWidth === 0) {
+                axisLabelHeight = 0;
+            }
+
+            var totalWidth =
+                self.tickPadding() * 2 +
+                self.tickSize() +
+                maxTickLabelWidth +
+                axisLabelWidth;
+
+            var labelHeight = (self.isHorizontal()) ? maxTickLabelHeight + axisLabelHeight : Math.max(maxTickLabelHeight, axisLabelHeight);
+
+            var totalHeight = labelHeight + self.tickPadding() * 2 + self.tickSize();
+
+            return {
+                height: totalHeight,
+                width: totalWidth
+            };
+        };
+
         /*
          * Adds to the list of series that this axis is associated with
          * @memberof! insight.Axis
@@ -170,32 +223,19 @@
             return domain;
         };
 
-        /*
-         * Calculates the output range bound of this axis, taking into account the size and margins of the chart.
-         * @memberof! insight.Axis
-         * @instance
-         * @param {insight.Chart} chart The chart to calculate bounds against.
-         * @returns {int[]} - An array with two items, for the width and height of the axis, respectively.
-         */
-        self.calculateAxisBounds = function(chart) {
-            var bounds = [];
-            var margin = chart.margin();
-
-            bounds[0] = chart.width() - margin.right - margin.left;
-            bounds[1] = chart.height() - margin.top - margin.bottom;
-
-            self.bounds = bounds;
-
-            return self.bounds;
-        };
-
         self.tickLabelRotationTransform = function() {
+
             var offset = self.tickPadding() + (self.tickSize() * 2);
-            offset = (shouldReversePosition && !self.isHorizontal()) ? 0 - offset : offset;
+            var measurer = new insight.TextMeasurer(self.measureCanvas);
+            var textHeight = Math.ceil(measurer.measureText("aa").width);
 
-            var rotation = ' rotate(' + self.tickLabelRotation() + ',0,' + offset + ')';
+            offset = (shouldReversePosition ^ !self.isHorizontal()) ? -offset : offset;
 
-            return rotation;
+            if (self.isHorizontal()) {
+                return ' rotate(' + self.tickLabelRotation() + ',' + (textHeight / 2) + ',' + offset + ')';
+            } else {
+                return ' rotate(' + self.tickLabelRotation() + ',' + offset + ',' + (textHeight / 2) + ')';
+            }
         };
 
         self.axisPosition = function() {
@@ -272,11 +312,15 @@
                 .style('position', 'absolute');
         };
 
+        self.updateAxisBounds = function(chart) {
+            self.bounds = chart.calculatePlotAreaSize();
+        };
+
         self.draw = function(chart, isDragging) {
 
             // Scale range and bounds need to be initialized regardless of whether the axis will be displayed
 
-            self.calculateAxisBounds(chart);
+            self.updateAxisBounds(chart);
 
             if (!self.isZoomable()) {
                 self.initializeScale();
@@ -299,7 +343,7 @@
 
             self.axisElement
                 .attr('transform', self.axisPosition())
-                .style('stroke', self.color())
+                .style('stroke', self.lineColor())
                 .style('stroke-width', self.lineWidth())
                 .style('fill', 'none')
                 .transition()
@@ -311,7 +355,12 @@
                 .attr('transform', self.tickLabelRotationTransform())
                 .style('text-anchor', self.textAnchor());
 
+            d3.selectAll(".tick > text")
+                .style('font', self.tickLabelFont());
+
             self.labelElement
+                .style('font', self.axisLabelFont())
+                .style('color', self.axisLabelColor())
                 .text(self.label());
 
             self.positionLabel();
@@ -323,6 +372,94 @@
         };
 
         // Public functions --------------------------------------------------------------------------------------
+
+        /**
+         * The font to use for the axis tick labels.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {String} - The font to use for the axis tick labels.
+         *
+         * @also
+         *
+         * Sets the font to use for the axis tick labels.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {String} font The font to use for the axis tick labels.
+         * @returns {this}
+         */
+        self.tickLabelFont = function(font) {
+            if (!arguments.length) {
+                return tickLabelFont;
+            }
+            tickLabelFont = font;
+            return self;
+        };
+
+        /**
+         * The font to use for the axis label.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {String} - The font to use for the axis label.
+         *
+         * @also
+         *
+         * Sets the font to use for the axis label.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {String} font The font to use for the axis label.
+         * @returns {this}
+         */
+        self.axisLabelFont = function(font) {
+            if (!arguments.length) {
+                return axisLabelFont;
+            }
+            axisLabelFont = font;
+            return self;
+        };
+
+        /**
+         * The color to use for the axis tick label.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Function} - A function that returns the color of an axis tick label.
+         *
+         * @also
+         *
+         * Sets the color to use for the axis tick label.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Function|Color} color Either a function that returns a color, or a color.
+         * @returns {this}
+         */
+        self.tickLabelColor = function(color) {
+            if (!arguments.length) {
+                return tickLabelColor;
+            }
+            tickLabelColor = d3.functor(color);
+            return self;
+        };
+
+        /**
+         * The color to use for the axis label.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Function} - A function that returns the color of an axis label.
+         *
+         * @also
+         *
+         * Sets the color to use for the axis label.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Function|Color} color Either a function that returns a color, or a color.
+         * @returns {this}
+         */
+        self.axisLabelColor = function(color) {
+            if (!arguments.length) {
+                return axisLabelColor;
+            }
+            axisLabelColor = d3.functor(color);
+            return self;
+        };
 
         /**
          * Whether or not the axis is displayed horizontally (true) or vertically (false).
@@ -338,21 +475,21 @@
          * Whether the axis values are displayed in order or not.
          * @memberof! insight.Axis
          * @instance
-         * @returns {boolean} - Whether the axis is currently ordered.
+         * @returns {Boolean} - Whether the axis is currently ordered.
          *
          * @also
          *
          * Sets whether the axis values are displayed in order or not.
          * @memberof! insight.Axis
          * @instance
-         * @param {boolean} value Whether or not the axis will be ordered.
+         * @param {Function|Boolean} shouldOrderAxis Either a function that returns a boolean, or a boolean.
          * @returns {this}
          */
-        self.isOrdered = function(value) {
+        self.isOrdered = function(shouldOrderAxis) {
             if (!arguments.length) {
-                return ordered();
+                return shouldBeOrdered();
             }
-            ordered = d3.functor(value);
+            shouldBeOrdered = d3.functor(shouldOrderAxis);
             return self;
         };
 
@@ -382,21 +519,21 @@
          * Returns a boolean value representing if this Axis is zoomable.
          * @instance
          * @memberof! insight.Axis
-         * @returns {boolean} - A value indicating whether the axis is zoomable or not
+         * @returns {Boolean} - A value indicating whether the axis is zoomable or not
          *
          * @also
          *
          * Sets the zoomable status of this Axis.  A zoomable Axis allows drag and zoom operations, and is not redrawn automatically on the draw() event of a chart.
          * @instance
          * @memberof! insight.Axis
-         * @param {boolean} value - A true/false value to set this Axis as zoomable or not.
+         * @param {Boolean} shouldBeZoomable - A boolean value to set this Axis as zoomable or not.
          * @returns {this}
          */
-        self.isZoomable = function(value) {
+        self.isZoomable = function(shouldBeZoomable) {
             if (!arguments.length) {
                 return zoomable;
             }
-            zoomable = value;
+            zoomable = shouldBeZoomable;
 
             return self;
         };
@@ -415,11 +552,11 @@
          * @param {boolean} displayed Whether or not the axis will be drawn.
          * @returns {this}
          */
-        self.shouldDisplay = function(value) {
+        self.shouldDisplay = function(shouldBeDisplayed) {
             if (!arguments.length) {
-                return display;
+                return shouldDisplay;
             }
-            display = value;
+            shouldDisplay = shouldBeDisplayed;
             return self;
         };
 
@@ -451,21 +588,21 @@
          * Gets the axis label
          * @memberof! insight.Axis
          * @instance
-         * @returns {string} - The axis label
+         * @returns {String} - The axis label
          *
          * @also
          *
          * Sets the axis label
          * @memberof! insight.Axis
          * @instance
-         * @param {string} value The axis label
+         * @param {String} axisLabel The axis label
          * @returns {this}
          */
-        self.label = function(value) {
+        self.label = function(axisLabel) {
             if (!arguments.length) {
                 return label;
             }
-            label = value;
+            label = axisLabel;
             return self;
         };
 
@@ -515,20 +652,20 @@
         };
 
         /**
-         * Gets the color of the axis labels and lines.
+         * Gets the color of the axis lines.
          * @memberof! insight.Axis
          * @instance
-         * @returns {Color} - The color of the axis labels and lines.
+         * @returns {Color} - The color of the axis lines.
          *
          * @also
          *
-         * Sets the color of the axis labels and lines.
+         * Sets the color of the axis lines.
          * @memberof! insight.Axis
          * @instance
-         * @param {Color} color The new color of the axis labels and lines.
+         * @param {Function|Color} color Either a function that returns a color, or a color.
          * @returns {this}
          */
-        self.color = function(color) {
+        self.lineColor = function(color) {
             if (!arguments.length) {
                 return colorFunction;
             }
@@ -694,9 +831,9 @@
          */
         self.shouldShowGridlines = function(showLines) {
             if (!arguments.length) {
-                return showGridlines;
+                return shouldShowGridlines;
             }
-            showGridlines = showLines;
+            shouldShowGridlines = showLines;
 
             return self;
         };
@@ -714,16 +851,13 @@
     insight.Axis.prototype.applyTheme = function(theme) {
         this.tickSize(theme.axisStyle.tickSize);
         this.tickPadding(theme.axisStyle.tickPadding);
-        this.color(theme.axisStyle.axisLineColor);
+        this.lineColor(theme.axisStyle.axisLineColor);
         this.lineWidth(theme.axisStyle.axisLineWidth);
 
-        /* TODO: Tick and axis label font/colours
-         tickLabelFont: undefined,
-         tickLabelColor: undefined,
-
-         axisLabelFont: undefined,
-         axisLabelColor: undefined
-         */
+        this.tickLabelFont(theme.axisStyle.tickLabelFont);
+        this.tickLabelColor(theme.axisStyle.tickLabelColor);
+        this.axisLabelFont(theme.axisStyle.axisLabelFont);
+        this.axisLabelColor(theme.axisStyle.axisLabelColor);
 
         this.shouldShowGridlines(theme.axisStyle.showGridlines);
 
