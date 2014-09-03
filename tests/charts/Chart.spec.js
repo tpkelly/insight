@@ -522,6 +522,111 @@ describe('Chart', function() {
             });
 
         });
+
+        it('expands left margin for horizontal axis with overhanging text on the left', function() {
+
+            // Given
+            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
+
+            spyOn(xAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
+            spyOn(yAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
+
+            spyOn(xAxis, 'calculateLabelOverhang').andReturn({ left: 50, right: 0, top: 0, bottom: 0});
+            spyOn(yAxis, 'calculateLabelOverhang').andReturn({ left: 0, right: 0, top: 0, bottom: 0});
+
+            chart.series([series]);
+
+            // When
+            chart.calculateChartMargin();
+
+            // Then
+            expect(chart.margin()).toEqual({
+                top: minimalMargins,
+                left: 50,
+                right: minimalMargins,
+                bottom: minimalMargins
+            });
+
+        });
+
+        it('expands right margin for horizontal axis with overhanging text on the right', function() {
+
+            // Given
+            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
+
+            spyOn(xAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
+            spyOn(yAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
+
+            spyOn(xAxis, 'calculateLabelOverhang').andReturn({ left: 0, right: 70, top: 0, bottom: 0});
+            spyOn(yAxis, 'calculateLabelOverhang').andReturn({ left: 0, right: 0, top: 0, bottom: 0});
+
+            chart.series([series]);
+
+            // When
+            chart.calculateChartMargin();
+
+            // Then
+            expect(chart.margin()).toEqual({
+                top: minimalMargins,
+                left: minimalMargins,
+                right: 70,
+                bottom: minimalMargins
+            });
+
+        });
+
+        it('expands top margin for vertical axis with overhanging text on the top', function() {
+
+            // Given
+            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
+
+            spyOn(xAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
+            spyOn(yAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
+
+            spyOn(xAxis, 'calculateLabelOverhang').andReturn({ left: 0, right: 0, top: 0, bottom: 0});
+            spyOn(yAxis, 'calculateLabelOverhang').andReturn({ left: 0, right: 0, top: 100, bottom: 0});
+
+            chart.series([series]);
+
+            // When
+            chart.calculateChartMargin();
+
+            // Then
+            expect(chart.margin()).toEqual({
+                top: 100,
+                left: minimalMargins,
+                right: minimalMargins,
+                bottom: minimalMargins
+            });
+
+        });
+
+        it('expands top margin for vertical axis with overhanging text on the bottom', function() {
+
+            // Given
+            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
+
+            spyOn(xAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
+            spyOn(yAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
+
+            spyOn(xAxis, 'calculateLabelOverhang').andReturn({ left: 0, right: 0, top: 0, bottom: 0});
+            spyOn(yAxis, 'calculateLabelOverhang').andReturn({ left: 0, right: 0, top: 0, bottom: 230});
+
+            chart.series([series]);
+
+            // When
+            chart.calculateChartMargin();
+
+            // Then
+            expect(chart.margin()).toEqual({
+                top: minimalMargins,
+                left: minimalMargins,
+                right: minimalMargins,
+                bottom: 230
+            });
+
+        });
+        
     });
 
     describe('xAxis', function() {

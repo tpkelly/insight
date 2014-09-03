@@ -196,6 +196,17 @@
             };
         };
 
+        self.calculateLabelOverhang = function() {
+
+            return {
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0
+            };
+
+        };
+
         /*
          * Adds to the list of series that this axis is associated with
          * @memberof! insight.Axis

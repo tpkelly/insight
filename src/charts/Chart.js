@@ -791,12 +791,20 @@
             'bottom': 10,
             'right': 10
         };
-        allAxes.forEach(function(axis) {
-            var labelDimensions = axis.calculateLabelDimensions();
 
+        allAxes.forEach(function(axis) {
+
+            var labelDimensions = axis.calculateLabelDimensions();
             var axisMargin = (axis.isHorizontal()) ? labelDimensions.height : labelDimensions.width;
 
             margin[axis.orientation()] = Math.max(axisMargin, margin[axis.orientation()]);
+
+            var labelOverhang = axis.calculateLabelOverhang();
+            margin.top = Math.max(margin.top, labelOverhang.top);
+            margin.bottom = Math.max(margin.bottom, labelOverhang.bottom);
+            margin.left = Math.max(margin.left, labelOverhang.left);
+            margin.right = Math.max(margin.right, labelOverhang.right);
+
         });
 
         this.margin(margin);
