@@ -12,20 +12,20 @@
 
         var self = this,
             label = name,
-            ordered = d3.functor(false),
+            shouldBeOrdered = d3.functor(false),
             orderingFunction = null,
             tickSize = d3.functor(0),
             tickPadding = d3.functor(0),
             lineWidth = 1,
             labelRotation = 0,
-            tickLabelFont = 'Helvetica Neue 11pt',
+            tickLabelFont = '11pt Helvetica Neue',
             tickLabelColor = d3.functor('Black'),
-            axisLabelFont = 'Helvetica Neue 12pt',
+            axisLabelFont = '12pt Helvetica Neue',
             axisLabelColor = d3.functor('Black'),
             tickLabelOrientation = d3.functor('lr'),
-            showGridlines = false,
+            shouldShowGridlines = false,
             colorFunction = d3.functor('#000'),
-            display = true,
+            shouldDisplay = true,
             barPadding = d3.functor(0.1),
             initialisedAxisView = false,
             shouldReversePosition = false,
@@ -343,7 +343,7 @@
 
             self.axisElement
                 .attr('transform', self.axisPosition())
-                .style('stroke', self.color())
+                .style('stroke', self.lineColor())
                 .style('stroke-width', self.lineWidth())
                 .style('fill', 'none')
                 .transition()
@@ -384,14 +384,14 @@
          * Sets the font to use for the axis tick labels.
          * @memberof! insight.Axis
          * @instance
-         * @param {String} value The font to use for the axis tick labels.
+         * @param {String} font The font to use for the axis tick labels.
          * @returns {this}
          */
-        self.tickLabelFont = function(value) {
+        self.tickLabelFont = function(font) {
             if (!arguments.length) {
                 return tickLabelFont;
             }
-            tickLabelFont = value;
+            tickLabelFont = font;
             return self;
         };
 
@@ -406,14 +406,14 @@
          * Sets the font to use for the axis label.
          * @memberof! insight.Axis
          * @instance
-         * @param {String} value The font to use for the axis label.
+         * @param {String} font The font to use for the axis label.
          * @returns {this}
          */
-        self.axisLabelFont = function(value) {
+        self.axisLabelFont = function(font) {
             if (!arguments.length) {
                 return axisLabelFont;
             }
-            axisLabelFont = value;
+            axisLabelFont = font;
             return self;
         };
 
@@ -428,14 +428,14 @@
          * Sets the color to use for the axis tick label.
          * @memberof! insight.Axis
          * @instance
-         * @param {Function} value A function that will be used to return the color of an axis tick label.
+         * @param {Function|Color} color Either a function that returns a color, or a color.
          * @returns {this}
          */
-        self.tickLabelColor = function(value) {
+        self.tickLabelColor = function(color) {
             if (!arguments.length) {
                 return tickLabelColor;
             }
-            tickLabelColor = d3.functor(value);
+            tickLabelColor = d3.functor(color);
             return self;
         };
 
@@ -450,14 +450,14 @@
          * Sets the color to use for the axis label.
          * @memberof! insight.Axis
          * @instance
-         * @param {Function} value A function that will be used to return the color of an axis label.
+         * @param {Function|Color} color Either a function that returns a color, or a color.
          * @returns {this}
          */
-        self.axisLabelColor = function(value) {
+        self.axisLabelColor = function(color) {
             if (!arguments.length) {
                 return axisLabelColor;
             }
-            axisLabelColor = d3.functor(value);
+            axisLabelColor = d3.functor(color);
             return self;
         };
 
@@ -475,21 +475,21 @@
          * Whether the axis values are displayed in order or not.
          * @memberof! insight.Axis
          * @instance
-         * @returns {boolean} - Whether the axis is currently ordered.
+         * @returns {Boolean} - Whether the axis is currently ordered.
          *
          * @also
          *
          * Sets whether the axis values are displayed in order or not.
          * @memberof! insight.Axis
          * @instance
-         * @param {boolean} value Whether or not the axis will be ordered.
+         * @param {Function|Boolean} shouldOrderAxis Either a function that returns a boolean, or a boolean.
          * @returns {this}
          */
-        self.isOrdered = function(value) {
+        self.isOrdered = function(shouldOrderAxis) {
             if (!arguments.length) {
-                return ordered();
+                return shouldBeOrdered();
             }
-            ordered = d3.functor(value);
+            shouldBeOrdered = d3.functor(shouldOrderAxis);
             return self;
         };
 
@@ -519,21 +519,21 @@
          * Returns a boolean value representing if this Axis is zoomable.
          * @instance
          * @memberof! insight.Axis
-         * @returns {boolean} - A value indicating whether the axis is zoomable or not
+         * @returns {Boolean} - A value indicating whether the axis is zoomable or not
          *
          * @also
          *
          * Sets the zoomable status of this Axis.  A zoomable Axis allows drag and zoom operations, and is not redrawn automatically on the draw() event of a chart.
          * @instance
          * @memberof! insight.Axis
-         * @param {boolean} value - A true/false value to set this Axis as zoomable or not.
+         * @param {Boolean} shouldBeZoomable - A boolean value to set this Axis as zoomable or not.
          * @returns {this}
          */
-        self.isZoomable = function(value) {
+        self.isZoomable = function(shouldBeZoomable) {
             if (!arguments.length) {
                 return zoomable;
             }
-            zoomable = value;
+            zoomable = shouldBeZoomable;
 
             return self;
         };
@@ -552,11 +552,11 @@
          * @param {boolean} displayed Whether or not the axis will be drawn.
          * @returns {this}
          */
-        self.shouldDisplay = function(value) {
+        self.shouldDisplay = function(shouldBeDisplayed) {
             if (!arguments.length) {
-                return display;
+                return shouldDisplay;
             }
-            display = value;
+            shouldDisplay = shouldBeDisplayed;
             return self;
         };
 
@@ -588,21 +588,21 @@
          * Gets the axis label
          * @memberof! insight.Axis
          * @instance
-         * @returns {string} - The axis label
+         * @returns {String} - The axis label
          *
          * @also
          *
          * Sets the axis label
          * @memberof! insight.Axis
          * @instance
-         * @param {string} value The axis label
+         * @param {String} axisLabel The axis label
          * @returns {this}
          */
-        self.label = function(value) {
+        self.label = function(axisLabel) {
             if (!arguments.length) {
                 return label;
             }
-            label = value;
+            label = axisLabel;
             return self;
         };
 
@@ -652,20 +652,20 @@
         };
 
         /**
-         * Gets the color of the axis labels and lines.
+         * Gets the color of the axis lines.
          * @memberof! insight.Axis
          * @instance
-         * @returns {Color} - The color of the axis labels and lines.
+         * @returns {Color} - The color of the axis lines.
          *
          * @also
          *
-         * Sets the color of the axis labels and lines.
+         * Sets the color of the axis lines.
          * @memberof! insight.Axis
          * @instance
-         * @param {Color} color The new color of the axis labels and lines.
+         * @param {Function|Color} color Either a function that returns a color, or a color.
          * @returns {this}
          */
-        self.color = function(color) {
+        self.lineColor = function(color) {
             if (!arguments.length) {
                 return colorFunction;
             }
@@ -831,9 +831,9 @@
          */
         self.shouldShowGridlines = function(showLines) {
             if (!arguments.length) {
-                return showGridlines;
+                return shouldShowGridlines;
             }
-            showGridlines = showLines;
+            shouldShowGridlines = showLines;
 
             return self;
         };
@@ -851,7 +851,7 @@
     insight.Axis.prototype.applyTheme = function(theme) {
         this.tickSize(theme.axisStyle.tickSize);
         this.tickPadding(theme.axisStyle.tickPadding);
-        this.color(theme.axisStyle.axisLineColor);
+        this.lineColor(theme.axisStyle.axisLineColor);
         this.lineWidth(theme.axisStyle.axisLineWidth);
 
         this.tickLabelFont(theme.axisStyle.tickLabelFont);
