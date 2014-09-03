@@ -521,10 +521,7 @@
             .tickSize(5)
             .tickPadding(0)
             .tickLabelOrientation('tb')
-            .isOrdered(true)
-            .orderingFunction(function(a, b) {
-                return b.value.Count - a.value.Count;
-            });
+            .isOrdered(true);
 
         var y = new insight.Axis('Apps', insight.Scales.Linear)
                         .shouldDisplay(false);
