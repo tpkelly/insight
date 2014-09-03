@@ -552,5 +552,91 @@ describe('Axis', function() {
             expect(y.gridlines.allGridlines(chart)[0].length).toEqual(7);
         });
 
+        it('Gridlines drawn when axis has no label', function() {
+            //Given:
+            createChartElement();
+
+            var chart = new insight.Chart('test', '#testChart')
+                .width(500)
+                .height(500);
+
+            var x = new insight.Axis('ValueAxis', insight.Scales.Linear);
+            var y = new insight.Axis('', insight.Scales.Linear)
+                .shouldShowGridlines(true);
+
+            chart.addXAxis(x);
+            chart.addYAxis(y);
+
+            var data = new insight.DataSet([
+                {"key": 1, "value": 1},
+                {"key": 2, "value": 2},
+                {"key": 3, "value": 3}
+            ]);
+            var lineSeries = new insight.LineSeries('line', data, x, y);
+            chart.series([lineSeries]);
+
+            //When:
+            expect(chart.draw).not.toThrow();
+
+            removeChartElement();
+        });
+
+        it('Gridlines drawn when axis has spaces', function() {
+            //Given:
+            createChartElement();
+
+            var chart = new insight.Chart('test', '#testChart')
+                .width(500)
+                .height(500);
+
+            var x = new insight.Axis('ValueAxis', insight.Scales.Linear);
+            var y = new insight.Axis('Key Axis', insight.Scales.Linear)
+                .shouldShowGridlines(true);
+
+            chart.addXAxis(x);
+            chart.addYAxis(y);
+
+            var data = new insight.DataSet([
+                {"key": 1, "value": 1},
+                {"key": 2, "value": 2},
+                {"key": 3, "value": 3}
+            ]);
+            var lineSeries = new insight.LineSeries('line', data, x, y);
+            chart.series([lineSeries]);
+
+            //When:
+            expect(chart.draw).not.toThrow();
+
+            removeChartElement();
+        });
+
+        it('Gridlines drawn when axis has special characters', function() {
+            //Given:
+            createChartElement();
+
+            var chart = new insight.Chart('test', '#testChart')
+                .width(500)
+                .height(500);
+
+            var x = new insight.Axis('ValueAxis', insight.Scales.Linear);
+            var y = new insight.Axis('Key$Axis', insight.Scales.Linear)
+                .shouldShowGridlines(true);
+
+            chart.addXAxis(x);
+            chart.addYAxis(y);
+
+            var data = new insight.DataSet([
+                {"key": 1, "value": 1},
+                {"key": 2, "value": 2},
+                {"key": 3, "value": 3}
+            ]);
+            var lineSeries = new insight.LineSeries('line', data, x, y);
+            chart.series([lineSeries]);
+
+            //When:
+            expect(chart.draw).not.toThrow();
+
+            removeChartElement();
+        });
     });
 });
