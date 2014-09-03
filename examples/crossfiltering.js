@@ -180,10 +180,6 @@ $(document)
                     return d.value.Count;
                 });
 
-            // set RowSeries to first color in the default series palette
-            //  - workaround until ColumnSeries has sub-series removed
-            rowSeries.series[0].color = d3.functor(insight.defaultTheme.chartStyle.seriesPalette[0]);
-
             chart.series([rowSeries]);
 
             return chart;

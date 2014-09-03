@@ -468,10 +468,6 @@
                     return d.key + " <br/> Average App Size (Mb) = " + Math.round(d.value.fileSizeBytes.Average/1024/1024);
                 });
 
-            // set RowSeries to first color in the default series palette
-            //  - workaround until ColumnSeries has sub-series removed
-            bubbles.color = d3.functor(insight.defaultTheme.chartStyle.seriesPalette[0]);
-
             bubbleChart.series([bubbles]);
             chartGroup.add(bubbleChart);
 
@@ -504,10 +500,6 @@
             var lSeries = new insight.ColumnSeries('languages', languages, x, y)
                 .top(10);
 
-            // set ColumnSeries to first color in the default series palette
-            //  - workaround until ColumnSeries has sub-series removed
-            lSeries.series[0].color = d3.functor(insight.defaultTheme.chartStyle.seriesPalette[0]);
-
             chart.series([lSeries]);
             chartGroup.add(chart);
     }
@@ -539,10 +531,6 @@
 
         var series = new insight.ColumnSeries('genre', genreData, x, y)
                                 .valueFunction(function(d){ return d.value.Count; });
-
-        // set ColumnSeries to first color in the default series palette
-        //  - workaround until ColumnSeries has sub-series removed
-        series.series[0].color = d3.functor(insight.defaultTheme.chartStyle.seriesPalette[0]);
 
         chart.series([series]);
         chartGroup.add(chart);
@@ -582,7 +570,7 @@
 
             timeChart.series([cumulative]);
 
-            timeChart.zoomable(xTime);
+            timeChart.setInteractiveAxis(xTime);
             chartGroup.add(timeChart);
     }
 
@@ -620,10 +608,6 @@
 
         var rowSeries = new insight.RowSeries('content', contentRating, x, y)
                                    .valueFunction(function(d){ return d.value.Count;});
-
-        // set ColumnSeries to first color in the default series palette
-        //  - workaround until ColumnSeries has sub-series removed
-        rowSeries.series[0].color = d3.functor(insight.defaultTheme.chartStyle.seriesPalette[0]);
 
         chart.series().push(rowSeries);
         chartGroup.add(chart);
