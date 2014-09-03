@@ -291,31 +291,52 @@ insight.Utils = (function() {
         return retValue;
     };
 
-    // Helper functions for text measurement.  Mock out in tests to remove dependency on window and DOM functions
+    exports.getNativeComputedStyle = function(element) {
+        return window.getComputedStyle(element);
+    };
+
+    // Helper functions for text measurement.
+    // Mock out in tests to remove dependency on window and DOM functions
 
     exports.getElementStyles = function(textElement, styleProperties) {
 
-        var style = window.getComputedStyle(textElement);
+        var style = exports.getNativeComputedStyle(textElement);
         var properties = {};
 
         styleProperties.forEach(function(propertyName) {
-            try {
-                properties[propertyName] = style.getPropertyValue(propertyName);
-            } catch (err) {
-                // handle this formally when we have a logging framework
-                console.log(err);
-            }
+            properties[propertyName] = style.getPropertyValue(propertyName);
         });
 
         return properties;
     };
 
-    exports.getDrawingContext = function(canvas, styles) {
+    exports.getDrawingContext = function(canvas, font) {
 
         var ctx = canvas.getContext('2d');
-        ctx.font = styles['font-size'] + ' ' + styles['font-family'];
+        ctx.font = font;
 
         return ctx;
+    };
+
+    exports.fontSizeFromFont = function(font) {
+
+        var defaultSize = 12;
+        if (!font) {
+            return defaultSize;
+        }
+
+        var fontComponents = font.split(' ');
+
+        for (var i = 0; i < fontComponents.length; i++) {
+            var parsed = parseInt(fontComponents[i]);
+
+            if (!isNaN(parsed)) {
+                return parsed;
+            }
+        }
+
+        return defaultSize;
+
     };
 
     return exports;

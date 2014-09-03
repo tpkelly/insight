@@ -253,10 +253,10 @@ describe('Chart', function() {
                 d3 = new D3Mocks();
 
                 // prevent calling through to functions that are not being tested
-                spyOn(chart, 'calculateLabelMargin');
+                spyOn(chart, 'calculateChartMargin');
                 spyOn(chart, 'draw').andCallThrough();
                 spyOn(chart, 'addClipPath').andCallThrough();
-                spyOn(window, 'getComputedStyle');
+                spyOn(insight.Utils, 'getElementStyles').andReturn({});
 
                 chart.draw();
             };
@@ -356,18 +356,13 @@ describe('Chart', function() {
             xAxis,
             yAxis,
             textElement,
-            styles,
-            measurer,
             minimalMargins = 10;
 
         //Set up tests
         beforeEach(function() {
             chart = new insight.Chart('asda', 'asdads', 'ada');
-            measurer = new insight.MarginMeasurer();
             xAxis = new insight.Axis('', insight.Scales.Linear);
             yAxis = new insight.Axis('', insight.Scales.Linear);
-
-            styles = {'font-size': '10px', 'font-family': 'Helvetica', 'line-height': '18px'};
 
             chart.addXAxis(xAxis);
             chart.addYAxis(yAxis);
@@ -377,9 +372,12 @@ describe('Chart', function() {
         it('margins are set to minimal value when no series on chart', function() {
             //Given:
             chart.series([]);
-            
+
+            spyOn(xAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
+            spyOn(yAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
+
             //When:
-            chart.calculateLabelMargin(measurer, styles);
+            chart.calculateChartMargin();
 
             //Then:
             expect(chart.margin()).toEqual({
@@ -394,19 +392,13 @@ describe('Chart', function() {
             //Given:
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
             
-            var expectedDimensions = {
-                    "maxKeyWidth": 0,
-                    "maxValueWidth": 0,
-                    "maxKeyHeight": 0,
-                    "maxValueHeight": 0
-            };
-            
             chart.series([series]);
 
-            spyOn(measurer, 'seriesLabelDimensions').andReturn(expectedDimensions);
+            spyOn(xAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
+            spyOn(yAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
 
             //When:
-            chart.calculateLabelMargin(measurer, styles);
+            chart.calculateChartMargin();
 
             //Then:
             
@@ -422,20 +414,14 @@ describe('Chart', function() {
         it('bottom margins are expanded when x-axis has labels', function() {
             //Given:
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
-            
-            var expectedDimensions = {
-                    "maxKeyWidth": 15,
-                    "maxValueWidth": 0,
-                    "maxKeyHeight": 20,
-                    "maxValueHeight": 0
-            };
 
-            spyOn(measurer, 'seriesLabelDimensions').andReturn(expectedDimensions);
+            spyOn(xAxis, 'calculateLabelDimensions').andReturn({ width: 15, height: 20});
+            spyOn(yAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
 
             chart.series([series]);
 
             //When:
-            chart.calculateLabelMargin(measurer, styles);
+            chart.calculateChartMargin();
 
             //Then:
             expect(chart.margin()).toEqual({
@@ -450,20 +436,14 @@ describe('Chart', function() {
         it('left margins are expanded when y-axis has labels', function() {
             //Given:
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
-            
-            var expectedDimensions = {
-                    "maxKeyWidth": 0,
-                    "maxValueWidth": 15,
-                    "maxKeyHeight": 0,
-                    "maxValueHeight": 20
-                };
 
-            spyOn(measurer, 'seriesLabelDimensions').andReturn(expectedDimensions);
+            spyOn(xAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
+            spyOn(yAxis, 'calculateLabelDimensions').andReturn({ width: 15, height: 20});
 
             chart.series([series]);
 
             //When:
-            chart.calculateLabelMargin(measurer, styles);
+            chart.calculateChartMargin();
 
             //Then:
             expect(chart.margin()).toEqual({
@@ -479,21 +459,15 @@ describe('Chart', function() {
             //Given:
             yAxis = new insight.Axis('', insight.Scales.Linear).hasReversedPosition(true);
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
-            
-            var maxDimensions = {
-                    "maxKeyWidth": 0,
-                    "maxValueWidth": 15,
-                    "maxKeyHeight": 0,
-                    "maxValueHeight": 20
-                };
 
-            spyOn(measurer, 'seriesLabelDimensions').andReturn(maxDimensions);
+            spyOn(xAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
+            spyOn(yAxis, 'calculateLabelDimensions').andReturn({ width: 15, height: 20});
 
             chart.series([series]);
             chart.yAxis(yAxis);
 
             //When:
-            chart.calculateLabelMargin(measurer, styles);
+            chart.calculateChartMargin();
 
             //Then:
             expect(chart.margin()).toEqual({
@@ -509,21 +483,14 @@ describe('Chart', function() {
             xAxis = new insight.Axis('', insight.Scales.Linear).hasReversedPosition(true);
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
 
-            var maxDimensions = {
-                "maxKeyWidth": 15,
-                "maxValueWidth":0,
-                "maxKeyHeight": 20,
-                "maxValueHeight": 0
-            };
-
-            spyOn(measurer, 'seriesLabelDimensions').andReturn(maxDimensions);
-
+            spyOn(xAxis, 'calculateLabelDimensions').andReturn({ width: 15, height: 20});
+            spyOn(yAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
 
             chart.series([series]);
             chart.xAxis(xAxis);
 
             //When:
-            chart.calculateLabelMargin(measurer, styles);
+            chart.calculateChartMargin();
 
             //Then:
             expect(chart.margin()).toEqual({
@@ -538,19 +505,13 @@ describe('Chart', function() {
             //Given:
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
 
-            var expectedDimensions = {
-                "maxKeyWidth": 5,
-                "maxValueWidth": 0,
-                "maxKeyHeight": 8,
-                "maxValueHeight": 0
-            };
-
-            spyOn(measurer, 'seriesLabelDimensions').andReturn(expectedDimensions);
+            spyOn(xAxis, 'calculateLabelDimensions').andReturn({ width: 5, height: 8});
+            spyOn(yAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
 
             chart.series([series]);
 
             //When:
-            chart.calculateLabelMargin(measurer, styles);
+            chart.calculateChartMargin();
 
             //Then:
             expect(chart.margin()).toEqual({
@@ -563,20 +524,31 @@ describe('Chart', function() {
         });
     });
 
-    describe("adding axes", function() {
-       it("Adding x-axis adds to the axis array", function() {
-           //Given:
-           var chart = new insight.Chart('asda', 'asdads', 'ada');
-           var xAxis = new insight.Axis('', insight.Scales.Linear);
+    describe('xAxis', function() {
+        it("returns empty array when no axis set", function () {
+            //Given:
+            var chart = new insight.Chart('asda', 'asdads', 'ada');
 
-           //When:
-           chart.xAxis(xAxis);
+            //When:
+            var axes = chart.xAxes();
 
-           //Then:
-           expect(chart.xAxes()).toEqual([xAxis]);
-       });
+            //Then:
+            expect(axes).toEqual([]);
+        });
 
-        it("Adding x-axis twice only adds to the axis array once", function() {
+        it("Adding x-axis adds to the axis array", function () {
+            //Given:
+            var chart = new insight.Chart('asda', 'asdads', 'ada');
+            var xAxis = new insight.Axis('', insight.Scales.Linear);
+
+            //When:
+            chart.xAxis(xAxis);
+
+            //Then:
+            expect(chart.xAxes()).toEqual([xAxis]);
+        });
+
+        it("Adding x-axis twice only adds to the axis array once", function () {
             //Given:
             var chart = new insight.Chart('asda', 'asdads', 'ada');
             var xAxis = new insight.Axis('', insight.Scales.Linear);
@@ -589,7 +561,7 @@ describe('Chart', function() {
             expect(chart.xAxes()).toEqual([xAxis]);
         });
 
-        it("Adding x-axes adds to the axis array", function() {
+        it("Adding x-axes adds to the axis array", function () {
             //Given:
             var chart = new insight.Chart('asda', 'asdads', 'ada');
             var xAxis = new insight.Axis('', insight.Scales.Linear);
@@ -601,7 +573,7 @@ describe('Chart', function() {
             expect(chart.xAxes()).toEqual([xAxis]);
         });
 
-        it("Adding x-axes twice only adds to the axis array once", function() {
+        it("Adding x-axes twice only adds to the axis array once", function () {
             //Given:
             var chart = new insight.Chart('asda', 'asdads', 'ada');
             var xAxis = new insight.Axis('', insight.Scales.Linear);
@@ -614,55 +586,87 @@ describe('Chart', function() {
             expect(chart.xAxes()).toEqual([xAxis]);
         });
 
-            it("Adding y-axis adds to the axis array", function() {
-                //Given:
-                var chart = new insight.Chart('asda', 'asdads', 'ada');
-                var yAxis = new insight.Axis('', insight.Scales.Linear);
+        it('Adding x-axis updates axis direction to "h"', function() {
 
-                //When:
-                chart.yAxis(yAxis);
+            //Given:
+            var chart = new insight.Chart('somename', 'somelement', 'ada');
+            var axis = new insight.Axis('Value Axis', insight.Scales.Linear);
 
-                //Then:
-                expect(chart.yAxes()).toEqual([yAxis]);
-            });
+            // When
+            chart.xAxis(axis);
+            var observedResult = axis.direction;
 
-            it("Adding y-axis twice only adds to the axis array once", function() {
-                //Given:
-                var chart = new insight.Chart('asda', 'asdads', 'ada');
-                var yAxis = new insight.Axis('', insight.Scales.Linear);
+            //Then:
+            expect(observedResult).toBe('h');
 
-                //When:
-                chart.yAxis(yAxis);
-                chart.yAxis(yAxis);
+        });
+    });
 
-                //Then:
-                expect(chart.yAxes()).toEqual([yAxis]);
-            });
+    describe('yAxis', function() {
 
-            it("Adding x-axes adds to the axis array", function() {
-                //Given:
-                var chart = new insight.Chart('asda', 'asdads', 'ada');
-                var yAxis = new insight.Axis('', insight.Scales.Linear);
+        it("Adding y-axis adds to the axis array", function() {
+            //Given:
+            var chart = new insight.Chart('asda', 'asdads', 'ada');
+            var yAxis = new insight.Axis('', insight.Scales.Linear);
 
-                //When:
-                chart.yAxes([yAxis]);
+            //When:
+            chart.yAxis(yAxis);
 
-                //Then:
-                expect(chart.yAxes()).toEqual([yAxis]);
-            });
+            //Then:
+            expect(chart.yAxes()).toEqual([yAxis]);
+        });
 
-            it("Adding x-axes twice only adds to the axis array once", function() {
-                //Given:
-                var chart = new insight.Chart('asda', 'asdads', 'ada');
-                var yAxis = new insight.Axis('', insight.Scales.Linear);
+        it("Adding y-axis twice only adds to the axis array once", function() {
+            //Given:
+            var chart = new insight.Chart('asda', 'asdads', 'ada');
+            var yAxis = new insight.Axis('', insight.Scales.Linear);
 
-                //When:
-                chart.yAxes([yAxis]);
-                chart.yAxes([yAxis]);
+            //When:
+            chart.yAxis(yAxis);
+            chart.yAxis(yAxis);
 
-                //Then:
-                expect(chart.yAxes()).toEqual([yAxis]);
-            });
+            //Then:
+            expect(chart.yAxes()).toEqual([yAxis]);
+        });
+
+        it("Adding y-axes adds to the axis array", function() {
+            //Given:
+            var chart = new insight.Chart('asda', 'asdads', 'ada');
+            var yAxis = new insight.Axis('', insight.Scales.Linear);
+
+            //When:
+            chart.yAxes([yAxis]);
+
+            //Then:
+            expect(chart.yAxes()).toEqual([yAxis]);
+        });
+
+        it("Adding y-axes twice only adds to the axis array once", function() {
+            //Given:
+            var chart = new insight.Chart('asda', 'asdads', 'ada');
+            var yAxis = new insight.Axis('', insight.Scales.Linear);
+
+            //When:
+            chart.yAxes([yAxis]);
+            chart.yAxes([yAxis]);
+
+            //Then:
+            expect(chart.yAxes()).toEqual([yAxis]);
+        });
+
+        it('Adding y-axis updates axis direction to "v"', function() {
+
+            //Given:
+            var chart = new insight.Chart('somename', 'somelement', 'ada');
+            var axis = new insight.Axis('Value Axis', insight.Scales.Linear);
+
+            // When
+            chart.yAxis(axis);
+            var observedResult = axis.direction;
+
+            //Then:
+            expect(observedResult).toBe('v');
+        });
     });
 
     describe('resizeWidth', function() {
@@ -670,6 +674,8 @@ describe('Chart', function() {
         var chart, element;
 
         beforeEach(function() {
+
+            spyOn(insight.Utils, 'getElementStyles').andReturn({});
 
             element = document.createElement('div');
             element.id = 'testElement';
@@ -780,6 +786,103 @@ describe('Chart', function() {
 
     });
 
+    describe('calculatePlotAreaSize', function() {
+        var chart,
+            dataSet;
+
+        beforeEach(function() {
+            var data = [
+                { key:'a', value:0,  date: new Date(2014, 0,  1) },
+                { key:'b', value:3,  date: new Date(2014, 0,  3) },
+                { key:'c', value:12, date: new Date(2014, 0,  2) },
+                { key:'d', value:20, date: new Date(2014, 0, 14) },
+                { key:'e', value:13, date: new Date(2013, 4, 15) }
+            ];
+
+            dataSet = new insight.DataSet(data);
+
+            chart = new insight.Chart('test', '#test', 'ada')
+                .width(300)
+                .height(400);
+        });
+
+        describe('for a vertical column series', function() {
+
+            beforeEach(function() {
+                var x = new insight.Axis('Key Axis', insight.Scales.Ordinal);
+                var y = new insight.Axis('Value Axis', insight.Scales.Linear);
+                chart.addXAxis(x);
+                chart.addYAxis(y);
+
+                var series = new insight.ColumnSeries('chart', dataSet, x, y);
+            });
+
+            it('calculates bounds with zero margin', function () {
+
+                //Given:
+                chart.margin({top: 0, left: 0, right: 0, bottom: 0});
+
+                //When:
+                var plotSizeResult = chart.calculatePlotAreaSize();
+                var expectedResult = [300, 400];
+
+                //Then:
+                expect(plotSizeResult).toEqual(expectedResult);
+            });
+
+            it('calculates bounds with a margin', function () {
+
+                //Given:
+                chart.margin({top: 50, left: 0, right: 0, bottom: 100});
+
+                //When:
+                var plotSizeResult = chart.calculatePlotAreaSize();
+                var expectedResult = [300, 250];
+
+                //Then:
+                expect(plotSizeResult).toEqual(expectedResult);
+            });
+        });
+
+        describe('for a horizontal row series', function() {
+
+            beforeEach(function() {
+                var x = new insight.Axis('Key Axis', insight.Scales.Linear);
+                var y = new insight.Axis('Value Axis', insight.Scales.Ordinal);
+                chart.addXAxis(x);
+                chart.addYAxis(y);
+
+                var series = new insight.RowSeries('chart', dataSet, x, y);
+            });
+
+            it('calculates bounds with no margin', function () {
+
+                //Given:
+                chart.margin({top: 0, left: 0, right: 0, bottom: 0});
+
+                //When:
+                var plotSizeResult = chart.calculatePlotAreaSize();
+                var expectedResult = [300, 400];
+
+                //Then:
+                expect(plotSizeResult).toEqual(expectedResult);
+            });
+
+            it('calculates bounds with a margin', function () {
+
+                //Given:
+                chart.margin({top: 0, left: 100, right: 10, bottom: 0});
+
+                //When:
+                var plotSizeResult = chart.calculatePlotAreaSize();
+                var expectedResult = [190, 400];
+
+                //Then:
+                expect(plotSizeResult).toEqual(expectedResult);
+            });
+        });
+
+    });
 
     describe('seriesIndexByType', function() {
 
