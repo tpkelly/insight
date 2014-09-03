@@ -1,10 +1,33 @@
-=== Version 1.1.0 (XX-XXX-2014) ===
+=== Version 1.1.0 (05-Sep-2014) ===
 
-* Updates Axis property names: tickLabelRotation, tickLabelFormat, tickLabelOrientation
+* Adds theming to charts and tables. By default this uses the LightTheme.
+* Removes the concept of sub-series from Column and Row series. Instead, multiple bars should be represented by multiple series.
+
+* Renames methods to more meaningful names
+  * Axis.ordered => Axis.isOrdered
+  * Axis.reversedPosition => Axis.hasReversedPosition
+  * Axis.showGridlines => Axis.shouldShowGridlines
+  * Axis.horizontal => Axis.isHorizontal
+  * Axis.display => Axis.shouldDisplay
+  * Axis.zoomable => Axis.isZoomable
+  * Axis.tickOrientation => Axis.tickLabelOrientation
+  * Axis.tickRotation => Axis.tickLabelRotation
+  * Axis.labelFormat => Axis.tickLabelFormat
+  * Axis.color => Axis.lineColor
+  * Chart.zoomable => Chart.setInteractiveAxis
+  * LineSeries.showPoints => LineSeries.shouldShowPoints
+
+* Fixes issue with Chart titles not displaying correctly.
+* Fixes issue with margins being too small when using auto margin.
+* Fixes issue where tables are not redrawn after cross filter is applied.
+
+
 
 === Version 1.0.1 (11-Aug-2014) ===
 
 * Fix issue with cross filtering on Bubble series.
+
+
 
 === Version 1.0.0 (08-Aug-2014) ===
 
