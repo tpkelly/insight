@@ -489,6 +489,36 @@ describe('Axis', function() {
         });
     });
 
+    var fakeMeasurer = {
+        measureText: function(text, font, angleDegrees) {
+
+            if (!text) {
+                return { width: 0, height: 0 };
+            }
+
+            if (!angleDegrees) {
+                angleDegrees = 0;
+            }
+
+            var fontSize = insight.Utils.fontSizeFromFont(font);
+
+            var width = text.length * fontSize + angleDegrees;
+            var height = text.length * fontSize + angleDegrees * 2;
+
+            return {
+                width: width,
+                height: height
+            };
+
+        }
+    };
+
+    function mockCreateTextMeasurer() {
+
+        return fakeMeasurer;
+
+    }
+
     describe('calculateLabelDimensions', function() {
         var axis,
             axisFont = insight.defaultTheme.axisStyle.axisLabelFont,
@@ -498,36 +528,6 @@ describe('Axis', function() {
             tickLabelFont = insight.defaultTheme.axisStyle.tickLabelFont,
             tickLabelFontSize = insight.Utils.fontSizeFromFont(tickLabelFont),
             tickSize = 10;
-
-        var fakeMeasurer = {
-            measureText: function(text, font, angleDegrees) {
-
-                if (!text) {
-                    return { width: 0, height: 0 };
-                }
-
-                if (!angleDegrees) {
-                    angleDegrees = 0;
-                }
-
-                var fontSize = insight.Utils.fontSizeFromFont(font);
-
-                var width = text.length * fontSize + angleDegrees;
-                var height = text.length * fontSize + angleDegrees * 2;
-
-                return {
-                    width: width,
-                    height: height
-                };
-
-            }
-        };
-
-        function mockCreateTextMeasurer() {
-
-            return fakeMeasurer;
-
-        }
 
         var data = [
             {key: 'Largest', value: 700},
@@ -789,6 +789,797 @@ describe('Axis', function() {
             });
 
         });
+
+    });
+
+    describe('calculateLabelOverhang', function() {
+
+        var axis,
+            tickLabelFont = insight.defaultTheme.axisStyle.tickLabelFont;
+
+        beforeEach(function() {
+            spyOn(insight.TextMeasurer, 'create').andCallFake(mockCreateTextMeasurer);
+        });
+
+        describe('with ordinal scale', function() {
+
+            var data = [
+                {key: 'First', value: 1},
+                {key: 'Middle', value: 3},
+                {key: 'Last', value: 2}
+            ];
+
+            beforeEach(function() {
+                axis = new insight.Axis('', insight.Scales.Ordinal)
+                    .tickLabelFormat(function(tickValue) {
+                        return tickValue + '!!!';
+                    });
+
+                var secondaryAxis = new insight.Axis('Y Label', insight.Scales.Linear);
+                series = new insight.ColumnSeries('testSeries', data, axis, secondaryAxis);
+            });
+
+            describe('on horizontal axis', function() {
+
+                beforeEach(function() {
+                    axis.isHorizontal = d3.functor(true);
+                });
+
+                describe('with no tickLabelRotation', function() {
+
+                    beforeEach(function() {
+                        axis.tickLabelRotation(0);
+                    });
+
+                    it('and textAnchor start - has right overhang only, using width of last formatted tick value', function() {
+
+                        // Given
+                        axis.textAnchor('start');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedRight = fakeMeasurer.measureText('Last!!!', tickLabelFont).width;
+
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: expectedRight,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                    it('and textAnchor middle - has left and right overhang, using half the width of first and last formatted tick values', function() {
+
+                        // Given
+                        axis.textAnchor('middle');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedLeft = fakeMeasurer.measureText('First!!!', tickLabelFont).width / 2;
+                        var expectedRight = fakeMeasurer.measureText('Last!!!', tickLabelFont).width / 2;
+
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: Math.ceil(expectedRight),
+                            left: Math.ceil(expectedLeft)
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                    it('and textAnchor end - has left overhang only, using width of first formatted tick value', function() {
+
+                        // Given
+                        axis.textAnchor('end');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedLeft = fakeMeasurer.measureText('First!!!', tickLabelFont).width;
+
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: 0,
+                            left: expectedLeft
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                });
+
+                describe('with 90 degree tickLabelRotation', function() {
+
+                    beforeEach(function() {
+                        axis.tickLabelRotation(90);
+                    });
+
+                    it('and textAnchor start - has no left or right overhang', function() {
+
+                        // Given
+                        axis.textAnchor('start');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: 0,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                    it('and textAnchor middle - has no left or right overhang', function() {
+
+                        // Given
+                        axis.textAnchor('middle');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: 0,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                    it('and textAnchor end - has no left or right overhang', function() {
+
+                        // Given
+                        axis.textAnchor('end');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: 0,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                });
+
+                describe('with 180 degree tickLabelRotation', function() {
+
+                    var rotation = 180;
+
+                    beforeEach(function() {
+                        axis.tickLabelRotation(rotation);
+                    });
+
+                    it('and textAnchor start - has right overhang only, using width of last formatted tick value', function() {
+
+                        // Given
+                        axis.textAnchor('start');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedRight = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).width;
+
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: expectedRight,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                    it('and textAnchor middle - has left and right overhang, using half the width of first and last formatted tick values', function() {
+
+                        // Given
+                        axis.textAnchor('middle');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedLeft = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).width / 2;
+                        var expectedRight = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).width / 2;
+
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: Math.ceil(expectedRight),
+                            left: Math.ceil(expectedLeft)
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                    it('and textAnchor end - has left overhang only, using width of first formatted tick value', function() {
+
+                        // Given
+                        axis.textAnchor('end');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedLeft = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).width;
+
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: 0,
+                            left: expectedLeft
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                });
+
+                describe('with 30 degree tickLabelRotation', function() {
+
+                    var rotation = 30;
+
+                    beforeEach(function() {
+                        axis.tickLabelRotation(rotation);
+                    });
+
+                    it('and textAnchor start - has right overhang only, using width of last formatted tick value', function() {
+
+                        // Given
+                        axis.textAnchor('start');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedRight = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).width;
+
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: expectedRight,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                    it('and textAnchor middle - has left and right overhang, using half the width of first and last formatted tick values', function() {
+
+                        // Given
+                        axis.textAnchor('middle');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedLeft = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).width / 2;
+                        var expectedRight = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).width / 2;
+
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: Math.ceil(expectedRight),
+                            left: Math.ceil(expectedLeft)
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                    it('and textAnchor end - has left overhang only, using width of first formatted tick value', function() {
+
+                        // Given
+                        axis.textAnchor('end');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedLeft = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).width;
+
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: 0,
+                            left: expectedLeft
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                });
+
+                describe('with 170 degree tickLabelRotation', function() {
+
+                    var rotation = 170;
+
+                    beforeEach(function() {
+                        axis.tickLabelRotation(rotation);
+                    });
+
+                    it('and textAnchor start - has left overhang only, using width of first formatted tick value', function() {
+
+                        // Given
+                        axis.textAnchor('start');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedLeft = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).width;
+
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: 0,
+                            left: expectedLeft
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                    it('and textAnchor middle - has left and right overhang, using half the width of first and last formatted tick values', function() {
+
+                        // Given
+                        axis.textAnchor('middle');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedLeft = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).width / 2;
+                        var expectedRight = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).width / 2;
+
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: Math.ceil(expectedRight),
+                            left: Math.ceil(expectedLeft)
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                    it('and textAnchor end - has right overhang only, using width of last formatted tick value', function() {
+
+                        // Given
+                        axis.textAnchor('end');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedRight = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).width;
+
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: expectedRight,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                });
+
+            });
+
+            describe('on vertical axis', function() {
+
+                beforeEach(function() {
+                    axis.isHorizontal = d3.functor(false);
+                });
+
+                describe('with no tickLabelRotation', function() {
+
+                    beforeEach(function() {
+                        axis.tickLabelRotation(0);
+                    });
+
+                    it('and textAnchor start - has no top or bottom overhang', function() {
+
+                        // Given
+                        axis.textAnchor('start');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: 0,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                    it('and textAnchor middle - has no top or bottom overhang', function() {
+
+                        // Given
+                        axis.textAnchor('middle');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: 0,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                    it('with textAnchor end - has no top or bottom overhang', function() {
+
+                        // Given
+                        axis.textAnchor('end');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: 0,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                });
+
+                describe('with 90 degree tickLabelRotation', function() {
+
+                    var rotation = 90;
+
+                    beforeEach(function() {
+                        axis.tickLabelRotation(rotation);
+                    });
+
+                    it('with textAnchor start - has bottom overhang only, using height of first formatted tick value', function() {
+
+                        // Given
+                        axis.textAnchor('start');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedBottom = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).height;
+
+                        var expectedResult = {
+                            top: 0,
+                            bottom: expectedBottom,
+                            right: 0,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                    it('with textAnchor middle - has top and bottom overhang, using half the height of first and last formatted tick values', function() {
+
+                        // Given
+                        axis.textAnchor('middle');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedBottom = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).height / 2;
+                        var expectedTop = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).height / 2;
+
+                        var expectedResult = {
+                            top: expectedTop,
+                            bottom: expectedBottom,
+                            right: 0,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                    it('with textAnchor end - has top overhang only, using height of last formatted tick value', function() {
+
+                        // Given
+                        axis.textAnchor('end');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedTop = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).height;
+
+                        var expectedResult = {
+                            top: expectedTop,
+                            bottom: 0,
+                            right: 0,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                });
+
+                describe('with 180 degree tickLabelRotation', function() {
+
+                    var rotation = 180;
+
+                    beforeEach(function() {
+                        axis.tickLabelRotation(rotation);
+                    });
+
+                    it('and textAnchor start - has no top or bottom overhang', function() {
+
+                        // Given
+                        axis.textAnchor('start');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: 0,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                    it('and textAnchor middle - has no top or bottom overhang', function() {
+
+                        // Given
+                        axis.textAnchor('middle');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: 0,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                    it('with textAnchor end - has no top or bottom overhang', function() {
+
+                        // Given
+                        axis.textAnchor('end');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedResult = {
+                            top: 0,
+                            bottom: 0,
+                            right: 0,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                });
+
+                describe('with 30 degree tickLabelRotation', function() {
+
+                    var rotation = 30;
+
+                    beforeEach(function() {
+                        axis.tickLabelRotation(rotation);
+                    });
+
+                    it('and textAnchor start - has bottom overhang only, using height of first formatted tick value', function() {
+
+                        // Given
+                        axis.textAnchor('start');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedBottom = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).height;
+
+                        var expectedResult = {
+                            top: 0,
+                            bottom: expectedBottom,
+                            right: 0,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                    it('and textAnchor middle - has top and bottom overhang, using half the height of first and last formatted tick values', function() {
+
+                        // Given
+                        axis.textAnchor('middle');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedBottom = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).height / 2;
+                        var expectedTop = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).height / 2;
+
+                        var expectedResult = {
+                            top: Math.ceil(expectedTop),
+                            bottom: Math.ceil(expectedBottom),
+                            right: 0,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                    it('and textAnchor end - has top overhang only, using height of last formatted tick value', function() {
+
+                        // Given
+                        axis.textAnchor('end');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedTop = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).height;
+
+                        var expectedResult = {
+                            top: expectedTop,
+                            bottom: 0,
+                            right: 0,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                });
+
+                describe('with 170 degree tickLabelRotation', function() {
+
+                    var rotation = 170;
+
+                    beforeEach(function() {
+                        axis.tickLabelRotation(rotation);
+                    });
+
+                    it('and textAnchor start - has bottom overhang only, using height of first formatted tick value', function() {
+
+                        // Given
+                        axis.textAnchor('start');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedBottom = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).height;
+
+                        var expectedResult = {
+                            top: 0,
+                            bottom: expectedBottom,
+                            right: 0,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                    it('and textAnchor middle - has top and bottom overhang, using half the height of first and last formatted tick values', function() {
+
+                        // Given
+                        axis.textAnchor('middle');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedBottom = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).height / 2;
+                        var expectedTop = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).height / 2;
+
+                        var expectedResult = {
+                            top: Math.ceil(expectedTop),
+                            bottom: Math.ceil(expectedBottom),
+                            right: 0,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                    it('and textAnchor end - has top overhang only, using height of last formatted tick value', function() {
+
+                        // Given
+                        axis.textAnchor('end');
+
+                        // When
+                        var result = axis.calculateLabelOverhang();
+
+                        // Then
+                        var expectedTop = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).height;
+
+                        var expectedResult = {
+                            top: expectedTop,
+                            bottom: 0,
+                            right: 0,
+                            left: 0
+                        };
+
+                        expect(result).toEqual(expectedResult);
+
+                    });
+
+                });
+
+            });
+
+        });
+
     });
 
 });

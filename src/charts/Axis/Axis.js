@@ -198,12 +198,43 @@
 
         self.calculateLabelOverhang = function() {
 
-            return {
+            var overhangs = {
                 top: 0,
                 bottom: 0,
                 left: 0,
                 right: 0
             };
+
+            if ((self.isHorizontal() && (self.tickLabelRotation() % 180 === 90)) ||
+                (!self.isHorizontal() && (self.tickLabelRotation() % 180 === 0))) {
+                return overhangs;
+            }
+
+            var textMeasurer = insight.TextMeasurer.create(self.measureCanvas);
+
+            var domain = self.domain();
+
+            var firstTick = self.tickLabelFormat()(domain[0]);
+            var lastTick = self.tickLabelFormat()(domain[domain.length - 1]);
+
+            var firstTickSize = textMeasurer.measureText(firstTick, self.tickLabelFont(), self.tickLabelRotation());
+            var lastTickSize = textMeasurer.measureText(lastTick, self.tickLabelFont(), self.tickLabelRotation());
+
+            var angleRadians = insight.Utils.degreesToRadians(self.tickLabelRotation());
+
+            var overhangLast = self.isHorizontal() ? (Math.cos(angleRadians) > 0) : (Math.sin(angleRadians) < 0);
+
+            overhangs = {
+                top: (!self.isHorizontal() && overhangLast) ? lastTickSize.height : 0,
+                bottom: (!self.isHorizontal() && !overhangLast) ? firstTickSize.height : 0,
+                left: (self.isHorizontal() && !overhangLast) ? firstTickSize.width : 0,
+                right: (self.isHorizontal() && overhangLast) ? lastTickSize.width : 0
+            };
+
+
+
+
+            return overhangs;
 
         };
 

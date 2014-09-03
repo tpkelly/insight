@@ -11,14 +11,6 @@
         var self = this,
             measureCanvas = canvas;
 
-        // Private functions
-
-        function degreesToRadians(angle) {
-
-            return angle * Math.PI / 180;
-
-        }
-
         // Internal functions -------------------------------------------------------------------------------------------
 
         self.measureText = function(text, font, angleDegrees) {
@@ -31,7 +23,7 @@
             var actualTextWidth = measurer.measureText(text).width;
             var roughTextHeight = measurer.measureText('aa').width;
 
-            var angleRadians = degreesToRadians(angleDegrees);
+            var angleRadians = insight.Utils.degreesToRadians(angleDegrees);
 
             var height = actualTextWidth * Math.sin(angleRadians) + roughTextHeight * Math.cos(angleRadians);
             var width = actualTextWidth * Math.cos(angleRadians) + roughTextHeight * Math.sin(angleRadians);
