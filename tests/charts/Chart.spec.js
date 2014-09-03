@@ -350,7 +350,7 @@ describe('Chart', function() {
         });
     });
 
-    describe('autosize margins', function() {
+    describe('calculateChartMargin', function() {
 
         var chart,
             xAxis,
@@ -369,7 +369,7 @@ describe('Chart', function() {
 
         });
 
-        it('margins are set to minimal value when no series on chart', function() {
+        it('sets margins to minimal value when no series on chart', function() {
             //Given:
             chart.series([]);
 
@@ -388,7 +388,7 @@ describe('Chart', function() {
             });
         });
 
-        it('margins are set to minimal value when series has no data', function() {
+        it('sets margins to minimal value when series has no data', function() {
             //Given:
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
             
@@ -411,7 +411,7 @@ describe('Chart', function() {
 
         });
 
-        it('bottom margins are expanded when x-axis has labels', function() {
+        it('expands bottom margin when x-axis has labels', function() {
             //Given:
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
 
@@ -433,7 +433,7 @@ describe('Chart', function() {
 
         });
 
-        it('left margins are expanded when y-axis has labels', function() {
+        it('expands left margins when y-axis has labels', function() {
             //Given:
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
 
@@ -455,7 +455,7 @@ describe('Chart', function() {
 
         });
 
-        it('right margins are expanded when y-axis is reversed', function() {
+        it('expands right margins y-axis is reversed', function() {
             //Given:
             yAxis = new insight.Axis('', insight.Scales.Linear).hasReversedPosition(true);
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
@@ -478,7 +478,7 @@ describe('Chart', function() {
             });
         });
 
-        it('top margins are expanded when x-axis is reversed', function() {
+        it('expands top margins when x-axis is reversed', function() {
             //Given:
             xAxis = new insight.Axis('', insight.Scales.Linear).hasReversedPosition(true);
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
@@ -501,7 +501,7 @@ describe('Chart', function() {
             });
         });
 
-        it('margins are not expanded for margins smaller than minimal value', function() {
+        it('doesn\'t expand margins for margins smaller than minimal value', function() {
             //Given:
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
 
