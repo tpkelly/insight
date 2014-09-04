@@ -1,0 +1,30 @@
+</div>
+<div class="row">
+    <div class="col-md-6 description" >
+        <p>
+            This chart uses a <code>ColumnSeries</code> and a <code>MarkerSeries</code> to display the current and
+            target number of points for teams in a football league:
+            <code class="language-javascript">
+var currentPoints = new insight.ColumnSeries('Current', leaguePlaces, x, y)
+    .keyFunction(teamNameFunc)
+    .valueFunction(function(d) {
+        return d.currentPoints;
+    });
+
+var targetPoints = new insight.MarkerSeries('Target', leaguePlaces, x, y)
+    .keyFunction(teamNameFunc)
+    .valueFunction(function(d) {
+        return d.targetPoints;
+    })
+    .widthFactor(0.7);
+
+// add all series as one array
+chart.series([currentPoints, targetPoints]);
+            </code>
+        </p>
+    </div>
+
+    <div id="league" class="exampleChart col-md-6">
+
+    </div>
+</div>

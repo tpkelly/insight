@@ -1,0 +1,148 @@
+/*Tooltip Styles*/
+
+.d3-tip
+{
+    background-color: #333;
+    color: #fff;
+    padding: 1em;
+    font-size: 15px;
+    opacity: 0.8;
+    transition: 0.2s ease all;
+    -webkit-border-radius: 2px;
+    -border-radius: 2px;
+    -moz-border-radius: 2px;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+
+.d3-tip:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+
+.d3-tip.n:after {
+  margin: -2px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+
+/*Axis Styles*/
+
+.in-axis
+{
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 13px;
+}
+
+.in-axis path
+{
+    stroke: #666;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+    fill: none;
+}
+
+.in-axis text
+{
+    fill: #666;
+    stroke: none;
+}
+
+.axis-text {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 13px;
+}
+
+/* Table Styles */
+
+.in-table th, in-table td
+{
+    padding: 0.4em 1em;
+}
+
+.in-table td
+{
+  text-align: right;
+}
+
+.in-datarow
+{
+  cursor: pointer;
+}
+.in-datarow.selected
+{
+  background: #D3D3E7;
+}
+.in-datarow:hover:not(.selected)
+{
+  background: #eee;
+}
+
+
+/*Dynamic Styles*/
+
+.active
+{
+    fill: #34495e;
+}
+
+.notselected
+{
+    fill: silver !important;
+    opacity: 0.5 !important;
+}
+
+/* Bar Styles*/
+
+rect.bar
+{
+    transition: 0.2s ease all;
+}
+
+/*Line Styles*/
+
+path.in-line
+{
+    stroke-width: 3;
+}
+
+circle.target-point 
+{
+    stroke: #fff;
+    fill: #888;
+    stroke-width: 2;
+}
+
+/*Bubble Styles*/
+.bubble
+{
+    opacity: 0.5;
+    stroke: #FFF;
+    stroke-width: 2;
+    transition: 0.3s ease all;
+    fill: rgb(44, 44, 85);
+}
+
+.bubble:active
+{
+    stroke: #222;
+}
+
+/*circle styles*/
+circle.target-point 
+{
+    stroke: #fff;
+    fill: cyan;
+    stroke-width: 1;
+}

@@ -78,7 +78,7 @@ img
   display: inline-block;
 }
 
-#container-body div {
+#container-body div:not(.d3-tip) {
   margin-top: 20px;
 }
 
@@ -213,4 +213,20 @@ img
 
 }
 
+button {
+  border-width:0
+}
 
+
+button.selected {
+  background-color: #ccc;
+  border-width: 1;
+  border-color: #aaa;
+}
+
+#correlationDiv {
+  width:90%;
+  text-align:right;
+  position:absolute;
+  z-index:100;
+}

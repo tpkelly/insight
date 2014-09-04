@@ -112,18 +112,20 @@
                 url: 'datasets/revenuereport.json'
             }];
 
-            $scope.dataset = {};
-            $scope.dataset.dummy = null;
-            $scope.dataset.selectedItem = datasets[0];
-            $scope.dataset.dimensions = [];
-            $scope.dataset.groupings = [];
-            $scope.dataset.ndx = {};
-            $scope.dataset.measures = [];
-            $scope.dataset.charts = [];
+            $scope.dataset = {
+                dummy: null,
+                selectedItem : datasets[0],
+                dimensions : [],
+                groupings : [],
+                ndx : {},
+                measures : [],
+                charts : [],
+                selectedDimensions : [],
+                selectedMeasures : []
+            };
+            
             $scope.chartId = 1;
             $scope.list1 = true;
-            $scope.dataset.selectedDimensions = [];
-            $scope.dataset.selectedMeasures = [];
 
             $scope.chartName = function(chart)
             {
@@ -439,8 +441,7 @@
 
             var bubbleX = new insight.Axis('Average Rating', insight.Scales.Linear)
                 .tickSize(5)
-                .tickPadding(0)
-                .tickLabelOrientation('tb');
+                .tickPadding(0);
 
             var bubbleY = new insight.Axis('$', insight.Scales.Linear)
                 .tickSize(5);
@@ -487,8 +488,7 @@
             var x = new insight.Axis('Language', insight.Scales.Ordinal)
                 .tickSize(5)
                 .tickPadding(0)
-                .tickLabelOrientation('tb')
-                .ordered(true);
+                .isOrdered(true);
 
             var y = new insight.Axis('', insight.Scales.Linear);
 
@@ -505,29 +505,21 @@
     function createGenreCountChart(chartGroup, genreData){
 
         var chart = new insight.Chart('Genre Chart', "#genre-count")
-                .width(500)
-                .height(325)
-                .margin(
-                {
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 120
-                });
+                .width(550)
+                .height(400);
 
-        var x = new insight.Axis('', insight.Scales.Ordinal)
-            .tickSize(5)
-            .tickPadding(0)
-            .tickLabelOrientation('tb')
-            .ordered(true);
+        var y = new insight.Axis('', insight.Scales.Ordinal)
+            .tickSize(0)
+            .tickPadding(5)
+            .isOrdered(true);
 
-        var y = new insight.Axis('Apps', insight.Scales.Linear)
-                        .display(false);
+        var x = new insight.Axis('', insight.Scales.Linear)
+                        .hasReversedPosition(true);
 
         chart.xAxis(x)
              .yAxis(y);
 
-        var series = new insight.ColumnSeries('genre', genreData, x, y)
+        var series = new insight.RowSeries('genre', genreData, x, y)
                                 .valueFunction(function(d){ return d.value.Count; });
 
         chart.series([series]);
@@ -538,7 +530,7 @@
 
     function createTimeChart(chartGroup, timeData) {
         var timeChart = new insight.Chart('Releases over time', '#time-releases')
-                .width(600)
+                .width(450)
                 .height(325)
                 .margin(
                 {
@@ -563,12 +555,12 @@
                 .valueFunction(function(d)
                 {
                     return d.value.CountCumulative;
-                }).showPoints(false);
+                }).shouldShowPoints(false);
 
 
             timeChart.series([cumulative]);
 
-            timeChart.zoomable(xTime);
+            timeChart.setInteractiveAxis(xTime);
             chartGroup.add(timeChart);
     }
 
@@ -591,10 +583,10 @@
         var x = new insight.Axis('', insight.Scales.Linear)
                            .tickSize(5)
                            .tickLabelRotation(45)
-                           .display(false);
+                           .shouldDisplay(false);
 
         var y = new insight.Axis('', insight.Scales.Ordinal)
-                           .ordered(true)
+                           .isOrdered(true)
                            .orderingFunction(function(a,b) {
                                 var aIndex = axisOrder.indexOf(a.key),
                                     bIndex = axisOrder.indexOf(b.key);
@@ -606,7 +598,7 @@
 
         var rowSeries = new insight.RowSeries('content', contentRating, x, y)
                                    .valueFunction(function(d){ return d.value.Count;});
-        
+
         chart.series().push(rowSeries);
         chartGroup.add(chart);
         
