@@ -1712,4 +1712,72 @@ describe('Axis', function() {
 
     });
 
+    describe('textAnchor', function() {
+
+        var axis;
+
+        beforeEach(function() {
+            axis = new insight.Axis('TestAxis', insight.Scales.Linear);
+        });
+
+        it('defaults to middle for a horizontal axis', function() {
+
+            // Given
+            axis.isHorizontal = d3.functor(true);
+
+            // When
+            var result = axis.textAnchor();
+
+            // Then
+            expect(result).toBe('middle');
+
+
+        });
+
+        it('defaults to middle for a horizontal axis with reversed position', function() {
+
+            // Given
+            axis.isHorizontal = d3.functor(true);
+            axis.hasReversedPosition(true);
+
+            // When
+            var result = axis.textAnchor();
+
+            // Then
+            expect(result).toBe('middle');
+
+
+        });
+
+        it('defaults to end for a vertical axis', function() {
+
+            // Given
+            axis.isHorizontal = d3.functor(false);
+
+            // When
+            var result = axis.textAnchor();
+
+            // Then
+            expect(result).toBe('end');
+
+
+        });
+
+        it('defaults to start for a vertical axis with reversed position', function() {
+
+            // Given
+            axis.isHorizontal = d3.functor(false);
+            axis.hasReversedPosition(true);
+
+            // When
+            var result = axis.textAnchor();
+
+            // Then
+            expect(result).toBe('start');
+
+
+        });
+
+    });
+
 });
