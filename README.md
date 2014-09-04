@@ -3,15 +3,31 @@ InsightJS [![Travis Results](https://travis-ci.org/ScottLogic/insight.svg?branch
 
 InsightJS is a JavaScript data aggregation and visualization library that allows you to quickly load and find patterns in datasets.  Given a data set, InsightJS can group the records across the dimensions of the data to quickly aggregate and provide statistics on the data.
 
-### Version 1.0.1 (11-Aug-2014)
+### Version 1.1.0 (05-Sep-2014)
 
-* Adds Charts with zoomable axes, gridlines and legends.
-* Adds Chart groups to show filtering of data across multiple charts.
-* Adds Line, Bar/Column, Marker, Scatter and Bubble series.
-* Adds Tooltips when hovering over datapoints.
-* Adds Tables with filtering and sorting.
-* Adds Analysis tools including data grouping and dimensional analysis.
-* Fix issue with cross filtering on Bubble series
+* Adds theming to charts and tables. By default this uses the LightTheme.
+* Removes the concept of sub-series from Column and Row series. Instead, multiple bars should be represented by multiple series.
+* Introduces the “Correlation Coefficient” calculator, as “insight.correlation”.
+* Adjusted sorting for ColumnSeries and RowSeries. If the key-axis is ordered, all series will be sorted in ascending order, except;
+  * RowSeries - sorts such that the longest bar is at the top.
+  * ColumnSeries - sorts such that the longest bar is on the left.
+
+* Renames methods to more meaningful names
+  * Axis.ordered => Axis.isOrdered
+  * Axis.reversedPosition => Axis.hasReversedPosition
+  * Axis.showGridlines => Axis.shouldShowGridlines
+  * Axis.horizontal => Axis.isHorizontal
+  * Axis.display => Axis.shouldDisplay
+  * Axis.tickOrientation => Axis.tickLabelOrientation
+  * Axis.tickRotation => Axis.tickLabelRotation
+  * Axis.labelFormat => Axis.tickLabelFormat
+  * Axis.color => Axis.lineColor
+  * Chart.zoomable => Chart.setInteractiveAxis
+  * LineSeries.showPoints => LineSeries.shouldShowPoints
+
+* Fixes issue with Chart titles not displaying correctly.
+* Fixes issue with margins being too small when using auto margin.
+* Fixes issue where tables are not redrawn after cross filter is applied.
 
 ### Getting Started
 
