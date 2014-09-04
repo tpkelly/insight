@@ -33,8 +33,8 @@
             width = width.toFixed(10);
 
             return {
-                width: Math.ceil(Math.abs(width)),
-                height: Math.ceil(Math.abs(height))
+                width: Math.ceil(width),
+                height: Math.ceil(height)
             };
 
         };

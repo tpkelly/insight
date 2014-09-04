@@ -489,36 +489,6 @@ describe('Axis', function() {
         });
     });
 
-    var fakeMeasurer = {
-        measureText: function(text, font, angleDegrees) {
-
-            if (!text) {
-                return { width: 0, height: 0 };
-            }
-
-            if (!angleDegrees) {
-                angleDegrees = 0;
-            }
-
-            var fontSize = insight.Utils.fontSizeFromFont(font);
-
-            var width = text.length * fontSize + angleDegrees;
-            var height = text.length * fontSize + angleDegrees * 2;
-
-            return {
-                width: width,
-                height: height
-            };
-
-        }
-    };
-
-    function mockCreateTextMeasurer() {
-
-        return fakeMeasurer;
-
-    }
-
     describe('calculateLabelDimensions', function() {
         var axis,
             axisFont = insight.defaultTheme.axisStyle.axisLabelFont,
@@ -527,12 +497,13 @@ describe('Axis', function() {
             tickPadding = 5,
             tickLabelFont = insight.defaultTheme.axisStyle.tickLabelFont,
             tickLabelFontSize = insight.Utils.fontSizeFromFont(tickLabelFont),
-            tickSize = 10;
+            tickSize = 10,
+            fakeMeasurer;
 
         var data = [
             {key: 'Largest', value: 700},
-            {key: 'Medium', value: 600},
-            {key: 'Tiny', value: 400}
+            {key: 'Mid', value: 600},
+            {key: 'T', value: 400}
         ];
 
         beforeEach(function() {
@@ -541,7 +512,9 @@ describe('Axis', function() {
 
             series = new insight.ColumnSeries('testSeries', data, axis, secondaryAxis);
 
-            spyOn(insight.TextMeasurer, 'create').andCallFake(mockCreateTextMeasurer);
+            var canvas = document.createElement('canvas');
+
+            fakeMeasurer = new insight.TextMeasurer(canvas);
         });
 
         describe('horizontal axis', function() {
@@ -631,6 +604,32 @@ describe('Axis', function() {
                     tickSize +
                     tickPadding * 2 +
                     expectedTickLabelHeight +
+                    expectedAxisLabelHeight;
+
+                expect(result.height).toBe(expectedResult);
+
+            });
+
+            it('handles negative text height', function() {
+
+                // Given
+                var tickLabelRotation = 180;
+
+                axis.tickSize(tickSize)
+                    .tickPadding(tickPadding)
+                    .label(axisLabel)
+                    .tickLabelRotation(tickLabelRotation);
+
+                // When
+                var result = axis.calculateLabelDimensions();
+
+                // Then
+                var expectedAxisLabelHeight = fakeMeasurer.measureText(axisLabel, axisFont).height;
+
+                var expectedResult =
+                    tickSize +
+                    tickPadding * 2 +
+                    0 +
                     expectedAxisLabelHeight;
 
                 expect(result.height).toBe(expectedResult);
@@ -759,6 +758,33 @@ describe('Axis', function() {
 
             });
 
+            it('handles negative text width', function() {
+
+                // Given
+                var tickLabelRotation = 180;
+
+                axis.tickSize(tickSize)
+                    .tickPadding(tickPadding)
+                    .label(axisLabel)
+                    .tickLabelRotation(tickLabelRotation);
+
+                // When
+                var result = axis.calculateLabelDimensions();
+
+                // Then
+                var expectedAxisLabelWidth = fakeMeasurer.measureText(axisLabel, axisFont).width;
+
+                var expectedResult =
+                    tickSize +
+                    tickPadding * 2 +
+                    0 +
+                    expectedAxisLabelWidth;
+
+                expect(result.width).toBe(expectedResult);
+
+            });
+
+
             it('handles formatted tick labels', function() {
 
                 // Given
@@ -795,10 +821,12 @@ describe('Axis', function() {
     describe('calculateLabelOverhang', function() {
 
         var axis,
-            tickLabelFont = insight.defaultTheme.axisStyle.tickLabelFont;
+            tickLabelFont = insight.defaultTheme.axisStyle.tickLabelFont,
+            fakeMeasurer;
 
         beforeEach(function() {
-            spyOn(insight.TextMeasurer, 'create').andCallFake(mockCreateTextMeasurer);
+            var canvas = document.createElement('canvas');
+            fakeMeasurer = new insight.TextMeasurer(canvas);
         });
 
         describe('with ordinal scale', function() {
@@ -976,7 +1004,7 @@ describe('Axis', function() {
                         axis.tickLabelRotation(rotation);
                     });
 
-                    it('and textAnchor start - has right overhang only, using width of last formatted tick value', function() {
+                    it('and textAnchor start - has left overhang only, using width of first formatted tick value', function() {
 
                         // Given
                         axis.textAnchor('start');
@@ -985,13 +1013,13 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedRight = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).width;
+                        var expectedLeft = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).width;
 
                         var expectedResult = {
                             top: 0,
                             bottom: 0,
-                            right: expectedRight,
-                            left: 0
+                            right: 0,
+                            left: Math.abs(expectedLeft)
                         };
 
                         expect(result).toEqual(expectedResult);
@@ -1013,15 +1041,15 @@ describe('Axis', function() {
                         var expectedResult = {
                             top: 0,
                             bottom: 0,
-                            right: Math.ceil(expectedRight),
-                            left: Math.ceil(expectedLeft)
+                            right: Math.ceil(Math.abs(expectedRight)),
+                            left: Math.ceil(Math.abs(expectedLeft))
                         };
 
                         expect(result).toEqual(expectedResult);
 
                     });
 
-                    it('and textAnchor end - has left overhang only, using width of first formatted tick value', function() {
+                    it('and textAnchor end - has right overhang only, using width of last formatted tick value', function() {
 
                         // Given
                         axis.textAnchor('end');
@@ -1030,13 +1058,13 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedLeft = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).width;
+                        var expectedRight = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).width;
 
                         var expectedResult = {
                             top: 0,
                             bottom: 0,
-                            right: 0,
-                            left: expectedLeft
+                            right: Math.abs(expectedRight),
+                            left: 0
                         };
 
                         expect(result).toEqual(expectedResult);
@@ -1145,7 +1173,7 @@ describe('Axis', function() {
                             top: 0,
                             bottom: 0,
                             right: 0,
-                            left: expectedLeft
+                            left: Math.abs(expectedLeft)
                         };
 
                         expect(result).toEqual(expectedResult);
@@ -1167,8 +1195,8 @@ describe('Axis', function() {
                         var expectedResult = {
                             top: 0,
                             bottom: 0,
-                            right: Math.ceil(expectedRight),
-                            left: Math.ceil(expectedLeft)
+                            right: Math.ceil(Math.abs(expectedRight)),
+                            left: Math.ceil(Math.abs(expectedLeft))
                         };
 
                         expect(result).toEqual(expectedResult);
@@ -1189,7 +1217,7 @@ describe('Axis', function() {
                         var expectedResult = {
                             top: 0,
                             bottom: 0,
-                            right: expectedRight,
+                            right: Math.abs(expectedRight),
                             left: 0
                         };
 
@@ -1520,7 +1548,7 @@ describe('Axis', function() {
 
                         var expectedResult = {
                             top: 0,
-                            bottom: expectedBottom,
+                            bottom: Math.abs(expectedBottom),
                             right: 0,
                             left: 0
                         };
@@ -1542,8 +1570,8 @@ describe('Axis', function() {
                         var expectedTop = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).height / 2;
 
                         var expectedResult = {
-                            top: Math.ceil(expectedTop),
-                            bottom: Math.ceil(expectedBottom),
+                            top: Math.ceil(Math.abs(expectedTop)),
+                            bottom: Math.ceil(Math.abs(expectedBottom)),
                             right: 0,
                             left: 0
                         };
@@ -1564,7 +1592,7 @@ describe('Axis', function() {
                         var expectedTop = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).height;
 
                         var expectedResult = {
-                            top: expectedTop,
+                            top: Math.abs(expectedTop),
                             bottom: 0,
                             right: 0,
                             left: 0

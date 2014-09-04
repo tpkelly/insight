@@ -163,11 +163,11 @@
             });
 
             var maxTickLabelWidth = d3.max(tickLabelSizes, function(d) {
-                return d.width;
+                return Math.max(0, d.width);
             });
 
             var maxTickLabelHeight = d3.max(tickLabelSizes, function(d) {
-                return d.height;
+                return Math.max(0, d.height);
             });
 
             var axisLabelWidth = Math.ceil(textMeasurer.measureText(self.label(), self.axisLabelFont()).width);
@@ -222,17 +222,39 @@
 
             var angleRadians = insight.Utils.degreesToRadians(self.tickLabelRotation());
 
-            var overhangLast = self.isHorizontal() ? (Math.cos(angleRadians) > 0) : (Math.sin(angleRadians) < 0);
+            switch (self.textAnchor()) {
+                case 'start':
+                case 'end':
+                    firstTickSize.width = Math.abs(firstTickSize.width);
+                    firstTickSize.height = Math.abs(firstTickSize.height);
+                    lastTickSize.width = Math.abs(lastTickSize.width);
+                    lastTickSize.height = Math.abs(lastTickSize.height);
+                    break;
 
-            overhangs = {
-                top: (!self.isHorizontal() && overhangLast) ? lastTickSize.height : 0,
-                bottom: (!self.isHorizontal() && !overhangLast) ? firstTickSize.height : 0,
-                left: (self.isHorizontal() && !overhangLast) ? firstTickSize.width : 0,
-                right: (self.isHorizontal() && overhangLast) ? lastTickSize.width : 0
-            };
+                case 'middle':
+                    firstTickSize.width = Math.ceil(Math.abs(firstTickSize.width * 0.5));
+                    firstTickSize.height = Math.ceil(Math.abs(firstTickSize.height * 0.5));
+                    lastTickSize.width = Math.ceil(Math.abs(lastTickSize.width * 0.5));
+                    lastTickSize.height = Math.ceil(Math.abs(lastTickSize.height * 0.5));
+                    break;
+            }
 
 
+            if (self.isHorizontal()) {
 
+                var overhangLast = ((self.textAnchor() === 'start') === (Math.cos(angleRadians) > 0));
+
+                overhangs.left = !overhangLast || self.textAnchor() === 'middle' ? firstTickSize.width : 0;
+                overhangs.right = overhangLast || self.textAnchor() === 'middle' ? lastTickSize.width : 0;
+
+            } else {
+
+                var overhangLast = ((self.textAnchor() === 'start') === (Math.sin(angleRadians) < 0));
+
+                overhangs.top = overhangLast || self.textAnchor() === 'middle' ? lastTickSize.height : 0;
+                overhangs.bottom = !overhangLast || self.textAnchor() === 'middle' ? firstTickSize.height : 0
+
+            }
 
             return overhangs;
 
