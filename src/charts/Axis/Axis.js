@@ -147,6 +147,13 @@
 
         self.calculateLabelDimensions = function() {
 
+            if (!self.shouldDisplay()) {
+                return {
+                    width: 0,
+                    height: 0
+                };
+            }
+
             var textMeasurer = new insight.TextMeasurer(self.measureCanvas);
 
             var axisLabelHeight = textMeasurer.measureText(self.label(), self.axisLabelFont()).height;
@@ -205,7 +212,8 @@
                 right: 0
             };
 
-            if ((self.isHorizontal() && (self.tickLabelRotation() % 180 === 90)) ||
+            if (!self.shouldDisplay() ||
+                (self.isHorizontal() && (self.tickLabelRotation() % 180 === 90)) ||
                 (!self.isHorizontal() && (self.tickLabelRotation() % 180 === 0))) {
                 return overhangs;
             }

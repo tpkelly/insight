@@ -666,6 +666,37 @@ describe('Axis', function() {
 
             });
 
+            it('returns zero height if axis is not displayed', function() {
+
+                // Given
+                var tickLabelRotation = 30;
+
+                axis.shouldDisplay(false)
+                    .tickSize(tickSize)
+                    .tickPadding(tickPadding)
+                    .label(axisLabel)
+                    .tickLabelRotation(tickLabelRotation)
+                    .tickLabelFormat(function(tickLabel) {
+                        return tickLabel + '!!!';
+                    });
+
+                // When
+                var result = axis.calculateLabelDimensions();
+
+                // Then
+                var expectedTickLabelHeight = textMeasurer.measureText('Largest!!!', tickLabelFont, tickLabelRotation).height;
+                var expectedAxisLabelHeight = textMeasurer.measureText(axisLabel, axisFont).height;
+
+                var expectedResult =
+                    tickSize +
+                    tickPadding * 2 +
+                    expectedTickLabelHeight +
+                    expectedAxisLabelHeight;
+
+                expect(result.height).toBe(0);
+
+            });
+
         });
 
         describe('vertical axis', function() {
@@ -814,6 +845,36 @@ describe('Axis', function() {
 
             });
 
+            it('returns zero width if axis is not displayed', function() {
+
+                // Given
+                var tickLabelRotation = 30;
+
+                axis.shouldDisplay(false)
+                    .tickSize(tickSize)
+                    .tickPadding(tickPadding)
+                    .label(axisLabel)
+                    .tickLabelRotation(tickLabelRotation)
+                    .tickLabelFormat(function(tickValue) {
+                        return '_' + tickValue + '_';
+                    });
+
+                // When
+                var result = axis.calculateLabelDimensions();
+
+                // Then
+                var expectedMaxTickLabelWidth = textMeasurer.measureText('_Largest_', tickLabelFont, tickLabelRotation).width;
+                var expectedAxisLabelWidth = textMeasurer.measureText(axisLabel, axisFont).width;
+
+                var expectedResult = expectedMaxTickLabelWidth
+                    + tickPadding * 2
+                    + tickSize
+                    + expectedAxisLabelWidth;
+
+                expect(result.width).toBe(0);
+
+            });
+
         });
 
     });
@@ -851,6 +912,26 @@ describe('Axis', function() {
 
                 beforeEach(function() {
                     axis.isHorizontal = d3.functor(true);
+                });
+
+                it('returns zero overhang if axis is not displayed', function() {
+
+                    // Given
+                    axis.shouldDisplay(false);
+
+                    // When
+                    var result = axis.calculateLabelOverhang();
+
+                    // Then
+                    var expectedResult = {
+                        top: 0,
+                        bottom: 0,
+                        right: 0,
+                        left: 0
+                    };
+
+                    expect(result).toEqual(expectedResult);
+
                 });
 
                 describe('with no tickLabelRotation', function() {
@@ -1233,6 +1314,27 @@ describe('Axis', function() {
 
                 beforeEach(function() {
                     axis.isHorizontal = d3.functor(false);
+                });
+
+                it('returns zero overhang if axis is not displayed and rotation is 90 degrees', function() {
+
+                    // Given
+                    axis.shouldDisplay(false)
+                        .tickLabelRotation(90);
+
+                    // When
+                    var result = axis.calculateLabelOverhang();
+
+                    // Then
+                    var expectedResult = {
+                        top: 0,
+                        bottom: 0,
+                        right: 0,
+                        left: 0
+                    };
+
+                    expect(result).toEqual(expectedResult);
+
                 });
 
                 describe('with no tickLabelRotation', function() {
