@@ -21,13 +21,6 @@
         "partialCSS": "examples/css/example.css"
     },
     {
-    "name": "stackedbars",
-    "pageName": "Stacked bars",
-    "script": "examples/stackedBar.js",
-    "partial": "examples/partials/stacked.html",
-    "partialCSS": "examples/css/example.css"
-    },
-    {
         "name": "multipleseries",
         "pageName": "Multiple series",
         "script": "examples/multipleseries.js",

@@ -476,14 +476,7 @@
 
         var chart = new insight.Chart('Chart 2', '#languages')
                 .width(400)
-                .height(300)
-                .margin(
-                {
-                    top: 30,
-                    left: 50,
-                    right: 0,
-                    bottom: 50
-                });
+                .height(300);
 
             var x = new insight.Axis('Language', insight.Scales.Ordinal)
                 .tickSize(5)
@@ -531,14 +524,7 @@
     function createTimeChart(chartGroup, timeData) {
         var timeChart = new insight.Chart('Releases over time', '#time-releases')
                 .width(450)
-                .height(325)
-                .margin(
-                {
-                    top: 0,
-                    left: 90,
-                    right: 0,
-                    bottom: 100
-                });
+                .height(325);
 
             var xTime = new insight.Axis('', insight.Scales.Time)
                 .tickLabelOrientation('tb')
