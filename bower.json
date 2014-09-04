@@ -1,7 +1,7 @@
 {
   "name": "insightjs-web",
   "description": "InsightJS github page",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "homepage": "https://github.com/angular/angular-seed",
   "license": "MIT",
   "private": true,
