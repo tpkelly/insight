@@ -498,7 +498,7 @@ describe('Axis', function() {
             tickLabelFont = insight.defaultTheme.axisStyle.tickLabelFont,
             tickLabelFontSize = insight.Utils.fontSizeFromFont(tickLabelFont),
             tickSize = 10,
-            fakeMeasurer;
+            textMeasurer;
 
         var data = [
             {key: 'Largest', value: 700},
@@ -514,7 +514,7 @@ describe('Axis', function() {
 
             var canvas = document.createElement('canvas');
 
-            fakeMeasurer = new insight.TextMeasurer(canvas);
+            textMeasurer = new insight.TextMeasurer(canvas);
         });
 
         describe('horizontal axis', function() {
@@ -534,7 +534,7 @@ describe('Axis', function() {
                 var result = axis.calculateLabelDimensions();
 
                 // Then
-                var expectedResult = fakeMeasurer.measureText('Largest', tickLabelFont).height;
+                var expectedResult = textMeasurer.measureText('Largest', tickLabelFont).height;
                 expect(result.height).toBe(expectedResult);
 
             });
@@ -550,7 +550,7 @@ describe('Axis', function() {
                 var result = axis.calculateLabelDimensions();
 
                 // Then
-                var expectedTickLabelHeight = fakeMeasurer.measureText('Largest', tickLabelFont).height;
+                var expectedTickLabelHeight = textMeasurer.measureText('Largest', tickLabelFont).height;
 
                 var expectedResult = expectedTickLabelHeight
                     + tickPadding * 2
@@ -571,8 +571,8 @@ describe('Axis', function() {
                 var result = axis.calculateLabelDimensions();
 
                 // Then
-                var expectedTickLabelHeight = fakeMeasurer.measureText('Largest', tickLabelFont).height;
-                var expectedAxisLabelHeight = fakeMeasurer.measureText(axisLabel, axisFont).height;
+                var expectedTickLabelHeight = textMeasurer.measureText('Largest', tickLabelFont).height;
+                var expectedAxisLabelHeight = textMeasurer.measureText(axisLabel, axisFont).height;
 
                 var expectedResult = expectedTickLabelHeight
                     + tickPadding * 2
@@ -597,8 +597,8 @@ describe('Axis', function() {
                 var result = axis.calculateLabelDimensions();
 
                 // Then
-                var expectedTickLabelHeight = fakeMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).height;
-                var expectedAxisLabelHeight = fakeMeasurer.measureText(axisLabel, axisFont).height;
+                var expectedTickLabelHeight = textMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).height;
+                var expectedAxisLabelHeight = textMeasurer.measureText(axisLabel, axisFont).height;
 
                 var expectedResult =
                     tickSize +
@@ -624,7 +624,7 @@ describe('Axis', function() {
                 var result = axis.calculateLabelDimensions();
 
                 // Then
-                var expectedAxisLabelHeight = fakeMeasurer.measureText(axisLabel, axisFont).height;
+                var expectedAxisLabelHeight = textMeasurer.measureText(axisLabel, axisFont).height;
 
                 var expectedResult =
                     tickSize +
@@ -653,8 +653,8 @@ describe('Axis', function() {
                 var result = axis.calculateLabelDimensions();
 
                 // Then
-                var expectedTickLabelHeight = fakeMeasurer.measureText('Largest!!!', tickLabelFont, tickLabelRotation).height;
-                var expectedAxisLabelHeight = fakeMeasurer.measureText(axisLabel, axisFont).height;
+                var expectedTickLabelHeight = textMeasurer.measureText('Largest!!!', tickLabelFont, tickLabelRotation).height;
+                var expectedAxisLabelHeight = textMeasurer.measureText(axisLabel, axisFont).height;
 
                 var expectedResult =
                     tickSize +
@@ -685,7 +685,7 @@ describe('Axis', function() {
                 var result = axis.calculateLabelDimensions();
 
                 // Then
-                var expectedResult = fakeMeasurer.measureText('Largest', tickLabelFont).width;
+                var expectedResult = textMeasurer.measureText('Largest', tickLabelFont).width;
                 expect(result.width).toBe(expectedResult);
 
             });
@@ -699,7 +699,7 @@ describe('Axis', function() {
                 var result = axis.calculateLabelDimensions();
 
                 // Then
-                var expectedMaxTickLabelWidth = fakeMeasurer.measureText('Largest', tickLabelFont).width;
+                var expectedMaxTickLabelWidth = textMeasurer.measureText('Largest', tickLabelFont).width;
 
                 var expectedResult = expectedMaxTickLabelWidth
                     + tickPadding * 2
@@ -720,8 +720,8 @@ describe('Axis', function() {
                 var result = axis.calculateLabelDimensions();
 
                 // Then
-                var expectedMaxTickLabelWidth = fakeMeasurer.measureText('Largest', tickLabelFont).width;
-                var expectedAxisLabelWidth = fakeMeasurer.measureText(axisLabel, axisFont).width;
+                var expectedMaxTickLabelWidth = textMeasurer.measureText('Largest', tickLabelFont).width;
+                var expectedAxisLabelWidth = textMeasurer.measureText(axisLabel, axisFont).width;
 
                 var expectedResult = expectedMaxTickLabelWidth
                     + tickPadding * 2
@@ -746,8 +746,8 @@ describe('Axis', function() {
                 var result = axis.calculateLabelDimensions();
 
                 // Then
-                var expectedMaxTickLabelWidth = fakeMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).width;
-                var expectedAxisLabelWidth = fakeMeasurer.measureText(axisLabel, axisFont).width;
+                var expectedMaxTickLabelWidth = textMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).width;
+                var expectedAxisLabelWidth = textMeasurer.measureText(axisLabel, axisFont).width;
 
                 var expectedResult = expectedMaxTickLabelWidth
                     + tickPadding * 2
@@ -772,7 +772,7 @@ describe('Axis', function() {
                 var result = axis.calculateLabelDimensions();
 
                 // Then
-                var expectedAxisLabelWidth = fakeMeasurer.measureText(axisLabel, axisFont).width;
+                var expectedAxisLabelWidth = textMeasurer.measureText(axisLabel, axisFont).width;
 
                 var expectedResult =
                     tickSize +
@@ -802,8 +802,8 @@ describe('Axis', function() {
                 var result = axis.calculateLabelDimensions();
 
                 // Then
-                var expectedMaxTickLabelWidth = fakeMeasurer.measureText('_Largest_', tickLabelFont, tickLabelRotation).width;
-                var expectedAxisLabelWidth = fakeMeasurer.measureText(axisLabel, axisFont).width;
+                var expectedMaxTickLabelWidth = textMeasurer.measureText('_Largest_', tickLabelFont, tickLabelRotation).width;
+                var expectedAxisLabelWidth = textMeasurer.measureText(axisLabel, axisFont).width;
 
                 var expectedResult = expectedMaxTickLabelWidth
                     + tickPadding * 2
@@ -822,11 +822,11 @@ describe('Axis', function() {
 
         var axis,
             tickLabelFont = insight.defaultTheme.axisStyle.tickLabelFont,
-            fakeMeasurer;
+            textMeasurer;
 
         beforeEach(function() {
             var canvas = document.createElement('canvas');
-            fakeMeasurer = new insight.TextMeasurer(canvas);
+            textMeasurer = new insight.TextMeasurer(canvas);
         });
 
         describe('with ordinal scale', function() {
@@ -868,7 +868,7 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedRight = fakeMeasurer.measureText('Last!!!', tickLabelFont).width;
+                        var expectedRight = textMeasurer.measureText('Last!!!', tickLabelFont).width;
 
                         var expectedResult = {
                             top: 0,
@@ -890,8 +890,8 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedLeft = fakeMeasurer.measureText('First!!!', tickLabelFont).width / 2;
-                        var expectedRight = fakeMeasurer.measureText('Last!!!', tickLabelFont).width / 2;
+                        var expectedLeft = textMeasurer.measureText('First!!!', tickLabelFont).width / 2;
+                        var expectedRight = textMeasurer.measureText('Last!!!', tickLabelFont).width / 2;
 
                         var expectedResult = {
                             top: 0,
@@ -913,7 +913,7 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedLeft = fakeMeasurer.measureText('First!!!', tickLabelFont).width;
+                        var expectedLeft = textMeasurer.measureText('First!!!', tickLabelFont).width;
 
                         var expectedResult = {
                             top: 0,
@@ -1013,7 +1013,7 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedLeft = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).width;
+                        var expectedLeft = textMeasurer.measureText('First!!!', tickLabelFont, rotation).width;
 
                         var expectedResult = {
                             top: 0,
@@ -1035,8 +1035,8 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedLeft = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).width / 2;
-                        var expectedRight = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).width / 2;
+                        var expectedLeft = textMeasurer.measureText('First!!!', tickLabelFont, rotation).width / 2;
+                        var expectedRight = textMeasurer.measureText('Last!!!', tickLabelFont, rotation).width / 2;
 
                         var expectedResult = {
                             top: 0,
@@ -1058,7 +1058,7 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedRight = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).width;
+                        var expectedRight = textMeasurer.measureText('Last!!!', tickLabelFont, rotation).width;
 
                         var expectedResult = {
                             top: 0,
@@ -1090,7 +1090,7 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedRight = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).width;
+                        var expectedRight = textMeasurer.measureText('Last!!!', tickLabelFont, rotation).width;
 
                         var expectedResult = {
                             top: 0,
@@ -1112,8 +1112,8 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedLeft = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).width / 2;
-                        var expectedRight = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).width / 2;
+                        var expectedLeft = textMeasurer.measureText('First!!!', tickLabelFont, rotation).width / 2;
+                        var expectedRight = textMeasurer.measureText('Last!!!', tickLabelFont, rotation).width / 2;
 
                         var expectedResult = {
                             top: 0,
@@ -1135,7 +1135,7 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedLeft = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).width;
+                        var expectedLeft = textMeasurer.measureText('First!!!', tickLabelFont, rotation).width;
 
                         var expectedResult = {
                             top: 0,
@@ -1167,7 +1167,7 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedLeft = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).width;
+                        var expectedLeft = textMeasurer.measureText('First!!!', tickLabelFont, rotation).width;
 
                         var expectedResult = {
                             top: 0,
@@ -1189,8 +1189,8 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedLeft = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).width / 2;
-                        var expectedRight = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).width / 2;
+                        var expectedLeft = textMeasurer.measureText('First!!!', tickLabelFont, rotation).width / 2;
+                        var expectedRight = textMeasurer.measureText('Last!!!', tickLabelFont, rotation).width / 2;
 
                         var expectedResult = {
                             top: 0,
@@ -1212,7 +1212,7 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedRight = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).width;
+                        var expectedRight = textMeasurer.measureText('Last!!!', tickLabelFont, rotation).width;
 
                         var expectedResult = {
                             top: 0,
@@ -1320,7 +1320,7 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedBottom = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).height;
+                        var expectedBottom = textMeasurer.measureText('First!!!', tickLabelFont, rotation).height;
 
                         var expectedResult = {
                             top: 0,
@@ -1342,8 +1342,8 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedBottom = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).height / 2;
-                        var expectedTop = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).height / 2;
+                        var expectedBottom = textMeasurer.measureText('First!!!', tickLabelFont, rotation).height / 2;
+                        var expectedTop = textMeasurer.measureText('Last!!!', tickLabelFont, rotation).height / 2;
 
                         var expectedResult = {
                             top: expectedTop,
@@ -1365,7 +1365,7 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedTop = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).height;
+                        var expectedTop = textMeasurer.measureText('Last!!!', tickLabelFont, rotation).height;
 
                         var expectedResult = {
                             top: expectedTop,
@@ -1467,7 +1467,7 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedBottom = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).height;
+                        var expectedBottom = textMeasurer.measureText('First!!!', tickLabelFont, rotation).height;
 
                         var expectedResult = {
                             top: 0,
@@ -1489,8 +1489,8 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedBottom = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).height / 2;
-                        var expectedTop = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).height / 2;
+                        var expectedBottom = textMeasurer.measureText('First!!!', tickLabelFont, rotation).height / 2;
+                        var expectedTop = textMeasurer.measureText('Last!!!', tickLabelFont, rotation).height / 2;
 
                         var expectedResult = {
                             top: Math.ceil(expectedTop),
@@ -1512,7 +1512,7 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedTop = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).height;
+                        var expectedTop = textMeasurer.measureText('Last!!!', tickLabelFont, rotation).height;
 
                         var expectedResult = {
                             top: expectedTop,
@@ -1544,7 +1544,7 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedBottom = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).height;
+                        var expectedBottom = textMeasurer.measureText('First!!!', tickLabelFont, rotation).height;
 
                         var expectedResult = {
                             top: 0,
@@ -1566,8 +1566,8 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedBottom = fakeMeasurer.measureText('First!!!', tickLabelFont, rotation).height / 2;
-                        var expectedTop = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).height / 2;
+                        var expectedBottom = textMeasurer.measureText('First!!!', tickLabelFont, rotation).height / 2;
+                        var expectedTop = textMeasurer.measureText('Last!!!', tickLabelFont, rotation).height / 2;
 
                         var expectedResult = {
                             top: Math.ceil(Math.abs(expectedTop)),
@@ -1589,7 +1589,7 @@ describe('Axis', function() {
                         var result = axis.calculateLabelOverhang();
 
                         // Then
-                        var expectedTop = fakeMeasurer.measureText('Last!!!', tickLabelFont, rotation).height;
+                        var expectedTop = textMeasurer.measureText('Last!!!', tickLabelFont, rotation).height;
 
                         var expectedResult = {
                             top: Math.abs(expectedTop),

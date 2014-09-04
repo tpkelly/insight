@@ -41,11 +41,4 @@
 
     };
 
-    /*
-     * Factory method for testability
-     */
-    insight.TextMeasurer.create = function(canvas) {
-        return new insight.TextMeasurer(canvas);
-    };
-
 })(insight);

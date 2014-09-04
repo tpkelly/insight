@@ -147,7 +147,7 @@
 
         self.calculateLabelDimensions = function() {
 
-            var textMeasurer = insight.TextMeasurer.create(self.measureCanvas);
+            var textMeasurer = new insight.TextMeasurer(self.measureCanvas);
 
             var axisLabelHeight = textMeasurer.measureText(self.label(), self.axisLabelFont()).height;
 
@@ -210,7 +210,7 @@
                 return overhangs;
             }
 
-            var textMeasurer = insight.TextMeasurer.create(self.measureCanvas);
+            var textMeasurer = new insight.TextMeasurer(self.measureCanvas);
 
             var domain = self.domain();
 
