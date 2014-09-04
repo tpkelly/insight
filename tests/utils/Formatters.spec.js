@@ -1,6 +1,6 @@
 describe("Formatters for", function() {
 
-    describe("currency", function() {
+    describe("currencyFormatter", function() {
 
         it("use USD as currency", function() {
             //Given:
@@ -31,7 +31,7 @@ describe("Formatters for", function() {
 
     });
 
-    describe("numbers", function() {
+    describe("numberFormatter", function() {
 
         it("use commas for separating thousands", function() {
             //Given:
@@ -51,7 +51,7 @@ describe("Formatters for", function() {
 
     });
 
-    describe("dates", function() {
+    describe("dateFormatter", function() {
 
         it("displays month and year", function() {
             //Given:
@@ -63,7 +63,7 @@ describe("Formatters for", function() {
         });
     });
 
-    describe("percentages", function() {
+    describe("percentageFormatter", function() {
 
         it("appends % sign to a decimal", function() {
             //Given:
