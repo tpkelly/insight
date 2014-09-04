@@ -7,15 +7,15 @@ insight.Formatters = (function(d3) {
 
     return {
 
-        /** Format the number with £, thousand-groupings, and 2 decimal places.
-         * @example 2345.2 becomes '£2,345.20'.
+        /** Format the number with $, thousand-groupings, and 2 decimal places.
+         * @example 2345.2 becomes '$2,345.20'.
          * @memberof! insight.Formatters
          * @param {Number} value The value to be formatted.
          * @returns {String} - The formatted value.
          */
         currencyFormatter: function(value) {
             var format = d3.format(",.02f");
-            return '£' + format(value);
+            return '$' + format(value);
         },
 
         /** Format the number with thousand-groupings.
