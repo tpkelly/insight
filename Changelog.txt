@@ -1,4 +1,4 @@
-=== Version 1.2.0 (XX-XXX-2014) ===
+=== Version X.X.X (XX-XXX-2014) ===
 
 * Horizontal axis tick labels anchored at the middle by default
 
