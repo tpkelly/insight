@@ -52,8 +52,8 @@ describe('TextMeasurer', function() {
         var result = measurer.measureText('123', font, 180);
 
         // Then
-        expect(result.width).toBe(3);
-        expect(result.height).toBe(textHeight);
+        expect(result.width).toBe(-3);
+        expect(result.height).toBe(-textHeight);
 
     });
 
