@@ -52,14 +52,7 @@ $(document)
 
             var chart = new insight.Chart('Revenue', "#revenue")
                 .width(500)
-                .height(400)
-                .margin(
-                {
-                    top: 10,
-                    left: 130,
-                    right: 45,
-                    bottom: 150
-                });
+                .height(400);
 
             return chart;
         }

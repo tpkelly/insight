@@ -22,14 +22,7 @@ $(document)
 
         var chart = new insight.Chart('Population', "#population")
             .width(500)
-            .height(400)
-            .margin(
-            {
-                top: 0,
-                left: 130,
-                right: 0,
-                bottom: 30
-            });
+            .height(400);
 
         var x = new insight.Axis('Country', insight.Scales.Ordinal)
             .label('')
