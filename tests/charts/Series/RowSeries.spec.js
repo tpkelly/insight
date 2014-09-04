@@ -125,4 +125,44 @@ describe('Row Series Tests', function() {
 
     });
 
+    describe('sorts data', function() {
+
+        var xAxis,
+            yAxis,
+            series;
+
+        beforeEach(function () {
+
+            xAxis = new insight.Axis('x', insight.Scales.Ordinal)
+                .isOrdered(true);
+            yAxis = new insight.Axis('y', insight.Scales.Linear);
+
+            var dataset = new insight.DataSet([
+                {key: "A", value: 3},
+                {key: "B", value: 1},
+                {key: "C", value: 5},
+                {key: "D", value: 1},
+                {key: "E", value: 4},
+                {key: "F", value: 6}
+            ]);
+
+
+            series = new insight.ColumnSeries('columns', dataset, xAxis, yAxis);;
+        });
+
+        it('descending by default', function () {
+
+            // When
+            var observedData = series.dataset();
+
+            // Then
+            var keys = observedData.map(series.keyFunction());
+            var values = observedData.map(series.valueFunction());
+            expect(keys).toEqual(["F", "C", "E", "A", "B", "D"]);
+            expect(values).toEqual([6, 5, 4, 3, 1, 1]);
+
+        });
+
+    });
+
 });
