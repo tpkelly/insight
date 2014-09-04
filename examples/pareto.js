@@ -44,14 +44,14 @@ $(document)
             chart.xAxis(x)
                 .yAxes([y, y2]);
 
-            var series = new insight.ColumnSeries('clientColumn', clientData, x, y, '#e74c3c')
+            var series = new insight.ColumnSeries('clientColumn', clientData, x, y)
                 .valueFunction(function(d)
                 {
                     return d.value.CurrentRevenue.Sum;
                 })
                 .tooltipFormat(insight.Formatters.currencyFormatter);
 
-            var line = new insight.LineSeries('percentLine', clientData, x, y2, 'cyan')
+            var line = new insight.LineSeries('percentLine', clientData, x, y2)
                 .tooltipFormat(insight.Formatters.percentageFormatter)
                 .valueFunction(function(d)
                 {

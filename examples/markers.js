@@ -40,14 +40,14 @@ $(document)
         chart.xAxis(x);
         chart.yAxis(y);
 
-        var series = new insight.ColumnSeries('countries', dataset, x, y, 'silver')
+        var series = new insight.ColumnSeries('countries', dataset, x, y)
             .valueFunction(function(d)
             {
                 return d.value;
             });
 
 
-        var targets = new insight.MarkerSeries('targets', dataset, x, y, '#333')
+        var targets = new insight.MarkerSeries('targets', dataset, x, y)
             .valueFunction(function(d)
             {
                 return d.target;

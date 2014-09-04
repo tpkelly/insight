@@ -55,7 +55,6 @@
     "grunt-jsbeautifier": "~0.2.6",
     "grunt-contrib-jasmine": "~0.5.2",
     "connect-livereload": "~0.3.0",
-    "grunt-cli": "^0.1.13"
   },
   "scripts": {
     "postinstall": "bower install",

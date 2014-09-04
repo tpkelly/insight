@@ -41,7 +41,7 @@ $(document)
             chart.xAxis(xScale);
             chart.yAxis(yScale);
 
-            var series = new insight.ColumnSeries('genre', genres, xScale, yScale, '#ACC3EE')
+            var series = new insight.ColumnSeries('genre', genres, xScale, yScale)
                 .valueFunction(function(d)
                 {
                     return d.value.Count;
@@ -69,7 +69,7 @@ $(document)
             languageChart.xAxis(lxScale);
             languageChart.yAxis(lyScale);
 
-            var lSeries = new insight.ColumnSeries('languages', languageGroup, lxScale, lyScale, '#ACC3EE')
+            var lSeries = new insight.ColumnSeries('languages', languageGroup, lxScale, lyScale)
                 .valueFunction(function(d)
                 {
                     return d.value;

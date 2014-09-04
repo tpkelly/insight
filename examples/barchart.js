@@ -32,7 +32,7 @@
          chart.xAxis(x);
          chart.yAxis(y);
 
-         var series = new insight.ColumnSeries('countryColumn', data, x, y, '#3498db');
+         var series = new insight.ColumnSeries('countryColumn', data, x, y);
 
          chart.series([series]);
 

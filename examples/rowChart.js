@@ -35,7 +35,7 @@ $(document)
             .xAxis(x)
             .yAxis(y);
 
-        var series = new insight.RowSeries('countryColumn', data, x, y, 'silver')
+        var series = new insight.RowSeries('countryColumn', data, x, y)
             .tooltipFormat(insight.Formatters.numberFormatter)
             .keyFunction(function(d)
             {

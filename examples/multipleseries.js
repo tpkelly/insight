@@ -60,14 +60,7 @@ $(document)
         var chart = new insight.Chart('League', '#league')
             .width(500)
             .height(500)
-            .legend(new insight.Legend())
-            .margin(
-            {
-                top: 20,
-                left: 85,
-                bottom: 110,
-                right: 40
-            });
+            .legend(new insight.Legend());
 
         var x = new insight.Axis('Team', insight.Scales.Ordinal)
             .tickLabelRotation(45)
