@@ -270,20 +270,21 @@
                     break;
             }
 
+            var overhangLast;
 
             if (self.isHorizontal()) {
 
-                var overhangLast = ((self.textAnchor() === 'start') === (Math.cos(angleRadians) > 0));
+                overhangLast = ((self.textAnchor() === 'start') === (Math.cos(angleRadians) > 0));
 
                 overhangs.left = !overhangLast || self.textAnchor() === 'middle' ? firstTickSize.width : 0;
                 overhangs.right = overhangLast || self.textAnchor() === 'middle' ? lastTickSize.width : 0;
 
             } else {
 
-                var overhangLast = ((self.textAnchor() === 'start') === (Math.sin(angleRadians) < 0));
+                overhangLast = ((self.textAnchor() === 'start') === (Math.sin(angleRadians) < 0));
 
                 overhangs.top = overhangLast || self.textAnchor() === 'middle' ? lastTickSize.height : 0;
-                overhangs.bottom = !overhangLast || self.textAnchor() === 'middle' ? firstTickSize.height : 0
+                overhangs.bottom = !overhangLast || self.textAnchor() === 'middle' ? firstTickSize.height : 0;
 
             }
 
