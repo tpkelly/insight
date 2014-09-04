@@ -98,7 +98,7 @@ describe('Series', function(){
 
             });
 
-            it('returns data ordered by the series value function if no order function is available', function(){
+            it('returns data ordered by the series value function in ascending order if no order function is available', function(){
 
                 // Given
                 data = [

@@ -339,6 +339,10 @@ insight.Utils = (function() {
 
     };
 
+    exports.degreesToRadians = function(degrees) {
+        return degrees * Math.PI / 180;
+    };
+
     return exports;
 
 }());

@@ -282,7 +282,7 @@ describe('ColumnSeries', function() {
 
     });
 
-    describe('sorts data', function() {
+    describe('sorts data in descending value order', function() {
 
         var xAxis,
             yAxis,

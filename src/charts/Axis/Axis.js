@@ -170,24 +170,34 @@
 
         self.calculateLabelDimensions = function() {
 
-            var textMeasurer = insight.TextMeasurer.create(self.measureCanvas);
+            if (!self.shouldDisplay()) {
+                return {
+                    width: 0,
+                    height: 0
+                };
+            }
+
+            var textMeasurer = new insight.TextMeasurer(self.measureCanvas);
 
             var axisLabelHeight = textMeasurer.measureText(self.label(), self.axisLabelFont()).height;
 
-            var tickValues = self.domain();
-            var tickLabelSizes = tickValues.map(function(tickValue) {
+            var formattedTickValues = self.domain().map(function(tickValue) {
+                return self.tickLabelFormat()(tickValue);
+            });
+
+            var tickLabelSizes = formattedTickValues.map(function(formattedTickValue) {
                 return textMeasurer.measureText(
-                    tickValue,
+                    formattedTickValue,
                     self.tickLabelFont(),
                     self.tickLabelRotation());
             });
 
             var maxTickLabelWidth = d3.max(tickLabelSizes, function(d) {
-                return d.width;
+                return Math.max(0, d.width);
             });
 
             var maxTickLabelHeight = d3.max(tickLabelSizes, function(d) {
-                return d.height;
+                return Math.max(0, d.height);
             });
 
             var axisLabelWidth = Math.ceil(textMeasurer.measureText(self.label(), self.axisLabelFont()).width);
@@ -214,6 +224,72 @@
                 height: totalHeight,
                 width: totalWidth
             };
+        };
+
+        self.calculateLabelOverhang = function() {
+
+            var overhangs = {
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0
+            };
+
+            if (!self.shouldDisplay() ||
+                (self.isHorizontal() && (self.tickLabelRotation() % 180 === 90)) ||
+                (!self.isHorizontal() && (self.tickLabelRotation() % 180 === 0))) {
+                return overhangs;
+            }
+
+            var textMeasurer = new insight.TextMeasurer(self.measureCanvas);
+
+            var domain = self.domain();
+
+            var firstTick = self.tickLabelFormat()(domain[0]);
+            var lastTick = self.tickLabelFormat()(domain[domain.length - 1]);
+
+            var firstTickSize = textMeasurer.measureText(firstTick, self.tickLabelFont(), self.tickLabelRotation());
+            var lastTickSize = textMeasurer.measureText(lastTick, self.tickLabelFont(), self.tickLabelRotation());
+
+            var angleRadians = insight.Utils.degreesToRadians(self.tickLabelRotation());
+
+            switch (self.textAnchor()) {
+                case 'start':
+                case 'end':
+                    firstTickSize.width = Math.abs(firstTickSize.width);
+                    firstTickSize.height = Math.abs(firstTickSize.height);
+                    lastTickSize.width = Math.abs(lastTickSize.width);
+                    lastTickSize.height = Math.abs(lastTickSize.height);
+                    break;
+
+                case 'middle':
+                    firstTickSize.width = Math.ceil(Math.abs(firstTickSize.width * 0.5));
+                    firstTickSize.height = Math.ceil(Math.abs(firstTickSize.height * 0.5));
+                    lastTickSize.width = Math.ceil(Math.abs(lastTickSize.width * 0.5));
+                    lastTickSize.height = Math.ceil(Math.abs(lastTickSize.height * 0.5));
+                    break;
+            }
+
+            var overhangLast;
+
+            if (self.isHorizontal()) {
+
+                overhangLast = ((self.textAnchor() === 'start') === (Math.cos(angleRadians) > 0));
+
+                overhangs.left = !overhangLast || self.textAnchor() === 'middle' ? firstTickSize.width : 0;
+                overhangs.right = overhangLast || self.textAnchor() === 'middle' ? lastTickSize.width : 0;
+
+            } else {
+
+                overhangLast = ((self.textAnchor() === 'start') === (Math.sin(angleRadians) < 0));
+
+                overhangs.top = overhangLast || self.textAnchor() === 'middle' ? lastTickSize.height : 0;
+                overhangs.bottom = !overhangLast || self.textAnchor() === 'middle' ? firstTickSize.height : 0;
+
+            }
+
+            return overhangs;
+
         };
 
         /*
