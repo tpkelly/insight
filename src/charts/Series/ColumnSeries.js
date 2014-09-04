@@ -52,6 +52,11 @@
 
         // Internal functions ----------------------------------------------------------------------------------------
 
+        self.orderFunction = function(a, b) {
+            // Sort descending for categorical data
+            return self.valueFunction()(b) - self.valueFunction()(a);
+        };
+
         self.draw = function(chart, isDragging) {
 
             self.initializeTooltip(chart.container.node());

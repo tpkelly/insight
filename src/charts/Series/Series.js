@@ -222,6 +222,11 @@
 
         };
 
+        self.orderFunction = function(a, b) {
+            // Sort ascending
+            return self.valueFunction()(a) - self.valueFunction()(b);
+        };
+
         self.draw = function(chart, drag) {};
 
         // Public functions -------------------------------------------------------------------------------------------
@@ -309,9 +314,7 @@
                 orderFunction =
                     orderFunction ||
                     self.keyAxis.orderingFunction() ||
-                    function(a, b) {
-                        return self.valueFunction()(a) - self.valueFunction()(b);
-                };
+                    self.orderFunction;
 
             } else {
 

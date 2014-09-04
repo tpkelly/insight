@@ -145,6 +145,29 @@
 
         // Internal functions -------------------------------------------------------------------------------------
 
+        /*
+         * Returns a boolean value representing if this Axis is zoomable.
+         * @instance
+         * @memberof! insight.Axis
+         * @returns {Boolean} - A value indicating whether the axis is zoomable or not
+         *
+         * @also
+         *
+         * Sets the zoomable status of this Axis.  A zoomable Axis allows drag and zoom operations, and is not redrawn automatically on the draw() event of a chart.
+         * @instance
+         * @memberof! insight.Axis
+         * @param {Boolean} shouldBeZoomable - A boolean value to set this Axis as zoomable or not.
+         * @returns {this}
+         */
+        self.isZoomable = function(shouldBeZoomable) {
+            if (!arguments.length) {
+                return zoomable;
+            }
+            zoomable = shouldBeZoomable;
+
+            return self;
+        };
+
         self.calculateLabelDimensions = function() {
 
             var textMeasurer = insight.TextMeasurer.create(self.measureCanvas);
@@ -515,29 +538,6 @@
                 return orderingFunction;
             }
             orderingFunction = orderFunc;
-            return self;
-        };
-
-        /**
-         * Returns a boolean value representing if this Axis is zoomable.
-         * @instance
-         * @memberof! insight.Axis
-         * @returns {Boolean} - A value indicating whether the axis is zoomable or not
-         *
-         * @also
-         *
-         * Sets the zoomable status of this Axis.  A zoomable Axis allows drag and zoom operations, and is not redrawn automatically on the draw() event of a chart.
-         * @instance
-         * @memberof! insight.Axis
-         * @param {Boolean} shouldBeZoomable - A boolean value to set this Axis as zoomable or not.
-         * @returns {this}
-         */
-        self.isZoomable = function(shouldBeZoomable) {
-            if (!arguments.length) {
-                return zoomable;
-            }
-            zoomable = shouldBeZoomable;
-
             return self;
         };
 
