@@ -2,6 +2,10 @@
 
 * Adds theming to charts and tables. By default this uses the LightTheme.
 * Removes the concept of sub-series from Column and Row series. Instead, multiple bars should be represented by multiple series.
+* Introduces the “Correlation Coefficient” calculator, as “insight.correlation”.
+* Adjusted sorting for ColumnSeries and RowSeries. If the key-axis is ordered, all series will be sorted in ascending order, except;
+  * RowSeries - sorts such that the longest bar is at the top.
+  * ColumnSeries - sorts such that the longest bar is on the left.
 
 * Renames methods to more meaningful names
   * Axis.ordered => Axis.isOrdered
@@ -9,7 +13,6 @@
   * Axis.showGridlines => Axis.shouldShowGridlines
   * Axis.horizontal => Axis.isHorizontal
   * Axis.display => Axis.shouldDisplay
-  * Axis.zoomable => Axis.isZoomable
   * Axis.tickOrientation => Axis.tickLabelOrientation
   * Axis.tickRotation => Axis.tickLabelRotation
   * Axis.labelFormat => Axis.tickLabelFormat
