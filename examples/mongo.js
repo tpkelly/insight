@@ -39,7 +39,7 @@ $(document)
             writeChart.xAxis(x);
             writeChart.yAxis(y);
 
-            var series = new insight.RowSeries('writes', dataset, x, y, '#3498db')
+            var series = new insight.RowSeries('writes', dataset, x, y)
                 .keyFunction(function(d)
                 {
                     return d.label;

@@ -103,11 +103,6 @@ img
     font-size: 12px;
 }
 
-.selected
-{
-    fill: #2c3e50 !important;
-}
-
 #source {
     font-size: 12px;
 }
@@ -218,4 +213,20 @@ img
 
 }
 
+button {
+  border-width:0
+}
 
+
+button.selected {
+  background-color: #ccc;
+  border-width: 1;
+  border-color: #aaa;
+}
+
+#correlationDiv {
+  width:90%;
+  text-align:right;
+  position:absolute;
+  z-index:100;
+}

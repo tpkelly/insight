@@ -29,13 +29,13 @@ $(document)
             chart.xAxis(x);
             chart.yAxes([y1, y2]);
 
-            var series = new insight.ColumnSeries('countryColumn', dataset, x, y1, 'silver')
+            var series = new insight.ColumnSeries('countryColumn', dataset, x, y1)
                 .keyFunction(function(d)
                 {
                     return d.country;
                 });
 
-            var line = new insight.LineSeries('valueLine', dataset, x, y2, 'cyan')
+            var line = new insight.LineSeries('valueLine', dataset, x, y2)
                 .keyFunction(function(d)
                 {
                     return d.country;

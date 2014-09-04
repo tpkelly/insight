@@ -1,0 +1,29 @@
+<div class="row">
+    <div class="col-md-6 description" >
+        <p>Raw data can be grouped into categories, to present the data in a more meaningful fashion, for example
+            grouping together dates into years.</p>
+        <p>To use grouped data, use <code>dataset.group(groupingFunction)</code> on your raw dataset, and provide this
+            group as the data for your series. Additional properties can be added to the grouping data, such as
+            <code>mean</code>, <code>sum</code> and <code>count</code> by calling the corresponding methods with the
+            name of the properties to calculate on.</p>
+
+        <code class="language-javascript">
+var dataset = new insight.DataSet(data);
+var yearly = dataset.group('years', function(item)
+{
+    // Group dates by the year
+    return new Date(item.releaseDate.getFullYear(), 0, 1);
+});
+
+// Add an "Average" property to each datapoint
+// with the mean price for that year.
+yearly.mean(['price']);
+
+// Use the grouped data in the series
+var columns = new insight.ColumnSeries('Year', yearly, x, y)
+        </code>
+    </div>
+
+<div id="exampleChart" class="exampleChart col-md-6">
+
+</div>

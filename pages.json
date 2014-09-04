@@ -1,79 +1,58 @@
 [
     {
-        "name": "bar",
-        "pageName": "Bar Chart",     
-        "script": "examples/barchart.js",
-        "imageUrl": "images/barchart.PNG",
-        "partial": "examples/partials/example.html",
-        "partialCSS": "examples/css/simpleBar.css"
-    }, 
-    {
-        "name": "row",
-        "pageName": "Row Chart",     
-        "script": "examples/rowChart.js",
-        "partial": "examples/partials/stacked.html",
-        "partialCSS": "examples/css/simpleBar.css"
-    },
-    {
-        "name": "stackedgroupedbar",
-        "pageName": "Stacked & Grouped Bar Chart", 
-        "script": "examples/stackedBar.js",
-        "imageUrl": "images/stackedBar.PNG",
-        "partial": "examples/partials/stacked.html",
-        "partialCSS": "examples/css/example.css"
-    },    
-    {
-        "name": "barslines",
-        "pageName": "Bars & Lines", 
-        "script": "examples/barsLines.js",
-        "imageUrl": "images/barChart.PNG",
-        "partial": "examples/partials/barsLines.html",
+        "name": "legend",
+        "pageName": "Legend",
+        "script": "examples/legend.js",
+        "partial": "examples/partials/legend.html",
         "partialCSS": "examples/css/example.css"
     },
     {
-        "name": "targetsmarkers",
-        "pageName": "Targets & Markers", 
-        "script": "examples/markers.js",
-        "imageUrl": "images/barChart.PNG",
-        "partial": "examples/partials/example.html",
+        "name": "gridlines",
+        "pageName": "Gridlines",
+        "script": "examples/gridlines.js",
+        "partial": "examples/partials/gridlines.html",
         "partialCSS": "examples/css/example.css"
     },
     {
-        "name": "time",
-        "pageName": "Time Chart", 
-        "script": "examples/lineCharts.js",
-        "imageUrl": "images/barChart.PNG",
-        "partial": "examples/partials/example.html",
+        "name": "formatting",
+        "pageName": "Formatting",
+        "script": "examples/formatting.js",
+        "partial": "examples/partials/formatting.html",
         "partialCSS": "examples/css/example.css"
     },
     {
-         "name": "pareto",
-         "pageName": "Pareto Chart", 
-         "script": "examples/pareto.js",
-         "imageUrl": "images/barChart.PNG",
-         "partial": "examples/partials/barsLines.html",
-         "partialCSS": "examples/css/example.css"
-    },
-    {
-        "name": "yearlybars",
-        "pageName": "Yearly Bars", 
-        "script": "examples/datebar.js",
-        "partial": "examples/partials/example.html",
+        "name": "multipleseries",
+        "pageName": "Multiple series",
+        "script": "examples/multipleseries.js",
+        "partial": "examples/partials/multipleseries.html",
         "partialCSS": "examples/css/example.css"
     },
     {
-        "name": "appstore",
-        "pageName": "App Store Analysis", 
-        "script": "examples/appstore.js",
-        "imageUrl": "images/barChart.PNG",
-        "partial": "examples/partials/appstore.html",
+        "name": "interactive",
+        "pageName": "Interactive axes",
+        "script": "examples/zoomable.js",
+        "partial": "examples/partials/zoomable.html",
         "partialCSS": "examples/css/example.css"
     },
     {
-        "name": "connect",
-        "pageName": "Connect Charts", 
-        "script": "examples/connect.js",
-        "partial": "examples/partials/connect.html",
+        "name": "grouping",
+        "pageName": "Grouping data",
+        "script": "examples/grouping.js",
+        "partial": "examples/partials/grouping.html",
+        "partialCSS": "examples/css/example.css"
+    },
+    {
+        "name": "groupprocessing",
+        "pageName": "Processing grouped data",
+        "script": "examples/groupprocessing.js",
+        "partial": "examples/partials/groupprocessing.html",
+        "partialCSS": "examples/css/example.css"
+    },
+    {
+        "name": "correlation",
+        "pageName": "Correlation",
+        "script": "examples/correlation.js",
+        "partial": "examples/partials/correlation.html",
         "partialCSS": "examples/css/example.css"
     }
 ]

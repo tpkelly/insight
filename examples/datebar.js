@@ -34,7 +34,7 @@ $(document)
             chart.xAxis(x)
                 .yAxis(y);
 
-            var columns = new insight.ColumnSeries('Year', yearly, x, y, '#ACC3EE')
+            var columns = new insight.ColumnSeries('Year', yearly, x, y)
                 .valueFunction(function(d)
                 {
                     return d.value.price.Average;

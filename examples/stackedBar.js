@@ -39,11 +39,18 @@ $(document)
         var chart = new insight.Chart('Chart 1', "#exampleChart")
             .width(450)
             .height(400)
+            .margin(
+            {
+                'left': 80,
+                'top': 10,
+                'right': 0,
+                'bottom': 100
+            })
             .xAxis(x)
             .yAxis(y);
 
 
-        var series = new insight.ColumnSeries('countryColumn', dataset, x, y, 'silver');
+        var series = new insight.ColumnSeries('countryColumn', dataset, x, y);
 
         series.series = [
         {
@@ -81,7 +88,7 @@ $(document)
         $('#toggle')
             .click(function(d)
             {
-                series.stacked(!series.stacked());
+                series.isStacked(!series.isStacked());
                 chart.draw();
             });
     });

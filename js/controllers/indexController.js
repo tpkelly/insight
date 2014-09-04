@@ -30,8 +30,7 @@
 
             var bubbleX = new insight.Axis('Average Rating', insight.Scales.Linear)
                 .tickSize(5)
-                .tickPadding(0)
-                .tickLabelOrientation('tb');
+                .tickPadding(0);
 
             var bubbleY = new insight.Axis('$', insight.Scales.Linear)
                 .tickSize(5);
@@ -39,7 +38,7 @@
             bubbleChart.xAxis(bubbleX)
                        .yAxis(bubbleY);
 
-            var bubbles = new insight.BubbleSeries('bubbles', bubbleData, bubbleX, bubbleY, '#336699')
+            var bubbles = new insight.BubbleSeries('bubbles', bubbleData, bubbleX, bubbleY)
                 .keyFunction(function(d)
                 {
                     return d.value.averageUserRating.Average;
@@ -66,27 +65,19 @@
 
         var chart = new insight.Chart('Chart 2', '#languages')
                 .width(400)
-                .height(300)
-                .margin(
-                {
-                    top: 30,
-                    left: 50,
-                    right: 0,
-                    bottom: 50
-                });
+                .height(300);
 
             var x = new insight.Axis('Language', insight.Scales.Ordinal)
                 .tickSize(5)
                 .tickPadding(0)
-                .tickLabelOrientation('tb')
-                .ordered(true);
+                .isOrdered(true);
 
             var y = new insight.Axis('', insight.Scales.Linear);
 
             chart.xAxis(x)
                  .yAxis(y);
 
-            var lSeries = new insight.ColumnSeries('languages', languages, x, y, '#336699')
+            var lSeries = new insight.ColumnSeries('languages', languages, x, y)
                 .top(10);
 
             chart.series([lSeries]);
@@ -96,29 +87,21 @@
     function createGenreCountChart(chartGroup, genreData){
 
         var chart = new insight.Chart('Genre Chart', "#genre-count")
-                .width(500)
-                .height(325)
-                .margin(
-                {
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 120
-                });
+                .width(550)
+                .height(400);
 
-        var x = new insight.Axis('', insight.Scales.Ordinal)
-            .tickSize(5)
-            .tickPadding(0)
-            .tickLabelOrientation('tb')
-            .ordered(true);
+        var y = new insight.Axis('', insight.Scales.Ordinal)
+            .tickSize(0)
+            .tickPadding(5)
+            .isOrdered(true);
 
-        var y = new insight.Axis('Apps', insight.Scales.Linear)
-                        .display(false);
+        var x = new insight.Axis('', insight.Scales.Linear)
+                        .hasReversedPosition(true);
 
         chart.xAxis(x)
              .yAxis(y);
 
-        var series = new insight.ColumnSeries('genre', genreData, x, y, '#336699')
+        var series = new insight.RowSeries('genre', genreData, x, y)
                                 .valueFunction(function(d){ return d.value.Count; });
 
         chart.series([series]);
@@ -129,15 +112,8 @@
 
     function createTimeChart(chartGroup, timeData) {
         var timeChart = new insight.Chart('Releases over time', '#time-releases')
-                .width(600)
-                .height(325)
-                .margin(
-                {
-                    top: 0,
-                    left: 90,
-                    right: 0,
-                    bottom: 100
-                });
+                .width(450)
+                .height(325);
 
             var xTime = new insight.Axis('', insight.Scales.Time)
                 .tickLabelOrientation('tb')
@@ -150,16 +126,16 @@
             timeChart.xAxis(xTime)
                      .yAxis(yTime);
 
-            var cumulative = new insight.LineSeries('valueLine', timeData, xTime, yTime, '#336699')
+            var cumulative = new insight.LineSeries('valueLine', timeData, xTime, yTime)
                 .valueFunction(function(d)
                 {
                     return d.value.CountCumulative;
-                }).showPoints(false);
+                }).shouldShowPoints(false);
 
 
             timeChart.series([cumulative]);
 
-            timeChart.zoomable(xTime);
+            timeChart.setInteractiveAxis(xTime);
             chartGroup.add(timeChart);
     }
 
@@ -182,10 +158,10 @@
         var x = new insight.Axis('', insight.Scales.Linear)
                            .tickSize(5)
                            .tickLabelRotation(45)
-                           .display(false);
+                           .shouldDisplay(false);
 
         var y = new insight.Axis('', insight.Scales.Ordinal)
-                           .ordered(true)
+                           .isOrdered(true)
                            .orderingFunction(function(a,b) {
                                 var aIndex = axisOrder.indexOf(a.key),
                                     bIndex = axisOrder.indexOf(b.key);
@@ -195,9 +171,9 @@
         chart.xAxis(x)
              .yAxis(y);
 
-        var rowSeries = new insight.RowSeries('content', contentRating, x, y, '#336699')
+        var rowSeries = new insight.RowSeries('content', contentRating, x, y)
                                    .valueFunction(function(d){ return d.value.Count;});
-        
+
         chart.series().push(rowSeries);
         chartGroup.add(chart);
         

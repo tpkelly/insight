@@ -1,23 +1,15 @@
 [
     {
         "country": "England",
-        "value": 10,
-        "value2": 5,
-        "pct": 0.5
+        "population": 53012456
     }, {
         "country": "Scotland",
-        "value": 20,
-        "value2": 7,
-        "pct": 0.78
+        "population": 5295000
     }, {
         "country": "Wales",
-        "value": 13,
-        "value2": 18,
-        "pct": 0.25
+        "population": 3063456
     }, {
         "country": "Ireland",
-        "value": 15,
-        "value2": 10,
-        "pct": 0.9
+        "population": 1810863
     }
 ]
