@@ -1,3 +1,9 @@
+=== Version 1.2.0 (XX-XXX-2014) ===
+
+* Horizontal axis tick labels anchored at the middle by default
+
+
+
 === Version 1.1.0 (05-Sep-2014) ===
 
 * Adds theming to charts and tables. By default this uses the LightTheme.
