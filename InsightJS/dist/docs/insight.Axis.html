@@ -149,9 +149,13 @@
             
                 <li data-name="insight.Axis#applyTheme"><a href="insight.Axis.html##applyTheme">#applyTheme</a></li>
             
-                <li data-name="insight.Axis#self.color"><a href="insight.Axis.html##self.color">#self.color</a></li>
+                <li data-name="insight.Axis#self.axisLabelColor"><a href="insight.Axis.html##self.axisLabelColor">#self.axisLabelColor</a></li>
             
-                <li data-name="insight.Axis#self.color"><a href="insight.Axis.html##self.color">#self.color</a></li>
+                <li data-name="insight.Axis#self.axisLabelColor"><a href="insight.Axis.html##self.axisLabelColor">#self.axisLabelColor</a></li>
+            
+                <li data-name="insight.Axis#self.axisLabelFont"><a href="insight.Axis.html##self.axisLabelFont">#self.axisLabelFont</a></li>
+            
+                <li data-name="insight.Axis#self.axisLabelFont"><a href="insight.Axis.html##self.axisLabelFont">#self.axisLabelFont</a></li>
             
                 <li data-name="insight.Axis#self.hasReversedPosition"><a href="insight.Axis.html##self.hasReversedPosition">#self.hasReversedPosition</a></li>
             
@@ -163,13 +167,13 @@
             
                 <li data-name="insight.Axis#self.isOrdered"><a href="insight.Axis.html##self.isOrdered">#self.isOrdered</a></li>
             
-                <li data-name="insight.Axis#self.isZoomable"><a href="insight.Axis.html##self.isZoomable">#self.isZoomable</a></li>
-            
-                <li data-name="insight.Axis#self.isZoomable"><a href="insight.Axis.html##self.isZoomable">#self.isZoomable</a></li>
-            
                 <li data-name="insight.Axis#self.label"><a href="insight.Axis.html##self.label">#self.label</a></li>
             
                 <li data-name="insight.Axis#self.label"><a href="insight.Axis.html##self.label">#self.label</a></li>
+            
+                <li data-name="insight.Axis#self.lineColor"><a href="insight.Axis.html##self.lineColor">#self.lineColor</a></li>
+            
+                <li data-name="insight.Axis#self.lineColor"><a href="insight.Axis.html##self.lineColor">#self.lineColor</a></li>
             
                 <li data-name="insight.Axis#self.lineWidth"><a href="insight.Axis.html##self.lineWidth">#self.lineWidth</a></li>
             
@@ -190,6 +194,14 @@
                 <li data-name="insight.Axis#self.textAnchor"><a href="insight.Axis.html##self.textAnchor">#self.textAnchor</a></li>
             
                 <li data-name="insight.Axis#self.textAnchor"><a href="insight.Axis.html##self.textAnchor">#self.textAnchor</a></li>
+            
+                <li data-name="insight.Axis#self.tickLabelColor"><a href="insight.Axis.html##self.tickLabelColor">#self.tickLabelColor</a></li>
+            
+                <li data-name="insight.Axis#self.tickLabelColor"><a href="insight.Axis.html##self.tickLabelColor">#self.tickLabelColor</a></li>
+            
+                <li data-name="insight.Axis#self.tickLabelFont"><a href="insight.Axis.html##self.tickLabelFont">#self.tickLabelFont</a></li>
+            
+                <li data-name="insight.Axis#self.tickLabelFont"><a href="insight.Axis.html##self.tickLabelFont">#self.tickLabelFont</a></li>
             
                 <li data-name="insight.Axis#self.tickLabelFormat"><a href="insight.Axis.html##self.tickLabelFormat">#self.tickLabelFormat</a></li>
             
@@ -1087,9 +1099,9 @@
             
 <dt>
     <div class="nameContainer">
-        <h4 class="name" id="#self.color">
+        <h4 class="name" id="#self.axisLabelColor">
             
-            #self.color<span class="signature">()</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{Color}</span>
+            #self.axisLabelColor<span class="signature">()</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{function}</span>
         </h4>
     </div>
 
@@ -1099,7 +1111,7 @@
     
     
     <div class="description">
-        Gets the color of the axis labels and lines.
+        The color to use for the axis label.
     </div>
     
 
@@ -1149,7 +1161,7 @@
 
 
 <h5>Returns:</h5>
-The color of the axis labels and lines.
+A function that returns the color of an axis label.
 <br />
 
     
@@ -1161,9 +1173,9 @@ The color of the axis labels and lines.
             
 <dt>
     <div class="nameContainer">
-        <h4 class="name" id="#self.color">
+        <h4 class="name" id="#self.axisLabelColor">
             
-            #self.color<span class="signature">(color)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{this}</span>
+            #self.axisLabelColor<span class="signature">(color)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{this}</span>
         </h4>
     </div>
 
@@ -1173,7 +1185,7 @@ The color of the axis labels and lines.
     
     
     <div class="description">
-        Sets the color of the axis labels and lines.
+        Sets the color to use for the axis label.
     </div>
     
 
@@ -1210,6 +1222,9 @@ The color of the axis labels and lines.
             <td class="type">
             
                 
+<span class="param-type">function</span>
+|
+
 <span class="param-type">Color</span>
 
 
@@ -1220,7 +1235,196 @@ The color of the axis labels and lines.
             
             <td class="description last">
                 
-                The new color of the axis labels and lines.</td>
+                Either a function that returns a color, or a color.</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="#self.axisLabelFont">
+            
+            #self.axisLabelFont<span class="signature">()</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{String}</span>
+        </h4>
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        The font to use for the axis label.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+The font to use for the axis label.
+<br />
+
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="#self.axisLabelFont">
+            
+            #self.axisLabelFont<span class="signature">(font)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{this}</span>
+        </h4>
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Sets the font to use for the axis label.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>font</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The font to use for the axis label.</td>
         </tr>
 	
 	
@@ -1541,7 +1745,7 @@ Whether the axis is horizontal.
     <div class="nameContainer">
         <h4 class="name" id="#self.isOrdered">
             
-            #self.isOrdered<span class="signature">()</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{boolean}</span>
+            #self.isOrdered<span class="signature">()</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{Boolean}</span>
         </h4>
     </div>
 
@@ -1615,7 +1819,7 @@ Whether the axis is currently ordered.
     <div class="nameContainer">
         <h4 class="name" id="#self.isOrdered">
             
-            #self.isOrdered<span class="signature">(value)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{this}</span>
+            #self.isOrdered<span class="signature">(shouldOrderAxis)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{this}</span>
         </h4>
     </div>
 
@@ -1656,13 +1860,16 @@ Whether the axis is currently ordered.
 	
         <tr>
             
-                <td class="name"><code>value</code></td>
+                <td class="name"><code>shouldOrderAxis</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">boolean</span>
+<span class="param-type">function</span>
+|
+
+<span class="param-type">Boolean</span>
 
 
             
@@ -1672,196 +1879,7 @@ Whether the axis is currently ordered.
             
             <td class="description last">
                 
-                Whether or not the axis will be ordered.</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-
-
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <div class="nameContainer">
-        <h4 class="name" id="#self.isZoomable">
-            
-            #self.isZoomable<span class="signature">()</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{boolean}</span>
-        </h4>
-    </div>
-
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Returns a boolean value representing if this Axis is zoomable.
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-
-
-<h5>Returns:</h5>
-A value indicating whether the axis is zoomable or not
-<br />
-
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <div class="nameContainer">
-        <h4 class="name" id="#self.isZoomable">
-            
-            #self.isZoomable<span class="signature">(value)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{this}</span>
-        </h4>
-    </div>
-
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Sets the zoomable status of this Axis.  A zoomable Axis allows drag and zoom operations, and is not redrawn automatically on the draw() event of a chart.
-    </div>
-    
-
-    
-    
-    
-    
-    
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>value</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-            
-            
-            
-            <td class="description last">
-                
-                A true/false value to set this Axis as zoomable or not.</td>
+                Either a function that returns a boolean, or a boolean.</td>
         </tr>
 	
 	
@@ -1919,7 +1937,7 @@ A value indicating whether the axis is zoomable or not
     <div class="nameContainer">
         <h4 class="name" id="#self.label">
             
-            #self.label<span class="signature">()</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{string}</span>
+            #self.label<span class="signature">()</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{String}</span>
         </h4>
     </div>
 
@@ -1993,7 +2011,7 @@ The axis label
     <div class="nameContainer">
         <h4 class="name" id="#self.label">
             
-            #self.label<span class="signature">(value)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{this}</span>
+            #self.label<span class="signature">(axisLabel)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{this}</span>
         </h4>
     </div>
 
@@ -2034,13 +2052,13 @@ The axis label
 	
         <tr>
             
-                <td class="name"><code>value</code></td>
+                <td class="name"><code>axisLabel</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
             
@@ -2051,6 +2069,198 @@ The axis label
             <td class="description last">
                 
                 The axis label</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="#self.lineColor">
+            
+            #self.lineColor<span class="signature">()</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{Color}</span>
+        </h4>
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Gets the color of the axis lines.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+The color of the axis lines.
+<br />
+
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="#self.lineColor">
+            
+            #self.lineColor<span class="signature">(color)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{this}</span>
+        </h4>
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Sets the color of the axis lines.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>color</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+|
+
+<span class="param-type">Color</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                Either a function that returns a color, or a color.</td>
         </tr>
 	
 	
@@ -2997,6 +3207,387 @@ The the current text-anchor attribute value.
             <td class="description last">
                 
                 The text-anchor attribute that will be set on each tick Label.</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="#self.tickLabelColor">
+            
+            #self.tickLabelColor<span class="signature">()</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{function}</span>
+        </h4>
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        The color to use for the axis tick label.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+A function that returns the color of an axis tick label.
+<br />
+
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="#self.tickLabelColor">
+            
+            #self.tickLabelColor<span class="signature">(color)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{this}</span>
+        </h4>
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Sets the color to use for the axis tick label.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>color</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+|
+
+<span class="param-type">Color</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                Either a function that returns a color, or a color.</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="#self.tickLabelFont">
+            
+            #self.tickLabelFont<span class="signature">()</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{String}</span>
+        </h4>
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        The font to use for the axis tick labels.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+
+
+<h5>Returns:</h5>
+The font to use for the axis tick labels.
+<br />
+
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="#self.tickLabelFont">
+            
+            #self.tickLabelFont<span class="signature">(font)</span><span class="glyphicon glyphicon-circle-arrow-right"></span><span class="type-signature returnType">{this}</span>
+        </h4>
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Sets the font to use for the axis tick labels.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>font</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The font to use for the axis tick labels.</td>
         </tr>
 	
 	

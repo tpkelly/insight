@@ -30,8 +30,7 @@
 
             var bubbleX = new insight.Axis('Average Rating', insight.Scales.Linear)
                 .tickSize(5)
-                .tickPadding(0)
-                .tickLabelOrientation('tb');
+                .tickPadding(0);
 
             var bubbleY = new insight.Axis('$', insight.Scales.Linear)
                 .tickSize(5);
@@ -78,7 +77,6 @@
             var x = new insight.Axis('Language', insight.Scales.Ordinal)
                 .tickSize(5)
                 .tickPadding(0)
-                .tickLabelOrientation('tb')
                 .isOrdered(true);
 
             var y = new insight.Axis('', insight.Scales.Linear);
@@ -96,29 +94,21 @@
     function createGenreCountChart(chartGroup, genreData){
 
         var chart = new insight.Chart('Genre Chart', "#genre-count")
-                .width(500)
-                .height(325)
-                .margin(
-                {
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 120
-                });
+                .width(550)
+                .height(400);
 
-        var x = new insight.Axis('', insight.Scales.Ordinal)
-            .tickSize(5)
-            .tickPadding(0)
-            .tickLabelOrientation('tb')
+        var y = new insight.Axis('', insight.Scales.Ordinal)
+            .tickSize(0)
+            .tickPadding(5)
             .isOrdered(true);
 
-        var y = new insight.Axis('Apps', insight.Scales.Linear)
-                        .shouldDisplay(false);
+        var x = new insight.Axis('', insight.Scales.Linear)
+                        .hasReversedPosition(true);
 
         chart.xAxis(x)
              .yAxis(y);
 
-        var series = new insight.ColumnSeries('genre', genreData, x, y)
+        var series = new insight.RowSeries('genre', genreData, x, y)
                                 .valueFunction(function(d){ return d.value.Count; });
 
         chart.series([series]);
@@ -129,7 +119,7 @@
 
     function createTimeChart(chartGroup, timeData) {
         var timeChart = new insight.Chart('Releases over time', '#time-releases')
-                .width(600)
+                .width(450)
                 .height(325)
                 .margin(
                 {
