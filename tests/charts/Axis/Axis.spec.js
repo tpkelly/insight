@@ -1448,8 +1448,8 @@ describe('Axis', function() {
                         var expectedTop = textMeasurer.measureText('Last!!!', tickLabelFont, rotation).height / 2;
 
                         var expectedResult = {
-                            top: expectedTop,
-                            bottom: expectedBottom,
+                            top: Math.ceil(expectedTop),
+                            bottom: Math.ceil(expectedBottom),
                             right: 0,
                             left: 0
                         };
