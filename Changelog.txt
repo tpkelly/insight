@@ -1,3 +1,7 @@
+=== Version X.X.X (XX-XXX-2014) ===
+
+* Sets default currency of currency formatter to USD.
+
 === Version 1.1.0 (05-Sep-2014) ===
 
 * Adds theming to charts and tables. By default this uses the LightTheme.
