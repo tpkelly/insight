@@ -52,12 +52,20 @@
         }
 
         function textAnchor() {
-            var orientation = self.orientation();
-            if (orientation === 'left' || orientation === 'top') {
-                return 'end';
-            } else {
-                return 'start';
+
+            switch (self.orientation()) {
+
+                case 'left':
+                    return 'end';
+
+                case 'right':
+                    return 'start';
+
+                case 'top':
+                case 'bottom':
+                    return 'middle';
             }
+
         }
 
         /*
