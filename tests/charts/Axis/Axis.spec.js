@@ -267,10 +267,10 @@ describe('Axis', function() {
                 .tickPadding(0);
 
             // When
-            var observedResult = y.tickLabelRotationTransform();
+            var observedResult = y.tickLabelRotationTransform().split(',')[0];
 
             // Then
-            expect(observedResult).toEqual(' rotate(0,0,6)');
+            expect(observedResult).toEqual(' rotate(0');
 
         });
 
@@ -283,8 +283,8 @@ describe('Axis', function() {
                 .tickPadding(0);
 
             //Then:
-            var observedResult = y.tickLabelRotationTransform();
-            var expectedResult = ' rotate(90,0,6)';
+            var observedResult = y.tickLabelRotationTransform().split(',')[0];
+            var expectedResult = ' rotate(90';
 
             expect(observedResult).toEqual(expectedResult);
         });
@@ -610,7 +610,61 @@ describe('Axis', function() {
 
             });
 
-            it('handles negative text height', function() {
+            it('handles tick label rotation greater than 180 degrees', function() {
+
+                // Given
+                var tickLabelRotation = 190;
+
+                axis.tickSize(tickSize)
+                    .tickPadding(tickPadding)
+                    .label(axisLabel)
+                    .tickLabelRotation(tickLabelRotation);
+
+                // When
+                var result = axis.calculateLabelDimensions();
+
+                // Then
+                var expectedTickLabelHeight = textMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).height;
+                var expectedAxisLabelHeight = textMeasurer.measureText(axisLabel, axisFont).height;
+
+                var expectedResult =
+                    tickSize +
+                    tickPadding * 2 +
+                    Math.abs(expectedTickLabelHeight) +
+                    expectedAxisLabelHeight;
+
+                expect(result.height).toBe(expectedResult);
+
+            });
+
+            it('handles tick label rotation 300 degrees', function() {
+
+                // Given
+                var tickLabelRotation = 300;
+
+                axis.tickSize(tickSize)
+                    .tickPadding(tickPadding)
+                    .label(axisLabel)
+                    .tickLabelRotation(tickLabelRotation);
+
+                // When
+                var result = axis.calculateLabelDimensions();
+
+                // Then
+                var expectedTickLabelHeight = textMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).height;
+                var expectedAxisLabelHeight = textMeasurer.measureText(axisLabel, axisFont).height;
+
+                var expectedResult =
+                    tickSize +
+                    tickPadding * 2 +
+                    Math.abs(expectedTickLabelHeight) +
+                    expectedAxisLabelHeight;
+
+                expect(result.height).toBe(expectedResult);
+
+            });
+
+            it('handles negative tick label height', function() {
 
                 // Given
                 var tickLabelRotation = 180;
@@ -624,12 +678,13 @@ describe('Axis', function() {
                 var result = axis.calculateLabelDimensions();
 
                 // Then
+                var expectedAxisTickLabelHeight = textMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).height;
                 var expectedAxisLabelHeight = textMeasurer.measureText(axisLabel, axisFont).height;
 
                 var expectedResult =
                     tickSize +
                     tickPadding * 2 +
-                    0 +
+                    Math.abs(expectedAxisTickLabelHeight) +
                     expectedAxisLabelHeight;
 
                 expect(result.height).toBe(expectedResult);
@@ -789,7 +844,7 @@ describe('Axis', function() {
 
             });
 
-            it('handles negative text width', function() {
+            it('handles negative tick label width', function() {
 
                 // Given
                 var tickLabelRotation = 180;
@@ -803,12 +858,41 @@ describe('Axis', function() {
                 var result = axis.calculateLabelDimensions();
 
                 // Then
+                var expectedTickLabelWidth = textMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).width;
                 var expectedAxisLabelWidth = textMeasurer.measureText(axisLabel, axisFont).width;
 
                 var expectedResult =
                     tickSize +
                     tickPadding * 2 +
-                    0 +
+                    Math.abs(expectedTickLabelWidth) +
+                    expectedAxisLabelWidth;
+
+                expect(result.width).toBe(expectedResult);
+
+            });
+
+
+            it('handles tick label rotation greater than 180 degrees', function() {
+
+                // Given
+                var tickLabelRotation = 190;
+
+                axis.tickSize(tickSize)
+                    .tickPadding(tickPadding)
+                    .label(axisLabel)
+                    .tickLabelRotation(tickLabelRotation);
+
+                // When
+                var result = axis.calculateLabelDimensions();
+
+                // Then
+                var expectedTickLabelWidth = textMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).width;
+                var expectedAxisLabelWidth = textMeasurer.measureText(axisLabel, axisFont).width;
+
+                var expectedResult =
+                    tickSize +
+                    tickPadding * 2 +
+                    Math.abs(expectedTickLabelWidth) +
                     expectedAxisLabelWidth;
 
                 expect(result.width).toBe(expectedResult);
