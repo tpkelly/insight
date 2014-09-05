@@ -2,6 +2,7 @@
 
 * Sets default currency of currency formatter to USD.
 * Horizontal axis tick labels anchored at the middle by default
+* Fix issue where chart titles were not within the chart SVG bounds.
 
 
 
