@@ -198,8 +198,7 @@
         self.drawTitle = function() {
             self.titleContainer
                 .style('position', 'absolute')
-                .style('top', '-20px')
-                .style('left', self.margin.left + 'px')
+                .style('left', self.margin().left + 'px')
                 .style('width', self.width() - self.margin().left - self.margin().right + 'px')
                 .style('text-align', 'center')
                 .style("font", self.titleFont)
@@ -806,6 +805,12 @@
             margin.right = Math.max(margin.right, labelOverhang.right);
 
         });
+
+        //Adjust margins to fit the title
+        if (this.title() && this.title().length > 0) {
+            var textMeasurer = new insight.TextMeasurer(this.measureCanvas);
+            margin.top += textMeasurer.measureText(this.title(), this.titleFont()).height;
+        }
 
         this.margin(margin);
 
