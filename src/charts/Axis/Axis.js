@@ -62,8 +62,10 @@
                     return 'start';
 
                 case 'top':
+                    return (self.tickLabelRotation() % 360 === 0) ? 'middle' : 'end';
+
                 case 'bottom':
-                    return 'middle';
+                    return (self.tickLabelRotation() % 360 === 0) ? 'middle' : 'start';
             }
 
         }

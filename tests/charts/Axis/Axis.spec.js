@@ -1720,7 +1720,7 @@ describe('Axis', function() {
             axis = new insight.Axis('TestAxis', insight.Scales.Linear);
         });
 
-        it('defaults to middle for a horizontal axis', function() {
+        it('defaults to middle for a horizontal axis with no rotation', function() {
 
             // Given
             axis.isHorizontal = d3.functor(true);
@@ -1734,7 +1734,7 @@ describe('Axis', function() {
 
         });
 
-        it('defaults to middle for a horizontal axis with reversed position', function() {
+        it('defaults to middle for a horizontal axis with reversed position and no rotation', function() {
 
             // Given
             axis.isHorizontal = d3.functor(true);
@@ -1749,7 +1749,7 @@ describe('Axis', function() {
 
         });
 
-        it('defaults to end for a vertical axis', function() {
+        it('defaults to end for a vertical axis with no rotation', function() {
 
             // Given
             axis.isHorizontal = d3.functor(false);
@@ -1763,10 +1763,103 @@ describe('Axis', function() {
 
         });
 
-        it('defaults to start for a vertical axis with reversed position', function() {
+        it('defaults to start for a vertical axis with reversed position and no rotation', function() {
 
             // Given
             axis.isHorizontal = d3.functor(false);
+            axis.hasReversedPosition(true);
+
+            // When
+            var result = axis.textAnchor();
+
+            // Then
+            expect(result).toBe('start');
+
+
+        });
+
+        it('defaults to start for horizontal axis with rotation', function() {
+
+            // Given
+            axis.isHorizontal = d3.functor(true);
+            axis.tickLabelRotation(20);
+
+            // When
+            var result = axis.textAnchor();
+
+            // Then
+            expect(result).toBe('start');
+
+
+        });
+
+        it('defaults to middle for horizontal axis with 360 degree rotation', function() {
+
+            // Given
+            axis.isHorizontal = d3.functor(true);
+            axis.tickLabelRotation(360);
+
+            // When
+            var result = axis.textAnchor();
+
+            // Then
+            expect(result).toBe('middle');
+
+
+        });
+
+        it('defaults to end for horizontal axis with reversed position and rotation', function() {
+
+            // Given
+            axis.isHorizontal = d3.functor(true);
+            axis.tickLabelRotation(20);
+            axis.hasReversedPosition(true);
+
+            // When
+            var result = axis.textAnchor();
+
+            // Then
+            expect(result).toBe('end');
+
+
+        });
+
+        it('defaults to middle for horizontal axis with reversed position and 360 degree rotation', function() {
+
+            // Given
+            axis.isHorizontal = d3.functor(true);
+            axis.tickLabelRotation(360);
+            axis.hasReversedPosition(true);
+
+            // When
+            var result = axis.textAnchor();
+
+            // Then
+            expect(result).toBe('middle');
+
+
+        });
+
+        it('defaults to end for vertical axis with rotation', function() {
+
+            // Given
+            axis.isHorizontal = d3.functor(false);
+            axis.tickLabelRotation(20);
+
+            // When
+            var result = axis.textAnchor();
+
+            // Then
+            expect(result).toBe('end');
+
+
+        });
+
+        it('defaults to start for vertical axis with reversed position and rotation', function() {
+
+            // Given
+            axis.isHorizontal = d3.functor(false);
+            axis.tickLabelRotation(20);
             axis.hasReversedPosition(true);
 
             // When
