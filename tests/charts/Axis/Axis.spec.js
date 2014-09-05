@@ -1720,154 +1720,537 @@ describe('Axis', function() {
             axis = new insight.Axis('TestAxis', insight.Scales.Linear);
         });
 
-        it('defaults to middle for a horizontal axis with no rotation', function() {
+        describe('vertical axis', function() {
 
-            // Given
-            axis.isHorizontal = d3.functor(true);
+            beforeEach(function() {
+                axis.isHorizontal = d3.functor(false);
+            });
 
-            // When
-            var result = axis.textAnchor();
+            it('end if no rotation', function() {
 
-            // Then
-            expect(result).toBe('middle');
+                // Given
+                axis.tickLabelRotation(0);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+
+            });
+
+            it('end if 45 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(45);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+
+            });
+
+            it('middle if 90 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(90);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('middle');
+
+
+            });
+
+            it('start if 135 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(135);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+
+            });
+
+            it('start if 180 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(180);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+            });
+
+            it('start if 225 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(225);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+            });
+
+            it('middle if 270 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(270);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('middle');
+
+            });
+
+            it('end if 315 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(315);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+            });
+
+            it('end if 360 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(360);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+            });
+
+            it('start if no rotation and reversed position', function() {
+
+                // Given
+                axis.tickLabelRotation(0);
+                axis.hasReversedPosition(true);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+
+            });
+
+            it('start if 45 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(45);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+            });
+
+            it('middle if 90 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(90);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('middle');
+
+
+            });
+
+            it('middle if -90 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(-90);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('middle');
+
+
+            });
+
+            it('end if 135 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(135);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+
+            });
+
+            it('end if 180 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(180);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+            });
+
+            it('end if 225 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(225);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+            });
+
+            it('middle if 270 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(270);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('middle');
+
+            });
+
+            it('start if 315 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(315);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+            });
+
+            it('start if 360 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(360);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+            });
+
 
 
         });
 
-        it('defaults to middle for a horizontal axis with reversed position and no rotation', function() {
+        describe('horizontal axis', function() {
 
-            // Given
-            axis.isHorizontal = d3.functor(true);
-            axis.hasReversedPosition(true);
+            beforeEach(function() {
+                axis.isHorizontal = d3.functor(true);
+            });
 
-            // When
-            var result = axis.textAnchor();
+            it('middle if no rotation', function() {
 
-            // Then
-            expect(result).toBe('middle');
+                // Given
+                axis.tickLabelRotation(0);
 
+                // When
+                var result = axis.textAnchor();
 
-        });
-
-        it('defaults to end for a vertical axis with no rotation', function() {
-
-            // Given
-            axis.isHorizontal = d3.functor(false);
-
-            // When
-            var result = axis.textAnchor();
-
-            // Then
-            expect(result).toBe('end');
+                // Then
+                expect(result).toBe('middle');
 
 
-        });
+            });
 
-        it('defaults to start for a vertical axis with reversed position and no rotation', function() {
+            it('start if 45 degree rotation', function() {
 
-            // Given
-            axis.isHorizontal = d3.functor(false);
-            axis.hasReversedPosition(true);
+                // Given
+                axis.tickLabelRotation(45);
 
-            // When
-            var result = axis.textAnchor();
+                // When
+                var result = axis.textAnchor();
 
-            // Then
-            expect(result).toBe('start');
-
-
-        });
-
-        it('defaults to start for horizontal axis with rotation', function() {
-
-            // Given
-            axis.isHorizontal = d3.functor(true);
-            axis.tickLabelRotation(20);
-
-            // When
-            var result = axis.textAnchor();
-
-            // Then
-            expect(result).toBe('start');
+                // Then
+                expect(result).toBe('start');
 
 
-        });
+            });
 
-        it('defaults to middle for horizontal axis with 360 degree rotation', function() {
+            it('start if 90 degree rotation', function() {
 
-            // Given
-            axis.isHorizontal = d3.functor(true);
-            axis.tickLabelRotation(360);
+                // Given
+                axis.tickLabelRotation(90);
 
-            // When
-            var result = axis.textAnchor();
+                // When
+                var result = axis.textAnchor();
 
-            // Then
-            expect(result).toBe('middle');
-
-
-        });
-
-        it('defaults to end for horizontal axis with reversed position and rotation', function() {
-
-            // Given
-            axis.isHorizontal = d3.functor(true);
-            axis.tickLabelRotation(20);
-            axis.hasReversedPosition(true);
-
-            // When
-            var result = axis.textAnchor();
-
-            // Then
-            expect(result).toBe('end');
+                // Then
+                expect(result).toBe('start');
 
 
-        });
+            });
 
-        it('defaults to middle for horizontal axis with reversed position and 360 degree rotation', function() {
+            it('start if 135 degree rotation', function() {
 
-            // Given
-            axis.isHorizontal = d3.functor(true);
-            axis.tickLabelRotation(360);
-            axis.hasReversedPosition(true);
+                // Given
+                axis.tickLabelRotation(135);
 
-            // When
-            var result = axis.textAnchor();
+                // When
+                var result = axis.textAnchor();
 
-            // Then
-            expect(result).toBe('middle');
+                // Then
+                expect(result).toBe('start');
 
 
-        });
+            });
 
-        it('defaults to end for vertical axis with rotation', function() {
+            it('middle if 180 degree rotation', function() {
 
-            // Given
-            axis.isHorizontal = d3.functor(false);
-            axis.tickLabelRotation(20);
+                // Given
+                axis.tickLabelRotation(180);
 
-            // When
-            var result = axis.textAnchor();
+                // When
+                var result = axis.textAnchor();
 
-            // Then
-            expect(result).toBe('end');
+                // Then
+                expect(result).toBe('middle');
+
+            });
+
+            it('end if 225 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(225);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+            });
+
+            it('end if 270 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(270);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+            });
+
+            it('end if 315 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(270);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+            });
+
+            it('middle if 360 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(360);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('middle');
+
+            });
+
+            it('middle if no rotation and reversed position', function() {
+
+                // Given
+                axis.tickLabelRotation(0);
+                axis.hasReversedPosition(true);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('middle');
 
 
-        });
+            });
 
-        it('defaults to start for vertical axis with reversed position and rotation', function() {
+            it('end if 45 degree rotation and reversed position', function() {
 
-            // Given
-            axis.isHorizontal = d3.functor(false);
-            axis.tickLabelRotation(20);
-            axis.hasReversedPosition(true);
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(45);
 
-            // When
-            var result = axis.textAnchor();
+                // When
+                var result = axis.textAnchor();
 
-            // Then
-            expect(result).toBe('start');
+                // Then
+                expect(result).toBe('end');
 
+
+            });
+
+            it('end if 90 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(90);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+
+            });
+
+            it('end if 135 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(135);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+
+            });
+
+            it('middle if 180 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(180);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('middle');
+
+            });
+
+            it('start if 225 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(225);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+            });
+
+            it('start if 270 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(270);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+            });
+
+            it('start if 315 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(270);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+            });
+
+            it('middle if 360 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(360);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('middle');
+
+            });
 
         });
 

@@ -53,19 +53,23 @@
 
         function textAnchor() {
 
+            var angleRadians = insight.Utils.degreesToRadians(self.tickLabelRotation());
+            var trigFunc = (self.isHorizontal()) ? Math.sin : Math.cos;
+            var trigResult = parseFloat(trigFunc(angleRadians).toFixed(10));
+
+            if (trigResult === 0) {
+                return 'middle';
+            }
+
             switch (self.orientation()) {
 
                 case 'left':
-                    return 'end';
+                case 'top':
+                    return (trigResult > 0) ? 'end' : 'start';
 
                 case 'right':
-                    return 'start';
-
-                case 'top':
-                    return (self.tickLabelRotation() % 360 === 0) ? 'middle' : 'end';
-
                 case 'bottom':
-                    return (self.tickLabelRotation() % 360 === 0) ? 'middle' : 'start';
+                    return (trigResult > 0) ? 'start' : 'end';
             }
 
         }
