@@ -53,17 +53,23 @@
 
         function textAnchor() {
 
+            var angleRadians = insight.Utils.degreesToRadians(self.tickLabelRotation());
+            var trigFunc = (self.isHorizontal()) ? Math.sin : Math.cos;
+            var trigResult = parseFloat(trigFunc(angleRadians).toFixed(10));
+
+            if (trigResult === 0) {
+                return 'middle';
+            }
+
             switch (self.orientation()) {
 
                 case 'left':
-                    return 'end';
+                case 'top':
+                    return (trigResult > 0) ? 'end' : 'start';
 
                 case 'right':
-                    return 'start';
-
-                case 'top':
                 case 'bottom':
-                    return 'middle';
+                    return (trigResult > 0) ? 'start' : 'end';
             }
 
         }
@@ -201,11 +207,11 @@
             });
 
             var maxTickLabelWidth = d3.max(tickLabelSizes, function(d) {
-                return Math.max(0, d.width);
+                return Math.abs(d.width);
             });
 
             var maxTickLabelHeight = d3.max(tickLabelSizes, function(d) {
-                return Math.max(0, d.height);
+                return Math.abs(d.height);
             });
 
             var axisLabelWidth = Math.ceil(textMeasurer.measureText(self.label(), self.axisLabelFont()).width);
@@ -330,11 +336,15 @@
             return domain;
         };
 
-        self.tickLabelRotationTransform = function() {
+        self.tickLabelRotationTransform = function(d) {
 
+            var formattedTickLabel = self.tickLabelFormat()(d);
             var offset = self.tickPadding() + (self.tickSize() * 2);
+
             var measurer = new insight.TextMeasurer(self.measureCanvas);
-            var textHeight = Math.ceil(measurer.measureText("aa").width);
+            var labelSize = measurer.measureText(formattedTickLabel, self.tickLabelFont());
+            var textHeight = Math.ceil(labelSize.height);
+
 
             offset = (shouldReversePosition ^ !self.isHorizontal()) ? -offset : offset;
 
@@ -459,7 +469,7 @@
 
             self.axisElement
                 .selectAll('text')
-                .attr('transform', self.tickLabelRotationTransform())
+                .attr('transform', self.tickLabelRotationTransform)
                 .style('text-anchor', self.textAnchor());
 
             d3.selectAll(".tick > text")
