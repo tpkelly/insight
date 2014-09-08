@@ -344,7 +344,7 @@
             var labelSize = measurer.measureText('aa', self.tickLabelFont());
             var textHeight = Math.ceil(labelSize.height);
 
-            offset = (shouldReversePosition ^ !self.isHorizontal()) ? -offset : offset;
+            offset = (self.orientation() === 'left' || self.orientation() === 'top') ? -offset : offset;
 
             if (self.isHorizontal()) {
                 return ' rotate(' + self.tickLabelRotation() + ',' + (textHeight / 2) + ',' + offset + ')';
