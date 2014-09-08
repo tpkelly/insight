@@ -336,15 +336,13 @@
             return domain;
         };
 
-        self.tickLabelRotationTransform = function(d) {
+        self.tickLabelRotationTransform = function() {
 
-            var formattedTickLabel = self.tickLabelFormat()(d);
-            var offset = self.tickPadding() + (self.tickSize() * 2);
+            var offset = self.tickPadding() + self.tickSize();
 
             var measurer = new insight.TextMeasurer(self.measureCanvas);
-            var labelSize = measurer.measureText(formattedTickLabel, self.tickLabelFont());
+            var labelSize = measurer.measureText('aa', self.tickLabelFont());
             var textHeight = Math.ceil(labelSize.height);
-
 
             offset = (shouldReversePosition ^ !self.isHorizontal()) ? -offset : offset;
 
