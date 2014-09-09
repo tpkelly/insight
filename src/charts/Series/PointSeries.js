@@ -79,7 +79,8 @@
                 .on('mouseout', self.mouseOut)
                 .on('click', click);
 
-            points
+            points.transition()
+                .duration(duration)
                 .attr('r', rad)
                 .attr('cx', self.rangeX)
                 .attr('cy', self.rangeY)
