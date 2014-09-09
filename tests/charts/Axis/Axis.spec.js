@@ -2340,4 +2340,79 @@ describe('Axis', function() {
 
     });
 
+    describe('tickValues', function() {
+
+        it('returns axis tick values for an ordinal axis', function() {
+
+            // Given:
+            var axis = new insight.Axis('axis', insight.Scales.Ordinal);
+            var domainValues = [
+                'Alan',
+                'Horse',
+                'Add'
+            ];
+            spyOn(axis, 'domain').andReturn(domainValues);
+
+            // When:
+            var result = axis.tickValues();
+
+            // Then:
+            expect(result).toEqual(domainValues);
+        });
+
+        it('returns axis tick values for an linear axis', function() {
+
+            // Given:
+            var axis = new insight.Axis('axis', insight.Scales.Linear);
+            spyOn(axis, 'domain').andReturn([0, 53271721]);
+
+            // When:
+            var result = axis.tickValues();
+
+            // Then:
+            var expectedTickValues = [
+                0,
+                5000000,
+                10000000,
+                15000000,
+                20000000,
+                25000000,
+                30000000,
+                35000000,
+                40000000,
+                45000000,
+                50000000
+            ];
+            expect(result).toEqual(expectedTickValues);
+        });
+
+        it('returns axis tick values for an Time axis', function() {
+
+            // Given:
+            var axis = new insight.Axis('axis', insight.Scales.Time);
+            spyOn(axis, 'domain').andReturn([
+                new Date(2014, 0, 1),
+                new Date(2014, 9, 1, 17, 33, 3)]
+            );
+
+            // When:
+            var result = axis.tickValues();
+
+            // Then:
+            var expectedTickValues = [
+                new Date(2014, 0, 1),
+                new Date(2014, 1, 1),
+                new Date(2014, 2, 1),
+                new Date(2014, 3, 1),
+                new Date(2014, 4, 1),
+                new Date(2014, 5, 1),
+                new Date(2014, 6, 1),
+                new Date(2014, 7, 1),
+                new Date(2014, 8, 1),
+                new Date(2014, 9, 1)
+            ];
+            expect(result).toEqual(expectedTickValues);
+        });
+    });
+
 });
