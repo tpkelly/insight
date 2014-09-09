@@ -3,6 +3,7 @@
     /**
      * The MarkerSeries class extends the Series class and draws markers/targets on a chart
      * @class insight.MarkerSeries
+     * @extends insight.Series
      * @param {string} name - A uniquely identifying name for this series
      * @param {DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis

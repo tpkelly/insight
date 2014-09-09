@@ -4,6 +4,7 @@
      * The BubbleSeries class extends the PointSeries class to display datapoints as differently sized circles,
      * where radius represents a measured value.
      * @class insight.BubbleSeries
+     * @extends insight.PointSeries
      * @param {string} name - A uniquely identifying name for this series
      * @param {DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
