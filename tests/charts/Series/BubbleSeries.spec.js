@@ -39,7 +39,7 @@ describe('BubbleSeries', function() {
 
         var dataset = new insight.DataSet(data);
 
-        chart = new insight.Chart('Scatter Chart', '#chart')
+        chart = new insight.Chart('Bubble Chart', '#chart')
             .width(250)
             .height(250);
 
