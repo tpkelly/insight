@@ -77,7 +77,7 @@
 
             points.enter()
                 .append('circle')
-                .attr('class', self.itemClassName)
+                .attr('class', self.selector)
                 .on('mouseover', self.mouseOver)
                 .on('mouseout', self.mouseOut)
                 .on('click', click);
