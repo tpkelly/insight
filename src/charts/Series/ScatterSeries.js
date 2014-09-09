@@ -56,7 +56,7 @@
 
             // create radius for each item
             data.forEach(function(d) {
-                d.radius = radiusFunction(d);
+                d.radius = Math.max(radiusFunction(d), 0);
             });
 
             return data;

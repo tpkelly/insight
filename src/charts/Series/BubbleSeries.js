@@ -50,7 +50,7 @@
             data.forEach(function(d) {
                 var radiusInput = radiusFunction(d);
 
-                if (radiusInput === 0) {
+                if (radiusInput <= 0) {
                     d.radius = 0;
                 } else {
                     d.radius = (radiusInput * maxRad) / max;

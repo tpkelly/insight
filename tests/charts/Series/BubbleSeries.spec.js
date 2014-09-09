@@ -27,51 +27,19 @@
 
 describe('BubbleSeries', function() {
 
-    it('Points with same radius have radius greater than 0', function () {
-        //Given:
-        var data = [{x:0, y:0, radius:2},
-                    {x:5, y:3, radius:2},
-                    {x:3, y:5, radius:2}];
+    var series;
+    var chart;
+
+    beforeEach(function() {
+
+        var data = [
+            {x:0, y:0, radius:5},
+            {x:5, y:3, radius:1},
+            {x:3, y:5, radius:2}];
+
         var dataset = new insight.DataSet(data);
 
-        var chart = new insight.Chart('Bubble Chart', '#chart')
-            .width(250)
-            .height(250);
-
-        var xAxis = new insight.Axis('', insight.Scales.Linear, 'bottom');
-        var yAxis = new insight.Axis('', insight.Scales.Linear, 'left');
-        chart.addXAxis(xAxis);
-        chart.addYAxis(yAxis);
-
-        var series = new insight.BubbleSeries('BubbleSeries', dataset, xAxis, yAxis)
-            .radiusFunction(function(d) {
-                return d.radius;
-            });
-        chart.series([series]);
-
-        //When:
-        xAxis.updateAxisBounds(chart);
-        yAxis.updateAxisBounds(chart);
-        var bubbleData = series.bubbleData(series.dataset());
-
-        //Then:
-        var radii = bubbleData.map(function(d) {
-            return d.radius;
-        })
-
-        // Max pixel radius = 25 (width:250 / 10)
-        // Radius = 25 (max pixel radius) * 2 (current radius) / 2 (max radius in set)
-        expect(radii).toEqual([25, 25, 25]);
-    });
-
-    it('Points with 0 radius have radius of 0', function () {
-        //Given:
-        var data = [{x:0, y:0, radius:0},
-                    {x:5, y:3, radius:0},
-                    {x:3, y:5, radius:0}];
-        var dataset = new insight.DataSet(data);
-
-        var chart = new insight.Chart('Bubble Chart', '#chart')
+        chart = new insight.Chart('Scatter Chart', '#chart')
             .width(250)
             .height(250);
 
@@ -80,93 +48,134 @@ describe('BubbleSeries', function() {
         chart.addXAxis(xAxis);
         chart.addYAxis(yAxis);
 
-        var series = new insight.BubbleSeries('BubbleSeries', dataset, xAxis, yAxis)
-            .radiusFunction(function(d) {
-                return d.radius;
-            });
+        series = new insight.BubbleSeries('testBubbleSeries', dataset, xAxis, yAxis);
         chart.series([series]);
 
-        //When:
         xAxis.updateAxisBounds(chart);
         yAxis.updateAxisBounds(chart);
-        var bubbleData = series.bubbleData(series.dataset());
 
-        //Then:
-        var radii = bubbleData.map(function(d) {
-            return d.radius;
-        })
-        expect(radii).toEqual([0, 0, 0]);
     });
 
-    it('Points with different radius have proportional radii', function () {
-        //Given:
-        var data = [{x:0, y:0, radius:5},
-                    {x:5, y:3, radius:1},
-                    {x:3, y:5, radius:2}];
-        var dataset = new insight.DataSet(data);
+    describe("radius and position", function() {
 
-        var chart = new insight.Chart('Bubble Chart', '#chart')
-            .width(250)
-            .height(250);
+        it('Points with same radius have radius greater than 0', function () {
+            //Given:
+            series.radiusFunction(function (d) {
+                return 2;
+            });
 
-        var xAxis = new insight.Axis('', insight.Scales.Linear);
-        var yAxis = new insight.Axis('', insight.Scales.Linear);
-        chart.addXAxis(xAxis);
-        chart.addYAxis(yAxis);
+            //When:
+            var bubbleData = series.bubbleData(series.dataset());
 
-        var series = new insight.BubbleSeries('BubbleSeries', dataset, xAxis, yAxis)
-            .radiusFunction(function(d) {
+            //Then:
+            var radii = bubbleData.map(function (d) {
                 return d.radius;
             });
-        chart.series([series]);
 
-        //When:
-        xAxis.updateAxisBounds(chart);
-        yAxis.updateAxisBounds(chart);
-        xAxis.bounds = chart.calculatePlotAreaSize();
-        var bubbleData = series.bubbleData(series.dataset());
+            // Max pixel radius = 25 (width:250 / 10)
+            // Radius = 25 (max pixel radius) * 2 (current radius) / 2 (max radius in set)
+            expect(radii).toEqual([25, 25, 25]);
+        });
 
-        //Then:
-        var radii = bubbleData.map(function(d) {
-            return d.radius;
-        })
+        it('Points with 0 radius have radius of 0', function () {
+            //Given:
+            series.radiusFunction(function (d) {
+                return 0;
+            });
 
-        //Largest is 25px, the rest are proportional to the size of the largest
-        //Also returned in descending order, to display the smallest points on top.
-        expect(radii).toEqual([25, 10, 5]);
+            //When:
+            var bubbleData = series.bubbleData(series.dataset());
+
+            //Then:
+            var radii = bubbleData.map(function (d) {
+                return d.radius;
+            });
+            expect(radii).toEqual([0, 0, 0]);
+        });
+
+        it('Points with "negative" radius have radius of 0', function () {
+            //Given:
+            series.radiusFunction(function (d) {
+                return -1;
+            });
+
+            //When:
+            var bubbleData = series.bubbleData(series.dataset());
+
+            //Then:
+            var radii = bubbleData.map(function (d) {
+                return d.radius;
+            });
+            expect(radii).toEqual([0, 0, 0]);
+        });
+
+        it('Points with different radius have proportional radii', function () {
+            //Given:
+            series.radiusFunction(function (d) {
+                return d.radius;
+            });
+
+            //When:
+            var bubbleData = series.bubbleData(series.dataset());
+
+            //Then:
+            var radii = bubbleData.map(function (d) {
+                return d.radius;
+            });
+
+            //Largest is 25px, the rest are proportional to the size of the largest
+            //Also returned in descending order, to display the smallest points on top.
+            expect(radii).toEqual([25, 10, 5]);
+        });
+
+        it('Sets x from data', function () {
+
+            //When:
+            var bubbleData = series.bubbleData(series.dataset());
+
+            //Then:
+            var xValues = bubbleData.map(function (d) {
+                return d.x;
+            });
+
+            expect(xValues).toEqual([0, 5, 3]);
+        });
+
+        it('Sets y from data', function () {
+
+            //When:
+            var bubbleData = series.bubbleData(series.dataset());
+
+            //Then:
+            var yValues = bubbleData.map(function (d) {
+                return d.y;
+            });
+
+            expect(yValues).toEqual([0, 3, 5]);
+        });
+
     });
 
-    it('BubbleSeries item class values are correct', function() {
-        
-        //Given 
+    it('item class values are correct', function() {
 
+        // Given
         var data = new insight.DataSet(bubbleDataSet);
-
-        var chart = new insight.Chart('Chart 1', '#chart1');
-                
         var group =  data.group('country', function(d){return d.Country;})
-                         .mean(['Age']);
+            .mean(['Age']);
 
-        var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
-        var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
-        
-        chart.addXAxis(xScale);
-        chart.addYAxis(yScale);
+        var testSeries = new insight.BubbleSeries('testBubbleSeries', group, chart.xAxis(), chart.yAxis());
+        chart.series([testSeries]);
 
-        var series = new insight.BubbleSeries('countryBubbles', group, xScale, yScale)
-                                .radiusFunction(function(d) {
-                                    return d.radius;
-                                });
         // When
-        series.rootClassName = series.seriesClassName();
+        testSeries.rootClassName = testSeries.seriesClassName();
 
         // Then
-        var actualData = series.dataset().map(function(data){ return series.itemClassName(data); });
+        var actualData = testSeries.dataset().map(function(data){ return testSeries.itemClassName(data); });
         var expectedData = [
-                            'countryBubblesclass bubble in_England',
-                            'countryBubblesclass bubble in_Northern_Ireland',
-                            'countryBubblesclass bubble in_Scotland',
-                            'countryBubblesclass bubble in_Wales',
+                            'testBubbleSeriesclass bubble in_England',
+                            'testBubbleSeriesclass bubble in_Northern_Ireland',
+                            'testBubbleSeriesclass bubble in_Scotland',
+                            'testBubbleSeriesclass bubble in_Wales'
                             ];
 
         expect(actualData).toEqual(expectedData);
