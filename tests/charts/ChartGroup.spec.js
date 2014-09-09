@@ -1,4 +1,4 @@
-describe('Chart Group Tests', function() {
+describe('ChartGroup', function() {
 
     var sourceData = 
         [{'Id':1,'Forename':'Martin','Surname':'Watkins','Country':'Scotland','DisplayColour':'#38d33c','Age':1,'IQ':69,'Gender':'Male','Interests':['Ballet', 'Music', 'Climbing'],},
@@ -44,185 +44,212 @@ describe('Chart Group Tests', function() {
         document.body.removeChild(div);
     });
 
+    describe('defaults', function() {
 
-    it('initializes correctly', function() {
+        it('dimensions empty', function() {
 
-        expect(chartGroup.dimensions).toEqual([]);
-        expect(chartGroup.groupings).toEqual([]);
-        expect(chartGroup.filteredDimensions).toEqual([]);
-        expect(chartGroup.dimensionListenerMap).toEqual([]);
-        expect(chartGroup.tables).toEqual([]);
-        expect(chartGroup.charts).toEqual([]);
-    });
+            expect(chartGroup.dimensions).toEqual([]);
 
+        });
 
-    it('can add a chart with no series', function() {
-        
-        // Given
+        it('groupings empty', function() {
 
-        chart = new insight.Chart('testChart', '#testChart');
+            expect(chartGroup.groupings).toEqual([]);
 
-        // When
+        });
 
-        chartGroup.add(chart);
+        it('filteredDimensions empty', function() {
 
-        // Then 
+            expect(chartGroup.filteredDimensions).toEqual([]);
 
-        expect(chartGroup.charts).toEqual([chart]);
-        expect(chartGroup.tables).toEqual([]);
-    });
+        });
 
-    it('can add a table with no series', function() {
-        
-        // Given
+        it('dimensionListenerMap empty', function() {
 
-        table = new insight.Table('testTable', '#testChart');
+            expect(chartGroup.dimensionListenerMap).toEqual([]);
 
-        // When
+        });
 
-        chartGroup.add(table);
+        it('tables empty', function() {
 
-        // Then 
+            expect(chartGroup.tables).toEqual([]);
 
-        expect(chartGroup.tables).toEqual([table]);
-        expect(chartGroup.charts).toEqual([]);
-    });
+        });
 
-    it('can add a chart with a series', function() {
-        
-        // Given
+        it('charts empty', function() {
 
-        chart = new insight.Chart('testChart', '#testChart');
-
-        var countries =  dataset.group('country', function(d){return d.Country;});
-
-        var x = new insight.Axis('Country', insight.Scales.Ordinal);
-        var y = new insight.Axis('Values', insight.Scales.Linear);
-        
-        chart.xAxis(x);
-        chart.yAxis(y);
-
-        var series = new insight.ColumnSeries('columns', countries, x, y)
-                                .valueFunction(function(d){ return d.value.Count; });
-
-        chart.series([series]);
-
-        // When
-
-        chartGroup.add(chart);
-        chartGroup.draw();
-
-        // Then 
-
-        var expectedDimensionMap = {'country': [chart]};        
-        var actualDimensionMap = chartGroup.dimensionListenerMap;
-
-        expect(chartGroup.charts).toEqual([chart]);
-        expect(chartGroup.dimensions).toEqual([countries.dimension]);
-        expect(chartGroup.groupings).toEqual([countries]);
-        expect(actualDimensionMap).toEqual(expectedDimensionMap);
-    });
-
-    it('adding multiple series doesnt duplicate dimensions and groupings', function() {
-        
-        // Given
-
-        chart = new insight.Chart('testChart', '#testChart');
-
-        var countries =  dataset.group('country', function(d){return d.Country;});
-
-        var x = new insight.Axis('Country', insight.Scales.Ordinal);
-        var y = new insight.Axis('Values', insight.Scales.Linear);
-        
-        chart.xAxis(x);
-        chart.yAxis(y);
-
-        var series = new insight.ColumnSeries('columns', countries, x, y)
-                                .valueFunction(function(d){return d.value.Count;});
-        
-        var series2 = new insight.ColumnSeries('columns2', countries, x, y)
-                                .valueFunction(function(d){return d.value.Count + 1;});
-        
-        chart.series([series, series2]);
-
-        // When
-
-        chartGroup.add(chart);
-
-        // Then 
-        
-        expect(chartGroup.charts).toEqual([chart]);
-        expect(chartGroup.dimensions).toEqual([countries.dimension]);
-        expect(chartGroup.groupings).toEqual([countries]);
-    });
-
-    it('drawing a ChartGroup draws a single chart', function() {
-        
-        // Given
-
-        chart = new insight.Chart('testChart', '#testChart');
-
-        var countries =  dataset.group('country', function(d){return d.Country;});
-
-        var x = new insight.Axis('Country', insight.Scales.Ordinal);
-        var y = new insight.Axis('Values', insight.Scales.Linear);
-        
-        chart.xAxis(x);
-        chart.yAxis(y);
-
-        var series = new insight.ColumnSeries('columns', countries, x, y)
-                                .valueFunction(function(d){return d.value.Count;});
-        
-        chart.series([series]);
-
-        // spy on the initialization of the chart, to make sure it's called
-        spyOn(chart, 'draw');
-
-        // When
-
-
-        chartGroup.add(chart);
-        chartGroup.draw();
-
-        // Then
-        expect(chart.draw).toHaveBeenCalled();
+            expect(chartGroup.charts).toEqual([]);
+            
+        });
 
     });
 
-    it('redrawing a ChartGroup redraws a single chart', function() {
-        
-        // Given
+    describe('add', function() {
 
-        chart = new insight.Chart('testChart', '#testChart');
+        it('works for a chart with no series', function() {
 
-        var countries =  dataset.group('country', function(d){return d.Country;});
+            // Given
+            chart = new insight.Chart('testChart', '#testChart');
 
-        var x = new insight.Axis('Country', insight.Scales.Ordinal);
-        var y = new insight.Axis('Values', insight.Scales.Linear);
-        
-        chart.xAxis(x);
-        chart.yAxis(y);
+            // When
+            chartGroup.add(chart);
 
-        var series = new insight.ColumnSeries('columns', countries, x, y)
-                                .valueFunction(function(d){return d.value.Count;});
-        
-        chart.series([series]);
+            // Then
+            expect(chartGroup.charts).toEqual([chart]);
+            expect(chartGroup.tables).toEqual([]);
 
-        // spy on the initialization of the chart, to make sure it's called
-        
-        spyOn(chart, 'draw');
+        });
 
-        // When
+        it('works for a table with no series', function() {
 
-        chartGroup.add(chart);
-        chartGroup.draw();
-        chartGroup.draw();
+            // Given
+            table = new insight.Table('testTable', '#testChart');
 
-        // Then
+            // When
+            chartGroup.add(table);
 
-        expect(chart.draw.calls.length).toEqual(2);
+            // Then
+            expect(chartGroup.tables).toEqual([table]);
+            expect(chartGroup.charts).toEqual([]);
+
+        });
+
+        it('adding multiple series doesn\'t duplicate dimensions and groupings', function() {
+
+            // Given
+
+            chart = new insight.Chart('testChart', '#testChart');
+
+            var countries =  dataset.group('country', function(d){return d.Country;});
+
+            var x = new insight.Axis('Country', insight.Scales.Ordinal);
+            var y = new insight.Axis('Values', insight.Scales.Linear);
+
+            chart.xAxis(x);
+            chart.yAxis(y);
+
+            var series = new insight.ColumnSeries('columns', countries, x, y)
+                .valueFunction(function(d){return d.value.Count;});
+
+            var series2 = new insight.ColumnSeries('columns2', countries, x, y)
+                .valueFunction(function(d){return d.value.Count + 1;});
+
+            chart.series([series, series2]);
+
+            // When
+
+            chartGroup.add(chart);
+
+            // Then
+
+            expect(chartGroup.charts).toEqual([chart]);
+            expect(chartGroup.dimensions).toEqual([countries.dimension]);
+            expect(chartGroup.groupings).toEqual([countries]);
+        });
+
     });
-    
+
+    describe('draw', function() {
+
+        it('works for a chart with a series', function() {
+
+            // Given
+            chart = new insight.Chart('testChart', '#testChart');
+
+            var countries =  dataset.group('country', function(d){return d.Country;});
+
+            var x = new insight.Axis('Country', insight.Scales.Ordinal);
+            var y = new insight.Axis('Values', insight.Scales.Linear);
+
+            chart.xAxis(x);
+            chart.yAxis(y);
+
+            var series = new insight.ColumnSeries('columns', countries, x, y)
+                .valueFunction(function(d){ return d.value.Count; });
+
+            chart.series([series]);
+            chartGroup.add(chart);
+
+            // When
+            chartGroup.draw();
+
+            // Then
+            var expectedDimensionMap = {'country': [chart]};
+            var actualDimensionMap = chartGroup.dimensionListenerMap;
+
+            expect(chartGroup.charts).toEqual([chart]);
+            expect(chartGroup.dimensions).toEqual([countries.dimension]);
+            expect(chartGroup.groupings).toEqual([countries]);
+            expect(actualDimensionMap).toEqual(expectedDimensionMap);
+
+        });
+
+        it('draws a single chart', function() {
+
+            // Given
+
+            chart = new insight.Chart('testChart', '#testChart');
+
+            var countries =  dataset.group('country', function(d){return d.Country;});
+
+            var x = new insight.Axis('Country', insight.Scales.Ordinal);
+            var y = new insight.Axis('Values', insight.Scales.Linear);
+
+            chart.xAxis(x);
+            chart.yAxis(y);
+
+            var series = new insight.ColumnSeries('columns', countries, x, y)
+                .valueFunction(function(d){return d.value.Count;});
+
+            chart.series([series]);
+
+            // spy on the initialization of the chart, to make sure it's called
+            spyOn(chart, 'draw');
+
+            chartGroup.add(chart);
+
+            // When
+            chartGroup.draw();
+
+            // Then
+            expect(chart.draw).toHaveBeenCalled();
+
+        });
+
+        it('redraws a single chart', function() {
+
+            // Given
+
+            chart = new insight.Chart('testChart', '#testChart');
+
+            var countries =  dataset.group('country', function(d){return d.Country;});
+
+            var x = new insight.Axis('Country', insight.Scales.Ordinal);
+            var y = new insight.Axis('Values', insight.Scales.Linear);
+
+            chart.xAxis(x);
+            chart.yAxis(y);
+
+            var series = new insight.ColumnSeries('columns', countries, x, y)
+                .valueFunction(function(d){return d.value.Count;});
+
+            chart.series([series]);
+
+            // spy on the initialization of the chart, to make sure it's called
+            spyOn(chart, 'draw');
+
+            chartGroup.add(chart);
+
+            // When
+            chartGroup.draw();
+            chartGroup.draw();
+
+            // Then
+            expect(chart.draw.calls.length).toEqual(2);
+
+        });
+
+    });
 
     describe('when adding multiple charts to a ChartGroup', function(){
 
@@ -236,8 +263,8 @@ describe('Chart Group Tests', function() {
             table;
 
         beforeEach(function(){
-            chart = new insight.Chart('testChart', '#testChart');
 
+            chart = new insight.Chart('testChart', '#testChart');
             countries =  dataset.group('country', function(d){return d.Country;});
 
             x = new insight.Axis('Country', insight.Scales.Ordinal);
@@ -253,7 +280,6 @@ describe('Chart Group Tests', function() {
 
 
             // second chart
-
             chart2 = new insight.Chart('AnotherChart', '#testChart2');
             x2 = new insight.Axis('Country', insight.Scales.Ordinal);
             y2 = new insight.Axis('Values', insight.Scales.Linear);
@@ -262,7 +288,7 @@ describe('Chart Group Tests', function() {
             chart2.yAxis(y2);
 
             series2 = new insight.ColumnSeries('columns', countries, x2, y2)
-                                    .valueFunction(function(d){return d.value.Count;});
+                .valueFunction(function(d){return d.value.Count;});
             
             chart2.series([series2]);
 
@@ -272,13 +298,12 @@ describe('Chart Group Tests', function() {
             spyOn(chart, 'draw');
             spyOn(chart2, 'draw');
             spyOn(table, 'draw');
-        });
 
+        });
 
         it('with mixed charts and tables correctly populates the dimension list', function() {      
 
             // When
-
             chartGroup.add(chart);
             chartGroup.add(chart2);
             chartGroup.add(table);
@@ -286,16 +311,15 @@ describe('Chart Group Tests', function() {
             chartGroup.draw();
 
             // Then
-
             var expectedDimensionMap = {'country': [chart, chart2, table]};
 
             expect(chartGroup.dimensionListenerMap).toEqual(expectedDimensionMap);
+
         });
 
         it('with multiple items draws the child charts', function() {
             
             // When
-
             chartGroup.add(chart);
             chartGroup.add(chart2);
             chartGroup.add(table);
@@ -303,31 +327,31 @@ describe('Chart Group Tests', function() {
             chartGroup.draw();        
 
             // Then
-
             expect(chart.draw.calls.length).toEqual(2);
             expect(chart2.draw.calls.length).toEqual(2);
+
         });
 
 
         it('redrawing a ChartGroup redraws charts and tables', function() {
-            
-            // When
 
+            // Given
             chartGroup.add(chart);
             chartGroup.add(table);
             chartGroup.add(chart2);
 
+            // When
             chartGroup.draw();
             chartGroup.draw();        
 
             // Then
-
             expect(table.draw.calls.length).toEqual(2);
+
         });
     });
    
 
-    describe('triggering a chart filter', function() {
+    describe('filterByGrouping', function() {
         
         var chart,
             x,
@@ -338,6 +362,7 @@ describe('Chart Group Tests', function() {
 
         beforeEach(function(){
 
+            // Given
             chart = new insight.Chart('testChart', '#testChart');
 
             countries =  dataset.group('country', function(d){return d.Country;});
@@ -373,34 +398,40 @@ describe('Chart Group Tests', function() {
             // filter the series to only include objects where the country is England 
             var filterValue = {key: 'England', value: {}};
             
-            chartGroup.filterByGrouping(series.data, filterValue, 'in_England');
+            chartGroup.filterByGrouping(series.data, filterValue);
+
         });
 
         it('causes the countries dimension to create a filter function', function() {
-        
+
             expect(countries.dimension.createFilterFunction).toHaveBeenCalled();
+
         });
 
         it('recalculates the countries group', function() {
-        
+
             expect(countries.recalculate).toHaveBeenCalled();
+
         });
 
         it('redraws the entire ChartGroup', function() {
-        
+
             expect(chartGroup.draw).toHaveBeenCalled();
+
         });
 
         it('highlights the chart inside', function() {
         
             expect(chart.highlight).toHaveBeenCalled();
+
         });
 
         it('highlights the table inside', function() {
+
             expect(table.highlight).toHaveBeenCalled();
+
         });
 
     });
-    
 
 });
