@@ -144,36 +144,35 @@
 
         /*
          * Method handler that is bound by the ChartGroup to the click events of any chart series or table rows,
-         * if the DataSets used by those entities are crossfilter enabled.
+         * if those entities' datasets are insight.Grouping objects.
          * It notifies any other listening charts of the dimensional selection event, which they can respond to
          * by applying CSS highlighting etc.
          * @memberof! insight.ChartGroup
          * @instance
-         * @param {object} dataset - The insight.DataSet or insight.Grouping being filtered
-         * @param {string} value - The value that the dimension is being sliced/filtered by.
+         * @param {insight.Grouping} grouping - The grouping being filtered
+         * @param {string} value - The value that the grouping is being filtered by.
          */
-        self.chartFilterHandler = function(dataset, value) {
+        self.chartFilterHandler = function(grouping, value) {
 
             var dimensionSelector = insight.Utils.keySelector(value);
+            var groupDimension = grouping.dimension;
 
             // send events to any charts or tables also using this dimension, as they will need to update their
             // styles to reflect the selection
-            notifyListeners(dataset.dimension.name, dimensionSelector);
+            notifyListeners(grouping.dimension.name, dimensionSelector);
 
-            var dimension = dataset.dimension;
-
-            var filterFunc = dimension.createFilterFunction(value);
+            var filterFunc = groupDimension.createFilterFunction(value);
             var nameProperty = 'name';
 
             // get the list of any dimensions matching the one that is being filtered
-            var dims = insight.Utils.takeWhere(self.dimensions, nameProperty, dimension.name);
+            var dims = insight.Utils.takeWhere(self.dimensions, nameProperty, groupDimension.name);
 
             // get the list of matching dimensions that are already filtered
-            var activeDim = insight.Utils.takeWhere(self.filteredDimensions, nameProperty, dimension.name);
+            var activeDim = insight.Utils.takeWhere(self.filteredDimensions, nameProperty, groupDimension.name);
 
             // add the new filter to the list of active filters if it's not already active
             if (!activeDim.length) {
-                self.filteredDimensions.push(dimension);
+                self.filteredDimensions.push(groupDimension);
             }
 
             // loop through the matching dimensions to filter them all
