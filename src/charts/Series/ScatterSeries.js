@@ -18,7 +18,9 @@
 
         // Internal functions -----------------------------------------------------------------------------------------
 
-        self.className = d3.functor(insight.Constants.Scatter);
+        self.cssClassName = d3.functor(insight.Constants.Scatter);
+
+        self.classValues = [self.cssClassName()];
 
         self.pointData = function(data) {
             // create radius for each item

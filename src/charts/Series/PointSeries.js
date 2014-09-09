@@ -32,11 +32,15 @@
 
         // Internal functions -----------------------------------------------------------------------------------------
 
-        self.className = d3.functor(insight.Constants.Point);
+        self.cssClassName = d3.functor(insight.Constants.Point);
 
         self.selector = function() {
-            return self.name + self.className();
+            return self.name + self.cssClassName();
         };
+
+        // Internal variables -------------------------------------------------------------------------------------------
+
+        self.classValues = [self.cssClassName()];
 
         self.rangeY = function(d) {
             return self.y.scale(self.valueFunction()(d));
