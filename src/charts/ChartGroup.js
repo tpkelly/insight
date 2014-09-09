@@ -49,7 +49,7 @@
 
                     addDimensionListener(series.data, chart);
 
-                    series.clickEvent = self.chartFilterHandler;
+                    series.clickEvent = self.filterByGrouping;
 
                     addDataSet(series.data);
                 });
@@ -91,7 +91,7 @@
         function addTable(table) {
 
             // wire up the click event of the table to the filter handler of the DataSet
-            table.clickEvent = self.chartFilterHandler;
+            table.clickEvent = self.filterByGrouping;
 
             addDimensionListener(table.data, table);
 
@@ -152,7 +152,7 @@
          * @param {insight.Grouping} grouping - The grouping being filtered
          * @param {string} value - The value that the grouping is being filtered by.
          */
-        self.chartFilterHandler = function(grouping, value) {
+        self.filterByGrouping = function(grouping, value) {
 
             var dimensionSelector = insight.Utils.keySelector(value);
             var groupDimension = grouping.dimension;

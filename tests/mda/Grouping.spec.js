@@ -671,7 +671,7 @@ describe('Grouping', function() {
             chart.draw();
 
             // filter the chart group to only include Male gender
-            chartGroup.chartFilterHandler(genderGroup, 'Male');
+            chartGroup.filterByGrouping(genderGroup, 'Male');
 
             // calling getData will cause the correlation calculations to be performed
             var groupData = countryGroup.getData();
