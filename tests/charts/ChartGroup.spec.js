@@ -79,7 +79,7 @@ describe('ChartGroup', function() {
         it('charts empty', function() {
 
             expect(chartGroup.charts).toEqual([]);
-            
+
         });
 
     });
@@ -395,10 +395,8 @@ describe('ChartGroup', function() {
             chartGroup.add(table);
             chartGroup.draw();        
             
-            // filter the series to only include objects where the country is England 
-            var filterValue = {key: 'England', value: {}};
-            
-            chartGroup.filterByGrouping(series.data, filterValue);
+            // When
+            chartGroup.filterByGrouping(countries, 'England');
 
         });
 
@@ -431,6 +429,12 @@ describe('ChartGroup', function() {
             expect(table.highlight).toHaveBeenCalled();
 
         });
+
+    });
+
+    describe('removeFilters', function() {
+
+
 
     });
 
