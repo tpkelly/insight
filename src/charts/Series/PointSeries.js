@@ -13,6 +13,8 @@
 
         insight.Series.call(this, name, data, x, y);
 
+        // Private variables -----------------------------------------------------------------------------------------
+
         var radiusFunction = d3.functor(3),
             self = this;
 
@@ -30,17 +32,14 @@
             return 0.5;
         };
 
-        // Internal functions -----------------------------------------------------------------------------------------
+        // Internal variables -----------------------------------------------------------------------------------------
 
         self.cssClassName = d3.functor(insight.Constants.Point);
 
-        self.selector = function() {
-            return self.name + self.cssClassName();
-        };
-
-        // Internal variables -------------------------------------------------------------------------------------------
-
         self.classValues = [self.cssClassName()];
+
+        // Internal functions -------------------------------------------------------------------------------------------
+
 
         self.rangeY = function(d) {
             return self.y.scale(self.valueFunction()(d));
@@ -50,6 +49,9 @@
             return self.x.scale(self.keyFunction()(d));
         };
 
+        self.selector = function() {
+            return self.name + self.cssClassName();
+        };
 
         self.draw = function(chart, isDragging) {
 

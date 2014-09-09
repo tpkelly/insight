@@ -17,11 +17,13 @@
 
         var self = this;
 
-        // Internal functions -----------------------------------------------------------------------------------------
+        // Internal variables -----------------------------------------------------------------------------------------
 
         self.cssClassName = d3.functor(insight.Constants.Bubble);
 
         self.classValues = [self.cssClassName()];
+
+        // Internal functions -----------------------------------------------------------------------------------------
 
         self.pointData = function(data) {
             var max = d3.max(data, self.radiusFunction());

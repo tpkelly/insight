@@ -16,11 +16,13 @@
 
         var self = this;
 
-        // Internal functions -----------------------------------------------------------------------------------------
+        // Internal variables -----------------------------------------------------------------------------------------
 
         self.cssClassName = d3.functor(insight.Constants.Scatter);
 
         self.classValues = [self.cssClassName()];
+
+        // Internal functions -----------------------------------------------------------------------------------------
 
         self.pointData = function(data) {
             // create radius for each item
