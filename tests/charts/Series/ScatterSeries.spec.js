@@ -31,7 +31,7 @@ describe('ScatterSeries', function() {
     it('Radius of all points defaults to 3', function () {
 
         //When:
-        var scatterData = series.scatterData(series.dataset());
+        var scatterData = series.pointData(series.dataset());
 
         //Then:
         var radii = scatterData.map(function(d) {
@@ -46,7 +46,7 @@ describe('ScatterSeries', function() {
         series.pointRadius(7);
 
         //When:
-        var scatterData = series.scatterData(series.dataset());
+        var scatterData = series.pointData(series.dataset());
 
         //Then:
         var radii = scatterData.map(function(d) {
@@ -61,7 +61,7 @@ describe('ScatterSeries', function() {
         series.pointRadius(0);
 
         //When:
-        var scatterData = series.scatterData(series.dataset());
+        var scatterData = series.pointData(series.dataset());
 
         //Then:
         var radii = scatterData.map(function(d) {
@@ -76,7 +76,7 @@ describe('ScatterSeries', function() {
         series.pointRadius(-1);
 
         //When:
-        var scatterData = series.scatterData(series.dataset());
+        var scatterData = series.pointData(series.dataset());
 
         //Then:
         var radii = scatterData.map(function(d) {
@@ -89,7 +89,7 @@ describe('ScatterSeries', function() {
     it('Sets x from data', function () {
         
         //When:
-        var scatterData = series.scatterData(series.dataset());
+        var scatterData = series.pointData(series.dataset());
 
         //Then:
         var xValues = scatterData.map(function(d) {
@@ -102,7 +102,7 @@ describe('ScatterSeries', function() {
     it('Sets y from data', function () {
         
         //When:
-        var scatterData = series.scatterData(series.dataset());
+        var scatterData = series.pointData(series.dataset());
 
         //Then:
         var yValues = scatterData.map(function(d) {

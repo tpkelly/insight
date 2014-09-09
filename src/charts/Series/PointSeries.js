@@ -14,10 +14,29 @@
         insight.Series.call(this, name, data, x, y);
 
         var radiusFunction = d3.functor(3),
-            opacityFunction = d3.functor(1),
             self = this;
 
+        var opacityFunction = function() {
+            // If we are using selected/notSelected, then make selected more opaque than notSelected
+            if (this.classList && this.classList.contains("selected")) {
+                return 0.8;
+            }
+
+            if (this.classList && this.classList.contains("notselected")) {
+                return 0.3;
+            }
+
+            //If not using selected/notSelected, make everything semi-transparent
+            return 0.5;
+        };
+
         // Internal functions -----------------------------------------------------------------------------------------
+
+        self.className = d3.functor(insight.Constants.Point);
+
+        self.selector = function() {
+            return self.name + self.className();
+        };
 
         self.rangeY = function(d) {
             return self.y.scale(self.valueFunction()(d));
@@ -26,6 +45,44 @@
         self.rangeX = function(d, i) {
             return self.x.scale(self.keyFunction()(d));
         };
+
+
+        self.draw = function(chart, isDragging) {
+
+            self.initializeTooltip(chart.container.node());
+
+            var duration = isDragging ? 0 : function(d, i) {
+                return 200 + (i * 20);
+            };
+
+            function click(filter) {
+                return self.click(self, filter);
+            }
+
+            var data = self.pointData(self.dataset());
+
+            var points = chart.plotArea.selectAll('circle.' + self.selector())
+                .data(data, self.keyFunction());
+
+            function rad(d) {
+                return d.radius;
+            }
+
+            points.enter()
+                .append('circle')
+                .attr('class', self.itemClassName)
+                .on('mouseover', self.mouseOver)
+                .on('mouseout', self.mouseOut)
+                .on('click', click);
+
+            points
+                .attr('r', rad)
+                .attr('cx', self.rangeX)
+                .attr('cy', self.rangeY)
+                .attr('opacity', self.pointOpacity())
+                .style('fill', self.color);
+        };
+
 
         // Public functions -------------------------------------------------------------------------------------------
 
@@ -95,7 +152,7 @@
          */
         self.pointOpacity = function(opacity) {
             if (!arguments.length) {
-                return opacityFunction();
+                return opacityFunction;
             }
             opacityFunction = d3.functor(opacity);
 

@@ -14,66 +14,19 @@
 
         // Private variables ------------------------------------------------------------------------------------------
 
-        var self = this,
-            selector = self.name + insight.Constants.Scatter;
-
-        // Private functions ------------------------------------------------------------------------------------------
-
-        function className(d) {
-
-            return selector + " " + insight.Constants.Scatter + " " + self.dimensionName;
-        }
+        var self = this;
 
         // Internal functions -----------------------------------------------------------------------------------------
 
-        self.scatterData = function(data) {
-            var max = d3.max(data, self.radiusFunction());
+        self.className = d3.functor(insight.Constants.Scatter);
 
-            //Minimum of pixels-per-axis-unit
-            var xValues = data.map(self.keyFunction());
-            var yValues = data.map(self.valueFunction());
-            var xBounds = self.x.bounds[1];
-            var yBounds = self.y.bounds[0];
-
+        self.pointData = function(data) {
             // create radius for each item
             data.forEach(function(d) {
                 d.radius = Math.max(self.radiusFunction()(d), 0);
             });
 
             return data;
-        };
-
-        self.draw = function(chart, isDragging) {
-
-            self.initializeTooltip(chart.container.node());
-            self.selectedItems = chart.selectedItems;
-
-            var duration = isDragging ? 0 : function(d, i) {
-                return 200 + (i * 20);
-            };
-
-            function click(filter) {
-                return self.click(self, filter);
-            }
-
-            var scatterData = self.scatterData(self.dataset());
-
-            var points = chart.plotArea.selectAll('circle.' + selector)
-                .data(scatterData, self.keyFunction());
-
-            points.enter()
-                .append('circle')
-                .attr('class', className)
-                .on('mouseover', self.mouseOver)
-                .on('mouseout', self.mouseOut)
-                .on('click', click);
-
-            points
-                .attr('r', self.radiusFunction())
-                .attr('cx', self.rangeX)
-                .attr('cy', self.rangeY)
-                .attr('opacity', self.pointOpacity())
-                .style('fill', self.color);
         };
 
     };

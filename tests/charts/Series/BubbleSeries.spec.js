@@ -65,7 +65,7 @@ describe('BubbleSeries', function() {
             });
 
             //When:
-            var bubbleData = series.bubbleData(series.dataset());
+            var bubbleData = series.pointData(series.dataset());
 
             //Then:
             var radii = bubbleData.map(function (d) {
@@ -84,7 +84,7 @@ describe('BubbleSeries', function() {
             });
 
             //When:
-            var bubbleData = series.bubbleData(series.dataset());
+            var bubbleData = series.pointData(series.dataset());
 
             //Then:
             var radii = bubbleData.map(function (d) {
@@ -100,7 +100,7 @@ describe('BubbleSeries', function() {
             });
 
             //When:
-            var bubbleData = series.bubbleData(series.dataset());
+            var bubbleData = series.pointData(series.dataset());
 
             //Then:
             var radii = bubbleData.map(function (d) {
@@ -116,7 +116,7 @@ describe('BubbleSeries', function() {
             });
 
             //When:
-            var bubbleData = series.bubbleData(series.dataset());
+            var bubbleData = series.pointData(series.dataset());
 
             //Then:
             var radii = bubbleData.map(function (d) {
@@ -131,7 +131,7 @@ describe('BubbleSeries', function() {
         it('Sets x from data', function () {
 
             //When:
-            var bubbleData = series.bubbleData(series.dataset());
+            var bubbleData = series.pointData(series.dataset());
 
             //Then:
             var xValues = bubbleData.map(function (d) {
@@ -144,7 +144,7 @@ describe('BubbleSeries', function() {
         it('Sets y from data', function () {
 
             //When:
-            var bubbleData = series.bubbleData(series.dataset());
+            var bubbleData = series.pointData(series.dataset());
 
             //Then:
             var yValues = bubbleData.map(function (d) {

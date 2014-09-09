@@ -15,8 +15,7 @@
 
         // Private variables ------------------------------------------------------------------------------------------
 
-        var self = this,
-            selector = self.name + insight.Constants.Bubble;
+        var self = this;
 
         // Internal variables -------------------------------------------------------------------------------------------
 
@@ -24,12 +23,10 @@
 
         // Internal functions -----------------------------------------------------------------------------------------
 
-        self.bubbleData = function(data) {
-            var max = d3.max(data, self.radiusFunction());
+        self.className = d3.functor(insight.Constants.Scatter);
 
-            function rad(d) {
-                return d.radius;
-            }
+        self.pointData = function(data) {
+            var max = d3.max(data, self.radiusFunction());
 
             //Minimum of pixels-per-axis-unit
             var xValues = data.map(self.keyFunction());
@@ -49,6 +46,10 @@
                 }
             });
 
+            function rad(d) {
+                return d.radius;
+            }
+
             //this sort ensures that smaller bubbles are on top of larger ones, so that they are always selectable.  Without changing original array (hence concat which creates a copy)
             data = data.concat()
                 .sort(function(a, b) {
@@ -57,60 +58,6 @@
 
             return data;
         };
-
-        self.draw = function(chart, isDragging) {
-
-            self.initializeTooltip(chart.container.node());
-            self.selectedItems = chart.selectedItems;
-
-            var duration = isDragging ? 0 : function(d, i) {
-                return 200 + (i * 20);
-            };
-
-            function click(filter) {
-                return self.click(self, filter);
-            }
-
-            var bubbleData = self.bubbleData(self.dataset());
-
-            var bubbles = chart.plotArea.selectAll('circle.' + insight.Constants.Bubble)
-                .data(bubbleData, self.keyFunction());
-
-            bubbles.enter()
-                .append('circle')
-                .attr('class', self.itemClassName)
-                .on('mouseover', self.mouseOver)
-                .on('mouseout', self.mouseOut)
-                .on('click', click);
-
-
-            function rad(d) {
-                return d.radius;
-            }
-
-            function opacity() {
-                // If we are using selected/notSelected, then make selected more opaque than notSelected
-                if (this.classList && this.classList.contains("selected")) {
-                    return 0.8;
-                }
-
-                if (this.classList && this.classList.contains("notselected")) {
-                    return 0.3;
-                }
-
-                //If not using selected/notSelected, make everything semi-transparent
-                return 0.5;
-            }
-
-            bubbles.transition()
-                .duration(duration)
-                .attr('r', rad)
-                .attr('cx', self.rangeX)
-                .attr('cy', self.rangeY)
-                .attr('opacity', self.opacity)
-                .style('fill', this.color);
-        };
-
     };
 
     insight.BubbleSeries.prototype = Object.create(insight.PointSeries.prototype);
