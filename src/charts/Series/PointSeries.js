@@ -120,7 +120,7 @@
         };
 
         /**
-         * The function to extract the radius of each bubble from the data objects.
+         * Gets the function to extract the radius of each bubble from the data objects.
          * @memberof! insight.PointSeries
          * @instance
          * @returns {Function} - The current function used to determine the radius of data objects.
@@ -143,8 +143,8 @@
         };
 
         /**
-         * The opacity of each point. A number between 0.0 and 1.0 where
-         * 0.0 is completely transparent and 1.0 is completely opaque.
+         * Gets the function to compute the opacity of each point. A number between 0.0 and 1.0 where
+         * 0.0 is completely transparent and 1.0 is opaque.
          * @memberof! insight.PointSeries
          * @instance
          * @returns {Number} - The current opacity of each point (0.0 - 1.0).
