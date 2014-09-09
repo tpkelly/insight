@@ -159,7 +159,7 @@
 
             // send events to any charts or tables also using this dimension, as they will need to update their
             // styles to reflect the selection
-            notifyListeners(grouping.dimension.name, dimensionSelector);
+            notifyListeners(groupDimension.name, dimensionSelector);
 
             var filterFunc = groupDimension.createFilterFunction(value);
             var nameProperty = 'name';
