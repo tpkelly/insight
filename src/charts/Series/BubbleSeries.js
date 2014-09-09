@@ -1,7 +1,8 @@
 (function(insight) {
 
     /**
-     * The BubbleSeries class extends the Series class
+     * The BubbleSeries class extends the PointSeries class to display datapoints as differently sized circles,
+     * where radius represents a measured value.
      * @class insight.BubbleSeries
      * @param {string} name - A uniquely identifying name for this series
      * @param {DataSet} data - The DataSet containing this series' data
@@ -10,7 +11,7 @@
      */
     insight.BubbleSeries = function BubbleSeries(name, data, x, y) {
 
-        insight.Series.call(this, name, data, x, y);
+        insight.PointSeries.call(this, name, data, x, y);
 
         // Private variables ------------------------------------------------------------------------------------------
 
@@ -146,7 +147,7 @@
 
     };
 
-    insight.BubbleSeries.prototype = Object.create(insight.Series.prototype);
+    insight.BubbleSeries.prototype = Object.create(insight.PointSeries.prototype);
     insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
 
 })(insight);

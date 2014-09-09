@@ -1,7 +1,7 @@
 (function(insight) {
 
     /**
-     * The ScatterSeries class extends the Series class
+     * The ScatterSeries class extends the PointSeries class to display datapoints as small circles.
      * @class insight.ScatterSeries
      * @param {string} name - A uniquely identifying name for this series
      * @param {DataSet} data - The DataSet containing this series' data
@@ -10,7 +10,7 @@
      */
     insight.ScatterSeries = function ScatterSeries(name, data, x, y) {
 
-        insight.Series.call(this, name, data, x, y);
+        insight.PointSeries.call(this, name, data, x, y);
 
         // Private variables ------------------------------------------------------------------------------------------
 
@@ -147,7 +147,7 @@
 
     };
 
-    insight.ScatterSeries.prototype = Object.create(insight.Series.prototype);
+    insight.ScatterSeries.prototype = Object.create(insight.PointSeries.prototype);
     insight.ScatterSeries.prototype.constructor = insight.ScatterSeries;
 
 })(insight);
