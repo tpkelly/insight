@@ -188,10 +188,10 @@
 
 
 
-        self.click = function(element, filterFunc) {
-            var filterValue = groupKeyFunction(filterFunc);
+        self.click = function(group) {
+            var groupKey = groupKeyFunction(group);
 
-            self.clickEvent(self.data, filterValue);
+            self.clickEvent(self.data, groupKey);
         };
 
         self.tooltipFunction = function(tooltipFunc) {

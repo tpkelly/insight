@@ -129,7 +129,7 @@
             var newBars = newGroups.selectAll('rect.bar');
 
             function click(filter) {
-                return self.click(self, filter);
+                return self.click(filter);
             }
 
             function duration(d, i) {
