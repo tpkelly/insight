@@ -3,7 +3,7 @@
     /**
      * The ScatterSeries class extends the Series class
      * @class insight.ScatterSeries
-     * @param {string} name - A uniquely identifying name for this chart
+     * @param {string} name - A uniquely identifying name for this series
      * @param {DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
      * @param {insight.Scales.Scale} y - the y axis
