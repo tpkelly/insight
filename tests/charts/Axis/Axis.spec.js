@@ -492,12 +492,11 @@ describe('Axis', function() {
     describe('calculateLabelDimensions', function() {
         var axis,
             axisFont = insight.defaultTheme.axisStyle.axisLabelFont,
-            axisFontSize = insight.Utils.fontSizeFromFont(axisFont),
             axisLabel = 'Axis Label',
             tickPadding = 5,
             tickLabelFont = insight.defaultTheme.axisStyle.tickLabelFont,
-            tickLabelFontSize = insight.Utils.fontSizeFromFont(tickLabelFont),
             tickSize = 10,
+            series,
             textMeasurer;
 
         var data = [
@@ -515,6 +514,22 @@ describe('Axis', function() {
             var canvas = document.createElement('canvas');
 
             textMeasurer = new insight.TextMeasurer(canvas);
+        });
+
+        it('uses tickValues to perform calculation', function () {
+
+            // Given
+            axis.label('')
+                .tickPadding(0)
+                .tickSize(0);
+            spyOn(axis, 'tickValues').andCallThrough();
+
+            // When
+            axis.calculateLabelDimensions();
+
+            // Then
+            expect(axis.tickValues).toHaveBeenCalled();
+
         });
 
         describe('horizontal axis', function() {
@@ -960,7 +975,6 @@ describe('Axis', function() {
             });
 
         });
-
     });
 
     describe('calculateLabelOverhang', function() {
@@ -2338,6 +2352,107 @@ describe('Axis', function() {
 
         });
 
+    });
+
+    describe('tickValues', function() {
+
+        it('returns axis tick values for an ordinal axis', function() {
+
+            // Given:
+            var axis = new insight.Axis('axis', insight.Scales.Ordinal);
+            var domainValues = [
+                'Alan',
+                'Horse',
+                'Add'
+            ];
+            spyOn(axis, 'domain').andReturn(domainValues);
+
+            // When:
+            var result = axis.tickValues();
+
+            // Then:
+            expect(result).toEqual(domainValues);
+        });
+
+        it('returns axis tick values for a linear axis', function() {
+
+            // Given:
+            var axis = new insight.Axis('axis', insight.Scales.Linear);
+            spyOn(axis, 'domain').andReturn([0, 53271721]);
+
+            // When:
+            var result = axis.tickValues();
+
+            // Then:
+            var expectedTickValues = [
+                0,
+                5000000,
+                10000000,
+                15000000,
+                20000000,
+                25000000,
+                30000000,
+                35000000,
+                40000000,
+                45000000,
+                50000000
+            ];
+            expect(result).toEqual(expectedTickValues);
+        });
+
+        it('returns axis tick values for a time axis', function() {
+
+            // Given:
+            var axis = new insight.Axis('axis', insight.Scales.Time);
+            spyOn(axis, 'domain').andReturn([
+                new Date(2014, 0, 1),
+                new Date(2014, 9, 1, 17, 33, 3)]
+            );
+
+            // When:
+            var result = axis.tickValues();
+
+            // Then:
+            var expectedTickValues = [
+                new Date(2014, 0, 1),
+                new Date(2014, 1, 1),
+                new Date(2014, 2, 1),
+                new Date(2014, 3, 1),
+                new Date(2014, 4, 1),
+                new Date(2014, 5, 1),
+                new Date(2014, 6, 1),
+                new Date(2014, 7, 1),
+                new Date(2014, 8, 1),
+                new Date(2014, 9, 1)
+            ];
+            expect(result).toEqual(expectedTickValues);
+        });
+
+        it('returned axis tick values contain domain values for a linear axis with round number', function() {
+
+            // Given:
+            var axis = new insight.Axis('axis', insight.Scales.Linear);
+            spyOn(axis, 'domain').andReturn([0, 1000]);
+
+            // When:
+            var result = axis.tickValues();
+
+            // Then:
+            var expectedTickValues = [
+                0,
+                100,
+                200,
+                300,
+                400,
+                500,
+                600,
+                700,
+                800,
+                900,
+                1000
+            ];
+            expect(result).toEqual(expectedTickValues);
+        });
     });
 
 });

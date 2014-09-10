@@ -182,6 +182,15 @@
             return self;
         };
 
+        self.tickValues = function() {
+            var scale = self.scale.copy()
+                .domain(self.domain());
+
+            // Some scales, such as `d3.scale.ordinal`, do not provide `ticks()`.
+            // For these scales `d3.svg.axis` depends upon `domain()` to create ticks values.
+            return scale.ticks ? scale.ticks() : scale.domain();
+        };
+
         self.calculateLabelDimensions = function() {
 
             if (!self.shouldDisplay()) {
@@ -195,7 +204,7 @@
 
             var axisLabelHeight = textMeasurer.measureText(self.label(), self.axisLabelFont()).height;
 
-            var formattedTickValues = self.domain().map(function(tickValue) {
+            var formattedTickValues = self.tickValues().map(function(tickValue) {
                 return self.tickLabelFormat()(tickValue);
             });
 
