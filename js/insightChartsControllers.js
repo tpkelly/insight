@@ -429,8 +429,8 @@
     function createBubbleChart(chartGroup, bubbleData) {
 
         var bubbleChart = new insight.Chart('Chart 3', '#bubble-chart')
-                .width(400)
-                .height(300)
+                .width(300)
+                .height(400)
                 .margin(
                 {
                     top: 30,
@@ -475,8 +475,8 @@
     function createLanguageChart(chartGroup, languages){
 
         var chart = new insight.Chart('Chart 2', '#languages')
-                .width(400)
-                .height(300);
+                .width(350)
+                .height(400);
 
             var x = new insight.Axis('Language', insight.Scales.Ordinal)
                 .tickSize(5)
@@ -498,7 +498,7 @@
     function createGenreCountChart(chartGroup, genreData){
 
         var chart = new insight.Chart('Genre Chart', "#genre-count")
-                .width(550)
+                .width(450)
                 .height(400);
 
         var y = new insight.Axis('', insight.Scales.Ordinal)
@@ -520,79 +520,6 @@
 
         return chart;
     }
-
-    function createTimeChart(chartGroup, timeData) {
-        var timeChart = new insight.Chart('Releases over time', '#time-releases')
-                .width(450)
-                .height(325);
-
-            var xTime = new insight.Axis('', insight.Scales.Time)
-                .tickLabelOrientation('tb')
-                .tickSize(5)
-                .tickLabelFormat(insight.Formatters.dateFormatter);
-
-            var yTime = new insight.Axis('Apps', insight.Scales.Linear)
-                .tickSize(5);
-
-            timeChart.xAxis(xTime)
-                     .yAxis(yTime);
-
-            var cumulative = new insight.LineSeries('valueLine', timeData, xTime, yTime)
-                .valueFunction(function(d)
-                {
-                    return d.value.CountCumulative;
-                }).shouldShowPoints(false);
-
-
-            timeChart.series([cumulative]);
-
-            timeChart.setInteractiveAxis(xTime);
-            chartGroup.add(timeChart);
-    }
-
-
-
-    function createAdvisoryChart(chartGroup, contentRating) {
-
-        var chart = new insight.Chart('Languages', '#content-advisory')
-                                    .width(250)
-                                    .height(300)
-                                    .margin({
-                                        top: 30,
-                                        bottom: 50,
-                                        left: 100,
-                                        right: 0
-                                    });
-
-        var axisOrder = ['Not yet rated', '4+', '9+', '12+', '17+'];
-
-        var x = new insight.Axis('', insight.Scales.Linear)
-                           .tickSize(5)
-                           .tickLabelRotation(45)
-                           .shouldDisplay(false);
-
-        var y = new insight.Axis('', insight.Scales.Ordinal)
-                           .isOrdered(true)
-                           .orderingFunction(function(a,b) {
-                                var aIndex = axisOrder.indexOf(a.key),
-                                    bIndex = axisOrder.indexOf(b.key);
-
-                                return bIndex - aIndex;
-                           });
-        chart.xAxis(x)
-             .yAxis(y);
-
-        var rowSeries = new insight.RowSeries('content', contentRating, x, y)
-                                   .valueFunction(function(d){ return d.value.Count;});
-
-        chart.series().push(rowSeries);
-        chartGroup.add(chart);
-        
-        return chart;
-    }
-
-
-
 
     angular.module('insightChartsControllers').controller('Index', ['$scope', 'Examples',
         function($scope, Examples)
@@ -621,24 +548,7 @@
                 }, true)
                 .count(['languageCodesISO2A']);
 
-                var dates = dataset.group('date', function(d)
-                    {
-                        return new Date(d.releaseDate.getFullYear(), d.releaseDate.getMonth(), 1);
-                    })
-                    .cumulative(['Count'])
-                    .filterFunction(function(d)
-                    {
-                        return d.key < new Date(2014, 0, 1);
-                    });
-
-                var contentRating = dataset.group('contentRating', function(d)
-                    {
-                        return d.contentAdvisoryRating;
-                    });
-
                 var genreChart = createGenreCountChart(chartGroup, genres);
-                var timeChart = createTimeChart(chartGroup, dates);
-                var langChart = createAdvisoryChart(chartGroup, contentRating);
                 var bubbleChart = createBubbleChart(chartGroup, genres);
                 var languageChart = createLanguageChart(chartGroup, languages);
                 
