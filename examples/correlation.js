@@ -24,14 +24,7 @@ $(document)
 
             var scatterChart = new insight.Chart('Chart 3', '#bubbleChart')
                 .width(500)
-                .height(400)
-                .margin(
-                {
-                    top: 10,
-                    left: 150,
-                    right: 40,
-                    bottom: 80
-                });
+                .height(400);
 
             var xAxis = new insight.Axis('Average Number of Ratings', insight.Scales.Linear)
                 .tickSize(2)
