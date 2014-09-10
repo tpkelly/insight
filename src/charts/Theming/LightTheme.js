@@ -16,7 +16,7 @@
         self.axisStyle.gridlineColor = '#888';
         self.axisStyle.showGridlines = false;
 
-        self.axisStyle.tickSize = 1;
+        self.axisStyle.tickSize = 3;
         self.axisStyle.tickPadding = 10;
 
         self.axisStyle.axisLineWidth = 1;
