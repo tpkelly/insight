@@ -22,6 +22,7 @@ insight.Constants = (function() {
     exports.LegendView = 'legend-view';
     exports.Bubble = 'bubble';
     exports.Scatter = 'scatter';
+    exports.Point = 'point';
     exports.TableClass = 'in-table';
     exports.TableRowClass = 'in-datarow';
 
