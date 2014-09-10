@@ -449,10 +449,17 @@
 
             var animationDuration = isDragging ? 0 : 200;
 
+            var adjustedTickSize = self.tickSize();
+            // All ticks draw from top-left position of axis. Top and Left ticks drawn up/left, but Bottom and Right
+            // draw down/right, overlapping the axis line.
+            if (self.orientation() === 'bottom' || self.orientation() === 'right') {
+                adjustedTickSize += self.lineWidth();
+            }
+
             self.axis = d3.svg.axis()
                 .scale(self.scale)
                 .orient(self.orientation())
-                .tickSize(self.tickSize())
+                .tickSize(adjustedTickSize)
                 .tickPadding(self.tickPadding())
                 .tickFormat(self.tickLabelFormat());
 

@@ -19,7 +19,7 @@
         self.axisStyle.tickSize = 1;
         self.axisStyle.tickPadding = 10;
 
-        self.axisStyle.axislineWidth = 1;
+        self.axisStyle.axisLineWidth = 1;
         self.axisStyle.axisLineColor = '#777';
         self.axisStyle.tickLabelFont = '11pt Helvetica Neue';
         self.axisStyle.tickLabelColor = '#777';
