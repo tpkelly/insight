@@ -28,6 +28,7 @@
          * update to highlight the selected slices of the Dimension
          */
         function notifyListeners(dimensionName, dimensionSelector) {
+
             var listeningObjects = self.dimensionListenerMap[dimensionName];
 
             if (listeningObjects != null) {
@@ -177,52 +178,13 @@
 
             // loop through the matching dimensions to filter them all
             dims.forEach(function(dim) {
-
-                var filterExists = insight.Utils.takeWhere(dim.filters, nameProperty, filterFunc.name)
-                    .length;
-
-                //if the dimension is already filtered by this value, toggle (remove) the filter
-                if (filterExists) {
-                    insight.Utils.removeWhere(dim.filters, nameProperty, filterFunc.name);
-
-                } else {
-                    // add the provided filter to the list for this dimension
-
-                    dim.filters.push(filterFunc);
-                }
-
-                // reset this dimension if no filters exist, else apply the filter to the dataset.
-                if (dim.filters.length === 0) {
-
-                    insight.Utils.removeItemFromArray(self.filteredDimensions, dim);
-                    dim.crossfilterDimension.filterAll();
-
-                } else {
-                    dim.crossfilterDimension.filter(function(d) {
-
-                        // apply all of the filters on this dimension to the current value, returning an array of
-                        // true/false values (which filters does it satisfy)
-                        var vals = dim.filters
-                            .map(function(func) {
-                                return func.filterFunction(d);
-                            });
-
-                        // if this value satisfies any of the filters, it should be kept
-                        var matchesAnyFilter = vals.filter(function(result) {
-                                return result;
-                            })
-                            .length > 0;
-
-                        return matchesAnyFilter;
-                    });
-                }
+                dim.applyFilter(self.filteredDimensions, filterFunc);
             });
 
             // the above filtering will have triggered a re-aggregation of the groupings.  We must manually
             // initiate the recalculation of the groupings for any post aggregation calculations
             self.groupings.forEach(function(group) {
                 group.recalculate();
-
             });
 
             self.draw();

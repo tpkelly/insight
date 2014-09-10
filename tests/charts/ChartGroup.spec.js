@@ -375,86 +375,129 @@ describe('ChartGroup', function() {
 
     describe('filterByGrouping', function() {
         
-        var chart,
-            x,
-            y,
+        var countryChart,
+            genderChart,
             countries,
+            genders,
             series,
-            table;
+            countryTable;
+
+        function dummyFilterFunc(value) {
+
+            return value;
+
+        }
+
+        function createChart(name, group) {
+
+            var chart = new insight.Chart(name, '#any-element');
+
+            var keyAxis = new insight.Axis('keys', insight.Scales.Ordinal);
+            var valueAxis = new insight.Axis('values', insight.Scales.Linear);
+
+            chart.xAxis(keyAxis);
+            chart.yAxis(valueAxis);
+
+            var series = new insight.ColumnSeries('columns', group, keyAxis, valueAxis)
+                .valueFunction(function(d){return d.value.Count;});
+
+            chart.series([series]);
+
+            // spy on the initialization of the chart, to make sure it's called
+            spyOn(chart, 'draw');
+            spyOn(chart, 'highlight');
+            spyOn(group, 'recalculate');
+            spyOn(group.dimension, 'applyFilter');
+            spyOn(group.dimension, 'createFilterFunction').andCallFake(function(value) {
+                return dummyFilterFunc;
+            });
+
+            chartGroup.add(chart);
+
+            return chart;
+
+        }
+
+        function createTable(name, group) {
+
+            var table = new insight.Table(name, '#any-element', group);
+
+            spyOn(table, 'draw');
+            spyOn(table, 'highlight');
+
+            chartGroup.add(table);
+
+            return table;
+
+        }
 
         beforeEach(function(){
 
             // Given
-            chart = new insight.Chart('testChart', '#testChart');
+            countries =  dataset.group('country', function(d) { return d.Country; });
+            countryChart = createChart('countryChart', countries);
 
-            countries =  dataset.group('country', function(d){return d.Country;});
+            genders =  dataset.group('gender', function(d) { return d.Gender; });
+            genderChart = createChart('genderChart', genders);
 
-            x = new insight.Axis('Country', insight.Scales.Ordinal);
-            y = new insight.Axis('Values', insight.Scales.Linear);
-            
-            chart.xAxis(x);
-            chart.yAxis(y);
+            countryTable = createTable('countryTable', countries);
 
-            series = new insight.ColumnSeries('columns', countries, x, y)
-                .valueFunction(function(d){return d.value.Count;});
-            
-            chart.series([series]);
-
-            table = new insight.Table('testTable', '#testChart', countries);
-
-            // spy on the initialization of the chart, to make sure it's called
-            spyOn(chart, 'draw');
             spyOn(chartGroup, 'draw');
-            spyOn(table, 'draw');
-            spyOn(countries, 'recalculate');
-            spyOn(countries.dimension, 'createFilterFunction').andCallThrough();
-            spyOn(chart, 'highlight');
-            spyOn(table, 'highlight');
-            
-            chartGroup.add(chart);
-            chartGroup.add(table);
-            chartGroup.draw();        
-            
+
             // When
             chartGroup.filterByGrouping(countries, 'England');
 
         });
 
-        it('creates a filter function on each Grouping in the ChartGroup', function() {
+        it('creates a filter function on the specified grouping', function() {
 
-            expect(countries.dimension.createFilterFunction).toHaveBeenCalled();
+            expect(countries.dimension.createFilterFunction).toHaveBeenCalledWith('England');
 
         });
 
-        it('recalculates the countries group', function() {
+        it('recalculates the all groupings in the ChartGroup', function() {
 
             expect(countries.recalculate).toHaveBeenCalled();
+            expect(genders.recalculate).toHaveBeenCalled();
 
         });
 
-        it('redraws the entire ChartGroup', function() {
+        it('redraws the ChartGroup', function() {
 
             expect(chartGroup.draw).toHaveBeenCalled();
 
         });
 
-        it('highlights the chart inside', function() {
-        
-            expect(chart.highlight).toHaveBeenCalled();
+        it('highlights all charts in the ChartGroup that use the grouping', function() {
+
+            expect(countryChart.highlight).toHaveBeenCalled();
 
         });
 
-        it('highlights the table inside', function() {
+        it('doesn\'t highlight charts in the ChartGroup that don\'t use the grouping', function() {
 
-            expect(table.highlight).toHaveBeenCalled();
+             expect(genderChart.highlight).not.toHaveBeenCalled();
 
         });
 
-    });
+        it('highlights tables in the ChartGroup', function() {
 
-    describe('removeFilters', function() {
+            expect(countryTable.highlight).toHaveBeenCalled();
 
+        });
 
+        it('filters the grouping', function() {
+
+            expect(countries.dimension.applyFilter)
+                .toHaveBeenCalledWith(chartGroup.filteredDimensions, dummyFilterFunc);
+
+        });
+
+        it('only filters the named grouping', function() {
+
+           expect(genders.dimension.applyFilter).not.toHaveBeenCalled();
+
+        });
 
     });
 
