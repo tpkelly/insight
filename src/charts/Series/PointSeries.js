@@ -89,6 +89,9 @@
                 .attr('cy', self.rangeY)
                 .attr('opacity', self.pointOpacity())
                 .style('fill', self.color);
+
+            //Remove any data which is no longer displayed
+            points.exit().remove();
         };
 
 
