@@ -68,7 +68,7 @@
 
             var data = self.pointData(self.dataset());
 
-            var points = chart.plotArea.selectAll('circle.' + self.selector())
+            var points = chart.plotArea.selectAll('circle.' + self.shortClassName())
                 .data(data, self.keyFunction());
 
             function rad(d) {
@@ -77,7 +77,7 @@
 
             points.enter()
                 .append('circle')
-                .attr('class', self.selector)
+                .attr('class', self.itemClassName)
                 .on('mouseover', self.mouseOver)
                 .on('mouseout', self.mouseOut)
                 .on('click', click);

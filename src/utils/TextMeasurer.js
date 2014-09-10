@@ -2,7 +2,6 @@
 
     /*
      * Measures the width and height of text using a given font.
-     * @class insight.MarginMeasurer
      */
     insight.TextMeasurer = function TextMeasurer(canvas) {
 
