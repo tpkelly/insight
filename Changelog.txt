@@ -5,6 +5,7 @@
 * Fix issue where chart titles were not within the chart SVG bounds.
 * Merges common functionality in ScatterSeries and BubbleSeries into a common PointSeries.
 * Deprecated “ScatterSeries.pointRadius”. Use “ScatterSeries.radiusFunction” instead.
+* Fixes issue where points were hidden when plotting multiple line series on a single chart.
 
 
 
