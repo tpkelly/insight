@@ -191,6 +191,18 @@
 
         };
 
+        self.clearFilters = function() {
+
+            self.filteredDimensions = [];
+
+            self.dimensions.forEach(function(dim) {
+                dim.clearFilters();
+            });
+
+            self.draw();
+
+        };
+
         /*
          * Draws all Charts and Tables in this ChartGroup
          * @memberof! insight.ChartGroup

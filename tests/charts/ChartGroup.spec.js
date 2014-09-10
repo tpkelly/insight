@@ -406,11 +406,6 @@ describe('ChartGroup', function() {
             // spy on the initialization of the chart, to make sure it's called
             spyOn(chart, 'draw');
             spyOn(chart, 'highlight');
-            spyOn(group, 'recalculate');
-            spyOn(group.dimension, 'applyFilter');
-            spyOn(group.dimension, 'createFilterFunction').andCallFake(function(value) {
-                return dummyFilterFunc;
-            });
 
             chartGroup.add(chart);
 
@@ -431,6 +426,17 @@ describe('ChartGroup', function() {
 
         }
 
+        function spyOnGroup(group) {
+
+            spyOn(group, 'recalculate');
+            spyOn(group.dimension, 'applyFilter');
+            spyOn(group.dimension, 'clearFilters');
+            spyOn(group.dimension, 'createFilterFunction').andCallFake(function(value) {
+                return dummyFilterFunc;
+            });
+
+        }
+
         beforeEach(function(){
 
             // Given
@@ -443,6 +449,8 @@ describe('ChartGroup', function() {
             countryTable = createTable('countryTable', countries);
 
             spyOn(chartGroup, 'draw');
+            spyOnGroup(countries);
+            spyOnGroup(genders);
 
             // When
             chartGroup.filterByGrouping(countries, 'England');
@@ -499,6 +507,44 @@ describe('ChartGroup', function() {
 
         });
 
+        describe('clearFilters', function() {
+
+            it('empties the ChartGroup\'s filteredDimensions', function() {
+
+                // When
+                chartGroup.clearFilters();
+
+                // Then
+                expect(chartGroup.filteredDimensions).toEqual([]);
+
+            });
+
+            it('clears filters on all groupings in the ChartGroup', function() {
+
+                // When
+                chartGroup.clearFilters();
+
+                // Then
+                expect(countries.dimension.clearFilters).toHaveBeenCalled();
+                expect(genders.dimension.clearFilters).toHaveBeenCalled();
+
+            });
+
+            it('redraws the ChartGroup', function() {
+
+                // When
+                chartGroup.clearFilters();
+
+                // Then
+                // called once in the filterByGrouping tests and once again in this clearFilters test
+                expect(chartGroup.draw.calls.length).toBe(2);
+
+            });
+
+        });
+
     });
+
+
 
 });

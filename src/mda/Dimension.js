@@ -104,6 +104,10 @@
 
         };
 
+        self.clearFilters = function() {
+
+        };
+
     };
 
 })(insight);
