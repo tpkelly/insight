@@ -2432,15 +2432,26 @@ describe('Axis', function() {
 
             // Given:
             var axis = new insight.Axis('axis', insight.Scales.Linear);
-            var roundedNumber = 1000;
-            spyOn(axis, 'domain').andReturn([0, roundedNumber]);
+            spyOn(axis, 'domain').andReturn([0, 1000]);
 
             // When:
             var result = axis.tickValues();
 
             // Then:
-            expect(result).toContain(0);
-            expect(result).toContain(roundedNumber);
+            var expectedTickValues = [
+                0,
+                100,
+                200,
+                300,
+                400,
+                500,
+                600,
+                700,
+                800,
+                900,
+                1000
+            ];
+            expect(result).toEqual(expectedTickValues);
         });
     });
 
