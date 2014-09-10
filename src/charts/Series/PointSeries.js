@@ -43,11 +43,13 @@
 
 
         self.rangeY = function(d) {
-            return self.y.scale(self.valueFunction()(d));
+            var yValue = self.y.scale(self.valueFunction()(d));
+            return yValue || 0;
         };
 
         self.rangeX = function(d, i) {
-            return self.x.scale(self.keyFunction()(d));
+            var xValue = self.x.scale(self.keyFunction()(d));
+            return xValue || 0;
         };
 
         self.selector = function() {
@@ -72,7 +74,7 @@
                 .data(data, self.keyFunction());
 
             function rad(d) {
-                return d.radius;
+                return d.radius || 0;
             }
 
             points.enter()
