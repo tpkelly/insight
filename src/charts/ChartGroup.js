@@ -199,6 +199,16 @@
                 dim.clearFilters();
             });
 
+            // the above filtering will have triggered a re-aggregation of the groupings.  We must manually
+            // initiate the recalculation of the groupings for any post aggregation calculations
+            self.groupings.forEach(function(group) {
+                group.recalculate();
+            });
+
+            self.charts.concat(self.tables).forEach(function(item) {
+                item.clearHighlight();
+            });
+
             self.draw();
 
         };

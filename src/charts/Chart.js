@@ -304,6 +304,18 @@
             notselected.classed('notselected', selected[0].length > 0);
         };
 
+        self.clearHighlight = function() {
+
+            self.selectedItems = [];
+
+            self.plotArea.selectAll('.selected')
+                .classed('selected', false);
+
+            self.plotArea.selectAll('.notselected')
+                .classed('notselected', false);
+
+        };
+
         self.draw = function(isDragging) {
 
             if (!initialized) {

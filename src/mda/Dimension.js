@@ -106,6 +106,9 @@
 
         self.clearFilters = function() {
 
+            self.filters = [];
+            self.crossfilterDimension.filterAll();
+
         };
 
     };

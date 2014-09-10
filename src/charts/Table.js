@@ -113,6 +113,18 @@
             notselected.classed('notselected', selected[0].length > 0);
         };
 
+        self.clearHighlight = function() {
+
+            self.selectedItems = [];
+
+            self.tableBody.selectAll('.selected')
+                .classed('selected', false);
+
+            self.tableBody.selectAll('.notselected')
+                .classed('notselected', false);
+
+        };
+
         // The public drawing method for the Table. It will also initialize the <table> element if required.
         self.draw = function() {
 
