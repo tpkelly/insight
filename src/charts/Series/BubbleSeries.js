@@ -1,43 +1,33 @@
 (function(insight) {
 
     /**
-     * The BubbleSeries class extends the Series class
+     * The BubbleSeries class extends the PointSeries class to display datapoints as differently sized circles,
+     * where radius represents a measured value.
      * @class insight.BubbleSeries
-     * @param {string} name - A uniquely identifying name for this chart
+     * @extends insight.PointSeries
+     * @param {string} name - A uniquely identifying name for this series
      * @param {DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
      * @param {insight.Scales.Scale} y - the y axis
      */
     insight.BubbleSeries = function BubbleSeries(name, data, x, y) {
 
-        insight.Series.call(this, name, data, x, y);
+        insight.PointSeries.call(this, name, data, x, y);
 
         // Private variables ------------------------------------------------------------------------------------------
 
-        var self = this,
-            selector = self.name + insight.Constants.Bubble,
-            radiusFunction = d3.functor(10);
+        var self = this;
 
-        // Internal variables -------------------------------------------------------------------------------------------
+        // Internal variables -----------------------------------------------------------------------------------------
 
-        self.classValues = [insight.Constants.Bubble];
+        self.cssClassName = d3.functor(insight.Constants.Bubble);
+
+        self.classValues = [self.cssClassName()];
 
         // Internal functions -----------------------------------------------------------------------------------------
 
-        self.rangeY = function(d) {
-            return self.y.scale(self.valueFunction()(d));
-        };
-
-        self.rangeX = function(d, i) {
-            return self.x.scale(self.keyFunction()(d));
-        };
-
-        self.bubbleData = function(data) {
-            var max = d3.max(data, radiusFunction);
-
-            function rad(d) {
-                return d.radius;
-            }
+        self.pointData = function(data) {
+            var max = d3.max(data, self.radiusFunction());
 
             //Minimum of pixels-per-axis-unit
             var xValues = data.map(self.keyFunction());
@@ -48,14 +38,18 @@
 
             // create radius for each item
             data.forEach(function(d) {
-                var radiusInput = radiusFunction(d);
+                var radiusInput = self.radiusFunction()(d);
 
-                if (radiusInput === 0) {
+                if (radiusInput <= 0) {
                     d.radius = 0;
                 } else {
                     d.radius = (radiusInput * maxRad) / max;
                 }
             });
+
+            function rad(d) {
+                return d.radius;
+            }
 
             //this sort ensures that smaller bubbles are on top of larger ones, so that they are always selectable.  Without changing original array (hence concat which creates a copy)
             data = data.concat()
@@ -65,88 +59,9 @@
 
             return data;
         };
-
-        self.draw = function(chart, isDragging) {
-
-            self.initializeTooltip(chart.container.node());
-            self.selectedItems = chart.selectedItems;
-
-            var duration = isDragging ? 0 : function(d, i) {
-                return 200 + (i * 20);
-            };
-
-            function click(filter) {
-                return self.click(self, filter);
-            }
-
-            var bubbleData = self.bubbleData(self.dataset());
-
-            var bubbles = chart.plotArea.selectAll('circle.' + insight.Constants.Bubble)
-                .data(bubbleData, self.keyFunction());
-
-            bubbles.enter()
-                .append('circle')
-                .attr('class', self.itemClassName)
-                .on('mouseover', self.mouseOver)
-                .on('mouseout', self.mouseOut)
-                .on('click', click);
-
-
-            function rad(d) {
-                return d.radius;
-            }
-
-            function opacity() {
-                // If we are using selected/notSelected, then make selected more opaque than notSelected
-                if (this.classList && this.classList.contains("selected")) {
-                    return 0.8;
-                }
-
-                if (this.classList && this.classList.contains("notselected")) {
-                    return 0.3;
-                }
-
-                //If not using selected/notSelected, make everything semi-transparent
-                return 0.5;
-            }
-
-            bubbles.transition()
-                .duration(duration)
-                .attr('r', rad)
-                .attr('cx', self.rangeX)
-                .attr('cy', self.rangeY)
-                .attr('opacity', opacity)
-                .style('fill', this.color);
-        };
-
-        // Public functions -------------------------------------------------------------------------------------------
-
-        /**
-         * The function to extract the radius of each bubble from the data objects.
-         * @memberof! insight.BubbleSeries
-         * @instance
-         * @returns {Function} - The current function used to determine the radius of data objects.
-         *
-         * @also
-         *
-         * Sets the function to extract the radius of each bubble from the data objects.
-         * @memberof! insight.BubbleSeries
-         * @instance
-         * @param {Function} radiusFunc The new function to extract the radius of each bubble from the data objects.
-         * @returns {this}
-         */
-        self.radiusFunction = function(radiusFunc) {
-            if (!arguments.length) {
-                return radiusFunction;
-            }
-            radiusFunction = radiusFunc;
-
-            return self;
-        };
-
     };
 
-    insight.BubbleSeries.prototype = Object.create(insight.Series.prototype);
+    insight.BubbleSeries.prototype = Object.create(insight.PointSeries.prototype);
     insight.BubbleSeries.prototype.constructor = insight.BubbleSeries;
 
 })(insight);

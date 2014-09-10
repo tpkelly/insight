@@ -31,12 +31,12 @@ describe('ScatterSeries', function() {
     it('Radius of all points defaults to 3', function () {
 
         //When:
-        var scatterData = series.scatterData(series.dataset());
+        var scatterData = series.pointData(series.dataset());
 
         //Then:
         var radii = scatterData.map(function(d) {
             return d.radius;
-        })
+        });
 
         expect(radii).toEqual([3, 3, 3]);
     });
@@ -46,25 +46,55 @@ describe('ScatterSeries', function() {
         series.pointRadius(7);
 
         //When:
-        var scatterData = series.scatterData(series.dataset());
+        var scatterData = series.pointData(series.dataset());
 
         //Then:
         var radii = scatterData.map(function(d) {
             return d.radius;
-        })
+        });
 
         expect(radii).toEqual([7, 7, 7]);
+    });
+
+    it('pointRadius of 0 gives zero radius to points', function () {
+        //Given:
+        series.pointRadius(0);
+
+        //When:
+        var scatterData = series.pointData(series.dataset());
+
+        //Then:
+        var radii = scatterData.map(function(d) {
+            return d.radius;
+        });
+
+        expect(radii).toEqual([0, 0, 0]);
+    });
+
+    it('negative pointRadius gives zero radius to points', function () {
+        //Given:
+        series.pointRadius(-1);
+
+        //When:
+        var scatterData = series.pointData(series.dataset());
+
+        //Then:
+        var radii = scatterData.map(function(d) {
+            return d.radius;
+        });
+
+        expect(radii).toEqual([0, 0, 0]);
     });
 
     it('Sets x from data', function () {
         
         //When:
-        var scatterData = series.scatterData(series.dataset());
+        var scatterData = series.pointData(series.dataset());
 
         //Then:
         var xValues = scatterData.map(function(d) {
             return d.x;
-        })
+        });
 
         expect(xValues).toEqual([0, 5, 3]);
     });
@@ -72,12 +102,12 @@ describe('ScatterSeries', function() {
     it('Sets y from data', function () {
         
         //When:
-        var scatterData = series.scatterData(series.dataset());
+        var scatterData = series.pointData(series.dataset());
 
         //Then:
         var yValues = scatterData.map(function(d) {
             return d.y;
-        })
+        });
 
         expect(yValues).toEqual([0, 3, 5]);
     });
