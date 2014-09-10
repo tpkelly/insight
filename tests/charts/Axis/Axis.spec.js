@@ -2374,7 +2374,7 @@ describe('Axis', function() {
             expect(result).toEqual(domainValues);
         });
 
-        it('returns axis tick values for an linear axis', function() {
+        it('returns axis tick values for a linear axis', function() {
 
             // Given:
             var axis = new insight.Axis('axis', insight.Scales.Linear);
@@ -2400,7 +2400,7 @@ describe('Axis', function() {
             expect(result).toEqual(expectedTickValues);
         });
 
-        it('returns axis tick values for an Time axis', function() {
+        it('returns axis tick values for a time axis', function() {
 
             // Given:
             var axis = new insight.Axis('axis', insight.Scales.Time);
@@ -2426,6 +2426,21 @@ describe('Axis', function() {
                 new Date(2014, 9, 1)
             ];
             expect(result).toEqual(expectedTickValues);
+        });
+
+        it('returned axis tick values contain domain values for a linear axis with round number', function() {
+
+            // Given:
+            var axis = new insight.Axis('axis', insight.Scales.Linear);
+            var roundedNumber = 1000;
+            spyOn(axis, 'domain').andReturn([0, roundedNumber]);
+
+            // When:
+            var result = axis.tickValues();
+
+            // Then:
+            expect(result).toContain(0);
+            expect(result).toContain(roundedNumber);
         });
     });
 

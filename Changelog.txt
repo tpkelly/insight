@@ -5,7 +5,7 @@
 * Fix issue where chart titles were not within the chart SVG bounds.
 * Merges common functionality in ScatterSeries and BubbleSeries into a common PointSeries.
 * Deprecated “ScatterSeries.pointRadius”. Use “ScatterSeries.radiusFunction” instead.
-* Fix edge case where the calculated charts margins were too large.
+* Fix issue where the calculated charts margins were too large.
 
 
 
