@@ -34,7 +34,7 @@
             if (listeningObjects != null) {
 
                 listeningObjects.forEach(function(item) {
-                    item.highlight(dimensionSelector);
+                    item.toggleHighlight(dimensionSelector);
                 });
 
             }

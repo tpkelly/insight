@@ -405,7 +405,7 @@ describe('ChartGroup', function() {
 
             // spy on the initialization of the chart, to make sure it's called
             spyOn(chart, 'draw');
-            spyOn(chart, 'highlight');
+            spyOn(chart, 'toggleHighlight');
 
             chartGroup.add(chart);
 
@@ -418,7 +418,7 @@ describe('ChartGroup', function() {
             var table = new insight.Table(name, '#any-element', group);
 
             spyOn(table, 'draw');
-            spyOn(table, 'highlight');
+            spyOn(table, 'toggleHighlight');
 
             chartGroup.add(table);
 
@@ -478,19 +478,19 @@ describe('ChartGroup', function() {
 
         it('highlights all charts in the ChartGroup that use the grouping', function() {
 
-            expect(countryChart.highlight).toHaveBeenCalled();
+            expect(countryChart.toggleHighlight).toHaveBeenCalled();
 
         });
 
         it('doesn\'t highlight charts in the ChartGroup that don\'t use the grouping', function() {
 
-             expect(genderChart.highlight).not.toHaveBeenCalled();
+             expect(genderChart.toggleHighlight).not.toHaveBeenCalled();
 
         });
 
         it('highlights tables in the ChartGroup', function() {
 
-            expect(countryTable.highlight).toHaveBeenCalled();
+            expect(countryTable.toggleHighlight).toHaveBeenCalled();
 
         });
 

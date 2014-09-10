@@ -660,7 +660,7 @@ describe('Grouping', function() {
             // prevent the chart from resizing or highlighting
             var emptyFunction = function() {};
             chart.resizeChart = emptyFunction;
-            chart.highlight = emptyFunction;
+            chart.toggleHighlight = emptyFunction;
 
             var chartGroup = new insight.ChartGroup();
             chartGroup.add(chart);

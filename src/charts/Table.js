@@ -93,7 +93,7 @@
 
         // Toggle highlighting on items in this table.
         // The provided cssSelector is used to activate or deactivate highlighting on one or more selected rows.
-        self.highlight = function(selector) {
+        self.toggleHighlight = function(selector) {
 
             var clicked = self.tableBody.selectAll('.' + selector);
             var alreadySelected = clicked.classed('selected');

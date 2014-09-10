@@ -282,7 +282,7 @@
          * @param {string} selector - a CSS selector matching a slice of a dimension. eg. an entry in a grouping by Country
          would be 'in_England', which would match that dimensional value in any charts.
          */
-        self.highlight = function(selector) {
+        self.toggleHighlight = function(selector) {
             var clicked = self.plotArea.selectAll('.' + selector);
             var alreadySelected = insight.Utils.arrayContains(self.selectedItems, selector);
 
