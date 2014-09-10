@@ -492,12 +492,11 @@ describe('Axis', function() {
     describe('calculateLabelDimensions', function() {
         var axis,
             axisFont = insight.defaultTheme.axisStyle.axisLabelFont,
-            axisFontSize = insight.Utils.fontSizeFromFont(axisFont),
             axisLabel = 'Axis Label',
             tickPadding = 5,
             tickLabelFont = insight.defaultTheme.axisStyle.tickLabelFont,
-            tickLabelFontSize = insight.Utils.fontSizeFromFont(tickLabelFont),
             tickSize = 10,
+            series,
             textMeasurer;
 
         var data = [
@@ -515,6 +514,22 @@ describe('Axis', function() {
             var canvas = document.createElement('canvas');
 
             textMeasurer = new insight.TextMeasurer(canvas);
+        });
+
+        it('uses tickValues to perform calculation', function () {
+
+            // Given
+            axis.label('')
+                .tickPadding(0)
+                .tickSize(0);
+            spyOn(axis, 'tickValues').andCallThrough();
+
+            // When
+            axis.calculateLabelDimensions();
+
+            // Then
+            expect(axis.tickValues).toHaveBeenCalled();
+
         });
 
         describe('horizontal axis', function() {
@@ -960,7 +975,6 @@ describe('Axis', function() {
             });
 
         });
-
     });
 
     describe('calculateLabelOverhang', function() {
