@@ -42,12 +42,12 @@
         // Internal functions -------------------------------------------------------------------------------------------
 
 
-        self.rangeY = function(d) {
+        self.yPosition = function(d) {
             var yValue = self.y.scale(self.valueFunction()(d));
             return yValue || 0;
         };
 
-        self.rangeX = function(d, i) {
+        self.xPosition = function(d, i) {
             var xValue = self.x.scale(self.keyFunction()(d));
             return xValue || 0;
         };
@@ -88,8 +88,8 @@
             points.transition()
                 .duration(duration)
                 .attr('r', rad)
-                .attr('cx', self.rangeX)
-                .attr('cy', self.rangeY)
+                .attr('cx', self.xPosition)
+                .attr('cy', self.yPosition)
                 .attr('opacity', self.pointOpacity())
                 .style('fill', self.color);
 
