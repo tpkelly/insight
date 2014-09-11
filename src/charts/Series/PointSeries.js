@@ -42,12 +42,14 @@
         // Internal functions -------------------------------------------------------------------------------------------
 
 
-        self.rangeY = function(d) {
-            return self.y.scale(self.valueFunction()(d));
+        self.yPosition = function(d) {
+            var yValue = self.y.scale(self.valueFunction()(d));
+            return yValue || 0;
         };
 
-        self.rangeX = function(d, i) {
-            return self.x.scale(self.keyFunction()(d));
+        self.xPosition = function(d, i) {
+            var xValue = self.x.scale(self.keyFunction()(d));
+            return xValue || 0;
         };
 
         self.selector = function() {
@@ -72,23 +74,27 @@
                 .data(data, self.keyFunction());
 
             function rad(d) {
-                return d.radius;
+                return d.radius || 0;
             }
 
             points.enter()
                 .append('circle')
-                .attr('class', self.itemClassName)
                 .on('mouseover', self.mouseOver)
                 .on('mouseout', self.mouseOut)
                 .on('click', click);
 
+            points.attr('class', self.itemClassName);
+
             points.transition()
                 .duration(duration)
                 .attr('r', rad)
-                .attr('cx', self.rangeX)
-                .attr('cy', self.rangeY)
+                .attr('cx', self.xPosition)
+                .attr('cy', self.yPosition)
                 .attr('opacity', self.pointOpacity())
                 .style('fill', self.color);
+
+            //Remove any data which is no longer displayed
+            points.exit().remove();
         };
 
 
