@@ -27,10 +27,6 @@
             return self.tooltipFormat()(self.valueFunction()(d));
         }
 
-        function click(filter) {
-            return self.click(filter);
-        }
-
         function duration(d, i) {
             return 200 + (i * 20);
         }
@@ -86,7 +82,7 @@
                 .attr('clip-path', 'url(#' + chart.clipPath() + ')')
                 .on('mouseover', mouseOver)
                 .on('mouseout', self.mouseOut)
-                .on('click', click);
+                .on('click', self.click);
 
             var seriesTypeCount = chart.countSeriesOfType(self);
             var seriesIndex = chart.seriesIndexByType(self);
