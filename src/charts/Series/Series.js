@@ -156,15 +156,14 @@
         };
 
         /*
-         * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouse over. Tooltips are shown and CSS updated.
+         * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouse over.
+         * Tooltips are shown and CSS updated.
          * The *this* context will reference the DOMElement raising the event.
          * @memberof! insight.Series
          * @param {object} item - The data point for the hovered item.
-         * @param {int} index - The index of the hovered item in the data set.  This is required at the moment as we need to provide the valueFunction until stacked series are refactored.
-         * @param {function} valueFunction - If provided, this function will be used to generate the tooltip text, otherwise the series default valueFunction will be used.
-         *                                   This is only for stacked charts that currently have multiple valueFunctions.
+         * @param {int} i - The index of the hovered item in the data set.
          */
-        self.mouseOver = function(item, i, valueFunction) {
+        self.mouseOver = function(item, i) {
 
             var textFunction = self.tooltipFunction();
             var tooltipText = tooltipFormat(textFunction(item));
