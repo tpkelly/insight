@@ -27,11 +27,6 @@
 
         // Private functions ------------------------------------------------------------------------------------------
 
-        function mouseOver(data, i) {
-            var seriesName = this.getAttribute('in_series');
-            self.mouseOver.call(this, data, i, self.valueFunction());
-        }
-
         function duration(d, i) {
             return 200 + (i * 20);
         }
@@ -83,7 +78,7 @@
                 .attr('in_series', self.name)
                 .attr('fill', self.color)
                 .attr('clip-path', 'url(#' + chart.clipPath() + ')')
-                .on('mouseover', mouseOver)
+                .on('mouseover', self.mouseOver)
                 .on('mouseout', self.mouseOut)
                 .on('click', self.click);
 

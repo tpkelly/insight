@@ -31,12 +31,6 @@
             return 200 + (i * 20);
         }
 
-        function mouseOver(data, i) {
-            var seriesName = this.getAttribute('in_series');
-
-            self.mouseOver.call(this, data, i, self.valueFunction());
-        }
-
         function opacity() {
             // If we are using selected/notSelected, then make selected more opaque than notSelected
             if (this.classList && this.classList.contains("notselected")) {
@@ -80,7 +74,7 @@
                 .attr('in_series', self.name)
                 .attr('fill', self.color)
                 .attr('clip-path', 'url(#' + chart.clipPath() + ')')
-                .on('mouseover', mouseOver)
+                .on('mouseover', self.mouseOver)
                 .on('mouseout', self.mouseOut)
                 .on('click', self.click);
 
