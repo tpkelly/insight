@@ -104,6 +104,7 @@
                 .attr("d", transform);
 
             var pointClassName = self.name + 'line' + insight.Constants.LinePoint;
+            pointClassName = pointClassName.replace(/[^A-Z0-9]/ig, '_');
 
             if (displayPoints) {
                 var circles = chart.plotArea.selectAll("circle." + pointClassName)
