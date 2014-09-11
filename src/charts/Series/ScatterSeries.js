@@ -33,6 +33,10 @@
 
             return data;
         };
+
+        // Override default opacity to be opaque
+        self.pointOpacity(1.0);
+        
     };
 
     insight.ScatterSeries.prototype = Object.create(insight.PointSeries.prototype);
