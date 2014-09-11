@@ -95,14 +95,26 @@
         // Internal functions -----------------------------------------------------------------------------------------
 
         /*
-         * Generates the base class name to be used for items in this series.It can be extended upon by individual items to show
-         * if they are selected or to mark them out in other ways.
+         * Generates the short class name to be used for items in this series.
          * @memberof insight.Series
-         * @returns {string} baseClassName - A root valuefor the class attribute used for items in this Series.
+         * @returns {string} shortClassName - A short value for the class attribute used for items in this Series.
+         */
+        self.shortClassName = function() {
+            var shortName = self.name + 'class';
+            var spacelessName = shortName.replace(/[^A-Z0-9]/ig, '_');
+
+            return spacelessName;
+        };
+
+        /*
+         * Generates the base class name to be used for items in this series.It can be extended upon by individual items
+         * to mark them out in other ways.
+         * @memberof insight.Series
+         * @returns {string} baseClassName - A root value for the class attribute used for items in this Series.
          */
         self.seriesClassName = function() {
 
-            var seriesName = [self.name + 'class']
+            var seriesName = [self.shortClassName()]
                 .concat(self.classValues)
                 .join(' ');
 

@@ -70,7 +70,7 @@
 
             var data = self.pointData(self.dataset());
 
-            var points = chart.plotArea.selectAll('circle.' + self.name + 'class')
+            var points = chart.plotArea.selectAll('circle.' + self.shortClassName())
                 .data(data, self.keyFunction());
 
             function rad(d) {
