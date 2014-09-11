@@ -186,15 +186,6 @@
 
         };
 
-        /**
-         * Empty event handler that is overridden by any listeners who want to know when this Chart's series change
-         * @memberof! insight.Chart
-         * @param {insight.Series[]} series - An array of insight.Series belonging to this Chart
-         */
-        self.seriesChanged = function(series) {
-
-        };
-
         self.drawTitle = function() {
             self.titleContainer
                 .style('position', 'absolute')
@@ -291,7 +282,7 @@
          * @param {string} selector - a CSS selector matching a slice of a dimension. eg. an entry in a grouping by Country
          would be 'in_England', which would match that dimensional value in any charts.
          */
-        self.highlight = function(selector) {
+        self.toggleHighlight = function(selector) {
             var clicked = self.plotArea.selectAll('.' + selector);
             var alreadySelected = insight.Utils.arrayContains(self.selectedItems, selector);
 
@@ -311,6 +302,23 @@
 
             // if nothing is selected anymore, clear the .notselected class from any elements (stop showing them as gray)
             notselected.classed('notselected', selected[0].length > 0);
+        };
+
+        self.clearHighlight = function() {
+
+            self.selectedItems = [];
+
+            // if the chart has not yet been drawn then there will be no plotArea so nothing to do here
+            if (!self.plotArea) {
+                return;
+            }
+
+            self.plotArea.selectAll('.selected')
+                .classed('selected', false);
+
+            self.plotArea.selectAll('.notselected')
+                .classed('notselected', false);
+
         };
 
         self.draw = function(isDragging) {

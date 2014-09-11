@@ -128,10 +128,6 @@
 
             var newBars = newGroups.selectAll('rect.bar');
 
-            function click(filter) {
-                return self.click(self, filter);
-            }
-
             function duration(d, i) {
                 return 200 + (i * 20);
             }
@@ -144,7 +140,7 @@
                 .attr('clip-path', 'url(#' + chart.clipPath() + ')')
                 .on('mouseover', self.mouseOver)
                 .on('mouseout', self.mouseOut)
-                .on('click', click);
+                .on('click', self.click);
 
             var bars = groups.selectAll('.' + self.name + 'class');
 

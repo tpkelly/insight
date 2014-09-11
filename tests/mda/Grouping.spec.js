@@ -660,7 +660,7 @@ describe('Grouping', function() {
             // prevent the chart from resizing or highlighting
             var emptyFunction = function() {};
             chart.resizeChart = emptyFunction;
-            chart.highlight = emptyFunction;
+            chart.toggleHighlight = emptyFunction;
 
             var chartGroup = new insight.ChartGroup();
             chartGroup.add(chart);
@@ -671,7 +671,7 @@ describe('Grouping', function() {
             chart.draw();
 
             // filter the chart group to only include Male gender
-            chartGroup.chartFilterHandler(genderGroup, 'Male');
+            chartGroup.filterByGrouping(genderGroup, 'Male');
 
             // calling getData will cause the correlation calculations to be performed
             var groupData = countryGroup.getData();

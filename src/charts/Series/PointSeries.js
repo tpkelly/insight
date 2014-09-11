@@ -64,10 +64,6 @@
                 return 200 + (i * 20);
             };
 
-            function click(filter) {
-                return self.click(self, filter);
-            }
-
             var data = self.pointData(self.dataset());
 
             var points = chart.plotArea.selectAll('circle.' + self.shortClassName())
@@ -81,7 +77,7 @@
                 .append('circle')
                 .on('mouseover', self.mouseOver)
                 .on('mouseout', self.mouseOut)
-                .on('click', click);
+                .on('click', self.click);
 
             points.attr('class', self.itemClassName);
 
