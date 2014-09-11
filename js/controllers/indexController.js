@@ -145,13 +145,7 @@
 
         var chart = new insight.Chart('Languages', '#content-advisory')
                                     .width(250)
-                                    .height(300)
-                                    .margin({
-                                        top: 30,
-                                        bottom: 50,
-                                        left: 100,
-                                        right: 0
-                                    });
+                                    .height(300);
 
         var axisOrder = ['Not yet rated', '4+', '9+', '12+', '17+'];
 
