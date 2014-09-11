@@ -467,12 +467,15 @@
 
             self.axisElement
                 .attr('transform', self.axisPosition())
-                .style('stroke', self.lineColor())
-                .style('stroke-width', self.lineWidth())
-                .style('fill', 'none')
                 .transition()
                 .duration(animationDuration)
                 .call(self.axis);
+
+            self.axisElement
+                .selectAll('path.domain')
+                .style('stroke', self.lineColor())
+                .style('stroke-width', self.lineWidth())
+                .style('fill', 'none');
 
             self.axisElement
                 .selectAll('text')
