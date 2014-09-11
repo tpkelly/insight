@@ -6,6 +6,7 @@
 * Merges common functionality in ScatterSeries and BubbleSeries into a common PointSeries.
 * Deprecated “ScatterSeries.pointRadius”. Use “ScatterSeries.radiusFunction” instead.
 * Fix issue where the calculated charts margins were too large.
+* Fix issue where tickmarks were obscured in bottom/right axis orientation.
 
 
 
