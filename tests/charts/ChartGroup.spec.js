@@ -44,39 +44,39 @@ describe('ChartGroup', function() {
         document.body.removeChild(div);
     });
 
-    describe('defaults', function() {
+    describe('constructor', function() {
 
-        it('dimensions empty', function() {
+        it('sets dimensions empty', function() {
 
             expect(chartGroup.dimensions).toEqual([]);
 
         });
 
-        it('groupings empty', function() {
+        it('sets groupings empty', function() {
 
             expect(chartGroup.groupings).toEqual([]);
 
         });
 
-        it('filteredDimensions empty', function() {
+        it('sets filteredDimensions empty', function() {
 
             expect(chartGroup.filteredDimensions).toEqual([]);
 
         });
 
-        it('dimensionListenerMap empty', function() {
+        it('sets dimensionListenerMap empty', function() {
 
             expect(chartGroup.dimensionListenerMap).toEqual([]);
 
         });
 
-        it('tables empty', function() {
+        it('sets tables empty', function() {
 
             expect(chartGroup.tables).toEqual([]);
 
         });
 
-        it('charts empty', function() {
+        it('sets charts empty', function() {
 
             expect(chartGroup.charts).toEqual([]);
 
