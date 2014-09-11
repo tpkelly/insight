@@ -430,24 +430,27 @@
 
         var bubbleChart = new insight.Chart('Chart 3', '#bubble-chart')
                 .width(300)
-                .height(400)
-                .margin(
-                {
-                    top: 30,
-                    left: 40,
-                    right: 30,
-                    bottom: 50
-                });
+                .height(400);
 
             var bubbleX = new insight.Axis('Average Rating', insight.Scales.Linear)
                 .tickSize(5)
-                .tickPadding(0);
+                .tickPadding(5);
 
-            var bubbleY = new insight.Axis('$', insight.Scales.Linear)
-                .tickSize(5);
+            bubbleX.ticksHint = d3.functor(4);
 
-            bubbleChart.xAxis(bubbleX)
-                       .yAxis(bubbleY);
+            var bubbleY = new insight.Axis('', insight.Scales.Linear)
+                .tickSize(5)
+                .tickPadding(5)
+                .tickLabelFormat(insight.Formatters.currencyFormatter);
+
+            //bubbleX.ticksHint = d3.functor(4);
+            //bubbleY.ticksHint = d3.functor(8);
+
+
+            bubbleChart
+                .xAxis(bubbleX)
+                .yAxis(bubbleY)
+                .title('App price vs. rating vs. filesize (radius)');
 
             var bubbles = new insight.BubbleSeries('bubbles', bubbleData, bubbleX, bubbleY)
                 .keyFunction(function(d)
@@ -480,13 +483,14 @@
 
             var x = new insight.Axis('Language', insight.Scales.Ordinal)
                 .tickSize(5)
-                .tickPadding(0)
+                .tickPadding(5)
                 .isOrdered(true);
 
             var y = new insight.Axis('', insight.Scales.Linear);
 
             chart.xAxis(x)
-                 .yAxis(y);
+                 .yAxis(y)
+                .title("Total number of Apps by language");
 
             var lSeries = new insight.ColumnSeries('languages', languages, x, y)
                 .top(10);
@@ -507,10 +511,15 @@
             .isOrdered(true);
 
         var x = new insight.Axis('', insight.Scales.Linear)
-                        .hasReversedPosition(true);
+                        .hasReversedPosition(true)
+            .tickPadding(0)
+            .tickSize(0)
+            .lineWidth(0)
+            .lineColor('#fff');
 
         chart.xAxis(x)
-             .yAxis(y);
+             .yAxis(y)
+            .title("Total number of Apps by genre");
 
         var series = new insight.RowSeries('genre', genreData, x, y)
                                 .valueFunction(function(d){ return d.value.Count; });

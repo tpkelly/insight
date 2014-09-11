@@ -34,6 +34,7 @@
 * Fixes issue with Chart titles not displaying correctly.
 * Fixes issue with margins being too small when using auto margin.
 * Fixes issue where tables are not redrawn after cross filter is applied.
+* Fixes issue where the tick-frequency was too high for small charts.
 
 
 
