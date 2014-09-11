@@ -117,6 +117,11 @@
 
             self.selectedItems = [];
 
+            // if the table has not yet been drawn then there will be no tableBody so nothing to do here
+            if (!self.tableBody) {
+                return;
+            }
+
             self.tableBody.selectAll('.selected')
                 .classed('selected', false);
 

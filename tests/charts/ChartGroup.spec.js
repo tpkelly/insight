@@ -406,6 +406,7 @@ describe('ChartGroup', function() {
             // spy on the initialization of the chart, to make sure it's called
             spyOn(chart, 'draw');
             spyOn(chart, 'toggleHighlight');
+            spyOn(chart, 'clearHighlight');
 
             chartGroup.add(chart);
 
@@ -419,6 +420,7 @@ describe('ChartGroup', function() {
 
             spyOn(table, 'draw');
             spyOn(table, 'toggleHighlight');
+            spyOn(table, 'clearHighlight');
 
             chartGroup.add(table);
 
@@ -530,6 +532,18 @@ describe('ChartGroup', function() {
 
             });
 
+            it('clears highlighting on all charts and tables in the ChartGroup', function() {
+
+                // When
+                chartGroup.clearFilters();
+
+                // Then
+                expect(countryChart.clearHighlight).toHaveBeenCalled();
+                expect(genderChart.clearHighlight).toHaveBeenCalled();
+                expect(countryTable.clearHighlight).toHaveBeenCalled();
+
+            });
+
             it('redraws the ChartGroup', function() {
 
                 // When
@@ -538,6 +552,17 @@ describe('ChartGroup', function() {
                 // Then
                 // called once in the filterByGrouping tests and once again in this clearFilters test
                 expect(chartGroup.draw.calls.length).toBe(2);
+
+            });
+
+            it('recalculates the all groupings in the ChartGroup', function() {
+
+                // When
+                chartGroup.clearFilters();
+
+                // Then
+                expect(countries.recalculate.calls.length).toBe(2);
+                expect(genders.recalculate.calls.length).toBe(2);
 
             });
 

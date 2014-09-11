@@ -308,6 +308,11 @@
 
             self.selectedItems = [];
 
+            // if the chart has not yet been drawn then there will be no plotArea so nothing to do here
+            if (!self.plotArea) {
+                return;
+            }
+
             self.plotArea.selectAll('.selected')
                 .classed('selected', false);
 
