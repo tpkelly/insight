@@ -143,14 +143,13 @@
 
         // Internal functions -----------------------------------------------------------------------------------------
 
-        /*
-         * Method handler that is bound by the ChartGroup to the click events of any chart series or table rows,
-         * if those entities' datasets are insight.Grouping objects.
-         * It notifies any other listening charts of the dimensional selection event, which they can respond to
-         * by applying CSS highlighting etc.
+        /**
+         * Filters the grouping with the ChartGroup so the given value will be highlighted by any chart or table that
+         * uses the grouping, and any charts or tables that use different groupings will be crossfiltered to only
+         * include data that matches the given group value.
          * @memberof! insight.ChartGroup
          * @instance
-         * @param {insight.Grouping} grouping - The grouping being filtered
+         * @param {insight.Grouping} grouping - The grouping being filtered.
          * @param {string} value - The value that the grouping is being filtered by.
          */
         self.filterByGrouping = function(grouping, value) {
@@ -191,6 +190,12 @@
 
         };
 
+        /**
+         * Removes all filtering from the ChartGroup so charts and tables will display all data and all highlighting
+         * will be reset.
+         * @memberof! insight.ChartGroup
+         * @instance
+         */
         self.clearFilters = function() {
 
             self.filteredDimensions = [];
