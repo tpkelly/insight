@@ -2455,4 +2455,66 @@ describe('Axis', function() {
         });
     });
 
+    describe('tickFrequency', function() {
+
+        describe('on linear axis', function() {
+
+            var axis;
+            beforeEach(function() {
+                axis = new insight.Axis('axis', insight.Scales.Linear);
+            });
+
+            it('has a 1/10th tick frequency', function() {
+                //Given:
+                spyOn(axis, 'domain').andReturn([0, 1000]);
+
+                //Then:
+                var expectedFrequency = 100;
+                var observedFrequency = axis.tickFrequency();
+                expect(observedFrequency).toBe(expectedFrequency);
+            });
+
+            it('has a round frequency', function() {
+                //Given:
+                spyOn(axis, 'domain').andReturn([0, 2025]);
+
+                //Then:
+                var expectedFrequency = 200;
+                var observedFrequency = axis.tickFrequency();
+                expect(observedFrequency).toBe(expectedFrequency);
+            });
+
+            it('has tick frequency of a single significant figure', function() {
+                //Given:
+                spyOn(axis, 'domain').andReturn([0, 999]);
+
+                //Then:
+                var expectedFrequency = 100;
+                var observedFrequency = axis.tickFrequency();
+                expect(observedFrequency).toBe(expectedFrequency);
+            });
+
+            it('has tick frequency of 1 when range is 0', function() {
+                //Given:
+                spyOn(axis, 'domain').andReturn([5, 5]);
+
+                //Then:
+                var expectedFrequency = 1;
+                var observedFrequency = axis.tickFrequency();
+                expect(observedFrequency).toBe(expectedFrequency);
+            });
+
+            it('tickValues are generated from tickFrequency', function() {
+                //Given:
+                spyOn(axis, 'tickFrequency').andReturn(200);
+                spyOn(axis, 'domain').andReturn([100,999]);
+
+                //Then:
+                var expectedTicks = [100, 300, 500, 700, 900];
+                var observedTicks = axis.tickValues();
+                expect(observedTicks).toEqual(expectedTicks);
+            });
+
+        });
+    });
 });

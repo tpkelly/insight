@@ -11,6 +11,15 @@
             return [0, 0];
         };
 
+        self.tickValues = function(axis) {
+            var scale = axis.scale.copy()
+                .domain(axis.domain());
+
+            // Some scales, such as `d3.scale.ordinal`, do not provide `ticks()`.
+            // For these scales `d3.svg.axis` depends upon `domain()` to create ticks values.
+            return scale.ticks ? scale.ticks() : scale.domain();
+        };
+
         /*
          * Calculates the minimum value to be used in this axis.
          * @returns {object} - The smallest value in the datasets that use this axis

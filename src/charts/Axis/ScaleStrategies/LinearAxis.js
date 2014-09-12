@@ -13,6 +13,22 @@
             return [0, self.findMax(axis)];
         };
 
+        self.tickValues = function(axis) {
+            var frequency = axis.tickFrequency();
+            var domain = axis.domain();
+
+            var tickValue = domain[0];
+
+            var results = [];
+
+            while (tickValue <= domain[1] && frequency > 0) {
+                results.push(tickValue);
+                tickValue += frequency;
+            }
+
+            return results;
+        };
+
     };
 
     insight.LinearAxis.prototype = Object.create(insight.AxisStrategy.prototype);

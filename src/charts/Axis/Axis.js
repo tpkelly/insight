@@ -146,12 +146,7 @@
         };
 
         self.tickValues = function() {
-            var scale = self.scale.copy()
-                .domain(self.domain());
-
-            // Some scales, such as `d3.scale.ordinal`, do not provide `ticks()`.
-            // For these scales `d3.svg.axis` depends upon `domain()` to create ticks values.
-            return scale.ticks ? scale.ticks() : scale.domain();
+            return axisStrategy.tickValues(self);
         };
 
         self.calculateLabelDimensions = function() {
@@ -903,6 +898,30 @@
             shouldShowGridlines = showLines;
 
             return self;
+        };
+
+        self.tickFrequency = function() {
+            var domain = self.domain();
+
+            var domainRange = domain[1] - domain[0];
+
+            if (domainRange === 0) {
+                return 1;
+            }
+
+            var tickFrequency = Math.pow(10, Math.floor(Math.log(domainRange) / Math.LN10) - 1);
+
+            var multipliers = [
+                2,
+                2.5,
+                2
+            ];
+
+            while (Math.floor(domainRange / tickFrequency) > 10) {
+                tickFrequency *= multipliers.shift();
+            }
+
+            return tickFrequency;
         };
 
         self.applyTheme(insight.defaultTheme);
