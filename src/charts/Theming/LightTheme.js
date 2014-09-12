@@ -29,7 +29,7 @@
         //Configure for chart
         self.chartStyle.seriesPalette = ['#3182bd', '#c6dbed', '#6baed6', '#08519c', '#9ecae1'];
         self.chartStyle.fillColor = '#fff';
-        self.chartStyle.titleFont = '16pt Helvetica Neue';
+        self.chartStyle.titleFont = 'bold 12pt Helvetica Neue';
         self.chartStyle.titleColor = '#000';
 
         //Configure series
