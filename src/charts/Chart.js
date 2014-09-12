@@ -814,10 +814,12 @@
 
         });
 
+        var titlePadding = 20;
+
         //Adjust margins to fit the title
         if (this.title() && this.title().length > 0) {
             var textMeasurer = new insight.TextMeasurer(this.measureCanvas);
-            margin.top += textMeasurer.measureText(this.title(), this.titleFont()).height + 20;
+            margin.top += textMeasurer.measureText(this.title(), this.titleFont()).height + titlePadding;
         }
 
         this.margin(margin);
