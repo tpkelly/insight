@@ -15,6 +15,7 @@ insight.Constants = (function() {
     exports.BarGroupClass = 'bargroup';
     exports.BarClass = 'bar';
     exports.LineClass = 'in-line';
+    exports.LinePoint = 'target-point';
     exports.ContainerClass = 'incontainer';
     exports.ChartSVG = 'chartSVG';
     exports.PlotArea = 'plotArea';

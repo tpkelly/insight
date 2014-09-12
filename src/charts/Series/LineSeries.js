@@ -103,13 +103,16 @@
                 .duration(duration)
                 .attr("d", transform);
 
+            var pointClassName = self.name + 'line' + insight.Constants.LinePoint;
+            pointClassName = insight.Utils.alphaNumericString(pointClassName);
+
             if (displayPoints) {
-                var circles = chart.plotArea.selectAll("circle")
+                var circles = chart.plotArea.selectAll("circle." + pointClassName)
                     .data(self.dataset());
 
                 circles.enter()
                     .append('circle')
-                    .attr('class', 'target-point')
+                    .attr('class', pointClassName)
                     .attr("clip-path", "url(#" + chart.clipPath() + ")")
                     .attr("cx", self.rangeX)
                     .attr("cy", chart.height() - chart.margin().bottom - chart.margin().top)
@@ -119,7 +122,7 @@
             }
 
             var colorFunc = (displayPoints) ? self.color : d3.functor(undefined);
-            var allCircles = chart.plotArea.selectAll("circle");
+            var allCircles = chart.plotArea.selectAll("circle." + pointClassName);
 
             allCircles
                 .transition()

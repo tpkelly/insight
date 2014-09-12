@@ -113,10 +113,20 @@ insight.Utils = (function() {
 
         if (d) {
             var str = d.toString();
-            result = 'in_' + str.replace(/[^A-Z0-9]/ig, '_');
+            result = 'in_' + exports.alphaNumericString(str);
         }
 
         return result;
+    };
+
+    /**
+     * Takes a string, and replaces all non-alphanumeric characters with underscores.
+     * @memberof! insight.Utils
+     * @param {String} string The string to strip non-alphanumeric characters from.
+     * @returns {String} - The stripped version of the input string.
+     */
+    exports.alphaNumericString = function(string) {
+        return string.replace(/[^A-Z0-9]/ig, '_');
     };
 
     /**
