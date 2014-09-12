@@ -101,7 +101,7 @@
          */
         self.shortClassName = function() {
             var shortName = self.name + 'class';
-            var spacelessName = shortName.replace(/[^A-Z0-9]/ig, '_');
+            var spacelessName = insight.Utils.alphaNumericString(shortName);
 
             return spacelessName;
         };
