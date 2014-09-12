@@ -230,3 +230,8 @@ button.selected {
   position:absolute;
   z-index:100;
 }
+
+a.filter-link {
+    cursor: pointer;
+    font-weight: bold;
+}

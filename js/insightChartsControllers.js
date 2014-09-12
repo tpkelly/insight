@@ -536,10 +536,20 @@
             $scope.examples = Examples.query();
             $scope.$parent.title = 'InsightJS - Open Source Analytics and Visualization for JavaScript';
 
-            var chartGroup, genreGrouping;
+            var chartGroup, genreGrouping, languageGrouping;
 
             $scope.filterGenres = function(genre) {
+                chartGroup.clearFilters();
                 chartGroup.filterByGrouping(genreGrouping, genre);
+            };
+
+            $scope.filterLanguage = function(language) {
+                chartGroup.clearFilters();
+                chartGroup.filterByGrouping(languageGrouping, language);
+            };
+
+            $scope.clearFilters = function() {
+                chartGroup.clearFilters();
             };
 
             // need to improve dependency management here, to allow the controller to know that it will need to load d3 and insight instead of just assuming they'll be there
@@ -557,7 +567,7 @@
                     .sum(['userRatingCount'])
                     .mean(['price', 'averageUserRating', 'userRatingCount', 'fileSizeBytes']);
 
-                var languages = dataset.group('languages', function(d)
+                languageGrouping = dataset.group('languages', function(d)
                 {
                     return d.languageCodesISO2A;
                 }, true)
@@ -565,7 +575,7 @@
 
                 var genreChart = createGenreCountChart(chartGroup, genreGrouping);
                 var bubbleChart = createBubbleChart(chartGroup, genreGrouping);
-                var languageChart = createLanguageChart(chartGroup, languages);
+                var languageChart = createLanguageChart(chartGroup, languageGrouping);
                 
                 chartGroup.draw();
             });

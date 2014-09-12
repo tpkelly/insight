@@ -30,7 +30,23 @@
             The example below uses data from the public iTunes API, allowing easy visualization of the patterns in the data. Explore the charts by clicking on particular bars or bubbles to see if you can spot any interesting patterns in the App Store ecosystem.
         </p>
         <p>
-            <button ng-click="filterGenres('Navigation')">Filter</button>
+            Did you know?
+            <ul>
+                <li>
+                    <a class="filter-link" ng-click="filterGenres('Navigation')">Navigation apps are large and expensive, but highly rated</a>
+                </li>
+                <li>
+                    There are more Business apps than Games supporting
+                    <a class="filter-link" ng-click="filterLanguage('DE')">German</a>
+                    ,
+                    <a class="filter-link" ng-click="filterLanguage('PT')">Portuguese</a>
+                    or
+                    <a class="filter-link" ng-click="filterLanguage('RU')">Russian</a>
+
+                </li>
+            </ul>
+
+            <button ng-click="clearFilters()">Clear filters</button>
         </p>
     </div>
     <div class="col-sm-12 examples">
