@@ -135,6 +135,7 @@
             $scope.filterLanguage = function(language) {
                 chartGroup.clearFilters();
                 chartGroup.filterByGrouping(languageGrouping, language);
+                chartGroup.filterByGrouping(genreGrouping, 'Business');
             };
 
             $scope.clearFilters = function() {
