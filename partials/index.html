@@ -29,6 +29,8 @@
         <p>
             The example below uses data from the public iTunes API, allowing easy visualization of the patterns in the data. Explore the charts by clicking on particular bars or bubbles to see if you can spot any interesting patterns in the App Store ecosystem.
         </p>
+    </div>
+    <div class="col-md-8">
         <p>
             Did you know?
             <ul>
@@ -50,9 +52,10 @@
 
                 </li>
             </ul>
-
-            <button ng-click="clearFilters()">Clear filters</button>
         </p>
+    </div>
+    <div class="col-md-4">
+        <button ng-show="anyFilters()" ng-click="clearFilters()">Reset charts</button>
     </div>
     <div class="col-sm-12 examples">
         <div class="chartcontainer">

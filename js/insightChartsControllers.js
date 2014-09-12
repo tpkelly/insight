@@ -553,6 +553,12 @@
                 chartGroup.clearFilters();
             };
 
+            $scope.anyFilters = function() {
+                var result = chartGroup && (chartGroup.filteredDimensions.length > 0);
+                console.log(result);
+                return result;
+            };
+
             // need to improve dependency management here, to allow the controller to know that it will need to load d3 and insight instead of just assuming they'll be there
             d3.json('datasets/appstore.json', function(data)
             {
