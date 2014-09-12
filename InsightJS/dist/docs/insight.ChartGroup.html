@@ -342,8 +342,6 @@
             
                 <li data-name="insight.Chart.self.seriesChanged"><a href="insight.Chart.html#self.seriesChanged">self.seriesChanged</a></li>
             
-                <li data-name="insight.Chart.self.seriesChanged"><a href="insight.Chart.html#self.seriesChanged">self.seriesChanged</a></li>
-            
                 <li data-name="insight.Chart#applyTheme"><a href="insight.Chart.html##applyTheme">#applyTheme</a></li>
             
                 <li data-name="insight.Chart#self.addXAxis"><a href="insight.Chart.html##self.addXAxis">#self.addXAxis</a></li>
@@ -436,6 +434,10 @@
                 <li data-name="insight.ChartGroup#applyTheme"><a href="insight.ChartGroup.html##applyTheme">#applyTheme</a></li>
             
                 <li data-name="insight.ChartGroup#self.add"><a href="insight.ChartGroup.html##self.add">#self.add</a></li>
+            
+                <li data-name="insight.ChartGroup#self.clearFilters"><a href="insight.ChartGroup.html##self.clearFilters">#self.clearFilters</a></li>
+            
+                <li data-name="insight.ChartGroup#self.filterByGrouping"><a href="insight.ChartGroup.html##self.filterByGrouping">#self.filterByGrouping</a></li>
             
             </ul>
             <ul class="events itemMembers">
@@ -1393,6 +1395,207 @@ depending on the type.
     
 
 
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="#self.clearFilters">
+            
+            #self.clearFilters<span class="signature">()</span>
+        </h4>
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Removes all filtering from the ChartGroup so charts and tables will display all data and all highlighting
+will be reset.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <div class="nameContainer">
+        <h4 class="name" id="#self.filterByGrouping">
+            
+            #self.filterByGrouping<span class="signature">(grouping, value)</span>
+        </h4>
+    </div>
+
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Filters the grouping with the ChartGroup so the given value will be highlighted by any chart or table that
+uses the grouping, and any charts or tables that use different groupings will be crossfiltered to only
+include data that matches the given group value.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>grouping</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="insight.Grouping.html">insight.Grouping</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The grouping being filtered.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            <td class="description last">
+                
+                The value that the grouping is being filtered by.</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
     
     
     
