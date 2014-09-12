@@ -59,6 +59,7 @@
         self.draw = function(chart, isDragging) {
 
             self.initializeTooltip(chart.container.node());
+            self.selectedItems = chart.selectedItems;
 
             var duration = isDragging ? 0 : function(d, i) {
                 return 200 + (i * 20);
