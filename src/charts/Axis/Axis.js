@@ -29,12 +29,12 @@
             barPadding = d3.functor(0.1),
             initialisedAxisView = false,
             shouldReversePosition = false,
-            zoomable = false;
+            zoomable = false,
+            axisStrategy = strategyForScale(scale);
 
         // Internal variables ---------------------------------------------------------------------------------------
 
         self.measureCanvas = document.createElement('canvas');
-        self.scaleType = scale.name;
         self.scale = scale.scale();
         self.bounds = [0, 0];
         self.series = [];
@@ -42,6 +42,20 @@
         self.gridlines = new insight.AxisGridlines(self);
 
         // Private functions -------------------------------------------------------------------------------------
+
+        function strategyForScale(scale) {
+            switch (scale.name) {
+                case insight.Scales.Linear.name:
+                    return new insight.LinearAxis();
+                case insight.Scales.Ordinal.name:
+                    return new insight.OrdinalAxis();
+                case insight.Scales.Time.name:
+                    return new insight.DateAxis();
+
+                default:
+                    return new insight.LinearAxis();
+            }
+        }
 
         function orientation() {
             if (self.isHorizontal()) {
@@ -104,57 +118,6 @@
 
             }
 
-        }
-
-        /*
-         * For an ordinal/categorical axis, this method queries all series that use this axis to get the list of available values
-         * @returns {object[]} values - the values for this ordinal axis
-         */
-        function findOrdinalValues() {
-            var vals = [];
-
-            // Build a list of values used by this axis by checking all Series using this axis
-            // Optionally provide an ordering function to sort the results by.  If the axis is ordered but no custom ordering is defined,
-            // then the series value function will be used by default.
-            self.series.forEach(function(series) {
-                vals = vals.concat(series.keys(self.orderingFunction()));
-            });
-
-            vals = insight.Utils.arrayUnique(vals);
-
-            return vals;
-        }
-
-        /*
-         * Calculates the minimum value to be used in this axis.
-         * @returns {object} - The smallest value in the datasets that use this axis
-         */
-        function findMin() {
-            var min = Number.MAX_VALUE;
-
-            self.series.forEach(function(series) {
-                var m = series.findMin(self);
-
-                min = m < min ? m : min;
-            });
-
-            return min;
-        }
-
-        /*
-         * Calculates the maximum value to be used in this axis.
-         * @returns {object} - The largest value in the datasets that use this axis
-         */
-        function findMax() {
-            var max = 0;
-
-            self.series.forEach(function(series) {
-                var m = series.findMax(self);
-
-                max = m > max ? m : max;
-            });
-
-            return max;
         }
 
         // Internal functions -------------------------------------------------------------------------------------
@@ -332,17 +295,7 @@
          * @returns {object[]} bounds - An array with two items, for the lower and upper range of this axis
          */
         self.domain = function() {
-            var domain = [];
-
-            if (self.scaleType === insight.Scales.Linear.name) {
-                domain = [0, findMax()];
-            } else if (self.scaleType === insight.Scales.Ordinal.name) {
-                domain = findOrdinalValues();
-            } else if (self.scaleType === insight.Scales.Time.name) {
-                domain = [new Date(findMin()), new Date(findMax())];
-            }
-
-            return domain;
+            return axisStrategy.domain(self);
         };
 
         self.tickLabelRotationTransform = function() {
