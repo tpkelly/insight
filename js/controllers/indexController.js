@@ -125,15 +125,21 @@
             $scope.examples = Examples.query();
             $scope.$parent.title = 'InsightJS - Open Source Analytics and Visualization for JavaScript';
 
+            var chartGroup, genreGrouping;
+
+            $scope.filterGenres = function(genre) {
+                chartGroup.filterByGrouping(genreGrouping, genre);
+            };
+
             // need to improve dependency management here, to allow the controller to know that it will need to load d3 and insight instead of just assuming they'll be there
             d3.json('datasets/appstore.json', function(data)
             {
                 preprocess(data);                
 
                 var dataset = new insight.DataSet(data);
-                var chartGroup = new insight.ChartGroup();
+                chartGroup = new insight.ChartGroup();
 
-                var genres = dataset.group('genre', function(d)
+                genreGrouping = dataset.group('genre', function(d)
                     {
                         return d.primaryGenreName;
                     })
@@ -146,8 +152,8 @@
                 }, true)
                 .count(['languageCodesISO2A']);
 
-                var genreChart = createGenreCountChart(chartGroup, genres);
-                var bubbleChart = createBubbleChart(chartGroup, genres);
+                var genreChart = createGenreCountChart(chartGroup, genreGrouping);
+                var bubbleChart = createBubbleChart(chartGroup, genreGrouping);
                 var languageChart = createLanguageChart(chartGroup, languages);
                 
                 chartGroup.draw();
