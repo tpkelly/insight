@@ -48,7 +48,7 @@
                 })
                 .radiusFunction(function(d)
                 {
-                    return d.value.fileSizeBytes.Average;
+                    return Math.sqrt(d.value.fileSizeBytes.Average);
                 })
                 .tooltipFunction(function(d)
                 {
@@ -123,24 +123,37 @@
 
             var chartGroup, genreGrouping, languageGrouping;
 
-            $scope.filterGenres = function(genre, language) {
+            $scope.filterGenres = function(genres, languages) {
 
                 chartGroup.clearFilters();
-                chartGroup.filterByGrouping(genreGrouping, genre);
 
-                if (language) {
-                    chartGroup.filterByGrouping(languageGrouping, language);
+                genres.forEach(function(genre) {
+                    chartGroup.filterByGrouping(genreGrouping, genre);
+                });
+
+
+                if (languages) {
+
+                    languages.forEach(function(language) {
+                        chartGroup.filterByGrouping(languageGrouping, language);
+                    });
+
                 }
 
             };
 
-            $scope.filterLanguage = function(language, genre) {
+            $scope.filterLanguage = function(languages, genres) {
 
                 chartGroup.clearFilters();
-                chartGroup.filterByGrouping(languageGrouping, language);
 
-                if (genre) {
-                    chartGroup.filterByGrouping(genreGrouping, genre);
+                languages.forEach(function(language) {
+                    chartGroup.filterByGrouping(languageGrouping, language);
+                });
+
+                if (genres) {
+                    genres.forEach(function(genre) {
+                        chartGroup.filterByGrouping(genreGrouping, genre);
+                    });
                 }
 
             };
@@ -151,9 +164,12 @@
 
             $scope.anyFilters = function() {
                 var result = chartGroup && (chartGroup.filteredDimensions.length > 0);
-                console.log(result);
                 return result;
             };
+
+            function showHideClearFilters() {
+                $scope.$apply();
+            }
 
             // need to improve dependency management here, to allow the controller to know that it will need to load d3 and insight instead of just assuming they'll be there
             d3.json('datasets/appstore.json', function(data)
@@ -181,6 +197,8 @@
                 var languageChart = createLanguageChart(chartGroup, languageGrouping);
                 
                 chartGroup.draw();
+
+                chartGroup.filterChanged = showHideClearFilters;
             });
         }
     ]);
