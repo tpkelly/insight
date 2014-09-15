@@ -12,38 +12,52 @@
         };
 
         self.tickValues = function(axis) {
-            var scale = axis.scale.copy()
-                .domain(axis.domain());
+            var frequency = axis.tickFrequency();
+            var domain = axis.domain();
 
-            // Some scales, such as `d3.scale.ordinal`, do not provide `ticks()`.
-            // For these scales `d3.svg.axis` depends upon `domain()` to create ticks values.
-            return scale.ticks ? scale.ticks() : scale.domain();
-        };
+            var tickValue = domain[0];
 
-        self.tickFrequencyForDomain = function(domain) {
-            var domainRange = domain[1] - domain[0];
+            var results = [];
 
-            if (domainRange === 0) {
-                return 1;
+            while (tickValue <= domain[1] && self.frequencyValue(frequency) > 0) {
+                results.push(tickValue);
+                tickValue = self.increaseTickStep(axis, tickValue);
             }
 
-            var tickFrequency = Math.pow(10, Math.floor(Math.log(domainRange) / Math.LN10) - 1);
+            return results;
+        };
 
-            var multipliers = [
-                2,
-                2.5,
-                2
-            ];
+        self.tickFrequencyForDomain = function(axis, domain) {
+            var tickFrequency = self.initialTickFrequency(axis, domain);
+            var domainRange = domain[1].valueOf() - domain[0].valueOf();
 
-            while (Math.floor(domainRange / tickFrequency) > 10) {
-                tickFrequency *= multipliers.shift();
+            var step = 0;
+            //Iterate until we have a reasonably small number of ticks
+            while (Math.floor(domainRange / self.frequencyValue(tickFrequency)) > 10) {
+                tickFrequency = self.increaseTickFrequency(axis, tickFrequency, step++);
             }
 
             return tickFrequency;
         };
 
+        self.frequencyValue = function(frequency) {
+            return frequency;
+        };
+
+        self.initialTickFrequency = function(axis, domain) {
+            return 1;
+        };
+
+        self.increaseTickFrequency = function(axis, tickFrequency, step) {
+            return tickFrequency + 1;
+        };
+
+        self.decreaseTickFrequency = function(axis, tickFrequency, step) {
+            return tickFrequency - 1;
+        };
+
         self.tickFrequency = function(axis) {
-            return self.tickFrequencyForDomain(axis.domain());
+            return self.tickFrequencyForDomain(axis, axis.domain());
         };
 
         /*

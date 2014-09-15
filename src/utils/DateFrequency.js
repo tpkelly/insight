@@ -14,18 +14,20 @@
             minutes || 0,
             seconds || 0);
 
-        self._date = referenceDate;
-
         self.toSeconds = function() {
 
             var totalSeconds = referenceDate.getSeconds();
             totalSeconds += referenceDate.getMinutes() * 60;
             totalSeconds += referenceDate.getHours() * 60 * 60;
-            totalSeconds += referenceDate.getDay() * 60 * 60 * 24;
+            totalSeconds += (referenceDate.getDate() - 1) * 60 * 60 * 24;
             totalSeconds += referenceDate.getMonth() * 60 * 60 * 24 * 29.5;
-            totalSeconds += referenceDate.getYear() * 60 * 60 * 24 * 365.25;
+            totalSeconds += (referenceDate.getFullYear() - 1900) * 60 * 60 * 24 * 365.25;
 
             return totalSeconds;
+        };
+
+        self.toValue = function() {
+            return referenceDate;
         };
 
         self.getYears = function() {
@@ -79,6 +81,15 @@
      */
     insight.DateFrequency.dateFrequencyForDays = function(numberOfDays) {
         return new insight.DateFrequency(0, 0, numberOfDays);
+    };
+
+    /**
+     * A DateFrequency representing a number of weeks
+     * @param {Number} numberOfWeeks The number of weeks to represent
+     * @returns {insight.DateFrequency} - A new DateFrequency representing this number of weeks.
+     */
+    insight.DateFrequency.dateFrequencyForWeeks = function(numberOfWeeks) {
+        return new insight.DateFrequency(0, 0, numberOfWeeks * 7);
     };
 
     /**

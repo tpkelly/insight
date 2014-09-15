@@ -2417,13 +2417,13 @@ describe('Axis', function() {
                 new Date(2014, 0, 1),
                 new Date(2014, 1, 1),
                 new Date(2014, 2, 1),
-                new Date(2014, 3, 1),
-                new Date(2014, 4, 1),
-                new Date(2014, 5, 1),
-                new Date(2014, 6, 1),
-                new Date(2014, 7, 1),
-                new Date(2014, 8, 1),
-                new Date(2014, 9, 1)
+                new Date(2014, 3, 1, 1), // Daylight saving time begins
+                new Date(2014, 4, 1, 1),
+                new Date(2014, 5, 1, 1),
+                new Date(2014, 6, 1, 1),
+                new Date(2014, 7, 1, 1),
+                new Date(2014, 8, 1, 1),
+                new Date(2014, 9, 1, 1)
             ];
             expect(result).toEqual(expectedTickValues);
         });
@@ -2671,6 +2671,58 @@ describe('Axis', function() {
             var axis;
             beforeEach(function() {
                 axis = new insight.Axis('axis', insight.Scales.Time);
+            });
+
+            it('has a 1/10th tick frequency', function() {
+                //Given:
+                spyOn(axis, 'domain').andReturn([
+                    new Date(2014, 0, 1),
+                    new Date(2014, 10, 1)
+                ]);
+
+                //Then:
+                var expectedFrequency = insight.DateFrequency.dateFrequencyForMonths(1).toValue();
+                var observedFrequency = axis.tickFrequency().toValue();
+                expect(observedFrequency).toEqual(expectedFrequency);
+            });
+
+            it('has a whole-date frequency for partial-day ranges', function() {
+                //Given:
+                spyOn(axis, 'domain').andReturn([
+                    new Date(2014, 0, 1),
+                    new Date(2014, 0, 21, 5)
+                ]);
+
+                //Then:
+                var expectedFrequency = insight.DateFrequency.dateFrequencyForDays(2).toValue();
+                var observedFrequency = axis.tickFrequency().toValue();
+                expect(observedFrequency).toEqual(expectedFrequency);
+            });
+
+            it('has a whole-year frequency for partial-year ranges', function() {
+                //Given:
+                spyOn(axis, 'domain').andReturn([
+                    new Date(2004, 1, 1),
+                    new Date(2014, 0, 30)
+                ]);
+
+                //Then:
+                var expectedFrequency = insight.DateFrequency.dateFrequencyForYears(1).toValue();
+                var observedFrequency = axis.tickFrequency().toValue();
+                expect(observedFrequency).toEqual(expectedFrequency);
+            });
+
+            it('has maximum tick frequency of 100 years', function() {
+                //Given:
+                spyOn(axis, 'domain').andReturn([
+                    new Date(1900, 1, 1),
+                    new Date(200014, 0, 30)
+                ]);
+
+                //Then:
+                var expectedFrequency = insight.DateFrequency.dateFrequencyForYears(100).toValue();
+                var observedFrequency = axis.tickFrequency().toValue();
+                expect(observedFrequency).toEqual(expectedFrequency);
             });
 
             it('tick values increase by tickFrequency for years', function() {

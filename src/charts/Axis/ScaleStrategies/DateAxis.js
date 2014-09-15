@@ -7,6 +7,30 @@
 
         var self = this;
 
+        var possibleAutoFrequencies = [
+            insight.DateFrequency.dateFrequencyForSeconds(1),
+            insight.DateFrequency.dateFrequencyForSeconds(5),
+            insight.DateFrequency.dateFrequencyForSeconds(15),
+            insight.DateFrequency.dateFrequencyForSeconds(30),
+            insight.DateFrequency.dateFrequencyForMinutes(1),
+            insight.DateFrequency.dateFrequencyForMinutes(5),
+            insight.DateFrequency.dateFrequencyForMinutes(15),
+            insight.DateFrequency.dateFrequencyForMinutes(30),
+            insight.DateFrequency.dateFrequencyForHours(1),
+            insight.DateFrequency.dateFrequencyForHours(6),
+            insight.DateFrequency.dateFrequencyForHours(12),
+            insight.DateFrequency.dateFrequencyForDays(1),
+            insight.DateFrequency.dateFrequencyForDays(2),
+            insight.DateFrequency.dateFrequencyForWeeks(1),
+            insight.DateFrequency.dateFrequencyForMonths(1),
+            insight.DateFrequency.dateFrequencyForMonths(3),
+            insight.DateFrequency.dateFrequencyForMonths(6),
+            insight.DateFrequency.dateFrequencyForYears(1),
+            insight.DateFrequency.dateFrequencyForYears(5),
+            insight.DateFrequency.dateFrequencyForYears(10),
+            insight.DateFrequency.dateFrequencyForYears(100)
+        ];
+
         insight.AxisStrategy.call(this);
 
         self.domain = function(axis) {
@@ -22,9 +46,9 @@
             var startDateInSeconds = Date.parse(startDate.toString()) / 1000;
             var endDateInSeconds = Date.parse(endDate.toString()) / 1000;
 
-            var tickFrequencySeconds = self.tickFrequencyForDomain([startDateInSeconds, endDateInSeconds]);
+            var tickFrequency = self.tickFrequencyForDomain(axis, [startDateInSeconds, endDateInSeconds]);
 
-            return insight.DateFrequency.dateFrequencyForSeconds(tickFrequencySeconds);
+            return tickFrequency;
         };
 
         self.increaseTickStep = function(axis, currentTickValue) {
@@ -65,6 +89,22 @@
             }
 
             return newDate;
+        };
+
+        self.frequencyValue = function(frequency) {
+            return frequency.toSeconds();
+        };
+
+        self.initialTickFrequency = function(axis, domain) {
+            return insight.DateFrequency.dateFrequencyForSeconds(1);
+        };
+
+        self.increaseTickFrequency = function(axis, currentFrequency, step) {
+            return possibleAutoFrequencies[step];
+        };
+
+        self.decreaseTickFrequency = function(axis, currentFrequency, step) {
+            return possibleAutoFrequencies[possibleAutoFrequencies.length - step - 1];
         };
 
     };
