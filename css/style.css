@@ -235,3 +235,14 @@ a.filter-link {
     cursor: pointer;
     font-weight: bold;
 }
+
+button.clear-filters {
+    font-weight: bold;
+    padding-top: 3em;
+    padding-bottom: 3em;
+    border-radius: 10px;
+    border-color: darkslateblue;
+    border-width: 3px;
+    background-color: #008cba;
+    color: #ffffff;
+}
