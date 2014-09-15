@@ -2400,6 +2400,31 @@ describe('Axis', function() {
             expect(result).toEqual(expectedTickValues);
         });
 
+        it('returns rounded axis tick values for a linear axis', function() {
+
+            // Given:
+            var axis = new insight.Axis('axis', insight.Scales.Linear);
+            spyOn(axis, 'domain').andReturn([241, 53271721]);
+
+            // When:
+            var result = axis.tickValues();
+
+            // Then:
+            var expectedTickValues = [
+                5000000,
+                10000000,
+                15000000,
+                20000000,
+                25000000,
+                30000000,
+                35000000,
+                40000000,
+                45000000,
+                50000000
+            ];
+            expect(result).toEqual(expectedTickValues);
+        });
+
         it('returns axis tick values for a time axis', function() {
 
             // Given:
@@ -2428,6 +2453,37 @@ describe('Axis', function() {
             expect(result).toEqual(expectedTickValues);
         });
 
+        it('returns hourly tick values for a 12-hour long time axis', function() {
+
+            // Given:
+            var axis = new insight.Axis('axis', insight.Scales.Time);
+            spyOn(axis, 'domain').andReturn([
+                    new Date(2014, 10, 8, 4, 6, 1),
+                    new Date(2014, 10, 8, 16, 33, 3)]
+            );
+            spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForHours(1));
+
+            // When:
+            var result = axis.tickValues();
+
+            // Then:
+            var expectedTickValues = [
+                new Date(2014, 10, 8, 5),
+                new Date(2014, 10, 8, 6),
+                new Date(2014, 10, 8, 7),
+                new Date(2014, 10, 8, 8),
+                new Date(2014, 10, 8, 9),
+                new Date(2014, 10, 8, 10),
+                new Date(2014, 10, 8, 11),
+                new Date(2014, 10, 8, 12),
+                new Date(2014, 10, 8, 13),
+                new Date(2014, 10, 8, 14),
+                new Date(2014, 10, 8, 15),
+                new Date(2014, 10, 8, 16)
+            ];
+            expect(result).toEqual(expectedTickValues);
+        });
+
         it('returned axis tick values contain domain values for a linear axis with round number', function() {
 
             // Given:
@@ -2452,6 +2508,49 @@ describe('Axis', function() {
                 1000
             ];
             expect(result).toEqual(expectedTickValues);
+        });
+    });
+
+    describe('initial tick', function() {
+        it('on linear axis is a multiple of the tick frequency', function() {
+            //Given:
+            var axis = new insight.Axis('axis', insight.Scales.Linear);
+            spyOn(axis, 'domain').andReturn([7, 20]);
+            spyOn(axis, 'tickFrequency').andReturn(4);
+            var axisStrategy = new insight.LinearAxis();
+
+            //Then:
+            var expectedFirstTick = 8;
+            var observedFirstTick = axisStrategy.initialTickValue(axis);
+            expect(observedFirstTick).toBe(expectedFirstTick);
+        });
+
+        it('on date axis is a multiple of the tick frequency', function() {
+            //Given:
+            var axis = new insight.Axis('axis', insight.Scales.Time);
+            spyOn(axis, 'domain').andReturn([
+                    new Date(2014, 10, 8, 4, 6, 1),
+                    new Date(2014, 10, 8, 16, 33, 3)]
+            );
+            spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForHours(1));
+            var axisStrategy = new insight.DateAxis();
+
+            //Then:
+            var expectedFirstTick = new Date(2014, 10, 8, 4);
+            var observedFirstTick = axisStrategy.initialTickValue(axis);
+            expect(observedFirstTick).toEqual(expectedFirstTick);
+        });
+
+        it('on ordinal axis is the first value', function() {
+            //Given:
+            var axis = new insight.Axis('axis', insight.Scales.Ordinal);
+            spyOn(axis, 'domain').andReturn(['Cat', 'Dog', 'Horse', 'Rat', 'Rabbit']);
+            var axisStrategy = new insight.OrdinalAxis();
+
+            //Then:
+            var expectedFirstTick = 'Cat';
+            var observedFirstTick = axisStrategy.initialTickValue(axis);
+            expect(observedFirstTick).toEqual(expectedFirstTick);
         });
     });
 
@@ -2558,7 +2657,7 @@ describe('Axis', function() {
                 spyOn(axis, 'domain').andReturn([100,999]);
 
                 //Then:
-                var expectedTicks = [100, 300, 500, 700, 900];
+                var expectedTicks = [200, 400, 600, 800];
                 var observedTicks = axis.tickValues();
                 expect(observedTicks).toEqual(expectedTicks);
             });

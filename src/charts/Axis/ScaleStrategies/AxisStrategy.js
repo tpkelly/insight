@@ -11,11 +11,15 @@
             return [0, 0];
         };
 
+        self.initialTickValue = function(axis) {
+            return 0;
+        };
+
         self.tickValues = function(axis) {
             var frequency = axis.tickFrequency();
             var domain = axis.domain();
 
-            var tickValue = domain[0];
+            var tickValue = self.initialTickValue(axis);
 
             var results = [];
 
@@ -23,6 +27,11 @@
                 results.push(tickValue);
                 tickValue = self.increaseTickStep(axis, tickValue);
             }
+
+            //Filter out any tickmarks outside the domain range
+            results = results.filter(function(d) {
+                return (d <= domain[1]) && (d >= domain[0]);
+            });
 
             return results;
         };

@@ -54,6 +54,31 @@
             return referenceDate.getSeconds();
         };
 
+        self.roundDate = function(date) {
+            var years = date.getFullYear(),
+                months = date.getMonth(),
+                days = date.getDate(),
+                hours = date.getHours(),
+                minutes = date.getMinutes(),
+                seconds = date.getSeconds();
+
+            if (self.getYears() !== 0) {
+                return new Date(years);
+            }
+            if (self.getMonths() !== 0) {
+                return new Date(years, months);
+            }
+            if (self.getDays() !== 0) {
+                return new Date(years, months, days);
+            }
+            if (self.getHours() !== 0) {
+                return new Date(years, months, days, hours);
+            }
+            if (self.getMinutes() !== 0) {
+                return new Date(years, months, days, hours, minutes);
+            }
+            return date;
+        };
     };
 
     /**

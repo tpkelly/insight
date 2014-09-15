@@ -17,6 +17,10 @@
             return axis.domain();
         };
 
+        self.initialTickValue = function(axis) {
+            return axis.domain()[0];
+        };
+
         /*
          * Queries all series that use this axis to get the list of available values
          * @returns {object[]} values - the values for this ordinal axis

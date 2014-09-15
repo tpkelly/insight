@@ -91,6 +91,12 @@
             return newDate;
         };
 
+        self.initialTickValue = function(axis) {
+            var firstValue = axis.domain()[0];
+            var tickFrequency = axis.tickFrequency();
+            return tickFrequency.roundDate(firstValue);
+        };
+
         self.frequencyValue = function(frequency) {
             return frequency.toSeconds();
         };

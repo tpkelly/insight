@@ -13,7 +13,13 @@
             return [0, self.findMax(axis)];
         };
 
+        self.initialTickValue = function(axis) {
+            var domain = axis.domain();
+            var tickFrequency = axis.tickFrequency();
 
+            var initialValue = domain[0];
+            return Math.ceil(initialValue / tickFrequency) * tickFrequency;
+        };
 
         self.increaseTickStep = function(axis, currentTickValue) {
             return currentTickValue + axis.tickFrequency();
