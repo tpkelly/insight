@@ -29,6 +29,14 @@
             return results;
         };
 
+        self.increaseTickStep = function(axis, currentTickValue) {
+            return currentTickValue + axis.tickFrequency();
+        };
+
+        self.decreaseTickStep = function(axis, currentTickValue) {
+            return currentTickValue - axis.tickFrequency();
+        };
+
     };
 
     insight.LinearAxis.prototype = Object.create(insight.AxisStrategy.prototype);

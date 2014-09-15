@@ -78,6 +78,13 @@
             return max;
         };
 
+        self.increaseTickStep = function(axis, currentTickValue) {
+            return currentTickValue;
+        };
+
+        self.decreaseTickStep = function(axis, currentTickValue) {
+            return currentTickValue;
+        };
     };
 
 })(insight);

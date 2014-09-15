@@ -35,6 +35,28 @@
 
             return vals;
         }
+
+        self.increaseTickStep = function(axis, currentTickValue) {
+            var categories = axis.domain();
+            var tickIndex = categories.indexOf(currentTickValue);
+
+            if (tickIndex === -1 || tickIndex === categories.length - 1) {
+                return null;
+            }
+
+            return categories[tickIndex + 1];
+        };
+
+        self.decreaseTickStep = function(axis, currentTickValue) {
+            var categories = axis.domain();
+            var tickIndex = categories.indexOf(currentTickValue);
+
+            if (tickIndex === -1 || tickIndex === 0) {
+                return null;
+            }
+
+            return categories[tickIndex - 1];
+        };
     };
 
     insight.OrdinalAxis.prototype = Object.create(insight.AxisStrategy.prototype);

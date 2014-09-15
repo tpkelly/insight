@@ -905,6 +905,9 @@
             if (!arguments.length) {
                 return tickFrequency !== undefined ? tickFrequency : axisStrategy.tickFrequency(self);
             }
+            if (tickFreq <= 0) {
+                throw new Error(insight.ErrorMessages.nonPositiveTickFrequencyException);
+            }
             tickFrequency = tickFreq;
 
             return self;
