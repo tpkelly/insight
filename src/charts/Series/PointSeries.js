@@ -26,7 +26,7 @@
             }
 
             if (this.classList && this.classList.contains("notselected")) {
-                return 0.3;
+                return 0.2;
             }
 
             //If not using selected/notSelected, make everything semi-transparent
