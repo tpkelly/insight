@@ -1,4 +1,4 @@
-<div id="container-body" class="container" ng-escape-key="notify()">
+<div id="container-body" class="container" ng-escape-key="clearFilters()">
     <div class="row">
         <div class="col-sm-4">
             <div class="visualization colorbox">
@@ -57,7 +57,7 @@
             </p>
         </div>
         <div class="col-md-4">
-            <button ng-show="anyFilters()" ng-click="clearFilters()">Reset charts</button>
+            <button ng-show="anyFilters()" ng-click="clearFilters()">Reset charts [ESC]</button>
         </div>
     </div>
     <div class="row">
