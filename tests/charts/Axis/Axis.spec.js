@@ -2504,6 +2504,34 @@ describe('Axis', function() {
                 expect(observedFrequency).toBe(expectedFrequency);
             });
 
+            it('can have a tick frequency set by the user', function() {
+                //Given:
+                var userSpecifiedValue = 75;
+                spyOn(axis, 'domain').andReturn([0, 1000]);
+
+                //When:
+                axis.tickFrequency(userSpecifiedValue);
+
+                //Then:
+                var expectedFrequency = userSpecifiedValue;
+                var observedFrequency = axis.tickFrequency();
+                expect(observedFrequency).toBe(expectedFrequency);
+            });
+
+            it('can have a tick frequency set by the user', function() {
+                //Given:
+                var userSpecifiedValue = 75;
+                spyOn(axis, 'domain').andReturn([0, 500]);
+
+                //When:
+                axis.tickFrequency(userSpecifiedValue);
+
+                //Then:
+                var expectedTicks = [0, 75, 150, 225, 300, 375, 450];
+                var observedTicks = axis.tickValues();
+                expect(observedTicks).toEqual(expectedTicks);
+            });
+
             it('tickValues are generated from tickFrequency', function() {
                 //Given:
                 spyOn(axis, 'tickFrequency').andReturn(200);
@@ -2515,6 +2543,34 @@ describe('Axis', function() {
                 expect(observedTicks).toEqual(expectedTicks);
             });
 
+        });
+
+        describe('on category axis', function() {
+
+            var axis;
+            beforeEach(function() {
+                axis = new insight.Axis('axis', insight.Scales.Ordinal);
+            });
+
+            it('displays all values', function() {
+                //Given:
+                var categories = ['Cat', 'Dog', 'Snake', 'Horse', 'Rabbit'];
+                spyOn(axis, 'domain').andReturn(categories);
+
+                //Then:
+                expect(axis.tickValues()).toEqual(categories);
+            });
+
+
+            it('ignores tickFrequency', function() {
+                //Given:
+                var categories = ['Cat', 'Dog', 'Snake', 'Horse', 'Rabbit'];
+                spyOn(axis, 'domain').andReturn(categories);
+                spyOn(axis, 'tickFrequency').andReturn(2);
+
+                //Then:
+                expect(axis.tickValues()).toEqual(categories);
+            })
         });
     });
 });

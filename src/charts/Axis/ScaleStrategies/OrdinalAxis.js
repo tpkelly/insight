@@ -13,6 +13,9 @@
             return findOrdinalValues(axis);
         };
 
+        self.tickValues = function(axis) {
+            return axis.domain();
+        };
 
         /*
          * Queries all series that use this axis to get the list of available values

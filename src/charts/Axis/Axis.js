@@ -30,7 +30,8 @@
             initialisedAxisView = false,
             shouldReversePosition = false,
             zoomable = false,
-            axisStrategy = strategyForScale(scale);
+            axisStrategy = strategyForScale(scale),
+            tickFrequency;
 
         // Internal variables ---------------------------------------------------------------------------------------
 
@@ -900,28 +901,13 @@
             return self;
         };
 
-        self.tickFrequency = function() {
-            var domain = self.domain();
-
-            var domainRange = domain[1] - domain[0];
-
-            if (domainRange === 0) {
-                return 1;
+        self.tickFrequency = function(tickFreq) {
+            if (!arguments.length) {
+                return tickFrequency !== undefined ? tickFrequency : axisStrategy.tickFrequency(self);
             }
+            tickFrequency = tickFreq;
 
-            var tickFrequency = Math.pow(10, Math.floor(Math.log(domainRange) / Math.LN10) - 1);
-
-            var multipliers = [
-                2,
-                2.5,
-                2
-            ];
-
-            while (Math.floor(domainRange / tickFrequency) > 10) {
-                tickFrequency *= multipliers.shift();
-            }
-
-            return tickFrequency;
+            return self;
         };
 
         self.applyTheme(insight.defaultTheme);

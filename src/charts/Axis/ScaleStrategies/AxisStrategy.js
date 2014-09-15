@@ -20,6 +20,32 @@
             return scale.ticks ? scale.ticks() : scale.domain();
         };
 
+        self.tickFrequencyForDomain = function(domain) {
+            var domainRange = domain[1] - domain[0];
+
+            if (domainRange === 0) {
+                return 1;
+            }
+
+            var tickFrequency = Math.pow(10, Math.floor(Math.log(domainRange) / Math.LN10) - 1);
+
+            var multipliers = [
+                2,
+                2.5,
+                2
+            ];
+
+            while (Math.floor(domainRange / tickFrequency) > 10) {
+                tickFrequency *= multipliers.shift();
+            }
+
+            return tickFrequency;
+        };
+
+        self.tickFrequency = function(axis) {
+            return self.tickFrequencyForDomain(axis.domain());
+        };
+
         /*
          * Calculates the minimum value to be used in this axis.
          * @returns {object} - The smallest value in the datasets that use this axis
