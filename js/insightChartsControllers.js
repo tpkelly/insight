@@ -428,7 +428,7 @@
 
     function createBubbleChart(chartGroup, bubbleData) {
 
-        var bubbleChart = new insight.Chart('Chart 3', '#bubble-chart')
+        var bubbleChart = new insight.Chart('Bubble chart', '#bubble-chart')
                 .width(300)
                 .height(400);
 
@@ -442,10 +442,6 @@
                 .tickSize(5)
                 .tickPadding(5)
                 .tickLabelFormat(insight.Formatters.currencyFormatter);
-
-            //bubbleX.ticksHint = d3.functor(4);
-            //bubbleY.ticksHint = d3.functor(8);
-
 
             bubbleChart
                 .xAxis(bubbleX)
@@ -538,15 +534,26 @@
 
             var chartGroup, genreGrouping, languageGrouping;
 
-            $scope.filterGenres = function(genre) {
+            $scope.filterGenres = function(genre, language) {
+
                 chartGroup.clearFilters();
                 chartGroup.filterByGrouping(genreGrouping, genre);
+
+                if (language) {
+                    chartGroup.filterByGrouping(languageGrouping, language);
+                }
+
             };
 
-            $scope.filterLanguage = function(language) {
+            $scope.filterLanguage = function(language, genre) {
+
                 chartGroup.clearFilters();
                 chartGroup.filterByGrouping(languageGrouping, language);
-                chartGroup.filterByGrouping(genreGrouping, 'Business');
+
+                if (genre) {
+                    chartGroup.filterByGrouping(genreGrouping, genre);
+                }
+
             };
 
             $scope.clearFilters = function() {

@@ -1,4 +1,4 @@
-<div id="container-body" class="container">
+<div id="container-body" class="container" ng-escape-key="notify()">
     <div class="row">
         <div class="col-sm-4">
             <div class="visualization colorbox">
@@ -25,50 +25,58 @@
             </div>
         </div>
     </div>
-    <div class="intro col-md-12">
-        <p>
-            The example below uses data from the public iTunes API, allowing easy visualization of the patterns in the data. Explore the charts by clicking on particular bars or bubbles to see if you can spot any interesting patterns in the App Store ecosystem.
-        </p>
-    </div>
-    <div class="col-md-8">
-        <p>
-            Did you know?
+    <div class="row">
+        <div class="col-md-8">
+            <p>The example below uses data from the iTunes app store.</p>
+            <p>
+                <strong>Did you know?</strong>
+            </p>
             <ul>
                 <li>
-                    <a class="filter-link" ng-click="filterGenres('Lifestyle')">Lifestyle</a>
-                    apps are inexpensive
-                </li>
-                <li>
                     <a class="filter-link" ng-click="filterGenres('Navigation')">Navigation</a>
-                    apps are large and expensive, but highly rated
+                    is the most expensive genre with the largest average file size
                 </li>
                 <li>
-                    There are more Business apps than Games supporting
-                    <a class="filter-link" ng-click="filterLanguage('DE')">German</a>
+                    <a class="filter-link" ng-click="filterGenres('Navigation', 'ZH')">Chinese Navigation apps</a>
+                    are more expensive (and smaller) than
+                    <a class="filter-link" ng-click="filterGenres('Navigation', 'EN')">English Navigation apps</a>
+                </li>
+                <li>
+                    There are more
+                    <a class="filter-link" ng-click="filterGenres('Business')">Business</a>
+                    apps than
+                    <a class="filter-link" ng-click="filterGenres('Games')">Games</a>
+                    supporting
+                    <a class="filter-link" ng-click="filterLanguage('DE', 'Business')">German</a>
                     ,
-                    <a class="filter-link" ng-click="filterLanguage('PT')">Portuguese</a>
+                    <a class="filter-link" ng-click="filterLanguage('PT', 'Business')">Portuguese</a>
                     or
-                    <a class="filter-link" ng-click="filterLanguage('RU')">Russian</a>
+                    <a class="filter-link" ng-click="filterLanguage('RU', 'Business')">Russian</a>
 
                 </li>
             </ul>
-        </p>
-    </div>
-    <div class="col-md-4">
-        <button ng-show="anyFilters()" ng-click="clearFilters()">Reset charts</button>
-    </div>
-    <div class="col-sm-12 examples">
-        <div class="chartcontainer">
-            <div id="languages" class="chartbox"></div>
+            </p>
+            <p>
+                <strong>Click the bars and bubbles below to find out more...</strong>
+            </p>
         </div>
-        <div class="chartcontainer">
-            <div id="bubble-chart" class="chartbox"></div>
-        </div>
-        <div class="chartcontainer">
-            <div id="genre-count" class="chartbox"></div>
+        <div class="col-md-4">
+            <button ng-show="anyFilters()" ng-click="clearFilters()">Reset charts</button>
         </div>
     </div>
-
+    <div class="row">
+        <div class="col-sm-12 examples">
+            <div class="chartcontainer">
+                <div id="languages" class="chartbox"></div>
+            </div>
+            <div class="chartcontainer">
+                <div id="bubble-chart" class="chartbox"></div>
+            </div>
+            <div class="chartcontainer">
+                <div id="genre-count" class="chartbox"></div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div id="footer" class="container">
