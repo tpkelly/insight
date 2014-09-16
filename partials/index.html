@@ -33,21 +33,21 @@
             </p>
             <ul>
                 <li>
-                    <a class="filter-link" ng-click="filterGenres(['Navigation'])">Navigation</a>
+                    <a class="filter-link" ng-click="filter(['Navigation'], [])">Navigation</a>
                     is the most expensive genre and has the largest average file size
                 </li>
                 <li>
-                    <a class="filter-link" ng-click="filterGenres(['Navigation'], ['ZH'])">Chinese Navigation apps</a>
+                    <a class="filter-link" ng-click="filter(['Navigation'], ['ZH'])">Chinese Navigation apps</a>
                     are more expensive (and smaller) than
-                    <a class="filter-link" ng-click="filterGenres(['Navigation'], ['EN'])">English Navigation apps</a>
+                    <a class="filter-link" ng-click="filter(['Navigation'], ['EN'])">English Navigation apps</a>
                 </li>
                 <li>
                     There are more Business apps than Games supporting
-                    <a class="filter-link" ng-click="filterLanguage(['DE'], ['Business', 'Games'])">German</a>
+                    <a class="filter-link" ng-click="filter(['Business', 'Games'], ['DE'])">German</a>
                     ,
-                    <a class="filter-link" ng-click="filterLanguage(['PT'], ['Business', 'Games'])">Portuguese</a>
+                    <a class="filter-link" ng-click="filter(['Business', 'Games'], ['PT'])">Portuguese</a>
                     or
-                    <a class="filter-link" ng-click="filterLanguage(['RU'], ['Business', 'Games'])">Russian</a>
+                    <a class="filter-link" ng-click="filter(['Business', 'Games'], ['RU'])">Russian</a>
 
                 </li>
             </ul>

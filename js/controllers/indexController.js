@@ -123,14 +123,15 @@
 
             var chartGroup, genreGrouping, languageGrouping;
 
-            $scope.filterGenres = function(genres, languages) {
+            $scope.filter = function(genres, languages) {
 
                 chartGroup.clearFilters();
 
-                genres.forEach(function(genre) {
-                    chartGroup.filterByGrouping(genreGrouping, genre);
-                });
-
+                if (genres) {
+                    genres.forEach(function(genre) {
+                        chartGroup.filterByGrouping(genreGrouping, genre);
+                    });
+                }
 
                 if (languages) {
 
@@ -138,22 +139,6 @@
                         chartGroup.filterByGrouping(languageGrouping, language);
                     });
 
-                }
-
-            };
-
-            $scope.filterLanguage = function(languages, genres) {
-
-                chartGroup.clearFilters();
-
-                languages.forEach(function(language) {
-                    chartGroup.filterByGrouping(languageGrouping, language);
-                });
-
-                if (genres) {
-                    genres.forEach(function(genre) {
-                        chartGroup.filterByGrouping(genreGrouping, genre);
-                    });
                 }
 
             };
