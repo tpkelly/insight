@@ -44,26 +44,32 @@ img
 {
   color: #fff;
   padding: 0.2em 1em;
+  border-radius: 20px;
+  height:200px;
 }
 
 .colorbox h2 {
-  font-weight: 700;
+  font-weight: 500;
 }
 
 
-.visualization
+.features
 {
-  background-color: #43ac6a;
+  background-color: #3182bd;
+  color: #ddd;
 }
 
-.analysis
+.features b
 {
-  background-color: #5bc0de;
+  color: #fff;
 }
 
-.open {
-  background-color: #f39c12;
+.did-you-know
+{
+  background-color: #bdd7e7;
+  color: #555;
 }
+
 .open a {
   color: #34495e;
 }
