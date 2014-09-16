@@ -168,7 +168,12 @@
             };
 
             function showHideClearFilters() {
-                $scope.$apply();
+
+                // only call apply if we are not already within an $apply phase
+                if (!$scope.$$phase) {
+                    $scope.$apply();
+                }
+
             }
 
             // need to improve dependency management here, to allow the controller to know that it will need to load d3 and insight instead of just assuming they'll be there
