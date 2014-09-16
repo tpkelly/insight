@@ -558,20 +558,6 @@
                 chartGroup.clearFilters();
             };
 
-            $scope.anyFilters = function() {
-                var result = chartGroup && (chartGroup.filteredDimensions.length > 0);
-                return result;
-            };
-
-            function showHideClearFilters() {
-
-                // only call apply if we are not already within an $apply phase
-                if (!$scope.$$phase) {
-                    $scope.$apply();
-                }
-
-            }
-
             // need to improve dependency management here, to allow the controller to know that it will need to load d3 and insight instead of just assuming they'll be there
             d3.json('datasets/appstore.json', function(data)
             {
@@ -599,7 +585,6 @@
                 
                 chartGroup.draw();
 
-                chartGroup.filterChanged = showHideClearFilters;
             });
         }
     ]);
