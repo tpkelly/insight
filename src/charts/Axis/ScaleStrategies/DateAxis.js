@@ -34,6 +34,14 @@
         insight.AxisStrategy.call(this);
 
         self.domain = function(axis) {
+            var scaleDomain = axis.scale.domain();
+
+            //If available (i.e. not just Jan 1st 1970), use the smarter domain provided by d3 (responds to zoom/panning, etc.)
+            if (scaleDomain[0].valueOf() !== 0 && scaleDomain[1].valueOf() !== 0) {
+                return axis.scale.domain();
+            }
+
+            //Fall back to our own date calculations
             return [new Date(self.findMin(axis)), new Date(self.findMax(axis))];
         };
 
