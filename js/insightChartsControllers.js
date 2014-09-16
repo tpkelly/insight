@@ -428,7 +428,7 @@
 
     function createBubbleChart(chartGroup, bubbleData) {
 
-        var bubbleChart = new insight.Chart('Chart 3', '#bubble-chart')
+        var bubbleChart = new insight.Chart('Bubble chart', '#bubble-chart')
                 .width(300)
                 .height(400);
 
@@ -442,10 +442,6 @@
                 .tickSize(5)
                 .tickPadding(5)
                 .tickLabelFormat(insight.Formatters.currencyFormatter);
-
-            //bubbleX.ticksHint = d3.functor(4);
-            //bubbleY.ticksHint = d3.functor(8);
-
 
             bubbleChart
                 .xAxis(bubbleX)
@@ -463,7 +459,7 @@
                 })
                 .radiusFunction(function(d)
                 {
-                    return d.value.fileSizeBytes.Average;
+                    return Math.sqrt(d.value.fileSizeBytes.Average);
                 })
                 .tooltipFunction(function(d)
                 {
@@ -536,32 +532,59 @@
             $scope.examples = Examples.query();
             $scope.$parent.title = 'InsightJS - Open Source Analytics and Visualization for JavaScript';
 
+            var chartGroup, genreGrouping, languageGrouping;
+
+            $scope.filter = function(genres, languages) {
+
+                chartGroup.clearFilters();
+
+                if (genres) {
+                    genres.forEach(function(genre) {
+                        chartGroup.filterByGrouping(genreGrouping, genre);
+                    });
+                }
+
+                if (languages) {
+
+                    languages.forEach(function(language) {
+                        chartGroup.filterByGrouping(languageGrouping, language);
+                    });
+
+                }
+
+            };
+
+            $scope.clearFilters = function() {
+                chartGroup.clearFilters();
+            };
+
             // need to improve dependency management here, to allow the controller to know that it will need to load d3 and insight instead of just assuming they'll be there
             d3.json('datasets/appstore.json', function(data)
             {
                 preprocess(data);                
 
                 var dataset = new insight.DataSet(data);
-                var chartGroup = new insight.ChartGroup();
+                chartGroup = new insight.ChartGroup();
 
-                var genres = dataset.group('genre', function(d)
+                genreGrouping = dataset.group('genre', function(d)
                     {
                         return d.primaryGenreName;
                     })
                     .sum(['userRatingCount'])
                     .mean(['price', 'averageUserRating', 'userRatingCount', 'fileSizeBytes']);
 
-                var languages = dataset.group('languages', function(d)
+                languageGrouping = dataset.group('languages', function(d)
                 {
                     return d.languageCodesISO2A;
                 }, true)
                 .count(['languageCodesISO2A']);
 
-                var genreChart = createGenreCountChart(chartGroup, genres);
-                var bubbleChart = createBubbleChart(chartGroup, genres);
-                var languageChart = createLanguageChart(chartGroup, languages);
+                var genreChart = createGenreCountChart(chartGroup, genreGrouping);
+                var bubbleChart = createBubbleChart(chartGroup, genreGrouping);
+                var languageChart = createLanguageChart(chartGroup, languageGrouping);
                 
                 chartGroup.draw();
+
             });
         }
     ]);
