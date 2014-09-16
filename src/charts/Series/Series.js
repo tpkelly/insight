@@ -143,7 +143,7 @@
         };
 
         /*
-         * Sets the offest of the tooltip and stores the tooltip reference in this series.
+         * Sets the offset of the tooltip and stores the tooltip reference in this series.
          * @memberof! insight.Series
          * @param {insight.Tooltip} tooltip - The tooltip object to initialize
          */
