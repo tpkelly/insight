@@ -44,12 +44,13 @@ img
 {
   color: #fff;
   padding: 0.2em 1em;
+  margin-top: 20px;
   border-radius: 20px;
-  height:200px;
 }
 
 .colorbox h2 {
   font-weight: 500;
+  margin-top: 10px;
 }
 
 
@@ -62,6 +63,11 @@ img
 .features b
 {
   color: #fff;
+}
+
+.features li
+{
+  margin-left: -15px;
 }
 
 .did-you-know
@@ -240,4 +246,5 @@ button.selected {
 a.filter-link {
     cursor: pointer;
     font-weight: bold;
+  text-decoration: underline;
 }
