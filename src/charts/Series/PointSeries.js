@@ -58,7 +58,7 @@
 
         self.draw = function(chart, isDragging) {
 
-            self.initializeTooltip(chart.tooltip);
+            self.tooltip = chart.tooltip;
             self.selectedItems = chart.selectedItems;
 
             var duration = isDragging ? 0 : function(d, i) {

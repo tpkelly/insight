@@ -143,19 +143,6 @@
         };
 
         /*
-         * Sets the offset of the tooltip and stores the tooltip reference in this series.
-         * @memberof! insight.Series
-         * @param {insight.Tooltip} tooltip - The tooltip object to initialize
-         */
-        self.initializeTooltip = function(tooltip) {
-
-            tooltip.offset(self.tooltipOffset());
-
-            self.tooltip = tooltip;
-
-        };
-
-        /*
          * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouse over.
          * Tooltips are shown and CSS updated.
          * The *this* context will reference the DOMElement raising the event.
@@ -167,6 +154,8 @@
 
             var textFunction = self.tooltipFunction();
             var tooltipText = tooltipFormat(textFunction(item));
+
+            self.tooltip.offset(self.tooltipOffset());
 
             self.tooltip.show(this, tooltipText);
 
