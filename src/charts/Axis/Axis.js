@@ -3,7 +3,7 @@
     /**
      * The Axis class coordinates the domain of the series data and draws axes.
      * @class insight.Axis
-     * @param {string} name - A uniquely identifying name for this chart
+     * @param {string} name - A uniquely identifying name for this axis
      * @param {insight.Scales.Scale} scale - insight.Scale.Linear for example
      */
     insight.Axis = function Axis(name, scale) {
@@ -419,7 +419,8 @@
                 .orient(self.orientation())
                 .tickSize(adjustedTickSize)
                 .tickPadding(self.tickPadding())
-                .tickFormat(self.tickLabelFormat());
+                .tickFormat(self.tickLabelFormat())
+                .tickValues(self.tickValues());
 
             self.axisElement
                 .attr('transform', self.axisPosition())
@@ -450,7 +451,6 @@
                 .text(self.label());
 
             self.positionLabel();
-
 
             if (self.shouldShowGridlines()) {
                 self.gridlines.drawGridLines(chart, self.scale.ticks());
