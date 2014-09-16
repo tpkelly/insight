@@ -325,7 +325,7 @@
 
         /*
          * Creates the tooltip for this Series, checking if it exists already first.
-         * @memberof! insight.Series
+         * @memberof! insight.Chart
          * @param {DOMElement} container - The DOM Element that the tooltip should be drawn inside.
          */
         self.initializeTooltip = function(container) {
