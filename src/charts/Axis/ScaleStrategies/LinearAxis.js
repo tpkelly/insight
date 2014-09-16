@@ -21,20 +21,21 @@
             return [0, self.findMax(axis)];
         };
 
-        self.initialTickValue = function(axis) {
+        self.initialTickValue = function(axis, tickFrequency) {
             var domain = axis.domain();
-            var tickFrequency = axis.tickFrequency();
 
             var initialValue = domain[0];
             return Math.ceil(initialValue / tickFrequency) * tickFrequency;
         };
 
-        self.increaseTickStep = function(axis, currentTickValue) {
-            return currentTickValue + axis.tickFrequency();
+        self.increaseTickStep = function(axis, currentTickValue, tickFrequency) {
+            var result = currentTickValue + tickFrequency;
+            return parseFloat(result.toPrecision(10));
         };
 
-        self.decreaseTickStep = function(axis, currentTickValue) {
-            return currentTickValue - axis.tickFrequency();
+        self.decreaseTickStep = function(axis, currentTickValue, tickFrequency) {
+            var result = currentTickValue - tickFrequency;
+            return parseFloat(result.toPrecision(10));
         };
 
         self.initialTickFrequency = function(axis, domain) {

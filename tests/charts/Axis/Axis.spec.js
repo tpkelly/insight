@@ -2355,6 +2355,9 @@ describe('Axis', function() {
     });
 
     describe('tickValues', function() {
+        function fakeAxisMeasurer(item) {
+            return item.map(function() { return { width: 20, height: 10 } });
+        }
 
         it('returns axis tick values for an ordinal axis', function() {
 
@@ -2378,7 +2381,9 @@ describe('Axis', function() {
 
             // Given:
             var axis = new insight.Axis('axis', insight.Scales.Linear);
+            axis.bounds = [1000, 300];
             spyOn(axis, 'domain').andReturn([0, 53271721]);
+            spyOn(axis, 'measureTickValues').andCallFake(fakeAxisMeasurer);
 
             // When:
             var result = axis.tickValues();
@@ -2404,7 +2409,9 @@ describe('Axis', function() {
 
             // Given:
             var axis = new insight.Axis('axis', insight.Scales.Linear);
+            axis.bounds = [1000, 300];
             spyOn(axis, 'domain').andReturn([241, 53271721]);
+            spyOn(axis, 'measureTickValues').andCallFake(fakeAxisMeasurer);
 
             // When:
             var result = axis.tickValues();
@@ -2421,6 +2428,33 @@ describe('Axis', function() {
                 40000000,
                 45000000,
                 50000000
+            ];
+            expect(result).toEqual(expectedTickValues);
+        });
+
+        it('returns rounded axis tick values for a linear axis with small tick frequencies', function() {
+
+            // Given:
+            var axis = new insight.Axis('axis', insight.Scales.Linear);
+            spyOn(axis, 'domain').andReturn([0, 1]);
+            spyOn(axis, 'tickFrequency').andReturn(0.1);
+
+            // When:
+            var result = axis.tickValues();
+
+            // Then:
+            var expectedTickValues = [
+                0,
+                0.1,
+                0.2,
+                0.3,
+                0.4,
+                0.5,
+                0.6,
+                0.7,
+                0.8,
+                0.9,
+                1
             ];
             expect(result).toEqual(expectedTickValues);
         });
@@ -2488,7 +2522,9 @@ describe('Axis', function() {
 
             // Given:
             var axis = new insight.Axis('axis', insight.Scales.Linear);
+            axis.bounds = [1000, 300];
             spyOn(axis, 'domain').andReturn([0, 1000]);
+            spyOn(axis, 'measureTickValues').andCallFake(fakeAxisMeasurer);
 
             // When:
             var result = axis.tickValues();
@@ -2516,12 +2552,12 @@ describe('Axis', function() {
             //Given:
             var axis = new insight.Axis('axis', insight.Scales.Linear);
             spyOn(axis, 'domain').andReturn([7, 20]);
-            spyOn(axis, 'tickFrequency').andReturn(4);
+            var tickFrequency = 4;
             var axisStrategy = new insight.LinearAxis();
 
             //Then:
             var expectedFirstTick = 8;
-            var observedFirstTick = axisStrategy.initialTickValue(axis);
+            var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
             expect(observedFirstTick).toBe(expectedFirstTick);
         });
 
@@ -2532,12 +2568,12 @@ describe('Axis', function() {
                     new Date(2014, 10, 8, 4, 6, 1),
                     new Date(2014, 10, 8, 16, 33, 3)]
             );
-            spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForHours(1));
+            var tickFrequency = insight.DateFrequency.dateFrequencyForHours(1);
             var axisStrategy = new insight.DateAxis();
 
             //Then:
             var expectedFirstTick = new Date(2014, 10, 8, 4);
-            var observedFirstTick = axisStrategy.initialTickValue(axis);
+            var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
             expect(observedFirstTick).toEqual(expectedFirstTick);
         });
 
@@ -2546,10 +2582,11 @@ describe('Axis', function() {
             var axis = new insight.Axis('axis', insight.Scales.Ordinal);
             spyOn(axis, 'domain').andReturn(['Cat', 'Dog', 'Horse', 'Rat', 'Rabbit']);
             var axisStrategy = new insight.OrdinalAxis();
+            var tickFrequency;
 
             //Then:
             var expectedFirstTick = 'Cat';
-            var observedFirstTick = axisStrategy.initialTickValue(axis);
+            var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
             expect(observedFirstTick).toEqual(expectedFirstTick);
         });
     });
@@ -2561,6 +2598,12 @@ describe('Axis', function() {
             var axis;
             beforeEach(function() {
                 axis = new insight.Axis('axis', insight.Scales.Linear);
+                axis.bounds = [1000, 300];
+                axis.isHorizontal = d3.functor(true);
+
+                spyOn(axis, 'measureTickValues').andCallFake(function(item) {
+                    return item.map(function() { return { width: 20, height: 10 } });
+                });
             });
 
             it('has a 1/10th tick frequency', function() {
@@ -2651,6 +2694,29 @@ describe('Axis', function() {
                 expect(throwAction).toThrow(insight.ErrorMessages.nonPositiveTickFrequencyException);
             });
 
+            it('has a tick frequency that ensures tick labels do not overlap when axis is horizontal', function() {
+                //Given:
+                axis.bounds = [100, 300];
+                spyOn(axis, 'domain').andReturn([0, 999]);
+
+                //Then:
+                var expectedFrequency = 200;
+                var observedFrequency = axis.tickFrequency();
+                expect(observedFrequency).toBe(expectedFrequency);
+            });
+
+            it('has a tick frequency that ensures tick labels do not overlap when axis is vertical', function() {
+                axis.isHorizontal = d3.functor(false);
+                //Given:
+                axis.bounds = [1000, 50];
+                spyOn(axis, 'domain').andReturn([0, 999]);
+
+                //Then:
+                var expectedFrequency = 200;
+                var observedFrequency = axis.tickFrequency();
+                expect(observedFrequency).toBe(expectedFrequency);
+            });
+
             it('tickValues are generated from tickFrequency', function() {
                 //Given:
                 spyOn(axis, 'tickFrequency').andReturn(200);
@@ -2664,21 +2730,21 @@ describe('Axis', function() {
 
             it('tick values increase by tickFrequency', function() {
                 //Given:
-                spyOn(axis, 'tickFrequency').andReturn(10);
+                var tickFrequency = 10;
                 var axisStrategy = new insight.LinearAxis();
 
                 //Then:
-                var nextTick = axisStrategy.increaseTickStep(axis, 50);
+                var nextTick = axisStrategy.increaseTickStep(axis, 50, tickFrequency);
                 expect(nextTick).toBe(60);
             });
 
             it('tick values decrease by tickFrequency', function() {
                 //Given:
-                spyOn(axis, 'tickFrequency').andReturn(10);
+                var tickFrequency = 10;
                 var axisStrategy = new insight.LinearAxis();
 
                 //Then:
-                var nextTick = axisStrategy.decreaseTickStep(axis, 50);
+                var nextTick = axisStrategy.decreaseTickStep(axis, 50, tickFrequency);
                 expect(nextTick).toBe(40);
             });
 
@@ -2770,6 +2836,12 @@ describe('Axis', function() {
             var axis;
             beforeEach(function() {
                 axis = new insight.Axis('axis', insight.Scales.Time);
+                axis.bounds = [1000, 300];
+                axis.isHorizontal = d3.functor(true);
+
+                spyOn(axis, 'measureTickValues').andCallFake(function(item) {
+                    return item.map(function() { return { width: 20, height: 10 } });
+                });
             });
 
             it('has a 1/10th tick frequency', function() {
@@ -2824,126 +2896,155 @@ describe('Axis', function() {
                 expect(observedFrequency).toEqual(expectedFrequency);
             });
 
+            it('has a tick frequency that ensures tick labels do not overlap when axis is horizontal', function() {
+                //Given:
+                axis.bounds = [100, 300];
+                spyOn(axis, 'domain').andReturn([
+                    new Date(2014, 0, 1),
+                    new Date(2014, 10, 1)
+                ]);
+
+                //Then:
+                var expectedFrequency = insight.DateFrequency.dateFrequencyForMonths(3).toValue();
+                var observedFrequency = axis.tickFrequency().toValue();
+                expect(observedFrequency).toEqual(expectedFrequency);
+            });
+
+            it('has a tick frequency that ensures tick labels do not overlap when axis is vertical', function() {
+                //Given:
+                axis.isHorizontal = d3.functor(false);
+                axis.bounds = [1000, 50];
+                spyOn(axis, 'domain').andReturn([
+                    new Date(2014, 0, 1),
+                    new Date(2014, 10, 1)
+                ]);
+
+                //Then:
+                var expectedFrequency = insight.DateFrequency.dateFrequencyForMonths(3).toValue();
+                var observedFrequency = axis.tickFrequency().toValue();
+                expect(observedFrequency).toEqual(expectedFrequency);
+            });
+
             it('tick values increase by tickFrequency for years', function() {
                 //Given:
-                spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForYears(1));
+                var tickFrequency = insight.DateFrequency.dateFrequencyForYears(1);
                 var axisStrategy = new insight.DateAxis();
 
                 //Then:
-                var nextTick = axisStrategy.increaseTickStep(axis, new Date(2012, 1, 29));
+                var nextTick = axisStrategy.increaseTickStep(axis, new Date(2012, 1, 29), tickFrequency);
                 expect(nextTick).toEqual(new Date(2013, 2, 1));
             });
 
             it('tick values decrease by tickFrequency for years', function() {
                 //Given:
-                spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForYears(1));
+                var tickFrequency = insight.DateFrequency.dateFrequencyForYears(1);
                 var axisStrategy = new insight.DateAxis();
 
                 //Then:
-                var nextTick = axisStrategy.decreaseTickStep(axis, new Date(2012, 1, 29));
+                var nextTick = axisStrategy.decreaseTickStep(axis, new Date(2012, 1, 29), tickFrequency);
                 expect(nextTick).toEqual(new Date(2011, 2, 1));
             });
 
 
             it('tick values increase by tickFrequency for months', function() {
                 //Given:
-                spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForMonths(3));
+                var tickFrequency = insight.DateFrequency.dateFrequencyForMonths(3);
                 var axisStrategy = new insight.DateAxis();
 
                 //Then:
-                var nextTick = axisStrategy.increaseTickStep(axis, new Date(2014, 4, 10));
+                var nextTick = axisStrategy.increaseTickStep(axis, new Date(2014, 4, 10), tickFrequency);
                 expect(nextTick).toEqual(new Date(2014, 7, 10));
             });
 
             it('tick values decrease by tickFrequency for months', function() {
                 //Given:
-                spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForMonths(3));
+                var tickFrequency = insight.DateFrequency.dateFrequencyForMonths(3);
                 var axisStrategy = new insight.DateAxis();
 
                 //Then:
-                var nextTick = axisStrategy.decreaseTickStep(axis, new Date(2014, 7, 10));
+                var nextTick = axisStrategy.decreaseTickStep(axis, new Date(2014, 7, 10), tickFrequency);
                 expect(nextTick).toEqual(new Date(2014, 4, 10));
             });
 
             it('tick values increase by tickFrequency for days', function() {
                 //Given:
-                spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForDays(1));
+                var tickFrequency = insight.DateFrequency.dateFrequencyForDays(1);
                 var axisStrategy = new insight.DateAxis();
 
                 //Then:
-                var nextTick = axisStrategy.increaseTickStep(axis, new Date(2014, 6, 31));
+                var nextTick = axisStrategy.increaseTickStep(axis, new Date(2014, 6, 31), tickFrequency);
                 expect(nextTick).toEqual(new Date(2014, 7, 1));
             });
 
             it('tick values decrease by tickFrequency for days', function() {
                 //Given:
-                spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForDays(1));
+                var tickFrequency= insight.DateFrequency.dateFrequencyForDays(1);
                 var axisStrategy = new insight.DateAxis();
 
                 //Then:
-                var nextTick = axisStrategy.decreaseTickStep(axis, new Date(2014, 0, 1));
+                var nextTick = axisStrategy.decreaseTickStep(axis, new Date(2014, 0, 1), tickFrequency);
                 expect(nextTick).toEqual(new Date(2013, 11, 31));
             });
 
             it('tick values increase by tickFrequency for hours', function() {
                 //Given:
-                spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForHours(6));
+                var tickFrequency = insight.DateFrequency.dateFrequencyForHours(6);
                 var axisStrategy = new insight.DateAxis();
 
                 //Then:
-                var nextTick = axisStrategy.increaseTickStep(axis, new Date(2014, 2, 30, 0));
+                var nextTick = axisStrategy.increaseTickStep(axis, new Date(2014, 2, 30, 0), tickFrequency);
                 // Considers transition into British summer time
                 expect(nextTick).toEqual(new Date(2014, 2, 30, 7));
             });
 
             it('tick values decrease by tickFrequency for hours', function() {
                 //Given:
-                spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForHours(6));
+                var tickFrequency = insight.DateFrequency.dateFrequencyForHours(6);
                 var axisStrategy = new insight.DateAxis();
 
                 //Then:
-                var nextTick = axisStrategy.decreaseTickStep(axis, new Date(2014, 9, 26, 6));
+                var nextTick = axisStrategy.decreaseTickStep(axis, new Date(2014, 9, 26, 6), tickFrequency);
                 // Considers transition out of British summer time
                 expect(nextTick).toEqual(new Date(2014, 9, 26, 1));
             });
 
             it('tick values increase by tickFrequency for minutes', function() {
                 //Given:
-                spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForMinutes(6));
+                var tickFrequency = insight.DateFrequency.dateFrequencyForMinutes(6);
                 var axisStrategy = new insight.DateAxis();
 
                 //Then:
-                var nextTick = axisStrategy.increaseTickStep(axis, new Date(2014, 2, 30, 0, 5));
+                var nextTick = axisStrategy.increaseTickStep(axis, new Date(2014, 2, 30, 0, 5), tickFrequency);
                 expect(nextTick).toEqual(new Date(2014, 2, 30, 0, 11));
             });
 
             it('tick values decrease by tickFrequency for minutes', function() {
                 //Given:
-                spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForMinutes(6));
+                var tickFrequency = insight.DateFrequency.dateFrequencyForMinutes(6);
                 var axisStrategy = new insight.DateAxis();
 
                 //Then:
-                var nextTick = axisStrategy.decreaseTickStep(axis, new Date(2014, 9, 26, 6, 11));
+                var nextTick = axisStrategy.decreaseTickStep(axis, new Date(2014, 9, 26, 6, 11), tickFrequency);
                 expect(nextTick).toEqual(new Date(2014, 9, 26, 6, 5));
             });
 
             it('tick values increase by tickFrequency for seconds', function() {
                 //Given:
-                spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForSeconds(6));
+                var tickFrequency = insight.DateFrequency.dateFrequencyForSeconds(6);
                 var axisStrategy = new insight.DateAxis();
 
                 //Then:
-                var nextTick = axisStrategy.increaseTickStep(axis, new Date(2014, 2, 30, 0, 0, 5));
+                var nextTick = axisStrategy.increaseTickStep(axis, new Date(2014, 2, 30, 0, 0, 5), tickFrequency);
                 expect(nextTick).toEqual(new Date(2014, 2, 30, 0, 0, 11));
             });
 
             it('tick values decrease by tickFrequency for seconds', function() {
                 //Given:
-                spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForSeconds(6));
+                var tickFrequency = insight.DateFrequency.dateFrequencyForSeconds(6);
                 var axisStrategy = new insight.DateAxis();
 
                 //Then:
-                var nextTick = axisStrategy.decreaseTickStep(axis, new Date(2014, 9, 26, 6, 0, 11));
+                var nextTick = axisStrategy.decreaseTickStep(axis, new Date(2014, 9, 26, 6, 0, 11), tickFrequency);
                 expect(nextTick).toEqual(new Date(2014, 9, 26, 6, 0, 5));
             });
         });

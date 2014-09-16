@@ -17,7 +17,7 @@
             return axis.domain();
         };
 
-        self.initialTickValue = function(axis) {
+        self.initialTickValue = function(axis, tickFrequency) {
             return axis.domain()[0];
         };
 
@@ -40,7 +40,7 @@
             return vals;
         }
 
-        self.increaseTickStep = function(axis, currentTickValue) {
+        self.increaseTickStep = function(axis, currentTickValue, tickFrequency) {
             var categories = axis.domain();
             var tickIndex = categories.indexOf(currentTickValue);
 
@@ -51,7 +51,7 @@
             return categories[tickIndex + 1];
         };
 
-        self.decreaseTickStep = function(axis, currentTickValue) {
+        self.decreaseTickStep = function(axis, currentTickValue, tickFrequency) {
             var categories = axis.domain();
             var tickIndex = categories.indexOf(currentTickValue);
 

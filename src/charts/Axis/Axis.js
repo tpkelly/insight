@@ -150,6 +150,21 @@
             return axisStrategy.tickValues(self);
         };
 
+        self.measureTickValues = function(tickValues) {
+            var textMeasurer = new insight.TextMeasurer(self.measureCanvas);
+
+            var formattedValues = tickValues.map(function(tickValue) {
+                return self.tickLabelFormat()(tickValue);
+            });
+
+            return formattedValues.map(function(formattedTickValue) {
+                return textMeasurer.measureText(
+                    formattedTickValue,
+                    self.tickLabelFont(),
+                    self.tickLabelRotation());
+            });
+        };
+
         self.calculateLabelDimensions = function() {
 
             if (!self.shouldDisplay()) {
@@ -163,16 +178,7 @@
 
             var axisLabelHeight = textMeasurer.measureText(self.label(), self.axisLabelFont()).height;
 
-            var formattedTickValues = self.tickValues().map(function(tickValue) {
-                return self.tickLabelFormat()(tickValue);
-            });
-
-            var tickLabelSizes = formattedTickValues.map(function(formattedTickValue) {
-                return textMeasurer.measureText(
-                    formattedTickValue,
-                    self.tickLabelFont(),
-                    self.tickLabelRotation());
-            });
+            var tickLabelSizes = self.measureTickValues(self.tickValues());
 
             var maxTickLabelWidth = d3.max(tickLabelSizes, function(d) {
                 return Math.abs(d.width);

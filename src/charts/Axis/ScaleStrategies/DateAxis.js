@@ -59,8 +59,7 @@
             return tickFrequency;
         };
 
-        self.increaseTickStep = function(axis, currentTickValue) {
-            var dateFrequency = axis.tickFrequency();
+        self.increaseTickStep = function(axis, currentTickValue, dateFrequency) {
             var newDate = new Date(currentTickValue);
 
             newDate.setYear(newDate.getFullYear() + dateFrequency.getYears());
@@ -79,8 +78,7 @@
             return newDate;
         };
 
-        self.decreaseTickStep = function(axis, currentTickValue) {
-            var dateFrequency = axis.tickFrequency();
+        self.decreaseTickStep = function(axis, currentTickValue, dateFrequency) {
             var newDate = new Date(currentTickValue);
 
             newDate.setYear(newDate.getFullYear() - dateFrequency.getYears());
@@ -99,9 +97,8 @@
             return newDate;
         };
 
-        self.initialTickValue = function(axis) {
+        self.initialTickValue = function(axis, tickFrequency) {
             var firstValue = axis.domain()[0];
-            var tickFrequency = axis.tickFrequency();
             return tickFrequency.roundDate(firstValue);
         };
 
@@ -118,7 +115,7 @@
         };
 
         self.decreaseTickFrequency = function(axis, currentFrequency, step) {
-            return possibleAutoFrequencies[possibleAutoFrequencies.length - step - 1];
+            return possibleAutoFrequencies[step - 1];
         };
 
     };
