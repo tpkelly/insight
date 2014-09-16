@@ -290,4 +290,47 @@ describe('Series', function(){
         var selectionClassName = series.itemClassName(seriesDataSet[0]);
         expect(selectionClassName).toBe(series.seriesClassName() + ' ' + insight.Utils.keySelector('Watkins'));
     });
+
+    describe('initializeTooltip', function() {
+
+        var series;
+
+        beforeEach(function() {
+
+            var xAxis = new insight.Axis('x', insight.Scales.Linear);
+            var yAxis = new insight.Axis('y', insight.Scales.Linear);
+
+            series = new insight.Series('just-a-test', seriesDataSet, xAxis, yAxis);
+
+        });
+
+        it('sets series tooltip', function() {
+
+            // Given
+            var tooltip = new insight.Tooltip();
+
+            // When
+            series.initializeTooltip(tooltip);
+
+            // Then
+            expect(series.tooltip).toBe(tooltip);
+
+        });
+
+        it('sets series tooltip offset', function() {
+
+            // Given
+            var tooltip = new insight.Tooltip();
+            var seriesTooltipOffset = { x: 1, y: 2 };
+            series.tooltipOffset(seriesTooltipOffset);
+
+            // When
+            series.initializeTooltip(tooltip);
+
+            // Then
+            expect(tooltip.offset()).toEqual(seriesTooltipOffset);
+
+        });
+
+    });
 });

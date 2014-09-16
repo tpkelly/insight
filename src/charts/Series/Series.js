@@ -143,16 +143,16 @@
         };
 
         /*
-         * Creates the tooltip for this Series, checking if it exists already first.
+         * Sets the offest of the tooltip and stores the tooltip reference in this series.
          * @memberof! insight.Series
-         * @param {DOMElement} container - The DOM Element that the tooltip should be drawn inside.
+         * @param {insight.Tooltip} tooltip - The tooltip object to initialize
          */
-        self.initializeTooltip = function(container) {
-            if (!self.tooltip) {
-                self.tooltip = new insight.Tooltip()
-                    .container(container)
-                    .offset(self.tooltipOffset());
-            }
+        self.initializeTooltip = function(tooltip) {
+
+            tooltip.offset(self.tooltipOffset());
+
+            self.tooltip = tooltip;
+
         };
 
         /*

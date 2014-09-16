@@ -256,6 +256,7 @@ describe('Chart', function() {
                 spyOn(chart, 'calculateChartMargin');
                 spyOn(chart, 'draw').andCallThrough();
                 spyOn(chart, 'addClipPath').andCallThrough();
+                spyOn(chart, 'initializeTooltip').andCallThrough();
                 spyOn(insight.Utils, 'getElementStyles').andReturn({});
 
                 chart.draw();
@@ -342,6 +343,14 @@ describe('Chart', function() {
                     testInit();
 
                     expect(chart.draw).toHaveBeenCalledWith();
+
+                });
+
+                it('initializeTooltip', function() {
+
+                    testInit();
+
+                    expect(chart.initializeTooltip).toHaveBeenCalledWith(chart.container.node());
 
                 });
                
@@ -1113,6 +1122,71 @@ describe('Chart', function() {
 
             // Then
             expect(result).toBe(1);
+
+        });
+
+    });
+
+    describe('initializeTooltip', function() {
+
+        var chart;
+
+        beforeEach(function() {
+            chart = new insight.Chart();
+        });
+
+        it('sets a new tooltip if the chart doesn\'t have one', function() {
+
+            // Given
+            var container = document.createElement('div');
+
+            // When
+            chart.initializeTooltip(container);
+
+            // Then
+            expect(chart.tooltip instanceof insight.Tooltip).toBe(true);
+
+        });
+
+        it('doesn\'t set a new tooltip if the chart already has one', function() {
+
+            // Given
+            var container = document.createElement('div');
+            var originalTooltip = new insight.Tooltip();
+            chart.tooltip = originalTooltip;
+
+            // When
+            chart.initializeTooltip(container);
+
+            // Then
+            expect(chart.tooltip).toBe(originalTooltip);
+
+        });
+
+        it('sets the chart\'s tooltip container', function() {
+
+            // Given
+            var container = document.createElement('div');
+
+            // When
+            chart.initializeTooltip(container);
+
+            // Then
+            expect(chart.tooltip.container()).toBe(container);
+
+        });
+
+        it('doesn\'t set the chart\'s tooltip container if the chart already has a tooltip', function() {
+
+            // Given
+            var container = document.createElement('div');
+            chart.tooltip = new insight.Tooltip();
+
+            // When
+            chart.initializeTooltip(container);
+
+            // Then
+            expect(chart.tooltip.container()).not.toBe(container);
 
         });
 
