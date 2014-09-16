@@ -27,18 +27,8 @@
             return self.tooltipFormat()(self.valueFunction()(d));
         }
 
-        function click(filter) {
-            return self.click(self, filter);
-        }
-
         function duration(d, i) {
             return 200 + (i * 20);
-        }
-
-        function mouseOver(data, i) {
-            var seriesName = this.getAttribute('in_series');
-
-            self.mouseOver.call(this, data, i, self.valueFunction());
         }
 
         function opacity() {
@@ -84,9 +74,9 @@
                 .attr('in_series', self.name)
                 .attr('fill', self.color)
                 .attr('clip-path', 'url(#' + chart.clipPath() + ')')
-                .on('mouseover', mouseOver)
+                .on('mouseover', self.mouseOver)
                 .on('mouseout', self.mouseOut)
-                .on('click', click);
+                .on('click', self.click);
 
             var seriesTypeCount = chart.countSeriesOfType(self);
             var seriesIndex = chart.seriesIndexByType(self);

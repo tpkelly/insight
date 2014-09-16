@@ -16,10 +16,10 @@
         self.axisStyle.gridlineColor = '#888';
         self.axisStyle.showGridlines = false;
 
-        self.axisStyle.tickSize = 1;
+        self.axisStyle.tickSize = 3;
         self.axisStyle.tickPadding = 10;
 
-        self.axisStyle.axislineWidth = 1;
+        self.axisStyle.axisLineWidth = 1;
         self.axisStyle.axisLineColor = '#777';
         self.axisStyle.tickLabelFont = '11pt Helvetica Neue';
         self.axisStyle.tickLabelColor = '#777';
@@ -29,7 +29,7 @@
         //Configure for chart
         self.chartStyle.seriesPalette = ['#3182bd', '#c6dbed', '#6baed6', '#08519c', '#9ecae1'];
         self.chartStyle.fillColor = '#fff';
-        self.chartStyle.titleFont = '16pt Helvetica Neue';
+        self.chartStyle.titleFont = 'bold 12pt Helvetica Neue';
         self.chartStyle.titleColor = '#000';
 
         //Configure series

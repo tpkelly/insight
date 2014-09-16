@@ -60,6 +60,57 @@
             };
         };
 
+        self.applyFilter = function(filteredDimensions, filterFunc) {
+
+            var nameProperty = 'name';
+
+            var filterExists = insight.Utils.takeWhere(self.filters, nameProperty, filterFunc.name).length;
+
+            //if the dimension is already filtered by this value, toggle (remove) the filter
+            if (filterExists) {
+                insight.Utils.removeWhere(self.filters, nameProperty, filterFunc.name);
+
+            } else {
+                // add the provided filter to the list for this dimension
+
+                self.filters.push(filterFunc);
+            }
+
+            // reset this dimension if no filters exist, else apply the filter to the dataset.
+            if (self.filters.length === 0) {
+
+                insight.Utils.removeItemFromArray(filteredDimensions, self);
+                self.crossfilterDimension.filterAll();
+
+            } else {
+                self.crossfilterDimension.filter(function(d) {
+
+                    // apply all of the filters on this dimension to the current value, returning an array of
+                    // true/false values (which filters does it satisfy)
+                    var vals = self.filters
+                        .map(function(func) {
+                            return func.filterFunction(d);
+                        });
+
+                    // if this value satisfies any of the filters, it should be kept
+                    var matchesAnyFilter = vals.filter(function(result) {
+                            return result;
+                        })
+                        .length > 0;
+
+                    return matchesAnyFilter;
+                });
+            }
+
+        };
+
+        self.clearFilters = function() {
+
+            self.filters = [];
+            self.crossfilterDimension.filterAll();
+
+        };
+
     };
 
 })(insight);

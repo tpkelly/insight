@@ -103,7 +103,7 @@ describe('Chart', function() {
 
         it('title font 16pt Helvetica', function() {
 
-            expect(chart.titleFont()).toBe('16pt Helvetica Neue');
+            expect(chart.titleFont()).toBe(insight.defaultTheme.chartStyle.titleFont);
 
         });
     });
@@ -650,7 +650,7 @@ describe('Chart', function() {
             var titleHeight = measurer.measureText(chart.title(), chart.titleFont()).height;
 
             expect(chart.margin()).toEqual({
-                top: 25 + titleHeight,
+                top: 20 + 25 + titleHeight,
                 left: minimalMargins,
                 right: minimalMargins,
                 bottom: minimalMargins

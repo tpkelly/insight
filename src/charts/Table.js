@@ -93,7 +93,7 @@
 
         // Toggle highlighting on items in this table.
         // The provided cssSelector is used to activate or deactivate highlighting on one or more selected rows.
-        self.highlight = function(selector) {
+        self.toggleHighlight = function(selector) {
 
             var clicked = self.tableBody.selectAll('.' + selector);
             var alreadySelected = clicked.classed('selected');
@@ -111,6 +111,23 @@
             var notselected = self.tableBody.selectAll('tr:not(.selected)');
 
             notselected.classed('notselected', selected[0].length > 0);
+        };
+
+        self.clearHighlight = function() {
+
+            self.selectedItems = [];
+
+            // if the table has not yet been drawn then there will be no tableBody so nothing to do here
+            if (!self.tableBody) {
+                return;
+            }
+
+            self.tableBody.selectAll('.selected')
+                .classed('selected', false);
+
+            self.tableBody.selectAll('.notselected')
+                .classed('notselected', false);
+
         };
 
         // The public drawing method for the Table. It will also initialize the <table> element if required.
