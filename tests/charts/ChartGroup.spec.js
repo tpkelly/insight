@@ -451,6 +451,7 @@ describe('ChartGroup', function() {
             countryTable = createTable('countryTable', countries);
 
             spyOn(chartGroup, 'draw');
+            spyOn(chartGroup, 'filterChanged');
             spyOnGroup(countries);
             spyOnGroup(genders);
 
@@ -509,6 +510,12 @@ describe('ChartGroup', function() {
 
         });
 
+        it('notifies that filtering was changed', function() {
+
+            expect(chartGroup.filterChanged).toHaveBeenCalled();
+
+        });
+
         describe('clearFilters', function() {
 
             it('empties the ChartGroup\'s filteredDimensions', function() {
@@ -563,6 +570,16 @@ describe('ChartGroup', function() {
                 // Then
                 expect(countries.recalculate.calls.length).toBe(2);
                 expect(genders.recalculate.calls.length).toBe(2);
+
+            });
+
+            it('notifies that filtering was changed', function() {
+
+                // When
+                chartGroup.clearFilters();
+
+                // Then
+                expect(chartGroup.filterChanged.calls.length).toBe(2);
 
             });
 

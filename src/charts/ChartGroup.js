@@ -143,6 +143,41 @@
 
         // Internal functions -----------------------------------------------------------------------------------------
 
+        /*
+         * Draws all Charts and Tables in this ChartGroup
+         * @memberof! insight.ChartGroup
+         * @instance
+         */
+        self.draw = function() {
+
+            self.charts.forEach(function(chart) {
+                chart.draw();
+            });
+
+            self.tables.forEach(function(table) {
+                table.draw();
+            });
+        };
+
+        // Public functions -------------------------------------------------------------------------------------------
+
+        /**
+         * Adds an item to this ChartGroup, calling the appropriate internal addChart or addTable function
+         * depending on the type.
+         * @memberof! insight.ChartGroup
+         * @instance
+         * @param {object} widget An insight.Table or insight.Chart
+         * @returns {this}
+         */
+        self.add = function(widget) {
+            if (widget instanceof insight.Chart) {
+                addChart(widget);
+            } else if (widget instanceof insight.Table) {
+                addTable(widget);
+            }
+            return self;
+        };
+
         /**
          * Filters the grouping with the ChartGroup so the given value will be highlighted by any chart or table that
          * uses the grouping, and any charts or tables that use different groupings will be crossfiltered to only
@@ -188,6 +223,8 @@
 
             self.draw();
 
+            self.filterChanged();
+
         };
 
         /**
@@ -216,42 +253,17 @@
 
             self.draw();
 
+            self.filterChanged();
+
         };
-
-        /*
-         * Draws all Charts and Tables in this ChartGroup
-         * @memberof! insight.ChartGroup
-         * @instance
-         */
-        self.draw = function() {
-
-            self.charts.forEach(function(chart) {
-                chart.draw();
-            });
-
-            self.tables.forEach(function(table) {
-                table.draw();
-            });
-        };
-
-        // Public functions -------------------------------------------------------------------------------------------
 
         /**
-         * Adds an item to this ChartGroup, calling the appropriate internal addChart or addTable function
-         * depending on the type.
+         * This function is called when the chart's groupings are filtered or unfiltered.
+         * It can be overridden by clients that wish to be notified when the chart's filtering has changed.
          * @memberof! insight.ChartGroup
          * @instance
-         * @param {object} widget An insight.Table or insight.Chart
-         * @returns {this}
          */
-        self.add = function(widget) {
-            if (widget instanceof insight.Chart) {
-                addChart(widget);
-            } else if (widget instanceof insight.Table) {
-                addTable(widget);
-            }
-            return self;
-        };
+        self.filterChanged = function() {};
 
         //Apply the default look-and-feel
         self.applyTheme(insight.defaultTheme);
