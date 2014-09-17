@@ -63,7 +63,7 @@
                 seconds = date.getSeconds();
 
             if (self.getYears() !== 0) {
-                return new Date(years);
+                return new Date(years, 0);
             }
             if (self.getMonths() !== 0) {
                 return new Date(years, months);
