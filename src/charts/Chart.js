@@ -192,8 +192,8 @@
                 .style('left', self.margin().left + 'px')
                 .style('width', self.width() - self.margin().left - self.margin().right + 'px')
                 .style('text-align', 'center')
-                .style("font", self.titleFont)
-                .style("color", self.titleColor)
+                .style("font", self.titleFont())
+                .style("color", self.titleColor())
                 .text(title);
         };
 
@@ -814,10 +814,12 @@
 
         });
 
+        var titlePadding = 20;
+
         //Adjust margins to fit the title
         if (this.title() && this.title().length > 0) {
             var textMeasurer = new insight.TextMeasurer(this.measureCanvas);
-            margin.top += textMeasurer.measureText(this.title(), this.titleFont()).height;
+            margin.top += textMeasurer.measureText(this.title(), this.titleFont()).height + titlePadding;
         }
 
         this.margin(margin);
