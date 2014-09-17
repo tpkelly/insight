@@ -426,106 +426,6 @@
         });
     }
 
-    function createBubbleChart(chartGroup, bubbleData) {
-
-        var bubbleChart = new insight.Chart('Bubble chart', '#bubble-chart')
-                .width(300)
-                .height(400);
-
-            var bubbleX = new insight.Axis('Average Rating', insight.Scales.Linear)
-                .tickSize(5)
-                .tickPadding(5);
-
-            bubbleX.ticksHint = d3.functor(4);
-
-            var bubbleY = new insight.Axis('', insight.Scales.Linear)
-                .tickSize(5)
-                .tickPadding(5)
-                .tickLabelFormat(insight.Formatters.currencyFormatter);
-
-            bubbleChart
-                .xAxis(bubbleX)
-                .yAxis(bubbleY)
-                .title('App price vs. rating vs. filesize (radius)');
-
-            var bubbles = new insight.BubbleSeries('bubbles', bubbleData, bubbleX, bubbleY)
-                .keyFunction(function(d)
-                {
-                    return d.value.averageUserRating.Average;
-                })
-                .valueFunction(function(d)
-                {
-                    return d.value.price.Average;
-                })
-                .radiusFunction(function(d)
-                {
-                    return Math.sqrt(d.value.fileSizeBytes.Average);
-                })
-                .tooltipFunction(function(d)
-                {
-                    return d.key + " <br/> Average App Size (Mb) = " + Math.round(d.value.fileSizeBytes.Average/1024/1024);
-                });
-
-            bubbleChart.series([bubbles]);
-            chartGroup.add(bubbleChart);
-
-    }
-
-    function createLanguageChart(chartGroup, languages){
-
-        var chart = new insight.Chart('Chart 2', '#languages')
-                .width(350)
-                .height(400);
-
-            var x = new insight.Axis('Language', insight.Scales.Ordinal)
-                .tickSize(5)
-                .tickPadding(5)
-                .isOrdered(true);
-
-            var y = new insight.Axis('', insight.Scales.Linear);
-
-            chart.xAxis(x)
-                 .yAxis(y)
-                .title("Total number of Apps by language");
-
-            var lSeries = new insight.ColumnSeries('languages', languages, x, y)
-                .top(10);
-
-            chart.series([lSeries]);
-            chartGroup.add(chart);
-    }
-
-    function createGenreCountChart(chartGroup, genreData){
-
-        var chart = new insight.Chart('Genre Chart', "#genre-count")
-                .width(450)
-                .height(400);
-
-        var y = new insight.Axis('', insight.Scales.Ordinal)
-            .tickSize(0)
-            .tickPadding(5)
-            .isOrdered(true);
-
-        var x = new insight.Axis('', insight.Scales.Linear)
-                        .hasReversedPosition(true)
-            .tickPadding(0)
-            .tickSize(0)
-            .lineWidth(0)
-            .lineColor('#fff');
-
-        chart.xAxis(x)
-             .yAxis(y)
-            .title("Total number of Apps by genre");
-
-        var series = new insight.RowSeries('genre', genreData, x, y)
-                                .valueFunction(function(d){ return d.value.Count; });
-
-        chart.series([series]);
-        chartGroup.add(chart);
-
-        return chart;
-    }
-
     angular.module('insightChartsControllers').controller('Index', ['$scope', 'Examples',
         function($scope, Examples)
         {
@@ -589,3 +489,100 @@
         }
     ]);
 }());
+function createBubbleChart(chartGroup, bubbleData) {
+
+    var bubbleChart = new insight.Chart('Bubble chart', '#bubble-chart')
+        .width(300)
+        .height(400);
+
+    var bubbleX = new insight.Axis('Average Rating', insight.Scales.Linear)
+        .tickSize(5)
+        .tickPadding(5);
+
+    bubbleX.ticksHint = d3.functor(4);
+
+    var bubbleY = new insight.Axis('', insight.Scales.Linear)
+        .tickSize(5)
+        .tickPadding(5)
+        .tickLabelFormat(insight.Formatters.currencyFormatter);
+
+    bubbleChart
+        .xAxis(bubbleX)
+        .yAxis(bubbleY)
+        .title('App price vs. rating vs. filesize (radius)');
+
+    var bubbles = new insight.BubbleSeries('bubbles', bubbleData, bubbleX, bubbleY)
+        .keyFunction(function(d)
+        {
+            return d.value.averageUserRating.Average;
+        })
+        .valueFunction(function(d)
+        {
+            return d.value.price.Average;
+        })
+        .radiusFunction(function(d)
+        {
+            return Math.sqrt(d.value.fileSizeBytes.Average);
+        })
+        .tooltipFunction(function(d)
+        {
+            return d.key + " <br/> Average App Size (Mb) = " + Math.round(d.value.fileSizeBytes.Average/1024/1024);
+        });
+
+    bubbleChart.series([bubbles]);
+    chartGroup.add(bubbleChart);
+
+}
+
+function createGenreCountChart(chartGroup, genreData){
+
+    var chart = new insight.Chart('Genre Chart', "#genre-count")
+        .width(450)
+        .height(400);
+
+    var y = new insight.Axis('', insight.Scales.Ordinal)
+        .tickSize(0)
+        .tickPadding(5)
+        .isOrdered(true);
+
+    var x = new insight.Axis('', insight.Scales.Linear)
+        .hasReversedPosition(true)
+        .tickPadding(0)
+        .tickSize(0)
+        .lineWidth(0)
+        .lineColor('#fff');
+
+    chart.xAxis(x)
+        .yAxis(y)
+        .title("Total number of Apps by genre");
+
+    var series = new insight.RowSeries('genre', genreData, x, y)
+        .valueFunction(function(d){ return d.value.Count; });
+
+    chart.series([series]);
+    chartGroup.add(chart);
+}
+
+function createLanguageChart(chartGroup, languages){
+
+    var chart = new insight.Chart('Chart 2', '#languages')
+        .width(350)
+        .height(400);
+
+    var x = new insight.Axis('Language', insight.Scales.Ordinal)
+        .tickSize(5)
+        .tickPadding(5)
+        .isOrdered(true);
+
+    var y = new insight.Axis('', insight.Scales.Linear);
+
+    chart.xAxis(x)
+        .yAxis(y)
+        .title("Total number of Apps by language");
+
+    var lSeries = new insight.ColumnSeries('languages', languages, x, y)
+        .top(10);
+
+    chart.series([lSeries]);
+    chartGroup.add(chart);
+}
