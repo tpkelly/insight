@@ -25,8 +25,8 @@ function createBubbleChart(chartGroup, bubbleData) {
             return Math.sqrt(d.value.fileSizeBytes.Average);
         })
         .tooltipFunction(function(d) {
-            return d.key + "\nAverage App Size (Mb) = "
-                + Math.round(d.value.fileSizeBytes.Average/1024/1024);
+            var fileSize = d.value.fileSizeBytes.Average / 1024 / 1024;
+            return d.key + ": " + Math.round(fileSize) + "MB";
         });
 
     bubbleChart.series([bubbles]);
