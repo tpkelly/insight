@@ -253,3 +253,16 @@ a.filter-link {
     font-weight: bold;
   text-decoration: underline;
 }
+
+.show-code {
+  text-align: center;
+  width: 100%;
+}
+
+.show-code button {
+  background-color: #bdd7e7;
+  font-weight: 600;
+  color: #333;
+  border-radius: 10px;
+  padding: 5px 10px;
+}
