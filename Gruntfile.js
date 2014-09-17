@@ -45,7 +45,7 @@ module.exports = function(grunt) {
             }
         },
         "jsbeautifier": {
-            files: ["./js/*.js", "./partials/*.html", "./examples/*.js", "index.html"],
+            files: ["./js/*.js", "./examples/*.js"],
             options: {
                 js: {
                     braceStyle: 'expand',
