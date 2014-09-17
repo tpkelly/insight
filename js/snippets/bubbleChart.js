@@ -4,41 +4,31 @@ function createBubbleChart(chartGroup, bubbleData) {
         .width(300)
         .height(400);
 
-    var bubbleX = new insight.Axis('Average Rating', insight.Scales.Linear)
-        .tickSize(5)
-        .tickPadding(5);
+    var xAxis = new insight.Axis('Average Rating', insight.Scales.Linear);
 
-    bubbleX.ticksHint = d3.functor(4);
-
-    var bubbleY = new insight.Axis('', insight.Scales.Linear)
-        .tickSize(5)
-        .tickPadding(5)
+    var yAxis = new insight.Axis('', insight.Scales.Linear)
         .tickLabelFormat(insight.Formatters.currencyFormatter);
 
     bubbleChart
-        .xAxis(bubbleX)
-        .yAxis(bubbleY)
+        .xAxis(xAxis)
+        .yAxis(yAxis)
         .title('App price vs. rating vs. filesize (radius)');
 
-    var bubbles = new insight.BubbleSeries('bubbles', bubbleData, bubbleX, bubbleY)
-        .keyFunction(function(d)
-        {
+    var bubbles = new insight.BubbleSeries('bubbles', bubbleData, xAxis, yAxis)
+        .keyFunction(function(d) {
             return d.value.averageUserRating.Average;
         })
-        .valueFunction(function(d)
-        {
+        .valueFunction(function(d) {
             return d.value.price.Average;
         })
-        .radiusFunction(function(d)
-        {
+        .radiusFunction(function(d) {
             return Math.sqrt(d.value.fileSizeBytes.Average);
         })
-        .tooltipFunction(function(d)
-        {
-            return d.key + " <br/> Average App Size (Mb) = " + Math.round(d.value.fileSizeBytes.Average/1024/1024);
+        .tooltipFunction(function(d) {
+            return d.key + "\nAverage App Size (Mb) = "
+                + Math.round(d.value.fileSizeBytes.Average/1024/1024);
         });
 
     bubbleChart.series([bubbles]);
     chartGroup.add(bubbleChart);
-
 }

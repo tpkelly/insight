@@ -5,8 +5,6 @@ function createLanguageChart(chartGroup, languages){
         .height(400);
 
     var x = new insight.Axis('Language', insight.Scales.Ordinal)
-        .tickSize(5)
-        .tickPadding(5)
         .isOrdered(true);
 
     var y = new insight.Axis('', insight.Scales.Linear);
