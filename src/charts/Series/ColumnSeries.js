@@ -50,7 +50,7 @@
 
         self.draw = function(chart, isDragging) {
 
-            self.initializeTooltip(chart.container.node());
+            self.tooltip = chart.tooltip;
             self.selectedItems = chart.selectedItems;
 
             var groupSelector = 'g.' + self.name + '.' + insight.Constants.BarGroupClass,

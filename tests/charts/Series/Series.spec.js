@@ -290,4 +290,5 @@ describe('Series', function(){
         var selectionClassName = series.itemClassName(seriesDataSet[0]);
         expect(selectionClassName).toBe(series.seriesClassName() + ' ' + insight.Utils.keySelector('Watkins'));
     });
+    
 });

@@ -108,7 +108,7 @@
 
         self.draw = function(chart, isDragging) {
 
-            self.initializeTooltip(chart.container.node());
+            self.tooltip = chart.tooltip;
             self.selectedItems = chart.selectedItems;
 
             function reset(d) {
