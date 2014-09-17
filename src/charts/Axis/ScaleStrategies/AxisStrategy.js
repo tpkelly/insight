@@ -1,7 +1,7 @@
 (function(insight) {
 
     /*
-     * An axis strategy representing time and date scales.
+     * The AxisStrategy base class provides some functions that are used by any specific types of axis.
      */
     insight.AxisStrategy = function AxisStrategy() {
 
@@ -24,7 +24,7 @@
 
             while (tickValue <= domain[1] && self.frequencyValue(frequency) > 0) {
                 results.push(tickValue);
-                tickValue = self.increaseTickStep(axis, tickValue, frequency);
+                tickValue = self.nextTickValue(axis, tickValue, frequency);
             }
 
             //Filter out any tickmarks outside the domain range
@@ -46,11 +46,11 @@
             var maxValue;
             if (axis.isHorizontal()) {
                 maxValue = d3.max(tickLabelSizes, function(d) {
-                    return Math.abs(d.width);
+                    return d.width;
                 });
             } else {
                 maxValue = d3.max(tickLabelSizes, function(d) {
-                    return Math.abs(d.height);
+                    return d.height;
                 });
             }
             return maxValue * tickValues.length;
@@ -58,6 +58,8 @@
 
         self.tickFrequencyForDomain = function(axis, domain) {
             var tickFrequency = self.initialTickFrequency(axis, domain);
+
+            // valueOf used to get correct domain range for dates
             var domainRange = domain[1].valueOf() - domain[0].valueOf();
 
             var step = 0;
@@ -132,11 +134,11 @@
             return max;
         };
 
-        self.increaseTickStep = function(axis, currentTickValue, tickFrequency) {
+        self.nextTickValue = function(axis, currentTickValue, tickFrequency) {
             return currentTickValue;
         };
 
-        self.decreaseTickStep = function(axis, currentTickValue, tickFrequency) {
+        self.previousTickValue = function(axis, currentTickValue, tickFrequency) {
             return currentTickValue;
         };
     };

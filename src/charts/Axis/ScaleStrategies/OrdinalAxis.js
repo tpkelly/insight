@@ -40,7 +40,7 @@
             return vals;
         }
 
-        self.increaseTickStep = function(axis, currentTickValue, tickFrequency) {
+        self.nextTickValue = function(axis, currentTickValue, tickFrequency) {
             var categories = axis.domain();
             var tickIndex = categories.indexOf(currentTickValue);
 
@@ -51,7 +51,7 @@
             return categories[tickIndex + 1];
         };
 
-        self.decreaseTickStep = function(axis, currentTickValue, tickFrequency) {
+        self.previousTickValue = function(axis, currentTickValue, tickFrequency) {
             var categories = axis.domain();
             var tickIndex = categories.indexOf(currentTickValue);
 

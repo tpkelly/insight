@@ -28,12 +28,12 @@
             return Math.ceil(initialValue / tickFrequency) * tickFrequency;
         };
 
-        self.increaseTickStep = function(axis, currentTickValue, tickFrequency) {
+        self.nextTickValue = function(axis, currentTickValue, tickFrequency) {
             var result = currentTickValue + tickFrequency;
             return parseFloat(result.toPrecision(10));
         };
 
-        self.decreaseTickStep = function(axis, currentTickValue, tickFrequency) {
+        self.previousTickValue = function(axis, currentTickValue, tickFrequency) {
             var result = currentTickValue - tickFrequency;
             return parseFloat(result.toPrecision(10));
         };

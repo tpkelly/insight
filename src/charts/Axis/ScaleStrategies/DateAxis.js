@@ -51,15 +51,15 @@
             var startDate = domain[0];
             var endDate = domain[1];
 
-            var startDateInSeconds = Date.parse(startDate.toString()) / 1000;
-            var endDateInSeconds = Date.parse(endDate.toString()) / 1000;
+            var startDateInSeconds = startDate.valueOf() / 1000;
+            var endDateInSeconds = endDate.valueOf() / 1000;
 
             var tickFrequency = self.tickFrequencyForDomain(axis, [startDateInSeconds, endDateInSeconds]);
 
             return tickFrequency;
         };
 
-        self.increaseTickStep = function(axis, currentTickValue, dateFrequency) {
+        self.nextTickValue = function(axis, currentTickValue, dateFrequency) {
             var newDate = new Date(currentTickValue);
 
             newDate.setYear(newDate.getFullYear() + dateFrequency.getYears());
@@ -78,7 +78,7 @@
             return newDate;
         };
 
-        self.decreaseTickStep = function(axis, currentTickValue, dateFrequency) {
+        self.previousTickValue = function(axis, currentTickValue, dateFrequency) {
             var newDate = new Date(currentTickValue);
 
             newDate.setYear(newDate.getFullYear() - dateFrequency.getYears());

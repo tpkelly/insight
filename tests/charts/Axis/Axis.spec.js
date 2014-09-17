@@ -2477,7 +2477,7 @@ describe('Axis', function() {
                     var axisStrategy = new insight.LinearAxis();
 
                     //Then:
-                    var nextTick = axisStrategy.increaseTickStep(axis, 50, tickFrequency);
+                    var nextTick = axisStrategy.nextTickValue(axis, 50, tickFrequency);
                     expect(nextTick).toBe(60);
                 });
 
@@ -2487,7 +2487,7 @@ describe('Axis', function() {
                     var axisStrategy = new insight.LinearAxis();
 
                     //Then:
-                    var nextTick = axisStrategy.decreaseTickStep(axis, 50, tickFrequency);
+                    var nextTick = axisStrategy.previousTickValue(axis, 50, tickFrequency);
                     expect(nextTick).toBe(40);
                 });
             });
@@ -2532,7 +2532,7 @@ describe('Axis', function() {
                 it('increases to next ordinal value', function() {
 
                     // When:
-                    var nextTick = axisStrategy.increaseTickStep(axis, 'Snake');
+                    var nextTick = axisStrategy.nextTickValue(axis, 'Snake');
 
                     // Then:
                     expect(nextTick).toBe('Horse');
@@ -2541,7 +2541,7 @@ describe('Axis', function() {
                 it('decreases to previous ordinal value', function() {
 
                     // When:
-                    var nextTick = axisStrategy.decreaseTickStep(axis, 'Dog');
+                    var nextTick = axisStrategy.previousTickValue(axis, 'Dog');
 
                     // Then:
                     expect(nextTick).toBe('Cat');
@@ -2550,7 +2550,7 @@ describe('Axis', function() {
                 it('last tick value cannot be increased', function() {
 
                     // When:
-                    var nextTick = axisStrategy.increaseTickStep(axis, 'Rabbit');
+                    var nextTick = axisStrategy.nextTickValue(axis, 'Rabbit');
 
                     // Then:
                     expect(nextTick).toBe(null);
@@ -2559,7 +2559,7 @@ describe('Axis', function() {
                 it('first tick value cannot be decreased', function() {
 
                     // When:
-                    var nextTick = axisStrategy.decreaseTickStep(axis, 'Cat');
+                    var nextTick = axisStrategy.previousTickValue(axis, 'Cat');
 
                     // Then:
                     expect(nextTick).toBe(null);
@@ -2568,7 +2568,7 @@ describe('Axis', function() {
                 it('cannot increase a missing tick value', function() {
 
                     // When:
-                    var nextTick = axisStrategy.increaseTickStep(axis, 'Fictional');
+                    var nextTick = axisStrategy.nextTickValue(axis, 'Fictional');
 
                     // Then:
                     expect(nextTick).toBe(null);
@@ -2577,7 +2577,7 @@ describe('Axis', function() {
                 it('cannot decrease a missing tick value', function() {
 
                     // When:
-                    var nextTick = axisStrategy.decreaseTickStep(axis, 'Fictional');
+                    var nextTick = axisStrategy.previousTickValue(axis, 'Fictional');
 
                     // Then:
                     expect(nextTick).toBe(null);
@@ -2663,7 +2663,7 @@ describe('Axis', function() {
                     var tickFrequency = insight.DateFrequency.dateFrequencyForYears(1);
 
                     //Then:
-                    var nextTick = axisStrategy.increaseTickStep(axis, new Date(2012, 1, 29), tickFrequency);
+                    var nextTick = axisStrategy.nextTickValue(axis, new Date(2012, 1, 29), tickFrequency);
                     expect(nextTick).toEqual(new Date(2013, 2, 1));
                 });
 
@@ -2672,7 +2672,7 @@ describe('Axis', function() {
                     var tickFrequency = insight.DateFrequency.dateFrequencyForYears(1);
 
                     //Then:
-                    var nextTick = axisStrategy.decreaseTickStep(axis, new Date(2012, 1, 29), tickFrequency);
+                    var nextTick = axisStrategy.previousTickValue(axis, new Date(2012, 1, 29), tickFrequency);
                     expect(nextTick).toEqual(new Date(2011, 2, 1));
                 });
 
@@ -2682,7 +2682,7 @@ describe('Axis', function() {
                     var tickFrequency = insight.DateFrequency.dateFrequencyForMonths(3);
 
                     //Then:
-                    var nextTick = axisStrategy.increaseTickStep(axis, new Date(2014, 4, 10), tickFrequency);
+                    var nextTick = axisStrategy.nextTickValue(axis, new Date(2014, 4, 10), tickFrequency);
                     expect(nextTick).toEqual(new Date(2014, 7, 10));
                 });
 
@@ -2691,7 +2691,7 @@ describe('Axis', function() {
                     var tickFrequency = insight.DateFrequency.dateFrequencyForMonths(3);
 
                     //Then:
-                    var nextTick = axisStrategy.decreaseTickStep(axis, new Date(2014, 7, 10), tickFrequency);
+                    var nextTick = axisStrategy.previousTickValue(axis, new Date(2014, 7, 10), tickFrequency);
                     expect(nextTick).toEqual(new Date(2014, 4, 10));
                 });
 
@@ -2700,7 +2700,7 @@ describe('Axis', function() {
                     var tickFrequency = insight.DateFrequency.dateFrequencyForDays(1);
 
                     //Then:
-                    var nextTick = axisStrategy.increaseTickStep(axis, new Date(2014, 6, 31), tickFrequency);
+                    var nextTick = axisStrategy.nextTickValue(axis, new Date(2014, 6, 31), tickFrequency);
                     expect(nextTick).toEqual(new Date(2014, 7, 1));
                 });
 
@@ -2709,7 +2709,7 @@ describe('Axis', function() {
                     var tickFrequency= insight.DateFrequency.dateFrequencyForDays(1);
 
                     //Then:
-                    var nextTick = axisStrategy.decreaseTickStep(axis, new Date(2014, 0, 1), tickFrequency);
+                    var nextTick = axisStrategy.previousTickValue(axis, new Date(2014, 0, 1), tickFrequency);
                     expect(nextTick).toEqual(new Date(2013, 11, 31));
                 });
 
@@ -2718,9 +2718,9 @@ describe('Axis', function() {
                     var tickFrequency = insight.DateFrequency.dateFrequencyForHours(6);
 
                     //Then:
-                    var nextTick = axisStrategy.increaseTickStep(axis, new Date(2014, 2, 30, 0), tickFrequency);
+                    var nextTick = axisStrategy.nextTickValue(axis, new Date(Date.UTC(2014, 2, 30, 0)), tickFrequency);
                     // Considers transition into British summer time
-                    expect(nextTick).toEqual(new Date(2014, 2, 30, 7));
+                    expect(nextTick).toEqual(new Date(Date.UTC(2014, 2, 30, 6)));
                 });
 
                 it('decreases by tickFrequency for hours', function() {
@@ -2728,9 +2728,9 @@ describe('Axis', function() {
                     var tickFrequency = insight.DateFrequency.dateFrequencyForHours(6);
 
                     //Then:
-                    var nextTick = axisStrategy.decreaseTickStep(axis, new Date(2014, 9, 26, 6), tickFrequency);
+                    var nextTick = axisStrategy.previousTickValue(axis, new Date(Date.UTC(2014, 9, 26, 5)), tickFrequency);
                     // Considers transition out of British summer time
-                    expect(nextTick).toEqual(new Date(2014, 9, 26, 1));
+                    expect(nextTick).toEqual(new Date(Date.UTC(2014, 9, 25, 23)));
                 });
 
                 it('increases by tickFrequency for minutes', function() {
@@ -2738,7 +2738,7 @@ describe('Axis', function() {
                     var tickFrequency = insight.DateFrequency.dateFrequencyForMinutes(6);
 
                     //Then:
-                    var nextTick = axisStrategy.increaseTickStep(axis, new Date(2014, 2, 30, 0, 5), tickFrequency);
+                    var nextTick = axisStrategy.nextTickValue(axis, new Date(2014, 2, 30, 0, 5), tickFrequency);
                     expect(nextTick).toEqual(new Date(2014, 2, 30, 0, 11));
                 });
 
@@ -2747,7 +2747,7 @@ describe('Axis', function() {
                     var tickFrequency = insight.DateFrequency.dateFrequencyForMinutes(6);
 
                     //Then:
-                    var nextTick = axisStrategy.decreaseTickStep(axis, new Date(2014, 9, 26, 6, 11), tickFrequency);
+                    var nextTick = axisStrategy.previousTickValue(axis, new Date(2014, 9, 26, 6, 11), tickFrequency);
                     expect(nextTick).toEqual(new Date(2014, 9, 26, 6, 5));
                 });
 
@@ -2756,7 +2756,7 @@ describe('Axis', function() {
                     var tickFrequency = insight.DateFrequency.dateFrequencyForSeconds(6);
 
                     //Then:
-                    var nextTick = axisStrategy.increaseTickStep(axis, new Date(2014, 2, 30, 0, 0, 5), tickFrequency);
+                    var nextTick = axisStrategy.nextTickValue(axis, new Date(2014, 2, 30, 0, 0, 5), tickFrequency);
                     expect(nextTick).toEqual(new Date(2014, 2, 30, 0, 0, 11));
                 });
 
@@ -2765,7 +2765,7 @@ describe('Axis', function() {
                     var tickFrequency = insight.DateFrequency.dateFrequencyForSeconds(6);
 
                     //Then:
-                    var nextTick = axisStrategy.decreaseTickStep(axis, new Date(2014, 9, 26, 6, 0, 11), tickFrequency);
+                    var nextTick = axisStrategy.previousTickValue(axis, new Date(2014, 9, 26, 6, 0, 11), tickFrequency);
                     expect(nextTick).toEqual(new Date(2014, 9, 26, 6, 0, 5));
                 });
             });
