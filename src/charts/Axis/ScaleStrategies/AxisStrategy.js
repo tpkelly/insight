@@ -65,7 +65,8 @@
             var step = 0;
             //Iterate until we have a reasonably small number of ticks
             while (Math.floor(domainRange / self.frequencyValue(tickFrequency)) > 10) {
-                tickFrequency = self.increaseTickFrequency(axis, tickFrequency, step++);
+                tickFrequency = self.increaseTickFrequency(axis, tickFrequency, step);
+                step++;
             }
 
             var axisSize = axis.isHorizontal() ? axis.bounds[0] : axis.bounds[1];
@@ -76,7 +77,8 @@
 
             //Iterate until we have a ticks non longer overlap
             while (calculateMaxWidth(axis, tickFrequency) > axisSize) {
-                tickFrequency = self.increaseTickFrequency(axis, tickFrequency, step++);
+                tickFrequency = self.increaseTickFrequency(axis, tickFrequency, step);
+                step++;
             }
 
             return tickFrequency;

@@ -2610,7 +2610,7 @@ describe('Axis', function() {
                     new Date(Date.UTC(2014, 0, 1)),
                     new Date(Date.UTC(2014, 1, 1)),
                     new Date(Date.UTC(2014, 2, 1)),
-                    new Date(Date.UTC(2014, 3, 1)), // Daylight saving time begins
+                    new Date(Date.UTC(2014, 3, 1)),
                     new Date(Date.UTC(2014, 4, 1)),
                     new Date(Date.UTC(2014, 5, 1)),
                     new Date(Date.UTC(2014, 6, 1)),
@@ -2647,6 +2647,35 @@ describe('Axis', function() {
                     new Date(Date.UTC(2014, 10, 8, 14)),
                     new Date(Date.UTC(2014, 10, 8, 15)),
                     new Date(Date.UTC(2014, 10, 8, 16))
+                ];
+                expect(result).toEqual(expectedTickValues);
+            });
+
+            it('handles dates before 1970', function() {
+
+                // Given:
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(1965, 0, 1, 0, 0)),
+                        new Date(Date.UTC(1975, 0, 1, 0, 0))]
+                );
+                spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForYears(1));
+
+                // When:
+                var result = axis.tickValues();
+
+                // Then:
+                var expectedTickValues = [
+                    new Date(Date.UTC(1965, 0, 1)),
+                    new Date(Date.UTC(1966, 0, 1)),
+                    new Date(Date.UTC(1967, 0, 1)),
+                    new Date(Date.UTC(1968, 0, 1)),
+                    new Date(Date.UTC(1969, 0, 1)),
+                    new Date(Date.UTC(1970, 0, 1)),
+                    new Date(Date.UTC(1971, 0, 1)),
+                    new Date(Date.UTC(1972, 0, 1)),
+                    new Date(Date.UTC(1973, 0, 1)),
+                    new Date(Date.UTC(1974, 0, 1)),
+                    new Date(Date.UTC(1975, 0, 1))
                 ];
                 expect(result).toEqual(expectedTickValues);
             });
@@ -2719,7 +2748,6 @@ describe('Axis', function() {
 
                     //Then:
                     var nextTick = axisStrategy.nextTickValue(axis, new Date(Date.UTC(2014, 2, 30, 0)), tickFrequency);
-                    // Considers transition into British summer time
                     expect(nextTick).toEqual(new Date(Date.UTC(2014, 2, 30, 6)));
                 });
 
@@ -2729,7 +2757,6 @@ describe('Axis', function() {
 
                     //Then:
                     var nextTick = axisStrategy.previousTickValue(axis, new Date(Date.UTC(2014, 9, 26, 5)), tickFrequency);
-                    // Considers transition out of British summer time
                     expect(nextTick).toEqual(new Date(Date.UTC(2014, 9, 25, 23)));
                 });
 
