@@ -44,26 +44,43 @@ img
 {
   color: #fff;
   padding: 0.2em 1em;
+  margin-top: 20px;
+  border-radius: 20px;
 }
 
 .colorbox h2 {
-  font-weight: 700;
+  font-weight: 500;
+  margin-top: 10px;
 }
 
 
-.visualization
+.features
 {
-  background-color: #43ac6a;
+  background-color: #3182bd;
+  color: #ddd;
 }
 
-.analysis
+.features b
 {
-  background-color: #5bc0de;
+  color: #fff;
 }
 
-.open {
-  background-color: #f39c12;
+.features h2
+{
+  color: #fff;
 }
+
+.features li
+{
+  margin-left: -15px;
+}
+
+.did-you-know
+{
+  background-color: #bdd7e7;
+  color: #555;
+}
+
 .open a {
   color: #34495e;
 }
@@ -234,4 +251,5 @@ button.selected {
 a.filter-link {
     cursor: pointer;
     font-weight: bold;
+  text-decoration: underline;
 }
