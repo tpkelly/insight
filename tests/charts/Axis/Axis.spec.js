@@ -2597,8 +2597,8 @@ describe('Axis', function() {
 
                 // Given:
                 spyOn(axis, 'domain').andReturn([
-                        new Date(2014, 0, 1),
-                        new Date(2014, 9, 1, 17, 33, 3)]
+                        new Date(Date.UTC(2014, 0, 1)),
+                        new Date(Date.UTC(2014, 9, 1, 17, 33, 3))]
                 );
                 spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForMonths(1));
 
@@ -2607,16 +2607,16 @@ describe('Axis', function() {
 
                 // Then:
                 var expectedTickValues = [
-                    new Date(2014, 0, 1),
-                    new Date(2014, 1, 1),
-                    new Date(2014, 2, 1),
-                    new Date(2014, 3, 1, 1), // Daylight saving time begins
-                    new Date(2014, 4, 1, 1),
-                    new Date(2014, 5, 1, 1),
-                    new Date(2014, 6, 1, 1),
-                    new Date(2014, 7, 1, 1),
-                    new Date(2014, 8, 1, 1),
-                    new Date(2014, 9, 1, 1)
+                    new Date(Date.UTC(2014, 0, 1)),
+                    new Date(Date.UTC(2014, 1, 1)),
+                    new Date(Date.UTC(2014, 2, 1)),
+                    new Date(Date.UTC(2014, 3, 1)), // Daylight saving time begins
+                    new Date(Date.UTC(2014, 4, 1)),
+                    new Date(Date.UTC(2014, 5, 1)),
+                    new Date(Date.UTC(2014, 6, 1)),
+                    new Date(Date.UTC(2014, 7, 1)),
+                    new Date(Date.UTC(2014, 8, 1)),
+                    new Date(Date.UTC(2014, 9, 1))
                 ];
                 expect(result).toEqual(expectedTickValues);
             });
@@ -2625,8 +2625,8 @@ describe('Axis', function() {
 
                 // Given:
                 spyOn(axis, 'domain').andReturn([
-                        new Date(2014, 10, 8, 4, 6, 1),
-                        new Date(2014, 10, 8, 16, 33, 3)]
+                        new Date(Date.UTC(2014, 10, 8, 4, 6, 1)),
+                        new Date(Date.UTC(2014, 10, 8, 16, 33, 3))]
                 );
                 spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForHours(1));
 
@@ -2635,18 +2635,18 @@ describe('Axis', function() {
 
                 // Then:
                 var expectedTickValues = [
-                    new Date(2014, 10, 8, 5),
-                    new Date(2014, 10, 8, 6),
-                    new Date(2014, 10, 8, 7),
-                    new Date(2014, 10, 8, 8),
-                    new Date(2014, 10, 8, 9),
-                    new Date(2014, 10, 8, 10),
-                    new Date(2014, 10, 8, 11),
-                    new Date(2014, 10, 8, 12),
-                    new Date(2014, 10, 8, 13),
-                    new Date(2014, 10, 8, 14),
-                    new Date(2014, 10, 8, 15),
-                    new Date(2014, 10, 8, 16)
+                    new Date(Date.UTC(2014, 10, 8, 5)),
+                    new Date(Date.UTC(2014, 10, 8, 6)),
+                    new Date(Date.UTC(2014, 10, 8, 7)),
+                    new Date(Date.UTC(2014, 10, 8, 8)),
+                    new Date(Date.UTC(2014, 10, 8, 9)),
+                    new Date(Date.UTC(2014, 10, 8, 10)),
+                    new Date(Date.UTC(2014, 10, 8, 11)),
+                    new Date(Date.UTC(2014, 10, 8, 12)),
+                    new Date(Date.UTC(2014, 10, 8, 13)),
+                    new Date(Date.UTC(2014, 10, 8, 14)),
+                    new Date(Date.UTC(2014, 10, 8, 15)),
+                    new Date(Date.UTC(2014, 10, 8, 16))
                 ];
                 expect(result).toEqual(expectedTickValues);
             });
