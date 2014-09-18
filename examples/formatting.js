@@ -17,7 +17,7 @@ $(document)
                 {
                     var thousands = (tickValue / 1000)
                         .toFixed(0);
-                    return '£' + thousands + 'k';
+                    return '$' + thousands + 'k';
                 });
 
             var clientRevenues = new insight.ColumnSeries('clientColumn', clientData, x, y)
