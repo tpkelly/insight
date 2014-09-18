@@ -4,7 +4,8 @@ function createBubbleChart(chartGroup, bubbleData) {
         .width(300)
         .height(400);
 
-    var xAxis = new insight.Axis('Average Rating', insight.Scales.Linear);
+    var xAxis = new insight.Axis('Average Rating', insight.Scales.Linear)
+        .tickFrequency(1);
 
     var yAxis = new insight.Axis('', insight.Scales.Linear)
         .tickLabelFormat(insight.Formatters.currencyFormatter);

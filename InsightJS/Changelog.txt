@@ -11,6 +11,7 @@
 * Allow programmatic filtering of a ChartGroup;
   * ChartGroup.filterByGrouping - allows a given grouping to be filtered by a given value.
   * ChartGroup.clearFilters - allows all previously applied filters to be removed.
+* Fix tick-frequency calculation to handle small charts
 
 
 
