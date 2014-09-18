@@ -1,7 +1,14 @@
 (function(insight) {
 
-    /*
+    /**
      * A Frequency used for spacing tick marks on a Date-Time axis.
+     * @class insight.DateFrequency
+     * @param {Number} year The number of years to represent
+     * @param {Number} [months] The number of months to represent
+     * @param {Number} [days] The number of days to represent
+     * @param {Number} [hours] The number of hours to represent
+     * @param {Number} [minutes] The number of minutes to represent
+     * @param {Number} [seconds] The number of seconds to represent
      */
     insight.DateFrequency = function DateFrequency(years, months, days, hours, minutes, seconds) {
 
