@@ -68,7 +68,7 @@
 
         self.draw = function(chart, isDragging) {
 
-            self.initializeTooltip(chart.container.node());
+            self.tooltip = chart.tooltip;
 
             var transform = d3.svg.line()
                 .x(self.rangeX)

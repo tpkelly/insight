@@ -96,6 +96,8 @@
                 .attr('class', insight.Constants.ChartTitleClass);
 
             self.addClipPath();
+
+            self.initializeTooltip(self.container.node());
         }
 
         function initZoom() {
@@ -319,6 +321,18 @@
             self.plotArea.selectAll('.notselected')
                 .classed('notselected', false);
 
+        };
+
+        /*
+         * Creates the tooltip for this chart, checking if it exists already first.
+         * @memberof! insight.Chart
+         * @param {DOMElement} container - The DOM Element that the tooltip should be drawn inside.
+         */
+        self.initializeTooltip = function(container) {
+            if (!self.tooltip) {
+                self.tooltip = new insight.Tooltip()
+                    .container(container);
+            }
         };
 
         self.draw = function(isDragging) {

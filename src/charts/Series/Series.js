@@ -143,19 +143,6 @@
         };
 
         /*
-         * Creates the tooltip for this Series, checking if it exists already first.
-         * @memberof! insight.Series
-         * @param {DOMElement} container - The DOM Element that the tooltip should be drawn inside.
-         */
-        self.initializeTooltip = function(container) {
-            if (!self.tooltip) {
-                self.tooltip = new insight.Tooltip()
-                    .container(container)
-                    .offset(self.tooltipOffset());
-            }
-        };
-
-        /*
          * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouse over.
          * Tooltips are shown and CSS updated.
          * The *this* context will reference the DOMElement raising the event.
@@ -167,6 +154,8 @@
 
             var textFunction = self.tooltipFunction();
             var tooltipText = tooltipFormat(textFunction(item));
+
+            self.tooltip.offset(self.tooltipOffset());
 
             self.tooltip.show(this, tooltipText);
 

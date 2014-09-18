@@ -3,7 +3,7 @@
     /**
      * The Axis class coordinates the domain of the series data and draws axes.
      * @class insight.Axis
-     * @param {string} name - A uniquely identifying name for this chart
+     * @param {string} name - A uniquely identifying name for this axis
      * @param {insight.Scales.Scale} scale - insight.Scale.Linear for example
      */
     insight.Axis = function Axis(name, scale) {
@@ -29,12 +29,13 @@
             barPadding = d3.functor(0.1),
             initialisedAxisView = false,
             shouldReversePosition = false,
-            zoomable = false;
+            zoomable = false,
+            axisStrategy = strategyForScale(scale),
+            tickFrequency;
 
         // Internal variables ---------------------------------------------------------------------------------------
 
         self.measureCanvas = document.createElement('canvas');
-        self.scaleType = scale.name;
         self.scale = scale.scale();
         self.bounds = [0, 0];
         self.series = [];
@@ -42,6 +43,20 @@
         self.gridlines = new insight.AxisGridlines(self);
 
         // Private functions -------------------------------------------------------------------------------------
+
+        function strategyForScale(scale) {
+            switch (scale.name) {
+                case insight.Scales.Linear.name:
+                    return new insight.LinearAxis();
+                case insight.Scales.Ordinal.name:
+                    return new insight.OrdinalAxis();
+                case insight.Scales.Time.name:
+                    return new insight.DateAxis();
+
+                default:
+                    return new insight.LinearAxis();
+            }
+        }
 
         function orientation() {
             if (self.isHorizontal()) {
@@ -106,57 +121,6 @@
 
         }
 
-        /*
-         * For an ordinal/categorical axis, this method queries all series that use this axis to get the list of available values
-         * @returns {object[]} values - the values for this ordinal axis
-         */
-        function findOrdinalValues() {
-            var vals = [];
-
-            // Build a list of values used by this axis by checking all Series using this axis
-            // Optionally provide an ordering function to sort the results by.  If the axis is ordered but no custom ordering is defined,
-            // then the series value function will be used by default.
-            self.series.forEach(function(series) {
-                vals = vals.concat(series.keys(self.orderingFunction()));
-            });
-
-            vals = insight.Utils.arrayUnique(vals);
-
-            return vals;
-        }
-
-        /*
-         * Calculates the minimum value to be used in this axis.
-         * @returns {object} - The smallest value in the datasets that use this axis
-         */
-        function findMin() {
-            var min = Number.MAX_VALUE;
-
-            self.series.forEach(function(series) {
-                var m = series.findMin(self);
-
-                min = m < min ? m : min;
-            });
-
-            return min;
-        }
-
-        /*
-         * Calculates the maximum value to be used in this axis.
-         * @returns {object} - The largest value in the datasets that use this axis
-         */
-        function findMax() {
-            var max = 0;
-
-            self.series.forEach(function(series) {
-                var m = series.findMax(self);
-
-                max = m > max ? m : max;
-            });
-
-            return max;
-        }
-
         // Internal functions -------------------------------------------------------------------------------------
 
         /*
@@ -183,12 +147,22 @@
         };
 
         self.tickValues = function() {
-            var scale = self.scale.copy()
-                .domain(self.domain());
+            return axisStrategy.tickValues(self);
+        };
 
-            // Some scales, such as `d3.scale.ordinal`, do not provide `ticks()`.
-            // For these scales `d3.svg.axis` depends upon `domain()` to create ticks values.
-            return scale.ticks ? scale.ticks() : scale.domain();
+        self.measureTickValues = function(tickValues) {
+            var textMeasurer = new insight.TextMeasurer(self.measureCanvas);
+
+            var formattedValues = tickValues.map(function(tickValue) {
+                return self.tickLabelFormat()(tickValue);
+            });
+
+            return formattedValues.map(function(formattedTickValue) {
+                return textMeasurer.measureText(
+                    formattedTickValue,
+                    self.tickLabelFont(),
+                    self.tickLabelRotation());
+            });
         };
 
         self.calculateLabelDimensions = function() {
@@ -204,16 +178,7 @@
 
             var axisLabelHeight = textMeasurer.measureText(self.label(), self.axisLabelFont()).height;
 
-            var formattedTickValues = self.tickValues().map(function(tickValue) {
-                return self.tickLabelFormat()(tickValue);
-            });
-
-            var tickLabelSizes = formattedTickValues.map(function(formattedTickValue) {
-                return textMeasurer.measureText(
-                    formattedTickValue,
-                    self.tickLabelFont(),
-                    self.tickLabelRotation());
-            });
+            var tickLabelSizes = self.measureTickValues(self.tickValues());
 
             var maxTickLabelWidth = d3.max(tickLabelSizes, function(d) {
                 return Math.abs(d.width);
@@ -332,17 +297,7 @@
          * @returns {object[]} bounds - An array with two items, for the lower and upper range of this axis
          */
         self.domain = function() {
-            var domain = [];
-
-            if (self.scaleType === insight.Scales.Linear.name) {
-                domain = [0, findMax()];
-            } else if (self.scaleType === insight.Scales.Ordinal.name) {
-                domain = findOrdinalValues();
-            } else if (self.scaleType === insight.Scales.Time.name) {
-                domain = [new Date(findMin()), new Date(findMax())];
-            }
-
-            return domain;
+            return axisStrategy.domain(self);
         };
 
         self.tickLabelRotationTransform = function() {
@@ -470,7 +425,8 @@
                 .orient(self.orientation())
                 .tickSize(adjustedTickSize)
                 .tickPadding(self.tickPadding())
-                .tickFormat(self.tickLabelFormat());
+                .tickFormat(self.tickLabelFormat())
+                .tickValues(self.tickValues());
 
             self.axisElement
                 .attr('transform', self.axisPosition())
@@ -501,7 +457,6 @@
                 .text(self.label());
 
             self.positionLabel();
-
 
             if (self.shouldShowGridlines()) {
                 self.gridlines.drawGridLines(chart, self.scale.ticks());
@@ -948,6 +903,18 @@
                 return shouldShowGridlines;
             }
             shouldShowGridlines = showLines;
+
+            return self;
+        };
+
+        self.tickFrequency = function(tickFreq) {
+            if (!arguments.length) {
+                return tickFrequency != null ? tickFrequency : axisStrategy.tickFrequency(self);
+            }
+            if (tickFreq <= 0) {
+                throw new Error(insight.ErrorMessages.nonPositiveTickFrequencyException);
+            }
+            tickFrequency = tickFreq;
 
             return self;
         };
