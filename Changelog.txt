@@ -1,5 +1,12 @@
 === Version 1.2.0 (22-Sep-2014) ===
 
+* Library changes
+  * Sets default currency of currency formatter to USD.
+  * Merges common functionality in ScatterSeries and BubbleSeries into a common PointSeries.
+  * Deprecated “ScatterSeries.pointRadius”. Use “ScatterSeries.radiusFunction” instead.
+  * ChartGroup.filterByGrouping: allows a given grouping to be filtered by a given value.
+  * ChartGroup.clearFilters: allows all previously applied filters to be removed.
+
 * Issues fixed
   * Horizontal axis tick labels were not anchored at the middle by default.
   * Chart titles were not within the chart SVG bounds.
@@ -7,13 +14,8 @@
   * Calculated charts margins were too large or too small.
   * Axis tick marks were obscured in bottom/right axis orientation.
   * There were too many ticks appearing on small charts.
-
-* Library changes
-  * Sets default currency of currency formatter to USD.
-  * Merges common functionality in ScatterSeries and BubbleSeries into a common PointSeries.
-  * Deprecated “ScatterSeries.pointRadius”. Use “ScatterSeries.radiusFunction” instead.
-  * ChartGroup.filterByGrouping: allows a given grouping to be filtered by a given value.
-  * ChartGroup.clearFilters: allows all previously applied filters to be removed.
+  * Points on a scatter series were not transitioning when drawn.
+  * Axis line width and color were not being displayed as they were set.
 
 
 
