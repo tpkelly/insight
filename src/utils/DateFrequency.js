@@ -5,14 +5,22 @@
      */
     insight.DateFrequency = function DateFrequency(years, months, days, hours, minutes, seconds) {
 
+        // Private variables ------------------------------------------------------------------------------------------
+
         var self = this;
+
+        // Days are not zero based
+        var adjustedDay = days + 1;
 
         var referenceDate = new Date(
             years,
-            months || 0, (days + 1) || 1,
+            months || 0,
+            adjustedDay || 1,
             hours || 0,
             minutes || 0,
             seconds || 0);
+
+        // Internal functions -----------------------------------------------------------------------------------------
 
         self.toSeconds = function() {
 
@@ -80,6 +88,8 @@
             return date;
         };
     };
+
+    // Public functions --------------------------------------------------------------------------------------
 
     /**
      * A DateFrequency representing a number of years

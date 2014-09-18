@@ -5,21 +5,12 @@
      */
     insight.OrdinalAxis = function OrdinalAxis() {
 
-        var self = this;
-
         insight.AxisStrategy.call(this);
 
-        self.domain = function(axis) {
-            return findOrdinalValues(axis);
-        };
+        // Private variables ------------------------------------------------------------------------------------------
+        var self = this;
 
-        self.tickValues = function(axis) {
-            return axis.domain();
-        };
-
-        self.initialTickValue = function(axis, tickFrequency) {
-            return axis.domain()[0];
-        };
+        // Private functions -----------------------------------------------------------------------------------------
 
         /*
          * Queries all series that use this axis to get the list of available values
@@ -39,6 +30,20 @@
 
             return vals;
         }
+
+        // Internal functions -----------------------------------------------------------------------------------------
+
+        self.domain = function(axis) {
+            return findOrdinalValues(axis);
+        };
+
+        self.tickValues = function(axis) {
+            return axis.domain();
+        };
+
+        self.initialTickValue = function(axis, tickFrequency) {
+            return axis.domain()[0];
+        };
 
         self.nextTickValue = function(axis, currentTickValue, tickFrequency) {
             var categories = axis.domain();

@@ -5,6 +5,9 @@
      */
     insight.DateAxis = function DateAxis() {
 
+        insight.AxisStrategy.call(this);
+
+        // Private variables ------------------------------------------------------------------------------------------
         var self = this;
 
         var possibleAutoFrequencies = [
@@ -31,7 +34,7 @@
             insight.DateFrequency.dateFrequencyForYears(100)
         ];
 
-        insight.AxisStrategy.call(this);
+        // Internal functions -----------------------------------------------------------------------------------------
 
         self.domain = function(axis) {
             var scaleDomain = axis.scale.domain();

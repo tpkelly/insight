@@ -909,7 +909,7 @@
 
         self.tickFrequency = function(tickFreq) {
             if (!arguments.length) {
-                return tickFrequency !== undefined ? tickFrequency : axisStrategy.tickFrequency(self);
+                return tickFrequency != null ? tickFrequency : axisStrategy.tickFrequency(self);
             }
             if (tickFreq <= 0) {
                 throw new Error(insight.ErrorMessages.nonPositiveTickFrequencyException);

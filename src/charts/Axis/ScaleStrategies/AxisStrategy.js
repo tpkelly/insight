@@ -5,7 +5,29 @@
      */
     insight.AxisStrategy = function AxisStrategy() {
 
+        // Private variables ------------------------------------------------------------------------------------------
         var self = this;
+
+        // Private functions ------------------------------------------------------------------------------------------
+
+        function calculateMaxWidth(axis, tickFrequency) {
+            var tickValues = self.calculateTickValues(axis, tickFrequency);
+            var tickLabelSizes = axis.measureTickValues(tickValues);
+
+            var maxValue;
+            if (axis.isHorizontal()) {
+                maxValue = d3.max(tickLabelSizes, function(d) {
+                    return d.width;
+                });
+            } else {
+                maxValue = d3.max(tickLabelSizes, function(d) {
+                    return d.height;
+                });
+            }
+            return maxValue * tickValues.length;
+        }
+
+        // Internal functions -----------------------------------------------------------------------------------------
 
         self.domain = function(axis) {
             return [0, 0];
@@ -38,23 +60,6 @@
         self.tickValues = function(axis) {
             return self.calculateTickValues(axis, axis.tickFrequency());
         };
-
-        function calculateMaxWidth(axis, tickFrequency) {
-            var tickValues = self.calculateTickValues(axis, tickFrequency);
-            var tickLabelSizes = axis.measureTickValues(tickValues);
-
-            var maxValue;
-            if (axis.isHorizontal()) {
-                maxValue = d3.max(tickLabelSizes, function(d) {
-                    return d.width;
-                });
-            } else {
-                maxValue = d3.max(tickLabelSizes, function(d) {
-                    return d.height;
-                });
-            }
-            return maxValue * tickValues.length;
-        }
 
         self.tickFrequencyForDomain = function(axis, domain) {
             var tickFrequency = self.initialTickFrequency(axis, domain);

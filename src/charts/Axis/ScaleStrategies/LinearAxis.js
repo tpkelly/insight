@@ -5,9 +5,12 @@
      */
     insight.LinearAxis = function LinearAxis() {
 
+        insight.AxisStrategy.call(this);
+
+        // Private variables ------------------------------------------------------------------------------------------
         var self = this;
 
-        insight.AxisStrategy.call(this);
+        // Internal functions -----------------------------------------------------------------------------------------
 
         self.domain = function(axis) {
             var scaleDomain = axis.scale.domain();
@@ -30,11 +33,15 @@
 
         self.nextTickValue = function(axis, currentTickValue, tickFrequency) {
             var result = currentTickValue + tickFrequency;
+
+            // Round number to a precision of 10 decimal places i.e. 0.300000000004 to 0.3
             return parseFloat(result.toPrecision(10));
         };
 
         self.previousTickValue = function(axis, currentTickValue, tickFrequency) {
             var result = currentTickValue - tickFrequency;
+
+            // Round number to a precision of 10 decimal places i.e. 0.300000000004 to 0.3
             return parseFloat(result.toPrecision(10));
         };
 
