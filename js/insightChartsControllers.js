@@ -472,8 +472,7 @@
 
                     var element = d3.select(targetId)
                         .call(tooltip)
-                        .on('click', toggleTooltipVisibilty);
-                        //.on('mouseout', tooltip.hide);
+                        .on('click', $scope.toggleTooltipVisibilty);
 
                 });
 
@@ -483,7 +482,7 @@
                 tooltip.hide();
             });
 
-            function toggleTooltipVisibilty() {
+            $scope.toggleTooltipVisibilty = function() {
                 var textElement = d3.select(this.previousElementSibling);
                 if (visibleButton) {
                     visibleButton.text("See the code");
@@ -497,7 +496,7 @@
                 else {
                     tooltip.hide();
                 }
-            }
+            };
 
             // need to improve dependency management here, to allow the controller to know that it will need to load d3 and insight instead of just assuming they'll be there
             d3.json('datasets/appstore.json', function(data)
