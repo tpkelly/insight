@@ -10,7 +10,7 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
         concat: {
           dist: {
-              src: 'js/controllers/*.js',
+              src: ['js/controllers/*.js', 'js/snippets/*.js'],
               dest: 'js/insightChartsControllers.js'
           }
         },
@@ -45,7 +45,7 @@ module.exports = function(grunt) {
             }
         },
         "jsbeautifier": {
-            files: ["./js/*.js", "./partials/*.html", "./examples/*.js", "index.html"],
+            files: ["./js/*.js", "./examples/*.js"],
             options: {
                 js: {
                     braceStyle: 'expand',

@@ -34,12 +34,10 @@ $(document)
                 });
 
             var xAxis = new insight.Axis('Average Number of Ratings', insight.Scales.Linear)
-                .tickSize(5)
-                .tickPadding(0)
+                .tickSize(2)
                 .tickLabelOrientation('tb');
 
-            var yAxis = new insight.Axis('Average Price', insight.Scales.Linear)
-                .tickSize(5);
+            var yAxis = new insight.Axis('Average Price', insight.Scales.Linear);
 
             scatterChart.xAxis(xAxis);
             scatterChart.yAxis(yAxis);
