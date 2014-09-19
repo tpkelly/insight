@@ -426,13 +426,15 @@
         });
     }
 
-    angular.module('insightChartsControllers').controller('Index', ['$scope', 'Examples',
-        function($scope, Examples)
+    angular.module('insightChartsControllers').controller('Index', ['$scope', 'Examples', '$http',
+        function($scope, Examples, $http)
         {
             $scope.examples = Examples.query();
             $scope.$parent.title = 'InsightJS - Open Source Analytics and Visualization for JavaScript';
 
             var chartGroup, genreGrouping, languageGrouping;
+
+            var tooltip = new insight.Tooltip();
 
             $scope.filter = function(genres, languages) {
 
@@ -456,6 +458,27 @@
 
             $scope.clearFilters = function() {
                 chartGroup.clearFilters();
+            };
+
+
+
+            $scope.showTooltip = function (filePath, $event) {
+
+                $http.get(filePath).success(function(content) {
+
+                    var codedContent = '<code class="language-javascript">' + content + '</code>';
+
+                    tooltip.container($event.target);
+                    tooltip.show($event.target, codedContent);
+                    tooltip.element.setAttribute('ng-mouseleave', 'hideTooltip');
+
+                });
+
+            };
+
+            $scope.hideTooltip = function() {
+                console.log("Hiding");
+                tooltip.hide();
             };
 
             // need to improve dependency management here, to allow the controller to know that it will need to load d3 and insight instead of just assuming they'll be there
