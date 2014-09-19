@@ -27,7 +27,7 @@ $(document)
 
 
             var timeChart = new insight.Chart('Releases over time', '#exampleChart')
-                .width(600)
+                .width(500)
                 .height(325);
 
             var xTime = new insight.Axis('', insight.Scales.Time)

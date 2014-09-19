@@ -259,15 +259,23 @@ a.filter-link {
   width: 100%;
 }
 
-.show-code button {
-  background-color: #bdd7e7;
-  font-weight: 600;
-  color: #333;
-  border-radius: 10px;
-  padding: 5px 10px;
+.toggle-code-background {
+    fill: #bdd7e7;
 }
 
-.mcTooltipInner {
-  white-space: pre;
-  line-height: 1.2em;
+.toggle-code-label {
+    color: #333;
+    font-weight: 600;
+    text-anchor: middle;
+}
+
+.toggle-code-button {
+    cursor: pointer;
+    opacity: 0;
+}
+
+pre.language-javascript {
+    background-color: #222;
+    color: #eee;
+    border-radius: 5px;
 }

@@ -1,6 +1,6 @@
 function createBubbleChart(chartGroup, bubbleData) {
 
-    var bubbleChart = new insight.Chart('Bubble chart', '#bubble-chart')
+    var bubbleChart = new insight.Chart('Bubble Chart', '#bubble-chart')
         .width(300)
         .height(400);
 
