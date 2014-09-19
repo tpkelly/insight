@@ -26,7 +26,6 @@ $(document)
             var x = new insight.Axis('', insight.Scales.Ordinal)
                 .tickSize(5)
                 .tickPadding(5)
-                .tickLabelRotation(45)
                 .tickLabelFormat(d3.time.format('%Y'));
 
             var y = new insight.Axis('', insight.Scales.Linear)
