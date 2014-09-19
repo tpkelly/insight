@@ -23,7 +23,7 @@
 
             var chartGroup, genreGrouping, languageGrouping;
 
-            var tooltip = new insight.Tooltip();
+            var tooltip = d3.tip();
 
             $scope.filter = function(genres, languages) {
 
@@ -51,15 +51,18 @@
 
 
 
-            $scope.showTooltip = function (filePath, $event) {
+            $scope.showTooltip = function (filePath, targetId) {
 
                 $http.get(filePath).success(function(content) {
 
                     var codedContent = '<code class="language-javascript">' + content + '</code>';
 
-                    tooltip.container($event.target);
-                    tooltip.show($event.target, codedContent);
-                    tooltip.element.setAttribute('ng-mouseleave', 'hideTooltip');
+                    tooltip.html(d3.functor(codedContent));
+
+                    var element = d3.select(targetId)
+                        .call(tooltip)
+                        .on('click', tooltip.show)
+                        .on('mouseout', tooltip.hide);
 
                 });
 
