@@ -462,7 +462,7 @@
             };
 
 
-            $scope.showTooltip = function (filePath, targetId) {
+            $scope.prepareTooltip = function (filePath, targetId) {
 
                 $http.get(filePath).success(function(content) {
 
@@ -478,6 +478,10 @@
                 });
 
             };
+
+            $scope.$on('$routeChangeStart', function(next, current) {
+                tooltip.hide();
+            });
 
             function toggleTooltipVisibilty() {
                 var textElement = d3.select(this.previousElementSibling);
