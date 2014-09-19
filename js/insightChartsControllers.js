@@ -491,7 +491,7 @@
 }());
 function createBubbleChart(chartGroup, bubbleData) {
 
-    var bubbleChart = new insight.Chart('Bubble chart', '#bubble-chart')
+    var bubbleChart = new insight.Chart('Bubble Chart', '#bubble-chart')
         .width(300)
         .height(400);
 
@@ -556,7 +556,7 @@ function createGenreCountChart(chartGroup, genreData){
 
 function createLanguageChart(chartGroup, languages){
 
-    var chart = new insight.Chart('Chart 2', '#languages')
+    var chart = new insight.Chart('Language Chart', '#languages')
         .width(350)
         .height(400);
 
