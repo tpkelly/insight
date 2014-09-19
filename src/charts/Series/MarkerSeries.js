@@ -3,7 +3,8 @@
     /**
      * The MarkerSeries class extends the Series class and draws markers/targets on a chart
      * @class insight.MarkerSeries
-     * @param {string} name - A uniquely identifying name for this chart
+     * @extends insight.Series
+     * @param {string} name - A uniquely identifying name for this series
      * @param {DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
      * @param {insight.Scales.Scale} y - the y axis
@@ -107,7 +108,7 @@
 
         self.draw = function(chart, isDragging) {
 
-            self.initializeTooltip(chart.container.node());
+            self.tooltip = chart.tooltip;
             self.selectedItems = chart.selectedItems;
 
             function reset(d) {
@@ -127,10 +128,6 @@
 
             var newBars = newGroups.selectAll('rect.bar');
 
-            function click(filter) {
-                return self.click(self, filter);
-            }
-
             function duration(d, i) {
                 return 200 + (i * 20);
             }
@@ -143,7 +140,7 @@
                 .attr('clip-path', 'url(#' + chart.clipPath() + ')')
                 .on('mouseover', self.mouseOver)
                 .on('mouseout', self.mouseOut)
-                .on('click', click);
+                .on('click', self.click);
 
             var bars = groups.selectAll('.' + self.name + 'class');
 

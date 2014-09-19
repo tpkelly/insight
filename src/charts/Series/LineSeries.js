@@ -3,7 +3,8 @@
     /**
      * The LineSeries class extends the Series class and draws horizontal bars on a Chart
      * @class insight.LineSeries
-     * @param {string} name - A uniquely identifying name for this chart
+     * @extends insight.Series
+     * @param {string} name - A uniquely identifying name for this series
      * @param {DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
      * @param {insight.Scales.Scale} y - the y axis
@@ -67,7 +68,7 @@
 
         self.draw = function(chart, isDragging) {
 
-            self.initializeTooltip(chart.container.node());
+            self.tooltip = chart.tooltip;
 
             var transform = d3.svg.line()
                 .x(self.rangeX)
@@ -102,13 +103,16 @@
                 .duration(duration)
                 .attr("d", transform);
 
+            var pointClassName = self.name + 'line' + insight.Constants.LinePoint;
+            pointClassName = insight.Utils.alphaNumericString(pointClassName);
+
             if (displayPoints) {
-                var circles = chart.plotArea.selectAll("circle")
+                var circles = chart.plotArea.selectAll("circle." + pointClassName)
                     .data(self.dataset());
 
                 circles.enter()
                     .append('circle')
-                    .attr('class', 'target-point')
+                    .attr('class', pointClassName)
                     .attr("clip-path", "url(#" + chart.clipPath() + ")")
                     .attr("cx", self.rangeX)
                     .attr("cy", chart.height() - chart.margin().bottom - chart.margin().top)
@@ -118,7 +122,7 @@
             }
 
             var colorFunc = (displayPoints) ? self.color : d3.functor(undefined);
-            var allCircles = chart.plotArea.selectAll("circle");
+            var allCircles = chart.plotArea.selectAll("circle." + pointClassName);
 
             allCircles
                 .transition()

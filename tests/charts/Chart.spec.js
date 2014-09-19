@@ -103,7 +103,7 @@ describe('Chart', function() {
 
         it('title font 16pt Helvetica', function() {
 
-            expect(chart.titleFont()).toBe('16pt Helvetica Neue');
+            expect(chart.titleFont()).toBe(insight.defaultTheme.chartStyle.titleFont);
 
         });
     });
@@ -256,6 +256,7 @@ describe('Chart', function() {
                 spyOn(chart, 'calculateChartMargin');
                 spyOn(chart, 'draw').andCallThrough();
                 spyOn(chart, 'addClipPath').andCallThrough();
+                spyOn(chart, 'initializeTooltip').andCallThrough();
                 spyOn(insight.Utils, 'getElementStyles').andReturn({});
 
                 chart.draw();
@@ -342,6 +343,14 @@ describe('Chart', function() {
                     testInit();
 
                     expect(chart.draw).toHaveBeenCalledWith();
+
+                });
+
+                it('initializeTooltip', function() {
+
+                    testInit();
+
+                    expect(chart.initializeTooltip).toHaveBeenCalledWith(chart.container.node());
 
                 });
                
@@ -626,7 +635,38 @@ describe('Chart', function() {
             });
 
         });
-        
+
+        it('expands top margin for title', function() {
+
+            // Given
+            var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
+
+            spyOn(xAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
+            spyOn(yAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
+
+            spyOn(xAxis, 'calculateLabelOverhang').andReturn({ left: 0, right: 0, top: 20, bottom: 0});
+            spyOn(yAxis, 'calculateLabelOverhang').andReturn({ left: 0, right: 0, top: 25, bottom: 0});
+
+            chart.series([series]);
+            chart.title("ABC");
+            chart.titleFont("20pt Helvetica Neue");
+
+            // When
+            chart.calculateChartMargin();
+
+            // Then
+            var measurer = new insight.TextMeasurer(chart.measureCanvas);
+            var titleHeight = measurer.measureText(chart.title(), chart.titleFont()).height;
+
+            expect(chart.margin()).toEqual({
+                top: 20 + 25 + titleHeight,
+                left: minimalMargins,
+                right: minimalMargins,
+                bottom: minimalMargins
+            });
+
+        });
+
     });
 
     describe('xAxis', function() {
@@ -1082,6 +1122,71 @@ describe('Chart', function() {
 
             // Then
             expect(result).toBe(1);
+
+        });
+
+    });
+
+    describe('initializeTooltip', function() {
+
+        var chart;
+
+        beforeEach(function() {
+            chart = new insight.Chart();
+        });
+
+        it('sets a new tooltip if the chart doesn\'t have one', function() {
+
+            // Given
+            var container = document.createElement('div');
+
+            // When
+            chart.initializeTooltip(container);
+
+            // Then
+            expect(chart.tooltip instanceof insight.Tooltip).toBe(true);
+
+        });
+
+        it('doesn\'t set a new tooltip if the chart already has one', function() {
+
+            // Given
+            var container = document.createElement('div');
+            var originalTooltip = new insight.Tooltip();
+            chart.tooltip = originalTooltip;
+
+            // When
+            chart.initializeTooltip(container);
+
+            // Then
+            expect(chart.tooltip).toBe(originalTooltip);
+
+        });
+
+        it('sets the chart\'s tooltip container', function() {
+
+            // Given
+            var container = document.createElement('div');
+
+            // When
+            chart.initializeTooltip(container);
+
+            // Then
+            expect(chart.tooltip.container()).toBe(container);
+
+        });
+
+        it('doesn\'t set the chart\'s tooltip container if the chart already has a tooltip', function() {
+
+            // Given
+            var container = document.createElement('div');
+            chart.tooltip = new insight.Tooltip();
+
+            // When
+            chart.initializeTooltip(container);
+
+            // Then
+            expect(chart.tooltip.container()).not.toBe(container);
 
         });
 

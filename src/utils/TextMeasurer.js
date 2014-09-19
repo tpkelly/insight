@@ -2,7 +2,6 @@
 
     /*
      * Measures the width and height of text using a given font.
-     * @class insight.MarginMeasurer
      */
     insight.TextMeasurer = function TextMeasurer(canvas) {
 
@@ -25,8 +24,8 @@
 
             var angleRadians = insight.Utils.degreesToRadians(angleDegrees);
 
-            var height = actualTextWidth * Math.sin(angleRadians) + roughTextHeight * Math.cos(angleRadians);
-            var width = actualTextWidth * Math.cos(angleRadians) + roughTextHeight * Math.sin(angleRadians);
+            var height = actualTextWidth * Math.abs(Math.sin(angleRadians)) + roughTextHeight * Math.abs(Math.cos(angleRadians));
+            var width = actualTextWidth * Math.abs(Math.cos(angleRadians)) + roughTextHeight * Math.abs(Math.sin(angleRadians));
 
             // avoid rounding errors
             height = height.toFixed(10);

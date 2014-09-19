@@ -15,6 +15,7 @@ insight.Constants = (function() {
     exports.BarGroupClass = 'bargroup';
     exports.BarClass = 'bar';
     exports.LineClass = 'in-line';
+    exports.LinePoint = 'target-point';
     exports.ContainerClass = 'incontainer';
     exports.ChartSVG = 'chartSVG';
     exports.PlotArea = 'plotArea';
@@ -22,6 +23,7 @@ insight.Constants = (function() {
     exports.LegendView = 'legend-view';
     exports.Bubble = 'bubble';
     exports.Scatter = 'scatter';
+    exports.Point = 'point';
     exports.TableClass = 'in-table';
     exports.TableRowClass = 'in-datarow';
 

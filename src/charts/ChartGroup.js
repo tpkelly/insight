@@ -28,12 +28,13 @@
          * update to highlight the selected slices of the Dimension
          */
         function notifyListeners(dimensionName, dimensionSelector) {
+
             var listeningObjects = self.dimensionListenerMap[dimensionName];
 
             if (listeningObjects != null) {
 
                 listeningObjects.forEach(function(item) {
-                    item.highlight(dimensionSelector);
+                    item.toggleHighlight(dimensionSelector);
                 });
 
             }
@@ -49,7 +50,7 @@
 
                     addDimensionListener(series.data, chart);
 
-                    series.clickEvent = self.chartFilterHandler;
+                    series.clickEvent = self.filterByGrouping;
 
                     addDataSet(series.data);
                 });
@@ -91,7 +92,7 @@
         function addTable(table) {
 
             // wire up the click event of the table to the filter handler of the DataSet
-            table.clickEvent = self.chartFilterHandler;
+            table.clickEvent = self.filterByGrouping;
 
             addDimensionListener(table.data, table);
 
@@ -143,94 +144,6 @@
         // Internal functions -----------------------------------------------------------------------------------------
 
         /*
-         * Method handler that is bound by the ChartGroup to the click events of any chart series or table rows,
-         * if the DataSets used by those entities are crossfilter enabled.
-         * It notifies any other listening charts of the dimensional selection event, which they can respond to
-         * by applying CSS highlighting etc.
-         * @memberof! insight.ChartGroup
-         * @instance
-         * @param {object} dataset - The insight.DataSet or insight.Grouping being filtered
-         * @param {string} value - The value that the dimension is being sliced/filtered by.
-         */
-        self.chartFilterHandler = function(dataset, value) {
-
-            var dimensionSelector = insight.Utils.keySelector(value);
-
-            // send events to any charts or tables also using this dimension, as they will need to update their
-            // styles to reflect the selection
-            notifyListeners(dataset.dimension.name, dimensionSelector);
-
-            var dimension = dataset.dimension;
-
-            var filterFunc = dimension.createFilterFunction(value);
-            var nameProperty = 'name';
-
-            // get the list of any dimensions matching the one that is being filtered
-            var dims = insight.Utils.takeWhere(self.dimensions, nameProperty, dimension.name);
-
-            // get the list of matching dimensions that are already filtered
-            var activeDim = insight.Utils.takeWhere(self.filteredDimensions, nameProperty, dimension.name);
-
-            // add the new filter to the list of active filters if it's not already active
-            if (!activeDim.length) {
-                self.filteredDimensions.push(dimension);
-            }
-
-            // loop through the matching dimensions to filter them all
-            dims.forEach(function(dim) {
-
-                var filterExists = insight.Utils.takeWhere(dim.filters, nameProperty, filterFunc.name)
-                    .length;
-
-                //if the dimension is already filtered by this value, toggle (remove) the filter
-                if (filterExists) {
-                    insight.Utils.removeWhere(dim.filters, nameProperty, filterFunc.name);
-
-                } else {
-                    // add the provided filter to the list for this dimension
-
-                    dim.filters.push(filterFunc);
-                }
-
-                // reset this dimension if no filters exist, else apply the filter to the dataset.
-                if (dim.filters.length === 0) {
-
-                    insight.Utils.removeItemFromArray(self.filteredDimensions, dim);
-                    dim.crossfilterDimension.filterAll();
-
-                } else {
-                    dim.crossfilterDimension.filter(function(d) {
-
-                        // apply all of the filters on this dimension to the current value, returning an array of
-                        // true/false values (which filters does it satisfy)
-                        var vals = dim.filters
-                            .map(function(func) {
-                                return func.filterFunction(d);
-                            });
-
-                        // if this value satisfies any of the filters, it should be kept
-                        var matchesAnyFilter = vals.filter(function(result) {
-                                return result;
-                            })
-                            .length > 0;
-
-                        return matchesAnyFilter;
-                    });
-                }
-            });
-
-            // the above filtering will have triggered a re-aggregation of the groupings.  We must manually
-            // initiate the recalculation of the groupings for any post aggregation calculations
-            self.groupings.forEach(function(group) {
-                group.recalculate();
-
-            });
-
-            self.draw();
-
-        };
-
-        /*
          * Draws all Charts and Tables in this ChartGroup
          * @memberof! insight.ChartGroup
          * @instance
@@ -264,6 +177,93 @@
             }
             return self;
         };
+
+        /**
+         * Filters the grouping with the ChartGroup so the given value will be highlighted by any chart or table that
+         * uses the grouping, and any charts or tables that use different groupings will be crossfiltered to only
+         * include data that matches the given group value.
+         * @memberof! insight.ChartGroup
+         * @instance
+         * @param {insight.Grouping} grouping - The grouping being filtered.
+         * @param {string} value - The value that the grouping is being filtered by.
+         */
+        self.filterByGrouping = function(grouping, value) {
+
+            var dimensionSelector = insight.Utils.keySelector(value);
+            var groupDimension = grouping.dimension;
+
+            // send events to any charts or tables also using this dimension, as they will need to update their
+            // styles to reflect the selection
+            notifyListeners(groupDimension.name, dimensionSelector);
+
+            var filterFunc = groupDimension.createFilterFunction(value);
+            var nameProperty = 'name';
+
+            // get the list of any dimensions matching the one that is being filtered
+            var dims = insight.Utils.takeWhere(self.dimensions, nameProperty, groupDimension.name);
+
+            // get the list of matching dimensions that are already filtered
+            var activeDim = insight.Utils.takeWhere(self.filteredDimensions, nameProperty, groupDimension.name);
+
+            // add the new filter to the list of active filters if it's not already active
+            if (!activeDim.length) {
+                self.filteredDimensions.push(groupDimension);
+            }
+
+            // loop through the matching dimensions to filter them all
+            dims.forEach(function(dim) {
+                dim.applyFilter(self.filteredDimensions, filterFunc);
+            });
+
+            // the above filtering will have triggered a re-aggregation of the groupings.  We must manually
+            // initiate the recalculation of the groupings for any post aggregation calculations
+            self.groupings.forEach(function(group) {
+                group.recalculate();
+            });
+
+            self.draw();
+
+            self.filterChanged();
+
+        };
+
+        /**
+         * Removes all filtering from the ChartGroup so charts and tables will display all data and all highlighting
+         * will be reset.
+         * @memberof! insight.ChartGroup
+         * @instance
+         */
+        self.clearFilters = function() {
+
+            self.filteredDimensions = [];
+
+            self.dimensions.forEach(function(dim) {
+                dim.clearFilters();
+            });
+
+            // the above filtering will have triggered a re-aggregation of the groupings.  We must manually
+            // initiate the recalculation of the groupings for any post aggregation calculations
+            self.groupings.forEach(function(group) {
+                group.recalculate();
+            });
+
+            self.charts.concat(self.tables).forEach(function(item) {
+                item.clearHighlight();
+            });
+
+            self.draw();
+
+            self.filterChanged();
+
+        };
+
+        /**
+         * This function is called when the chart's groupings are filtered or unfiltered.
+         * It can be overridden by clients that wish to be notified when the chart's filtering has changed.
+         * @memberof! insight.ChartGroup
+         * @instance
+         */
+        self.filterChanged = function() {};
 
         //Apply the default look-and-feel
         self.applyTheme(insight.defaultTheme);

@@ -267,10 +267,10 @@ describe('Axis', function() {
                 .tickPadding(0);
 
             // When
-            var observedResult = y.tickLabelRotationTransform();
+            var observedResult = y.tickLabelRotationTransform().split(',')[0];
 
             // Then
-            expect(observedResult).toEqual(' rotate(0,0,6)');
+            expect(observedResult).toEqual(' rotate(0');
 
         });
 
@@ -283,8 +283,8 @@ describe('Axis', function() {
                 .tickPadding(0);
 
             //Then:
-            var observedResult = y.tickLabelRotationTransform();
-            var expectedResult = ' rotate(90,0,6)';
+            var observedResult = y.tickLabelRotationTransform().split(',')[0];
+            var expectedResult = ' rotate(90';
 
             expect(observedResult).toEqual(expectedResult);
         });
@@ -492,12 +492,11 @@ describe('Axis', function() {
     describe('calculateLabelDimensions', function() {
         var axis,
             axisFont = insight.defaultTheme.axisStyle.axisLabelFont,
-            axisFontSize = insight.Utils.fontSizeFromFont(axisFont),
             axisLabel = 'Axis Label',
             tickPadding = 5,
             tickLabelFont = insight.defaultTheme.axisStyle.tickLabelFont,
-            tickLabelFontSize = insight.Utils.fontSizeFromFont(tickLabelFont),
             tickSize = 10,
+            series,
             textMeasurer;
 
         var data = [
@@ -515,6 +514,22 @@ describe('Axis', function() {
             var canvas = document.createElement('canvas');
 
             textMeasurer = new insight.TextMeasurer(canvas);
+        });
+
+        it('uses tickValues to perform calculation', function () {
+
+            // Given
+            axis.label('')
+                .tickPadding(0)
+                .tickSize(0);
+            spyOn(axis, 'tickValues').andCallThrough();
+
+            // When
+            axis.calculateLabelDimensions();
+
+            // Then
+            expect(axis.tickValues).toHaveBeenCalled();
+
         });
 
         describe('horizontal axis', function() {
@@ -610,7 +625,61 @@ describe('Axis', function() {
 
             });
 
-            it('handles negative text height', function() {
+            it('handles tick label rotation greater than 180 degrees', function() {
+
+                // Given
+                var tickLabelRotation = 190;
+
+                axis.tickSize(tickSize)
+                    .tickPadding(tickPadding)
+                    .label(axisLabel)
+                    .tickLabelRotation(tickLabelRotation);
+
+                // When
+                var result = axis.calculateLabelDimensions();
+
+                // Then
+                var expectedTickLabelHeight = textMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).height;
+                var expectedAxisLabelHeight = textMeasurer.measureText(axisLabel, axisFont).height;
+
+                var expectedResult =
+                    tickSize +
+                    tickPadding * 2 +
+                    Math.abs(expectedTickLabelHeight) +
+                    expectedAxisLabelHeight;
+
+                expect(result.height).toBe(expectedResult);
+
+            });
+
+            it('handles tick label rotation 300 degrees', function() {
+
+                // Given
+                var tickLabelRotation = 300;
+
+                axis.tickSize(tickSize)
+                    .tickPadding(tickPadding)
+                    .label(axisLabel)
+                    .tickLabelRotation(tickLabelRotation);
+
+                // When
+                var result = axis.calculateLabelDimensions();
+
+                // Then
+                var expectedTickLabelHeight = textMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).height;
+                var expectedAxisLabelHeight = textMeasurer.measureText(axisLabel, axisFont).height;
+
+                var expectedResult =
+                    tickSize +
+                    tickPadding * 2 +
+                    Math.abs(expectedTickLabelHeight) +
+                    expectedAxisLabelHeight;
+
+                expect(result.height).toBe(expectedResult);
+
+            });
+
+            it('handles negative tick label height', function() {
 
                 // Given
                 var tickLabelRotation = 180;
@@ -624,12 +693,13 @@ describe('Axis', function() {
                 var result = axis.calculateLabelDimensions();
 
                 // Then
+                var expectedAxisTickLabelHeight = textMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).height;
                 var expectedAxisLabelHeight = textMeasurer.measureText(axisLabel, axisFont).height;
 
                 var expectedResult =
                     tickSize +
                     tickPadding * 2 +
-                    0 +
+                    Math.abs(expectedAxisTickLabelHeight) +
                     expectedAxisLabelHeight;
 
                 expect(result.height).toBe(expectedResult);
@@ -789,7 +859,7 @@ describe('Axis', function() {
 
             });
 
-            it('handles negative text width', function() {
+            it('handles negative tick label width', function() {
 
                 // Given
                 var tickLabelRotation = 180;
@@ -803,12 +873,41 @@ describe('Axis', function() {
                 var result = axis.calculateLabelDimensions();
 
                 // Then
+                var expectedTickLabelWidth = textMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).width;
                 var expectedAxisLabelWidth = textMeasurer.measureText(axisLabel, axisFont).width;
 
                 var expectedResult =
                     tickSize +
                     tickPadding * 2 +
-                    0 +
+                    Math.abs(expectedTickLabelWidth) +
+                    expectedAxisLabelWidth;
+
+                expect(result.width).toBe(expectedResult);
+
+            });
+
+
+            it('handles tick label rotation greater than 180 degrees', function() {
+
+                // Given
+                var tickLabelRotation = 190;
+
+                axis.tickSize(tickSize)
+                    .tickPadding(tickPadding)
+                    .label(axisLabel)
+                    .tickLabelRotation(tickLabelRotation);
+
+                // When
+                var result = axis.calculateLabelDimensions();
+
+                // Then
+                var expectedTickLabelWidth = textMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).width;
+                var expectedAxisLabelWidth = textMeasurer.measureText(axisLabel, axisFont).width;
+
+                var expectedResult =
+                    tickSize +
+                    tickPadding * 2 +
+                    Math.abs(expectedTickLabelWidth) +
                     expectedAxisLabelWidth;
 
                 expect(result.width).toBe(expectedResult);
@@ -876,7 +975,6 @@ describe('Axis', function() {
             });
 
         });
-
     });
 
     describe('calculateLabelOverhang', function() {
@@ -1712,4 +1810,1263 @@ describe('Axis', function() {
 
     });
 
+    describe('textAnchor', function() {
+
+        var axis;
+
+        beforeEach(function() {
+            axis = new insight.Axis('TestAxis', insight.Scales.Linear);
+        });
+
+        describe('vertical axis', function() {
+
+            beforeEach(function() {
+                axis.isHorizontal = d3.functor(false);
+            });
+
+            it('end if no rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(0);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+
+            });
+
+            it('end if 45 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(45);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+
+            });
+
+            it('middle if 90 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(90);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('middle');
+
+
+            });
+
+            it('start if 135 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(135);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+
+            });
+
+            it('start if 180 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(180);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+            });
+
+            it('start if 225 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(225);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+            });
+
+            it('middle if 270 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(270);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('middle');
+
+            });
+
+            it('end if 315 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(315);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+            });
+
+            it('end if 360 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(360);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+            });
+
+            it('start if no rotation and reversed position', function() {
+
+                // Given
+                axis.tickLabelRotation(0);
+                axis.hasReversedPosition(true);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+
+            });
+
+            it('start if 45 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(45);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+            });
+
+            it('middle if 90 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(90);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('middle');
+
+
+            });
+
+            it('middle if -90 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(-90);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('middle');
+
+
+            });
+
+            it('end if 135 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(135);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+
+            });
+
+            it('end if 180 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(180);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+            });
+
+            it('end if 225 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(225);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+            });
+
+            it('middle if 270 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(270);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('middle');
+
+            });
+
+            it('start if 315 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(315);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+            });
+
+            it('start if 360 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(360);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+            });
+
+
+
+        });
+
+        describe('horizontal axis', function() {
+
+            beforeEach(function() {
+                axis.isHorizontal = d3.functor(true);
+            });
+
+            it('middle if no rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(0);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('middle');
+
+
+            });
+
+            it('start if 45 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(45);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+
+            });
+
+            it('start if 90 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(90);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+
+            });
+
+            it('start if 135 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(135);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+
+            });
+
+            it('middle if 180 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(180);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('middle');
+
+            });
+
+            it('end if 225 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(225);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+            });
+
+            it('end if 270 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(270);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+            });
+
+            it('end if 315 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(270);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+            });
+
+            it('middle if 360 degree rotation', function() {
+
+                // Given
+                axis.tickLabelRotation(360);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('middle');
+
+            });
+
+            it('middle if no rotation and reversed position', function() {
+
+                // Given
+                axis.tickLabelRotation(0);
+                axis.hasReversedPosition(true);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('middle');
+
+
+            });
+
+            it('end if 45 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(45);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+
+            });
+
+            it('end if 90 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(90);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+
+            });
+
+            it('end if 135 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(135);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('end');
+
+
+            });
+
+            it('middle if 180 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(180);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('middle');
+
+            });
+
+            it('start if 225 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(225);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+            });
+
+            it('start if 270 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(270);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+            });
+
+            it('start if 315 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(270);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('start');
+
+            });
+
+            it('middle if 360 degree rotation and reversed position', function() {
+
+                // Given
+                axis.hasReversedPosition(true);
+                axis.tickLabelRotation(360);
+
+                // When
+                var result = axis.textAnchor();
+
+                // Then
+                expect(result).toBe('middle');
+
+            });
+
+        });
+
+    });
+
+    describe('tickValues', function() {
+        function fakeAxisMeasurer(item) {
+            return item.map(function() { return { width: 20, height: 10 } });
+        }
+
+        describe('on linear axis', function() {
+
+            var axis;
+            beforeEach(function() {
+                axis = new insight.Axis('axis', insight.Scales.Linear);
+            });
+
+            it('tickValues are generated from tickFrequency', function() {
+
+                // Given:
+                spyOn(axis, 'domain').andReturn([0, 53271721]);
+                spyOn(axis, 'tickFrequency').andReturn(5000000);
+
+                // When:
+                var result = axis.tickValues();
+
+                // Then:
+                var expectedTickValues = [
+                    0,
+                    5000000,
+                    10000000,
+                    15000000,
+                    20000000,
+                    25000000,
+                    30000000,
+                    35000000,
+                    40000000,
+                    45000000,
+                    50000000
+                ];
+                expect(result).toEqual(expectedTickValues);
+            });
+
+            it('has rounded tick values', function() {
+
+                // Given:
+                spyOn(axis, 'domain').andReturn([241, 53271721]);
+                spyOn(axis, 'tickFrequency').andReturn(5000000);
+
+                // When:
+                var result = axis.tickValues();
+
+                // Then:
+                var expectedTickValues = [
+                    5000000,
+                    10000000,
+                    15000000,
+                    20000000,
+                    25000000,
+                    30000000,
+                    35000000,
+                    40000000,
+                    45000000,
+                    50000000
+                ];
+                expect(result).toEqual(expectedTickValues);
+            });
+
+            it('has rounded tick values for small tick frequencies', function() {
+
+                // Given:
+                spyOn(axis, 'domain').andReturn([0, 1]);
+                spyOn(axis, 'tickFrequency').andReturn(0.1);
+
+                // When:
+                var result = axis.tickValues();
+
+                // Then:
+                var expectedTickValues = [
+                    0,
+                    0.1,
+                    0.2,
+                    0.3,
+                    0.4,
+                    0.5,
+                    0.6,
+                    0.7,
+                    0.8,
+                    0.9,
+                    1
+                ];
+                expect(result).toEqual(expectedTickValues);
+            });
+
+            it('has tick values that contain domain values', function() {
+
+                // Given:
+                spyOn(axis, 'domain').andReturn([0, 1000]);
+                spyOn(axis, 'tickFrequency').andReturn(100);
+
+                // When:
+                var result = axis.tickValues();
+
+                // Then:
+                var expectedTickValues = [
+                    0,
+                    100,
+                    200,
+                    300,
+                    400,
+                    500,
+                    600,
+                    700,
+                    800,
+                    900,
+                    1000
+                ];
+                expect(result).toEqual(expectedTickValues);
+            });
+
+            describe('the tick step', function() {
+
+                it('increases by tickFrequency', function() {
+                    //Given:
+                    var tickFrequency = 10;
+                    var axisStrategy = new insight.LinearAxis();
+
+                    //Then:
+                    var nextTick = axisStrategy.nextTickValue(axis, 50, tickFrequency);
+                    expect(nextTick).toBe(60);
+                });
+
+                it('decreases by tickFrequency', function() {
+                    //Given:
+                    var tickFrequency = 10;
+                    var axisStrategy = new insight.LinearAxis();
+
+                    //Then:
+                    var nextTick = axisStrategy.previousTickValue(axis, 50, tickFrequency);
+                    expect(nextTick).toBe(40);
+                });
+            });
+        });
+
+        describe('on ordinal axis', function() {
+
+
+            var axis;
+            var categories;
+
+            beforeEach(function() {
+                axis = new insight.Axis('axis', insight.Scales.Ordinal);
+                categories = ['Cat', 'Dog', 'Snake', 'Horse', 'Rabbit'];
+                spyOn(axis, 'domain').andReturn(categories);
+            });
+
+            it('tickValues are generated from ordinal values', function() {
+
+                // When:
+                var result = axis.tickValues();
+
+                // Then:
+                expect(result).toEqual(categories);
+            });
+
+            it('ignores tickFrequency', function() {
+                //Given:
+                spyOn(axis, 'tickFrequency').andReturn(2);
+
+                //Then:
+                expect(axis.tickValues()).toEqual(categories);
+            });
+
+            describe('the tick step', function() {
+
+                var axisStrategy;
+                beforeEach(function() {
+                    axisStrategy = new insight.OrdinalAxis();
+                });
+
+                it('increases to next ordinal value', function() {
+
+                    // When:
+                    var nextTick = axisStrategy.nextTickValue(axis, 'Snake');
+
+                    // Then:
+                    expect(nextTick).toBe('Horse');
+                });
+
+                it('decreases to previous ordinal value', function() {
+
+                    // When:
+                    var nextTick = axisStrategy.previousTickValue(axis, 'Dog');
+
+                    // Then:
+                    expect(nextTick).toBe('Cat');
+                });
+
+                it('last tick value cannot be increased', function() {
+
+                    // When:
+                    var nextTick = axisStrategy.nextTickValue(axis, 'Rabbit');
+
+                    // Then:
+                    expect(nextTick).toBe(null);
+                });
+
+                it('first tick value cannot be decreased', function() {
+
+                    // When:
+                    var nextTick = axisStrategy.previousTickValue(axis, 'Cat');
+
+                    // Then:
+                    expect(nextTick).toBe(null);
+                });
+
+                it('cannot increase a missing tick value', function() {
+
+                    // When:
+                    var nextTick = axisStrategy.nextTickValue(axis, 'Fictional');
+
+                    // Then:
+                    expect(nextTick).toBe(null);
+                });
+
+                it('cannot decrease a missing tick value', function() {
+
+                    // When:
+                    var nextTick = axisStrategy.previousTickValue(axis, 'Fictional');
+
+                    // Then:
+                    expect(nextTick).toBe(null);
+                });
+            });
+
+        });
+
+        describe('on time axis', function() {
+
+            var axis;
+            beforeEach(function() {
+                axis = new insight.Axis('axis', insight.Scales.Time);
+            });
+
+            it('tickValues are generated from tickFrequency', function() {
+
+                // Given:
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(2014, 0, 1)),
+                        new Date(Date.UTC(2014, 9, 1, 17, 33, 3))]
+                );
+                spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForMonths(1));
+
+                // When:
+                var result = axis.tickValues();
+
+                // Then:
+                var expectedTickValues = [
+                    new Date(Date.UTC(2014, 0, 1)),
+                    new Date(Date.UTC(2014, 1, 1)),
+                    new Date(Date.UTC(2014, 2, 1)),
+                    new Date(Date.UTC(2014, 3, 1)),
+                    new Date(Date.UTC(2014, 4, 1)),
+                    new Date(Date.UTC(2014, 5, 1)),
+                    new Date(Date.UTC(2014, 6, 1)),
+                    new Date(Date.UTC(2014, 7, 1)),
+                    new Date(Date.UTC(2014, 8, 1)),
+                    new Date(Date.UTC(2014, 9, 1))
+                ];
+                expect(result).toEqual(expectedTickValues);
+            });
+
+            it('has hourly tick values for a 12-hour long time axis', function() {
+
+                // Given:
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(2014, 10, 8, 4, 6, 1)),
+                        new Date(Date.UTC(2014, 10, 8, 16, 33, 3))]
+                );
+                spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForHours(1));
+
+                // When:
+                var result = axis.tickValues();
+
+                // Then:
+                var expectedTickValues = [
+                    new Date(Date.UTC(2014, 10, 8, 5)),
+                    new Date(Date.UTC(2014, 10, 8, 6)),
+                    new Date(Date.UTC(2014, 10, 8, 7)),
+                    new Date(Date.UTC(2014, 10, 8, 8)),
+                    new Date(Date.UTC(2014, 10, 8, 9)),
+                    new Date(Date.UTC(2014, 10, 8, 10)),
+                    new Date(Date.UTC(2014, 10, 8, 11)),
+                    new Date(Date.UTC(2014, 10, 8, 12)),
+                    new Date(Date.UTC(2014, 10, 8, 13)),
+                    new Date(Date.UTC(2014, 10, 8, 14)),
+                    new Date(Date.UTC(2014, 10, 8, 15)),
+                    new Date(Date.UTC(2014, 10, 8, 16))
+                ];
+                expect(result).toEqual(expectedTickValues);
+            });
+
+            it('handles dates before 1970', function() {
+
+                // Given:
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(1965, 0, 1, 0, 0)),
+                        new Date(Date.UTC(1975, 0, 1, 0, 0))]
+                );
+                spyOn(axis, 'tickFrequency').andReturn(insight.DateFrequency.dateFrequencyForYears(1));
+
+                // When:
+                var result = axis.tickValues();
+
+                // Then:
+                var expectedTickValues = [
+                    new Date(Date.UTC(1965, 0, 1)),
+                    new Date(Date.UTC(1966, 0, 1)),
+                    new Date(Date.UTC(1967, 0, 1)),
+                    new Date(Date.UTC(1968, 0, 1)),
+                    new Date(Date.UTC(1969, 0, 1)),
+                    new Date(Date.UTC(1970, 0, 1)),
+                    new Date(Date.UTC(1971, 0, 1)),
+                    new Date(Date.UTC(1972, 0, 1)),
+                    new Date(Date.UTC(1973, 0, 1)),
+                    new Date(Date.UTC(1974, 0, 1)),
+                    new Date(Date.UTC(1975, 0, 1))
+                ];
+                expect(result).toEqual(expectedTickValues);
+            });
+
+            describe('the tick step', function() {
+
+                var axisStrategy;
+                beforeEach(function() {
+                    axisStrategy = new insight.DateAxis();
+                });
+
+                it('increases by tickFrequency for years', function() {
+                    //Given:
+                    var tickFrequency = insight.DateFrequency.dateFrequencyForYears(1);
+
+                    //Then:
+                    var nextTick = axisStrategy.nextTickValue(axis, new Date(2012, 1, 29), tickFrequency);
+                    expect(nextTick).toEqual(new Date(2013, 2, 1));
+                });
+
+                it('decreases by tickFrequency for years', function() {
+                    //Given:
+                    var tickFrequency = insight.DateFrequency.dateFrequencyForYears(1);
+
+                    //Then:
+                    var nextTick = axisStrategy.previousTickValue(axis, new Date(2012, 1, 29), tickFrequency);
+                    expect(nextTick).toEqual(new Date(2011, 2, 1));
+                });
+
+
+                it('increases by tickFrequency for months', function() {
+                    //Given:
+                    var tickFrequency = insight.DateFrequency.dateFrequencyForMonths(3);
+
+                    //Then:
+                    var nextTick = axisStrategy.nextTickValue(axis, new Date(2014, 4, 10), tickFrequency);
+                    expect(nextTick).toEqual(new Date(2014, 7, 10));
+                });
+
+                it('decreases by tickFrequency for months', function() {
+                    //Given:
+                    var tickFrequency = insight.DateFrequency.dateFrequencyForMonths(3);
+
+                    //Then:
+                    var nextTick = axisStrategy.previousTickValue(axis, new Date(2014, 7, 10), tickFrequency);
+                    expect(nextTick).toEqual(new Date(2014, 4, 10));
+                });
+
+                it('increases by tickFrequency for days', function() {
+                    //Given:
+                    var tickFrequency = insight.DateFrequency.dateFrequencyForDays(1);
+
+                    //Then:
+                    var nextTick = axisStrategy.nextTickValue(axis, new Date(2014, 6, 31), tickFrequency);
+                    expect(nextTick).toEqual(new Date(2014, 7, 1));
+                });
+
+                it('decreases by tickFrequency for days', function() {
+                    //Given:
+                    var tickFrequency= insight.DateFrequency.dateFrequencyForDays(1);
+
+                    //Then:
+                    var nextTick = axisStrategy.previousTickValue(axis, new Date(2014, 0, 1), tickFrequency);
+                    expect(nextTick).toEqual(new Date(2013, 11, 31));
+                });
+
+                it('increases by tickFrequency for hours', function() {
+                    //Given:
+                    var tickFrequency = insight.DateFrequency.dateFrequencyForHours(6);
+
+                    //Then:
+                    var nextTick = axisStrategy.nextTickValue(axis, new Date(Date.UTC(2014, 2, 30, 0)), tickFrequency);
+                    expect(nextTick).toEqual(new Date(Date.UTC(2014, 2, 30, 6)));
+                });
+
+                it('decreases by tickFrequency for hours', function() {
+                    //Given:
+                    var tickFrequency = insight.DateFrequency.dateFrequencyForHours(6);
+
+                    //Then:
+                    var nextTick = axisStrategy.previousTickValue(axis, new Date(Date.UTC(2014, 9, 26, 5)), tickFrequency);
+                    expect(nextTick).toEqual(new Date(Date.UTC(2014, 9, 25, 23)));
+                });
+
+                it('increases by tickFrequency for minutes', function() {
+                    //Given:
+                    var tickFrequency = insight.DateFrequency.dateFrequencyForMinutes(6);
+
+                    //Then:
+                    var nextTick = axisStrategy.nextTickValue(axis, new Date(2014, 2, 30, 0, 5), tickFrequency);
+                    expect(nextTick).toEqual(new Date(2014, 2, 30, 0, 11));
+                });
+
+                it('decreases by tickFrequency for minutes', function() {
+                    //Given:
+                    var tickFrequency = insight.DateFrequency.dateFrequencyForMinutes(6);
+
+                    //Then:
+                    var nextTick = axisStrategy.previousTickValue(axis, new Date(2014, 9, 26, 6, 11), tickFrequency);
+                    expect(nextTick).toEqual(new Date(2014, 9, 26, 6, 5));
+                });
+
+                it('increases by tickFrequency for seconds', function() {
+                    //Given:
+                    var tickFrequency = insight.DateFrequency.dateFrequencyForSeconds(6);
+
+                    //Then:
+                    var nextTick = axisStrategy.nextTickValue(axis, new Date(2014, 2, 30, 0, 0, 5), tickFrequency);
+                    expect(nextTick).toEqual(new Date(2014, 2, 30, 0, 0, 11));
+                });
+
+                it('decreases by tickFrequency for seconds', function() {
+                    //Given:
+                    var tickFrequency = insight.DateFrequency.dateFrequencyForSeconds(6);
+
+                    //Then:
+                    var nextTick = axisStrategy.previousTickValue(axis, new Date(2014, 9, 26, 6, 0, 11), tickFrequency);
+                    expect(nextTick).toEqual(new Date(2014, 9, 26, 6, 0, 5));
+                });
+            });
+
+        });
+
+    });
+
+    describe('initial tick', function() {
+        it('on linear axis is a multiple of the tick frequency', function() {
+            //Given:
+            var axis = new insight.Axis('axis', insight.Scales.Linear);
+            spyOn(axis, 'domain').andReturn([7, 20]);
+            var tickFrequency = 4;
+            var axisStrategy = new insight.LinearAxis();
+
+            //Then:
+            var expectedFirstTick = 8;
+            var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+            expect(observedFirstTick).toBe(expectedFirstTick);
+        });
+
+        it('on date axis is a multiple of the tick frequency', function() {
+            //Given:
+            var axis = new insight.Axis('axis', insight.Scales.Time);
+            spyOn(axis, 'domain').andReturn([
+                    new Date(2014, 10, 8, 4, 6, 1),
+                    new Date(2014, 10, 8, 16, 33, 3)]
+            );
+            var tickFrequency = insight.DateFrequency.dateFrequencyForHours(1);
+            var axisStrategy = new insight.DateAxis();
+
+            //Then:
+            var expectedFirstTick = new Date(2014, 10, 8, 4);
+            var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+            expect(observedFirstTick).toEqual(expectedFirstTick);
+        });
+
+        it('on ordinal axis is the first value', function() {
+            //Given:
+            var axis = new insight.Axis('axis', insight.Scales.Ordinal);
+            spyOn(axis, 'domain').andReturn(['Cat', 'Dog', 'Horse', 'Rat', 'Rabbit']);
+            var axisStrategy = new insight.OrdinalAxis();
+            var tickFrequency;
+
+            //Then:
+            var expectedFirstTick = 'Cat';
+            var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+            expect(observedFirstTick).toEqual(expectedFirstTick);
+        });
+    });
+
+    describe('tickFrequency', function() {
+
+        describe('on linear axis', function() {
+
+            var axis;
+            beforeEach(function() {
+                axis = new insight.Axis('axis', insight.Scales.Linear);
+                axis.bounds = [1000, 300];
+                axis.isHorizontal = d3.functor(true);
+
+                spyOn(axis, 'measureTickValues').andCallFake(function(item) {
+                    return item.map(function() { return { width: 20, height: 10 } });
+                });
+            });
+
+            it('has a 1/10th tick frequency', function() {
+                //Given:
+                spyOn(axis, 'domain').andReturn([0, 1000]);
+
+                //Then:
+                var expectedFrequency = 100;
+                var observedFrequency = axis.tickFrequency();
+                expect(observedFrequency).toBe(expectedFrequency);
+            });
+
+            it('has a round frequency', function() {
+                //Given:
+                spyOn(axis, 'domain').andReturn([0, 2025]);
+
+                //Then:
+                var expectedFrequency = 200;
+                var observedFrequency = axis.tickFrequency();
+                expect(observedFrequency).toBe(expectedFrequency);
+            });
+
+            it('has tick frequency of a single significant figure', function() {
+                //Given:
+                spyOn(axis, 'domain').andReturn([0, 999]);
+
+                //Then:
+                var expectedFrequency = 100;
+                var observedFrequency = axis.tickFrequency();
+                expect(observedFrequency).toBe(expectedFrequency);
+            });
+
+            it('has tick frequency of 1 when range is 0', function() {
+                //Given:
+                spyOn(axis, 'domain').andReturn([5, 5]);
+
+                //Then:
+                var expectedFrequency = 1;
+                var observedFrequency = axis.tickFrequency();
+                expect(observedFrequency).toBe(expectedFrequency);
+            });
+
+            it('can have a tick frequency set by the user', function() {
+                //Given:
+                var userSpecifiedValue = 75;
+                spyOn(axis, 'domain').andReturn([0, 1000]);
+
+                //When:
+                axis.tickFrequency(userSpecifiedValue);
+
+                //Then:
+                var expectedFrequency = userSpecifiedValue;
+                var observedFrequency = axis.tickFrequency();
+                expect(observedFrequency).toBe(expectedFrequency);
+            });
+
+            it('setting the tick frequency updates tickValues', function() {
+                //Given:
+                var userSpecifiedValue = 75;
+                spyOn(axis, 'domain').andReturn([0, 500]);
+
+                //When:
+                axis.tickFrequency(userSpecifiedValue);
+
+                //Then:
+                var expectedTicks = [0, 75, 150, 225, 300, 375, 450];
+                var observedTicks = axis.tickValues();
+                expect(observedTicks).toEqual(expectedTicks);
+            });
+
+            it('tick frequency cannot be negative', function() {
+                //Given:
+                var throwMinusOne = function() {axis.tickFrequency(-1);};
+                var throwMinusOneHundred = function() {axis.tickFrequency(-100);};
+                var throwMinusPointOne = function() {axis.tickFrequency(-.1);};
+
+                //Then:
+                expect(throwMinusOne).toThrow(insight.ErrorMessages.nonPositiveTickFrequencyException);
+                expect(throwMinusOneHundred).toThrow(insight.ErrorMessages.nonPositiveTickFrequencyException);
+                expect(throwMinusPointOne).toThrow(insight.ErrorMessages.nonPositiveTickFrequencyException);
+            });
+
+            it('tick frequency cannot be zero', function() {
+                //Given:
+                var throwAction = function() {axis.tickFrequency(0);};
+
+                //Then:
+                expect(throwAction).toThrow(insight.ErrorMessages.nonPositiveTickFrequencyException);
+            });
+
+            it('ensures tick labels do not overlap when axis is horizontal', function() {
+                //Given:
+                axis.bounds = [100, 300];
+                spyOn(axis, 'domain').andReturn([0, 999]);
+
+                //Then:
+                var expectedFrequency = 200;
+                var observedFrequency = axis.tickFrequency();
+                expect(observedFrequency).toBe(expectedFrequency);
+            });
+
+            it('ensures tick labels do not overlap when axis is vertical', function() {
+                axis.isHorizontal = d3.functor(false);
+                //Given:
+                axis.bounds = [1000, 50];
+                spyOn(axis, 'domain').andReturn([0, 999]);
+
+                //Then:
+                var expectedFrequency = 200;
+                var observedFrequency = axis.tickFrequency();
+                expect(observedFrequency).toBe(expectedFrequency);
+            });
+
+        });
+
+        describe('on date / time axis', function() {
+
+            var axis;
+            beforeEach(function() {
+                axis = new insight.Axis('axis', insight.Scales.Time);
+                axis.bounds = [1000, 300];
+                axis.isHorizontal = d3.functor(true);
+
+                spyOn(axis, 'measureTickValues').andCallFake(function(item) {
+                    return item.map(function() { return { width: 20, height: 10 } });
+                });
+            });
+
+            it('has a 1/10th tick frequency', function() {
+                //Given:
+                spyOn(axis, 'domain').andReturn([
+                    new Date(2014, 0, 1),
+                    new Date(2014, 10, 1)
+                ]);
+
+                //Then:
+                var expectedFrequency = insight.DateFrequency.dateFrequencyForMonths(1).toValue();
+                var observedFrequency = axis.tickFrequency().toValue();
+                expect(observedFrequency).toEqual(expectedFrequency);
+            });
+
+            it('has a whole-date frequency for partial-day ranges', function() {
+                //Given:
+                spyOn(axis, 'domain').andReturn([
+                    new Date(2014, 0, 1),
+                    new Date(2014, 0, 21, 5)
+                ]);
+
+                //Then:
+                var expectedFrequency = insight.DateFrequency.dateFrequencyForDays(2).toValue();
+                var observedFrequency = axis.tickFrequency().toValue();
+                expect(observedFrequency).toEqual(expectedFrequency);
+            });
+
+            it('has a whole-year frequency for partial-year ranges', function() {
+                //Given:
+                spyOn(axis, 'domain').andReturn([
+                    new Date(2004, 1, 1),
+                    new Date(2014, 0, 30)
+                ]);
+
+                //Then:
+                var expectedFrequency = insight.DateFrequency.dateFrequencyForYears(1).toValue();
+                var observedFrequency = axis.tickFrequency().toValue();
+                expect(observedFrequency).toEqual(expectedFrequency);
+            });
+
+            it('has maximum tick frequency of 100 years', function() {
+                //Given:
+                spyOn(axis, 'domain').andReturn([
+                    new Date(1900, 1, 1),
+                    new Date(200014, 0, 30)
+                ]);
+
+                //Then:
+                var expectedFrequency = insight.DateFrequency.dateFrequencyForYears(100).toValue();
+                var observedFrequency = axis.tickFrequency().toValue();
+                expect(observedFrequency).toEqual(expectedFrequency);
+            });
+
+            it('ensures tick labels do not overlap when axis is horizontal', function() {
+                //Given:
+                axis.bounds = [100, 300];
+                spyOn(axis, 'domain').andReturn([
+                    new Date(2014, 0, 1),
+                    new Date(2014, 10, 1)
+                ]);
+
+                //Then:
+                var expectedFrequency = insight.DateFrequency.dateFrequencyForMonths(3).toValue();
+                var observedFrequency = axis.tickFrequency().toValue();
+                expect(observedFrequency).toEqual(expectedFrequency);
+            });
+
+            it('ensures tick labels do not overlap when axis is vertical', function() {
+                //Given:
+                axis.isHorizontal = d3.functor(false);
+                axis.bounds = [1000, 50];
+                spyOn(axis, 'domain').andReturn([
+                    new Date(2014, 0, 1),
+                    new Date(2014, 10, 1)
+                ]);
+
+                //Then:
+                var expectedFrequency = insight.DateFrequency.dateFrequencyForMonths(3).toValue();
+                var observedFrequency = axis.tickFrequency().toValue();
+                expect(observedFrequency).toEqual(expectedFrequency);
+            });
+
+        });
+    });
 });

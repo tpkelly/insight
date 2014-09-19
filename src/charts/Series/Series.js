@@ -3,7 +3,7 @@
     /**
      * The Series base class provides some base functions that are used by any specific types of series that derive from this class
      * @class insight.Series
-     * @param {string} name - A uniquely identifying name for this chart
+     * @param {string} name - A uniquely identifying name for this series
      * @param {DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
      * @param {insight.Scales.Scale} y - the y axis
@@ -95,14 +95,26 @@
         // Internal functions -----------------------------------------------------------------------------------------
 
         /*
-         * Generates the base class name to be used for items in this series.It can be extended upon by individual items to show
-         * if they are selected or to mark them out in other ways.
+         * Generates the short class name to be used for items in this series.
          * @memberof insight.Series
-         * @returns {string} baseClassName - A root valuefor the class attribute used for items in this Series.
+         * @returns {string} shortClassName - A short value for the class attribute used for items in this Series.
+         */
+        self.shortClassName = function() {
+            var shortName = self.name + 'class';
+            var spacelessName = insight.Utils.alphaNumericString(shortName);
+
+            return spacelessName;
+        };
+
+        /*
+         * Generates the base class name to be used for items in this series.It can be extended upon by individual items
+         * to mark them out in other ways.
+         * @memberof insight.Series
+         * @returns {string} baseClassName - A root value for the class attribute used for items in this Series.
          */
         self.seriesClassName = function() {
 
-            var seriesName = [self.name + 'class']
+            var seriesName = [self.shortClassName()]
                 .concat(self.classValues)
                 .join(' ');
 
@@ -131,31 +143,19 @@
         };
 
         /*
-         * Creates the tooltip for this Series, checking if it exists already first.
-         * @memberof! insight.Series
-         * @param {DOMElement} container - The DOM Element that the tooltip should be drawn inside.
-         */
-        self.initializeTooltip = function(container) {
-            if (!self.tooltip) {
-                self.tooltip = new insight.Tooltip()
-                    .container(container)
-                    .offset(self.tooltipOffset());
-            }
-        };
-
-        /*
-         * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouse over. Tooltips are shown and CSS updated.
+         * This event handler is triggered when a series element (rectangle, circle or line) triggers a mouse over.
+         * Tooltips are shown and CSS updated.
          * The *this* context will reference the DOMElement raising the event.
          * @memberof! insight.Series
          * @param {object} item - The data point for the hovered item.
-         * @param {int} index - The index of the hovered item in the data set.  This is required at the moment as we need to provide the valueFunction until stacked series are refactored.
-         * @param {function} valueFunction - If provided, this function will be used to generate the tooltip text, otherwise the series default valueFunction will be used.
-         *                                   This is only for stacked charts that currently have multiple valueFunctions.
+         * @param {int} i - The index of the hovered item in the data set.
          */
-        self.mouseOver = function(item, i, valueFunction) {
+        self.mouseOver = function(item, i) {
 
-            var textFunction = valueFunction || self.tooltipFunction();
+            var textFunction = self.tooltipFunction();
             var tooltipText = tooltipFormat(textFunction(item));
+
+            self.tooltip.offset(self.tooltipOffset());
 
             self.tooltip.show(this, tooltipText);
 
@@ -176,10 +176,10 @@
 
 
 
-        self.click = function(element, filterFunc) {
-            var filterValue = groupKeyFunction(filterFunc);
+        self.click = function(group) {
+            var groupKey = groupKeyFunction(group);
 
-            self.clickEvent(self.data, filterValue);
+            self.clickEvent(self.data, groupKey);
         };
 
         self.tooltipFunction = function(tooltipFunc) {

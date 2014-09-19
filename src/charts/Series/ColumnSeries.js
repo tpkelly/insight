@@ -3,7 +3,8 @@
     /**
      * The ColumnSeries class extends the Series class and draws vertical bars on a Chart
      * @class insight.ColumnSeries
-     * @param {string} name - A uniquely identifying name for this chart
+     * @extends insight.Series
+     * @param {string} name - A uniquely identifying name for this series
      * @param {DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
      * @param {insight.Scales.Scale} y - the y axis
@@ -26,18 +27,8 @@
             return self.tooltipFormat()(self.valueFunction()(d));
         }
 
-        function click(filter) {
-            return self.click(self, filter);
-        }
-
         function duration(d, i) {
             return 200 + (i * 20);
-        }
-
-        function mouseOver(data, i) {
-            var seriesName = this.getAttribute('in_series');
-
-            self.mouseOver.call(this, data, i, self.valueFunction());
         }
 
         function opacity() {
@@ -59,7 +50,7 @@
 
         self.draw = function(chart, isDragging) {
 
-            self.initializeTooltip(chart.container.node());
+            self.tooltip = chart.tooltip;
             self.selectedItems = chart.selectedItems;
 
             var groupSelector = 'g.' + self.name + '.' + insight.Constants.BarGroupClass,
@@ -83,9 +74,9 @@
                 .attr('in_series', self.name)
                 .attr('fill', self.color)
                 .attr('clip-path', 'url(#' + chart.clipPath() + ')')
-                .on('mouseover', mouseOver)
+                .on('mouseover', self.mouseOver)
                 .on('mouseout', self.mouseOut)
-                .on('click', click);
+                .on('click', self.click);
 
             var seriesTypeCount = chart.countSeriesOfType(self);
             var seriesIndex = chart.seriesIndexByType(self);
