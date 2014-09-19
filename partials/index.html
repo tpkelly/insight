@@ -54,21 +54,33 @@
                 <br>
                 <div class="show-code">
                     <svg width="120" height="30">
-                        <rect width="100%" height="100%" rx="10" fill="#bdd7e7"></rect>
-                        <text color="#333" font-weight="600" x="15" y="20">See the code</text>
-                        <rect id="languages-code" width="100%" height="100%" opacity="0" ng-mouseenter="showTooltip('js/snippets/languageChart.js', '#languages-code')"></rect>
+                        <rect class="toggle-code-background" width="100%" height="100%" rx="10"></rect>
+                        <text class="toggle-code-label" x="60" y="20">See the code</text>
+                        <rect class="toggle-code-button" id="languages-code" width="100%" height="100%" ng-mouseenter="showTooltip('js/snippets/languageChart.js', '#languages-code')"></rect>
                     </svg>
                 </div>
             </div>
             <div class="chartcontainer">
                 <div id="bubble-chart" class="chartbox"></div>
                 <br>
-                <div class="show-code"><button ng-click="showTooltip('js/snippets/bubbleChart.js', $event)">See the code</button></div>
+                <div class="show-code">
+                    <svg width="120" height="30">
+                        <rect class="toggle-code-background" width="100%" height="100%" rx="10"></rect>
+                        <text class="toggle-code-label" x="60" y="20">See the code</text>
+                        <rect class="toggle-code-button" id="bubbles-code" width="100%" height="100%" ng-mouseenter="showTooltip('js/snippets/bubbleChart.js', '#bubbles-code')"></rect>
+                    </svg>
+                </div>
             </div>
             <div class="chartcontainer">
                 <div id="genre-count" class="chartbox"></div>
                 <br>
-                <div class="show-code"><button ng-click="showTooltip('js/snippets/genreChart.js', $event)">See the code</button></div>
+                <div class="show-code">
+                    <svg width="120" height="30">
+                        <rect class="toggle-code-background" width="100%" height="100%" rx="10"></rect>
+                        <text class="toggle-code-label" x="60" y="20">See the code</text>
+                        <rect class="toggle-code-button" id="genres-code" width="100%" height="100%" ng-mouseenter="showTooltip('js/snippets/genreChart.js', '#genres-code')"></rect>
+                    </svg>
+                </div>
             </div>
         </div>
     </div>

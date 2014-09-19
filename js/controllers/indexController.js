@@ -24,6 +24,7 @@
             var chartGroup, genreGrouping, languageGrouping;
 
             var tooltip = d3.tip();
+            var visibleButton = null;
 
             $scope.filter = function(genres, languages) {
 
@@ -50,28 +51,38 @@
             };
 
 
-
             $scope.showTooltip = function (filePath, targetId) {
 
                 $http.get(filePath).success(function(content) {
 
-                    var codedContent = '<code class="language-javascript">' + content + '</code>';
+                    var codedContent = '<pre class="language-javascript">' + content + '</pre>';
 
                     tooltip.html(d3.functor(codedContent));
 
                     var element = d3.select(targetId)
                         .call(tooltip)
-                        .on('click', tooltip.show)
-                        .on('mouseout', tooltip.hide);
+                        .on('click', toggleTooltipVisibilty);
+                        //.on('mouseout', tooltip.hide);
 
                 });
 
             };
 
-            $scope.hideTooltip = function() {
-                console.log("Hiding");
-                tooltip.hide();
-            };
+            function toggleTooltipVisibilty() {
+                var textElement = d3.select(this.previousElementSibling);
+                if (visibleButton) {
+                    visibleButton.text("See the code");
+                }
+
+                if (tooltip.style('opacity') === "0") {
+                    tooltip.show();
+                    textElement.text("Hide the code");
+                    visibleButton = textElement;
+                }
+                else {
+                    tooltip.hide();
+                }
+            }
 
             // need to improve dependency management here, to allow the controller to know that it will need to load d3 and insight instead of just assuming they'll be there
             d3.json('datasets/appstore.json', function(data)
