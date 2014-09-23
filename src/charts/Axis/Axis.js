@@ -907,6 +907,21 @@
             return self;
         };
 
+        /**
+         * The desired gap between ticks on the axis.
+         * This can either be expressed as a number for linear axes, or as an insight.DateFrequency for time axes.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Number|insight.DateFrequency} - The desired gap between ticks on the axis.
+         *
+         * @also
+         *
+         * Sets the desired gap between ticks on the axis.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Number|insight.DateFrequency} - The desired gap between ticks on the axis.
+         * @returns {this}
+         */
         self.tickFrequency = function(tickFreq) {
             if (!arguments.length) {
                 return tickFrequency != null ? tickFrequency : axisStrategy.tickFrequency(self);
