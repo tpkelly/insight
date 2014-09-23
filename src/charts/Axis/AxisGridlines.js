@@ -3,7 +3,7 @@
     /**
      * The Axis gridlines represent and draw the gridlines for a given axis.
      * @class insight.AxisGridlines
-     * @param {Axis} axis - The axis to draw gridlines from.
+     * @param {insight.Axis} axis - The axis to draw gridlines from.
      */
     insight.AxisGridlines = function AxisGridlines(axis) {
 
@@ -69,7 +69,7 @@
          *
          * @memberof! insight.AxisGridlines
          * @instance
-         * @param {Chart} chart The chart to grab the gridlines from.
+         * @param {insight.Chart} chart The chart to grab the gridlines from.
          * @returns {Object[]} - All of the gridlines currently added to this chart.
          */
         self.allGridlines = function(chart) {

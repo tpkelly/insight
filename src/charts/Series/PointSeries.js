@@ -21,11 +21,11 @@
 
         var opacityFunction = function() {
             // If we are using selected/notSelected, then make selected more opaque than notSelected
-            if (this.classList && this.classList.contains("selected")) {
+            if (d3.select(this).classed('selected')) {
                 return 0.8;
             }
 
-            if (this.classList && this.classList.contains("notselected")) {
+            if (d3.select(this).classed('notselected')) {
                 return 0.2;
             }
 
