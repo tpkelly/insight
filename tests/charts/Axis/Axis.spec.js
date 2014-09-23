@@ -491,7 +491,7 @@ describe('Axis', function() {
 
     describe('calculateLabelDimensions', function() {
         var axis,
-            axisFont = insight.defaultTheme.axisStyle.axisLabelFont,
+            axisFont = insight.defaultTheme.axisStyle.axisTitleFont,
             axisLabel = 'Axis Label',
             tickPadding = 5,
             tickLabelFont = insight.defaultTheme.axisStyle.tickLabelFont,

@@ -176,7 +176,7 @@
 
             var textMeasurer = new insight.TextMeasurer(self.measureCanvas);
 
-            var axisLabelHeight = textMeasurer.measureText(self.label(), self.axisLabelFont()).height;
+            var axisLabelHeight = textMeasurer.measureText(self.label(), self.axisTitleFont()).height;
 
             var tickLabelSizes = self.measureTickValues(self.tickValues());
 
@@ -188,7 +188,7 @@
                 return Math.abs(d.height);
             });
 
-            var axisLabelWidth = Math.ceil(textMeasurer.measureText(self.label(), self.axisLabelFont()).width);
+            var axisLabelWidth = Math.ceil(textMeasurer.measureText(self.label(), self.axisTitleFont()).width);
 
             if (maxTickLabelWidth === 0) {
                 maxTickLabelHeight = 0;
@@ -452,8 +452,8 @@
                 .style('font', self.tickLabelFont());
 
             self.labelElement
-                .style('font', self.axisLabelFont())
-                .style('color', self.axisLabelColor())
+                .style('font', self.axisTitleFont())
+                .style('color', self.axisTitleColor())
                 .text(self.label());
 
             self.positionLabel();
@@ -501,7 +501,7 @@
          * @param {String} font The font to use for the axis label.
          * @returns {this}
          */
-        self.axisLabelFont = function(font) {
+        self.axisTitleFont = function(font) {
             if (!arguments.length) {
                 return axisLabelFont;
             }
@@ -545,7 +545,7 @@
          * @param {Function|Color} color Either a function that returns a color, or a color.
          * @returns {this}
          */
-        self.axisLabelColor = function(color) {
+        self.axisTitleColor = function(color) {
             if (!arguments.length) {
                 return axisLabelColor;
             }
@@ -937,10 +937,10 @@
 
         this.tickLabelFont(theme.axisStyle.tickLabelFont);
         this.tickLabelColor(theme.axisStyle.tickLabelColor);
-        this.axisLabelFont(theme.axisStyle.axisLabelFont);
-        this.axisLabelColor(theme.axisStyle.axisLabelColor);
+        this.axisTitleFont(theme.axisStyle.axisTitleFont);
+        this.axisTitleColor(theme.axisStyle.axisTitleColor);
 
-        this.shouldShowGridlines(theme.axisStyle.showGridlines);
+        this.shouldShowGridlines(theme.axisStyle.shouldShowGridlines);
 
         this.gridlines.applyTheme(theme);
 

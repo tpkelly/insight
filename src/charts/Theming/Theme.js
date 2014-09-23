@@ -19,7 +19,7 @@
          *
          * @property {Integer}  gridlineWidth   The width of an axis grid line, in pixels.
          * @property {Color}    gridlineColor   The color of an axis grid line.
-         * @property {Boolean}  showGridlines   Whether axis grid lines should be displayed or not.
+         * @property {Boolean}  shouldShowGridlines   Whether axis grid lines should be displayed or not.
          *
          * @property {Integer}  tickSize        The length of axis ticks, in pixels.
          * @property {Integer}  tickPadding     The distance between the end of axis tick marks and tick labels, in pixels.
@@ -30,14 +30,14 @@
          * @property {Font}     tickLabelFont   The font to use for axis tick labels.
          * @property {Color}    tickLabelColor  The color to use for axis tick labels.
          *
-         * @property {Font}     axisLabelFont   The font to use for an axis title.
-         * @property {Color}    axisLabelColor  The color to use for an axis title.
+         * @property {Font}     axisTitleFont   The font to use for an axis title.
+         * @property {Color}    axisTitleColor  The color to use for an axis title.
          */
         self.axisStyle = {
 
             gridlineWidth: undefined,
             gridlineColor: undefined,
-            showGridlines: undefined,
+            shouldShowGridlines: undefined,
 
             tickSize: undefined,
             tickPadding: undefined,
@@ -48,8 +48,8 @@
             tickLabelFont: undefined,
             tickLabelColor: undefined,
 
-            axisLabelFont: undefined,
-            axisLabelColor: undefined
+            axisTitleFont: undefined,
+            axisTitleColor: undefined
         };
 
         /**
@@ -80,7 +80,7 @@
          * @property {LineStyle}    lineStyle   The style of line to use for a series, if applicable to the series.
          */
         self.seriesStyle = {
-            showPoints: undefined,
+            shouldShowPoints: undefined,
             lineStyle: undefined
         };
 

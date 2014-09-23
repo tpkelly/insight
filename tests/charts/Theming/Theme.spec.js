@@ -12,7 +12,7 @@ describe("Theme", function(){
             axisStyle: {
                 gridlineWidth:3.1,
                 gridlineColor: '#204',
-                showGridlines: true,
+                shouldShowGridlines: true,
 
                 tickSize: 1.4,
                 tickPadding: 6.4,
@@ -23,8 +23,8 @@ describe("Theme", function(){
                 tickLabelFont: 'Sans serif 72pt',
                 tickLabelColor: '#eac',
 
-                axisLabelFont: 'Sans serif 73pt',
-                axisLabelColor: '#abc'
+                axisTitleFont: 'Sans serif 73pt',
+                axisTitleColor: '#abc'
             },
 
             chartStyle: {
@@ -35,7 +35,7 @@ describe("Theme", function(){
             },
 
             seriesStyle : {
-                showPoints: true,
+                shouldShowPoints: true,
                 lineStyle: 'cardinal'
             },
 
