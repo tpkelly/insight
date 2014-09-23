@@ -29,7 +29,7 @@ $(document)
             .textAnchor('middle');
 
         var y = new insight.Axis('', insight.Scales.Linear)
-            .tickLabelFormat(insight.Formatters.numberFormatter)
+            .tickLabelFormat(insight.formatters.numberFormatter)
             .tickLabelFormat(function(tickValue)
             {
                 var millions = tickValue / 1000000;
@@ -48,7 +48,7 @@ $(document)
             {
                 return d.population;
             })
-            .tooltipFormat(insight.Formatters.numberFormatter);
+            .tooltipFormat(insight.formatters.numberFormatter);
 
         chart.series([populations]);
 

@@ -49,7 +49,7 @@ $(document)
             {
                 return d.population;
             })
-            .tooltipFormat(insight.Formatters.numberFormatter);
+            .tooltipFormat(insight.formatters.numberFormatter);
 
         chart.series([populations]);
 
