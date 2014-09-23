@@ -381,7 +381,7 @@
          * Enable zooming and panning for an axis on this chart
          * @memberof! insight.Chart
          * @instance
-         * @param axis The axis to enable zooming and panning for
+         * @param {insight.Axis} axis The axis to enable zooming and panning for
          * @returns {Chart} Returns this.
          */
         self.setInteractiveAxis = function(axis) {
