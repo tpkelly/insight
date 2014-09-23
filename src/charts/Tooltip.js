@@ -110,7 +110,7 @@
          * @memberof! insight.Tooltip
          * @instance
          * @returns {Object} - The style of the tooltip, in standard {'name': 'value', ...} format of CSS values.
-         * E.g. <code>{'text-align': 'left', ...}</code>
+         * @example {'text-align': 'left', ...}
          *
          * @also
          *
@@ -118,7 +118,7 @@
          * @memberof! insight.Tooltip
          * @instance
          * @param {Object} style The new style of the tooltip, in standard {'name': 'value', ...} format of CSS values.
-         * E.g. <code>{'text-align': 'left', ...}</code>
+         * @example self.styles({'text-align': 'left', ...})
          * @returns {this}
          */
         self.styles = function(value) {
