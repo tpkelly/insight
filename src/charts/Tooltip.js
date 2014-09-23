@@ -26,7 +26,7 @@
             'box-sizing': 'border-box'
         };
 
-        // Private methods ------------------------------------------------------------------------------------------
+        // Private functions ------------------------------------------------------------------------------------------
 
         // Creates the tooltip element inside the defined container element.  It sets this.element.
         function createElement() {
@@ -80,7 +80,7 @@
                 });
         }
 
-        // Public Methods ------------------------------------------------------------------------------------------
+        // Public functions ------------------------------------------------------------------------------------------
 
         /**
          * The distance to which move the tooltip for this series relative to its default point.
@@ -129,7 +129,7 @@
             return self;
         };
 
-        // Internal methods ------------------------------------------------------------------------------------------
+        // Internal functions ------------------------------------------------------------------------------------------
 
         // Gets or sets the DOM element that this tooltip will be created inside, usually a div.
         self.container = function(container) {
