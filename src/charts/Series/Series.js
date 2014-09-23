@@ -388,7 +388,7 @@
          * @also
          *
          * Sets the function that will be used to format the tooltip for this series' values.
-         * See `insight.Formatters` for pre-built examples.
+         * See `insight.formatters` for pre-built examples.
          * @memberof! insight.Series
          * @instance
          * @param {Function} formatFunc A function that accepts the value string and returns the formatted tooltip label.

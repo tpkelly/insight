@@ -2,14 +2,14 @@
  * Convenience formatters for formatting string values.
  * @namespace insight.formatters
  */
-insight.Formatters = (function(d3) {
+insight.formatters = (function(d3) {
 
 
     return {
 
         /** Format the number with $, thousand-groupings, and 2 decimal places.
          * @example 2345.2 becomes '$2,345.20'.
-         * @memberof! insight.Formatters
+         * @memberof! insight.formatters
          * @param {Number} value The value to be formatted.
          * @returns {String} - The formatted value.
          */
@@ -20,7 +20,7 @@ insight.Formatters = (function(d3) {
 
         /** Format the number with thousand-groupings.
          * @example 2345.2234 becomes '2,345.2234'.
-         * @memberof! insight.Formatters
+         * @memberof! insight.formatters
          * @param {Number} value The value to be formatted.
          * @returns {String} - The formatted value.
          */
@@ -31,7 +31,7 @@ insight.Formatters = (function(d3) {
 
         /** Format the date as a month and year.
          * @example new Date(2014,0,1) becomes 'Jan 2014'.
-         * @memberof! insight.Formatters
+         * @memberof! insight.formatters
          * @param {Date} date The date to be formatted.
          * @returns {String} - The date formatted as a string.
          */
@@ -42,7 +42,7 @@ insight.Formatters = (function(d3) {
 
         /** Format the number as a percentage.
          * @example 0.15 becomes '15%'.
-         * @memberof! insight.Formatters
+         * @memberof! insight.formatters
          * @param {Number} value The number to be formatted.
          * @returns {String} - The formatted value.
          */
@@ -51,9 +51,9 @@ insight.Formatters = (function(d3) {
             return format(value);
         },
 
-        /** A wrapper for d3.format().
-         * See <a href="https://github.com/mbostock/d3/wiki/Formatting#d3_format">D3 API reference</a> for more information.
-         * @memberof! insight.Formatters
+        /** A wrapper for <code>d3.format()</code>.
+         * @see {@link https://github.com/mbostock/d3/wiki/Formatting#d3_format|D3 API reference} for more information.
+         * @memberof! insight.formatters
          * @param {String} format The format to apply.
          * @param {Object} value The value to be formatted.
          * @returns {String} - The formatted value.
