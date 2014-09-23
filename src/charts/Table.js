@@ -250,14 +250,14 @@
         };
 
         /**
-         * The number of rows to display. Used in combination with ascending() or descending() to display top or bottom data.
+         * The number of rows to display. Used in combination with [ascending]{@link insight.Table#self.ascending} or [descending]{@link insight.Table#self.descending} to display top or bottom data.
          * @memberof! insight.Table
          * @instance
          * @returns {Number} - The maximum number of top values being displayed.
          *
          * @also
          *
-         * Sets the number of rows to display. Used in combination with ascending() or descending() to display top or bottom data.
+         * Sets the number of rows to display. Used in combination with [ascending]{@link insight.Table#self.ascending} or [descending]{@link insight.Table#self.descending}.
          * @memberof! insight.Table
          * @instance
          * @param {Number} topValueCount How many values to display in the Table.
