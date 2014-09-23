@@ -26,6 +26,8 @@
             'box-sizing': 'border-box'
         };
 
+        // Private methods ------------------------------------------------------------------------------------------
+
         // Creates the tooltip element inside the defined container element.  It sets this.element.
         function createElement() {
 
@@ -78,7 +80,7 @@
                 });
         }
 
-        // Public Methods
+        // Public Methods ------------------------------------------------------------------------------------------
 
         /**
          * The distance to which move the tooltip for this series relative to its default point.
@@ -108,6 +110,7 @@
          * @memberof! insight.Tooltip
          * @instance
          * @returns {Object} - The style of the tooltip, in standard {'name': 'value', ...} format of CSS values.
+         * E.g. <code>{'text-align': 'left', ...}</code>
          *
          * @also
          *
@@ -115,6 +118,7 @@
          * @memberof! insight.Tooltip
          * @instance
          * @param {Object} style The new style of the tooltip, in standard {'name': 'value', ...} format of CSS values.
+         * E.g. <code>{'text-align': 'left', ...}</code>
          * @returns {this}
          */
         self.styles = function(value) {
@@ -124,6 +128,8 @@
             styles = value;
             return self;
         };
+
+        // Internal methods ------------------------------------------------------------------------------------------
 
         // Gets or sets the DOM element that this tooltip will be created inside, usually a div.
         self.container = function(container) {
