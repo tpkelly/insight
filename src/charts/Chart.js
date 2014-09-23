@@ -396,6 +396,7 @@
          * @memberof! insight.Chart
          * @instance
          * @returns {Object} - The current margins of the chart.
+         * @example {top: 10, bottom: 20, left: 30, right: 40}
          *
          * @also
          *
@@ -403,6 +404,7 @@
          * @memberof! insight.Chart
          * @instance
          * @param {Object} margins The new margins to use around the chart.
+         * @example self.margin({top: 10, bottom: 20, left: 30, right: 40})
          * @returns {this}
          */
         self.margin = function(newMargins) {
