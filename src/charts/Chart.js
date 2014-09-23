@@ -3,8 +3,8 @@
     /**
      * The Chart class is the element in which series and axes are drawn
      * @class insight.Chart
-     * @param {string} name - A uniquely identifying name for this chart
-     * @param {string} element - The css selector identifying the div container that the chart will be drawn in. '#columnChart' for example.
+     * @param {String} name - A uniquely identifying name for this chart
+     * @param {String} element - The css selector identifying the div container that the chart will be drawn in. '#columnChart' for example.
      */
     insight.Chart = function Chart(name, element) {
 
@@ -139,7 +139,7 @@
          * Calculates the plot area of this chart, taking into account the size and margins of the chart.
          * @memberof! insight.Axis
          * @instance
-         * @returns {int[]} - An array with two items, for the width and height of the axis, respectively.
+         * @returns {Number[]} - An array with two items, for the width and height of the axis, respectively.
          */
         self.calculatePlotAreaSize = function() {
             var bounds = [];
@@ -281,7 +281,7 @@
          * in response to a filtering event.
          * and something else is.
          * @memberof! insight.Chart
-         * @param {string} selector - a CSS selector matching a slice of a dimension. eg. an entry in a grouping by Country
+         * @param {String} selector - a CSS selector matching a slice of a dimension. eg. an entry in a grouping by Country
          would be 'in_England', which would match that dimensional value in any charts.
          */
         self.toggleHighlight = function(selector) {
@@ -395,14 +395,14 @@
          * The margins to use around the chart (top, bottom, left, right), each measured in pixels.
          * @memberof! insight.Chart
          * @instance
-         * @returns {object} - The current margins of the chart.
+         * @returns {Object} - The current margins of the chart.
          *
          * @also
          *
          * Sets the margins to use around the chart (top, bottom, left, right), each measured in pixels.
          * @memberof! insight.Chart
          * @instance
-         * @param {object} margins The new margins to use around the chart.
+         * @param {Object} margins The new margins to use around the chart.
          * @returns {this}
          */
         self.margin = function(newMargins) {
@@ -799,8 +799,8 @@
      * @instance
      * @param {DOMElement} measurer - A canvas HTML element to use by the measurer.  Specific to each chart as
      *                                each chart may have specific css rules
-     * @param {object} axisStyles - An associative map between css properties and values for the axis values
-     * @param {object} labelStyles - An associative map between css properties and values for the axis labels
+     * @param {Object} axisStyles - An associative map between css properties and values for the axis values
+     * @param {Object} labelStyles - An associative map between css properties and values for the axis labels
      */
     insight.Chart.prototype.calculateChartMargin = function() {
 

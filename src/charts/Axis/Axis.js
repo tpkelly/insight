@@ -3,7 +3,7 @@
     /**
      * The Axis class coordinates the domain of the series data and draws axes.
      * @class insight.Axis
-     * @param {string} name - A uniquely identifying name for this axis
+     * @param {String} name - A uniquely identifying name for this axis
      * @param {insight.Scales.Scale} scale - insight.Scale.Linear for example
      */
     insight.Axis = function Axis(name, scale) {
@@ -91,8 +91,8 @@
 
         /*
          * The default axis tick format, just returns the input
-         * @returns {object} tickPoint - The axis data for a particular tick
-         * @param {object} ticklabel - The output string to be displayed
+         * @returns {Object} tickPoint - The axis data for a particular tick
+         * @param {Object} ticklabel - The output string to be displayed
          */
         function format(d) {
             return d;
@@ -294,7 +294,7 @@
          * Calculates the domain of values that this axis has, from a minimum to a maximum.
          * @memberof! insight.Axis
          * @instance
-         * @returns {object[]} bounds - An array with two items, for the lower and upper range of this axis
+         * @returns {Object[]} bounds - An array with two items, for the lower and upper range of this axis
          */
         self.domain = function() {
             return axisStrategy.domain(self);
@@ -557,7 +557,7 @@
          * Whether or not the axis is displayed horizontally (true) or vertically (false).
          * @memberof! insight.Axis
          * @instance
-         * @returns {boolean} - Whether the axis is horizontal.
+         * @returns {Boolean} - Whether the axis is horizontal.
          */
         self.isHorizontal = function() {
             return self.direction === 'h';
@@ -611,14 +611,14 @@
          * Whether the axis is drawn on the chart.
          * @memberof! insight.Axis
          * @instance
-         * @returns {boolean} - Whether the axis is currently being drawn on the chart.
+         * @returns {Boolean} - Whether the axis is currently being drawn on the chart.
          *
          * @also
          *
          * Sets whether the axis is drawn on the chart.
          * @memberof! insight.Axis
          * @instance
-         * @param {boolean} displayed Whether or not the axis will be drawn.
+         * @param {Boolean} displayed Whether or not the axis will be drawn.
          * @returns {this}
          */
         self.shouldDisplay = function(shouldBeDisplayed) {
@@ -633,14 +633,14 @@
          * Whether the axis is drawn in a reversed position.
          * @memberof! insight.Axis
          * @instance
-         * @returns {boolean} - Whether the axis is drawn at the bottom/left (false) or top/right (true).
+         * @returns {Boolean} - Whether the axis is drawn at the bottom/left (false) or top/right (true).
          *
          * @also
          *
          * Sets whether the axis is drawn in a reversed position.
          * @memberof! insight.Axis
          * @instance
-         * @param {boolean} isReversed Whether the axis is drawn at the bottom/left (false) or top/right (true).
+         * @param {Boolean} isReversed Whether the axis is drawn at the bottom/left (false) or top/right (true).
          * @returns {this}
          */
         self.hasReversedPosition = function(isReversed) {
@@ -746,14 +746,14 @@
          * Gets the axis orientation: h = horizontal, v = vertical
          * @memberof! insight.Axis
          * @instance
-         * @returns {string} - h = horizontal, v = vertical
+         * @returns {String} - h = horizontal, v = vertical
          *
          * @also
          *
          * Sets the axis orientation: h = horizontal, v = vertical
          * @memberof! insight.Axis
          * @instance
-         * @param {string} value The the axis orientation: h = horizontal, v = vertical
+         * @param {String} value The the axis orientation: h = horizontal, v = vertical
          * @returns {this}
          */
         self.orientation = function(value) {
@@ -768,14 +768,14 @@
          * Gets the clockwise angle (degrees), that the each tick label will be rotated from horizontal.
          * @memberof! insight.Axis
          * @instance
-         * @returns {number} - The clockwise angle (degrees), that the each tick label will be rotated from horizontal.
+         * @returns {Number} - The clockwise angle (degrees), that the each tick label will be rotated from horizontal.
          *
          * @also
          *
          * Sets the clockwise angle (degrees), that the each tick label will be rotated from horizontal.
          * @memberof! insight.Axis
          * @instance
-         * @param {number} value The clockwise angle (degrees), that the each tick label will be rotated from horizontal.
+         * @param {Number} value The clockwise angle (degrees), that the each tick label will be rotated from horizontal.
          * @returns {this}
          */
         self.tickLabelRotation = function(value) {
@@ -790,14 +790,14 @@
          * Gets the size of each axis tick in pixels.
          * @memberof! insight.Axis
          * @instance
-         * @returns {number} - The size of each axis tick, in pixels.
+         * @returns {Number} - The size of each axis tick, in pixels.
          *
          * @also
          *
          * Sets the size of each axis tick in, pixels.
          * @memberof! insight.Axis
          * @instance
-         * @param {number} value The size of each axis tick, in pixels.
+         * @param {Number} value The size of each axis tick, in pixels.
          * @returns {this}
          */
         self.tickSize = function(value) {
@@ -812,14 +812,14 @@
          * Gets the padding between the end of a tick and its label, in pixels.
          * @memberof! insight.Axis
          * @instance
-         * @returns {number} - The padding between the end of a tick and its label, in pixels.
+         * @returns {Number} - The padding between the end of a tick and its label, in pixels.
          *
          * @also
          *
          * Sets the padding between the end of a tick and its label, in pixels.
          * @memberof! insight.Axis
          * @instance
-         * @param {number} value The padding between the end of a tick and its label, in pixels.
+         * @param {Number} value The padding between the end of a tick and its label, in pixels.
          * @returns {this}
          */
         self.tickPadding = function(value) {
@@ -835,14 +835,14 @@
          * One of: start/middle/end.
          * @memberof! insight.Axis
          * @instance
-         * @returns {string} - The the current text-anchor attribute value.
+         * @returns {String} - The the current text-anchor attribute value.
          *
          * @also
          *
          * Sets the text-anchor attribute that will be set on each tick Label.
          * @memberof! insight.Axis
          * @instance
-         * @param {string} value The text-anchor attribute that will be set on each tick Label.
+         * @param {String} value The text-anchor attribute that will be set on each tick Label.
          * @returns {this}
          */
         self.textAnchor = function(value) {
@@ -857,7 +857,7 @@
          * Gets the orientation of the tick labels: 'tb' = top to bottom, 'lr' = left to right.
          * @memberof! insight.Axis
          * @instance
-         * @returns {string} - 'tb' = top to bottom, 'lr' = left to right.
+         * @returns {String} - 'tb' = top to bottom, 'lr' = left to right.
          *
          * @also
          *
@@ -865,7 +865,7 @@
          * This is a helper function that sets the ticklabelRotation to either 0 or 90.
          * @memberof! insight.Axis
          * @instance
-         * @param {string} value 'tb' = top to bottom, 'lr' = left to right.
+         * @param {String} value 'tb' = top to bottom, 'lr' = left to right.
          * @returns {this}
          */
         self.tickLabelOrientation = function(value) {
@@ -888,14 +888,14 @@
          * Whether the axis has gridlines drawn from its major ticks.
          * @memberof! insight.Axis
          * @instance
-         * @returns {boolean} - Whether the axis has gridlines drawn from its major ticks.
+         * @returns {Boolean} - Whether the axis has gridlines drawn from its major ticks.
          *
          * @also
          *
          * Sets whether the axis has gridlines drawn from its major ticks.
          * @memberof! insight.Axis
          * @instance
-         * @param {boolean} showGridlines Whether the axis has gridlines drawn from its major ticks.
+         * @param {Boolean} showGridlines Whether the axis has gridlines drawn from its major ticks.
          * @returns {this}
          */
         self.shouldShowGridlines = function(showLines) {

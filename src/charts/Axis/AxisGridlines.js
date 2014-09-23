@@ -70,7 +70,7 @@
          * @memberof! insight.AxisGridlines
          * @instance
          * @param {Chart} chart The chart to grab the gridlines from.
-         * @returns {object[]} - All of the gridlines currently added to this chart.
+         * @returns {Object[]} - All of the gridlines currently added to this chart.
          */
         self.allGridlines = function(chart) {
             var gridLineIdentifier = 'line.' + gridlineClass();
