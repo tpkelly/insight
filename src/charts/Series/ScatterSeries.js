@@ -5,7 +5,7 @@
      * @class insight.ScatterSeries
      * @extends insight.PointSeries
      * @param {String} name - A uniquely identifying name for this series
-     * @param {DataSet} data - The DataSet containing this series' data
+     * @param {insight.DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
      * @param {insight.Scales.Scale} y - the y axis
      */

@@ -4,7 +4,7 @@
      * The Series base class provides some base functions that are used by any specific types of series that derive from this class
      * @class insight.Series
      * @param {String} name - A uniquely identifying name for this series
-     * @param {DataSet} data - The DataSet containing this series' data
+     * @param {insight.DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
      * @param {insight.Scales.Scale} y - the y axis
      */
