@@ -1,5 +1,5 @@
 (function(insight) {
-    /**
+    /*
      * A Dimension organizes a dataset along a particular property, or variation of a property.
      * Defining a dimension with a function of:<pre><code>function(d){ return d.Surname; }</code></pre> will slice a dataset by the distinct values of the Surname property.
      * @constructor
