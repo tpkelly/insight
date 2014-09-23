@@ -183,6 +183,7 @@
          * @memberof! insight.Table
          * @instance
          * @returns {Object[]} - The current properties used as columns, of the form {'label':... , 'value':... }.
+         * @example {'Label': 'data-label', 'value', 'data-value', ...}
          *
          * @also
          *
@@ -190,6 +191,7 @@
          * @memberof! insight.Table
          * @instance
          * @param {Object[]} columnProperties - The new properties to use as columns, of the form {'label':... , 'value':... }.
+         * @example self.columns({'Label': 'data-label', 'value', 'data-value', ...});
          * @returns {this}
          */
         self.columns = function(value) {
