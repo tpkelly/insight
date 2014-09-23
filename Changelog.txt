@@ -1,3 +1,6 @@
+=== Version X.X.X (XX-XXX-2014) ===
+
+* Fixed issue with chart highlighting in IE 11.
 * Renamed insight.Formatters => insight.formatters
 
 === Version 1.1.1 (18-Sep-2014) ===
