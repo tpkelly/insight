@@ -677,7 +677,8 @@
          * The function used to compare the elements in this grouping if sorting is requested.
          * @instance
          * @memberof! insight.Grouping
-         * @returns {Function} - The function used to compare two values when sort() is called on an array
+         * @returns {Function} orderingFunction - The function used to compare two values when
+         * {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort|sort()} is called on an array
          *
          * @also
          *
