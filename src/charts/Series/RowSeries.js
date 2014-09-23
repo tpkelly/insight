@@ -4,11 +4,11 @@
      * The RowSeries class extends the Series class and draws horizontal bars on a Chart
      * @class insight.RowSeries
      * @extends insight.Series
-     * @param {string} name - A uniquely identifying name for this series
+     * @param {String} name - A uniquely identifying name for this series
      * @param {DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
      * @param {insight.Scales.Scale} y - the y axis
-     * @param {object} color - a string or function that defines the color to be used for the items in this series
+     * @param {Object} color - a string or function that defines the color to be used for the items in this series
      */
     insight.RowSeries = function RowSeries(name, data, x, y) {
 
@@ -33,7 +33,7 @@
 
         function opacity() {
             // If we are using selected/notSelected, then make selected more opaque than notSelected
-            if (this.classList && this.classList.contains("notselected")) {
+            if (d3.select(this).classed('notselected')) {
                 return 0.5;
             }
 

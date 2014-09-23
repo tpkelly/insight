@@ -4,7 +4,7 @@ describe("Formatters for", function() {
 
         it("use USD as currency", function() {
             //Given:
-            var formatter = insight.Formatters.currencyFormatter;
+            var formatter = insight.formatters.currencyFormatter;
 
             //Then:
             expect(formatter(5)).toBe("$5.00");
@@ -12,7 +12,7 @@ describe("Formatters for", function() {
 
         it("use commas for separating thousands", function() {
             //Given:
-            var formatter = insight.Formatters.currencyFormatter;
+            var formatter = insight.formatters.currencyFormatter;
 
             //Then:
             expect(formatter(123456789)).toBe("$123,456,789.00");
@@ -20,7 +20,7 @@ describe("Formatters for", function() {
 
         it("rounds to nearest cent", function() {
             //Given:
-            var formatter = insight.Formatters.currencyFormatter;
+            var formatter = insight.formatters.currencyFormatter;
 
             //Then:
             //Round up
@@ -35,7 +35,7 @@ describe("Formatters for", function() {
 
         it("use commas for separating thousands", function() {
             //Given:
-            var formatter = insight.Formatters.numberFormatter;
+            var formatter = insight.formatters.numberFormatter;
 
             //Then:
             expect(formatter(123456789)).toBe("123,456,789");
@@ -43,7 +43,7 @@ describe("Formatters for", function() {
 
         it("display decimal places when required", function() {
             //Given:
-            var formatter = insight.Formatters.numberFormatter;
+            var formatter = insight.formatters.numberFormatter;
 
             //Then:
             expect(formatter(123.456789)).toBe("123.456789");
@@ -55,7 +55,7 @@ describe("Formatters for", function() {
 
         it("displays month and year", function() {
             //Given:
-            formatter = insight.Formatters.dateFormatter;
+            formatter = insight.formatters.dateFormatter;
 
             //When:
             var formattedDate = formatter(new Date(2014, 0, 1));
@@ -67,7 +67,7 @@ describe("Formatters for", function() {
 
         it("appends % sign to a decimal", function() {
             //Given:
-            formatter = insight.Formatters.percentageFormatter;
+            formatter = insight.formatters.percentageFormatter;
 
             //Then:
             expect(formatter(0.12)).toBe("12%");
@@ -75,7 +75,7 @@ describe("Formatters for", function() {
 
         it("rounds to nearest whole percentage", function() {
             //Given:
-            formatter = insight.Formatters.percentageFormatter;
+            formatter = insight.formatters.percentageFormatter;
 
             //Then:
             expect(formatter(0.123)).toBe("12%");

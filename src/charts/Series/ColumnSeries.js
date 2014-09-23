@@ -4,7 +4,7 @@
      * The ColumnSeries class extends the Series class and draws vertical bars on a Chart
      * @class insight.ColumnSeries
      * @extends insight.Series
-     * @param {string} name - A uniquely identifying name for this series
+     * @param {String} name - A uniquely identifying name for this series
      * @param {DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
      * @param {insight.Scales.Scale} y - the y axis
@@ -33,7 +33,7 @@
 
         function opacity() {
             // If we are using selected/notSelected, then make selected more opaque than notSelected
-            if (this.classList && this.classList.contains("notselected")) {
+            if (d3.select(this).classed('notselected')) {
                 return 0.5;
             }
 

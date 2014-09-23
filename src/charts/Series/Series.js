@@ -3,7 +3,7 @@
     /**
      * The Series base class provides some base functions that are used by any specific types of series that derive from this class
      * @class insight.Series
-     * @param {string} name - A uniquely identifying name for this series
+     * @param {String} name - A uniquely identifying name for this series
      * @param {DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
      * @param {insight.Scales.Scale} y - the y axis
@@ -63,9 +63,9 @@
         /*
          * Checks whether individual chart items should be marked as selected or not.
          * @memberof insight.Series
-         * @returns {string} selectionClass - A string that is used by CSS highlighting to style the chart item.
-         * @param {string[]}selectedItems - A list of CSS selectors for currently selected items
-         * @param {string} selector - The selector for the item being drawn
+         * @returns {String} selectionClass - A string that is used by CSS highlighting to style the chart item.
+         * @param {String[]}selectedItems - A list of CSS selectors for currently selected items
+         * @param {String} selector - The selector for the item being drawn
          */
         function selectedClassName(selectedItems, selector) {
             var selected = '';
@@ -97,7 +97,7 @@
         /*
          * Generates the short class name to be used for items in this series.
          * @memberof insight.Series
-         * @returns {string} shortClassName - A short value for the class attribute used for items in this Series.
+         * @returns {String} shortClassName - A short value for the class attribute used for items in this Series.
          */
         self.shortClassName = function() {
             var shortName = self.name + 'class';
@@ -110,7 +110,7 @@
          * Generates the base class name to be used for items in this series.It can be extended upon by individual items
          * to mark them out in other ways.
          * @memberof insight.Series
-         * @returns {string} baseClassName - A root value for the class attribute used for items in this Series.
+         * @returns {String} baseClassName - A root value for the class attribute used for items in this Series.
          */
         self.seriesClassName = function() {
 
@@ -124,9 +124,9 @@
         /*
          * Constructs the text for the class attribute for a specific data point, using the base value for this Series and any additional values.
          * @memberof insight.Series
-         * @param {object} dataItem - The data item being drawn
-         * @param {string[]} additionalClasses - Any additional values this Series needs appending to the class value.Used by stacked Series to differentiate between Series.
-         * @returns {string} classValue - A class value for a particular data item being bound in this Series.
+         * @param {Object} dataItem - The data item being drawn
+         * @param {String[]} additionalClasses - Any additional values this Series needs appending to the class value.Used by stacked Series to differentiate between Series.
+         * @returns {String} classValue - A class value for a particular data item being bound in this Series.
          */
         self.itemClassName = function(dataItem, additionalClasses) {
 
@@ -147,8 +147,8 @@
          * Tooltips are shown and CSS updated.
          * The *this* context will reference the DOMElement raising the event.
          * @memberof! insight.Series
-         * @param {object} item - The data point for the hovered item.
-         * @param {int} i - The index of the hovered item in the data set.
+         * @param {Object} item - The data point for the hovered item.
+         * @param {Integer} i - The index of the hovered item in the data set.
          */
         self.mouseOver = function(item, i) {
 
@@ -235,14 +235,14 @@
          * Gets the function used to retrieve the x-value from the data object to plot on a chart.
          * @memberof! insight.Series
          * @instance
-         * @returns {function} The current function used to extract the x-value.
+         * @returns {Function} The current function used to extract the x-value.
          *
          * @also
          *
          * Sets the function used to retrieve the x-value from the data object to plot on a chart.
          * @memberof! insight.Series
          * @instance
-         * @param {function} keyFunc The new key function to use to extract the x-value from a data object.
+         * @param {Function} keyFunc The new key function to use to extract the x-value from a data object.
          * @returns {this}
          */
         self.keyFunction = function(keyFunc) {
@@ -258,14 +258,14 @@
          * Gets the function used to retrieve the grouping key from the data object to plot on a chart, used for cross filtering.
          * @memberof! insight.Series
          * @instance
-         * @returns {function} The current function used to extract the grouping key.
+         * @returns {Function} The current function used to extract the grouping key.
          *
          * @also
          *
          * Sets the function used to retrieve the grouping key from the data object to plot on a chart.
          * @memberof! insight.Series
          * @instance
-         * @param {function} keyFunc The new function to use to extract the grouping key from a data object.
+         * @param {Function} keyFunc The new function to use to extract the grouping key from a data object.
          * @returns {this}
          */
         self.groupKeyFunction = function(keyFunc) {
@@ -281,14 +281,14 @@
          * Gets the y-value from the data object to plot on a chart.
          * @memberof! insight.Series
          * @instance
-         * @returns {function} The current function used to extract the y-value.
+         * @returns {Function} The current function used to extract the y-value.
          *
          * @also
          *
          * Sets the function used to retrieve the y-value from the data object to plot on a chart.
          * @memberof! insight.Series
          * @instance
-         * @param {function} valueFunc The new key function to use to extract the y-value from a data object.
+         * @param {Function} valueFunc The new key function to use to extract the y-value from a data object.
          * @returns {this}
          */
         self.valueFunction = function(valueFunc) {
@@ -305,7 +305,7 @@
          * @memberof! insight.Series
          * @instance
          * @param {Function} orderFunction The function used to compare objects in the dataset for ordering.
-         * @returns {object[]} - The data set to be used by the series
+         * @returns {Object[]} - The data set to be used by the series
          */
         self.dataset = function(orderFunction) {
 
@@ -335,14 +335,14 @@
          * The distance to which move the tooltip for this series relative to its default point.
          * @memberof! insight.Series
          * @instance
-         * @returns {object} - The {x,y} offset to place the tooltip from the point.
+         * @returns {Object} - The {x,y} offset to place the tooltip from the point.
          *
          * @also
          *
          * Sets the distance to which move the tooltip for this series relative to its default point.
          * @memberof! insight.Series
          * @instance
-         * @param {object} offset The new distance to which move the tooltip for this series relative to its default point.
+         * @param {Object} offset The new distance to which move the tooltip for this series relative to its default point.
          * @returns {this}
          */
         self.tooltipOffset = function(value) {
@@ -388,7 +388,7 @@
          * @also
          *
          * Sets the function that will be used to format the tooltip for this series' values.
-         * See `insight.Formatters` for pre-built examples.
+         * See `insight.formatters` for pre-built examples.
          * @memberof! insight.Series
          * @instance
          * @param {Function} formatFunc A function that accepts the value string and returns the formatted tooltip label.
@@ -429,9 +429,9 @@
     };
 
     /* Skeleton event overriden by a Dashboard to subscribe to this series' clicks.
-     * @param {object} series - The series being clicked
-     * @param {object[]} filter - The value of the point selected, used for filtering/highlighting
-     * @param {object[]} selection - The css selection name also used to maintain a list of filtered dimensions (TODO - is this needed anymore?)
+     * @param {Object} series - The series being clicked
+     * @param {Object[]} filter - The value of the point selected, used for filtering/highlighting
+     * @param {Object[]} selection - The css selection name also used to maintain a list of filtered dimensions (TODO - is this needed anymore?)
      */
     insight.Series.prototype.clickEvent = function(series, filter, selection) {
 

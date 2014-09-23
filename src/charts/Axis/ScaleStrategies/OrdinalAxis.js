@@ -14,7 +14,7 @@
 
         /*
          * Queries all series that use this axis to get the list of available values
-         * @returns {object[]} values - the values for this ordinal axis
+         * @returns {Object[]} values - the values for this ordinal axis
          */
         function findOrdinalValues(axis) {
             var vals = [];

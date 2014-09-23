@@ -4,7 +4,7 @@
      * The LineSeries class extends the Series class and draws horizontal bars on a Chart
      * @class insight.LineSeries
      * @extends insight.Series
-     * @param {string} name - A uniquely identifying name for this series
+     * @param {String} name - A uniquely identifying name for this series
      * @param {DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
      * @param {insight.Scales.Scale} y - the y axis
@@ -140,14 +140,14 @@
          * Whether or not to show circular points on top of the line for each datapoint.
          * @memberof! insight.LineSeries
          * @instance
-         * @returns {boolean} - Whether or not to show circular points on top of the line for each datapoint.
+         * @returns {Boolean} - Whether or not to show circular points on top of the line for each datapoint.
          *
          * @also
          *
          * Sets whether or not to show circular points on top of the line for each datapoint.
          * @memberof! insight.LineSeries
          * @instance
-         * @param {boolean} showPoints Whether or not to show circular points on top of the line for each datapoint.
+         * @param {Boolean} showPoints Whether or not to show circular points on top of the line for each datapoint.
          * @returns {this}
          */
         self.shouldShowPoints = function(showPoints) {

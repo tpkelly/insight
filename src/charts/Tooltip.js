@@ -66,7 +66,7 @@
 
         /*
          * Given a coordinate {x,y} position, this method updates the position and visibility of the tooltip to display it.
-         * @param {object} point - an {x,y} coordinate, from the top left of the tooltip's container SVG.
+         * @param {Object} point - an {x,y} coordinate, from the top left of the tooltip's container SVG.
          */
         function drawTooltip(position) {
 
@@ -84,14 +84,14 @@
          * The distance to which move the tooltip for this series relative to its default point.
          * @memberof! insight.Tooltip
          * @instance
-         * @returns {object} - The {x,y} offset to place the tooltip from the point.
+         * @returns {Object} - The {x,y} offset to place the tooltip from the point.
          *
          * @also
          *
          * Sets the distance to which move the tooltip for this series relative to its default point.
          * @memberof! insight.Tooltip
          * @instance
-         * @param {object} offset The new distance to which move the tooltip for this series relative to its default point.
+         * @param {Object} offset The new distance to which move the tooltip for this series relative to its default point.
          * @returns {this}
          */
         self.offset = function(value) {
@@ -107,14 +107,14 @@
          * The current style for the tooltip.
          * @memberof! insight.Tooltip
          * @instance
-         * @returns {object} - The style of the tooltip, in standard {'name': 'value', ...} format of CSS values.
+         * @returns {Object} - The style of the tooltip, in standard {'name': 'value', ...} format of CSS values.
          *
          * @also
          *
          * Sets the current style for the tooltip.
          * @memberof! insight.Tooltip
          * @instance
-         * @param {object} style The new style of the tooltip, in standard {'name': 'value', ...} format of CSS values.
+         * @param {Object} style The new style of the tooltip, in standard {'name': 'value', ...} format of CSS values.
          * @returns {this}
          */
         self.styles = function(value) {
@@ -139,7 +139,7 @@
          * Display the tooltip, using the provided element and tooltipText parameters to control the context and position.
          * @memberof! insight.Tooltip
          * @instance
-         * @param {element} element The element to attach to.
+         * @param {DOMElement} element The element to attach to.
          * @param {String} tooltipText The text to display on the tooltip.
          */
         self.show = function(element, tooltipText) {

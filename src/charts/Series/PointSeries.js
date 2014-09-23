@@ -5,7 +5,7 @@
      * and Lines).
      * @class insight.PointSeries
      * @extends insight.Series
-     * @param {string} name - A uniquely identifying name for this chart
+     * @param {String} name - A uniquely identifying name for this chart
      * @param {DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
      * @param {insight.Scales.Scale} y - the y axis
@@ -21,11 +21,11 @@
 
         var opacityFunction = function() {
             // If we are using selected/notSelected, then make selected more opaque than notSelected
-            if (this.classList && this.classList.contains("selected")) {
+            if (d3.select(this).classed('selected')) {
                 return 0.8;
             }
 
-            if (this.classList && this.classList.contains("notselected")) {
+            if (d3.select(this).classed('notselected')) {
                 return 0.2;
             }
 
