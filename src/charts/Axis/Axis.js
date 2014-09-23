@@ -684,7 +684,7 @@
          * @also
          *
          * Sets the function that will be used to format the axis tick labels
-         * See `insight.Formatters` for pre-built examples.
+         * See {@link insight.Formatters} for pre-built examples.
          * @memberof! insight.Axis
          * @instance
          * @param {Function} value A function that accepts the axis tick label and returns the formatted label
