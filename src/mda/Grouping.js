@@ -1,11 +1,10 @@
-/**
- * A Grouping is generated on a dimension, to reduce the items in the data set into groups along the provided dimension
- * @class insight.Grouping
- * @constructor
- * @param {dimension} dimension - The dimension to group
- */
 (function(insight) {
-
+    /**
+     * A Grouping is generated on a dimension, to reduce the items in the data set into groups along the provided dimension
+     * @class
+     * @constructor
+     * @param {Object} dimension - The dimension to group
+     */
     insight.Grouping = function Grouping(dimension) {
 
         // Private variables ------------------------------------------------------------------------------------------
@@ -678,7 +677,7 @@
          * The function used to compare the elements in this grouping if sorting is requested.
          * @instance
          * @memberof! insight.Grouping
-         * @returns {Function} orderingFunction - The function used to compare two values when sort() is called on an array
+         * @returns {Function} - The function used to compare two values when sort() is called on an array
          *
          * @also
          *
