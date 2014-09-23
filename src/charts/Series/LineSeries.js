@@ -160,7 +160,7 @@
 
         /**
          * The line type that this lineSeries will draw. Defaults to 'linear'.
-         * See https://github.com/mbostock/d3/wiki/SVG-Shapes#line_interpolate for all options.
+         * See [d3's shapes]{@link https://github.com/mbostock/d3/wiki/SVG-Shapes#line_interpolate} for all options.
          * @memberof! insight.LineSeries
          * @instance
          * @returns {String} - The line type that this lineSeries will draw.
