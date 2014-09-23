@@ -226,7 +226,7 @@
          * @memberof! insight.Table
          * @instance
          * @param {Function} sortFunction A function extracting the property to sort on from a data object.
-         * @returns {Object} this Returns the Table object
+         * @returns {this}.
          */
         self.ascending = function(sortFunction) {
 
@@ -240,7 +240,7 @@
          * @memberof! insight.Table
          * @instance
          * @param {Function} sortFunction A function extracting the property to sort on from a data object.
-         * @returns {Object} this Returns the Table object.
+         * @returns {this}.
          */
         self.descending = function(sortFunction) {
 
