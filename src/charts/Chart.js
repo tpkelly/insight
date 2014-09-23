@@ -637,7 +637,7 @@
          *
          * @memberof! insight.Chart
          * @instance
-         * @param {Axis} [axis] The x-axis to add.
+         * @param {Axis} axis The x-axis to add.
          * @returns {this}
          */
         self.addXAxis = function(axis) {
@@ -704,7 +704,7 @@
          *
          * @memberof! insight.Chart
          * @instance
-         * @param {Axis} [axis] The y-axis to add.
+         * @param {Axis} axis The y-axis to add.
          * @returns {this}
          */
         self.addYAxis = function(axis) {
