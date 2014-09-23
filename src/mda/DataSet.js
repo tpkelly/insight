@@ -4,7 +4,7 @@
      * A DataSet should be used with an array of data that is to be charted without being used in a crossfilter or dimensional dataset.
      * @class insight.DataSet
      * @constructor
-     * @param {Object[]} data - The short name used to identify this dimension, and any linked dimensions sharing the same name
+     * @param {Object[]} data - The data to be processed and represented by this DataSet.
      */
     insight.DataSet = function DataSet(data) {
 
