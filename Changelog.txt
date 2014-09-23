@@ -2,6 +2,8 @@
 
 * Fixed issue with chart highlighting in IE 11.
 
+
+
 === Version 1.1.1 (18-Sep-2014) ===
 
 * Library changes
