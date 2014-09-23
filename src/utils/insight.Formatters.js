@@ -51,9 +51,9 @@ insight.formatters = (function(d3) {
             return format(value);
         },
 
-        /** A wrapper for <code>d3.format()</code>.
-         * @see {@link https://github.com/mbostock/d3/wiki/Formatting#d3_format|D3 API reference} for more information.
-         * @memberof! insight.formatters
+        /** A wrapper for d3.format().
+         * See <a href="https://github.com/mbostock/d3/wiki/Formatting#d3_format">D3 API reference</a> for more information.
+         * @memberof! insight.Formatters
          * @param {String} format The format to apply.
          * @param {Object} value The value to be formatted.
          * @returns {String} - The formatted value.
