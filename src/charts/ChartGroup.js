@@ -166,7 +166,7 @@
          * depending on the type.
          * @memberof! insight.ChartGroup
          * @instance
-         * @param {object} widget An insight.Table or insight.Chart
+         * @param {Object} widget An insight.Table or insight.Chart
          * @returns {this}
          */
         self.add = function(widget) {
@@ -185,7 +185,7 @@
          * @memberof! insight.ChartGroup
          * @instance
          * @param {insight.Grouping} grouping - The grouping being filtered.
-         * @param {string} value - The value that the grouping is being filtered by.
+         * @param {String} value - The value that the grouping is being filtered by.
          */
         self.filterByGrouping = function(grouping, value) {
 

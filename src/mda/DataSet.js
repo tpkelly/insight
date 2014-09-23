@@ -4,7 +4,7 @@
      * A DataSet should be used with an array of data that is to be charted without being used in a crossfilter or dimensional dataset.
      * @class insight.DataSet
      * @constructor
-     * @param {object[]} data - The short name used to identify this dimension, and any linked dimensions sharing the same name
+     * @param {Object[]} data - The short name used to identify this dimension, and any linked dimensions sharing the same name
      */
     insight.DataSet = function DataSet(data) {
 
@@ -64,7 +64,7 @@
          * @memberof! insight.DataSet
          * @instance
          * @param {Function} [orderFunc] If provided then the data will be returned ordered using this function.
-         * @returns {object[]} data All data currently held by the dataset.
+         * @returns {Object[]} data All data currently held by the dataset.
          */
         self.getData = function(orderFunc) {
 

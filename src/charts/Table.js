@@ -3,8 +3,8 @@
     /**
      * The Table class draws HTML tables from DataSets
      * @class insight.Table
-     * @param {string} name - A uniquely identifying name for this table
-     * @param {string} element - The css selector identifying the div container that the table will be drawn in. '#dataTable' for example.
+     * @param {String} name - A uniquely identifying name for this table
+     * @param {String} element - The css selector identifying the div container that the table will be drawn in. '#dataTable' for example.
      * @param {DataSet} dataset - The DataSet to render this Table from
      */
     insight.Table = function Table(name, element, dataset) {
@@ -79,7 +79,7 @@
         }
 
         // Adds sorters to this Table's list of sorting methods and orders.
-        // @param {string} order - 'ASC' or 'DESC'
+        // @param {String} order - 'ASC' or 'DESC'
         function addSortOrder(func, order) {
             var sort = {
                 sortParameter: func,
@@ -181,14 +181,14 @@
          * The properties of the DataSet to use as columns.
          * @memberof! insight.Table
          * @instance
-         * @returns {object[]} - The current properties used as columns, of the form {'label':... , 'value':... }.
+         * @returns {Object[]} - The current properties used as columns, of the form {'label':... , 'value':... }.
          *
          * @also
          *
          * Sets the properties of the DataSet to use as columns.
          * @memberof! insight.Table
          * @instance
-         * @param {object[]} columnProperties - The new properties to use as columns, of the form {'label':... , 'value':... }.
+         * @param {Object[]} columnProperties - The new properties to use as columns, of the form {'label':... , 'value':... }.
          * @returns {this}
          */
         self.columns = function(value) {
@@ -203,14 +203,14 @@
          * The key function to use for this Table.
          * @memberof! insight.Table
          * @instance
-         * @returns {function} - The function to use as the key accessor for this Table
+         * @returns {Function} - The function to use as the key accessor for this Table
          *
          * @also
          *
          * Sets the properties of the DataSet to use as columns.
          * @memberof! insight.Table
          * @instance
-         * @param {function} keyFunc - The function to use as the key accessor for this Table
+         * @param {Function} keyFunc - The function to use as the key accessor for this Table
          * @returns {this}
          */
         self.keyFunction = function(keyFunc) {
@@ -225,8 +225,8 @@
          * This method adds an ascending sort to this Table's rows using the provided function as a comparison
          * @memberof! insight.Table
          * @instance
-         * @param {function} sortFunction A function extracting the property to sort on from a data object.
-         * @returns {object} this Returns the Table object
+         * @param {Function} sortFunction A function extracting the property to sort on from a data object.
+         * @returns {Object} this Returns the Table object
          */
         self.ascending = function(sortFunction) {
 
@@ -239,8 +239,8 @@
          * Adds a descending sort to this Table's rows using the provided function as a comparison
          * @memberof! insight.Table
          * @instance
-         * @param {function} sortFunction A function extracting the property to sort on from a data object.
-         * @returns {object} this Returns the Table object.
+         * @param {Function} sortFunction A function extracting the property to sort on from a data object.
+         * @returns {Object} this Returns the Table object.
          */
         self.descending = function(sortFunction) {
 
@@ -276,7 +276,7 @@
          * Returns the array of data objects used to draw this table.
          * @memberof! insight.Series
          * @instance
-         * @returns {object[]} - The data set to be used by the table.
+         * @returns {Object[]} - The data set to be used by the table.
          */
         self.dataset = function() {
 
@@ -298,8 +298,8 @@
     };
 
     /* Skeleton event overriden by any listening objects to subscribe to the click event of the table rows
-     * @param {object} series - The row being clicked
-     * @param {object[]} filter - The value of the point selected, used for filtering/highlighting
+     * @param {Object} series - The row being clicked
+     * @param {Object[]} filter - The value of the point selected, used for filtering/highlighting
      */
     insight.Table.prototype.clickEvent = function(series, filter) {
 
