@@ -27,6 +27,7 @@
             zoomInitialized = false,
             initialized = false,
             zoomAxis = null,
+            titlePadding = 20,
             highlightSelector = insight.Utils.highlightSelector();
 
         var margin = {
@@ -486,6 +487,29 @@
         };
 
         /**
+         * The spacing between the chart title and the plot area.
+         * @memberof! insight.Chart
+         * @instance
+         * @returns {Number} - The padding in pixels between the chart title and the plot area.
+         *
+         * @also
+         *
+         * Sets the spacing between the chart title and the plot area.
+         * @memberof! insight.Chart
+         * @instance
+         * @param {Number} newTitlePadding The padding in pixels between the chart title and the plot area.
+         * @returns {this}
+         */
+        self.titlePadding = function(newTitlePadding) {
+            if (!arguments.length) {
+                return titlePadding;
+            }
+
+            titlePadding = newTitlePadding;
+            return self;
+        };
+
+        /**
          * The width of the chart element, measured in pixels.
          * @memberof! insight.Chart
          * @instance
@@ -828,12 +852,10 @@
 
         });
 
-        var titlePadding = 20;
-
         //Adjust margins to fit the title
         if (this.title() && this.title().length > 0) {
             var textMeasurer = new insight.TextMeasurer(this.measureCanvas);
-            margin.top += textMeasurer.measureText(this.title(), this.titleFont()).height + titlePadding;
+            margin.top += textMeasurer.measureText(this.title(), this.titleFont()).height + this.titlePadding();
         }
 
         this.margin(margin);

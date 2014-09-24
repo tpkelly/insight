@@ -641,6 +641,8 @@ describe('Chart', function() {
             // Given
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
 
+            var titlePadding = 17;
+
             spyOn(xAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
             spyOn(yAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
 
@@ -650,6 +652,7 @@ describe('Chart', function() {
             chart.series([series]);
             chart.title("ABC");
             chart.titleFont("20pt Helvetica Neue");
+            chart.titlePadding(titlePadding);
 
             // When
             chart.calculateChartMargin();
@@ -659,7 +662,7 @@ describe('Chart', function() {
             var titleHeight = measurer.measureText(chart.title(), chart.titleFont()).height;
 
             expect(chart.margin()).toEqual({
-                top: 20 + 25 + titleHeight,
+                top: titlePadding + 25 + titleHeight,
                 left: minimalMargins,
                 right: minimalMargins,
                 bottom: minimalMargins
