@@ -182,14 +182,14 @@
          * The properties of the DataSet to use as columns.
          * @memberof! insight.Table
          * @instance
-         * @returns {Column[]} - The current properties used as columns.
+         * @returns {Array<Column>} - The current properties used as columns.
          *
          * @also
          *
          * Sets the properties of the DataSet to use as columns.
          * @memberof! insight.Table
          * @instance
-         * @param {Column[]} columnProperties - The new properties to use as columns.
+         * @param {Array<Column>} columnProperties - The new properties to use as columns.
          * @returns {this}
          */
         self.columns = function(value) {
