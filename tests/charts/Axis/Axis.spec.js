@@ -587,12 +587,12 @@ describe('Axis', function() {
 
                 // Then
                 var expectedTickLabelHeight = textMeasurer.measureText('Largest', tickLabelFont).height;
-                var expectedAxisLabelHeight = textMeasurer.measureText(axisTitle, axisFont).height;
+                var expectedAxisTitleHeight = textMeasurer.measureText(axisTitle, axisFont).height;
 
                 var expectedResult = expectedTickLabelHeight
                     + tickPadding * 2
                     + tickSize
-                    + expectedAxisLabelHeight;
+                    + expectedAxisTitleHeight;
 
                 expect(result.height).toBe(expectedResult);
 
@@ -613,13 +613,13 @@ describe('Axis', function() {
 
                 // Then
                 var expectedTickLabelHeight = textMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).height;
-                var expectedAxisLabelHeight = textMeasurer.measureText(axisTitle, axisFont).height;
+                var expectedAxisTitleHeight = textMeasurer.measureText(axisTitle, axisFont).height;
 
                 var expectedResult =
                     tickSize +
                     tickPadding * 2 +
                     expectedTickLabelHeight +
-                    expectedAxisLabelHeight;
+                    expectedAxisTitleHeight;
 
                 expect(result.height).toBe(expectedResult);
 
@@ -640,13 +640,13 @@ describe('Axis', function() {
 
                 // Then
                 var expectedTickLabelHeight = textMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).height;
-                var expectedAxisLabelHeight = textMeasurer.measureText(axisTitle, axisFont).height;
+                var expectedAxisTitleHeight = textMeasurer.measureText(axisTitle, axisFont).height;
 
                 var expectedResult =
                     tickSize +
                     tickPadding * 2 +
                     Math.abs(expectedTickLabelHeight) +
-                    expectedAxisLabelHeight;
+                    expectedAxisTitleHeight;
 
                 expect(result.height).toBe(expectedResult);
 
@@ -667,13 +667,13 @@ describe('Axis', function() {
 
                 // Then
                 var expectedTickLabelHeight = textMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).height;
-                var expectedAxisLabelHeight = textMeasurer.measureText(axisTitle, axisFont).height;
+                var expectedAxisTitleHeight = textMeasurer.measureText(axisTitle, axisFont).height;
 
                 var expectedResult =
                     tickSize +
                     tickPadding * 2 +
                     Math.abs(expectedTickLabelHeight) +
-                    expectedAxisLabelHeight;
+                    expectedAxisTitleHeight;
 
                 expect(result.height).toBe(expectedResult);
 
@@ -694,13 +694,13 @@ describe('Axis', function() {
 
                 // Then
                 var expectedAxisTickLabelHeight = textMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).height;
-                var expectedAxisLabelHeight = textMeasurer.measureText(axisTitle, axisFont).height;
+                var expectedAxisTitleHeight = textMeasurer.measureText(axisTitle, axisFont).height;
 
                 var expectedResult =
                     tickSize +
                     tickPadding * 2 +
                     Math.abs(expectedAxisTickLabelHeight) +
-                    expectedAxisLabelHeight;
+                    expectedAxisTitleHeight;
 
                 expect(result.height).toBe(expectedResult);
 
@@ -724,13 +724,13 @@ describe('Axis', function() {
 
                 // Then
                 var expectedTickLabelHeight = textMeasurer.measureText('Largest!!!', tickLabelFont, tickLabelRotation).height;
-                var expectedAxisLabelHeight = textMeasurer.measureText(axisTitle, axisFont).height;
+                var expectedAxisTitleHeight = textMeasurer.measureText(axisTitle, axisFont).height;
 
                 var expectedResult =
                     tickSize +
                     tickPadding * 2 +
                     expectedTickLabelHeight +
-                    expectedAxisLabelHeight;
+                    expectedAxisTitleHeight;
 
                 expect(result.height).toBe(expectedResult);
 
@@ -755,13 +755,13 @@ describe('Axis', function() {
 
                 // Then
                 var expectedTickLabelHeight = textMeasurer.measureText('Largest!!!', tickLabelFont, tickLabelRotation).height;
-                var expectedAxisLabelHeight = textMeasurer.measureText(axisTitle, axisFont).height;
+                var expectedAxisTitleHeight = textMeasurer.measureText(axisTitle, axisFont).height;
 
                 var expectedResult =
                     tickSize +
                     tickPadding * 2 +
                     expectedTickLabelHeight +
-                    expectedAxisLabelHeight;
+                    expectedAxisTitleHeight;
 
                 expect(result.height).toBe(0);
 
@@ -822,12 +822,12 @@ describe('Axis', function() {
 
                 // Then
                 var expectedMaxTickLabelWidth = textMeasurer.measureText('Largest', tickLabelFont).width;
-                var expectedAxisLabelWidth = textMeasurer.measureText(axisTitle, axisFont).width;
+                var expectedAxisTitleWidth = textMeasurer.measureText(axisTitle, axisFont).width;
 
                 var expectedResult = expectedMaxTickLabelWidth
                     + tickPadding * 2
                     + tickSize
-                    + expectedAxisLabelWidth;
+                    + expectedAxisTitleWidth;
 
                 expect(result.width).toBe(expectedResult);
 
@@ -848,12 +848,12 @@ describe('Axis', function() {
 
                 // Then
                 var expectedMaxTickLabelWidth = textMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).width;
-                var expectedAxisLabelWidth = textMeasurer.measureText(axisTitle, axisFont).width;
+                var expectedAxisTitleWidth = textMeasurer.measureText(axisTitle, axisFont).width;
 
                 var expectedResult = expectedMaxTickLabelWidth
                     + tickPadding * 2
                     + tickSize
-                    + expectedAxisLabelWidth;
+                    + expectedAxisTitleWidth;
 
                 expect(result.width).toBe(expectedResult);
 
@@ -874,13 +874,13 @@ describe('Axis', function() {
 
                 // Then
                 var expectedTickLabelWidth = textMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).width;
-                var expectedAxisLabelWidth = textMeasurer.measureText(axisTitle, axisFont).width;
+                var expectedAxisTitleWidth = textMeasurer.measureText(axisTitle, axisFont).width;
 
                 var expectedResult =
                     tickSize +
                     tickPadding * 2 +
                     Math.abs(expectedTickLabelWidth) +
-                    expectedAxisLabelWidth;
+                    expectedAxisTitleWidth;
 
                 expect(result.width).toBe(expectedResult);
 
@@ -902,13 +902,13 @@ describe('Axis', function() {
 
                 // Then
                 var expectedTickLabelWidth = textMeasurer.measureText('Largest', tickLabelFont, tickLabelRotation).width;
-                var expectedAxisLabelWidth = textMeasurer.measureText(axisTitle, axisFont).width;
+                var expectedAxisTitleWidth = textMeasurer.measureText(axisTitle, axisFont).width;
 
                 var expectedResult =
                     tickSize +
                     tickPadding * 2 +
                     Math.abs(expectedTickLabelWidth) +
-                    expectedAxisLabelWidth;
+                    expectedAxisTitleWidth;
 
                 expect(result.width).toBe(expectedResult);
 
@@ -933,12 +933,12 @@ describe('Axis', function() {
 
                 // Then
                 var expectedMaxTickLabelWidth = textMeasurer.measureText('_Largest_', tickLabelFont, tickLabelRotation).width;
-                var expectedAxisLabelWidth = textMeasurer.measureText(axisTitle, axisFont).width;
+                var expectedAxisTitleWidth = textMeasurer.measureText(axisTitle, axisFont).width;
 
                 var expectedResult = expectedMaxTickLabelWidth
                     + tickPadding * 2
                     + tickSize
-                    + expectedAxisLabelWidth;
+                    + expectedAxisTitleWidth;
 
                 expect(result.width).toBe(expectedResult);
 
@@ -963,12 +963,12 @@ describe('Axis', function() {
 
                 // Then
                 var expectedMaxTickLabelWidth = textMeasurer.measureText('_Largest_', tickLabelFont, tickLabelRotation).width;
-                var expectedAxisLabelWidth = textMeasurer.measureText(axisTitle, axisFont).width;
+                var expectedAxisTitleWidth = textMeasurer.measureText(axisTitle, axisFont).width;
 
                 var expectedResult = expectedMaxTickLabelWidth
                     + tickPadding * 2
                     + tickSize
-                    + expectedAxisLabelWidth;
+                    + expectedAxisTitleWidth;
 
                 expect(result.width).toBe(0);
 
