@@ -11,9 +11,6 @@
     * insight.Theme.seriesStyle.showPoints => insight.Theme.seriesStyle.shouldShowPoints
     * insight.Formatters => insight.formatters.
 
-* Issues fixed
-  * Chart highlighting was not working in IE 11.
-
 
 
 === Version 1.1.1-Hotfix (23-Sep-2014) ===
