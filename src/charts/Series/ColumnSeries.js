@@ -19,7 +19,7 @@
 
         // Internal variables ------------------------------------------------------------------------------------------
 
-        self.classValues = [insight.Constants.BarClass];
+        self.classValues = [insight.Constants.ColClass];
 
         // Private functions -----------------------------------------------------------------------------------------
 

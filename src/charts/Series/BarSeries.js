@@ -12,6 +12,14 @@
     insight.BarSeries = function BarSeries(name, data, x, y) {
 
         insight.Series.call(this, name, data, x, y);
+
+        // Private variables ------------------------------------------------------------------------------------------
+
+        var self = this;
+
+        // Internal variables -------------------------------------------------------------------------------------------
+
+        self.classValues = [insight.Constants.BarClass];
     };
 
     insight.BarSeries.prototype = Object.create(insight.Series.prototype);

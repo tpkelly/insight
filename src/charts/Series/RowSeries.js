@@ -22,7 +22,7 @@
 
         self.valueAxis = x;
         self.keyAxis = y;
-        self.classValues = [insight.Constants.BarClass];
+        self.classValues = [insight.Constants.RowClass];
 
         // Private functions ------------------------------------------------------------------------------------------
 
