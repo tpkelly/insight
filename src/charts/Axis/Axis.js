@@ -3,15 +3,15 @@
     /**
      * The Axis class coordinates the domain of the series data and draws axes.
      * @class insight.Axis
-     * @param {String} name - A uniquely identifying name for this axis
+     * @param {String} axisTitle - A title that will be displayed alongside the axis.
      * @param {insight.Scales.Scale} scale - insight.Scale.Linear for example
      */
-    insight.Axis = function Axis(name, scale) {
+    insight.Axis = function Axis(axisTitle, scale) {
 
         // Private variables --------------------------------------------------------------------------------------
 
         var self = this,
-            label = name,
+            title = axisTitle,
             shouldBeOrdered = d3.functor(false),
             orderingFunction = null,
             tickSize = d3.functor(0),
@@ -176,7 +176,7 @@
 
             var textMeasurer = new insight.TextMeasurer(self.measureCanvas);
 
-            var axisLabelHeight = textMeasurer.measureText(self.label(), self.axisTitleFont()).height;
+            var axisTitleHeight = textMeasurer.measureText(self.title(), self.axisTitleFont()).height;
 
             var tickLabelSizes = self.measureTickValues(self.tickValues());
 
@@ -188,23 +188,23 @@
                 return Math.abs(d.height);
             });
 
-            var axisLabelWidth = Math.ceil(textMeasurer.measureText(self.label(), self.axisTitleFont()).width);
+            var axisTitleWidth = Math.ceil(textMeasurer.measureText(self.title(), self.axisTitleFont()).width);
 
             if (maxTickLabelWidth === 0) {
                 maxTickLabelHeight = 0;
             }
 
-            if (axisLabelWidth === 0) {
-                axisLabelHeight = 0;
+            if (axisTitleWidth === 0) {
+                axisTitleHeight = 0;
             }
 
             var totalWidth =
                 self.tickPadding() * 2 +
                 self.tickSize() +
                 maxTickLabelWidth +
-                axisLabelWidth;
+                axisTitleWidth;
 
-            var labelHeight = (self.isHorizontal()) ? maxTickLabelHeight + axisLabelHeight : Math.max(maxTickLabelHeight, axisLabelHeight);
+            var labelHeight = (self.isHorizontal()) ? maxTickLabelHeight + axisTitleHeight : Math.max(maxTickLabelHeight, axisTitleHeight);
 
             var totalHeight = labelHeight + self.tickPadding() * 2 + self.tickSize();
 
@@ -454,7 +454,7 @@
             self.labelElement
                 .style('font', self.axisTitleFont())
                 .style('color', self.axisTitleColor())
-                .text(self.label());
+                .text(self.title());
 
             self.positionLabel();
 
@@ -488,17 +488,17 @@
         };
 
         /**
-         * The font to use for the axis label.
+         * The font to use for the axis title.
          * @memberof! insight.Axis
          * @instance
-         * @returns {String} - The font to use for the axis label.
+         * @returns {String} - The font to use for the axis title.
          *
          * @also
          *
-         * Sets the font to use for the axis label.
+         * Sets the font to use for the axis title.
          * @memberof! insight.Axis
          * @instance
-         * @param {String} font The font to use for the axis label.
+         * @param {String} font The font to use for the axis title.
          * @returns {this}
          */
         self.axisTitleFont = function(font) {
@@ -532,14 +532,14 @@
         };
 
         /**
-         * The color to use for the axis label.
+         * The color to use for the axis title.
          * @memberof! insight.Axis
          * @instance
-         * @returns {Function} - A function that returns the color of an axis label.
+         * @returns {Function} - A function that returns the color of an axis title.
          *
          * @also
          *
-         * Sets the color to use for the axis label.
+         * Sets the color to use for the axis title.
          * @memberof! insight.Axis
          * @instance
          * @param {Function|Color} color Either a function that returns a color, or a color.
@@ -651,27 +651,27 @@
             return self;
         };
 
-        // label and axis tick methods
+        // title and axis tick methods
 
         /**
-         * Gets the axis label
+         * Gets the axis title
          * @memberof! insight.Axis
          * @instance
-         * @returns {String} - The axis label
+         * @returns {String} - The axis title
          *
          * @also
          *
-         * Sets the axis label
+         * Sets the axis title
          * @memberof! insight.Axis
          * @instance
-         * @param {String} axisLabel The axis label
+         * @param {String} axisLabel The axis title
          * @returns {this}
          */
-        self.label = function(axisLabel) {
+        self.title = function(axisLabel) {
             if (!arguments.length) {
-                return label;
+                return title;
             }
-            label = axisLabel;
+            title = axisLabel;
             return self;
         };
 
