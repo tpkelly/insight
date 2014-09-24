@@ -1,22 +1,22 @@
 <div class="row">
     <div class="col-md-6 description">
         <p>
-            InsightJs allows axis tick labels and series tooltips to be formatted using
+            InsightJS allows axis tick labels and series tooltips to be formatted using
             <code>axis.tickLabelFormat(formatFunction)</code> and <code>series.tooltipFormat(formatFunction)</code>.
         </p>
         <p>
             In both cases <code>formatFunction</code> is a function that accepts a value argument and returns a
-            formatted string.  InsightJs provides a set of useful format functions in the <code>insight.Formatters</code>
+            formatted string.  InsightJS provides a set of useful format functions in the <code>insight.formatters</code>
             namespace.
-            See <a href="InsightJS/dist/docs/insight.Formatters.html" target="_blank">API Docs</a>
+            See <a href="InsightJS/dist/docs/insight.formatters.html" target="_blank">API Docs</a>
             for details of format functions provided.
         </p>
         <p>
-            This chart uses a custom formatter for the y-axis and the <code>insight.Formatters.currencyFormatter</code>
+            This chart uses a custom formatter for the y-axis and the <code>insight.formatters.currencyFormatter</code>
             for the series tooltip:
 
             <code class="language-javascript">
-series.tooltipFormat(insight.Formatters.currencyFormatter);
+series.tooltipFormat(insight.formatters.currencyFormatter);
 
 yAxis.tickLabelFormat(function(tickValue) {
     var thousands = (tickValue / 1000).toFixed(0);

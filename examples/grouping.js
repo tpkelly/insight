@@ -26,11 +26,10 @@ $(document)
             var x = new insight.Axis('', insight.Scales.Ordinal)
                 .tickSize(5)
                 .tickPadding(5)
-                .tickLabelRotation(45)
                 .tickLabelFormat(d3.time.format('%Y'));
 
             var y = new insight.Axis('', insight.Scales.Linear)
-                .tickLabelFormat(insight.Formatters.currencyFormatter);
+                .tickLabelFormat(insight.formatters.currencyFormatter);
 
             chart.xAxis(x)
                 .yAxis(y);
@@ -40,7 +39,7 @@ $(document)
                 {
                     return d.value.price.Average;
                 })
-                .tooltipFormat(insight.Formatters.currencyFormatter);
+                .tooltipFormat(insight.formatters.currencyFormatter);
 
             chart.series([columns]);
 

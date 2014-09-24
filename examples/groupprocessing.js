@@ -16,10 +16,10 @@ $(document)
                 .isOrdered(true);
 
             var clientRevenueAxis = new insight.Axis('', insight.Scales.Linear)
-                .tickLabelFormat(insight.Formatters.currencyFormatter);
+                .tickLabelFormat(insight.formatters.currencyFormatter);
 
             var cumulativeRevenueAxis = new insight.Axis('', insight.Scales.Linear)
-                .tickLabelFormat(insight.Formatters.percentageFormatter)
+                .tickLabelFormat(insight.formatters.percentageFormatter)
                 .hasReversedPosition(true);
 
             var clientRevenues = new insight.ColumnSeries('clientColumn', clientData, x, clientRevenueAxis)
@@ -27,10 +27,10 @@ $(document)
                 {
                     return d.value.CurrentRevenue.Sum;
                 })
-                .tooltipFormat(insight.Formatters.currencyFormatter);
+                .tooltipFormat(insight.formatters.currencyFormatter);
 
             var cumulativeRevenue = new insight.LineSeries('percentLine', clientData, x, cumulativeRevenueAxis)
-                .tooltipFormat(insight.Formatters.percentageFormatter)
+                .tooltipFormat(insight.formatters.percentageFormatter)
                 .valueFunction(function(d)
                 {
                     return d.value.Percentage;

@@ -1,6 +1,6 @@
 function createBubbleChart(chartGroup, bubbleData) {
 
-    var bubbleChart = new insight.Chart('Bubble chart', '#bubble-chart')
+    var bubbleChart = new insight.Chart('Bubble Chart', '#bubble-chart')
         .width(300)
         .height(400);
 
@@ -8,7 +8,7 @@ function createBubbleChart(chartGroup, bubbleData) {
         .tickFrequency(1);
 
     var yAxis = new insight.Axis('', insight.Scales.Linear)
-        .tickLabelFormat(insight.Formatters.currencyFormatter);
+        .tickLabelFormat(insight.formatters.currencyFormatter);
 
     bubbleChart
         .xAxis(xAxis)

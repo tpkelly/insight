@@ -1,6 +1,6 @@
 function createLanguageChart(chartGroup, languages){
 
-    var chart = new insight.Chart('Chart 2', '#languages')
+    var chart = new insight.Chart('Language Chart', '#languages')
         .width(350)
         .height(400);
 

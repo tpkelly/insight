@@ -426,13 +426,16 @@
         });
     }
 
-    angular.module('insightChartsControllers').controller('Index', ['$scope', 'Examples',
-        function($scope, Examples)
+    angular.module('insightChartsControllers').controller('Index', ['$scope', 'Examples', '$http',
+        function($scope, Examples, $http)
         {
             $scope.examples = Examples.query();
             $scope.$parent.title = 'InsightJS - Open Source Analytics and Visualization for JavaScript';
 
             var chartGroup, genreGrouping, languageGrouping;
+
+            var tooltip = d3.tip();
+            var visibleButton = null;
 
             $scope.filter = function(genres, languages) {
 
@@ -456,6 +459,43 @@
 
             $scope.clearFilters = function() {
                 chartGroup.clearFilters();
+            };
+
+
+            $scope.prepareTooltip = function (filePath, targetId) {
+
+                $http.get(filePath).success(function(content) {
+
+                    var codedContent = '<pre class="language-javascript">' + content + '</pre>';
+
+                    tooltip.html(d3.functor(codedContent));
+
+                    var element = d3.select(targetId)
+                        .call(tooltip)
+                        .on('click', $scope.toggleTooltipVisibilty);
+
+                });
+
+            };
+
+            $scope.$on('$routeChangeStart', function(next, current) {
+                tooltip.hide();
+            });
+
+            $scope.toggleTooltipVisibilty = function() {
+                var textElement = d3.select(this.previousElementSibling);
+                if (visibleButton) {
+                    visibleButton.text("See the code");
+                }
+
+                if (tooltip.style('opacity') === "0") {
+                    tooltip.show();
+                    textElement.text("Hide the code");
+                    visibleButton = textElement;
+                }
+                else {
+                    tooltip.hide();
+                }
             };
 
             // need to improve dependency management here, to allow the controller to know that it will need to load d3 and insight instead of just assuming they'll be there
@@ -491,7 +531,7 @@
 }());
 function createBubbleChart(chartGroup, bubbleData) {
 
-    var bubbleChart = new insight.Chart('Bubble chart', '#bubble-chart')
+    var bubbleChart = new insight.Chart('Bubble Chart', '#bubble-chart')
         .width(300)
         .height(400);
 
@@ -499,7 +539,7 @@ function createBubbleChart(chartGroup, bubbleData) {
         .tickFrequency(1);
 
     var yAxis = new insight.Axis('', insight.Scales.Linear)
-        .tickLabelFormat(insight.Formatters.currencyFormatter);
+        .tickLabelFormat(insight.formatters.currencyFormatter);
 
     bubbleChart
         .xAxis(xAxis)
@@ -556,7 +596,7 @@ function createGenreCountChart(chartGroup, genreData){
 
 function createLanguageChart(chartGroup, languages){
 
-    var chart = new insight.Chart('Chart 2', '#languages')
+    var chart = new insight.Chart('Language Chart', '#languages')
         .width(350)
         .height(400);
 
