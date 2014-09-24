@@ -852,8 +852,6 @@
 
         });
 
-        var titlePadding = 20;
-
         //Adjust margins to fit the title
         if (this.title() && this.title().length > 0) {
             var textMeasurer = new insight.TextMeasurer(this.measureCanvas);
