@@ -1,9 +1,9 @@
 (function(insight) {
 
     /**
-     * The ColumnSeries class extends the Series class and draws vertical bars on a Chart
+     * The ColumnSeries class extends the BarSeries class and draws vertical bars on a Chart
      * @class insight.ColumnSeries
-     * @extends insight.Series
+     * @extends insight.BarSeries
      * @param {String} name - A uniquely identifying name for this series
      * @param {insight.DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
@@ -11,7 +11,7 @@
      */
     insight.ColumnSeries = function ColumnSeries(name, data, x, y) {
 
-        insight.Series.call(this, name, data, x, y);
+        insight.BarSeries.call(this, name, data, x, y);
 
         // Private variables -----------------------------------------------------------------------------------------
 
@@ -144,7 +144,7 @@
 
     };
 
-    insight.ColumnSeries.prototype = Object.create(insight.Series.prototype);
+    insight.ColumnSeries.prototype = Object.create(insight.BarSeries.prototype);
     insight.ColumnSeries.prototype.constructor = insight.ColumnSeries;
 
 })(insight);
