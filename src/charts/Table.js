@@ -275,7 +275,7 @@
 
         /**
          * Returns the array of data objects used to draw this table.
-         * @memberof! insight.Series
+         * @memberof! insight.Table
          * @instance
          * @returns {Object[]} - The data set to be used by the table.
          */
