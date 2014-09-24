@@ -182,16 +182,14 @@
          * The properties of the DataSet to use as columns.
          * @memberof! insight.Table
          * @instance
-         * @returns {Object[]} - The current properties used as columns, of the form {'label':... , 'value':... }.
-         * @example {'Label': 'data-label', 'value': function(d) { return d.value; }}
+         * @returns {Column[]} - The current properties used as columns.
          *
          * @also
          *
          * Sets the properties of the DataSet to use as columns.
          * @memberof! insight.Table
          * @instance
-         * @param {Object[]} columnProperties - The new properties to use as columns, of the form {'label':... , 'value':... }.
-         * @example self.columns({'Label': 'data-label', 'value': function(d) { return d.value; }});
+         * @param {Column[]} columnProperties - The new properties to use as columns.
          * @returns {this}
          */
         self.columns = function(value) {
