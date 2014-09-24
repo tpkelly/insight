@@ -2,6 +2,7 @@
 
 * Fixed issue with chart highlighting in IE 11.
 * Renamed insight.Formatters => insight.formatters.
+* Added Chart.titlePadding, to configure the distance between the chart title and plot area.
 
 
 
