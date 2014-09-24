@@ -29,6 +29,9 @@
          *
          * @property {Font}     tickLabelFont   The font to use for axis tick labels.
          * @property {Color}    tickLabelColor  The color to use for axis tick labels.
+         *
+         * @property {Font}     axisLabelFont   The font to use for axis labels.
+         * @property {Color}    axisLabelColor  The color to use for axis labels.
          */
         self.axisStyle = {
 
