@@ -25,11 +25,11 @@ $(document)
             .height(400);
 
         var x = new insight.Axis('Country', insight.Scales.Ordinal)
-            .label('')
+            .title('')
             .textAnchor('middle');
 
         var y = new insight.Axis('Population', insight.Scales.Linear)
-            .label('Population')
+            .title('Population')
             .tickLabelFormat(function(tickValue)
             {
                 var millions = tickValue / 1000000;
