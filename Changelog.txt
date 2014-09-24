@@ -3,6 +3,7 @@
 * Fixed issue with chart highlighting in IE 11.
 * Renamed insight.Formatters => insight.formatters.
 * Added Chart.titlePadding, to configure the distance between the chart title and plot area.
+* Added Axis.tickWidth and Axis.tickColor to configure the appearance of axis tick marks. Defaults are taken from the Theme.axisStyle.tickLineColor and Theme.axis.tickLineWidth respectively.
 
 
 

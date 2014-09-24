@@ -21,6 +21,8 @@
 
         self.axisStyle.axisLineWidth = 1;
         self.axisStyle.axisLineColor = '#777';
+        self.axisStyle.tickLineWidth = 1;
+        self.axisStyle.tickLineColor = '#777';
         self.axisStyle.tickLabelFont = '11pt Helvetica Neue';
         self.axisStyle.tickLabelColor = '#777';
         self.axisStyle.axisLabelFont = '12pt Helvetica Neue';
