@@ -17,9 +17,9 @@
          * @instance
          * @type {Object}
          *
-         * @property {Integer}  gridlineWidth       The width of an axis grid line, in pixels.
-         * @property {Color}    gridlineColor       The color of an axis grid line.
-         * @property {Boolean}  showGridlines Whether axis grid lines should be displayed or not.
+         * @property {Integer}  gridlineWidth   The width of an axis grid line, in pixels.
+         * @property {Color}    gridlineColor   The color of an axis grid line.
+         * @property {Boolean}  showGridlines   Whether axis grid lines should be displayed or not.
          *
          * @property {Integer}  tickSize        The length of axis ticks, in pixels.
          * @property {Integer}  tickPadding     The distance between the end of axis tick marks and tick labels, in pixels.
@@ -27,11 +27,8 @@
          * @property {Integer}  axisLineWidth   The width of the axis line, in pixels.
          * @property {Integer}  axisLineColor   The color of an axis line.
          *
-         * @property {Font}     tickLabelFont     The font to use for axis tick labels.
+         * @property {Font}     tickLabelFont   The font to use for axis tick labels.
          * @property {Color}    tickLabelColor  The color to use for axis tick labels.
-
-         * @property {Font}     tickLabelFont     The font to use for axis label.
-         * @property {Color}    tickLabelColor  The color to use for axis label.
          */
         self.axisStyle = {
 
