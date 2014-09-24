@@ -4,8 +4,9 @@
      * The Table class draws HTML tables from DataSets
      * @class insight.Table
      * @param {String} name - A uniquely identifying name for this table
-     * @param {String} element - The css selector identifying the div container that the table will be drawn in. '#dataTable' for example.
-     * @param {DataSet} dataset - The DataSet to render this Table from
+     * @param {String} element - The css selector identifying the div container that the table will be drawn in.
+     * @param {insight.DataSet} dataset - The DataSet to render this Table from
+     * @example var myTable = new insight.Table('My Table', '#table-div', data);
      */
     insight.Table = function Table(name, element, dataset) {
 
@@ -181,14 +182,14 @@
          * The properties of the DataSet to use as columns.
          * @memberof! insight.Table
          * @instance
-         * @returns {Object[]} - The current properties used as columns, of the form {'label':... , 'value':... }.
+         * @returns {Array<Column>} - The current properties used as columns.
          *
          * @also
          *
          * Sets the properties of the DataSet to use as columns.
          * @memberof! insight.Table
          * @instance
-         * @param {Object[]} columnProperties - The new properties to use as columns, of the form {'label':... , 'value':... }.
+         * @param {Array<Column>} columnProperties - The new properties to use as columns.
          * @returns {this}
          */
         self.columns = function(value) {
@@ -226,7 +227,7 @@
          * @memberof! insight.Table
          * @instance
          * @param {Function} sortFunction A function extracting the property to sort on from a data object.
-         * @returns {Object} this Returns the Table object
+         * @returns {this}.
          */
         self.ascending = function(sortFunction) {
 
@@ -240,7 +241,7 @@
          * @memberof! insight.Table
          * @instance
          * @param {Function} sortFunction A function extracting the property to sort on from a data object.
-         * @returns {Object} this Returns the Table object.
+         * @returns {this}.
          */
         self.descending = function(sortFunction) {
 
@@ -250,14 +251,14 @@
         };
 
         /**
-         * The number of rows to display. Used in combination with ascending() or descending() to display top or bottom data.
+         * The number of rows to display. Used in combination with [ascending]{@link insight.Table#self.ascending} or [descending]{@link insight.Table#self.descending} to display top or bottom data.
          * @memberof! insight.Table
          * @instance
          * @returns {Number} - The maximum number of top values being displayed.
          *
          * @also
          *
-         * Sets the number of rows to display. Used in combination with ascending() or descending() to display top or bottom data.
+         * Sets the number of rows to display. Used in combination with [ascending]{@link insight.Table#self.ascending} or [descending]{@link insight.Table#self.descending}.
          * @memberof! insight.Table
          * @instance
          * @param {Number} topValueCount How many values to display in the Table.

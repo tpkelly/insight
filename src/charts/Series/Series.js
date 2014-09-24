@@ -4,7 +4,7 @@
      * The Series base class provides some base functions that are used by any specific types of series that derive from this class
      * @class insight.Series
      * @param {String} name - A uniquely identifying name for this series
-     * @param {DataSet} data - The DataSet containing this series' data
+     * @param {insight.DataSet} data - The DataSet containing this series' data
      * @param {insight.Scales.Scale} x - the x axis
      * @param {insight.Scales.Scale} y - the y axis
      */
@@ -388,7 +388,7 @@
          * @also
          *
          * Sets the function that will be used to format the tooltip for this series' values.
-         * See `insight.formatters` for pre-built examples.
+         * @see {@link insight.formatters} for pre-built examples.
          * @memberof! insight.Series
          * @instance
          * @param {Function} formatFunc A function that accepts the value string and returns the formatted tooltip label.
