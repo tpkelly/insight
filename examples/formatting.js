@@ -25,7 +25,7 @@ $(document)
                 {
                     return d.value.CurrentRevenue.Sum;
                 })
-                .tooltipFormat(insight.Formatters.currencyFormatter);
+                .tooltipFormat(insight.formatters.currencyFormatter);
 
             revenueChart.xAxis(x)
                 .yAxis(y)

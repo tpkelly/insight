@@ -29,7 +29,7 @@ $(document)
                 .tickLabelFormat(d3.time.format('%Y'));
 
             var y = new insight.Axis('', insight.Scales.Linear)
-                .tickLabelFormat(insight.Formatters.currencyFormatter);
+                .tickLabelFormat(insight.formatters.currencyFormatter);
 
             chart.xAxis(x)
                 .yAxis(y);
@@ -39,7 +39,7 @@ $(document)
                 {
                     return d.value.price.Average;
                 })
-                .tooltipFormat(insight.Formatters.currencyFormatter);
+                .tooltipFormat(insight.formatters.currencyFormatter);
 
             chart.series([columns]);
 

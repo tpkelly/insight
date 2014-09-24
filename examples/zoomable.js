@@ -33,7 +33,7 @@ $(document)
             var xTime = new insight.Axis('', insight.Scales.Time)
                 .tickLabelOrientation('tb')
                 .tickSize(5)
-                .tickLabelFormat(insight.Formatters.dateFormatter);
+                .tickLabelFormat(insight.formatters.dateFormatter);
 
             var yTime = new insight.Axis('New Apps per Month', insight.Scales.Linear)
                 .tickSize(5);
