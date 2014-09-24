@@ -1,22 +1,23 @@
-/**
- * Module for calculating correlation coefficients on pairs of values.
- * @namespace insight.correlation
- */
-insight.correlation = (function(insight) {
+(function(insight) {
+
+    /**
+     * Module for calculating correlation coefficients on pairs of values.
+     * @namespace insight.correlation
+     */
+    insight.correlation = function() {};
 
     var correlation = {};
 
     /**
      * Calculates the pearson correlation coefficient for two arrays of numbers.
      * The two arrays must be equal in length and must only contain numbers.
-     * @memberof! insight.correlation
      * @param {Array<Number>} x The x values
      * @param {Array<Number>} y The y values
      * @param {Object} [errorContainer] An object that will contain
      * information about any errors that were encountered with the operation.
      * @returns {Number} - The pearson correlation coefficient for two arrays of numbers
      */
-    correlation.fromValues = function(x, y, errorContainer) {
+    insight.correlation.fromValues = function(x, y, errorContainer) {
 
         if (!(errorContainer instanceof insight.ErrorContainer)) {
             errorContainer = new insight.ErrorContainer();
@@ -77,8 +78,7 @@ insight.correlation = (function(insight) {
 
     /**
      * Calculates the pearson correlation coefficients for a given property pair in the dataset.
-     * @memberof! insight.correlation
-     * @param {insight.DatSet|Object[]} dataset The insight.DataSet or array to calculate correlation coefficients for.
+     * @param {insight.DataSet|Object[]} dataset The insight.DataSet or array to calculate correlation coefficients for.
      * @param {Function} xFunction A function that will return a value from one element in the dataset.
      * The value that the function returns will be used in the correlation calculation.
      * @param {Function} yFunction A function that will return a value from one element in the dataset.
@@ -87,7 +87,7 @@ insight.correlation = (function(insight) {
      * information about any errors that were encountered with the operation.
      * @returns {Number} - The pearson correlation coefficient for the given property pair in the dataset.
      */
-    correlation.fromDataSet = function(dataset, xFunction, yFunction, errorContainer) {
+    insight.correlation.fromDataSet = function(dataset, xFunction, yFunction, errorContainer) {
         if (!(errorContainer instanceof insight.ErrorContainer)) {
             errorContainer = new insight.ErrorContainer();
         }
