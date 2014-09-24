@@ -664,14 +664,14 @@
          * Sets the axis title
          * @memberof! insight.Axis
          * @instance
-         * @param {String} axisLabel The axis title
+         * @param {String} axisTitle The axis title
          * @returns {this}
          */
-        self.title = function(axisLabel) {
+        self.title = function(axisTitle) {
             if (!arguments.length) {
                 return title;
             }
-            title = axisLabel;
+            title = axisTitle;
             return self;
         };
 
