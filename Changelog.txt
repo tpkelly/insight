@@ -1,8 +1,18 @@
 === Version X.X.X (XX-XXX-2014) ===
 
-* Fixed issue with chart highlighting in IE 11.
-* Renamed insight.Formatters => insight.formatters.
-* Added Chart.titlePadding, to configure the distance between the chart title and plot area.
+* Library changes
+  * Added Chart.titlePadding, to configure the distance between the chart title and plot area.
+  * Renaming
+    * insight.Axis.axisLabelColor => insight.Axis.axisTitleColor
+    * insight.Axis.axisLabelFont => insight.Axis.axisTitleFont
+    * insight.Theme.axisStyle.showGridlines => insight.Theme.axisStyle.shouldShowGridlines
+    * insight.Theme.axisStyle.axisLabelFont => insight.Theme.axisStyle.axisTitleFont
+    * insight.Theme.axisStyle.axisLabelColor => insight.Theme.axisStyle.axisTitleColor
+    * insight.Theme.seriesStyle.showPoints => insight.Theme.seriesStyle.shouldShowPoints
+    * insight.Formatters => insight.formatters.
+
+* Issues fixed
+  * Chart highlighting was not working in IE 11.
 
 
 
