@@ -18,8 +18,8 @@ describe('Axis', function() {
 
             //Then:
             var observedTitle = axis.title();
-            var expectedLabel = 'Value Axis';
-            expect(observedTitle).toBe(expectedLabel);
+            var expectedTitle = 'Value Axis';
+            expect(observedTitle).toBe(expectedTitle);
 
         });
     });
@@ -507,7 +507,7 @@ describe('Axis', function() {
 
         beforeEach(function() {
             axis = new insight.Axis('', insight.Scales.Ordinal);
-            var secondaryAxis = new insight.Axis('Y Label', insight.Scales.Linear);
+            var secondaryAxis = new insight.Axis('Y Title', insight.Scales.Linear);
 
             series = new insight.ColumnSeries('testSeries', data, axis, secondaryAxis);
 
@@ -1002,7 +1002,7 @@ describe('Axis', function() {
                         return tickValue + '!!!';
                     });
 
-                var secondaryAxis = new insight.Axis('Y Label', insight.Scales.Linear);
+                var secondaryAxis = new insight.Axis('Y Title', insight.Scales.Linear);
                 series = new insight.ColumnSeries('testSeries', data, axis, secondaryAxis);
             });
 

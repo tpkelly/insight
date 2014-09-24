@@ -5,6 +5,7 @@
   * Renaming
     * insight.Axis.axisLabelColor => insight.Axis.axisTitleColor
     * insight.Axis.axisLabelFont => insight.Axis.axisTitleFont
+    * insight.Axis.label => insight.Axis.title
     * insight.Theme.axisStyle.showGridlines => insight.Theme.axisStyle.shouldShowGridlines
     * insight.Theme.axisStyle.axisLabelFont => insight.Theme.axisStyle.axisTitleFont
     * insight.Theme.axisStyle.axisLabelColor => insight.Theme.axisStyle.axisTitleColor
