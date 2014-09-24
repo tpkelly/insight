@@ -748,17 +748,17 @@
 
 
         /**
-         * Gets the width of the tick marks.
+         * Gets the width of the tick marks, measured in pixels.
          * @memberof! insight.Axis
          * @instance
-         * @returns {Number} - The width of the tick marks.
+         * @returns {Number} - The width of the tick marks, measured in pixels.
          *
          * @also
          *
-         * Sets the width of the tick marks.
+         * Sets the width of the tick marks, measured in pixels.
          * @memberof! insight.Axis
          * @instance
-         * @param {Number} width The new width of the tick marks.
+         * @param {Number} width The new width of the tick marks, measured in pixels.
          * @returns {this}
          */
         self.tickWidth = function(width) {
@@ -773,7 +773,7 @@
          * Gets the color of the tick marks.
          * @memberof! insight.Axis
          * @instance
-         * @returns {Color} - The color of the tick marks.
+         * @returns {Function} - The function of the color of the tick marks.
          *
          * @also
          *

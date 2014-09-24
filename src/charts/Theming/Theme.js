@@ -25,10 +25,10 @@
          * @property {Integer}  tickPadding     The distance between the end of axis tick marks and tick labels, in pixels.
          *
          * @property {Integer}  tickLineWidth   The width of the tick marks, in pixels.
-         * @property {Integer}  tickLineColor   The color of the tick marks.
+         * @property {Color}  tickLineColor   The color of the tick marks.
          *
          * @property {Integer}  axisLineWidth   The width of the axis line, in pixels.
-         * @property {Integer}  axisLineColor   The color of an axis line.
+         * @property {Color}  axisLineColor   The color of an axis line.
          *
          * @property {Font}     tickLabelFont   The font to use for axis tick labels.
          * @property {Color}    tickLabelColor  The color to use for axis tick labels.
