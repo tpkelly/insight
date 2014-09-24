@@ -19,129 +19,23 @@
 
         // Internal variables ------------------------------------------------------------------------------------------
 
+        self.valueAxis = y;
+        self.keyAxis = x;
         self.classValues = [insight.Constants.ColClass];
 
         // Private functions -----------------------------------------------------------------------------------------
 
-        function tooltipFunction(d) {
-            return self.tooltipFormat()(self.valueFunction()(d));
-        }
-
-        function duration(d, i) {
-            return 200 + (i * 20);
-        }
-
-        function opacity() {
-            // If we are using selected/notSelected, then make selected more opaque than notSelected
-            if (d3.select(this).classed('notselected')) {
-                return 0.5;
-            }
-
-            //If not using selected/notSelected, make everything opaque
-            return 1;
-        }
 
         // Internal functions ----------------------------------------------------------------------------------------
+
+        self.isHorizontal = function() {
+            return false;
+        };
 
         self.orderFunction = function(a, b) {
             // Sort descending for categorical data
             return self.valueFunction()(b) - self.valueFunction()(a);
         };
-
-        self.draw = function(chart, isDragging) {
-
-            self.tooltip = chart.tooltip;
-            self.selectedItems = chart.selectedItems;
-
-            var groupSelector = 'g.' + self.name + '.' + insight.Constants.BarGroupClass,
-                barSelector = 'rect.' + self.name + '.' + insight.Constants.BarGroupClass;
-
-            var data = self.dataset();
-
-            var groups = chart.plotArea
-                .selectAll(groupSelector)
-                .data(data, self.keyFunction());
-
-            var newGroups = groups.enter()
-                .append('g')
-                .classed(self.name, true)
-                .classed(insight.Constants.BarGroupClass, true);
-
-            var newBars = newGroups.selectAll(barSelector);
-
-            newBars = newGroups.append('rect')
-                .attr('class', self.itemClassName)
-                .attr('in_series', self.name)
-                .attr('fill', self.color)
-                .attr('clip-path', 'url(#' + chart.clipPath() + ')')
-                .on('mouseover', self.mouseOver)
-                .on('mouseout', self.mouseOut)
-                .on('click', self.click);
-
-            var seriesTypeCount = chart.countSeriesOfType(self);
-            var seriesIndex = chart.seriesIndexByType(self);
-            var groupIndex = 0;
-
-            // Select and update all bars
-            var seriesSelector = '.' + self.name + 'class.' + insight.Constants.BarClass;
-            var bars = groups.selectAll(seriesSelector);
-
-            bars
-                .transition()
-                .duration(duration)
-                .attr('y', yPosition)
-                .attr('x', xPosition)
-                .attr('width', barWidth)
-                .attr('height', barHeight)
-                .style('opacity', opacity);
-
-            // Remove groups no longer in the data set
-            groups.exit().remove();
-
-            // draw helper functions ----------------------------------
-
-            function barHeight(d) {
-
-                var barValue = self.valueFunction()(d);
-                var height = (chart.height() - chart.margin().top - chart.margin().bottom) - self.y.scale(barValue);
-
-                return height;
-            }
-
-            function groupWidth(d) {
-                var w = self.x.scale.rangeBand(d);
-                return w;
-            }
-
-            function barWidth(d) {
-
-                var widthOfGroup = groupWidth(d);
-                var width = widthOfGroup / seriesTypeCount;
-                return width;
-
-            }
-
-            function xPosition(d) {
-
-                var groupPositions = self.keyAxis.scale.range();
-                var groupX = groupPositions[groupIndex];
-
-                var widthOfBar = barWidth(d);
-                var position = groupX + (widthOfBar * seriesIndex);
-
-                groupIndex++;
-
-                return position;
-
-            }
-
-            function yPosition(d) {
-                var position = self.y.scale(self.valueFunction()(d));
-                return position;
-            }
-
-        };
-
     };
 
     insight.ColumnSeries.prototype = Object.create(insight.BarSeries.prototype);
