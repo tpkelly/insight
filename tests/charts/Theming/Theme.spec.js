@@ -20,6 +20,9 @@ describe("Theme", function(){
                 axisLineColor: '#345',
                 axisLineWidth: 12.5,
 
+                tickLineColor: '#543',
+                tickLineWidth: 9.3,
+
                 tickLabelFont: 'Sans serif 72pt',
                 tickLabelColor: '#eac',
 
@@ -100,6 +103,24 @@ describe("Theme", function(){
             //Then:
             expect(chart.xAxis().lineWidth()).toBe(12.5);
             expect(chart.yAxis().lineWidth()).toBe(12.5);
+        });
+
+        it("Tick color to be set by theme", function() {
+            //When:
+            chartGroup.applyTheme(dummyTheme);
+
+            //Then:
+            expect(chart.xAxis().tickColor()()).toBe('#543');
+            expect(chart.yAxis().tickColor()()).toBe('#543');
+        });
+
+        it("Tick width to be set by theme", function() {
+            //When:
+            chartGroup.applyTheme(dummyTheme);
+
+            //Then:
+            expect(chart.xAxis().tickWidth()).toBe(9.3);
+            expect(chart.yAxis().tickWidth()).toBe(9.3);
         });
 
         it("Gridline color to be set by theme", function() {

@@ -1,6 +1,6 @@
 (function(insight) {
 
-    /*
+    /**
      * The PointSeries is an abstract base class for all Cartesian classes representing points (E.g. Scatter, Bubbles
      * and Lines).
      * @class insight.PointSeries

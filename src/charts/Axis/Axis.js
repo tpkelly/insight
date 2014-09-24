@@ -17,6 +17,7 @@
             tickSize = d3.functor(0),
             tickPadding = d3.functor(0),
             lineWidth = 1,
+            tickWidth = 1,
             labelRotation = 0,
             tickLabelFont = '11pt Helvetica Neue',
             tickLabelColor = d3.functor('Black'),
@@ -25,6 +26,7 @@
             tickLabelOrientation = d3.functor('lr'),
             shouldShowGridlines = false,
             colorFunction = d3.functor('#000'),
+            tickColorFunction = d3.functor('#000'),
             shouldDisplay = true,
             barPadding = d3.functor(0.1),
             initialisedAxisView = false,
@@ -430,8 +432,8 @@
 
             self.axisElement
                 .attr('transform', self.axisPosition())
-                .style('stroke', self.lineColor())
-                .style('stroke-width', self.lineWidth())
+                .style('stroke', self.tickColor())
+                .style('stroke-width', self.tickWidth())
                 .style('fill', 'none')
                 .transition()
                 .duration(animationDuration)
@@ -448,8 +450,10 @@
                 .attr('transform', self.tickLabelRotationTransform)
                 .style('text-anchor', self.textAnchor());
 
-            d3.selectAll(".tick > text")
-                .style('font', self.tickLabelFont());
+            //NB: SVG text uses "fill", not "color" for the text colour
+            self.axisElement.selectAll(".tick > text")
+                .style('font', self.tickLabelFont())
+                .style('fill', self.tickLabelColor());
 
             self.labelElement
                 .style('font', self.axisTitleFont())
@@ -742,6 +746,51 @@
             return self;
         };
 
+
+        /**
+         * Gets the width of the tick marks, measured in pixels.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Number} - The width of the tick marks, measured in pixels.
+         *
+         * @also
+         *
+         * Sets the width of the tick marks, measured in pixels.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Number} width The new width of the tick marks, measured in pixels.
+         * @returns {this}
+         */
+        self.tickWidth = function(width) {
+            if (!arguments.length) {
+                return tickWidth;
+            }
+            tickWidth = width;
+            return self;
+        };
+
+        /**
+         * Gets the color of the tick marks.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Function} - The function of the color of the tick marks.
+         *
+         * @also
+         *
+         * Sets the color of the tick marks.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Function|Color} color Either a function that returns a color, or a color.
+         * @returns {this}
+         */
+        self.tickColor = function(color) {
+            if (!arguments.length) {
+                return tickColorFunction;
+            }
+            tickColorFunction = d3.functor(color);
+            return self;
+        };
+
         /*
          * Gets the axis orientation: h = horizontal, v = vertical
          * @memberof! insight.Axis
@@ -907,6 +956,24 @@
             return self;
         };
 
+        /**
+         * The desired gap between tick values on the axis.
+         * This can either be expressed as a number for linear axes, or as an {@link insight.DateFrequency} for time axes.
+         * The value has no effect on an ordinal axis.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Number|insight.DateFrequency} - The desired gap between tick values on the axis.
+         *
+         * @also
+         *
+         * Sets the desired gap between tick values on the axis.
+         * This can either be expressed as a number for linear axes, or as an {@link insight.DateFrequency} for time axes.
+         * The value has no effect on an ordinal axis.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Number|insight.DateFrequency} - The desired gap between tick values on the axis.
+         * @returns {this}
+         */
         self.tickFrequency = function(tickFreq) {
             if (!arguments.length) {
                 return tickFrequency != null ? tickFrequency : axisStrategy.tickFrequency(self);
@@ -932,8 +999,11 @@
     insight.Axis.prototype.applyTheme = function(theme) {
         this.tickSize(theme.axisStyle.tickSize);
         this.tickPadding(theme.axisStyle.tickPadding);
+
         this.lineColor(theme.axisStyle.axisLineColor);
         this.lineWidth(theme.axisStyle.axisLineWidth);
+        this.tickColor(theme.axisStyle.tickLineColor);
+        this.tickWidth(theme.axisStyle.tickLineWidth);
 
         this.tickLabelFont(theme.axisStyle.tickLabelFont);
         this.tickLabelColor(theme.axisStyle.tickLabelColor);
