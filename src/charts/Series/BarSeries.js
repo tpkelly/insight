@@ -90,13 +90,12 @@
 
             var seriesTypeCount = chart.countSeriesOfType(self);
             var seriesIndex = chart.seriesIndexByType(self);
-            var rowGroupIndex = 0;
-            var colGroupIndex = 0;
+            var groupIndex = 0;
 
-            var xPosition = (self.isHorizontal()) ? 0 : colKeyPosition;
-            var yPosition = (self.isHorizontal()) ? rowKeyPosition : valuePosition;
             var height = (self.isHorizontal()) ? barBreadth : colBarLength;
             var width = (self.isHorizontal()) ? barLength : barBreadth;
+            var xPosition = (self.isHorizontal()) ? 0 : keyPosition;
+            var yPosition = (self.isHorizontal()) ? keyPosition : valuePosition;
 
 
             // Select and update all bars
@@ -143,34 +142,19 @@
                 return length;
             }
 
-            function rowKeyPosition(d) {
+            function keyPosition(d) {
 
                 var groupPositions = self.keyAxis.scale.range();
-                var groupY = groupPositions[rowGroupIndex];
+                var groupPos = groupPositions[groupIndex];
 
-                var heightOfBar = barLength(d);
-                var position = groupY + (heightOfBar * (seriesTypeCount - seriesIndex - 1));
+                var barWidth = width(d);
+                var position = groupPos + (barWidth * (seriesTypeCount - seriesIndex - 1));
 
-                rowGroupIndex++;
+                groupIndex++;
 
                 return position;
 
             }
-
-            function colKeyPosition(d) {
-
-                var groupPositions = self.keyAxis.scale.range();
-                var groupX = groupPositions[colGroupIndex];
-
-                var widthOfBar = barBreadth(d);
-                var position = groupX + (widthOfBar * seriesIndex);
-
-                colGroupIndex++;
-
-                return position;
-
-            }
-
         };
     };
 
