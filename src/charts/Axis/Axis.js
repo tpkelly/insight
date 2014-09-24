@@ -448,8 +448,10 @@
                 .attr('transform', self.tickLabelRotationTransform)
                 .style('text-anchor', self.textAnchor());
 
-            d3.selectAll(".tick > text")
-                .style('font', self.tickLabelFont());
+            //NB: SVG text uses "fill", not "color" for the text colour
+            self.axisElement.selectAll(".tick > text")
+                .style('font', self.tickLabelFont())
+                .style('fill', self.tickLabelColor());
 
             self.labelElement
                 .style('font', self.axisLabelFont())
