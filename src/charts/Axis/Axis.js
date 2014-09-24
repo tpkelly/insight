@@ -908,18 +908,21 @@
         };
 
         /**
-         * The desired gap between ticks on the axis.
-         * This can either be expressed as a number for linear axes, or as an insight.DateFrequency for time axes.
+         * The desired gap between tick values on the axis.
+         * This can either be expressed as a number for linear axes, or as an {@link insight.DateFrequency} for time axes.
+         * The value has no effect on an ordinal axis.
          * @memberof! insight.Axis
          * @instance
-         * @returns {Number|insight.DateFrequency} - The desired gap between ticks on the axis.
+         * @returns {Number|insight.DateFrequency} - The desired gap between tick values on the axis.
          *
          * @also
          *
-         * Sets the desired gap between ticks on the axis.
+         * Sets the desired gap between tick values on the axis.
+         * This can either be expressed as a number for linear axes, or as an {@link insight.DateFrequency} for time axes.
+         * The value has no effect on an ordinal axis.
          * @memberof! insight.Axis
          * @instance
-         * @param {Number|insight.DateFrequency} - The desired gap between ticks on the axis.
+         * @param {Number|insight.DateFrequency} - The desired gap between tick values on the axis.
          * @returns {this}
          */
         self.tickFrequency = function(tickFreq) {
