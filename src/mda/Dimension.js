@@ -27,7 +27,7 @@
 
         function oneToManyFilterFunction(filterValue) {
             return function(d) {
-                return insight.Utils.arrayContains(d, filterValue);
+                return insight.utils.arrayContains(d, filterValue);
             };
         }
 
@@ -62,11 +62,11 @@
 
             var nameProperty = 'name';
 
-            var filterExists = insight.Utils.takeWhere(self.filters, nameProperty, filterFunc.name).length;
+            var filterExists = insight.utils.takeWhere(self.filters, nameProperty, filterFunc.name).length;
 
             //if the dimension is already filtered by this value, toggle (remove) the filter
             if (filterExists) {
-                insight.Utils.removeWhere(self.filters, nameProperty, filterFunc.name);
+                insight.utils.removeWhere(self.filters, nameProperty, filterFunc.name);
 
             } else {
                 // add the provided filter to the list for this dimension
@@ -77,7 +77,7 @@
             // reset this dimension if no filters exist, else apply the filter to the dataset.
             if (self.filters.length === 0) {
 
-                insight.Utils.removeItemFromArray(filteredDimensions, self);
+                insight.utils.removeItemFromArray(filteredDimensions, self);
                 self.crossfilterDimension.filterAll();
 
             } else {

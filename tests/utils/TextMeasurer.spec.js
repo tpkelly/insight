@@ -20,7 +20,7 @@ describe('TextMeasurer', function() {
         var canvas = document.createElement('canvas');
         measurer = new insight.TextMeasurer(canvas);
 
-        spyOn(insight.Utils, 'getDrawingContext').andCallFake(fakeDrawingContext);
+        spyOn(insight.utils, 'getDrawingContext').andCallFake(fakeDrawingContext);
 
     });
 

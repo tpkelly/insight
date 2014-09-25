@@ -17,6 +17,7 @@
     * insight.Scales.Ordinal => insight.scales.ordinal
     * insight.Scales.Time => insight.scales.time
     * insight.Constants => insight.constants
+    * insight.Utils => insight.utils
 
 * Issues fixed:
   * Date axis tick labels were jumping on interactive charts

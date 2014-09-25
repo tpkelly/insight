@@ -67,7 +67,7 @@
                 var propertyValue = group.value[propertyName];
                 var mean = propertyValue.Sum / propertyValue.Count;
 
-                mean = insight.Utils.isNumber(mean) && isFinite(mean) ? mean : undefined;
+                mean = insight.utils.isNumber(mean) && isFinite(mean) ? mean : undefined;
 
                 group.value[propertyName].Average = mean;
             }
@@ -142,7 +142,7 @@
                         if (addingData.hasOwnProperty(propertyName)) {
 
                             // get this grouping from the global data
-                            var groupData = insight.Utils.takeWhere(globalData, 'key', self.dimension.aggregationFunction(addingData))[0].value;
+                            var groupData = insight.utils.takeWhere(globalData, 'key', self.dimension.aggregationFunction(addingData))[0].value;
 
                             // get the group mean from global data for this grouping
                             var groupMean = groupData[propertyName].Average;
@@ -172,8 +172,8 @@
 
                         var xName = pair[0],
                             yName = pair[1],
-                            xDeviation = insight.Utils.lastElement(workings[xName].deviation),
-                            yDeviation = insight.Utils.lastElement(workings[yName].deviation),
+                            xDeviation = insight.utils.lastElement(workings[xName].deviation),
+                            yDeviation = insight.utils.lastElement(workings[yName].deviation),
                             correlationName = deviationProductNameFunction(xName, yName);
 
                         if (!workings[correlationName]) {
@@ -303,7 +303,7 @@
                     var propertyValue = data[propertyName];
 
                     // If this property holds multiple values, increment the counts for each one.
-                    if (insight.Utils.isArray(propertyValue)) {
+                    if (insight.utils.isArray(propertyValue)) {
 
                         for (var subIndex in propertyValue) {
                             var subVal = propertyValue[subIndex];
@@ -351,7 +351,7 @@
 
                     var propertyValue = data[propertyName];
 
-                    if (insight.Utils.isArray(propertyValue)) {
+                    if (insight.utils.isArray(propertyValue)) {
 
                         for (var subIndex in propertyValue) {
                             var subVal = propertyValue[subIndex];
@@ -591,15 +591,15 @@
             correlationPairProperties = properties;
 
             for (var i = 0, len = properties.length; i < len; i++) {
-                insight.Utils.addToSet(allCorrelationProperties, properties[i][0]);
-                insight.Utils.addToSet(allCorrelationProperties, properties[i][1]);
+                insight.utils.addToSet(allCorrelationProperties, properties[i][0]);
+                insight.utils.addToSet(allCorrelationProperties, properties[i][1]);
             }
 
             // need mean for correlation
-            averageProperties = insight.Utils.arrayUnique(averageProperties.concat(allCorrelationProperties));
+            averageProperties = insight.utils.arrayUnique(averageProperties.concat(allCorrelationProperties));
 
             // need sum for mean so set that too
-            sumProperties = insight.Utils.arrayUnique(sumProperties.concat(allCorrelationProperties));
+            sumProperties = insight.utils.arrayUnique(sumProperties.concat(allCorrelationProperties));
 
             return self;
         };
@@ -668,7 +668,7 @@
             }
             averageProperties = properties;
 
-            sumProperties = insight.Utils.arrayUnique(sumProperties.concat(averageProperties));
+            sumProperties = insight.utils.arrayUnique(sumProperties.concat(averageProperties));
 
             return self;
         };

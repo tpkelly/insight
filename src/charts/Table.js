@@ -81,7 +81,7 @@
         }
 
         function rowClass(dataPoint) {
-            return insight.constants.TableRowClass + ' ' + insight.Utils.keySelector(keyFunction(dataPoint));
+            return insight.constants.TableRowClass + ' ' + insight.utils.keySelector(keyFunction(dataPoint));
         }
 
         function click(dataItem) {
@@ -124,7 +124,7 @@
 
             if (alreadySelected) {
                 clicked.classed('selected', false);
-                insight.Utils.removeItemFromArray(self.selectedItems, selector);
+                insight.utils.removeItemFromArray(self.selectedItems, selector);
             } else {
                 clicked.classed('selected', true)
                     .classed('notselected', false);
@@ -315,7 +315,7 @@
 
             var data = self.data.getData();
 
-            data = insight.Utils.multiSort(data, sorters);
+            data = insight.utils.multiSort(data, sorters);
 
             if (self.top()) {
                 data = data.slice(0, self.top());

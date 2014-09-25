@@ -29,7 +29,7 @@
             initialized = false,
             zoomAxis = null,
             titlePadding = 20,
-            highlightSelector = insight.Utils.highlightSelector();
+            highlightSelector = insight.utils.highlightSelector();
 
         var margin = {
             top: 0,
@@ -275,7 +275,7 @@
 
         self.clipPath = function() {
 
-            return insight.Utils.safeString(self.name) + 'clip';
+            return insight.utils.safeString(self.name) + 'clip';
         };
 
         /*
@@ -288,11 +288,11 @@
          */
         self.toggleHighlight = function(selector) {
             var clicked = self.plotArea.selectAll('.' + selector);
-            var alreadySelected = insight.Utils.arrayContains(self.selectedItems, selector);
+            var alreadySelected = insight.utils.arrayContains(self.selectedItems, selector);
 
             if (alreadySelected) {
                 clicked.classed('selected', false);
-                insight.Utils.removeItemFromArray(self.selectedItems, selector);
+                insight.utils.removeItemFromArray(self.selectedItems, selector);
             } else {
                 clicked.classed('selected', true)
                     .classed('notselected', false);

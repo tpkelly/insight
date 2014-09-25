@@ -257,7 +257,7 @@ describe('Chart', function() {
                 spyOn(chart, 'draw').andCallThrough();
                 spyOn(chart, 'addClipPath').andCallThrough();
                 spyOn(chart, 'initializeTooltip').andCallThrough();
-                spyOn(insight.Utils, 'getElementStyles').andReturn({});
+                spyOn(insight.utils, 'getElementStyles').andReturn({});
 
                 chart.draw();
             };
@@ -823,7 +823,7 @@ describe('Chart', function() {
 
         beforeEach(function() {
 
-            spyOn(insight.Utils, 'getElementStyles').andReturn({});
+            spyOn(insight.utils, 'getElementStyles').andReturn({});
 
             element = document.createElement('div');
             element.id = 'testElement';

@@ -70,7 +70,7 @@
 
         function textAnchor() {
 
-            var angleRadians = insight.Utils.degreesToRadians(self.tickLabelRotation());
+            var angleRadians = insight.utils.degreesToRadians(self.tickLabelRotation());
             var trigFunc = (self.isHorizontal()) ? Math.sin : Math.cos;
             var trigResult = parseFloat(trigFunc(angleRadians).toFixed(10));
 
@@ -241,7 +241,7 @@
             var firstTickSize = textMeasurer.measureText(firstTick, self.tickLabelFont(), self.tickLabelRotation());
             var lastTickSize = textMeasurer.measureText(lastTick, self.tickLabelFont(), self.tickLabelRotation());
 
-            var angleRadians = insight.Utils.degreesToRadians(self.tickLabelRotation());
+            var angleRadians = insight.utils.degreesToRadians(self.tickLabelRotation());
 
             switch (self.textAnchor()) {
                 case 'start':
