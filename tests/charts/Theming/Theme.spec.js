@@ -1,9 +1,12 @@
 describe("Theme", function(){
 
-    var dummyTheme;
-    var chartGroup;
-    var chart;
-    var lineSeries, rowSeries, columnSeries, bubbleSeries;
+    var dummyTheme,
+        chartGroup,
+        chart,
+        lineSeries,
+        rowSeries,
+        columnSeries,
+        bubbleSeries;
 
     beforeEach(function() {
         //Create a new theme to be applied
@@ -66,85 +69,61 @@ describe("Theme", function(){
         // we don't care about resizing the chart for theme tests and there are browser specific
         // differences so a spy will prevent the chart from being resized and thus prevent the side effects
         spyOn(chart, 'resizeChart');
+
+        //When:
+        chartGroup.applyTheme(dummyTheme);
     });
 
     describe("Axis", function() {
         it("Tick size to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(chart.xAxis().tickSize()).toBe(1.4);
             expect(chart.yAxis().tickSize()).toBe(1.4);
         });
 
         it("Tick padding to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(chart.xAxis().tickPadding()).toBe(6.4);
             expect(chart.yAxis().tickPadding()).toBe(6.4);
         });
 
         it("Line color to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(chart.xAxis().lineColor()()).toBe('#345');
             expect(chart.yAxis().lineColor()()).toBe('#345');
         });
 
         it("Line width to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(chart.xAxis().lineWidth()).toBe(12.5);
             expect(chart.yAxis().lineWidth()).toBe(12.5);
         });
 
         it("Tick color to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(chart.xAxis().tickColor()()).toBe('#543');
             expect(chart.yAxis().tickColor()()).toBe('#543');
         });
 
         it("Tick width to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(chart.xAxis().tickWidth()).toBe(9.3);
             expect(chart.yAxis().tickWidth()).toBe(9.3);
         });
 
         it("Gridline color to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(chart.xAxis().gridlines.lineColor()).toBe('#204');
             expect(chart.yAxis().gridlines.lineColor()).toBe('#204');
         });
 
         it("Gridline width to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(chart.xAxis().gridlines.lineWidth()).toBe(3.1);
             expect(chart.yAxis().gridlines.lineWidth()).toBe(3.1);
         });
 
         it("Gridline visibility to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(chart.xAxis().shouldShowGridlines()).toBe(true);
             expect(chart.yAxis().shouldShowGridlines()).toBe(true);
@@ -154,7 +133,6 @@ describe("Theme", function(){
     describe("Chart", function() {
         it("Series palette to be set by theme", function() {
             //When:
-            chartGroup.applyTheme(dummyTheme);
             chartGroup.draw();
 
             //Then:
@@ -167,17 +145,11 @@ describe("Theme", function(){
 
     describe("Series", function() {
         it("Line style to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(lineSeries.lineType()).toBe('cardinal');
         });
 
         it("Line point visibility to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(lineSeries.shouldShowPoints()).toBe(true);
         });
@@ -292,5 +264,5 @@ describe("Theme", function(){
         });
         //Expect default series colour palette
         expect(seriesColours).toEqual(['lightblue', 'lightblue', 'lightblue', 'lightblue']);
-    })
+    });
 });
