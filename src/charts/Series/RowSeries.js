@@ -24,14 +24,19 @@
         self.keyAxis = y;
         self.classValues = [insight.Constants.RowClass];
 
-        // Private functions ------------------------------------------------------------------------------------------
-
-
-
         // Internal functions -----------------------------------------------------------------------------------------
 
         self.isHorizontal = function() {
             return true;
+        };
+
+        self.barLength = function(d, plotHeight) {
+            var barValue = self.valueFunction()(d);
+            return self.valueAxis.scale(barValue);
+        };
+
+        self.valuePosition = function(d) {
+            return 0;
         };
     };
 

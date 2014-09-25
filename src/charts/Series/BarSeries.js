@@ -58,6 +58,14 @@
             return undefined;
         };
 
+        self.barLength = function(d, plotHeight) {
+            return undefined;
+        };
+
+        self.valuePosition = function(d) {
+            return undefined;
+        };
+
         self.draw = function(chart) {
 
             self.tooltip = chart.tooltip;
@@ -92,9 +100,9 @@
             var seriesIndex = chart.seriesIndexByType(self);
             var groupIndex = 0;
 
-            var height = (self.isHorizontal()) ? barBreadth : colBarLength;
+            var height = (self.isHorizontal()) ? barBreadth : barLength;
             var width = (self.isHorizontal()) ? barLength : barBreadth;
-            var xPosition = (self.isHorizontal()) ? 0 : keyPosition;
+            var xPosition = (self.isHorizontal()) ? valuePosition : keyPosition;
             var yPosition = (self.isHorizontal()) ? keyPosition : valuePosition;
 
 
@@ -128,20 +136,14 @@
 
             }
 
-            function colBarLength(d) {
-                return (chart.height() - chart.margin().top - chart.margin().bottom) - barLength(d);
-            }
-
             function barLength(d) {
-
-                var barValue = self.valueFunction()(d);
-                var length = self.valueAxis.scale(barValue);
-                return length;
+                var plotHeight = (chart.height() - chart.margin().top - chart.margin().bottom);
+                return self.barLength(d, plotHeight);
             }
 
             function valuePosition(d) {
-                var length = barLength(d);
-                return length;
+                var plotHeight = (chart.height() - chart.margin().top - chart.margin().bottom);
+                return self.valuePosition(d);
             }
 
             function keyPosition(d) {

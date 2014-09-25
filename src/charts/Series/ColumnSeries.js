@@ -23,9 +23,6 @@
         self.keyAxis = x;
         self.classValues = [insight.Constants.ColClass];
 
-        // Private functions -----------------------------------------------------------------------------------------
-
-
         // Internal functions ----------------------------------------------------------------------------------------
 
         self.isHorizontal = function() {
@@ -36,6 +33,16 @@
             // Sort descending for categorical data
             return self.valueFunction()(b) - self.valueFunction()(a);
         };
+
+        self.barLength = function(d, plotHeight) {
+            return plotHeight - self.valuePosition(d);
+        };
+
+        self.valuePosition = function(d) {
+            var barValue = self.valueFunction()(d);
+            return self.valueAxis.scale(barValue);
+        };
+
     };
 
     insight.ColumnSeries.prototype = Object.create(insight.BarSeries.prototype);
