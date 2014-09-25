@@ -17,7 +17,13 @@
             tableInitialized = false,
             header,
             sortFunctions = [],
-            topValues = null;
+            topValues = null,
+            headerColor = d3.functor('red'),
+            headerFont = 'bold 16pt Helvetica Neue',
+            rowKeyColor = d3.functor('blue'),
+            rowKeyFont = 'bold 14pt Times New Roman',
+            rowValueColor = d3.functor('green'),
+            rowValueFont = '12pt Arial';
 
         // Internal variables -----------------------------------------------------------------------------------------
 
@@ -147,6 +153,8 @@
                 .enter()
                 .append('th')
                 .attr('class', 'column')
+                .style('color', headerColor)
+                .style('font', headerFont)
                 .html(labelFunction);
 
             var rows = self.tableBody.selectAll('tr.' + insight.Constants.TableRowClass)
@@ -157,22 +165,22 @@
                 .attr('class', rowClass)
                 .on('click', click)
                 .append('th')
+                .style('color', rowKeyColor)
+                .style('font', rowKeyFont)
                 .html(keyFunction);
 
             var cells = rows.selectAll('td')
                 .data(columnBuilder);
 
-            cells.enter()
-                .append('td');
+            cells.enter().append('td');
 
-            cells.html(valueFunction);
+            cells.html(valueFunction)
+                .style('color', rowValueColor)
+                .style('font', rowValueFont);
 
             // remove any DOM elements no longer in the data set
-            cells.exit()
-                .remove();
-
-            rows.exit()
-                .remove();
+            cells.exit().remove();
+            rows.exit().remove();
         };
 
         // Public functions -------------------------------------------------------------------------------------------
