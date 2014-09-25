@@ -5,7 +5,7 @@
      * @class insight.MarkerSeries
      * @extends insight.Series
      * @param {String} name - A uniquely identifying name for this series
-     * @param {insight.DataSet | Array<Object>} data - The DataSet containing this series' data
+     * @param {insight.DataSet | Array | insight.Grouping} data - The DataSet containing this series' data
      * @param {insight.Axis} x - The x axis
      * @param {insight.Axis} y - The y axis
      */
