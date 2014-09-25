@@ -5,9 +5,9 @@
      * @class insight.ColumnSeries
      * @extends insight.BarSeries
      * @param {String} name - A uniquely identifying name for this series
-     * @param {insight.DataSet} data - The DataSet containing this series' data
-     * @param {insight.Scales.Scale} x - the x axis
-     * @param {insight.Scales.Scale} y - the y axis
+     * @param {insight.DataSet | Array<Object>} data - The DataSet containing this series' data
+     * @param {insight.Axis} x - The x axis
+     * @param {insight.Axis} y - The y axis
      */
     insight.ColumnSeries = function ColumnSeries(name, data, x, y) {
 
@@ -25,9 +25,7 @@
 
         // Internal functions ----------------------------------------------------------------------------------------
 
-        self.isHorizontal = function() {
-            return false;
-        };
+        self.isHorizontal = d3.functor(false);
 
         self.orderFunction = function(a, b) {
             // Sort descending for categorical data

@@ -13,7 +13,6 @@ insight.Constants = (function() {
     exports.Tooltip = 'd3-tip';
     exports.ToolTipTextClass = 'tooltip';
     exports.BarGroupClass = 'bargroup';
-    exports.BarClass = 'bar';
     exports.RowClass = 'row';
     exports.ColClass = 'col';
     exports.LineClass = 'in-line';

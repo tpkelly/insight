@@ -1,13 +1,13 @@
 (function(insight) {
 
     /**
-     * The RowSeries class extends the BarSeries class and draws horizontal bars on a Chart
+     * The RowSeries class extends the [BarSeries]{@link insight.BarSeries} class and draws horizontal bars on a [Chart]{@link insight.Chart}
      * @class insight.RowSeries
      * @extends insight.BarSeries
      * @param {String} name - A uniquely identifying name for this series
-     * @param {insight.DataSet} data - The DataSet containing this series' data
-     * @param {insight.Scales.Scale} x - the x axis
-     * @param {insight.Scales.Scale} y - the y axis
+     * @param {insight.DataSet | Array<Object>} data - The DataSet containing this series' data
+     * @param {insight.Axis} x - The x axis
+     * @param {insight.Axis} y - The y axis
      */
     insight.RowSeries = function RowSeries(name, data, x, y) {
 
@@ -15,8 +15,7 @@
 
         // Private variables ------------------------------------------------------------------------------------------
 
-        var self = this,
-            barThicknessFunction = self.y.scale.rangeBand;
+        var self = this;
 
         // Internal variables -------------------------------------------------------------------------------------------
 
@@ -26,18 +25,14 @@
 
         // Internal functions -----------------------------------------------------------------------------------------
 
-        self.isHorizontal = function() {
-            return true;
-        };
+        self.isHorizontal = d3.functor(true);
 
         self.barLength = function(d, plotHeight) {
             var barValue = self.valueFunction()(d);
             return self.valueAxis.scale(barValue);
         };
 
-        self.valuePosition = function(d) {
-            return 0;
-        };
+        self.valuePosition = d3.functor(0);
     };
 
     insight.RowSeries.prototype = Object.create(insight.BarSeries.prototype);

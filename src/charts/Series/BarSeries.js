@@ -1,13 +1,13 @@
 (function(insight) {
 
-    /*
+    /**
      * The BarSeries is an abstract base class for columns and rows.
      * @class insight.BarSeries
      * @extends insight.Series
      * @param {String} name - A uniquely identifying name for this series
-     * @param {insight.DataSet} data - The DataSet containing this series' data
-     * @param {insight.Scales.Scale} x - the x axis
-     * @param {insight.Scales.Scale} y - the y axis
+     * @param {insight.DataSet | Array<Object>} data - The DataSet containing this series' data
+     * @param {insight.Axis} x - The x axis
+     * @param {insight.Axis} y - The y axis
      */
     insight.BarSeries = function BarSeries(name, data, x, y) {
 
@@ -21,7 +21,7 @@
 
         self.valueAxis = undefined;
         self.keyAxis = undefined;
-        self.classValues = [insight.Constants.BarClass];
+        self.classValues = [insight.Constants.BarGroupClass];
 
         // Private functions ------------------------------------------------------------------------------------------
 
@@ -102,8 +102,8 @@
 
             var height = (self.isHorizontal()) ? barBreadth : barLength;
             var width = (self.isHorizontal()) ? barLength : barBreadth;
-            var xPosition = (self.isHorizontal()) ? valuePosition : keyPosition;
-            var yPosition = (self.isHorizontal()) ? keyPosition : valuePosition;
+            var xPosition = (self.isHorizontal()) ? self.valuePosition : keyPosition;
+            var yPosition = (self.isHorizontal()) ? keyPosition : self.valuePosition;
 
 
             // Select and update all bars
@@ -124,8 +124,7 @@
             // draw helper functions ------------------------------------
 
             function groupHeight(d) {
-                var w = self.keyAxis.scale.rangeBand(d);
-                return w;
+                return self.keyAxis.scale.rangeBand(d);
             }
 
             function barBreadth(d) {
@@ -139,11 +138,6 @@
             function barLength(d) {
                 var plotHeight = (chart.height() - chart.margin().top - chart.margin().bottom);
                 return self.barLength(d, plotHeight);
-            }
-
-            function valuePosition(d) {
-                var plotHeight = (chart.height() - chart.margin().top - chart.margin().bottom);
-                return self.valuePosition(d);
             }
 
             function keyPosition(d) {

@@ -298,14 +298,6 @@
                     .classed('notselected', false);
                 self.selectedItems.push(selector);
             }
-
-
-            // depending on if anything is selected, we have to update the rest as notselected so that they are coloured differently
-            var selected = self.plotArea.selectAll('.selected');
-            var notselected = self.plotArea.selectAll(highlightSelector);
-
-            // if nothing is selected anymore, clear the .notselected class from any elements (stop showing them as gray)
-            notselected.classed('notselected', selected[0].length > 0);
         };
 
         self.clearHighlight = function() {
