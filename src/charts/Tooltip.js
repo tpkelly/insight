@@ -2,7 +2,7 @@
 
     /**
      * A tooltip, displaying values for a series or point when hovered over.
-     * @class insight.Tooltip
+     * @constructor
      */
     insight.Tooltip = function Tooltip() {
 

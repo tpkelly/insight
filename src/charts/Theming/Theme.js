@@ -5,7 +5,7 @@
      * from it to style themselves.
      *
      * All values are `undefined`, being properly set in the subclasses of Theme.
-     * @class insight.Theme
+     * @constructor
      */
     insight.Theme = function Theme() {
 

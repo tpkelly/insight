@@ -2,7 +2,7 @@
 
     /**
      * The Chart class is the element in which series and axes are drawn
-     * @class insight.Chart
+     * @constructor insight.Chart
      * @param {String} name - A uniquely identifying name for this chart
      * @param {String} element - The css selector identifying the div container that the chart will be drawn in.
      * @example var myChart = new insight.Chart('My Chart', '#chart-div');

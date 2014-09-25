@@ -2,7 +2,7 @@
 
     /**
      * A Frequency used for spacing tick marks on a Date-Time axis.
-     * @class insight.DateFrequency
+     * @constructor
      * @param {Number} year The number of years to represent
      * @param {Number} [months] The number of months to represent
      * @param {Number} [days] The number of days to represent

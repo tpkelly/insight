@@ -2,7 +2,7 @@
 
     /**
      * The ScatterSeries class extends the PointSeries class to display datapoints as small circles.
-     * @class insight.ScatterSeries
+     * @constructor
      * @extends insight.PointSeries
      * @param {String} name - A uniquely identifying name for this series
      * @param {insight.DataSet} data - The DataSet containing this series' data

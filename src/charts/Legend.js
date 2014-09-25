@@ -2,7 +2,7 @@
 
     /**
      * A Legend listing out the series on a chart
-     * @class insight.Legend
+     * @constructor
      */
     insight.Legend = function Legend() {
 

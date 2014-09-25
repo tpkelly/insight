@@ -2,7 +2,7 @@
 
     /**
      * The Axis class coordinates the domain of the series data and draws axes.
-     * @class insight.Axis
+     * @constructor
      * @param {String} axisTitle - A title that will be displayed alongside the axis.
      * @param {insight.Scale} scale - One of the scales defined by {@link insight.scales}.
      */

@@ -2,7 +2,7 @@
 
     /**
      * The ColumnSeries class extends the Series class and draws vertical bars on a Chart
-     * @class insight.ColumnSeries
+     * @constructor
      * @extends insight.Series
      * @param {String} name - A uniquely identifying name for this series
      * @param {insight.DataSet} data - The DataSet containing this series' data

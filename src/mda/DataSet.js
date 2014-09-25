@@ -2,7 +2,6 @@
     /**
      * A DataSet is wrapper around a simple object array, but providing some functions that are required by charts to load and filter data.
      * A DataSet should be used with an array of data that is to be charted without being used in a crossfilter or dimensional dataset.
-     * @class insight.DataSet
      * @constructor
      * @param {Object[]} data - The data to be processed and represented by this DataSet.
      */
