@@ -282,7 +282,7 @@ describe('Chart', function() {
 
                     testInit();
 
-                    expect(d3.elements['div'].attrs['class']).toEqual(insight.Constants.ContainerClass);
+                    expect(d3.elements['div'].attrs['class']).toEqual(insight.constants.ContainerClass);
 
                 });
 
@@ -310,7 +310,7 @@ describe('Chart', function() {
 
                     testInit();
 
-                    expect(d3.elements['svg'].attrs['class']).toEqual(insight.Constants.ChartSVG);
+                    expect(d3.elements['svg'].attrs['class']).toEqual(insight.constants.ChartSVG);
 
                 });
 
@@ -322,7 +322,7 @@ describe('Chart', function() {
 
                     testInit();
 
-                    expect(d3.elements['g'].attrs['class']).toEqual(insight.Constants.PlotArea);
+                    expect(d3.elements['g'].attrs['class']).toEqual(insight.constants.PlotArea);
 
                 });
 

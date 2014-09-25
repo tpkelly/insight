@@ -9,7 +9,7 @@
         // Private variables ------------------------------------------------------------------------------------------
 
         var self = this,
-            className = insight.Constants.Tooltip,
+            className = insight.constants.Tooltip,
             chartContainer = null,
             styles = {};
 

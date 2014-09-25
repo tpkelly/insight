@@ -1,4 +1,4 @@
-insight.Constants = (function() {
+insight.constants = (function() {
     var exports = {};
 
     exports.Behind = 'behind';

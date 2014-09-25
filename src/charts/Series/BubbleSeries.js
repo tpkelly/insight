@@ -20,7 +20,7 @@
 
         // Internal variables -----------------------------------------------------------------------------------------
 
-        self.cssClassName = d3.functor(insight.Constants.Bubble);
+        self.cssClassName = d3.functor(insight.constants.Bubble);
 
         self.classValues = [self.cssClassName()];
 

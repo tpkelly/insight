@@ -382,14 +382,14 @@
             self.axisElement = chart.plotArea.append('g');
 
             self.axisElement
-                .attr('class', insight.Constants.AxisClass)
+                .attr('class', insight.constants.AxisClass)
                 .call(self.axis)
                 .selectAll('text')
-                .attr('class', insight.Constants.AxisTextClass);
+                .attr('class', insight.constants.AxisTextClass);
 
             self.labelElement = chart.container
                 .append('div')
-                .attr('class', insight.Constants.AxisLabelClass)
+                .attr('class', insight.constants.AxisLabelClass)
                 .style('position', 'absolute');
         };
 

@@ -63,8 +63,8 @@ insight.Utils = (function() {
     exports.highlightSelector = function() {
 
         var notSelected = ':not(.selected)';
-        var selector = '.' + insight.Constants.BarClass + notSelected +
-            ',.' + insight.Constants.Bubble + notSelected;
+        var selector = '.' + insight.constants.BarClass + notSelected +
+            ',.' + insight.constants.Bubble + notSelected;
 
         return selector;
     };
