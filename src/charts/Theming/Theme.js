@@ -104,6 +104,8 @@
          *
          * @property {Font}     cellFont            The font to use for a table cell.
          * @property {Color}    cellTextColor       The text color to use for a table cell.
+         *
+         * @property {String}   headerDivider       The CSS border style to use for the divider between the table headers and body.
          */
         self.tableStyle = {
             headerFont: undefined,
@@ -112,6 +114,7 @@
             rowHeaderTextColor: undefined,
             cellFont: undefined,
             cellTextColor: undefined,
+            headerDivider: undefined
         };
     };
 

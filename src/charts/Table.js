@@ -23,7 +23,8 @@
             rowHeaderTextColor = d3.functor('blue'),
             rowHeaderFont = 'bold 14pt Times New Roman',
             cellTextColor = d3.functor('green'),
-            cellFont = '12pt Arial';
+            cellFont = '12pt Arial',
+            headerDivider = '0px solid white';
 
         // Internal variables -----------------------------------------------------------------------------------------
 
@@ -146,6 +147,8 @@
             if (!tableInitialized) {
                 initializeTable();
             }
+
+            header.style('border-bottom', self.headerDivider());
 
             // draw column headers for properties
             header.selectAll('th.column')
@@ -436,6 +439,28 @@
             return self;
         };
 
+        /**
+         * The style of the divider between the headers and table body
+         * @memberof! insight.Table
+         * @instance
+         * @returns {String} - The style of the divider between the headers and table body.
+         *
+         * @also
+         *
+         * Sets the style of the divider between the headers and table body.
+         * @memberof! insight.Table
+         * @instance
+         * @param {String} font The style of the divider between the headers and table body.
+         * @returns {this}
+         */
+        self.headerDivider = function(font) {
+            if (!arguments.length) {
+                return headerDivider;
+            }
+            headerDivider = font;
+            return self;
+        };
+
         self.applyTheme(insight.defaultTheme);
 
     };
@@ -466,6 +491,8 @@
 
         this.cellFont(theme.tableStyle.cellFont);
         this.cellTextColor(theme.tableStyle.cellTextColor);
+
+        this.headerDivider(theme.tableStyle.headerDivider);
 
         return this;
     };

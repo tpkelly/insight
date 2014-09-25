@@ -52,7 +52,8 @@ describe("Theme", function(){
                 rowHeaderFont: 'bold 15pt Times New Roman',
                 rowHeaderTextColor: 'green',
                 cellFont: '13pt Helvetica Neue',
-                cellTextColor: 'blue'
+                cellTextColor: 'blue',
+                headerDivider: '3px solid yellow'
             }
         };
 
@@ -194,6 +195,12 @@ describe("Theme", function(){
             //Then:
             expect(table.cellTextColor()()).toBe('blue');
         });
+
+        it("Header divider style to be set by theme", function() {
+            //Then:
+            expect(table.headerDivider()).toBe('3px solid yellow');
+        });
+
     });
 
     describe("Initial theme", function() {
