@@ -192,7 +192,7 @@
 
     insight.LineSeries.prototype.applyTheme = function(theme) {
         this.lineType(theme.seriesStyle.lineStyle);
-        this.shouldShowPoints(theme.seriesStyle.showPoints);
+        this.shouldShowPoints(theme.seriesStyle.shouldShowPoints);
 
         return this;
     };

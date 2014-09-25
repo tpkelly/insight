@@ -14,17 +14,19 @@
         //Configure for axis
         self.axisStyle.gridlineWidth = 1;
         self.axisStyle.gridlineColor = '#888';
-        self.axisStyle.showGridlines = false;
+        self.axisStyle.shouldShowGridlines = false;
 
         self.axisStyle.tickSize = 3;
         self.axisStyle.tickPadding = 10;
 
         self.axisStyle.axisLineWidth = 1;
         self.axisStyle.axisLineColor = '#777';
+        self.axisStyle.tickLineWidth = 1;
+        self.axisStyle.tickLineColor = '#777';
         self.axisStyle.tickLabelFont = '11pt Helvetica Neue';
         self.axisStyle.tickLabelColor = '#777';
-        self.axisStyle.axisLabelFont = '12pt Helvetica Neue';
-        self.axisStyle.axisLabelColor = '#777';
+        self.axisStyle.axisTitleFont = '12pt Helvetica Neue';
+        self.axisStyle.axisTitleColor = '#777';
 
         //Configure for chart
         self.chartStyle.seriesPalette = ['#3182bd', '#c6dbed', '#6baed6', '#08519c', '#9ecae1'];
@@ -33,7 +35,7 @@
         self.chartStyle.titleColor = '#000';
 
         //Configure series
-        self.seriesStyle.showPoints = false;
+        self.seriesStyle.shouldShowPoints = false;
         self.seriesStyle.lineStyle = 'linear';
     };
 
