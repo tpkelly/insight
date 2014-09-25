@@ -3,15 +3,15 @@
     /**
      * The Axis class coordinates the domain of the series data and draws axes.
      * @class insight.Axis
-     * @param {String} name - A uniquely identifying name for this axis
+     * @param {String} axisTitle - A title that will be displayed alongside the axis.
      * @param {insight.Scales.Scale} scale - insight.Scale.Linear for example
      */
-    insight.Axis = function Axis(name, scale) {
+    insight.Axis = function Axis(axisTitle, scale) {
 
         // Private variables --------------------------------------------------------------------------------------
 
         var self = this,
-            label = name,
+            title = axisTitle,
             shouldBeOrdered = d3.functor(false),
             orderingFunction = null,
             tickSize = d3.functor(0),
@@ -178,7 +178,7 @@
 
             var textMeasurer = new insight.TextMeasurer(self.measureCanvas);
 
-            var axisLabelHeight = textMeasurer.measureText(self.label(), self.axisLabelFont()).height;
+            var axisTitleHeight = textMeasurer.measureText(self.title(), self.axisTitleFont()).height;
 
             var tickLabelSizes = self.measureTickValues(self.tickValues());
 
@@ -190,23 +190,23 @@
                 return Math.abs(d.height);
             });
 
-            var axisLabelWidth = Math.ceil(textMeasurer.measureText(self.label(), self.axisLabelFont()).width);
+            var axisTitleWidth = Math.ceil(textMeasurer.measureText(self.title(), self.axisTitleFont()).width);
 
             if (maxTickLabelWidth === 0) {
                 maxTickLabelHeight = 0;
             }
 
-            if (axisLabelWidth === 0) {
-                axisLabelHeight = 0;
+            if (axisTitleWidth === 0) {
+                axisTitleHeight = 0;
             }
 
             var totalWidth =
                 self.tickPadding() * 2 +
                 self.tickSize() +
                 maxTickLabelWidth +
-                axisLabelWidth;
+                axisTitleWidth;
 
-            var labelHeight = (self.isHorizontal()) ? maxTickLabelHeight + axisLabelHeight : Math.max(maxTickLabelHeight, axisLabelHeight);
+            var labelHeight = (self.isHorizontal()) ? maxTickLabelHeight + axisTitleHeight : Math.max(maxTickLabelHeight, axisTitleHeight);
 
             var totalHeight = labelHeight + self.tickPadding() * 2 + self.tickSize();
 
@@ -456,9 +456,9 @@
                 .style('fill', self.tickLabelColor());
 
             self.labelElement
-                .style('font', self.axisLabelFont())
-                .style('color', self.axisLabelColor())
-                .text(self.label());
+                .style('font', self.axisTitleFont())
+                .style('color', self.axisTitleColor())
+                .text(self.title());
 
             self.positionLabel();
 
@@ -492,20 +492,20 @@
         };
 
         /**
-         * The font to use for the axis label.
+         * The font to use for the axis title.
          * @memberof! insight.Axis
          * @instance
-         * @returns {String} - The font to use for the axis label.
+         * @returns {String} - The font to use for the axis title.
          *
          * @also
          *
-         * Sets the font to use for the axis label.
+         * Sets the font to use for the axis title.
          * @memberof! insight.Axis
          * @instance
-         * @param {String} font The font to use for the axis label.
+         * @param {String} font The font to use for the axis title.
          * @returns {this}
          */
-        self.axisLabelFont = function(font) {
+        self.axisTitleFont = function(font) {
             if (!arguments.length) {
                 return axisLabelFont;
             }
@@ -536,20 +536,20 @@
         };
 
         /**
-         * The color to use for the axis label.
+         * The color to use for the axis title.
          * @memberof! insight.Axis
          * @instance
-         * @returns {Function} - A function that returns the color of an axis label.
+         * @returns {Function} - A function that returns the color of an axis title.
          *
          * @also
          *
-         * Sets the color to use for the axis label.
+         * Sets the color to use for the axis title.
          * @memberof! insight.Axis
          * @instance
          * @param {Function|Color} color Either a function that returns a color, or a color.
          * @returns {this}
          */
-        self.axisLabelColor = function(color) {
+        self.axisTitleColor = function(color) {
             if (!arguments.length) {
                 return axisLabelColor;
             }
@@ -655,27 +655,27 @@
             return self;
         };
 
-        // label and axis tick methods
+        // title and axis tick methods
 
         /**
-         * Gets the axis label
+         * Gets the axis title
          * @memberof! insight.Axis
          * @instance
-         * @returns {String} - The axis label
+         * @returns {String} - The axis title
          *
          * @also
          *
-         * Sets the axis label
+         * Sets the axis title
          * @memberof! insight.Axis
          * @instance
-         * @param {String} axisLabel The axis label
+         * @param {String} axisTitle The axis title
          * @returns {this}
          */
-        self.label = function(axisLabel) {
+        self.title = function(axisTitle) {
             if (!arguments.length) {
-                return label;
+                return title;
             }
-            label = axisLabel;
+            title = axisTitle;
             return self;
         };
 
@@ -1007,10 +1007,10 @@
 
         this.tickLabelFont(theme.axisStyle.tickLabelFont);
         this.tickLabelColor(theme.axisStyle.tickLabelColor);
-        this.axisLabelFont(theme.axisStyle.axisLabelFont);
-        this.axisLabelColor(theme.axisStyle.axisLabelColor);
+        this.axisTitleFont(theme.axisStyle.axisTitleFont);
+        this.axisTitleColor(theme.axisStyle.axisTitleColor);
 
-        this.shouldShowGridlines(theme.axisStyle.showGridlines);
+        this.shouldShowGridlines(theme.axisStyle.shouldShowGridlines);
 
         this.gridlines.applyTheme(theme);
 

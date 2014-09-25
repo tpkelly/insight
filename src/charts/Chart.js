@@ -373,6 +373,7 @@
         /**
          * Empty event handler that is overridden by any listeners who want to know when this Chart's series change
          * @memberof! insight.Chart
+         * @instance
          * @param {insight.Series[]} series - An array of insight.Series belonging to this Chart
          */
         self.seriesChanged = function(series) {
