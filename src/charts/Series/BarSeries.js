@@ -64,7 +64,7 @@
             self.selectedItems = chart.selectedItems;
 
             var groupSelector = 'g.' + self.name + '.' + insight.Constants.BarGroupClass,
-                barSelector = 'rect.' + self.name + '.' + insight.Constants.BarGroupClass;
+                barSelector = 'rect.' + self.shortClassName();
 
             var data = self.dataset();
 
@@ -79,7 +79,7 @@
 
             var newBars = newGroups.selectAll(barSelector);
 
-            newBars = newGroups.append('rect')
+            newGroups.append('rect')
                 .attr('class', self.itemClassName)
                 .attr('in_series', self.name)
                 .attr('fill', self.color)
@@ -99,9 +99,11 @@
 
 
             // Select and update all bars
-            var seriesSelector = '.' + self.name + 'class.' + self.classValues[0];
-            var bars = groups.selectAll(seriesSelector)
-                .transition()
+            var allBars = groups.selectAll(barSelector);
+
+            allBars.attr('class', self.itemClassName);
+
+            allBars.transition()
                 .duration(duration)
                 .attr('x', xPosition)
                 .attr('y', yPosition)
