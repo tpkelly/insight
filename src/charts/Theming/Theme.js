@@ -82,8 +82,8 @@
          * @instance
          * @type {Object}
          *
-         * @property {Boolean}      showPoints  Whether points should be shown on a series, if applicable to the series.
-         * @property {LineStyle}    lineStyle   The style of line to use for a series, if applicable to the series.
+         * @property {Boolean} shouldShowPoints Whether points should be shown on a series, if applicable to the series.
+         * @property {LineStyle} lineStyle The style of line to use for a series, if applicable to the series.
          */
         self.seriesStyle = {
             shouldShowPoints: undefined,
