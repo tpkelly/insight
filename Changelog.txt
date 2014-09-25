@@ -12,6 +12,7 @@
     * insight.Theme.axisStyle.axisLabelColor => insight.Theme.axisStyle.axisTitleColor
     * insight.Theme.seriesStyle.showPoints => insight.Theme.seriesStyle.shouldShowPoints
     * insight.Formatters => insight.formatters.
+  * Fixed issue with date axis tick labels jumping on interactive charts
 
 
 
