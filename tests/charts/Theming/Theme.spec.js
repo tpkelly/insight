@@ -3,6 +3,7 @@ describe("Theme", function(){
     var dummyTheme,
         chartGroup,
         chart,
+        table,
         lineSeries,
         rowSeries,
         columnSeries,
@@ -46,7 +47,12 @@ describe("Theme", function(){
             },
 
             tableStyle : {
-
+                headerFont: '17pt Arial',
+                headerTextColor: 'red',
+                rowHeaderFont: 'bold 15pt Times New Roman',
+                rowHeaderTextColor: 'green',
+                cellFont: '13pt Helvetica Neue',
+                cellTextColor: 'blue'
             }
         };
 
@@ -63,8 +69,11 @@ describe("Theme", function(){
         chart.yAxis(yAxis);
         chart.series([lineSeries, rowSeries, columnSeries, bubbleSeries]);
 
+        table = new insight.Table('Table', '#table', new insight.DataSet([1,2,3]));
+
         chartGroup = new insight.ChartGroup();
         chartGroup.charts = [chart];
+        chartGroup.tables = [table];
 
         // we don't care about resizing the chart for theme tests and there are browser specific
         // differences so a spy will prevent the chart from being resized and thus prevent the side effects
@@ -152,6 +161,38 @@ describe("Theme", function(){
         it("Line point visibility to be set by theme", function() {
             //Then:
             expect(lineSeries.shouldShowPoints()).toBe(true);
+        });
+    });
+
+    describe("Table", function() {
+        it("Header font to be set by theme", function() {
+            //Then:
+            expect(table.headerFont()).toBe('17pt Arial');
+        });
+
+        it("Row header font to be set by theme", function() {
+            //Then:
+            expect(table.rowHeaderFont()).toBe('bold 15pt Times New Roman');
+        });
+
+        it("Cell font to be set by theme", function() {
+            //Then:
+            expect(table.cellFont()).toBe('13pt Helvetica Neue');
+        });
+
+        it("Header textcolor to be set by theme", function() {
+            //Then:
+            expect(table.headerTextColor()()).toBe('red');
+        });
+
+        it("Row header textcolor to be set by theme", function() {
+            //Then:
+            expect(table.rowHeaderTextColor()()).toBe('green');
+        });
+
+        it("Cell textcolor to be set by theme", function() {
+            //Then:
+            expect(table.cellTextColor()()).toBe('blue');
         });
     });
 

@@ -457,6 +457,16 @@
      * @returns {this}
      */
     insight.Table.prototype.applyTheme = function(theme) {
+
+        this.headerFont(theme.tableStyle.headerFont);
+        this.headerTextColor(theme.tableStyle.headerTextColor);
+
+        this.rowHeaderFont(theme.tableStyle.rowHeaderFont);
+        this.rowHeaderTextColor(theme.tableStyle.rowHeaderTextColor);
+
+        this.cellFont(theme.tableStyle.cellFont);
+        this.cellTextColor(theme.tableStyle.cellTextColor);
+
         return this;
     };
 

@@ -37,6 +37,14 @@
         //Configure series
         self.seriesStyle.shouldShowPoints = false;
         self.seriesStyle.lineStyle = 'linear';
+
+        //Configure table
+        self.tableStyle.headerFont = '12pt Helvetica Neue';
+        self.tableStyle.headerTextColor = 'black';
+        self.tableStyle.rowHeaderFont = '12pt Helvetica Neue';
+        self.tableStyle.rowHeaderTextColor = 'black';
+        self.tableStyle.cellFont = '12pt Helvetica Neue';
+        self.tableStyle.cellTextColor = 'black';
     };
 
     insight.LightTheme.prototype = Object.create(insight.Theme.prototype);
