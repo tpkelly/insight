@@ -91,33 +91,40 @@
 
             if (self.getYears() !== 0) {
                 var nearestYear = roundUpToNearestMultiple(years, self.getYears());
-                return new Date(nearestYear, 0);
+
+                return new Date(Date.UTC(nearestYear, 0));
             }
             if (self.getMonths() !== 0) {
                 var nearestMonth = roundUpToNearestMultiple(months, self.getMonths());
-                return new Date(years, nearestMonth);
+
+                return new Date(Date.UTC(years, nearestMonth));
             }
             if (self.getDays() !== 0 && self.getDays() % 7 === 0) {
                 var startOfWeek = (7 - date.getDay()) % 7;
                 var nearestWeek = days + startOfWeek;
-                return new Date(years, months, nearestWeek);
+
+                return new Date(Date.UTC(years, months, nearestWeek));
             }
             if (self.getDays() !== 0) {
                 var multipleOfDays = self.getDays();
                 var daysFromMultiple = totalDaysSinceEpoch(date) % multipleOfDays;
                 var nearestDay = days + daysFromMultiple;
-                return new Date(years, months, nearestDay);
+
+                return new Date(Date.UTC(years, months, nearestDay));
             }
             if (self.getHours() !== 0) {
                 var nearestHour = roundUpToNearestMultiple(hours, self.getHours());
-                return new Date(years, months, days, nearestHour);
+
+                return new Date(Date.UTC(years, months, days, nearestHour));
             }
             if (self.getMinutes() !== 0) {
                 var nearestMinute = roundUpToNearestMultiple(minutes, self.getMinutes());
-                return new Date(years, months, days, hours, nearestMinute);
+
+                return new Date(Date.UTC(years, months, days, hours, nearestMinute));
             }
             var nearestSecond = roundUpToNearestMultiple(seconds, self.getSeconds());
-            return new Date(years, months, days, hours, minutes, nearestSecond);
+
+            return new Date(Date.UTC(years, months, days, hours, minutes, nearestSecond));
         };
     };
 
