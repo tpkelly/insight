@@ -18,12 +18,12 @@
             header,
             sortFunctions = [],
             topValues = null,
-            headerColor = d3.functor('red'),
+            headerTextColor = d3.functor('red'),
             headerFont = 'bold 16pt Helvetica Neue',
-            rowKeyColor = d3.functor('blue'),
-            rowKeyFont = 'bold 14pt Times New Roman',
-            rowValueColor = d3.functor('green'),
-            rowValueFont = '12pt Arial';
+            rowHeaderTextColor = d3.functor('blue'),
+            rowHeaderFont = 'bold 14pt Times New Roman',
+            cellTextColor = d3.functor('green'),
+            cellFont = '12pt Arial';
 
         // Internal variables -----------------------------------------------------------------------------------------
 
@@ -153,8 +153,8 @@
                 .enter()
                 .append('th')
                 .attr('class', 'column')
-                .style('color', headerColor)
-                .style('font', headerFont)
+                .style('color', self.headerTextColor())
+                .style('font', self.headerFont())
                 .html(labelFunction);
 
             var rows = self.tableBody.selectAll('tr.' + insight.Constants.TableRowClass)
@@ -165,8 +165,8 @@
                 .attr('class', rowClass)
                 .on('click', click)
                 .append('th')
-                .style('color', rowKeyColor)
-                .style('font', rowKeyFont)
+                .style('color', self.rowHeaderTextColor())
+                .style('font', self.rowHeaderFont())
                 .html(keyFunction);
 
             var cells = rows.selectAll('td')
@@ -175,8 +175,8 @@
             cells.enter().append('td');
 
             cells.html(valueFunction)
-                .style('color', rowValueColor)
-                .style('font', rowValueFont);
+                .style('color', self.cellTextColor())
+                .style('font', self.cellFont());
 
             // remove any DOM elements no longer in the data set
             cells.exit().remove();
@@ -300,6 +300,140 @@
             }
 
             return data;
+        };
+
+        /**
+         * The text color to use for the table headings.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Function} - A function that returns the color of the table headings.
+         *
+         * @also
+         *
+         * Sets the color to use for the table headings.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Function|Color} color Either a function that returns a color, or a color.
+         * @returns {this}
+         */
+        self.headerTextColor = function(color) {
+            if (!arguments.length) {
+                return headerTextColor;
+            }
+            headerTextColor = d3.functor(color);
+            return self;
+        };
+
+        /**
+         * The font to use for the table headings.
+         * @memberof! insight.Table
+         * @instance
+         * @returns {String} - The font to use for the table headings.
+         *
+         * @also
+         *
+         * Sets the font to use for the table headings.
+         * @memberof! insight.Table
+         * @instance
+         * @param {String} font The font to use for the table headings.
+         * @returns {this}
+         */
+        self.headerFont = function(font) {
+            if (!arguments.length) {
+                return headerFont;
+            }
+            headerFont = font;
+            return self;
+        };
+
+        /**
+         * The text color to use for the row headings.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Function} - A function that returns the color of the row headings.
+         *
+         * @also
+         *
+         * Sets the color to use for the row headings.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Function|Color} color Either a function that returns a color, or a color.
+         * @returns {this}
+         */
+
+        self.rowHeaderTextColor = function(color) {
+            if (!arguments.length) {
+                return rowHeaderTextColor;
+            }
+            rowHeaderTextColor = d3.functor(color);
+            return self;
+        };
+
+        /**
+         * The font to use for the row headings.
+         * @memberof! insight.Table
+         * @instance
+         * @returns {String} - The font to use for the row headings.
+         *
+         * @also
+         *
+         * Sets the font to use for the row headings.
+         * @memberof! insight.Table
+         * @instance
+         * @param {String} font The font to use for the row headings.
+         * @returns {this}
+         */
+        self.rowHeaderFont = function(font) {
+            if (!arguments.length) {
+                return rowHeaderFont;
+            }
+            rowHeaderFont = font;
+            return self;
+        };
+
+        /**
+         * The text color to use for the cells.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Function} - A function that returns the color of the cells.
+         *
+         * @also
+         *
+         * Sets the color to use for the cells.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Function|Color} color Either a function that returns a color, or a color.
+         * @returns {this}
+         */
+
+        self.cellTextColor = function(color) {
+            if (!arguments.length) {
+                return cellTextColor;
+            }
+            cellTextColor = d3.functor(color);
+            return self;
+        };
+
+        /**
+         * The font to use for the cells.
+         * @memberof! insight.Table
+         * @instance
+         * @returns {String} - The font to use for the cells.
+         *
+         * @also
+         *
+         * Sets the font to use for the cells.
+         * @memberof! insight.Table
+         * @instance
+         * @param {String} font The font to use for the cells.
+         * @returns {this}
+         */
+        self.cellFont = function(font) {
+            if (!arguments.length) {
+                return cellFont;
+            }
+            cellFont = font;
+            return self;
         };
 
         self.applyTheme(insight.defaultTheme);
