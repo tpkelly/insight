@@ -4,7 +4,7 @@
      * The Axis class coordinates the domain of the series data and draws axes.
      * @class insight.Axis
      * @param {String} axisTitle - A title that will be displayed alongside the axis.
-     * @param {insight.Scales.Scale} scale - insight.Scale.Linear for example
+     * @param {insight.Scale} scale - One of the scales defined by {@link insight.Scales}.
      */
     insight.Axis = function Axis(axisTitle, scale) {
 

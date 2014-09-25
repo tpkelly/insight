@@ -6,8 +6,6 @@
      */
     insight.correlation = function() {};
 
-    var correlation = {};
-
     /**
      * Calculates the pearson correlation coefficient for two arrays of numbers.
      * The two arrays must be equal in length and must only contain numbers.
@@ -209,7 +207,5 @@
         });
 
     }
-
-    return correlation;
 
 })(insight);
