@@ -39,12 +39,12 @@
         self.seriesStyle.lineStyle = 'linear';
 
         //Configure table
-        self.tableStyle.headerFont = '12pt Helvetica Neue';
-        self.tableStyle.headerTextColor = 'black';
-        self.tableStyle.rowHeaderFont = '12pt Helvetica Neue';
-        self.tableStyle.rowHeaderTextColor = 'black';
+        self.tableStyle.headerFont = 'bold 14pt Helvetica Neue';
+        self.tableStyle.headerTextColor = '#084594';
+        self.tableStyle.rowHeaderFont = 'bold 12pt Helvetica Neue';
+        self.tableStyle.rowHeaderTextColor = '#2171b5';
         self.tableStyle.cellFont = '12pt Helvetica Neue';
-        self.tableStyle.cellTextColor = 'black';
+        self.tableStyle.cellTextColor = '#888';
     };
 
     insight.LightTheme.prototype = Object.create(insight.Theme.prototype);
