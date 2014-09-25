@@ -4,7 +4,7 @@
      * The Axis class coordinates the domain of the series data and draws axes.
      * @class insight.Axis
      * @param {String} axisTitle - A title that will be displayed alongside the axis.
-     * @param {insight.Scale} scale - One of the scales defined by {@link insight.Scales}.
+     * @param {insight.Scale} scale - One of the scales defined by {@link insight.scales}.
      */
     insight.Axis = function Axis(axisTitle, scale) {
 
@@ -48,11 +48,11 @@
 
         function strategyForScale(scale) {
             switch (scale.name) {
-                case insight.Scales.Linear.name:
+                case insight.scales.linear.name:
                     return new insight.LinearAxis();
-                case insight.Scales.Ordinal.name:
+                case insight.scales.ordinal.name:
                     return new insight.OrdinalAxis();
-                case insight.Scales.Time.name:
+                case insight.scales.time.name:
                     return new insight.DateAxis();
 
                 default:

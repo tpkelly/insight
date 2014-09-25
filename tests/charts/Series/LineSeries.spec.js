@@ -17,8 +17,8 @@ describe('LineSeries', function() {
 
         beforeEach(function() {
 
-            xAxis = new insight.Axis('x', insight.Scales.Linear);
-            yAxis = new insight.Axis('y', insight.Scales.Linear);
+            xAxis = new insight.Axis('x', insight.scales.linear);
+            yAxis = new insight.Axis('y', insight.scales.linear);
 
             series = new insight.LineSeries('bubbles', testData, xAxis, yAxis)
                 .keyFunction(function(d) {
