@@ -2815,21 +2815,153 @@ describe('Axis', function() {
             expect(observedFirstTick).toBe(expectedFirstTick);
         });
 
-        it('on date axis is a multiple of the tick frequency', function() {
-            //Given:
-            var axis = new insight.Axis('axis', insight.scales.time);
-            spyOn(axis, 'domain').andReturn([
-                    new Date(2014, 10, 8, 4, 6, 1),
-                    new Date(2014, 10, 8, 16, 33, 3)]
-            );
-            var tickFrequency = insight.DateFrequency.dateFrequencyForHours(1);
-            var axisStrategy = new insight.DateAxis();
+        describe('on date axis', function() {
 
-            //Then:
-            var expectedFirstTick = new Date(2014, 10, 8, 4);
-            var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
-            expect(observedFirstTick).toEqual(expectedFirstTick);
+            it('is a multiple of a second tick frequency', function() {
+                //Given:
+                var axis = new insight.Axis('axis', insight.scales.time);
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(2014, 10, 8, 4, 6, 4)),
+                        new Date(Date.UTC(2014, 10, 8, 16, 33, 5))]
+                );
+                var tickFrequency = insight.DateFrequency.dateFrequencyForSeconds(15);
+                var axisStrategy = new insight.DateAxis();
+
+                //Then:
+                var expectedFirstTick = new Date(Date.UTC(2014, 10, 8, 4, 6, 15));
+                var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+                expect(observedFirstTick).toEqual(expectedFirstTick);
+            });
+
+            it('is a multiple of a minute tick frequency', function() {
+                //Given:
+                var axis = new insight.Axis('axis', insight.scales.time);
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(2014, 10, 8, 4, 6, 4)),
+                        new Date(Date.UTC(2014, 10, 8, 16, 33, 5))]
+                );
+                var tickFrequency = insight.DateFrequency.dateFrequencyForMinutes(30);
+                var axisStrategy = new insight.DateAxis();
+
+                //Then:
+                var expectedFirstTick = new Date(Date.UTC(2014, 10, 8, 4, 30));
+                var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+                expect(observedFirstTick).toEqual(expectedFirstTick);
+            });
+
+            it('is a multiple of a hour tick frequency', function() {
+                //Given:
+                var axis = new insight.Axis('axis', insight.scales.time);
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(2014, 10, 8, 4, 6)),
+                        new Date(Date.UTC(2014, 10, 8, 16, 33))]
+                );
+                var tickFrequency = insight.DateFrequency.dateFrequencyForHours(6);
+                var axisStrategy = new insight.DateAxis();
+
+                //Then:
+                var expectedFirstTick = new Date(Date.UTC(2014, 10, 8, 6));
+                var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+                expect(observedFirstTick).toEqual(expectedFirstTick);
+            });
+
+            it('is a multiple of a day tick frequency', function() {
+                //Given:
+                var axis = new insight.Axis('axis', insight.scales.time);
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(2013, 9, 30, 4)),
+                        new Date(Date.UTC(2013, 10, 9, 16))]
+                );
+                var tickFrequency = insight.DateFrequency.dateFrequencyForDays(2);
+                var axisStrategy = new insight.DateAxis();
+
+                //Then:
+                var expectedFirstTick = new Date(Date.UTC(2013, 9, 30));
+                var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+                expect(observedFirstTick).toEqual(expectedFirstTick);
+            });
+
+            it('handles month boundaries for day tick frequencies', function() {
+                //Given:
+                var axis = new insight.Axis('axis', insight.scales.time);
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(2013, 9, 31, 4)),
+                        new Date(Date.UTC(2014, 1, 18, 16))]
+                );
+                var tickFrequency = insight.DateFrequency.dateFrequencyForDays(2);
+                var axisStrategy = new insight.DateAxis();
+
+                //Then:
+                var expectedFirstTick = new Date(Date.UTC(2013, 10, 1));
+                var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+                expect(observedFirstTick).toEqual(expectedFirstTick);
+            });
+
+            it('handles year boundaries for day tick frequencies', function() {
+                //Given:
+                var axis = new insight.Axis('axis', insight.scales.time);
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(2014, 0, 1, 4)),
+                        new Date(Date.UTC(2014, 0, 18, 16))]
+                );
+                var tickFrequency = insight.DateFrequency.dateFrequencyForDays(2);
+                var axisStrategy = new insight.DateAxis();
+
+                //Then:
+                var expectedFirstTick = new Date(Date.UTC(2014, 0, 2));
+                var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+                expect(observedFirstTick).toEqual(expectedFirstTick);
+            });
+
+            it('is a multiple of a week tick frequency', function() {
+                //Given:
+                var axis = new insight.Axis('axis', insight.scales.time);
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(2014, 10, 8, 4)),
+                        new Date(Date.UTC(2014, 10, 8, 16))]
+                );
+                var tickFrequency = insight.DateFrequency.dateFrequencyForWeeks(1);
+                var axisStrategy = new insight.DateAxis();
+
+                //Then:
+                var expectedFirstTick = new Date(Date.UTC(2014, 10, 9));
+                var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+                expect(observedFirstTick).toEqual(expectedFirstTick);
+            });
+
+            it('is a multiple of a month tick frequency', function() {
+                //Given:
+                var axis = new insight.Axis('axis', insight.scales.time);
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(2014, 7, 8)),
+                        new Date(Date.UTC(2014, 11, 8))]
+                );
+                var tickFrequency = insight.DateFrequency.dateFrequencyForMonths(3);
+                var axisStrategy = new insight.DateAxis();
+
+                //Then:
+                var expectedFirstTick = new Date(Date.UTC(2014, 9));
+                var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+                expect(observedFirstTick).toEqual(expectedFirstTick);
+            });
+
+            it('is a multiple of a year tick frequency', function() {
+                //Given:
+                var axis = new insight.Axis('axis', insight.scales.time);
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(2014, 10, 8, 4, 6, 1)),
+                        new Date(Date.UTC(2014, 10, 8, 16, 33, 3))]
+                );
+                var tickFrequency = insight.DateFrequency.dateFrequencyForYears(5);
+                var axisStrategy = new insight.DateAxis();
+
+                //Then:
+                var expectedFirstTick = new Date(2015, 0);
+                var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+                expect(observedFirstTick).toEqual(expectedFirstTick);
+            });
         });
+
 
         it('on ordinal axis is the first value', function() {
             //Given:
