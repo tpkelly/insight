@@ -66,12 +66,12 @@
 
 /* Table Styles */
 
-.in-table th, in-table td
+.in-table th, .in-table td
 {
     padding: 0.4em 1em;
 }
 
-.in-table td
+.in-table td, .in-table thead th
 {
   text-align: right;
 }

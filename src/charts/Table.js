@@ -17,7 +17,17 @@
             tableInitialized = false,
             header,
             sortFunctions = [],
-            topValues = null;
+            topValues = null,
+            headerTextColor = d3.functor('red'),
+            headerFont = 'bold 16pt Helvetica Neue',
+            rowHeaderTextColor = d3.functor('blue'),
+            rowHeaderFont = 'bold 14pt Times New Roman',
+            cellTextColor = d3.functor('green'),
+            cellFont = '12pt Arial',
+            headerDivider = '0px solid white',
+            headerBackgroundColor = d3.functor('white'),
+            rowBackgroundColor = d3.functor('white'),
+            rowAlternateBackgroundColor = d3.functor(undefined); //Left as undefined, to default to rowBackgroundColor
 
         // Internal variables -----------------------------------------------------------------------------------------
 
@@ -90,6 +100,19 @@
             sortFunctions.push(sort);
         }
 
+        function rowColor(d, index) {
+            var mainBackgroundColor = self.rowBackgroundColor();
+            var alternateBackgroundColor = self.rowAlternateBackgroundColor();
+
+            //Default to main row colour if alternate colour is undefined
+            if (!alternateBackgroundColor()) {
+                alternateBackgroundColor = mainBackgroundColor;
+            }
+
+            //Alternate the colours for rows
+            return (index % 2 === 0) ? mainBackgroundColor() : alternateBackgroundColor();
+        }
+
         // Internal functions -----------------------------------------------------------------------------------------
 
         // Toggle highlighting on items in this table.
@@ -141,12 +164,18 @@
                 initializeTable();
             }
 
+            header
+                .style('border-bottom', self.headerDivider())
+                .style('background-color', self.headerBackgroundColor());
+
             // draw column headers for properties
             header.selectAll('th.column')
                 .data(columns)
                 .enter()
                 .append('th')
                 .attr('class', 'column')
+                .style('color', self.headerTextColor())
+                .style('font', self.headerFont())
                 .html(labelFunction);
 
             var rows = self.tableBody.selectAll('tr.' + insight.Constants.TableRowClass)
@@ -156,23 +185,24 @@
                 .append('tr')
                 .attr('class', rowClass)
                 .on('click', click)
+                .style('background-color', rowColor)
                 .append('th')
+                .style('color', self.rowHeaderTextColor())
+                .style('font', self.rowHeaderFont())
                 .html(keyFunction);
 
             var cells = rows.selectAll('td')
                 .data(columnBuilder);
 
-            cells.enter()
-                .append('td');
+            cells.enter().append('td');
 
-            cells.html(valueFunction);
+            cells.html(valueFunction)
+                .style('color', self.cellTextColor())
+                .style('font', self.cellFont());
 
             // remove any DOM elements no longer in the data set
-            cells.exit()
-                .remove();
-
-            rows.exit()
-                .remove();
+            cells.exit().remove();
+            rows.exit().remove();
         };
 
         // Public functions -------------------------------------------------------------------------------------------
@@ -294,6 +324,228 @@
             return data;
         };
 
+        /**
+         * The text color to use for the table headings.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Function} - A function that returns the color of the table headings.
+         *
+         * @also
+         *
+         * Sets the color to use for the table headings.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Function|Color} color Either a function that returns a color, or a color.
+         * @returns {this}
+         */
+        self.headerTextColor = function(color) {
+            if (!arguments.length) {
+                return headerTextColor;
+            }
+            headerTextColor = d3.functor(color);
+            return self;
+        };
+
+        /**
+         * The font to use for the table headings.
+         * @memberof! insight.Table
+         * @instance
+         * @returns {Font} - The font to use for the table headings.
+         *
+         * @also
+         *
+         * Sets the font to use for the table headings.
+         * @memberof! insight.Table
+         * @instance
+         * @param {Font} font The font to use for the table headings.
+         * @returns {this}
+         */
+        self.headerFont = function(font) {
+            if (!arguments.length) {
+                return headerFont;
+            }
+            headerFont = font;
+            return self;
+        };
+
+        /**
+         * The text color to use for the row headings.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Function} - A function that returns the color of the row headings.
+         *
+         * @also
+         *
+         * Sets the color to use for the row headings.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Function|Color} color Either a function that returns a color, or a color.
+         * @returns {this}
+         */
+        self.rowHeaderTextColor = function(color) {
+            if (!arguments.length) {
+                return rowHeaderTextColor;
+            }
+            rowHeaderTextColor = d3.functor(color);
+            return self;
+        };
+
+        /**
+         * The font to use for the row headings.
+         * @memberof! insight.Table
+         * @instance
+         * @returns {Font} - The font to use for the row headings.
+         *
+         * @also
+         *
+         * Sets the font to use for the row headings.
+         * @memberof! insight.Table
+         * @instance
+         * @param {Font} font The font to use for the row headings.
+         * @returns {this}
+         */
+        self.rowHeaderFont = function(font) {
+            if (!arguments.length) {
+                return rowHeaderFont;
+            }
+            rowHeaderFont = font;
+            return self;
+        };
+
+        /**
+         * The text color to use for the cells.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Function} - A function that returns the color of the cells.
+         *
+         * @also
+         *
+         * Sets the color to use for the cells.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Function|Color} color Either a function that returns a color, or a color.
+         * @returns {this}
+         */
+        self.cellTextColor = function(color) {
+            if (!arguments.length) {
+                return cellTextColor;
+            }
+            cellTextColor = d3.functor(color);
+            return self;
+        };
+
+        /**
+         * The font to use for the cells.
+         * @memberof! insight.Table
+         * @instance
+         * @returns {Font} - The font to use for the cells.
+         *
+         * @also
+         *
+         * Sets the font to use for the cells.
+         * @memberof! insight.Table
+         * @instance
+         * @param {Font} font The font to use for the cells.
+         * @returns {this}
+         */
+        self.cellFont = function(font) {
+            if (!arguments.length) {
+                return cellFont;
+            }
+            cellFont = font;
+            return self;
+        };
+
+        /**
+         * The style of the divider between the headers and table body
+         * @memberof! insight.Table
+         * @instance
+         * @returns {Border} - The style of the divider between the headers and table body.
+         *
+         * @also
+         *
+         * Sets the style of the divider between the headers and table body.
+         * @memberof! insight.Table
+         * @instance
+         * @param {Border} dividerStyle The style of the divider between the headers and table body.
+         * @returns {this}
+         */
+        self.headerDivider = function(dividerStyle) {
+            if (!arguments.length) {
+                return headerDivider;
+            }
+            headerDivider = dividerStyle;
+            return self;
+        };
+
+        /**
+         * The background color to use for the table headings.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Function} - A function that returns the background color of the table headings.
+         *
+         * @also
+         *
+         * Sets the background color to use for the table headings.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Function|Color} color Either a function that returns a color, or a color.
+         * @returns {this}
+         */
+        self.headerBackgroundColor = function(color) {
+            if (!arguments.length) {
+                return headerBackgroundColor;
+            }
+            headerBackgroundColor = d3.functor(color);
+            return self;
+        };
+
+        /**
+         * The background color to use for the rows.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Function} - A function that returns the background color of the rows.
+         *
+         * @also
+         *
+         * Sets the background color to use for the rows.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Function|Color} color Either a function that returns a color, or a color.
+         * @returns {this}
+         */
+        self.rowBackgroundColor = function(color) {
+            if (!arguments.length) {
+                return rowBackgroundColor;
+            }
+            rowBackgroundColor = d3.functor(color);
+            return self;
+        };
+
+        /**
+         * The alternate background color to use for the rows, to appear on every other row.
+         * If undefined, then the alternate row background color defaults to using the [rowBackgroundColor]{@link insight.Table#self.rowBackgroundColor}.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Function} - A function that returns the alternate background color of the rows.
+         *
+         * @also
+         *
+         * Sets the alternate background color to use for the rows.
+         * If undefined, then the alternate row background color defaults to using the [rowBackgroundColor]{@link insight.Table#self.rowBackgroundColor}.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Function|Color} color Either a function that returns a color, or a color.
+         * @returns {this}
+         */
+        self.rowAlternateBackgroundColor = function(color) {
+            if (!arguments.length) {
+                return rowAlternateBackgroundColor;
+            }
+            rowAlternateBackgroundColor = d3.functor(color);
+            return self;
+        };
+
         self.applyTheme(insight.defaultTheme);
 
     };
@@ -310,11 +562,26 @@
      * Applies all properties from a theme to the table.
      * @memberof! insight.Table
      * @instance
-     * @todo Extract relevant properties and save them to the table.
      * @param {insight.Theme} theme The theme to apply to the table.
      * @returns {this}
      */
     insight.Table.prototype.applyTheme = function(theme) {
+
+        this.headerFont(theme.tableStyle.headerFont);
+        this.headerTextColor(theme.tableStyle.headerTextColor);
+
+        this.rowHeaderFont(theme.tableStyle.rowHeaderFont);
+        this.rowHeaderTextColor(theme.tableStyle.rowHeaderTextColor);
+
+        this.cellFont(theme.tableStyle.cellFont);
+        this.cellTextColor(theme.tableStyle.cellTextColor);
+
+        this.headerDivider(theme.tableStyle.headerDivider);
+
+        this.headerBackgroundColor(theme.tableStyle.headerBackgroundColor);
+        this.rowBackgroundColor(theme.tableStyle.rowBackgroundColor);
+        this.rowAlternateBackgroundColor(theme.tableStyle.rowAlternateBackgroundColor);
+
         return this;
     };
 

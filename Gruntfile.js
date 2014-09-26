@@ -21,6 +21,7 @@ module.exports = function(grunt) {
     'src/charts/Axis/AxisGridlines.js',
     'src/charts/Series/Series.js',
     'src/charts/Series/PointSeries.js',
+    'src/charts/Series/BarSeries.js',
     'src/charts/Series/MarkerSeries.js',
     'src/charts/Series/BubbleSeries.js', 
     'src/charts/Series/ScatterSeries.js', 
