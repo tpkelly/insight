@@ -33,6 +33,10 @@
             return [0, 0];
         };
 
+        self.axisRange = function(axis, minimum, maximum) {
+            return [minimum, maximum];
+        };
+
         self.initialTickValue = function(axis, tickFrequency) {
             return 0;
         };
