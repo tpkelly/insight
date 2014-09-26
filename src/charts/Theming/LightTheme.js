@@ -37,6 +37,20 @@
         //Configure series
         self.seriesStyle.shouldShowPoints = false;
         self.seriesStyle.lineStyle = 'linear';
+
+        //Configure table
+        self.tableStyle.headerFont = 'bold 14pt Helvetica Neue';
+        self.tableStyle.headerTextColor = '#084594';
+        self.tableStyle.rowHeaderFont = 'bold 12pt Helvetica Neue';
+        self.tableStyle.rowHeaderTextColor = '#2171b5';
+        self.tableStyle.cellFont = '12pt Helvetica Neue';
+        self.tableStyle.cellTextColor = '#888';
+
+        self.tableStyle.headerDivider = '1px solid #084594';
+
+        self.tableStyle.headerBackgroundColor = 'white';
+        self.tableStyle.rowBackgroundColor = '#c6dbef';
+        self.tableStyle.rowAlternateBackgroundColor = 'white';
     };
 
     insight.LightTheme.prototype = Object.create(insight.Theme.prototype);
