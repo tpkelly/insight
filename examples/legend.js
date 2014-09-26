@@ -25,10 +25,10 @@ $(document)
             .height(400)
             .legend(new insight.Legend());
 
-        var x = new insight.Axis('', insight.Scales.Ordinal)
+        var x = new insight.Axis('', insight.scales.ordinal)
             .textAnchor('middle');
 
-        var y = new insight.Axis('', insight.Scales.Linear)
+        var y = new insight.Axis('', insight.scales.linear)
             .tickLabelFormat(insight.formatters.numberFormatter)
             .tickLabelFormat(function(tickValue)
             {

@@ -24,11 +24,11 @@ $(document)
             .width(500)
             .height(400);
 
-        var x = new insight.Axis('Country', insight.Scales.Ordinal)
+        var x = new insight.Axis('Country', insight.scales.ordinal)
             .title('')
             .textAnchor('middle');
 
-        var y = new insight.Axis('Population', insight.Scales.Linear)
+        var y = new insight.Axis('Population', insight.scales.linear)
             .title('Population')
             .tickLabelFormat(function(tickValue)
             {

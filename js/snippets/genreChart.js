@@ -4,12 +4,12 @@ function createGenreCountChart(chartGroup, genreData){
         .width(450)
         .height(400);
 
-    var y = new insight.Axis('', insight.Scales.Ordinal)
+    var y = new insight.Axis('', insight.scales.ordinal)
         .tickSize(0)
         .tickPadding(5)
         .isOrdered(true);
 
-    var x = new insight.Axis('', insight.Scales.Linear)
+    var x = new insight.Axis('', insight.scales.linear)
         .hasReversedPosition(true)
         .tickPadding(0)
         .tickSize(0)
