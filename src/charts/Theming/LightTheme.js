@@ -47,6 +47,10 @@
         self.tableStyle.cellTextColor = '#888';
 
         self.tableStyle.headerDivider = '1px solid #084594';
+
+        self.tableStyle.headerBackgroundColor = 'white';
+        self.tableStyle.rowBackgroundColor = '#c6dbef';
+        self.tableStyle.rowAlternateBackgroundColor = 'white';
     };
 
     insight.LightTheme.prototype = Object.create(insight.Theme.prototype);

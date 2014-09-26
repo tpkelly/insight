@@ -24,7 +24,10 @@
             rowHeaderFont = 'bold 14pt Times New Roman',
             cellTextColor = d3.functor('green'),
             cellFont = '12pt Arial',
-            headerDivider = '0px solid white';
+            headerDivider = '0px solid white',
+            headerBackgroundColor = d3.functor('white'),
+            rowBackgroundColor = d3.functor('white'),
+            rowAlternateBackgroundColor = d3.functor(undefined); //Left as undefined, to default to rowBackgroundColor
 
         // Internal variables -----------------------------------------------------------------------------------------
 
@@ -97,6 +100,19 @@
             sortFunctions.push(sort);
         }
 
+        function rowColor(d, index) {
+            var mainBackgroundColor = self.rowBackgroundColor();
+            var alternateBackgroundColor = self.rowAlternateBackgroundColor();
+
+            //Default to main row colour if alternate colour is undefined
+            if (!alternateBackgroundColor()) {
+                alternateBackgroundColor = mainBackgroundColor;
+            }
+
+            //Alternate the colours for rows
+            return (index % 2 === 0) ? mainBackgroundColor() : alternateBackgroundColor();
+        }
+
         // Internal functions -----------------------------------------------------------------------------------------
 
         // Toggle highlighting on items in this table.
@@ -148,7 +164,9 @@
                 initializeTable();
             }
 
-            header.style('border-bottom', self.headerDivider());
+            header
+                .style('border-bottom', self.headerDivider())
+                .style('background-color', self.headerBackgroundColor());
 
             // draw column headers for properties
             header.selectAll('th.column')
@@ -167,6 +185,7 @@
                 .append('tr')
                 .attr('class', rowClass)
                 .on('click', click)
+                .style('background-color', rowColor)
                 .append('th')
                 .style('color', self.rowHeaderTextColor())
                 .style('font', self.rowHeaderFont())
@@ -461,6 +480,77 @@
             return self;
         };
 
+        /**
+         * The background color to use for the table headings.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Function} - A function that returns the background color of the table headings.
+         *
+         * @also
+         *
+         * Sets the background color to use for the table headings.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Function|Color} color Either a function that returns a color, or a color.
+         * @returns {this}
+         */
+
+        self.headerBackgroundColor = function(color) {
+            if (!arguments.length) {
+                return headerBackgroundColor;
+            }
+            headerBackgroundColor = d3.functor(color);
+            return self;
+        };
+
+        /**
+         * The background color to use for the rows.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Function} - A function that returns the background color of the rows.
+         *
+         * @also
+         *
+         * Sets the background color to use for the rows.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Function|Color} color Either a function that returns a color, or a color.
+         * @returns {this}
+         */
+
+        self.rowBackgroundColor = function(color) {
+            if (!arguments.length) {
+                return rowBackgroundColor;
+            }
+            rowBackgroundColor = d3.functor(color);
+            return self;
+        };
+
+        /**
+         * The alternate background color to use for the rows, to appear on every other row.
+         * If undefined, then the alternate row background color defaults to using the [rowBackgroundColor]{@link insight.Table#self.rowBackgroundColor}.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Function} - A function that returns the alternate background color of the rows.
+         *
+         * @also
+         *
+         * Sets the alternate background color to use for the rows.
+         * If undefined, then the alternate row background color defaults to using the [rowBackgroundColor]{@link insight.Table#self.rowBackgroundColor}.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Function|Color} color Either a function that returns a color, or a color.
+         * @returns {this}
+         */
+
+        self.rowAlternateBackgroundColor = function(color) {
+            if (!arguments.length) {
+                return rowAlternateBackgroundColor;
+            }
+            rowAlternateBackgroundColor = d3.functor(color);
+            return self;
+        };
+
         self.applyTheme(insight.defaultTheme);
 
     };
@@ -493,6 +583,10 @@
         this.cellTextColor(theme.tableStyle.cellTextColor);
 
         this.headerDivider(theme.tableStyle.headerDivider);
+
+        this.headerBackgroundColor(theme.tableStyle.headerBackgroundColor);
+        this.rowBackgroundColor(theme.tableStyle.rowBackgroundColor);
+        this.rowAlternateBackgroundColor(theme.tableStyle.rowAlternateBackgroundColor);
 
         return this;
     };

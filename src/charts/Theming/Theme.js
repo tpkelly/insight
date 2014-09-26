@@ -96,16 +96,20 @@
          * @instance
          * @type {Object}
          *
-         * @property {Font}     headerFont          The font to use for a table column header.
-         * @property {Color}    headerTextColor     The text color to use for a table column header.
+         * @property {Font}     headerFont                  The font to use for a table column header.
+         * @property {Color}    headerTextColor             The text color to use for a table column header.
          *
-         * @property {Font}     rowHeaderFont       The font to use for a table row header.
-         * @property {Color}    rowHeaderTextColor  The text color to use for a table row header.
+         * @property {Font}     rowHeaderFont               The font to use for a table row header.
+         * @property {Color}    rowHeaderTextColor          The text color to use for a table row header.
          *
-         * @property {Font}     cellFont            The font to use for a table cell.
-         * @property {Color}    cellTextColor       The text color to use for a table cell.
+         * @property {Font}     cellFont                    The font to use for a table cell.
+         * @property {Color}    cellTextColor               The text color to use for a table cell.
          *
-         * @property {String}   headerDivider       The CSS border style to use for the divider between the table headers and body.
+         * @property {String}   headerDivider               The CSS border style to use for the divider between the table headers and body.
+         *
+         * @property {Color}    headerBackgroundColor       The background color for the header row on the table.
+         * @property {Color}    rowBackgroundColor          The background color for rows on the table.
+         * @property {Color}    rowAlternateBackgroundColor The background color for every other row on the table.
          */
         self.tableStyle = {
             headerFont: undefined,
@@ -114,7 +118,10 @@
             rowHeaderTextColor: undefined,
             cellFont: undefined,
             cellTextColor: undefined,
-            headerDivider: undefined
+            headerDivider: undefined,
+            headerBackgroundColor: undefined,
+            rowBackgroundColor: undefined,
+            rowAlternateBackgroundColor: undefined
         };
     };
 

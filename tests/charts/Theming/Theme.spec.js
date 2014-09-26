@@ -53,7 +53,10 @@ describe("Theme", function(){
                 rowHeaderTextColor: 'green',
                 cellFont: '13pt Helvetica Neue',
                 cellTextColor: 'blue',
-                headerDivider: '3px solid yellow'
+                headerDivider: '3px solid yellow',
+                headerBackgroundColor: '#824',
+                rowBackgroundColor : '#943',
+                rowAlternateBackgroundColor: '#439'
             }
         };
 
@@ -199,6 +202,21 @@ describe("Theme", function(){
         it("Header divider style to be set by theme", function() {
             //Then:
             expect(table.headerDivider()).toBe('3px solid yellow');
+        });
+
+        it("Header background color to be set by theme", function() {
+            //Then:
+            expect(table.headerBackgroundColor()()).toBe('#824');
+        });
+
+        it("Row background color to be set by theme", function() {
+            //Then:
+            expect(table.rowBackgroundColor()()).toBe('#943');
+        });
+
+        it("Alternate background color to be set by theme", function() {
+            //Then:
+            expect(table.rowAlternateBackgroundColor()()).toBe('#439');
         });
 
     });
