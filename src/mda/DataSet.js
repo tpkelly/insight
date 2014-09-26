@@ -111,16 +111,6 @@
             return self;
         };
 
-        self.getOrderedData = function() {
-            var data;
-
-            data = self.data
-                .filter(filterFunction)
-                .sort(orderFunction);
-
-            return data;
-        };
-
         self.group = function(name, groupFunction, oneToMany) {
 
             self.crossfilterData = self.crossfilterData || crossfilter(self.data);
