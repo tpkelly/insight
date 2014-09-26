@@ -32,8 +32,8 @@ describe('Row Series Tests', function() {
        
         var group =  dataset.group('country',function(d){return d.Country;});
 
-        var xScale = new insight.Axis('Values', insight.Scales.Ordinal);
-        var yScale = new insight.Axis('Keys', insight.Scales.Linear);
+        var xScale = new insight.Axis('Values', insight.scales.ordinal);
+        var yScale = new insight.Axis('Keys', insight.scales.linear);
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
 
@@ -53,8 +53,8 @@ describe('Row Series Tests', function() {
         var group =  data.group('country', function(d){return d.Country;})
                          .mean(['Age']);
 
-        var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
-        var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        var xScale = new insight.Axis('Country', insight.scales.ordinal);
+        var yScale = new insight.Axis('Stuff', insight.scales.linear);
         
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
@@ -87,8 +87,8 @@ describe('Row Series Tests', function() {
 
         beforeEach(function() {
 
-            xAxis = new insight.Axis('x', insight.Scales.Linear);
-            yAxis = new insight.Axis('y', insight.Scales.Ordinal);
+            xAxis = new insight.Axis('x', insight.scales.linear);
+            yAxis = new insight.Axis('y', insight.scales.ordinal);
 
             var dataset = new insight.DataSet(rowdata);
             var countryGroup = dataset.group('countries', function(d) { return d.Country; });
@@ -133,9 +133,9 @@ describe('Row Series Tests', function() {
 
         beforeEach(function () {
 
-            xAxis = new insight.Axis('x', insight.Scales.Ordinal)
+            xAxis = new insight.Axis('x', insight.scales.ordinal)
                 .isOrdered(true);
-            yAxis = new insight.Axis('y', insight.Scales.Linear);
+            yAxis = new insight.Axis('y', insight.scales.linear);
 
             var dataset = new insight.DataSet([
                 {key: "A", value: 3},

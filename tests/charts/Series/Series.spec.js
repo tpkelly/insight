@@ -45,8 +45,8 @@ describe('Series', function(){
 
         beforeEach(function() {
             chart = new insight.Chart('Chart', '#chart');
-            xAxis = new insight.Axis('x-axis', insight.Scales.Linear, 'bottom');
-            yAxis = new insight.Axis('y-axis', insight.Scales.Linear, 'left');
+            xAxis = new insight.Axis('x-axis', insight.scales.linear, 'bottom');
+            yAxis = new insight.Axis('y-axis', insight.scales.linear, 'left');
             chart.addXAxis(xAxis);
             chart.addYAxis(yAxis);
 
@@ -249,8 +249,8 @@ describe('Series', function(){
     it('Last value can be extracted', function(){
         //Given:
         var chart = new insight.Chart('Chart', '#chart');
-        var xAxis = new insight.Scale(chart, 'x-axis', 'h', insight.Scales.Linear);
-        var yAxis = new insight.Scale(chart, 'y-axis', 'v', insight.Scales.Linear);
+        var xAxis = new insight.Scale(chart, 'x-axis', 'h', insight.scales.linear);
+        var yAxis = new insight.Scale(chart, 'y-axis', 'v', insight.scales.linear);
 
         var data = new insight.DataSet([3, 1, 5, 1, 7, 6]);
         var series = new insight.Series('Test series', chart, data, xAxis, yAxis);
@@ -264,8 +264,8 @@ describe('Series', function(){
     it('Maximum value can be extracted', function(){
         //Given:
         var chart = new insight.Chart('Chart', '#chart');
-        var xAxis = new insight.Scale(chart, 'x-axis', 'h', insight.Scales.Linear);
-        var yAxis = new insight.Scale(chart, 'y-axis', 'v', insight.Scales.Linear);
+        var xAxis = new insight.Scale(chart, 'x-axis', 'h', insight.scales.linear);
+        var yAxis = new insight.Scale(chart, 'y-axis', 'v', insight.scales.linear);
 
         var data = new insight.DataSet([3, 1, 5, 1, 7, 6]);
         var series = new insight.Series('Test series', chart, data, xAxis, yAxis);
@@ -279,8 +279,8 @@ describe('Series', function(){
 
     it('Series does selection by group key value', function() {
         //Given:
-        var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
-        var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        var xScale = new insight.Axis('Country', insight.scales.ordinal);
+        var yScale = new insight.Axis('Stuff', insight.scales.linear);
         var series = new insight.Series('country', seriesDataSet, xScale, yScale)
             .groupKeyFunction(function(d) {
                 return d.Surname;

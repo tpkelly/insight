@@ -13,6 +13,9 @@
     * insight.Theme.axisStyle.axisLabelColor => insight.Theme.axisStyle.axisTitleColor
     * insight.Theme.seriesStyle.showPoints => insight.Theme.seriesStyle.shouldShowPoints
     * insight.Formatters => insight.formatters.
+    * insight.Scales.Linear => insight.scales.linear
+    * insight.Scales.Ordinal => insight.scales.ordinal
+    * insight.Scales.Time => insight.scales.time
 
 
 
