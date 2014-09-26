@@ -350,14 +350,14 @@
          * The font to use for the table headings.
          * @memberof! insight.Table
          * @instance
-         * @returns {String} - The font to use for the table headings.
+         * @returns {Font} - The font to use for the table headings.
          *
          * @also
          *
          * Sets the font to use for the table headings.
          * @memberof! insight.Table
          * @instance
-         * @param {String} font The font to use for the table headings.
+         * @param {Font} font The font to use for the table headings.
          * @returns {this}
          */
         self.headerFont = function(font) {
@@ -395,14 +395,14 @@
          * The font to use for the row headings.
          * @memberof! insight.Table
          * @instance
-         * @returns {String} - The font to use for the row headings.
+         * @returns {Font} - The font to use for the row headings.
          *
          * @also
          *
          * Sets the font to use for the row headings.
          * @memberof! insight.Table
          * @instance
-         * @param {String} font The font to use for the row headings.
+         * @param {Font} font The font to use for the row headings.
          * @returns {this}
          */
         self.rowHeaderFont = function(font) {
@@ -440,14 +440,14 @@
          * The font to use for the cells.
          * @memberof! insight.Table
          * @instance
-         * @returns {String} - The font to use for the cells.
+         * @returns {Font} - The font to use for the cells.
          *
          * @also
          *
          * Sets the font to use for the cells.
          * @memberof! insight.Table
          * @instance
-         * @param {String} font The font to use for the cells.
+         * @param {Font} font The font to use for the cells.
          * @returns {this}
          */
         self.cellFont = function(font) {
