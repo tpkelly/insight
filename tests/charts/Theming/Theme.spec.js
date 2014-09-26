@@ -47,8 +47,8 @@ describe("Theme", function(){
             }
         };
 
-        var xAxis = new insight.Axis('x-axis', insight.Scales.Linear);
-        var yAxis = new insight.Axis('y-axis', insight.Scales.Linear);
+        var xAxis = new insight.Axis('x-axis', insight.scales.linear);
+        var yAxis = new insight.Axis('y-axis', insight.scales.linear);
 
         lineSeries = new insight.LineSeries('line', [1,2,3], xAxis, yAxis);
         rowSeries = new insight.RowSeries('row', [1,2,3], xAxis, yAxis);
@@ -228,8 +228,8 @@ describe("Theme", function(){
             method = prototype.applyTheme;
             prototype.applyTheme = spy;
 
-            var xAxis = new insight.Axis('Axis', insight.Scales.Linear);
-            var yAxis = new insight.Axis('Axis', insight.Scales.Linear);
+            var xAxis = new insight.Axis('Axis', insight.scales.linear);
+            var yAxis = new insight.Axis('Axis', insight.scales.linear);
 
             //When:
             var series = new insight.LineSeries('Series', [], xAxis, yAxis);
@@ -245,7 +245,7 @@ describe("Theme", function(){
             prototype.applyTheme = spy;
 
             //When:
-            var axis = new insight.Axis('Axis', insight.Scales.Linear);
+            var axis = new insight.Axis('Axis', insight.scales.linear);
 
             //Then:
             expect(spy).toHaveBeenCalled();

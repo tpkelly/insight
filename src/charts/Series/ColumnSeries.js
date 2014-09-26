@@ -1,17 +1,17 @@
 (function(insight) {
 
     /**
-     * The ColumnSeries class extends the Series class and draws vertical bars on a Chart
+     * The ColumnSeries class extends the [BarSeries]{@link insight.BarSeries} class and draws vertical bars on a [Chart]{@link insight.Chart}
      * @class insight.ColumnSeries
-     * @extends insight.Series
+     * @extends insight.BarSeries
      * @param {String} name - A uniquely identifying name for this series
-     * @param {insight.DataSet} data - The DataSet containing this series' data
-     * @param {insight.Scales.Scale} x - the x axis
-     * @param {insight.Scales.Scale} y - the y axis
+     * @param {insight.DataSet | Array | insight.Grouping} data - The DataSet containing this series' data
+     * @param {insight.Axis} x - The x axis
+     * @param {insight.Axis} y - The y axis
      */
     insight.ColumnSeries = function ColumnSeries(name, data, x, y) {
 
-        insight.Series.call(this, name, data, x, y);
+        insight.BarSeries.call(this, name, data, x, y);
 
         // Private variables -----------------------------------------------------------------------------------------
 
@@ -19,132 +19,31 @@
 
         // Internal variables ------------------------------------------------------------------------------------------
 
-        self.classValues = [insight.Constants.BarClass];
-
-        // Private functions -----------------------------------------------------------------------------------------
-
-        function tooltipFunction(d) {
-            return self.tooltipFormat()(self.valueFunction()(d));
-        }
-
-        function duration(d, i) {
-            return 200 + (i * 20);
-        }
-
-        function opacity() {
-            // If we are using selected/notSelected, then make selected more opaque than notSelected
-            if (d3.select(this).classed('notselected')) {
-                return 0.5;
-            }
-
-            //If not using selected/notSelected, make everything opaque
-            return 1;
-        }
+        self.valueAxis = y;
+        self.keyAxis = x;
+        self.classValues = [insight.Constants.ColClass];
 
         // Internal functions ----------------------------------------------------------------------------------------
+
+        self.isHorizontal = d3.functor(false);
 
         self.orderFunction = function(a, b) {
             // Sort descending for categorical data
             return self.valueFunction()(b) - self.valueFunction()(a);
         };
 
-        self.draw = function(chart, isDragging) {
+        self.barLength = function(d, plotHeight) {
+            return plotHeight - self.valuePosition(d);
+        };
 
-            self.tooltip = chart.tooltip;
-            self.selectedItems = chart.selectedItems;
-
-            var groupSelector = 'g.' + self.name + '.' + insight.Constants.BarGroupClass,
-                barSelector = 'rect.' + self.name + '.' + insight.Constants.BarGroupClass;
-
-            var data = self.dataset();
-
-            var groups = chart.plotArea
-                .selectAll(groupSelector)
-                .data(data, self.keyFunction());
-
-            var newGroups = groups.enter()
-                .append('g')
-                .classed(self.name, true)
-                .classed(insight.Constants.BarGroupClass, true);
-
-            var newBars = newGroups.selectAll(barSelector);
-
-            newBars = newGroups.append('rect')
-                .attr('class', self.itemClassName)
-                .attr('in_series', self.name)
-                .attr('fill', self.color)
-                .attr('clip-path', 'url(#' + chart.clipPath() + ')')
-                .on('mouseover', self.mouseOver)
-                .on('mouseout', self.mouseOut)
-                .on('click', self.click);
-
-            var seriesTypeCount = chart.countSeriesOfType(self);
-            var seriesIndex = chart.seriesIndexByType(self);
-            var groupIndex = 0;
-
-            // Select and update all bars
-            var seriesSelector = '.' + self.name + 'class.' + insight.Constants.BarClass;
-            var bars = groups.selectAll(seriesSelector);
-
-            bars
-                .transition()
-                .duration(duration)
-                .attr('y', yPosition)
-                .attr('x', xPosition)
-                .attr('width', barWidth)
-                .attr('height', barHeight)
-                .style('opacity', opacity);
-
-            // Remove groups no longer in the data set
-            groups.exit().remove();
-
-            // draw helper functions ----------------------------------
-
-            function barHeight(d) {
-
-                var barValue = self.valueFunction()(d);
-                var height = (chart.height() - chart.margin().top - chart.margin().bottom) - self.y.scale(barValue);
-
-                return height;
-            }
-
-            function groupWidth(d) {
-                var w = self.x.scale.rangeBand(d);
-                return w;
-            }
-
-            function barWidth(d) {
-
-                var widthOfGroup = groupWidth(d);
-                var width = widthOfGroup / seriesTypeCount;
-                return width;
-
-            }
-
-            function xPosition(d) {
-
-                var groupPositions = self.keyAxis.scale.range();
-                var groupX = groupPositions[groupIndex];
-
-                var widthOfBar = barWidth(d);
-                var position = groupX + (widthOfBar * seriesIndex);
-
-                groupIndex++;
-
-                return position;
-
-            }
-
-            function yPosition(d) {
-                var position = self.y.scale(self.valueFunction()(d));
-                return position;
-            }
-
+        self.valuePosition = function(d) {
+            var barValue = self.valueFunction()(d);
+            return self.valueAxis.scale(barValue);
         };
 
     };
 
-    insight.ColumnSeries.prototype = Object.create(insight.Series.prototype);
+    insight.ColumnSeries.prototype = Object.create(insight.BarSeries.prototype);
     insight.ColumnSeries.prototype.constructor = insight.ColumnSeries;
 
 })(insight);

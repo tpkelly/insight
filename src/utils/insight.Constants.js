@@ -13,7 +13,8 @@ insight.Constants = (function() {
     exports.Tooltip = 'd3-tip';
     exports.ToolTipTextClass = 'tooltip';
     exports.BarGroupClass = 'bargroup';
-    exports.BarClass = 'bar';
+    exports.RowClass = 'row';
+    exports.ColClass = 'col';
     exports.LineClass = 'in-line';
     exports.LinePoint = 'target-point';
     exports.ContainerClass = 'incontainer';
@@ -27,24 +28,5 @@ insight.Constants = (function() {
     exports.TableClass = 'in-table';
     exports.TableRowClass = 'in-datarow';
 
-    return exports;
-}());
-
-
-insight.Scales = (function() {
-    var exports = {};
-
-    exports.Ordinal = {
-        name: 'ordinal',
-        scale: d3.scale.ordinal
-    };
-    exports.Linear = {
-        name: 'linear',
-        scale: d3.scale.linear
-    };
-    exports.Time = {
-        name: 'time',
-        scale: d3.time.scale
-    };
     return exports;
 }());

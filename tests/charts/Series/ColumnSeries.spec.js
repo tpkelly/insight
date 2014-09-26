@@ -50,8 +50,8 @@ describe('ColumnSeries', function() {
 
         var group =  data.group('country',function(d){return d.Country;});
         
-        var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
-        var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        var xScale = new insight.Axis('Country', insight.scales.ordinal);
+        var yScale = new insight.Axis('Stuff', insight.scales.linear);
         
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
@@ -71,8 +71,8 @@ describe('ColumnSeries', function() {
         
         var group =  data.group('country',function(d){return d.Country;});
 
-        var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
-        var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        var xScale = new insight.Axis('Country', insight.scales.ordinal);
+        var yScale = new insight.Axis('Stuff', insight.scales.linear);
         
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
@@ -90,8 +90,8 @@ describe('ColumnSeries', function() {
                         
         var group =  data.group('country',function(d){return d.Country;});
 
-        var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
-        var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        var xScale = new insight.Axis('Country', insight.scales.ordinal);
+        var yScale = new insight.Axis('Stuff', insight.scales.linear);
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
 
@@ -107,8 +107,8 @@ describe('ColumnSeries', function() {
                         
         var group =  data.group('country',function(d){return d.Country;}).mean(['Age']);
 
-        var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
-        var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        var xScale = new insight.Axis('Country', insight.scales.ordinal);
+        var yScale = new insight.Axis('Stuff', insight.scales.linear);
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
 
@@ -145,8 +145,8 @@ describe('ColumnSeries', function() {
                 
         var group =  data.group('country',function(d){return d.Country;}).mean(['Age']);
 
-        var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
-        var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        var xScale = new insight.Axis('Country', insight.scales.ordinal);
+        var yScale = new insight.Axis('Stuff', insight.scales.linear);
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
 
@@ -186,8 +186,8 @@ describe('ColumnSeries', function() {
         var group =  data.group('country', function(d){return d.Country;})
                          .mean(['Age']);
 
-        var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
-        var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        var xScale = new insight.Axis('Country', insight.scales.ordinal);
+        var yScale = new insight.Axis('Stuff', insight.scales.linear);
         
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
@@ -197,7 +197,7 @@ describe('ColumnSeries', function() {
 
         // Then
         var actualData = series.seriesClassName();
-        var expectedData = 'countryColumnclass bar';
+        var expectedData = 'countryColumnclass ' + insight.Constants.ColClass;
 
         expect(actualData).toBe(expectedData);
 
@@ -210,8 +210,8 @@ describe('ColumnSeries', function() {
         var group =  data.group('country', function(d){return d.Country;})
                          .mean(['Age']);
 
-        var xScale = new insight.Axis('Country', insight.Scales.Ordinal);
-        var yScale = new insight.Axis('Stuff', insight.Scales.Linear);
+        var xScale = new insight.Axis('Country', insight.scales.ordinal);
+        var yScale = new insight.Axis('Stuff', insight.scales.linear);
         
         chart.addXAxis(xScale);
         chart.addYAxis(yScale);
@@ -226,10 +226,10 @@ describe('ColumnSeries', function() {
         // Then
         var actualData = series.dataset().map(function(data){ return series.itemClassName(data); });
         var expectedData = [
-                            'countryColumnclass bar in_England',
-                            'countryColumnclass bar in_Northern_Ireland',
-                            'countryColumnclass bar in_Scotland',
-                            'countryColumnclass bar in_Wales',
+                            'countryColumnclass ' + insight.Constants.ColClass + ' in_England',
+                            'countryColumnclass ' + insight.Constants.ColClass + ' in_Northern_Ireland',
+                            'countryColumnclass ' + insight.Constants.ColClass + ' in_Scotland',
+                            'countryColumnclass ' + insight.Constants.ColClass + ' in_Wales'
                             ];
 
         expect(actualData).toEqual(expectedData);
@@ -244,8 +244,8 @@ describe('ColumnSeries', function() {
 
         beforeEach(function() {
 
-            xAxis = new insight.Axis('x', insight.Scales.Ordinal);
-            yAxis = new insight.Axis('y', insight.Scales.Linear);
+            xAxis = new insight.Axis('x', insight.scales.ordinal);
+            yAxis = new insight.Axis('y', insight.scales.linear);
 
             var dataset = new insight.DataSet(testData);
             var countryGroup = dataset.group('countries', function(d) { return d.Country; });
@@ -290,9 +290,9 @@ describe('ColumnSeries', function() {
 
         beforeEach(function () {
 
-            xAxis = new insight.Axis('x', insight.Scales.Ordinal)
+            xAxis = new insight.Axis('x', insight.scales.ordinal)
                 .isOrdered(true);
-            yAxis = new insight.Axis('y', insight.Scales.Linear);
+            yAxis = new insight.Axis('y', insight.scales.linear);
 
             var dataset = new insight.DataSet([
                 {key: "A", value: 3},

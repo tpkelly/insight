@@ -370,8 +370,8 @@ describe('Chart', function() {
         //Set up tests
         beforeEach(function() {
             chart = new insight.Chart('asda', 'asdads', 'ada');
-            xAxis = new insight.Axis('', insight.Scales.Linear);
-            yAxis = new insight.Axis('', insight.Scales.Linear);
+            xAxis = new insight.Axis('', insight.scales.linear);
+            yAxis = new insight.Axis('', insight.scales.linear);
 
             chart.addXAxis(xAxis);
             chart.addYAxis(yAxis);
@@ -466,7 +466,7 @@ describe('Chart', function() {
 
         it('expands right margins y-axis is reversed', function() {
             //Given:
-            yAxis = new insight.Axis('', insight.Scales.Linear).hasReversedPosition(true);
+            yAxis = new insight.Axis('', insight.scales.linear).hasReversedPosition(true);
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
 
             spyOn(xAxis, 'calculateLabelDimensions').andReturn({ width: 0, height: 0});
@@ -489,7 +489,7 @@ describe('Chart', function() {
 
         it('expands top margins when x-axis is reversed', function() {
             //Given:
-            xAxis = new insight.Axis('', insight.Scales.Linear).hasReversedPosition(true);
+            xAxis = new insight.Axis('', insight.scales.linear).hasReversedPosition(true);
             var series = new insight.Series('testSeries', new insight.DataSet([]), xAxis, yAxis);
 
             spyOn(xAxis, 'calculateLabelDimensions').andReturn({ width: 15, height: 20});
@@ -687,7 +687,7 @@ describe('Chart', function() {
         it("Adding x-axis adds to the axis array", function () {
             //Given:
             var chart = new insight.Chart('asda', 'asdads', 'ada');
-            var xAxis = new insight.Axis('', insight.Scales.Linear);
+            var xAxis = new insight.Axis('', insight.scales.linear);
 
             //When:
             chart.xAxis(xAxis);
@@ -699,7 +699,7 @@ describe('Chart', function() {
         it("Adding x-axis twice only adds to the axis array once", function () {
             //Given:
             var chart = new insight.Chart('asda', 'asdads', 'ada');
-            var xAxis = new insight.Axis('', insight.Scales.Linear);
+            var xAxis = new insight.Axis('', insight.scales.linear);
 
             //When:
             chart.xAxis(xAxis);
@@ -712,7 +712,7 @@ describe('Chart', function() {
         it("Adding x-axes adds to the axis array", function () {
             //Given:
             var chart = new insight.Chart('asda', 'asdads', 'ada');
-            var xAxis = new insight.Axis('', insight.Scales.Linear);
+            var xAxis = new insight.Axis('', insight.scales.linear);
 
             //When:
             chart.xAxes([xAxis]);
@@ -724,7 +724,7 @@ describe('Chart', function() {
         it("Adding x-axes twice only adds to the axis array once", function () {
             //Given:
             var chart = new insight.Chart('asda', 'asdads', 'ada');
-            var xAxis = new insight.Axis('', insight.Scales.Linear);
+            var xAxis = new insight.Axis('', insight.scales.linear);
 
             //When:
             chart.xAxes([xAxis]);
@@ -738,7 +738,7 @@ describe('Chart', function() {
 
             //Given:
             var chart = new insight.Chart('somename', 'somelement', 'ada');
-            var axis = new insight.Axis('Value Axis', insight.Scales.Linear);
+            var axis = new insight.Axis('Value Axis', insight.scales.linear);
 
             // When
             chart.xAxis(axis);
@@ -755,7 +755,7 @@ describe('Chart', function() {
         it("Adding y-axis adds to the axis array", function() {
             //Given:
             var chart = new insight.Chart('asda', 'asdads', 'ada');
-            var yAxis = new insight.Axis('', insight.Scales.Linear);
+            var yAxis = new insight.Axis('', insight.scales.linear);
 
             //When:
             chart.yAxis(yAxis);
@@ -767,7 +767,7 @@ describe('Chart', function() {
         it("Adding y-axis twice only adds to the axis array once", function() {
             //Given:
             var chart = new insight.Chart('asda', 'asdads', 'ada');
-            var yAxis = new insight.Axis('', insight.Scales.Linear);
+            var yAxis = new insight.Axis('', insight.scales.linear);
 
             //When:
             chart.yAxis(yAxis);
@@ -780,7 +780,7 @@ describe('Chart', function() {
         it("Adding y-axes adds to the axis array", function() {
             //Given:
             var chart = new insight.Chart('asda', 'asdads', 'ada');
-            var yAxis = new insight.Axis('', insight.Scales.Linear);
+            var yAxis = new insight.Axis('', insight.scales.linear);
 
             //When:
             chart.yAxes([yAxis]);
@@ -792,7 +792,7 @@ describe('Chart', function() {
         it("Adding y-axes twice only adds to the axis array once", function() {
             //Given:
             var chart = new insight.Chart('asda', 'asdads', 'ada');
-            var yAxis = new insight.Axis('', insight.Scales.Linear);
+            var yAxis = new insight.Axis('', insight.scales.linear);
 
             //When:
             chart.yAxes([yAxis]);
@@ -806,7 +806,7 @@ describe('Chart', function() {
 
             //Given:
             var chart = new insight.Chart('somename', 'somelement', 'ada');
-            var axis = new insight.Axis('Value Axis', insight.Scales.Linear);
+            var axis = new insight.Axis('Value Axis', insight.scales.linear);
 
             // When
             chart.yAxis(axis);
@@ -957,8 +957,8 @@ describe('Chart', function() {
         describe('for a vertical column series', function() {
 
             beforeEach(function() {
-                var x = new insight.Axis('Key Axis', insight.Scales.Ordinal);
-                var y = new insight.Axis('Value Axis', insight.Scales.Linear);
+                var x = new insight.Axis('Key Axis', insight.scales.ordinal);
+                var y = new insight.Axis('Value Axis', insight.scales.linear);
                 chart.addXAxis(x);
                 chart.addYAxis(y);
 
@@ -995,8 +995,8 @@ describe('Chart', function() {
         describe('for a horizontal row series', function() {
 
             beforeEach(function() {
-                var x = new insight.Axis('Key Axis', insight.Scales.Linear);
-                var y = new insight.Axis('Value Axis', insight.Scales.Ordinal);
+                var x = new insight.Axis('Key Axis', insight.scales.linear);
+                var y = new insight.Axis('Value Axis', insight.scales.ordinal);
                 chart.addXAxis(x);
                 chart.addYAxis(y);
 
@@ -1044,8 +1044,8 @@ describe('Chart', function() {
             chart = new insight.Chart('somechart', '#someelement');
             seriesData = [1, 2, 3, 4, 5];
 
-            xAxis = new insight.Axis('x', insight.Scales.Linear);
-            yAxis = new insight.Axis('y', insight.Scales.Linear);
+            xAxis = new insight.Axis('x', insight.scales.linear);
+            yAxis = new insight.Axis('y', insight.scales.linear);
 
         });
 

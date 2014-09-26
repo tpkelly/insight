@@ -18,8 +18,8 @@ describe('ScatterSeries', function() {
             .width(250)
             .height(250);
 
-        var xAxis = new insight.Axis('', insight.Scales.Linear);
-        var yAxis = new insight.Axis('', insight.Scales.Linear);
+        var xAxis = new insight.Axis('', insight.scales.linear);
+        var yAxis = new insight.Axis('', insight.scales.linear);
         chart.addXAxis(xAxis);
         chart.addYAxis(yAxis);
 
@@ -129,8 +129,8 @@ describe('ScatterSeries', function() {
 
         beforeEach(function() {
 
-            xAxis = new insight.Axis('x', insight.Scales.Linear);
-            yAxis = new insight.Axis('y', insight.Scales.Linear);
+            xAxis = new insight.Axis('x', insight.scales.linear);
+            yAxis = new insight.Axis('y', insight.scales.linear);
 
             series = new insight.ScatterSeries('bubbles', testData, xAxis, yAxis)
                 .keyFunction(function(d) {
