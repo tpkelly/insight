@@ -105,7 +105,7 @@
          * @property {Font}     cellFont                    The font to use for a table cell.
          * @property {Color}    cellTextColor               The text color to use for a table cell.
          *
-         * @property {String}   headerDivider               The CSS border style to use for the divider between the table headers and body.
+         * @property {Border}   headerDivider               The CSS border style to use for the divider between the table headers and body.
          *
          * @property {Color}    headerBackgroundColor       The background color for the header row on the table.
          * @property {Color}    rowBackgroundColor          The background color for rows on the table.

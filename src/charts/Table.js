@@ -382,7 +382,6 @@
          * @param {Function|Color} color Either a function that returns a color, or a color.
          * @returns {this}
          */
-
         self.rowHeaderTextColor = function(color) {
             if (!arguments.length) {
                 return rowHeaderTextColor;
@@ -427,7 +426,6 @@
          * @param {Function|Color} color Either a function that returns a color, or a color.
          * @returns {this}
          */
-
         self.cellTextColor = function(color) {
             if (!arguments.length) {
                 return cellTextColor;
@@ -462,21 +460,21 @@
          * The style of the divider between the headers and table body
          * @memberof! insight.Table
          * @instance
-         * @returns {String} - The style of the divider between the headers and table body.
+         * @returns {Border} - The style of the divider between the headers and table body.
          *
          * @also
          *
          * Sets the style of the divider between the headers and table body.
          * @memberof! insight.Table
          * @instance
-         * @param {String} font The style of the divider between the headers and table body.
+         * @param {Border} dividerStyle The style of the divider between the headers and table body.
          * @returns {this}
          */
-        self.headerDivider = function(font) {
+        self.headerDivider = function(dividerStyle) {
             if (!arguments.length) {
                 return headerDivider;
             }
-            headerDivider = font;
+            headerDivider = dividerStyle;
             return self;
         };
 
@@ -494,7 +492,6 @@
          * @param {Function|Color} color Either a function that returns a color, or a color.
          * @returns {this}
          */
-
         self.headerBackgroundColor = function(color) {
             if (!arguments.length) {
                 return headerBackgroundColor;
@@ -517,7 +514,6 @@
          * @param {Function|Color} color Either a function that returns a color, or a color.
          * @returns {this}
          */
-
         self.rowBackgroundColor = function(color) {
             if (!arguments.length) {
                 return rowBackgroundColor;
@@ -542,7 +538,6 @@
          * @param {Function|Color} color Either a function that returns a color, or a color.
          * @returns {this}
          */
-
         self.rowAlternateBackgroundColor = function(color) {
             if (!arguments.length) {
                 return rowAlternateBackgroundColor;
@@ -567,7 +562,6 @@
      * Applies all properties from a theme to the table.
      * @memberof! insight.Table
      * @instance
-     * @todo Extract relevant properties and save them to the table.
      * @param {insight.Theme} theme The theme to apply to the table.
      * @returns {this}
      */
