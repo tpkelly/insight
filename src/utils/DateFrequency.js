@@ -27,6 +27,18 @@
             minutes || 0,
             seconds || 0);
 
+        // Private functions -------------------------------------------------------------------------------------
+
+        function totalDaysSinceEpoch(date) {
+            var totalMillisecondsInADay = 8.64e7;
+            var result = Math.floor(date / totalMillisecondsInADay);
+            return result;
+        }
+
+        function roundUpToNearestMultiple(number, multiple) {
+            return Math.ceil(number / multiple) * multiple;
+        }
+
         // Internal functions -----------------------------------------------------------------------------------------
 
         self.toSeconds = function() {
@@ -78,21 +90,41 @@
                 seconds = date.getSeconds();
 
             if (self.getYears() !== 0) {
-                return new Date(years, 0);
+                var nearestYear = roundUpToNearestMultiple(years, self.getYears());
+
+                return new Date(Date.UTC(nearestYear, 0));
             }
             if (self.getMonths() !== 0) {
-                return new Date(years, months);
+                var nearestMonth = roundUpToNearestMultiple(months, self.getMonths());
+
+                return new Date(Date.UTC(years, nearestMonth));
+            }
+            if (self.getDays() !== 0 && self.getDays() % 7 === 0) {
+                var startOfWeek = (7 - date.getDay()) % 7;
+                var nearestWeek = days + startOfWeek;
+
+                return new Date(Date.UTC(years, months, nearestWeek));
             }
             if (self.getDays() !== 0) {
-                return new Date(years, months, days);
+                var multipleOfDays = self.getDays();
+                var daysFromMultiple = totalDaysSinceEpoch(date) % multipleOfDays;
+                var nearestDay = days + daysFromMultiple;
+
+                return new Date(Date.UTC(years, months, nearestDay));
             }
             if (self.getHours() !== 0) {
-                return new Date(years, months, days, hours);
+                var nearestHour = roundUpToNearestMultiple(hours, self.getHours());
+
+                return new Date(Date.UTC(years, months, days, nearestHour));
             }
             if (self.getMinutes() !== 0) {
-                return new Date(years, months, days, hours, minutes);
+                var nearestMinute = roundUpToNearestMultiple(minutes, self.getMinutes());
+
+                return new Date(Date.UTC(years, months, days, hours, nearestMinute));
             }
-            return date;
+            var nearestSecond = roundUpToNearestMultiple(seconds, self.getSeconds());
+
+            return new Date(Date.UTC(years, months, days, hours, minutes, nearestSecond));
         };
     };
 

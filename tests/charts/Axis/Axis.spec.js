@@ -14,7 +14,7 @@ describe('Axis', function() {
         it('title getter works', function() {
 
             //Given:
-            var axis = new insight.Axis('Value Axis', insight.Scales.Linear);
+            var axis = new insight.Axis('Value Axis', insight.scales.linear);
 
             //Then:
             var observedTitle = axis.title();
@@ -29,7 +29,7 @@ describe('Axis', function() {
         it('has initial value of 0', function() {
 
             // Given
-            var axis = new insight.Axis('SomeAxis', insight.Scales.Ordinal);
+            var axis = new insight.Axis('SomeAxis', insight.scales.ordinal);
 
             // When
             var result = axis.tickLabelRotation();
@@ -45,7 +45,7 @@ describe('Axis', function() {
 
         it('has initial value of 0.1', function() {
             //Given:
-            var axis = new insight.Axis('Value Axis', insight.Scales.Linear);
+            var axis = new insight.Axis('Value Axis', insight.scales.linear);
 
             //Then:
             expect(axis.barPadding()).toBe(0.1);
@@ -57,7 +57,7 @@ describe('Axis', function() {
         it('returns true for horizontal axis', function() {
 
             //Given:
-            var axis = new insight.Axis('Value Axis', insight.Scales.Linear);
+            var axis = new insight.Axis('Value Axis', insight.scales.linear);
             axis.direction = 'h';
 
             // When
@@ -71,7 +71,7 @@ describe('Axis', function() {
         it('returns false for vertical axis', function() {
 
             //Given:
-            var axis = new insight.Axis('Value Axis', insight.Scales.Linear);
+            var axis = new insight.Axis('Value Axis', insight.scales.linear);
             axis.direction = 'v';
 
             // When
@@ -86,7 +86,7 @@ describe('Axis', function() {
         it('returns true by default', function() {
 
             //Given:
-            var axis = new insight.Axis('Value Axis', insight.Scales.Linear);
+            var axis = new insight.Axis('Value Axis', insight.scales.linear);
 
             //Then:
             var observedResult = axis.shouldDisplay();
@@ -97,7 +97,7 @@ describe('Axis', function() {
         it('returns false when value set to false', function() {
 
             //Given:
-            var axis = new insight.Axis('Value Axis', insight.Scales.Linear)
+            var axis = new insight.Axis('Value Axis', insight.scales.linear)
                                   .shouldDisplay(false);
 
             //Then:
@@ -111,7 +111,7 @@ describe('Axis', function() {
         it('returns false by default', function () {
 
             //Given:
-            var axis = new insight.Axis('Value Axis', insight.Scales.Linear);
+            var axis = new insight.Axis('Value Axis', insight.scales.linear);
 
             //Then:
             var observedResult = axis.isOrdered();
@@ -123,7 +123,7 @@ describe('Axis', function() {
         it('returns true when value set to true', function () {
 
             //Given:
-            var axis = new insight.Axis('Value Axis', insight.Scales.Linear)
+            var axis = new insight.Axis('Value Axis', insight.scales.linear)
                 .isOrdered(true);
 
             //Then:
@@ -140,8 +140,8 @@ describe('Axis', function() {
             //Given:
             var dataset = new insight.DataSet(data);
 
-            var x = new insight.Axis('Key Axis', insight.Scales.Ordinal);
-            var y = new insight.Axis('Value Axis', insight.Scales.Linear);
+            var x = new insight.Axis('Key Axis', insight.scales.ordinal);
+            var y = new insight.Axis('Value Axis', insight.scales.linear);
 
             var series = new insight.ColumnSeries('chart', dataset, x, y)
                 .valueFunction(function (d) {
@@ -160,8 +160,8 @@ describe('Axis', function() {
             //Given:
             var dataset = new insight.DataSet(data);
 
-            var x = new insight.Axis('Key Axis', insight.Scales.Ordinal);
-            var y = new insight.Axis('Value Axis', insight.Scales.Linear);
+            var x = new insight.Axis('Key Axis', insight.scales.ordinal);
+            var y = new insight.Axis('Value Axis', insight.scales.linear);
 
             var series = new insight.ColumnSeries('chart', dataset, x, y)
                 .valueFunction(function (d) {
@@ -180,8 +180,8 @@ describe('Axis', function() {
             //Given:
             var dataset = new insight.DataSet(data);
 
-            var x = new insight.Axis('Key Axis', insight.Scales.Time);
-            var y = new insight.Axis('Value Axis', insight.Scales.Linear);
+            var x = new insight.Axis('Key Axis', insight.scales.time);
+            var y = new insight.Axis('Value Axis', insight.scales.linear);
 
             var series = new insight.Series('chart', dataset, x, y)
                 .keyFunction(function (d) {
@@ -199,7 +199,7 @@ describe('Axis', function() {
     describe('axisPosition', function() {
         var axis;
         beforeEach(function() {
-            axis = new insight.Axis('Key Axis', insight.Scales.Linear);
+            axis = new insight.Axis('Key Axis', insight.scales.linear);
             axis.bounds = [300, 400];
         });
 
@@ -262,7 +262,7 @@ describe('Axis', function() {
         it('returns no tick rotation by default', function () {
 
             // Given
-            var y = new insight.Axis('Key Axis', insight.Scales.Linear)
+            var y = new insight.Axis('Key Axis', insight.scales.linear)
                 .tickSize(0)
                 .tickPadding(0);
 
@@ -277,7 +277,7 @@ describe('Axis', function() {
         it('returns 90 degree tick rotation when top to bottom specified', function () {
 
             //Given:
-            var y = new insight.Axis('Key Axis', insight.Scales.Linear)
+            var y = new insight.Axis('Key Axis', insight.scales.linear)
                 .tickLabelOrientation('tb')
                 .tickSize(0)
                 .tickPadding(0);
@@ -307,7 +307,7 @@ describe('Axis', function() {
 
         it('gridlines hidden by default', function () {
             //Given:
-            var y = new insight.Axis('Key Axis', insight.Scales.Linear)
+            var y = new insight.Axis('Key Axis', insight.scales.linear)
                 .tickLabelOrientation('tb')
                 .tickSize(0);
 
@@ -331,10 +331,10 @@ describe('Axis', function() {
                     bottom: 100
                 });
 
-            var x = new insight.Axis('ValueAxis', insight.Scales.Linear)
+            var x = new insight.Axis('ValueAxis', insight.scales.linear)
                 .tickLabelOrientation('lr');
 
-            var y = new insight.Axis('KeyAxis', insight.Scales.Linear)
+            var y = new insight.Axis('KeyAxis', insight.scales.linear)
                 .tickLabelOrientation('lr')
                 .shouldShowGridlines(false);
 
@@ -374,10 +374,10 @@ describe('Axis', function() {
                     bottom: 100
                 });
 
-            var x = new insight.Axis('ValueAxis', insight.Scales.Linear)
+            var x = new insight.Axis('ValueAxis', insight.scales.linear)
                 .tickLabelOrientation('lr');
 
-            var y = new insight.Axis('KeyAxis', insight.Scales.Linear)
+            var y = new insight.Axis('KeyAxis', insight.scales.linear)
                 .tickLabelOrientation('lr')
                 .shouldShowGridlines(true);
 
@@ -409,8 +409,8 @@ describe('Axis', function() {
                 .width(500)
                 .height(500);
 
-            var x = new insight.Axis('ValueAxis', insight.Scales.Linear);
-            var y = new insight.Axis('', insight.Scales.Linear)
+            var x = new insight.Axis('ValueAxis', insight.scales.linear);
+            var y = new insight.Axis('', insight.scales.linear)
                 .shouldShowGridlines(true);
 
             chart.addXAxis(x);
@@ -438,8 +438,8 @@ describe('Axis', function() {
                 .width(500)
                 .height(500);
 
-            var x = new insight.Axis('ValueAxis', insight.Scales.Linear);
-            var y = new insight.Axis('Key Axis', insight.Scales.Linear)
+            var x = new insight.Axis('ValueAxis', insight.scales.linear);
+            var y = new insight.Axis('Key Axis', insight.scales.linear)
                 .shouldShowGridlines(true);
 
             chart.addXAxis(x);
@@ -467,8 +467,8 @@ describe('Axis', function() {
                 .width(500)
                 .height(500);
 
-            var x = new insight.Axis('ValueAxis', insight.Scales.Linear);
-            var y = new insight.Axis('Key$Axis', insight.Scales.Linear)
+            var x = new insight.Axis('ValueAxis', insight.scales.linear);
+            var y = new insight.Axis('Key$Axis', insight.scales.linear)
                 .shouldShowGridlines(true);
 
             chart.addXAxis(x);
@@ -506,8 +506,8 @@ describe('Axis', function() {
         ];
 
         beforeEach(function() {
-            axis = new insight.Axis('', insight.Scales.Ordinal);
-            var secondaryAxis = new insight.Axis('Y Title', insight.Scales.Linear);
+            axis = new insight.Axis('', insight.scales.ordinal);
+            var secondaryAxis = new insight.Axis('Y Title', insight.scales.linear);
 
             series = new insight.ColumnSeries('testSeries', data, axis, secondaryAxis);
 
@@ -997,12 +997,12 @@ describe('Axis', function() {
             ];
 
             beforeEach(function() {
-                axis = new insight.Axis('', insight.Scales.Ordinal)
+                axis = new insight.Axis('', insight.scales.ordinal)
                     .tickLabelFormat(function(tickValue) {
                         return tickValue + '!!!';
                     });
 
-                var secondaryAxis = new insight.Axis('Y Title', insight.Scales.Linear);
+                var secondaryAxis = new insight.Axis('Y Title', insight.scales.linear);
                 series = new insight.ColumnSeries('testSeries', data, axis, secondaryAxis);
             });
 
@@ -1815,7 +1815,7 @@ describe('Axis', function() {
         var axis;
 
         beforeEach(function() {
-            axis = new insight.Axis('TestAxis', insight.Scales.Linear);
+            axis = new insight.Axis('TestAxis', insight.scales.linear);
         });
 
         describe('vertical axis', function() {
@@ -2363,7 +2363,7 @@ describe('Axis', function() {
 
             var axis;
             beforeEach(function() {
-                axis = new insight.Axis('axis', insight.Scales.Linear);
+                axis = new insight.Axis('axis', insight.scales.linear);
             });
 
             it('tickValues are generated from tickFrequency', function() {
@@ -2500,7 +2500,7 @@ describe('Axis', function() {
             var categories;
 
             beforeEach(function() {
-                axis = new insight.Axis('axis', insight.Scales.Ordinal);
+                axis = new insight.Axis('axis', insight.scales.ordinal);
                 categories = ['Cat', 'Dog', 'Snake', 'Horse', 'Rabbit'];
                 spyOn(axis, 'domain').andReturn(categories);
             });
@@ -2590,7 +2590,7 @@ describe('Axis', function() {
 
             var axis;
             beforeEach(function() {
-                axis = new insight.Axis('axis', insight.Scales.Time);
+                axis = new insight.Axis('axis', insight.scales.time);
             });
 
             it('tickValues are generated from tickFrequency', function() {
@@ -2804,7 +2804,7 @@ describe('Axis', function() {
     describe('initial tick', function() {
         it('on linear axis is a multiple of the tick frequency', function() {
             //Given:
-            var axis = new insight.Axis('axis', insight.Scales.Linear);
+            var axis = new insight.Axis('axis', insight.scales.linear);
             spyOn(axis, 'domain').andReturn([7, 20]);
             var tickFrequency = 4;
             var axisStrategy = new insight.LinearAxis();
@@ -2815,25 +2815,157 @@ describe('Axis', function() {
             expect(observedFirstTick).toBe(expectedFirstTick);
         });
 
-        it('on date axis is a multiple of the tick frequency', function() {
-            //Given:
-            var axis = new insight.Axis('axis', insight.Scales.Time);
-            spyOn(axis, 'domain').andReturn([
-                    new Date(2014, 10, 8, 4, 6, 1),
-                    new Date(2014, 10, 8, 16, 33, 3)]
-            );
-            var tickFrequency = insight.DateFrequency.dateFrequencyForHours(1);
-            var axisStrategy = new insight.DateAxis();
+        describe('on date axis', function() {
 
-            //Then:
-            var expectedFirstTick = new Date(2014, 10, 8, 4);
-            var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
-            expect(observedFirstTick).toEqual(expectedFirstTick);
+            it('is a multiple of a second tick frequency', function() {
+                //Given:
+                var axis = new insight.Axis('axis', insight.scales.time);
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(2014, 10, 8, 4, 6, 4)),
+                        new Date(Date.UTC(2014, 10, 8, 16, 33, 5))]
+                );
+                var tickFrequency = insight.DateFrequency.dateFrequencyForSeconds(15);
+                var axisStrategy = new insight.DateAxis();
+
+                //Then:
+                var expectedFirstTick = new Date(Date.UTC(2014, 10, 8, 4, 6, 15));
+                var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+                expect(observedFirstTick).toEqual(expectedFirstTick);
+            });
+
+            it('is a multiple of a minute tick frequency', function() {
+                //Given:
+                var axis = new insight.Axis('axis', insight.scales.time);
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(2014, 10, 8, 4, 6, 4)),
+                        new Date(Date.UTC(2014, 10, 8, 16, 33, 5))]
+                );
+                var tickFrequency = insight.DateFrequency.dateFrequencyForMinutes(30);
+                var axisStrategy = new insight.DateAxis();
+
+                //Then:
+                var expectedFirstTick = new Date(Date.UTC(2014, 10, 8, 4, 30));
+                var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+                expect(observedFirstTick).toEqual(expectedFirstTick);
+            });
+
+            it('is a multiple of a hour tick frequency', function() {
+                //Given:
+                var axis = new insight.Axis('axis', insight.scales.time);
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(2014, 10, 8, 4, 6)),
+                        new Date(Date.UTC(2014, 10, 8, 16, 33))]
+                );
+                var tickFrequency = insight.DateFrequency.dateFrequencyForHours(6);
+                var axisStrategy = new insight.DateAxis();
+
+                //Then:
+                var expectedFirstTick = new Date(Date.UTC(2014, 10, 8, 6));
+                var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+                expect(observedFirstTick).toEqual(expectedFirstTick);
+            });
+
+            it('is a multiple of a day tick frequency', function() {
+                //Given:
+                var axis = new insight.Axis('axis', insight.scales.time);
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(2013, 9, 30, 4)),
+                        new Date(Date.UTC(2013, 10, 9, 16))]
+                );
+                var tickFrequency = insight.DateFrequency.dateFrequencyForDays(2);
+                var axisStrategy = new insight.DateAxis();
+
+                //Then:
+                var expectedFirstTick = new Date(Date.UTC(2013, 9, 30));
+                var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+                expect(observedFirstTick).toEqual(expectedFirstTick);
+            });
+
+            it('handles month boundaries for day tick frequencies', function() {
+                //Given:
+                var axis = new insight.Axis('axis', insight.scales.time);
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(2013, 9, 31, 4)),
+                        new Date(Date.UTC(2014, 1, 18, 16))]
+                );
+                var tickFrequency = insight.DateFrequency.dateFrequencyForDays(2);
+                var axisStrategy = new insight.DateAxis();
+
+                //Then:
+                var expectedFirstTick = new Date(Date.UTC(2013, 10, 1));
+                var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+                expect(observedFirstTick).toEqual(expectedFirstTick);
+            });
+
+            it('handles year boundaries for day tick frequencies', function() {
+                //Given:
+                var axis = new insight.Axis('axis', insight.scales.time);
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(2014, 0, 1, 4)),
+                        new Date(Date.UTC(2014, 0, 18, 16))]
+                );
+                var tickFrequency = insight.DateFrequency.dateFrequencyForDays(2);
+                var axisStrategy = new insight.DateAxis();
+
+                //Then:
+                var expectedFirstTick = new Date(Date.UTC(2014, 0, 2));
+                var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+                expect(observedFirstTick).toEqual(expectedFirstTick);
+            });
+
+            it('is a multiple of a week tick frequency', function() {
+                //Given:
+                var axis = new insight.Axis('axis', insight.scales.time);
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(2014, 10, 8, 4)),
+                        new Date(Date.UTC(2014, 10, 8, 16))]
+                );
+                var tickFrequency = insight.DateFrequency.dateFrequencyForWeeks(1);
+                var axisStrategy = new insight.DateAxis();
+
+                //Then:
+                var expectedFirstTick = new Date(Date.UTC(2014, 10, 9));
+                var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+                expect(observedFirstTick).toEqual(expectedFirstTick);
+            });
+
+            it('is a multiple of a month tick frequency', function() {
+                //Given:
+                var axis = new insight.Axis('axis', insight.scales.time);
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(2014, 7, 8)),
+                        new Date(Date.UTC(2014, 11, 8))]
+                );
+                var tickFrequency = insight.DateFrequency.dateFrequencyForMonths(3);
+                var axisStrategy = new insight.DateAxis();
+
+                //Then:
+                var expectedFirstTick = new Date(Date.UTC(2014, 9));
+                var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+                expect(observedFirstTick).toEqual(expectedFirstTick);
+            });
+
+            it('is a multiple of a year tick frequency', function() {
+                //Given:
+                var axis = new insight.Axis('axis', insight.scales.time);
+                spyOn(axis, 'domain').andReturn([
+                        new Date(Date.UTC(2014, 10, 8, 4, 6, 1)),
+                        new Date(Date.UTC(2014, 10, 8, 16, 33, 3))]
+                );
+                var tickFrequency = insight.DateFrequency.dateFrequencyForYears(5);
+                var axisStrategy = new insight.DateAxis();
+
+                //Then:
+                var expectedFirstTick = new Date(2015, 0);
+                var observedFirstTick = axisStrategy.initialTickValue(axis, tickFrequency);
+                expect(observedFirstTick).toEqual(expectedFirstTick);
+            });
         });
+
 
         it('on ordinal axis is the first value', function() {
             //Given:
-            var axis = new insight.Axis('axis', insight.Scales.Ordinal);
+            var axis = new insight.Axis('axis', insight.scales.ordinal);
             spyOn(axis, 'domain').andReturn(['Cat', 'Dog', 'Horse', 'Rat', 'Rabbit']);
             var axisStrategy = new insight.OrdinalAxis();
             var tickFrequency;
@@ -2851,7 +2983,7 @@ describe('Axis', function() {
 
             var axis;
             beforeEach(function() {
-                axis = new insight.Axis('axis', insight.Scales.Linear);
+                axis = new insight.Axis('axis', insight.scales.linear);
                 axis.bounds = [1000, 300];
                 axis.isHorizontal = d3.functor(true);
 
@@ -2977,7 +3109,7 @@ describe('Axis', function() {
 
             var axis;
             beforeEach(function() {
-                axis = new insight.Axis('axis', insight.Scales.Time);
+                axis = new insight.Axis('axis', insight.scales.time);
                 axis.bounds = [1000, 300];
                 axis.isHorizontal = d3.functor(true);
 

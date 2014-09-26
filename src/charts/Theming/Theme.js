@@ -67,7 +67,7 @@
          * @property {Array<Color>} seriesPalette   The ordered array of colors to use for each successive series within a chart.
          * @property {Color}        fillColor       The color to use for the chart's background.
          * @property {Font}         titleFont       The font to use for the chart's title.
-         * @property {Color }       titleColor      The color to use for the chart's title.
+         * @property {Color}        titleColor      The color to use for the chart's title.
          */
         self.chartStyle = {
             seriesPalette: undefined,
@@ -95,9 +95,33 @@
          * @memberof! insight.Theme
          * @instance
          * @type {Object}
+         *
+         * @property {Font}     headerFont                  The font to use for a table column header.
+         * @property {Color}    headerTextColor             The text color to use for a table column header.
+         *
+         * @property {Font}     rowHeaderFont               The font to use for a table row header.
+         * @property {Color}    rowHeaderTextColor          The text color to use for a table row header.
+         *
+         * @property {Font}     cellFont                    The font to use for a table cell.
+         * @property {Color}    cellTextColor               The text color to use for a table cell.
+         *
+         * @property {Border}   headerDivider               The CSS border style to use for the divider between the table headers and body.
+         *
+         * @property {Color}    headerBackgroundColor       The background color for the header row on the table.
+         * @property {Color}    rowBackgroundColor          The background color for rows on the table.
+         * @property {Color}    rowAlternateBackgroundColor The background color for every other row on the table.
          */
         self.tableStyle = {
-
+            headerFont: undefined,
+            headerTextColor: undefined,
+            rowHeaderFont: undefined,
+            rowHeaderTextColor: undefined,
+            cellFont: undefined,
+            cellTextColor: undefined,
+            headerDivider: undefined,
+            headerBackgroundColor: undefined,
+            rowBackgroundColor: undefined,
+            rowAlternateBackgroundColor: undefined
         };
     };
 

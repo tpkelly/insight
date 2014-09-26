@@ -121,8 +121,8 @@ describe('ChartGroup', function() {
 
             var countries =  dataset.group('country', function(d){return d.Country;});
 
-            var x = new insight.Axis('Country', insight.Scales.Ordinal);
-            var y = new insight.Axis('Values', insight.Scales.Linear);
+            var x = new insight.Axis('Country', insight.scales.ordinal);
+            var y = new insight.Axis('Values', insight.scales.linear);
 
             chart.xAxis(x);
             chart.yAxis(y);
@@ -284,8 +284,8 @@ describe('ChartGroup', function() {
             chart = new insight.Chart('testChart', '#testChart');
             countries =  dataset.group('country', function(d){return d.Country;});
 
-            x = new insight.Axis('Country', insight.Scales.Ordinal);
-            y = new insight.Axis('Values', insight.Scales.Linear);
+            x = new insight.Axis('Country', insight.scales.ordinal);
+            y = new insight.Axis('Values', insight.scales.linear);
 
             chart.xAxis(x);
             chart.yAxis(y);
@@ -298,8 +298,8 @@ describe('ChartGroup', function() {
 
             // second chart
             chart2 = new insight.Chart('AnotherChart', '#testChart2');
-            x2 = new insight.Axis('Country', insight.Scales.Ordinal);
-            y2 = new insight.Axis('Values', insight.Scales.Linear);
+            x2 = new insight.Axis('Country', insight.scales.ordinal);
+            y2 = new insight.Axis('Values', insight.scales.linear);
 
             chart2.xAxis(x2);
             chart2.yAxis(y2);
@@ -392,8 +392,8 @@ describe('ChartGroup', function() {
 
             var chart = new insight.Chart(name, '#any-element');
 
-            var keyAxis = new insight.Axis('keys', insight.Scales.Ordinal);
-            var valueAxis = new insight.Axis('values', insight.Scales.Linear);
+            var keyAxis = new insight.Axis('keys', insight.scales.ordinal);
+            var valueAxis = new insight.Axis('values', insight.scales.linear);
 
             chart.xAxis(keyAxis);
             chart.yAxis(valueAxis);

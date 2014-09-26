@@ -645,8 +645,8 @@ describe('Grouping', function() {
             var clickedGender = {key:'Male', value:{}};
 
             // add the groups to series
-            var x = new insight.Axis('Country', insight.Scales.Ordinal);
-            var y = new insight.Axis('Values', insight.Scales.Linear);
+            var x = new insight.Axis('Country', insight.scales.ordinal);
+            var y = new insight.Axis('Values', insight.scales.linear);
             var countrySeries = new insight.ColumnSeries('columns', countryGroup, x, y)
                 .valueFunction(function(d) { return d.value.IQ_Cor_Age; });
             var genderSeries = new insight.ColumnSeries('genders', genderGroup, x, y);
