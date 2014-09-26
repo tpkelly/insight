@@ -21,7 +21,7 @@
 
         self.valueAxis = x;
         self.keyAxis = y;
-        self.classValues = [insight.Constants.RowClass];
+        self.classValues = [insight.constants.RowClass];
 
         // Internal functions -----------------------------------------------------------------------------------------
 
