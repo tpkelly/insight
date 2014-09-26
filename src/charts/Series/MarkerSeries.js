@@ -5,9 +5,9 @@
      * @class insight.MarkerSeries
      * @extends insight.Series
      * @param {String} name - A uniquely identifying name for this series
-     * @param {insight.DataSet} data - The DataSet containing this series' data
-     * @param {insight.Scales.Scale} x - the x axis
-     * @param {insight.Scales.Scale} y - the y axis
+     * @param {insight.DataSet | Array | insight.Grouping} data - The DataSet containing this series' data
+     * @param {insight.Axis} x - The x axis
+     * @param {insight.Axis} y - The y axis
      */
     insight.MarkerSeries = function MarkerSeries(name, data, x, y) {
 

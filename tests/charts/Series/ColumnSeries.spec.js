@@ -197,7 +197,7 @@ describe('ColumnSeries', function() {
 
         // Then
         var actualData = series.seriesClassName();
-        var expectedData = 'countryColumnclass bar';
+        var expectedData = 'countryColumnclass ' + insight.Constants.ColClass;
 
         expect(actualData).toBe(expectedData);
 
@@ -226,10 +226,10 @@ describe('ColumnSeries', function() {
         // Then
         var actualData = series.dataset().map(function(data){ return series.itemClassName(data); });
         var expectedData = [
-                            'countryColumnclass bar in_England',
-                            'countryColumnclass bar in_Northern_Ireland',
-                            'countryColumnclass bar in_Scotland',
-                            'countryColumnclass bar in_Wales',
+                            'countryColumnclass ' + insight.Constants.ColClass + ' in_England',
+                            'countryColumnclass ' + insight.Constants.ColClass + ' in_Northern_Ireland',
+                            'countryColumnclass ' + insight.Constants.ColClass + ' in_Scotland',
+                            'countryColumnclass ' + insight.Constants.ColClass + ' in_Wales'
                             ];
 
         expect(actualData).toEqual(expectedData);
