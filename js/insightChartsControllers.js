@@ -535,10 +535,10 @@ function createBubbleChart(chartGroup, bubbleData) {
         .width(300)
         .height(400);
 
-    var xAxis = new insight.Axis('Average Rating', insight.Scales.Linear)
+    var xAxis = new insight.Axis('Average Rating', insight.scales.linear)
         .tickFrequency(1);
 
-    var yAxis = new insight.Axis('', insight.Scales.Linear)
+    var yAxis = new insight.Axis('', insight.scales.linear)
         .tickLabelFormat(insight.formatters.currencyFormatter);
 
     bubbleChart
@@ -571,12 +571,12 @@ function createGenreCountChart(chartGroup, genreData){
         .width(450)
         .height(400);
 
-    var y = new insight.Axis('', insight.Scales.Ordinal)
+    var y = new insight.Axis('', insight.scales.ordinal)
         .tickSize(0)
         .tickPadding(5)
         .isOrdered(true);
 
-    var x = new insight.Axis('', insight.Scales.Linear)
+    var x = new insight.Axis('', insight.scales.linear)
         .hasReversedPosition(true)
         .tickPadding(0)
         .tickSize(0)
@@ -600,10 +600,10 @@ function createLanguageChart(chartGroup, languages){
         .width(350)
         .height(400);
 
-    var x = new insight.Axis('Language', insight.Scales.Ordinal)
+    var x = new insight.Axis('Language', insight.scales.ordinal)
         .isOrdered(true);
 
-    var y = new insight.Axis('', insight.Scales.Linear);
+    var y = new insight.Axis('', insight.scales.linear);
 
     chart.xAxis(x)
         .yAxis(y)

@@ -9,10 +9,10 @@ $(document)
 
             var revenueChart = createEmptyChart();
 
-            var x = new insight.Axis('', insight.Scales.Ordinal)
+            var x = new insight.Axis('', insight.scales.ordinal)
                 .tickLabelOrientation('tb');
 
-            var y = new insight.Axis('', insight.Scales.Linear)
+            var y = new insight.Axis('', insight.scales.linear)
                 .tickLabelFormat(function(tickValue)
                 {
                     var thousands = (tickValue / 1000)

@@ -1,8 +1,9 @@
 === Version X.X.X (XX-XXX-2014) ===
 
-* Library changes
+* Library changes:
   * Added Chart.titlePadding, to configure the distance between the chart title and plot area.
   * Added Axis.tickWidth and Axis.tickColor to configure the appearance of axis tick marks. Defaults are taken from the Theme.axisStyle.tickLineColor and Theme.axis.tickLineWidth respectively.
+  * Added BarSeries as a common base class between RowSeries and ColumnSeries. BarSeries should not be initialized directly, but contains methods used in both RowSeries and ColumnSeries.
   * Renaming
     * insight.Axis.axisLabelColor => insight.Axis.axisTitleColor
     * insight.Axis.axisLabelFont => insight.Axis.axisTitleFont
@@ -12,6 +13,14 @@
     * insight.Theme.axisStyle.axisLabelColor => insight.Theme.axisStyle.axisTitleColor
     * insight.Theme.seriesStyle.showPoints => insight.Theme.seriesStyle.shouldShowPoints
     * insight.Formatters => insight.formatters.
+    * insight.Scales.Linear => insight.scales.linear
+    * insight.Scales.Ordinal => insight.scales.ordinal
+    * insight.Scales.Time => insight.scales.time
+    * insight.Constants => insight.constants
+    * insight.Utils => insight.utils
+
+* Issues fixed:
+  * Date axis tick labels were jumping on interactive charts
 
 
 
@@ -23,14 +32,14 @@
 
 === Version 1.1.1 (18-Sep-2014) ===
 
-* Library changes
+* Library changes:
   * Sets default currency of currency formatter to USD.
   * Merges common functionality in ScatterSeries and BubbleSeries into a common PointSeries.
   * Deprecated “ScatterSeries.pointRadius”. Use “ScatterSeries.radiusFunction” instead.
   * ChartGroup.filterByGrouping: allows a given grouping to be filtered by a given value.
   * ChartGroup.clearFilters: allows all previously applied filters to be removed.
 
-* Issues fixed
+* Issues fixed:
   * Horizontal axis tick labels were not anchored at the middle by default.
   * Chart titles were not within the chart SVG bounds.
   * Points were hidden when plotting multiple line series on a single chart.
