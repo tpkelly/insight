@@ -54,5 +54,12 @@
         "script": "examples/correlation.js",
         "partial": "examples/partials/correlation.html",
         "partialCSS": "examples/css/example.css"
+    },
+    {
+        "name": "tables",
+        "pageName": "Tables",
+        "script": "examples/tables.js",
+        "partial": "examples/partials/tables.html",
+        "partialCSS": "examples/css/example.css"
     }
 ]

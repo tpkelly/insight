@@ -1,0 +1,25 @@
+<div class="row">
+    <div class="col-md-8 description" >
+        <p>
+           Tables take an <code>insight.Grouping</code> and render the values in rows and columns.
+
+            The <code>table.columns()</code> uses an array of objects with a <code>label</code> for the header and a
+            <code>value</code> function.
+
+<code class="language-javascript">var table = new insight.Table('stats', '#population', group)
+    .columns([
+    {
+        label: 'Population',
+        value: function(d)
+        {
+            return d.value.population.Average;
+        }
+    }]);
+</code>
+        </p>
+    </div>
+
+    <div id="population" class="exampleTable col-md-4">
+
+    </div>
+</div>
