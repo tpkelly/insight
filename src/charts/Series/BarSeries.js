@@ -75,6 +75,12 @@
                 barSelector = 'rect.' + self.shortClassName();
 
             var data = self.dataset();
+            var visibleBars = self.keyAxis.domain();
+
+            data = data.filter(function(d) {
+                var key = self.keyFunction()(d);
+                return (visibleBars.indexOf(key) !== -1);
+            });
 
             var groups = chart.plotArea
                 .selectAll(groupSelector)
