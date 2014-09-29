@@ -500,7 +500,7 @@ describe('ChartGroup', function() {
         it('filters the grouping', function() {
 
             expect(countries.dimension.applyFilter)
-                .toHaveBeenCalledWith(chartGroup.filteredDimensions, dummyFilterFunc);
+                .toHaveBeenCalledWith(dummyFilterFunc);
 
         });
 
