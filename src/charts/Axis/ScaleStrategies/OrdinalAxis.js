@@ -26,7 +26,7 @@
                 vals = vals.concat(series.keys(axis.orderingFunction()));
             });
 
-            vals = insight.Utils.arrayUnique(vals);
+            vals = insight.utils.arrayUnique(vals);
 
             return vals;
         }

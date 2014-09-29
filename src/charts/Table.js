@@ -65,7 +65,7 @@
         function initializeTable() {
             self.tableElement = d3.select(self.element)
                 .append('table')
-                .attr('class', insight.Constants.TableClass);
+                .attr('class', insight.constants.TableClass);
 
             header = self.tableElement
                 .append('thead')
@@ -81,7 +81,7 @@
         }
 
         function rowClass(dataPoint) {
-            return insight.Constants.TableRowClass + ' ' + insight.Utils.keySelector(keyFunction(dataPoint));
+            return insight.constants.TableRowClass + ' ' + insight.utils.keySelector(keyFunction(dataPoint));
         }
 
         function click(dataItem) {
@@ -124,7 +124,7 @@
 
             if (alreadySelected) {
                 clicked.classed('selected', false);
-                insight.Utils.removeItemFromArray(self.selectedItems, selector);
+                insight.utils.removeItemFromArray(self.selectedItems, selector);
             } else {
                 clicked.classed('selected', true)
                     .classed('notselected', false);
@@ -178,7 +178,7 @@
                 .style('font', self.headerFont())
                 .html(labelFunction);
 
-            var rows = self.tableBody.selectAll('tr.' + insight.Constants.TableRowClass)
+            var rows = self.tableBody.selectAll('tr.' + insight.constants.TableRowClass)
                 .data(data, keyFunction);
 
             rows.enter()
@@ -315,7 +315,7 @@
 
             var data = self.data.getData();
 
-            data = insight.Utils.multiSort(data, sorters);
+            data = insight.utils.multiSort(data, sorters);
 
             if (self.top()) {
                 data = data.slice(0, self.top());
