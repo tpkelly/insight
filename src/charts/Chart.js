@@ -2,7 +2,7 @@
 
     /**
      * The Chart class is the element in which series and axes are drawn
-     * @class insight.Chart
+     * @constructor insight.Chart
      * @param {String} name - A uniquely identifying name for this chart
      * @param {String} element - The css selector identifying the div container that the chart will be drawn in.
      * @example var myChart = new insight.Chart('My Chart', '#chart-div');
@@ -29,7 +29,7 @@
             initialized = false,
             zoomAxis = null,
             titlePadding = 20,
-            highlightSelector = insight.Utils.highlightSelector();
+            highlightSelector = insight.utils.highlightSelector();
 
         var margin = {
             top: 0,
@@ -73,29 +73,29 @@
             self.container = d3.select(self.element).append('div');
 
             self.container
-                .attr('class', insight.Constants.ContainerClass)
+                .attr('class', insight.constants.ContainerClass)
                 .style('position', 'relative')
                 .style('display', 'inline-block');
 
             self.chartSVG = self.container
                 .append('svg')
-                .attr('class', insight.Constants.ChartSVG);
+                .attr('class', insight.constants.ChartSVG);
 
             self.plotArea = self.chartSVG.append('g')
-                .attr('class', insight.Constants.PlotArea);
+                .attr('class', insight.constants.PlotArea);
 
             // create the empty text element used by the text measuring process
             self.axisMeasurer = self.plotArea
                 .append('text')
-                .attr('class', insight.Constants.AxisTextClass);
+                .attr('class', insight.constants.AxisTextClass);
 
             self.labelMeasurer = self.container
                 .append('text')
-                .attr('class', insight.Constants.AxisLabelClass);
+                .attr('class', insight.constants.AxisLabelClass);
 
             self.titleContainer = self.container
                 .append('text')
-                .attr('class', insight.Constants.ChartTitleClass);
+                .attr('class', insight.constants.ChartTitleClass);
 
             self.addClipPath();
 
@@ -275,7 +275,7 @@
 
         self.clipPath = function() {
 
-            return insight.Utils.safeString(self.name) + 'clip';
+            return insight.utils.safeString(self.name) + 'clip';
         };
 
         /*
@@ -288,11 +288,11 @@
          */
         self.toggleHighlight = function(selector) {
             var clicked = self.plotArea.selectAll('.' + selector);
-            var alreadySelected = insight.Utils.arrayContains(self.selectedItems, selector);
+            var alreadySelected = insight.utils.arrayContains(self.selectedItems, selector);
 
             if (alreadySelected) {
                 clicked.classed('selected', false);
-                insight.Utils.removeItemFromArray(self.selectedItems, selector);
+                insight.utils.removeItemFromArray(self.selectedItems, selector);
             } else {
                 clicked.classed('selected', true)
                     .classed('notselected', false);

@@ -2,7 +2,7 @@
 
     /**
      * The ColumnSeries class extends the [BarSeries]{@link insight.BarSeries} class and draws vertical bars on a [Chart]{@link insight.Chart}
-     * @class insight.ColumnSeries
+     * @constructor
      * @extends insight.BarSeries
      * @param {String} name - A uniquely identifying name for this series
      * @param {insight.DataSet | Array | insight.Grouping} data - The DataSet containing this series' data
@@ -21,7 +21,7 @@
 
         self.valueAxis = y;
         self.keyAxis = x;
-        self.classValues = [insight.Constants.ColClass];
+        self.classValues = [insight.constants.ColClass];
 
         // Internal functions ----------------------------------------------------------------------------------------
 

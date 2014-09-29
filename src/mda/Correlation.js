@@ -21,7 +21,7 @@
             errorContainer = new insight.ErrorContainer();
         }
 
-        if (!insight.Utils.isArray(x) || !insight.Utils.isArray(y)) {
+        if (!insight.utils.isArray(x) || !insight.utils.isArray(y)) {
 
             errorContainer.setError(insight.ErrorMessages.invalidArrayParameterException);
 
@@ -92,7 +92,7 @@
 
         var dataArray = getArray(dataset);
 
-        if (!insight.Utils.isArray(dataArray)) {
+        if (!insight.utils.isArray(dataArray)) {
 
             errorContainer.setError(insight.ErrorMessages.invalidDataSetOrArrayParameterException);
 
@@ -100,7 +100,7 @@
 
         }
 
-        if (!insight.Utils.isFunction(xFunction) || !insight.Utils.isFunction(yFunction)) {
+        if (!insight.utils.isFunction(xFunction) || !insight.utils.isFunction(yFunction)) {
 
             errorContainer.setError(insight.ErrorMessages.invalidFunctionParameterException);
 
@@ -147,7 +147,7 @@
     }
 
     function isPairOfNumbers(element) {
-        var result = insight.Utils.isNumber(element.x) && insight.Utils.isNumber(element.y);
+        var result = insight.utils.isNumber(element.x) && insight.utils.isNumber(element.y);
 
         return result;
     }

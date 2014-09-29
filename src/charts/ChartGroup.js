@@ -3,7 +3,7 @@
     /**
      * The ChartGroup class is a container for Charts and Tables, linking them together
      * and coordinating cross chart filtering and styling.
-     * @class insight.ChartGroup
+     * @constructor
      */
     insight.ChartGroup = function ChartGroup() {
 
@@ -78,8 +78,8 @@
             if (crossfilterEnabled) {
 
                 // Add Grouping and Dimension to internal lists if they are not already there
-                insight.Utils.addToSet(self.groupings, dataset);
-                insight.Utils.addToSet(self.dimensions, dataset.dimension);
+                insight.utils.addToSet(self.groupings, dataset);
+                insight.utils.addToSet(self.dimensions, dataset.dimension);
             }
         }
 
@@ -130,7 +130,7 @@
 
                 if (listeningObjects) {
 
-                    var alreadyListening = insight.Utils.arrayContains(listeningObjects, widget);
+                    var alreadyListening = insight.utils.arrayContains(listeningObjects, widget);
 
                     if (!alreadyListening) {
                         self.dimensionListenerMap[dimension.name].push(widget);
@@ -189,7 +189,7 @@
          */
         self.filterByGrouping = function(grouping, value) {
 
-            var dimensionSelector = insight.Utils.keySelector(value);
+            var dimensionSelector = insight.utils.keySelector(value);
             var groupDimension = grouping.dimension;
 
             // send events to any charts or tables also using this dimension, as they will need to update their
@@ -200,10 +200,10 @@
             var nameProperty = 'name';
 
             // get the list of any dimensions matching the one that is being filtered
-            var dims = insight.Utils.takeWhere(self.dimensions, nameProperty, groupDimension.name);
+            var dims = insight.utils.takeWhere(self.dimensions, nameProperty, groupDimension.name);
 
             // get the list of matching dimensions that are already filtered
-            var activeDim = insight.Utils.takeWhere(self.filteredDimensions, nameProperty, groupDimension.name);
+            var activeDim = insight.utils.takeWhere(self.filteredDimensions, nameProperty, groupDimension.name);
 
             // add the new filter to the list of active filters if it's not already active
             if (!activeDim.length) {
@@ -215,7 +215,7 @@
                 dim.applyFilter(filterFunc);
 
                 if (dim.filters.length === 0) {
-                    insight.Utils.removeItemFromArray(self.filteredDimensions, dim);
+                    insight.utils.removeItemFromArray(self.filteredDimensions, dim);
                 }
             });
 

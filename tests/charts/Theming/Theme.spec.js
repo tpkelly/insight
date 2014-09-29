@@ -1,9 +1,13 @@
 describe("Theme", function(){
 
-    var dummyTheme;
-    var chartGroup;
-    var chart;
-    var lineSeries, rowSeries, columnSeries, bubbleSeries;
+    var dummyTheme,
+        chartGroup,
+        chart,
+        table,
+        lineSeries,
+        rowSeries,
+        columnSeries,
+        bubbleSeries;
 
     beforeEach(function() {
         //Create a new theme to be applied
@@ -43,7 +47,16 @@ describe("Theme", function(){
             },
 
             tableStyle : {
-
+                headerFont: '17pt Arial',
+                headerTextColor: 'red',
+                rowHeaderFont: 'bold 15pt Times New Roman',
+                rowHeaderTextColor: 'green',
+                cellFont: '13pt Helvetica Neue',
+                cellTextColor: 'blue',
+                headerDivider: '3px solid yellow',
+                headerBackgroundColor: '#824',
+                rowBackgroundColor : '#943',
+                rowAlternateBackgroundColor: '#439'
             }
         };
 
@@ -60,91 +73,70 @@ describe("Theme", function(){
         chart.yAxis(yAxis);
         chart.series([lineSeries, rowSeries, columnSeries, bubbleSeries]);
 
+        table = new insight.Table('Table', '#table', new insight.DataSet([1,2,3]));
+
         chartGroup = new insight.ChartGroup();
         chartGroup.charts = [chart];
+        chartGroup.tables = [table];
 
         // we don't care about resizing the chart for theme tests and there are browser specific
         // differences so a spy will prevent the chart from being resized and thus prevent the side effects
         spyOn(chart, 'resizeChart');
+
+        //When:
+        chartGroup.applyTheme(dummyTheme);
     });
 
     describe("Axis", function() {
         it("Tick size to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(chart.xAxis().tickSize()).toBe(1.4);
             expect(chart.yAxis().tickSize()).toBe(1.4);
         });
 
         it("Tick padding to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(chart.xAxis().tickPadding()).toBe(6.4);
             expect(chart.yAxis().tickPadding()).toBe(6.4);
         });
 
         it("Line color to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(chart.xAxis().lineColor()()).toBe('#345');
             expect(chart.yAxis().lineColor()()).toBe('#345');
         });
 
         it("Line width to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(chart.xAxis().lineWidth()).toBe(12.5);
             expect(chart.yAxis().lineWidth()).toBe(12.5);
         });
 
         it("Tick color to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(chart.xAxis().tickColor()()).toBe('#543');
             expect(chart.yAxis().tickColor()()).toBe('#543');
         });
 
         it("Tick width to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(chart.xAxis().tickWidth()).toBe(9.3);
             expect(chart.yAxis().tickWidth()).toBe(9.3);
         });
 
         it("Gridline color to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(chart.xAxis().gridlines.lineColor()).toBe('#204');
             expect(chart.yAxis().gridlines.lineColor()).toBe('#204');
         });
 
         it("Gridline width to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(chart.xAxis().gridlines.lineWidth()).toBe(3.1);
             expect(chart.yAxis().gridlines.lineWidth()).toBe(3.1);
         });
 
         it("Gridline visibility to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(chart.xAxis().shouldShowGridlines()).toBe(true);
             expect(chart.yAxis().shouldShowGridlines()).toBe(true);
@@ -154,7 +146,6 @@ describe("Theme", function(){
     describe("Chart", function() {
         it("Series palette to be set by theme", function() {
             //When:
-            chartGroup.applyTheme(dummyTheme);
             chartGroup.draw();
 
             //Then:
@@ -167,20 +158,67 @@ describe("Theme", function(){
 
     describe("Series", function() {
         it("Line style to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(lineSeries.lineType()).toBe('cardinal');
         });
 
         it("Line point visibility to be set by theme", function() {
-            //When:
-            chartGroup.applyTheme(dummyTheme);
-
             //Then:
             expect(lineSeries.shouldShowPoints()).toBe(true);
         });
+    });
+
+    describe("Table", function() {
+        it("Header font to be set by theme", function() {
+            //Then:
+            expect(table.headerFont()).toBe('17pt Arial');
+        });
+
+        it("Row header font to be set by theme", function() {
+            //Then:
+            expect(table.rowHeaderFont()).toBe('bold 15pt Times New Roman');
+        });
+
+        it("Cell font to be set by theme", function() {
+            //Then:
+            expect(table.cellFont()).toBe('13pt Helvetica Neue');
+        });
+
+        it("Header textcolor to be set by theme", function() {
+            //Then:
+            expect(table.headerTextColor()()).toBe('red');
+        });
+
+        it("Row header textcolor to be set by theme", function() {
+            //Then:
+            expect(table.rowHeaderTextColor()()).toBe('green');
+        });
+
+        it("Cell textcolor to be set by theme", function() {
+            //Then:
+            expect(table.cellTextColor()()).toBe('blue');
+        });
+
+        it("Header divider style to be set by theme", function() {
+            //Then:
+            expect(table.headerDivider()).toBe('3px solid yellow');
+        });
+
+        it("Header background color to be set by theme", function() {
+            //Then:
+            expect(table.headerBackgroundColor()()).toBe('#824');
+        });
+
+        it("Row background color to be set by theme", function() {
+            //Then:
+            expect(table.rowBackgroundColor()()).toBe('#943');
+        });
+
+        it("Alternate background color to be set by theme", function() {
+            //Then:
+            expect(table.rowAlternateBackgroundColor()()).toBe('#439');
+        });
+
     });
 
     describe("Initial theme", function() {
@@ -292,5 +330,5 @@ describe("Theme", function(){
         });
         //Expect default series colour palette
         expect(seriesColours).toEqual(['lightblue', 'lightblue', 'lightblue', 'lightblue']);
-    })
+    });
 });

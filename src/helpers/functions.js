@@ -21,7 +21,7 @@ insight.helpers.functions = (function() {
          *     }
          * };
 
-         * var forenameAccessor = insight.Utils.createPropertyAccessor('name.forename');
+         * var forenameAccessor = insight.utils.createPropertyAccessor('name.forename');
 
          * var result = forenameAccessor(anObject); // 'Bob'
          */

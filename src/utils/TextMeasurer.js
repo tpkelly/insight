@@ -18,11 +18,11 @@
                 angleDegrees = 0;
             }
 
-            var measurer = insight.Utils.getDrawingContext(measureCanvas, font);
+            var measurer = insight.utils.getDrawingContext(measureCanvas, font);
             var actualTextWidth = measurer.measureText(text).width;
             var roughTextHeight = measurer.measureText('aa').width;
 
-            var angleRadians = insight.Utils.degreesToRadians(angleDegrees);
+            var angleRadians = insight.utils.degreesToRadians(angleDegrees);
 
             var height = actualTextWidth * Math.abs(Math.sin(angleRadians)) + roughTextHeight * Math.abs(Math.cos(angleRadians));
             var width = actualTextWidth * Math.abs(Math.cos(angleRadians)) + roughTextHeight * Math.abs(Math.sin(angleRadians));

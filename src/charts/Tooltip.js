@@ -2,14 +2,14 @@
 
     /**
      * A tooltip, displaying values for a series or point when hovered over.
-     * @class insight.Tooltip
+     * @constructor
      */
     insight.Tooltip = function Tooltip() {
 
         // Private variables ------------------------------------------------------------------------------------------
 
         var self = this,
-            className = insight.Constants.Tooltip,
+            className = insight.constants.Tooltip,
             chartContainer = null,
             styles = {};
 
@@ -50,7 +50,7 @@
         // It currently just returns the position centrally above the provided DOM element, however the coordinate system is in place to allow customization around the element.
         function getTooltipPosition(target) {
 
-            var boundingBox = insight.Utils.getSVGBoundingBox(target);
+            var boundingBox = insight.utils.getSVGBoundingBox(target);
 
             var offset = self.offset();
 
@@ -123,7 +123,7 @@
          */
         self.styles = function(value) {
             if (!arguments.length) {
-                return insight.Utils.objectUnion(baseStyles, styles);
+                return insight.utils.objectUnion(baseStyles, styles);
             }
             styles = value;
             return self;

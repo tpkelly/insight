@@ -1,13 +1,13 @@
 (function(insight) {
     /*
      * A Dimension organizes a dataset along a particular property, or variation of a property.
-     * Defining a dimension with a function of:<pre><code>function(d){ return d.Surname; }</code></pre> will slice a dataset by the distinct values of the Surname property.
+     * Defining a dimension with a function of:<pre><code>function(d){ return d.Surname; }</code></pre> will slice a
+     * dataset by the distinct values of the Surname property.
      * @constructor
      * @param {String} name - The short name used to identify this dimension, and any linked dimensions sharing the same name
      * @param {Object} crossfilterData - The crossfilter object to create the Dimension on.
      * @param {Function} sliceFunction - The function used to categorize points within the dimension.
      * @param {Boolean} oneToMany - Whether or not this dimension represents a collection of possible values in each item.
-     * @class
      */
     insight.Dimension = function Dimension(name, crossfilterData, sliceFunction, oneToMany) {
 
@@ -27,7 +27,7 @@
 
         function oneToManyFilterFunction(filterValue) {
             return function(d) {
-                return insight.Utils.arrayContains(d, filterValue);
+                return insight.utils.arrayContains(d, filterValue);
             };
         }
 
@@ -62,11 +62,11 @@
 
             var nameProperty = 'name';
 
-            var filterExists = insight.Utils.takeWhere(self.filters, nameProperty, filterFunc.name).length;
+            var filterExists = insight.utils.takeWhere(self.filters, nameProperty, filterFunc.name).length;
 
             //if the dimension is already filtered by this value, toggle (remove) the filter
             if (filterExists) {
-                insight.Utils.removeWhere(self.filters, nameProperty, filterFunc.name);
+                insight.utils.removeWhere(self.filters, nameProperty, filterFunc.name);
 
             } else {
                 // add the provided filter to the list for this dimension

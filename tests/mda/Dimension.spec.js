@@ -114,7 +114,7 @@ describe('Dimension', function() {
 
             expect(filteredData.length).toBe(expectedData.length);
             filteredData.forEach(function(d) {
-                expect(insight.Utils.arrayContains(expectedData, d)).toBe(true);
+                expect(insight.utils.arrayContains(expectedData, d)).toBe(true);
             });
 
 
