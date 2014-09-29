@@ -21,7 +21,7 @@
 
         self.valueAxis = undefined;
         self.keyAxis = undefined;
-        self.classValues = [insight.Constants.BarGroupClass];
+        self.classValues = [insight.constants.BarGroupClass];
 
         // Private functions ------------------------------------------------------------------------------------------
 
@@ -71,7 +71,7 @@
             self.tooltip = chart.tooltip;
             self.selectedItems = chart.selectedItems;
 
-            var groupSelector = 'g.' + self.name + '.' + insight.Constants.BarGroupClass,
+            var groupSelector = 'g.' + self.name + '.' + insight.constants.BarGroupClass,
                 barSelector = 'rect.' + self.shortClassName();
 
             var data = self.dataset();
@@ -83,7 +83,7 @@
             var newGroups = groups.enter()
                 .append('g')
                 .classed(self.name, true)
-                .classed(insight.Constants.BarGroupClass, true);
+                .classed(insight.constants.BarGroupClass, true);
 
             var newBars = newGroups.selectAll(barSelector);
 

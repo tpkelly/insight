@@ -35,7 +35,7 @@ describe('Utils', function() {
             var testString = 'Comic Sans 11px';
 
             // When
-            var result = insight.Utils.fontSizeFromFont(testString);
+            var result = insight.utils.fontSizeFromFont(testString);
 
             // Then
             expect(result).toBe(11);
@@ -48,7 +48,7 @@ describe('Utils', function() {
             var testString = '11pt Comic Sans';
 
             // When
-            var result = insight.Utils.fontSizeFromFont(testString);
+            var result = insight.utils.fontSizeFromFont(testString);
 
             // Then
             expect(result).toBe(11);
@@ -61,7 +61,7 @@ describe('Utils', function() {
             var testString = '14pt Comic Sans 25px';
 
             // When
-            var result = insight.Utils.fontSizeFromFont(testString);
+            var result = insight.utils.fontSizeFromFont(testString);
 
             // Then
             expect(result).toBe(14);
@@ -74,7 +74,7 @@ describe('Utils', function() {
             var testString = 'Comic Sans';
 
             // When
-            var result = insight.Utils.fontSizeFromFont(testString);
+            var result = insight.utils.fontSizeFromFont(testString);
 
             // Then
             expect(result).toBe(12);
@@ -87,7 +87,7 @@ describe('Utils', function() {
             var testString = '';
 
             // When
-            var result = insight.Utils.fontSizeFromFont(testString);
+            var result = insight.utils.fontSizeFromFont(testString);
 
             // Then
             expect(result).toBe(12);
@@ -100,7 +100,7 @@ describe('Utils', function() {
             var testString = undefined;
 
             // When
-            var result = insight.Utils.fontSizeFromFont(testString);
+            var result = insight.utils.fontSizeFromFont(testString);
 
             // Then
             expect(result).toBe(12);
@@ -118,10 +118,10 @@ describe('Utils', function() {
             objectProperty: {id:1, name:'blah'}
         };
 
-        expect(insight.Utils.isArray(data.arrayProperty)).toBe(true);
-        expect(insight.Utils.isArray(data.numberProperty)).toBe(false);
-        expect(insight.Utils.isArray(data.stringProperty)).toBe(false);
-        expect(insight.Utils.isArray(data.objectProperty)).toBe(false);
+        expect(insight.utils.isArray(data.arrayProperty)).toBe(true);
+        expect(insight.utils.isArray(data.numberProperty)).toBe(false);
+        expect(insight.utils.isArray(data.stringProperty)).toBe(false);
+        expect(insight.utils.isArray(data.objectProperty)).toBe(false);
     });
 
     it('combines two arrays, removing duplicates', function() {
@@ -135,7 +135,7 @@ describe('Utils', function() {
         // Then
 
         var expectedResult = ['a','b','c','d','e','f','g','h','i'];
-        var actualResult = insight.Utils.arrayUnique(combinedArray);
+        var actualResult = insight.utils.arrayUnique(combinedArray);
 
         expect(actualResult).toEqual(expectedResult);
     });
@@ -148,7 +148,7 @@ describe('Utils', function() {
         // Then
 
         var expectedResult = 'in_Scotland';
-        var actualResult = insight.Utils.keySelector(input);
+        var actualResult = insight.utils.keySelector(input);
 
         expect(actualResult).toBe(expectedResult);
     });
@@ -167,7 +167,7 @@ describe('Utils', function() {
                 {'Id':19,'Forename':'Ryan','Surname':'Freeman','Country':'Scotland','DisplayColour':'#6cbc04','Age':12,'IQ':96, 'Interests':['Football', 'Music', 'Kayaking'], 'Gender':'Male'}
             ];
 
-        var actualResult = insight.Utils.takeWhere(input, 'Country', 'Scotland');
+        var actualResult = insight.utils.takeWhere(input, 'Country', 'Scotland');
 
         expect(actualResult).toEqual(expectedResult);
     });
@@ -204,7 +204,7 @@ describe('Utils', function() {
                 ];
 
 
-        insight.Utils.removeWhere(input, 'Country', 'Scotland');
+        insight.utils.removeWhere(input, 'Country', 'Scotland');
 
         expect(input).toEqual(expectedResult);
     });
@@ -218,7 +218,7 @@ describe('Utils', function() {
         // Then
 
         var expectedResult = true;
-        var actualResult = insight.Utils.arrayContains(input, 3);
+        var actualResult = insight.utils.arrayContains(input, 3);
 
         expect(actualResult).toEqual(expectedResult);
     });
@@ -234,7 +234,7 @@ describe('Utils', function() {
         // Then
 
         var expectedResult = true;
-        var actualResult = insight.Utils.arrayContains(input, value);
+        var actualResult = insight.utils.arrayContains(input, value);
 
         expect(actualResult).toEqual(expectedResult);
     });
@@ -251,7 +251,7 @@ describe('Utils', function() {
         // Then
 
         var expectedResult = {'font': 'arial', 'display':'block', 'font-size': '17px'};
-        var actualResult = insight.Utils.objectUnion(base, extension);
+        var actualResult = insight.utils.objectUnion(base, extension);
 
         expect(actualResult).toEqual(expectedResult);
     });
@@ -266,7 +266,7 @@ describe('Utils', function() {
         // Then
 
         var expectedResult = {'font': 'arial', 'display':'block'};
-        var actualResult = insight.Utils.objectUnion(base, extension);
+        var actualResult = insight.utils.objectUnion(base, extension);
 
         expect(actualResult).toEqual(expectedResult);
     });
@@ -289,7 +289,7 @@ describe('Utils', function() {
         document.body.appendChild(svg);
         // When
         
-        var boundingBox = insight.Utils.getSVGBoundingBox(rect);
+        var boundingBox = insight.utils.getSVGBoundingBox(rect);
 
         // Then
         
@@ -323,7 +323,7 @@ describe('Utils', function() {
      
         // When
 
-        var actualData = insight.Utils.multiSort(tabledata, sorters)
+        var actualData = insight.utils.multiSort(tabledata, sorters)
                                       .map(function(point){return point.IQ;});
 
         var expectedData= [51, 53, 55, 60, 63, 69, 69, 70, 71, 85, 86, 87, 93, 96, 96, 98, 100, 103, 105, 106] ;
@@ -350,7 +350,7 @@ describe('Utils', function() {
      
         // When 
 
-        var actualData = insight.Utils.multiSort(tabledata, sorters)
+        var actualData = insight.utils.multiSort(tabledata, sorters)
                                       .map(function(d){return d.IQ;});
         var expectedData = [106, 105, 103, 100, 98, 96, 96, 93, 87, 86, 85, 71, 70, 69, 69, 63, 60, 55, 53, 51];
 
@@ -379,8 +379,8 @@ describe('Utils', function() {
      
         // When 
 
-        var actualCountries = insight.Utils.multiSort(tabledata, sorters).map(function(d){return d.Country;});
-        var actualAges = insight.Utils.multiSort(tabledata, sorters).map(function(d){return d.Age;});
+        var actualCountries = insight.utils.multiSort(tabledata, sorters).map(function(d){return d.Country;});
+        var actualAges = insight.utils.multiSort(tabledata, sorters).map(function(d){return d.Age;});
 
         var expectedCountries = ["England", "England", "England", "England", "England", "England", "England", "Northern Ireland", "Northern Ireland", "Northern Ireland", "Northern Ireland", "Northern Ireland", "Northern Ireland", "Scotland", "Scotland", "Scotland", "Wales", "Wales", "Wales", "Wales"];
         var expectedAges = [20, 19, 18, 18, 10, 7, 5, 16, 14, 7, 7, 5, 2, 20, 12, 1, 11, 6, 4, 3];
@@ -409,8 +409,8 @@ describe('Utils', function() {
      
         // When
 
-        var actualCountries = insight.Utils.multiSort(tabledata, sorters).map(function(d){return d.Country;});
-        var actualAges = insight.Utils.multiSort(tabledata, sorters).map(function(d){return d.Age;});
+        var actualCountries = insight.utils.multiSort(tabledata, sorters).map(function(d){return d.Country;});
+        var actualAges = insight.utils.multiSort(tabledata, sorters).map(function(d){return d.Age;});
         
         var expectedCountries = ["Wales", "Wales", "Wales", "Wales", "Scotland", "Scotland", "Scotland", "Northern Ireland", "Northern Ireland", "Northern Ireland", "Northern Ireland", "Northern Ireland", "Northern Ireland", "England", "England", "England", "England", "England", "England", "England"];
         var expectedAges = [3, 4, 6, 11, 1, 12, 20, 2, 5, 7, 7, 14, 16, 5, 7, 10, 18, 18, 19, 20];
@@ -429,7 +429,7 @@ describe('Utils', function() {
 
         // When
 
-        insight.Utils.addToSet(set, value);
+        insight.utils.addToSet(set, value);
 
         // Then
         var expectedResult = [1,2,3,4];
@@ -446,7 +446,7 @@ describe('Utils', function() {
 
         // When
 
-        insight.Utils.addToSet(set, value);
+        insight.utils.addToSet(set, value);
 
         // Then
         var expectedResult = [1,2,3,4];
@@ -458,37 +458,37 @@ describe('Utils', function() {
     
         it('undefined if passed empty array', function(){
             
-            expect(insight.Utils.lastElement([])).not.toBeDefined();
+            expect(insight.utils.lastElement([])).not.toBeDefined();
         
         });
         
         it('undefined if passed non array', function(){
             
-            spyOn(insight.Utils, 'isArray').andReturn(false);
+            spyOn(insight.utils, 'isArray').andReturn(false);
             
             var emptyObject = {};
             
-            expect(insight.Utils.lastElement(emptyObject)).not.toBeDefined();
+            expect(insight.utils.lastElement(emptyObject)).not.toBeDefined();
             
-            expect(insight.Utils.isArray).toHaveBeenCalledWith(emptyObject);
+            expect(insight.utils.isArray).toHaveBeenCalledWith(emptyObject);
         
         });
         
         it('undefined if passed undefied', function(){
             
-            expect(insight.Utils.lastElement(undefined)).not.toBeDefined();
+            expect(insight.utils.lastElement(undefined)).not.toBeDefined();
         
         });
         
         it('undefined if passed null', function(){
             
-            expect(insight.Utils.lastElement(null)).not.toBeDefined();
+            expect(insight.utils.lastElement(null)).not.toBeDefined();
         
         });
         
         it('returns last element of array', function(){
             
-            expect(insight.Utils.lastElement([1,2,3])).toBe(3);
+            expect(insight.utils.lastElement([1,2,3])).toBe(3);
         
         });
     
@@ -520,7 +520,7 @@ describe('Utils', function() {
                 })
             }
 
-            spyOn(insight.Utils, 'getNativeComputedStyle').andReturn(getComputedStyleResult);
+            spyOn(insight.utils, 'getNativeComputedStyle').andReturn(getComputedStyleResult);
 
             errorContainer = new insight.ErrorContainer();
 
@@ -532,7 +532,7 @@ describe('Utils', function() {
             var aMockElement = {};
 
             // When
-            var result = insight.Utils.getElementStyles(aMockElement, []);
+            var result = insight.utils.getElementStyles(aMockElement, []);
 
             // Then
             expect(getComputedStyleResult.getPropertyValue).not.toHaveBeenCalled();
@@ -557,7 +557,7 @@ describe('Utils', function() {
                 var aMockElement = {};
 
                 // When
-                var result = insight.Utils.getElementStyles(aMockElement, [property.propertyName]);
+                var result = insight.utils.getElementStyles(aMockElement, [property.propertyName]);
 
                 // Then
                 expect(getComputedStyleResult.getPropertyValue).toHaveBeenCalled();
@@ -572,7 +572,7 @@ describe('Utils', function() {
 
                 // When
                 var lookForProperty = 'font-size';
-                var result = insight.Utils.getElementStyles(aMockElement, [lookForProperty]);
+                var result = insight.utils.getElementStyles(aMockElement, [lookForProperty]);
 
                 // Then
                 expect(getComputedStyleResult.getPropertyValue).toHaveBeenCalled();

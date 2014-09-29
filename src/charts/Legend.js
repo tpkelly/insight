@@ -42,7 +42,7 @@
             }
 
             chart.legendView = chart.chartSVG.append("g")
-                .attr("class", insight.Constants.LegendView)
+                .attr("class", insight.constants.LegendView)
                 .attr("transform", "translate(" + (chart.width() - 80) + ",30)");
 
             chart.legendBox = chart.legendView.append("rect")
@@ -51,7 +51,7 @@
                 .style("fill", 'white');
 
             chart.legendItems = chart.legendView.append("g")
-                .attr("class", insight.Constants.Legend);
+                .attr("class", insight.constants.Legend);
         };
 
         self.draw = function(chart) {

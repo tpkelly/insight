@@ -35,7 +35,7 @@
 
         // Internal variables -----------------------------------------------------------------------------------------
 
-        self.cssClassName = d3.functor(insight.Constants.Point);
+        self.cssClassName = d3.functor(insight.constants.Point);
 
         self.classValues = [self.cssClassName()];
 

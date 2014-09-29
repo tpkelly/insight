@@ -21,7 +21,7 @@
 
         // Internal variables -----------------------------------------------------------------------------------------
 
-        self.classValues = [insight.Constants.LineClass];
+        self.classValues = [insight.constants.LineClass];
 
         // Private functions ------------------------------------------------------------------------------------------
 
@@ -77,8 +77,8 @@
 
             var data = self.dataset();
 
-            var classValue = self.name + 'line ' + insight.Constants.LineClass;
-            var classSelector = '.' + self.name + 'line.' + insight.Constants.LineClass;
+            var classValue = self.name + 'line ' + insight.constants.LineClass;
+            var classSelector = '.' + self.name + 'line.' + insight.constants.LineClass;
 
             var rangeIdentifier = "path" + classSelector;
 
@@ -103,8 +103,8 @@
                 .duration(duration)
                 .attr("d", transform);
 
-            var pointClassName = self.name + 'line' + insight.Constants.LinePoint;
-            pointClassName = insight.Utils.alphaNumericString(pointClassName);
+            var pointClassName = self.name + 'line' + insight.constants.LinePoint;
+            pointClassName = insight.utils.alphaNumericString(pointClassName);
 
             if (displayPoints) {
                 var circles = chart.plotArea.selectAll("circle." + pointClassName)

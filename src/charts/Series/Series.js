@@ -71,7 +71,7 @@
             var selected = '';
 
             if (selectedItems.length) {
-                selected = insight.Utils.arrayContains(selectedItems, selector) ? ' selected' : ' notselected';
+                selected = insight.utils.arrayContains(selectedItems, selector) ? ' selected' : ' notselected';
             }
 
             return selected;
@@ -101,7 +101,7 @@
          */
         self.shortClassName = function() {
             var shortName = self.name + 'class';
-            var spacelessName = insight.Utils.alphaNumericString(shortName);
+            var spacelessName = insight.utils.alphaNumericString(shortName);
 
             return spacelessName;
         };
@@ -130,7 +130,7 @@
          */
         self.itemClassName = function(dataItem, additionalClasses) {
 
-            var keySelector = insight.Utils.keySelector(groupKeyFunction(dataItem));
+            var keySelector = insight.utils.keySelector(groupKeyFunction(dataItem));
             var selected = selectedClassName(self.selectedItems, keySelector);
             var value = self.seriesClassName() + ' ' + keySelector + selected;
 

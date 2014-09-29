@@ -288,7 +288,7 @@ describe('Series', function(){
 
         //Then:
         var selectionClassName = series.itemClassName(seriesDataSet[0]);
-        expect(selectionClassName).toBe(series.seriesClassName() + ' ' + insight.Utils.keySelector('Watkins'));
+        expect(selectionClassName).toBe(series.seriesClassName() + ' ' + insight.utils.keySelector('Watkins'));
     });
     
 });

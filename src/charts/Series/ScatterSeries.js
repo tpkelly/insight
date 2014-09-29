@@ -19,7 +19,7 @@
 
         // Internal variables -----------------------------------------------------------------------------------------
 
-        self.cssClassName = d3.functor(insight.Constants.Scatter);
+        self.cssClassName = d3.functor(insight.constants.Scatter);
 
         self.classValues = [self.cssClassName()];
 
