@@ -1,41 +1,41 @@
 $(document)
     .ready(function()
     {
+        d3.json('datasets/world_countries.json', function(countryData)
+        {
 
-        var populationData = [
-        {
-            "country": "England",
-            "population": 53012456
-        },
-        {
-            "country": "Scotland",
-            "population": 5295000
-        },
-        {
-            "country": "Wales",
-            "population": 3063456
-        },
-        {
-            "country": "Northern Ireland",
-            "population": 1810863
-        }];
-
-        var dataSet = new insight.DataSet(populationData);
-        var group = dataSet.group("countries", function(d)
+            var countriesWithRegions = countryData.filter(function(country)
             {
-                return d.country;
-            })
-            .mean(["population"]);
+                return country.region && (country.region.length > 0);
+            });
 
-        var table = new insight.Table('stats', '#population', group)
-            .columns([
-            {
-                label: 'Population',
-                value: function(d)
+            var dataset = new insight.DataSet(countriesWithRegions);
+            var worldCountriesByRegion = dataset.group(
+                    'regions',
+                    function(country)
+                    {
+                        return country.region;
+                    })
+                .sum(['area']);
+
+            var table = new insight.Table('stats', '#regions', worldCountriesByRegion)
+                .columns([
                 {
-                    return d.value.population.Average;
-                }
-            }]);
+                    label: 'Total area (km<sup>2</sup>)',
+                    value: function(d)
+                    {
+                        var floored = Math.floor(d.value.area.Sum);
+                        var formatted = insight.formatters.numberFormatter(floored);
 
-        table.draw();
+                        return formatted;
+                    }
+                }])
+                .descending(function(region)
+                {
+                    return region.value.area.Sum;
+                });
+
+            table.draw();
+
+        });
     });

@@ -5,21 +5,29 @@
 
             The <code>table.columns()</code> uses an array of objects with a <code>label</code> for the header and a
             <code>value</code> function.
-
-<code class="language-javascript">var table = new insight.Table('stats', '#population', group)
-    .columns([
-    {
-        label: 'Population',
-        value: function(d)
-        {
-            return d.value.population.Average;
-        }
-    }]);
-</code>
         </p>
+        <p>
+            This table uses <a target="_blank" href="https://mledoze.github.io/countries/">world country data</a>
+            grouped by region. The table has been sorted using the <code>descending()</code> function. See the
+            <a target="_blank" href="http://localhost:8999/InsightJS/dist/docs/insight.Table.html">API docs</a> to
+            see what else you can do with tables.
+        </p>
+
+<code class="language-javascript">var table = new insight.Table('stats', '#regions', worldCountriesByRegion)
+    .columns([{
+        label: 'Total area (km&lt;sup&gt;2&lt;/sup&gt;)',
+        value: function(d) {
+            return insight.formatters.numberFormatter(d.value.area.Sum);
+        }
+    }])
+    .descending(function(d) {
+        return d.value.area.Sum;
+    });
+</code>
+
     </div>
 
-    <div id="population" class="exampleTable col-md-4">
+    <div id="regions" class="exampleTable col-md-4">
 
     </div>
 </div>
