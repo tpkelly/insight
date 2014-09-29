@@ -22,10 +22,10 @@ describe('Dimension', function() {
         {'Id':19,'Forename':'Ryan','Surname':'Freeman','Country':'Scotland','DisplayColour':'#6cbc04','Age':12,'IQ':96, 'Interests':['Football', 'Music', 'Kayaking'], 'Gender':'Male'},
         {'Id':20,'Forename':'Frances','Surname':'Lawson','Country':'Northern Ireland','DisplayColour':'#e739c9','Age':14,'IQ':71, 'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'}];
 
-    var ndx;
+    var crossfilterData;
 
     beforeEach(function(){
-        ndx = crossfilter(sourceData);
+        crossfilterData = crossfilter(sourceData);
     });
 
     function sliceByCountry(d) {
@@ -41,7 +41,7 @@ describe('Dimension', function() {
         it('will initialize without error', function() {
 
             // When:
-            var dimension = new insight.Dimension('testDim', ndx, sliceByCountry, false);
+            var dimension = new insight.Dimension('testDim', crossfilterData, sliceByCountry, false);
 
             // Then:
             expect(dimension.name).toEqual('testDim');
@@ -57,7 +57,7 @@ describe('Dimension', function() {
             it('will create the appropriate filter for a one to one dimension', function() {
 
                 // Given:
-                var dimension = new insight.Dimension('testDim', ndx, sliceByCountry, false);
+                var dimension = new insight.Dimension('testDim', crossfilterData, sliceByCountry, false);
 
                 var testData = ['England', 'Scotland', 'Wales', 'Ireland'];
 
@@ -76,7 +76,7 @@ describe('Dimension', function() {
             it('will create the appropriate filter for a one to many dimension', function() {
 
                 // Given:
-                var dimension = new insight.Dimension('testDim', ndx, sliceByInterests, true);
+                var dimension = new insight.Dimension('testDim', crossfilterData, sliceByInterests, true);
 
                 var testData = [['Football', 'Cycling'], ['Cycling'], ['Dancing', 'Football'], ['Cycling', 'Dancing']];
 
@@ -94,6 +94,31 @@ describe('Dimension', function() {
     });
 
     describe('applyFilter', function() {
+
+        it('will filter data using the filter function if it is not already applied', function() {
+
+            // Given:
+            var dimension = new insight.Dimension('testDim', crossfilterData, sliceByCountry, false);
+
+            var filterFunction = dimension.createFilterFunction('England');
+
+            // When:
+            dimension.applyFilter(filterFunction);
+
+            // Then:
+            var expectedData = sourceData.filter(function(d) {
+                return d.Country === 'England';
+            });
+
+            var filteredData = dimension.crossfilterDimension.top(sourceData.length);
+
+            expect(filteredData.length).toBe(expectedData.length);
+            filteredData.forEach(function(d) {
+                expect(insight.Utils.arrayContains(expectedData, d)).toBe(true);
+            });
+
+
+        });
 
     });
 
