@@ -15,7 +15,7 @@
 
 <code class="language-javascript">var table = new insight.Table('stats', '#regions', worldCountriesByRegion)
     .columns([{
-        label: 'Total area (km<sup>2</sup>)',
+        label: 'Total area (km&lt;sup&gt;2&lt;/sup&gt;)',
         value: function(d) {
             return insight.formatters.numberFormatter(d.value.area.Sum);
         }
