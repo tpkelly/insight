@@ -995,6 +995,19 @@
             return self;
         };
 
+        /**
+         * Gets the start and end of the axis scale range.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Object[]} - An array of 2 values: the lower and upper limits of the axis range.
+         *
+         * Sets the start and end of axis scale range.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Object} rangeMin The lower limit of the axis range
+         * @param {Object} rangeMax The upper limit of the axis range
+         * @returns {this}
+         */
         self.axisRange = function(rangeMin, rangeMax) {
             if (!arguments.length) {
                 return axisStrategy.axisRange(self, rangeMinimum(), rangeMaximum());
