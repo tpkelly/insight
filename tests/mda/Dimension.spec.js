@@ -95,11 +95,18 @@ describe('Dimension', function() {
 
     describe('applyFilter', function() {
 
+        beforeEach(function() {
+
+            this.addMatchers({
+                toContainSameElementsAs: insightTesting.matchers.toContainSameElementsAs
+            });
+
+        });
+
         it('will filter data using the filter function if it is not already applied', function() {
 
             // Given:
             var dimension = new insight.Dimension('testDim', crossfilterData, sliceByCountry, false);
-
             var filterFunction = dimension.createFilterFunction('England');
 
             // When:
@@ -111,12 +118,23 @@ describe('Dimension', function() {
             });
 
             var filteredData = dimension.crossfilterDimension.top(sourceData.length);
+            expect(filteredData).toContainSameElementsAs(expectedData);
 
-            expect(filteredData.length).toBe(expectedData.length);
-            filteredData.forEach(function(d) {
-                expect(insight.utils.arrayContains(expectedData, d)).toBe(true);
-            });
+        });
 
+        it('will remove a filter if it is already applied', function() {
+
+            // Given:
+            var dimension = new insight.Dimension('testDim', crossfilterData, sliceByCountry, false);
+            var filterFunction = dimension.createFilterFunction('England');
+            dimension.applyFilter(filterFunction);
+
+            // When:
+            dimension.applyFilter(filterFunction);
+
+            // Then:
+            var filteredData = dimension.crossfilterDimension.top(sourceData.length);
+            expect(filteredData).toContainSameElementsAs(sourceData);
 
         });
 
