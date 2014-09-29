@@ -37,6 +37,11 @@
             return [minimum, maximum];
         };
 
+        self.domainIsDefault = function(domain) {
+            //Default time/linear axis domain is [0,1]
+            return domain.length === 2 && domain[0].valueOf() === 0 && domain[1].valueOf() === 1;
+        };
+
         self.initialTickValue = function(axis, tickFrequency) {
             return 0;
         };

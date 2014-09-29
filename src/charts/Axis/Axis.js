@@ -1010,6 +1010,10 @@
          */
         self.axisRange = function(rangeMin, rangeMax) {
             if (!arguments.length) {
+                var domain = self.scale.domain();
+                if (!axisStrategy.domainIsDefault(domain)) {
+                    return self.scale.domain();
+                }
                 return axisStrategy.axisRange(self, rangeMinimum(), rangeMaximum());
             }
 

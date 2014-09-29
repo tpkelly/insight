@@ -58,6 +58,11 @@
             return rangeValues;
         };
 
+        self.domainIsDefault = function(domain) {
+            //Default ordinal domain is []
+            return domain.length === 0;
+        };
+
         self.tickValues = function(axis) {
             return axis.domain();
         };
