@@ -2,7 +2,7 @@
 
     /**
      * The BarSeries is an abstract base class for columns and rows.
-     * @class insight.BarSeries
+     * @constructor
      * @extends insight.Series
      * @param {String} name - A uniquely identifying name for this series
      * @param {insight.DataSet | Array | insight.Grouping} data - The DataSet containing this series' data
