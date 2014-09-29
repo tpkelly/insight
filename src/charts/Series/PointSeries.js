@@ -3,7 +3,7 @@
     /**
      * The PointSeries is an abstract base class for all Cartesian classes representing points (E.g. Scatter, Bubbles
      * and Lines).
-     * @class insight.PointSeries
+     * @constructor
      * @extends insight.Series
      * @param {String} name - A uniquely identifying name for this chart
      * @param {insight.DataSet | Array | insight.Grouping} data - The DataSet containing this series' data

@@ -2,7 +2,7 @@
 
     /**
      * The Table class draws HTML tables from DataSets
-     * @class insight.Table
+     * @constructor
      * @param {String} name - A uniquely identifying name for this table
      * @param {String} element - The css selector identifying the div container that the table will be drawn in.
      * @param {insight.DataSet} dataset - The DataSet to render this Table from

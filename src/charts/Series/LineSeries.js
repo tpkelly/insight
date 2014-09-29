@@ -2,7 +2,7 @@
 
     /**
      * The LineSeries class extends the Series class and draws horizontal bars on a Chart
-     * @class insight.LineSeries
+     * @constructor
      * @extends insight.Series
      * @param {String} name - A uniquely identifying name for this series
      * @param {insight.DataSet | Array | insight.Grouping} data - The DataSet containing this series' data

@@ -3,7 +3,7 @@
     /**
      * A Theme for drawing on a lightly coloured background. Sets a number of the properties defined in the Theme base
      * class.
-     * @class insight.LightTheme
+     * @constructor
      */
     insight.LightTheme = function LightTheme() {
 

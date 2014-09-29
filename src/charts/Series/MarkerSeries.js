@@ -2,7 +2,7 @@
 
     /**
      * The MarkerSeries class extends the Series class and draws markers/targets on a chart
-     * @class insight.MarkerSeries
+     * @constructor
      * @extends insight.Series
      * @param {String} name - A uniquely identifying name for this series
      * @param {insight.DataSet | Array | insight.Grouping} data - The DataSet containing this series' data

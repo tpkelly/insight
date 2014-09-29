@@ -3,7 +3,7 @@
     /**
      * The ChartGroup class is a container for Charts and Tables, linking them together
      * and coordinating cross chart filtering and styling.
-     * @class insight.ChartGroup
+     * @constructor
      */
     insight.ChartGroup = function ChartGroup() {
 

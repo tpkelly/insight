@@ -1,7 +1,6 @@
 (function(insight) {
     /**
      * A Grouping is generated on a dimension, to reduce the items in the data set into groups along the provided dimension
-     * @class
      * @constructor
      * @param {Object} dimension - The dimension to group
      */

@@ -2,7 +2,7 @@
 
     /**
      * The RowSeries class extends the [BarSeries]{@link insight.BarSeries} class and draws horizontal bars on a [Chart]{@link insight.Chart}
-     * @class insight.RowSeries
+     * @constructor
      * @extends insight.BarSeries
      * @param {String} name - A uniquely identifying name for this series
      * @param {insight.DataSet | Array | insight.Grouping} data - The DataSet containing this series' data
