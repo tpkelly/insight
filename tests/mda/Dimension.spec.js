@@ -2,7 +2,8 @@
 describe('Dimension', function() {
 
     var sourceData = 
-        [{'Id':1,'Forename':'Martin','Surname':'Watkins','Country':'Scotland','DisplayColour':'#38d33c','Age':1,'IQ':69,'Gender':'Male','Interests':['Ballet', 'Music', 'Climbing']},        {'Id':2,'Forename':'Teresa','Surname':'Knight','Country':'Scotland','DisplayColour':'#6ee688','Age':20,'IQ':103,'Interests':['Triathlon', 'Music', 'Mountain Biking'],'Gender':'Female'},
+        [{'Id':1,'Forename':'Martin','Surname':'Watkins','Country':'Scotland','DisplayColour':'#38d33c','Age':1,'IQ':69,'Gender':'Male','Interests':['Ballet', 'Music', 'Climbing']},
+        {'Id':2,'Forename':'Teresa','Surname':'Knight','Country':'Scotland','DisplayColour':'#6ee688','Age':20,'IQ':103,'Interests':['Triathlon', 'Music', 'Mountain Biking'],'Gender':'Female'},
         {'Id':3,'Forename':'Mary','Surname':'Lee','Country':'Wales','DisplayColour':'#8e6bc2','Age':3,'IQ':96,'Interests':['Triathlon', 'Music', 'Mountain Biking'],'Gender':'Female'},
         {'Id':4,'Forename':'Sandra','Surname':'Harrison','Country':'Northern Ireland','DisplayColour':'#02acd0','Age':16,'IQ':55, 'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'},
         {'Id':5,'Forename':'Frank','Surname':'Cox','Country':'England','DisplayColour':'#0b281c','Age':5,'IQ':105,'Interests':['Football', 'Music', 'Kayaking'], 'Gender':'Male'},
@@ -135,6 +136,39 @@ describe('Dimension', function() {
             // Then:
             var filteredData = dimension.crossfilterDimension.top(sourceData.length);
             expect(filteredData).toContainSameElementsAs(sourceData);
+
+        });
+
+        it('adds a filter if a different filter is already applied', function() {
+
+            // Given:
+            var dimension = new insight.Dimension('testDim', crossfilterData, sliceByCountry, false);
+            dimension.applyFilter(dimension.createFilterFunction('England'));
+
+            // When:
+            dimension.applyFilter(dimension.createFilterFunction('Scotland'));
+
+            // Then:
+            var expectedData = sourceData.filter(function(d) {
+                return d.Country === 'England' || d.Country === 'Scotland';
+            });
+
+            var filteredData = dimension.crossfilterDimension.top(sourceData.length);
+            expect(filteredData).toContainSameElementsAs(expectedData);
+
+        });
+
+        it('filtering a value that doesn\'t exist results in empty data', function() {
+
+            // Given:
+            var dimension = new insight.Dimension('testDim', crossfilterData, sliceByCountry, false);
+
+            // When:
+            dimension.applyFilter(dimension.createFilterFunction('France'));
+
+            // Then:
+            var filteredData = dimension.crossfilterDimension.top(sourceData.length);
+            expect(filteredData).toEqual([]);
 
         });
 
