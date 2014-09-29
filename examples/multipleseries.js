@@ -62,11 +62,11 @@ $(document)
             .height(500)
             .legend(new insight.Legend());
 
-        var x = new insight.Axis('Team', insight.Scales.Ordinal)
+        var x = new insight.Axis('Team', insight.scales.ordinal)
             .tickLabelRotation(45)
             .isOrdered(true);
 
-        var y = new insight.Axis('Points', insight.Scales.Linear);
+        var y = new insight.Axis('Points', insight.scales.linear);
 
         chart.xAxis(x);
         chart.yAxis(y);

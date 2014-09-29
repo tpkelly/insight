@@ -11,14 +11,14 @@ $(document)
 
             var paretoChart = createEmptyChart();
 
-            var x = new insight.Axis('', insight.Scales.Ordinal, 'bottom')
+            var x = new insight.Axis('', insight.scales.ordinal, 'bottom')
                 .tickLabelOrientation('tb')
                 .isOrdered(true);
 
-            var clientRevenueAxis = new insight.Axis('', insight.Scales.Linear)
+            var clientRevenueAxis = new insight.Axis('', insight.scales.linear)
                 .tickLabelFormat(insight.formatters.currencyFormatter);
 
-            var cumulativeRevenueAxis = new insight.Axis('', insight.Scales.Linear)
+            var cumulativeRevenueAxis = new insight.Axis('', insight.scales.linear)
                 .tickLabelFormat(insight.formatters.percentageFormatter)
                 .hasReversedPosition(true);
 

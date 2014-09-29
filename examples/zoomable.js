@@ -30,12 +30,12 @@ $(document)
                 .width(500)
                 .height(325);
 
-            var xTime = new insight.Axis('', insight.Scales.Time)
+            var xTime = new insight.Axis('', insight.scales.time)
                 .tickLabelOrientation('tb')
                 .tickSize(5)
                 .tickLabelFormat(insight.formatters.dateFormatter);
 
-            var yTime = new insight.Axis('New Apps per Month', insight.Scales.Linear)
+            var yTime = new insight.Axis('New Apps per Month', insight.scales.linear)
                 .tickSize(5);
 
             timeChart.xAxis(xTime)

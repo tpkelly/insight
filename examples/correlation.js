@@ -33,11 +33,11 @@ $(document)
                     bottom: 80
                 });
 
-            var xAxis = new insight.Axis('Average Number of Ratings', insight.Scales.Linear)
+            var xAxis = new insight.Axis('Average Number of Ratings', insight.scales.linear)
                 .tickSize(2)
                 .tickLabelOrientation('tb');
 
-            var yAxis = new insight.Axis('Average Price', insight.Scales.Linear);
+            var yAxis = new insight.Axis('Average Price', insight.scales.linear);
 
             scatterChart.xAxis(xAxis);
             scatterChart.yAxis(yAxis);
