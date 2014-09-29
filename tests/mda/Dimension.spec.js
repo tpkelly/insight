@@ -1,9 +1,8 @@
 
-describe('Dimension tests', function() {
+describe('Dimension', function() {
 
     var sourceData = 
-        [{'Id':1,'Forename':'Martin','Surname':'Watkins','Country':'Scotland','DisplayColour':'#38d33c','Age':1,'IQ':69,'Gender':'Male','Interests':['Ballet', 'Music', 'Climbing'],},
-        {'Id':2,'Forename':'Teresa','Surname':'Knight','Country':'Scotland','DisplayColour':'#6ee688','Age':20,'IQ':103,'Interests':['Triathlon', 'Music', 'Mountain Biking'],'Gender':'Female'},
+        [{'Id':1,'Forename':'Martin','Surname':'Watkins','Country':'Scotland','DisplayColour':'#38d33c','Age':1,'IQ':69,'Gender':'Male','Interests':['Ballet', 'Music', 'Climbing']},        {'Id':2,'Forename':'Teresa','Surname':'Knight','Country':'Scotland','DisplayColour':'#6ee688','Age':20,'IQ':103,'Interests':['Triathlon', 'Music', 'Mountain Biking'],'Gender':'Female'},
         {'Id':3,'Forename':'Mary','Surname':'Lee','Country':'Wales','DisplayColour':'#8e6bc2','Age':3,'IQ':96,'Interests':['Triathlon', 'Music', 'Mountain Biking'],'Gender':'Female'},
         {'Id':4,'Forename':'Sandra','Surname':'Harrison','Country':'Northern Ireland','DisplayColour':'#02acd0','Age':16,'IQ':55, 'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'},
         {'Id':5,'Forename':'Frank','Surname':'Cox','Country':'England','DisplayColour':'#0b281c','Age':5,'IQ':105,'Interests':['Football', 'Music', 'Kayaking'], 'Gender':'Male'},
@@ -23,75 +22,83 @@ describe('Dimension tests', function() {
         {'Id':19,'Forename':'Ryan','Surname':'Freeman','Country':'Scotland','DisplayColour':'#6cbc04','Age':12,'IQ':96, 'Interests':['Football', 'Music', 'Kayaking'], 'Gender':'Male'},
         {'Id':20,'Forename':'Frances','Surname':'Lawson','Country':'Northern Ireland','DisplayColour':'#e739c9','Age':14,'IQ':71, 'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'}];
 
-    var ndx,
-        oneToMany,
-        dim,
-        sliceFunction;
-
+    var ndx;
 
     beforeEach(function(){
         ndx = crossfilter(sourceData);
-        oneToMany = false,
-        sliceFunction = function(d) {
-            return d.Country;
-        };
     });
 
-    it('will initialize without error', function() {
-        
-        // Given 
+    function sliceByCountry(d) {
+        return d.Country;
+    }
 
-        dim = new insight.Dimension('testDim', ndx, sliceFunction, oneToMany)
+    function sliceByInterests(d) {
+        return d.Interests;
+    }
 
-        // Then
+    describe('constructor', function() {
 
-        expect(dim.name).toEqual('testDim');
-        expect(dim.filters).toEqual([]);
-        expect(dim.crossfilterDimension).toBeDefined();
+        it('will initialize without error', function() {
 
-        
+            // When:
+            var dimension = new insight.Dimension('testDim', ndx, sliceByCountry, false);
+
+            // Then:
+            expect(dimension.name).toEqual('testDim');
+            expect(dimension.filters).toEqual([]);
+            expect(dimension.crossfilterDimension).toBeDefined();
+
+        });
+
     });
 
-    it('will create the appropriate filter for a one to one dimension', function() {
-        
-        // Given 
-        
-        dim = new insight.Dimension('testDim', ndx, sliceFunction, oneToMany);
+    describe('createFilterFunction', function() {
 
-        var testData = ['England', 'Scotland', 'Wales', 'Ireland'];
+            it('will create the appropriate filter for a one to one dimension', function() {
+
+                // Given:
+                var dimension = new insight.Dimension('testDim', ndx, sliceByCountry, false);
+
+                var testData = ['England', 'Scotland', 'Wales', 'Ireland'];
+
+                // When:
+                var actualFilterFunction = dimension.createFilterFunction('England').filterFunction;
 
 
-        // Then
+                // Then:
+                var actualData = testData.filter(actualFilterFunction);
+                var expectedData = ['England'];
 
-        var actualFilterFunction = dim.createFilterFunction('England').filterFunction;
-        
+                expect(actualData).toEqual(expectedData);
 
-        var actualData = testData.filter(actualFilterFunction);
-        var expectedData = ['England'];
-        
-        expect(actualData).toEqual(expectedData);
+            });
+
+            it('will create the appropriate filter for a one to many dimension', function() {
+
+                // Given:
+                var dimension = new insight.Dimension('testDim', ndx, sliceByInterests, true);
+
+                var testData = [['Football', 'Cycling'], ['Cycling'], ['Dancing', 'Football'], ['Cycling', 'Dancing']];
+
+                // When:
+                var actualFilterFunction = dimension.createFilterFunction('Cycling').filterFunction;
+
+                // Then:
+                var actualData = testData.filter(actualFilterFunction);
+                var expectedData = [['Football', 'Cycling'], ['Cycling'], ['Cycling', 'Dancing']];
+
+                expect(actualData).toEqual(expectedData);
+
+            });
+
     });
 
-    it('will create the appropriate filter for a one to many dimension', function() {
-        
-        // Given 
-        
-        oneToMany = true;
-        sliceFunction = function(d){ return d.Interests; };
+    describe('applyFilter', function() {
 
-        dim = new insight.Dimension('testDim', ndx, sliceFunction, oneToMany);
+    });
 
-        var testData = [['Football', 'Cycling'], ['Cycling'], ['Dancing', 'Football'], ['Cycling', 'Dancing']];
+    describe('clearFilters', function() {
 
-        // Then
-
-        var actualFilterFunction = dim.createFilterFunction('Cycling').filterFunction;
-        
-
-        var actualData = testData.filter(actualFilterFunction);
-        var expectedData = [['Football', 'Cycling'], ['Cycling'], ['Cycling', 'Dancing']];
-        
-        expect(actualData).toEqual(expectedData);
     });
 
 });
