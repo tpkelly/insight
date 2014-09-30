@@ -16,11 +16,11 @@
             var scaleMin = axis.rangeMinimum();
             var scaleMax = axis.rangeMaximum();
 
-            if (scaleMin === scaleMax) {
-                return axis.scale.domain();
+            if (self.domainIsDefault(axis.scale.domain())) {
+                return [scaleMin, scaleMax];
             }
 
-            return [scaleMin, scaleMax];
+            return axis.scale.domain();
         };
 
         self.initialTickValue = function(axis, tickFrequency) {
