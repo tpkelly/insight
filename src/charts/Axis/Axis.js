@@ -1001,7 +1001,10 @@
          * @instance
          * @returns {Object[]} - An array of 2 values: the lower and upper limits of the axis range.
          *
-         * Sets the start and end of axis scale range.
+         * @also
+         *
+         * Sets the start and end of axis scale range. The specific type of rangeMin and rangeMax will
+         * depend on which of the [insight scales]{@link insight.scales} the axis is using.
          * @memberof! insight.Axis
          * @instance
          * @param {Object} rangeMin The lower limit of the axis range
