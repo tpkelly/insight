@@ -3210,7 +3210,7 @@ describe('Axis', function() {
 
             beforeEach(function () {
                 axis = new insight.Axis('axis', insight.scales.linear);
-                spyOn(axis.scale, 'domain').andReturn([5, 1000]);
+                axis.axisRange(5, 1000);
             });
 
             it('defaults to domain', function () {
@@ -3241,7 +3241,7 @@ describe('Axis', function() {
 
             beforeEach(function () {
                 axis = new insight.Axis('axis', insight.scales.time);
-                spyOn(axis.scale, 'domain').andReturn([new Date(2014, 1), new Date(2015, 8)]);
+                axis.axisRange(new Date(2014, 1), new Date(2015, 8));
             });
 
             it('defaults to domain', function () {
