@@ -35,16 +35,16 @@
             axisStrategy = strategyForScale(scale),
             tickFrequency;
 
-        var rangeMinimum = function() {
-            return axisStrategy.domain(self)[0];
+        // Internal variables ---------------------------------------------------------------------------------------
+
+        self.rangeMinimum = function() {
+            return self.scale.domain()[0];
         };
 
-        var rangeMaximum = function() {
-            var domain = axisStrategy.domain(self);
+        self.rangeMaximum = function() {
+            var domain = self.scale.domain();
             return domain[domain.length - 1];
         };
-
-        // Internal variables ---------------------------------------------------------------------------------------
 
         self.measureCanvas = document.createElement('canvas');
         self.scale = scale.scale();
@@ -1010,11 +1010,7 @@
          */
         self.axisRange = function(rangeMin, rangeMax) {
             if (!arguments.length) {
-                var domain = self.scale.domain();
-                if (!axisStrategy.domainIsDefault(domain)) {
-                    return self.scale.domain();
-                }
-                return axisStrategy.axisRange(self, rangeMinimum(), rangeMaximum());
+                return axisStrategy.domain(self);
             }
 
             var minVal = d3.functor(rangeMin);
@@ -1023,8 +1019,10 @@
             //If max < min, we will need to swap the values to make the axisRange still be in ascending order.
             var shouldReverseValues = (maxVal() < minVal());
 
-            rangeMinimum = (!shouldReverseValues) ? minVal : maxVal;
-            rangeMaximum = (!shouldReverseValues) ? maxVal : minVal;
+            self.rangeMinimum = (!shouldReverseValues) ? minVal : maxVal;
+            self.rangeMaximum = (!shouldReverseValues) ? maxVal : minVal;
+
+            self.scale.domain(axisStrategy.axisRange(self, self.rangeMinimum(), self.rangeMaximum()));
 
             return self;
         };

@@ -34,16 +34,16 @@
         // Internal functions -----------------------------------------------------------------------------------------
 
         self.domain = function(axis) {
-            return findOrdinalValues(axis);
+            return self.axisRange(axis, axis.rangeMinimum(), axis.rangeMaximum());
         };
 
         self.axisRange = function(axis, minimum, maximum) {
-            var domain = self.domain(axis);
+            var domain = findOrdinalValues(axis);
             var minIndex = domain.indexOf(minimum);
             var maxIndex = domain.indexOf(maximum);
 
             if (minIndex === -1 || maxIndex === -1) {
-                return self.domain(axis);
+                return domain;
             }
 
             //Swap the indices to ensure minIndex < maxIndex

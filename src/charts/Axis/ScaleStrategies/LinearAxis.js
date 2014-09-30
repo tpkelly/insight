@@ -13,15 +13,13 @@
         // Internal functions -----------------------------------------------------------------------------------------
 
         self.domain = function(axis) {
-            var scaleDomain = axis.scale.domain();
+            var scaleMax = self.findMax(axis);
 
-            //If available (i.e. not just [0, 1]), use the smarter domain provided by d3 (responds to zoom/panning, etc.)
-            if (scaleDomain[0] !== 0 && scaleDomain[1] !== 1) {
+            if (scaleMax === 0) {
                 return axis.scale.domain();
             }
 
-            //Fall back to our own calculations
-            return [0, self.findMax(axis)];
+            return [0, scaleMax];
         };
 
         self.initialTickValue = function(axis, tickFrequency) {
