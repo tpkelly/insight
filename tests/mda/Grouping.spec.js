@@ -36,11 +36,12 @@ describe('Grouping', function() {
         {'Id':10,'Forename':'Earl','Surname':'Flores','Country':'Scotland','DisplayColour':'#1be47c','Age':16,'IQ':93,'Interests':['Climbing', 'Boxing', 'Music'], 'Gender':'Male'}
     ];
 
-    var crossfilterAllFields, crossfilterMissingFields;
+    var crossfilterAllFields, crossfilterMissingFields, emptyCrossfilterData;
 
     beforeEach(function() {
         crossfilterAllFields = crossfilter(dataAllFieldsPresent);
         crossfilterMissingFields = crossfilter(dataWithFieldsMissing);
+        emptyCrossfilterData = crossfilter([]);
     });
 
     function findByKey(data, keyValue) {
@@ -78,6 +79,19 @@ describe('Grouping', function() {
 
         // Then:
         expect(data.length).toBe(4);
+    });
+
+    it('when given empty data will initialize without error', function() {
+
+        // Given:
+        var dimension = new insight.Dimension('country', emptyCrossfilterData, sliceByCountry);
+        var group = new insight.Grouping(dimension);
+
+        // When:
+        var data = group.getData();
+
+        // Then:
+        expect(data.length).toBe(0);
     });
 
     describe('sum', function() {
@@ -492,8 +506,6 @@ describe('Grouping', function() {
 
             var postAggregation = function(groupEntry) {
                 var total = 0;
-
-
                 groupEntry.getData()
                     .forEach(function(d)
                     {
@@ -519,6 +531,32 @@ describe('Grouping', function() {
             expect(plusOneData).toEqual(expectedPlusOneData);
 
         });
+
+        it('when given empty data runs without error', function() {
+
+            // Given
+            var countryDimension = new insight.Dimension('country', emptyCrossfilterData, sliceByCountry);
+            var group = new insight.Grouping(countryDimension)
+                .sum(['IQ']);
+
+            var postAggregation = function(groupEntry) {
+                var total = 0;
+                groupEntry.getData()
+                    .forEach(function(d)
+                    {
+                        d.value.IQ.PlusOne = d.value.IQ.Sum + 1;
+                    });
+            };
+
+            // When
+            group.postAggregation(postAggregation);
+
+            var dataArray = group.getData();
+
+            // Then - nothing to expect except a lack of exception
+
+        });
+
     });
 
     describe('correlationPairs', function() {
