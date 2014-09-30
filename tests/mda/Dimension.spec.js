@@ -172,6 +172,21 @@ describe('Dimension', function() {
 
         });
 
+        it('filtering an empty dimension results in empty data', function() {
+
+            // Given:
+            var emptydata = crossfilter([]);
+            var dimension = new insight.Dimension('testDim', emptydata, sliceByCountry, false);
+
+            // When:
+            dimension.applyFilter(dimension.createFilterFunction('France'));
+
+            // Then:
+            var filteredData = dimension.crossfilterDimension.top(1);
+            expect(filteredData).toEqual([]);
+
+        });
+
     });
 
     describe('clearFilters', function() {
