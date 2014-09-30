@@ -3279,8 +3279,9 @@ describe('Axis', function() {
                     'Nissan', 'Porsche', 'Vauxhall', 'Honda',
                     'Jaguar', 'Skoda', 'Volkswagen', 'Volvo'];
 
-                var mockSeries = jasmine.createSpyObj(insight.Series, ['keys']);
+                var mockSeries = jasmine.createSpyObj(insight.Series, ['keys', 'findMax']);
                 mockSeries.keys.andReturn(categories);
+                mockSeries.findMax.andReturn('Volvo');
 
                 axis = new insight.Axis('axis', insight.scales.ordinal);
                 axis.series = [mockSeries];

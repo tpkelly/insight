@@ -38,12 +38,11 @@
         // Internal variables ---------------------------------------------------------------------------------------
 
         self.rangeMinimum = function() {
-            return self.scale.domain()[0];
+            return 0;
         };
 
         self.rangeMaximum = function() {
-            var domain = self.scale.domain();
-            return domain[domain.length - 1];
+            return axisStrategy.findMax(self);
         };
 
         self.measureCanvas = document.createElement('canvas');
