@@ -4,7 +4,7 @@
      * The Series base class provides some base functions that are used by any specific types of series that derive from this class
      * @constructor
      * @param {String} name - A uniquely identifying name for this series
-     * @param {insight.DataSet | Array | insight.Grouping} data - The DataSet containing this series' data
+     * @param {insight.DataProvider | Array} data - The object containing this series' data
      * @param {insight.Axis} x - The x axis
      * @param {insight.Axis} y - The y axis
      */
@@ -22,8 +22,7 @@
 
         // Internal variables -----------------------------------------------------------------------------------------
 
-        self.data = data;
-        self.isDataProvider = (data instanceof insight.DataProvider);
+        self.data = (insight.utils.isArray(data)) ? new insight.DataProvider(data) : data;
         self.x = x;
         self.y = y;
         self.name = name;
@@ -75,21 +74,6 @@
             }
 
             return selected;
-        }
-
-        function arrayDataSet(orderFunction, topValues) {
-
-            // Take a shallow copy of the data array
-            var data = self.data.slice(0);
-
-            if (orderFunction) {
-                data = data.sort(orderFunction);
-            }
-            if (topValues) {
-                data = data.slice(0, top);
-            }
-
-            return data;
         }
 
         // Internal functions -----------------------------------------------------------------------------------------
@@ -322,7 +306,7 @@
 
             }
 
-            var data = self.isDataProvider ? self.data.extractData(orderFunction, self.topValues) : arrayDataSet(orderFunction, self.topValues);
+            var data = self.data.extractData(orderFunction, self.topValues);
 
             if (filter) {
                 data = data.filter(filter);
