@@ -34,7 +34,8 @@
          */
         self.extractData = function(orderFunc, top) {
 
-            if (top <= 0) {
+            // Javascript less-than-or-equal does Number type coercion so treats null as 0
+            if (top != null && top <= 0) {
                 return [];
             }
 

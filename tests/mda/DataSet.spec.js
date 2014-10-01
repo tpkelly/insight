@@ -23,107 +23,18 @@ describe('DataSet', function() {
         {'Id':20,'Forename':'Frances','Surname':'Lawson','Country':'Northern Ireland','DisplayColour':'#e739c9','Age':14,'IQ':71, 'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'}
     ];
 
-    describe('filterFunction', function() {
+    describe('extractData', function() {
 
-        var dataSet;
-
-        beforeEach(function() {
-            dataSet = new insight.DataSet();
-        });
-
-        it('will include all data be default', function() {
-
-            // When:
-            var filterBy = dataSet.filterFunction();
-
-            // Then:
-            var filteredData = data.filter(filterBy);
-            expect(filteredData.length).toBe(20);
-
-        });
-
-        it('can be overridden by the user', function() {
-
-            // When:
-            dataSet.filterFunction(function(d) {
-                return d.Id > 10;
-            });
-
-            // Then:
-            var filterBy = dataSet.filterFunction();
-            var filteredData = data.filter(filterBy);
-            expect(filteredData.length).toBe(10);
-
-        });
-
-    });
-
-    describe('getData', function() {
-
-        it('has data the that was supplied in the constructor', function() {
+        it('extracts the data that was supplied in the constructor', function() {
 
             // Given:
             var dataSet = new insight.DataSet(data);
 
             // When:
-            var result = dataSet.getData();
+            var result = dataSet.extractData();
 
             // Then:
-            expect(result.length).toBe(20);
-        });
-
-
-    });
-
-    describe('orderingFunction', function() {
-
-        var orderingData = [
-            { Id: 3, value: 2 },
-            { Id: 2, value: 12 },
-            { Id: 1, value: 7 }
-        ];
-
-        var dataSet;
-
-        beforeEach(function() {
-            dataSet = new insight.DataSet();
-        });
-
-        it('will order data by the "value" property (descending) by default', function() {
-
-            // When:
-            var orderBy = dataSet.orderingFunction();
-
-            // Then:
-            var orderedData = orderingData.sort(orderBy);
-            var expectedOrdering = [
-                { Id: 2, value: 12 },
-                { Id: 1, value: 7 },
-                { Id: 3, value: 2 }
-            ];
-
-            expect(orderedData).toEqual(expectedOrdering);
-
-        });
-
-        it('can be overridden by the user', function() {
-
-            // When:
-            dataSet.orderingFunction(function(a, b) {
-                return b.Id - a.Id;
-            });
-
-            // Then:
-            var orderBy = dataSet.orderingFunction();
-            var orderedData = orderingData.sort(orderBy);
-            var expectedOrdering = [
-                { Id: 3, value: 2 },
-                { Id: 2, value: 12 },
-                { Id: 1, value: 7 }
-            ];
-
-            expect(orderedData).toEqual(expectedOrdering);
-
+            expect(result).toEqual(data);
         });
 
     });
@@ -143,24 +54,23 @@ describe('DataSet', function() {
             expect(countryData.length).toBe(4);
         });
 
+        it('can add a group with extra calculated values', function() {
+
+            // Given:
+            var dataSet = new insight.DataSet(data);
+
+            // When:
+            var countries = dataSet.group('country', function(d){return d.Country;})
+                .mean(['Age']);
+
+            // Then:
+            var countryData = countries.getData();
+            var scotland = countryData.filter(function(d){return d.key=='Scotland';})[0];
+
+            expect(countryData.length).toBe(4);
+            expect(scotland.value.Age.Average).toBe(11);
+        });
+
     });
-
-    it('can add a group with extra calculated values', function() {
-        
-        var dataSet = new insight.DataSet(data);
-
-
-        var countries = dataSet.group('country', function(d){return d.Country;})
-                                 .mean(['Age']);
-
-        var countryData = countries.getData();
-
-        var scotland = countryData.filter(function(d){return d.key=='Scotland';})[0];
-        
-        expect(countryData.length).toBe(4);
-        expect(scotland.value.Age.Average).toBe(11);
-    });
-
-
-})
+});
 

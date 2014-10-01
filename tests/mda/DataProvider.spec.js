@@ -222,6 +222,33 @@ describe('DataProvider', function() {
                 expect(dataProvider.rawData).toHaveBeenCalled();
             });
 
+            it('of null gives all results', function() {
+
+                // When:
+                var result = dataProvider.extractData(null, null);
+
+                // Then:
+                expect(result).toEqual(data);
+            });
+
+            it('of undefined gives all results', function() {
+
+                // When:
+                var result = dataProvider.extractData(null, undefined);
+
+                // Then:
+                expect(result).toEqual(data);
+            });
+
+            it('of NaN gives all results', function() {
+
+                // When:
+                var result = dataProvider.extractData(null, NaN);
+
+                // Then:
+                expect(result).toEqual(data);
+            });
+
         });
 
         describe('when filterFunction has been set', function() {
