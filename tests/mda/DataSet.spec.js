@@ -50,7 +50,7 @@ describe('DataSet', function() {
             var countries = dataSet.group('country', function(d){return d.Country;});
 
             // Then:
-            var countryData = countries.getData();
+            var countryData = countries.extractData();
             expect(countryData.length).toBe(4);
         });
 
@@ -64,7 +64,7 @@ describe('DataSet', function() {
                 .count(['Interests']);
 
             // Then:
-            var interestsData = interests.getData();
+            var interestsData = interests.extractData();
             expect(interestsData.length).toBe(8);
         });
 
@@ -78,7 +78,7 @@ describe('DataSet', function() {
                 .mean(['Age']);
 
             // Then:
-            var countryData = countries.getData();
+            var countryData = countries.extractData();
             var scotland = countryData.filter(function(d){return d.key=='Scotland';})[0];
 
             expect(countryData.length).toBe(4);

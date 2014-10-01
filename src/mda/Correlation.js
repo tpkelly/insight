@@ -121,8 +121,8 @@
      */
     function getArray(obj) {
 
-        if (obj instanceof insight.DataSet || obj instanceof insight.Grouping) {
-            return obj.getData();
+        if (obj instanceof insight.DataProvider) {
+            return obj.extractData();
         }
 
         return obj;

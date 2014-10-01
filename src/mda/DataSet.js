@@ -36,8 +36,6 @@
             return group;
         };
 
-        self.getData = self.extractData;
-
     };
 
     insight.DataSet.prototype = Object.create(insight.DataProvider.prototype);

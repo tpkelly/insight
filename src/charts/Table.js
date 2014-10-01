@@ -313,7 +313,7 @@
 
             var sorters = sortFunctions;
 
-            var data = self.data.getData();
+            var data = self.data.extractData();
 
             data = insight.utils.multiSort(data, sorters);
 

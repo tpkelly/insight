@@ -23,7 +23,7 @@
         // Internal variables -----------------------------------------------------------------------------------------
 
         self.data = data;
-        self.usesCrossfilter = (data instanceof insight.DataSet) || (data instanceof insight.Grouping);
+        self.isDataProvider = (data instanceof insight.DataProvider);
         self.x = x;
         self.y = y;
         self.name = name;
@@ -322,7 +322,7 @@
 
             }
 
-            var data = self.usesCrossfilter ? self.data.getData(orderFunction, self.topValues) : arrayDataSet(orderFunction, self.topValues);
+            var data = self.isDataProvider ? self.data.extractData(orderFunction, self.topValues) : arrayDataSet(orderFunction, self.topValues);
 
             if (filter) {
                 data = data.filter(filter);

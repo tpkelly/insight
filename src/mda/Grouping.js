@@ -2,6 +2,7 @@
     /**
      * A Grouping is generated on a dimension, to reduce the items in the data set into groups along the provided dimension
      * @constructor
+     * @extends insight.DataProvider
      * @param {Object} dimension - The dimension to group
      */
     insight.Grouping = function Grouping(dimension) {
@@ -695,7 +696,17 @@
             return self;
         };
 
+        /**
+         * Returns an object array containing one object per group in the data set. This array is produced using
+         * [crossfilter]{@link http://square.github.io/crossfilter/}.
+         * @virtual
+         * @memberof! insight.Grouping
+         * @instance
+         * @returns {Object[]}
+         * */
         self.rawData = function() {
+
+            var data;
 
             if (!self.data) {
                 self.initialize();
@@ -706,11 +717,10 @@
             } else {
                 data = self.data.all();
             }
+
             return data.slice(0);
 
         };
-
-        self.getData = self.extractData;
 
     };
 

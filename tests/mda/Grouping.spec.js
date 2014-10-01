@@ -75,7 +75,7 @@ describe('Grouping', function() {
         var group = new insight.Grouping(dimension);
 
         // When:
-        var data = group.getData();
+        var data = group.extractData();
 
         // Then:
         expect(data.length).toBe(4);
@@ -88,7 +88,7 @@ describe('Grouping', function() {
         var group = new insight.Grouping(dimension);
 
         // When:
-        var data = group.getData();
+        var data = group.extractData();
 
         // Then:
         expect(data.length).toBe(0);
@@ -105,7 +105,7 @@ describe('Grouping', function() {
             // When
             group.sum(['IQ']);
 
-            var data = group.getData();
+            var data = group.extractData();
 
             var scotland = findByKey(data, 'Scotland');
             var england = findByKey(data, 'England');
@@ -124,7 +124,7 @@ describe('Grouping', function() {
             // When
             group.sum(['IQ']);
 
-            var data = group.getData();
+            var data = group.extractData();
 
             var scotland = findByKey(data, 'Scotland');
             var england = findByKey(data, 'England');
@@ -146,7 +146,7 @@ describe('Grouping', function() {
             // When
             group.mean(['IQ']);
 
-            var data = group.getData();
+            var data = group.extractData();
 
             var scotland = findByKey(data, 'Scotland');
 
@@ -165,7 +165,7 @@ describe('Grouping', function() {
             countryGroup.mean(['IQ']);
 
             // When
-            var data = countryGroup.getData();
+            var data = countryGroup.extractData();
 
             //filter age by people older than 10, to remove an entry from the scotland group
             ageDimension.crossfilterDimension.filter(function(d){
@@ -192,7 +192,7 @@ describe('Grouping', function() {
             // When
             group.mean(['IQ']);
 
-            var data = group.getData();
+            var data = group.extractData();
 
             var scotland = findByKey(data, 'Scotland');
             var england = findByKey(data, 'England');
@@ -214,7 +214,7 @@ describe('Grouping', function() {
             // When
             group.mean(['IQ']);
 
-            var data = group.getData();
+            var data = group.extractData();
 
             //filter age by people older than 10, to remove an entry from the scotland group
             ageDimension.crossfilterDimension.filter(function(d){
@@ -246,7 +246,7 @@ describe('Grouping', function() {
             // When
             group.isOrdered(true);
 
-            var data = group.getData(function(a,b){return b.value.Count - a.value.Count;});
+            var data = group.extractData(function(a,b){return b.value.Count - a.value.Count;});
 
             // Then
             expect(data[0].key).toBe('England');
@@ -263,7 +263,7 @@ describe('Grouping', function() {
             // When
             group.isOrdered(true);
 
-            var data = group.getData(function(a,b){return b.value.Count - a.value.Count;});
+            var data = group.extractData(function(a,b){return b.value.Count - a.value.Count;});
 
             // Then
             expect(data[0].key).toBe('England');
@@ -283,7 +283,7 @@ describe('Grouping', function() {
             group.mean(['IQ'])
                 .cumulative(['IQ.Sum','IQ.Average']);
 
-            var data = group.getData();
+            var data = group.extractData();
 
             // Then
             expect(data[data.length-1].value.IQ.SumCumulative).toBe(1616);
@@ -301,7 +301,7 @@ describe('Grouping', function() {
             // When
             group.count(['Gender']);
 
-            var dataArray = group.getData();
+            var dataArray = group.extractData();
 
             var scotland = findByKey(dataArray, 'Scotland');
 
@@ -320,7 +320,7 @@ describe('Grouping', function() {
             // When
             group.count(['Gender']);
 
-            var data = group.getData();
+            var data = group.extractData();
 
             var scotland = findByKey(data, 'Scotland');
             var england = findByKey(data, 'England');
@@ -342,7 +342,7 @@ describe('Grouping', function() {
             // When
             group.count(['Interests']);
 
-            var data = group.getData();
+            var data = group.extractData();
 
             var scotland = findByKey(data, 'Scotland');
 
@@ -362,7 +362,7 @@ describe('Grouping', function() {
             // When
             group.count(['Interests']);
 
-            var data = group.getData();
+            var data = group.extractData();
 
             var scotland = findByKey(data, 'Scotland');
             var england = findByKey(data, 'England');
@@ -386,7 +386,7 @@ describe('Grouping', function() {
             // When
             countryGroup.count(['Gender', 'Interests']);
 
-            var dataArray = countryGroup.getData();
+            var dataArray = countryGroup.extractData();
 
             var scotland = dataArray.filter(function(country){ return country.key=='Scotland'; })[0];
 
@@ -404,7 +404,7 @@ describe('Grouping', function() {
 
             countryGroup.recalculate();
 
-            scotland = findByKey(countryGroup.getData(), 'Scotland');
+            scotland = findByKey(countryGroup.extractData(), 'Scotland');
 
             expect(scotland.value.Gender.Male).toBe(1);
             expect(scotland.value.Gender.Female).toBe(1);
@@ -424,7 +424,7 @@ describe('Grouping', function() {
             var interestsGroup = new insight.Grouping(interestsDimension)
                 .count(['Interests']);
 
-            var data = interestsGroup.getData();
+            var data = interestsGroup.extractData();
 
             var ballet = findByKey(data, 'Ballet');
             var triathlon = findByKey(data, 'Triathlon');
@@ -437,7 +437,7 @@ describe('Grouping', function() {
                 return d > 10;
             });
 
-            interestsGroup.getData();
+            interestsGroup.extractData();
 
             var ballet = findByKey(data, 'Ballet');
             var triathlon = findByKey(data, 'Triathlon');
@@ -458,7 +458,7 @@ describe('Grouping', function() {
                 .count(['Interests']);
 
 
-            var data = interestsGroup.getData(function(a,b){return b.value - a.value;});
+            var data = interestsGroup.extractData(function(a,b){return b.value - a.value;});
 
             var ballet = findByKey(data, 'Ballet');
             var triathlon = findByKey(data, 'Triathlon');
@@ -478,7 +478,7 @@ describe('Grouping', function() {
                 return d > 10; 
             });
 
-            data = interestsGroup.getData(function(a,b){return b.value - a.value;});
+            data = interestsGroup.extractData(function(a,b){return b.value - a.value;});
 
             var ballet = findByKey(data, 'Ballet');
             var triathlon = findByKey(data, 'Triathlon');
@@ -506,7 +506,7 @@ describe('Grouping', function() {
 
             var postAggregation = function(groupEntry) {
                 var total = 0;
-                groupEntry.getData()
+                groupEntry.extractData()
                     .forEach(function(d)
                     {
                         d.value.IQ.PlusOne = d.value.IQ.Sum + 1;
@@ -517,7 +517,7 @@ describe('Grouping', function() {
 
             group.postAggregation(postAggregation);
 
-            var dataArray = group.getData();
+            var dataArray = group.extractData();
 
             // Then
 
@@ -541,7 +541,7 @@ describe('Grouping', function() {
 
             var postAggregation = function(groupEntry) {
                 var total = 0;
-                groupEntry.getData()
+                groupEntry.extractData()
                     .forEach(function(d)
                     {
                         d.value.IQ.PlusOne = d.value.IQ.Sum + 1;
@@ -551,7 +551,7 @@ describe('Grouping', function() {
             // When
             group.postAggregation(postAggregation);
 
-            var dataArray = group.getData();
+            var dataArray = group.extractData();
 
             // Then - nothing to expect except a lack of exception
 
@@ -642,8 +642,8 @@ describe('Grouping', function() {
             var group = new insight.Grouping(countryDimension)
                 .correlationPairs([['IQ', 'Age']]);
 
-            // calling getData will cause the correlation calculations to be performed
-            var data = group.getData();
+            // calling extractData will cause the correlation calculations to be performed
+            var data = group.extractData();
 
             // get the groups for each country
             var england = findByKey(data, 'England');
@@ -700,8 +700,8 @@ describe('Grouping', function() {
             // filter the chart group to only include Male gender
             chartGroup.filterByGrouping(genderGroup, 'Male');
 
-            // calling getData will cause the correlation calculations to be performed
-            var groupData = countryGroup.getData();
+            // calling extractData will cause the correlation calculations to be performed
+            var groupData = countryGroup.extractData();
 
             // get the groups for each country
             var england = findByKey(groupData, 'England');
