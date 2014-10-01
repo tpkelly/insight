@@ -767,6 +767,27 @@ describe('Axis', function() {
 
             });
 
+            it('handles empty list of tick values', function() {
+
+                // Given
+                spyOn(axis, 'tickValues').andReturn([]);
+
+                var tickPadding = 10,
+                    tickSize = 5;
+
+                axis.title('')
+                    .tickPadding(tickPadding)
+                    .tickSize(tickSize);
+
+                // When
+                var result = axis.calculateLabelDimensions();
+
+                // Then
+                var expectedHeight = 2 * tickPadding + tickSize;
+                expect(result.height).toBe(expectedHeight);
+
+            });
+
         });
 
         describe('vertical axis', function() {
@@ -971,6 +992,27 @@ describe('Axis', function() {
                     + expectedAxisTitleWidth;
 
                 expect(result.width).toBe(0);
+
+            });
+
+            it('handles empty list of tick values', function() {
+
+                // Given
+                spyOn(axis, 'tickValues').andReturn([]);
+
+                var tickPadding = 10,
+                    tickSize = 5;
+
+                axis.title('')
+                    .tickPadding(tickPadding)
+                    .tickSize(tickSize);
+
+                // When
+                var result = axis.calculateLabelDimensions();
+
+                // Then
+                var expectedWidth = 2 * tickPadding + tickSize;
+                expect(result.width).toBe(expectedWidth);
 
             });
 

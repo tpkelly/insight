@@ -85,6 +85,20 @@ describe('DataSet', function() {
             expect(scotland.value.Age.Average).toBe(11);
         });
 
+        it('creates a valid group when provided no data', function() {
+
+            // Given:
+            var emptyData = [];
+            var dataSet = new insight.DataSet(emptyData);
+
+            // When:
+            var countries = dataSet.group('country', function(d){return d.Country;});
+
+            // Then:
+            var countryData = countries.extractData();
+            expect(countryData.length).toBe(0);
+        });
+
     });
 });
 
