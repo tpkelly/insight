@@ -54,6 +54,20 @@ describe('DataSet', function() {
             expect(countryData.length).toBe(4);
         });
 
+        it('creates a valid one-to-many group', function() {
+
+            // Given:
+            var dataSet = new insight.DataSet(data);
+
+            // When:
+            var interests = dataSet.group('interests', function(d){ return d.Interests; }, true)
+                .count(['Interests']);
+
+            // Then:
+            var interestsData = interests.getData();
+            expect(interestsData.length).toBe(8);
+        });
+
         it('can add a group with extra calculated values', function() {
 
             // Given:
