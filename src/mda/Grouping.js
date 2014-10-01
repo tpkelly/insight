@@ -6,6 +6,8 @@
      */
     insight.Grouping = function Grouping(dimension) {
 
+        insight.DataProvider.call(this);
+
         // Private variables ------------------------------------------------------------------------------------------
 
         var self = this,
@@ -15,9 +17,7 @@
             averageProperties = [],
             correlationPairProperties = [],
             allCorrelationProperties = [],
-            ordered = false,
-            filterFunction = null,
-            orderFunction;
+            ordered = false;
 
         // Internal variables -----------------------------------------------------------------------------------------
 
@@ -247,7 +247,7 @@
 
             var totals = {};
 
-            var data = self.isOrdered() ? self.getData(self.orderFunction()) : self.getData();
+            var data = self.isOrdered() ? self.extractData(self.orderingFunction()) : self.extractData();
 
             data.forEach(function(d) {
 
@@ -470,7 +470,7 @@
             var data = self.dimension.crossfilterDimension.groupAll()
                 .reduce(reduceAdd, reduceRemove, reduceInitial);
 
-            self.orderFunction(function(a, b) {
+            self.orderingFunction(function(a, b) {
                 return b.value - a.value;
             });
 
@@ -514,7 +514,7 @@
         /*
          * Performs the aggregation of the underlying crossfilter dimension, calculating any additional properties during the map-reduce phase.
          * It must be run prior to a group being used
-         * @todo This should probably be run during the constructor? If not, lazily evaluated by getData() if it hasn't been run already.
+         * @todo This should probably be run during the constructor? If not, lazily evaluated by extractData() if it hasn't been run already.
          */
         self.initialize = function() {
 
@@ -673,31 +673,6 @@
         };
 
         /**
-         * The function used to compare the elements in this grouping if sorting is requested.
-         * @instance
-         * @memberof! insight.Grouping
-         * @returns {Function} orderingFunction - The function used to compare two values when
-         * {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort|sort()} is called on an array
-         *
-         * @also
-         *
-         * Sets the function used to compare the elements in this grouping if sorting is requested.
-         * @instance
-         * @memberof! insight.Grouping
-         * @returns {this}
-         * @param {Function} orderingFunction - The comparison function to be used to sort the elements in this group.
-         * The function should take the form of a standard
-         * {@link https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/GlobalvalueObjects/Array/sort|Javascript comparison function}.
-         */
-        self.orderFunction = function(orderingFunction) {
-            if (!arguments.length) {
-                return orderFunction;
-            }
-            orderFunction = orderingFunction;
-            return self;
-        };
-
-        /**
          * Whether the group's data is ordered.
          * @instance
          * @memberof! insight.Grouping
@@ -720,41 +695,7 @@
             return self;
         };
 
-        /**
-         * The function used to filter the results returned by this grouping.
-         * The function returns true to keep the value, or false to remove it from the final result.
-         * @instance
-         * @memberof! insight.Grouping
-         * @returns {Function} - The function used to filter the results returned by this grouping.
-         *
-         * @also
-         *
-         * Sets the function used to filter the results returned by this grouping.
-         * The function returns true to keep the value, or false to remove it from the final result.
-         * @instance
-         * @memberof! insight.Grouping
-         * @param {Function} filterFunc - The function used to filter the results returned by this grouping.
-         * @returns {this}
-         */
-        self.filterFunction = function(filterFunc) {
-            if (!arguments.length) {
-                return filterFunction;
-            }
-            filterFunction = filterFunc;
-            return self;
-        };
-
-        /**
-         * Used to return the group's data, without ordering.  It checks if there is any filtering requested and applies the filter to the return array.
-         * @memberof! insight.Grouping
-         * @instance
-         * @returns {Object[]} return - The grouping's data in an object array, with an object per slice of the dimension.
-         */
-        self.getData = function(orderFunction, top) {
-            var data;
-
-            // Set the provided order function if it has been given, otherwise use the inherent grouping order if one has been defined.
-            var orderFunc = orderFunction ? orderFunction : self.orderFunction();
+        self.rawData = function() {
 
             if (!self.data) {
                 self.initialize();
@@ -765,24 +706,15 @@
             } else {
                 data = self.data.all();
             }
+            return data.slice(0);
 
-            // take a copy of the array to not alter the original dataset
-            data = data.slice(0);
-
-            if (orderFunc) {
-                data = data.sort(orderFunc);
-            }
-            if (top) {
-                data = data.slice(0, top);
-            }
-
-            if (filterFunction) {
-                data = data.filter(filterFunction);
-            }
-
-            return data;
         };
 
+        self.getData = self.extractData;
+
     };
+
+    insight.Grouping.prototype = Object.create(insight.DataProvider.prototype);
+    insight.Grouping.prototype.constructor = insight.Grouping;
 
 })(insight);
