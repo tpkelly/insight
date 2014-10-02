@@ -13,14 +13,18 @@
         // Internal functions -----------------------------------------------------------------------------------------
 
         self.domain = function(axis) {
-            var scaleMin = axis.rangeMinimum();
-            var scaleMax = axis.rangeMaximum();
+            var rangeMin = axis.rangeMinimum();
+            var rangeMax = axis.rangeMaximum();
 
-            if (self.domainIsDefault(axis.scale.domain())) {
-                return [scaleMin, scaleMax];
+            if (rangeMin === rangeMax) {
+                return axis.scale.domain();
             }
 
-            return axis.scale.domain();
+            if (axis.isZoomable() && !self.domainIsDefault(axis.scale.domain())) {
+                return axis.scale.domain();
+            }
+
+            return [rangeMin, rangeMax];
         };
 
         self.initialTickValue = function(axis, tickFrequency) {
