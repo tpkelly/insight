@@ -79,7 +79,7 @@
 
             data = data.filter(function(d) {
                 var key = self.keyFunction()(d);
-                return insight.Utils.arrayContains(visibleBars, key);
+                return insight.utils.arrayContains(visibleBars, key);
             });
 
             var groups = chart.plotArea
