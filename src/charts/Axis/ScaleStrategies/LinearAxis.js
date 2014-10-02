@@ -13,15 +13,18 @@
         // Internal functions -----------------------------------------------------------------------------------------
 
         self.domain = function(axis) {
-            var scaleDomain = axis.scale.domain();
+            var rangeMin = axis.rangeMinimum();
+            var rangeMax = axis.rangeMaximum();
 
-            //If available (i.e. not just [0, 1]), use the smarter domain provided by d3 (responds to zoom/panning, etc.)
-            if (scaleDomain[0] !== 0 && scaleDomain[1] !== 1) {
+            if (rangeMin === rangeMax) {
                 return axis.scale.domain();
             }
 
-            //Fall back to our own calculations
-            return [0, self.findMax(axis)];
+            if (axis.isZoomable() && !self.domainIsDefault(axis.scale.domain())) {
+                return axis.scale.domain();
+            }
+
+            return [rangeMin, rangeMax];
         };
 
         self.initialTickValue = function(axis, tickFrequency) {

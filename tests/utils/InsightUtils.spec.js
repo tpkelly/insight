@@ -23,7 +23,7 @@ var tabledata =
 
 var createElement = function(namespace, tag) {
     return document.createElementNS(namespace, tag);
-}
+};
 
 describe('Utils', function() {
 
@@ -580,6 +580,56 @@ describe('Utils', function() {
             });
        });
 
-    })
-})
+    });
+
+    describe('arrayEquals', function() {
+        it('matches empty arrays', function() {
+            //When:
+            var equalArrays = insight.utils.arrayEquals([], []);
+
+            //Then:
+            expect(equalArrays).toBe(true);
+        });
+
+        it('matches string arrays', function() {
+            //When:
+            var equalArrays = insight.utils.arrayEquals(['abc', 'def', 'ghi'], ['abc', 'def', 'ghi']);
+
+            //Then:
+            expect(equalArrays).toBe(true);
+        });
+
+        it('does not match string arrays of different lengths', function() {
+            //When:
+            var equalArrays = insight.utils.arrayEquals(['abc', 'def'], ['abc', 'def', 'ghi']);
+
+            //Then:
+            expect(equalArrays).toBe(false);
+        });
+
+        it('does not match string arrays of different contents', function() {
+            //When:
+            var equalArrays = insight.utils.arrayEquals(['abc', 'def', 'jkl'], ['abc', 'def', 'ghi']);
+
+            //Then:
+            expect(equalArrays).toBe(false);
+        });
+
+        it('matches date arrays of identical contents', function() {
+            //When:
+            var equalArrays = insight.utils.arrayEquals([new Date(2014, 5)], [new Date(2014, 5)]);
+
+            //Then:
+            expect(equalArrays).toBe(true);
+        });
+
+        it('does not match date arrays of differing contents', function() {
+            //When:
+            var equalArrays = insight.utils.arrayEquals([new Date(2014, 5)], [new Date(2015, 8)]);
+
+            //Then:
+            expect(equalArrays).toBe(false);
+        });
+    });
+});
 

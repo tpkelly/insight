@@ -89,6 +89,27 @@ insight.utils = (function() {
     };
 
     /*
+     * Checks if the two arrays are identical
+     * @memberof! insight.utils
+     * @param {Object[]} baseArray The first array to compare for equality
+     * @param {Object} compareArray The second array to compare for equality
+     * @returns {Boolean} - True if the arrays contain the same objects.
+     */
+    exports.arrayEquals = function(baseArray, compareArray) {
+        if (baseArray.length !== compareArray.length) {
+            return false;
+        }
+
+        for (var i = 0; i < baseArray.length; i++) {
+            if (baseArray[i].valueOf() !== compareArray[i].valueOf()) {
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    /*
      * Adds a value to an array, only if it doesn't already belong to the array.
      * @memberof! insight.utils
      * @param {Object[]} array - The array to insert into
