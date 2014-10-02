@@ -233,9 +233,12 @@
                 return overhangs;
             }
 
-            var textMeasurer = new insight.TextMeasurer(self.measureCanvas);
-
             var domain = self.domain();
+            if (domain.length === 0) {
+                return overhangs;
+            }
+
+            var textMeasurer = new insight.TextMeasurer(self.measureCanvas);
 
             var firstTick = self.tickLabelFormat()(domain[0]);
             var lastTick = self.tickLabelFormat()(domain[domain.length - 1]);

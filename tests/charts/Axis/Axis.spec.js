@@ -1074,6 +1074,30 @@ describe('Axis', function() {
 
                 });
 
+                it('returns zero overhang if domain is empty and tick labels are rotated and formatted', function() {
+
+                    // Given
+                    spyOn(axis, 'domain').andReturn([]);
+                    axis.tickLabelRotation(30);
+                    axis.tickLabelFormat(function(d) {
+                        return d.valueOf();
+                    });
+
+                    // When
+                    var result = axis.calculateLabelOverhang();
+
+                    // Then
+                    var expectedResult = {
+                        top: 0,
+                        bottom: 0,
+                        right: 0,
+                        left: 0
+                    };
+
+                    expect(result).toEqual(expectedResult);
+
+                });
+
                 describe('with no tickLabelRotation', function() {
 
                     beforeEach(function() {
@@ -1454,6 +1478,31 @@ describe('Axis', function() {
 
                 beforeEach(function() {
                     axis.isHorizontal = d3.functor(false);
+                });
+
+                it('returns zero overhang if domain is empty and there is tick label rotation and formatting', function() {
+
+                    // Given
+                    spyOn(axis, 'domain').andReturn([]);
+                    axis.tickLabelRotation(30);
+                    axis.tickLabelFormat(function(d) {
+                        return d.valueOf();
+                    });
+
+                    // When
+                    debugger;
+                    var result = axis.calculateLabelOverhang();
+
+                    // Then
+                    var expectedResult = {
+                        top: 0,
+                        bottom: 0,
+                        right: 0,
+                        left: 0
+                    };
+
+                    expect(result).toEqual(expectedResult);
+
                 });
 
                 it('returns zero overhang if axis is not displayed and rotation is 90 degrees', function() {
