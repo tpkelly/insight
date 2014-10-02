@@ -257,7 +257,7 @@ describe('Chart', function() {
                 spyOn(chart, 'draw').andCallThrough();
                 spyOn(chart, 'addClipPath').andCallThrough();
                 spyOn(chart, 'initializeTooltip').andCallThrough();
-                spyOn(insight.Utils, 'getElementStyles').andReturn({});
+                spyOn(insight.utils, 'getElementStyles').andReturn({});
 
                 chart.draw();
             };
@@ -282,7 +282,7 @@ describe('Chart', function() {
 
                     testInit();
 
-                    expect(d3.elements['div'].attrs['class']).toEqual(insight.Constants.ContainerClass);
+                    expect(d3.elements['div'].attrs['class']).toEqual(insight.constants.ContainerClass);
 
                 });
 
@@ -310,7 +310,7 @@ describe('Chart', function() {
 
                     testInit();
 
-                    expect(d3.elements['svg'].attrs['class']).toEqual(insight.Constants.ChartSVG);
+                    expect(d3.elements['svg'].attrs['class']).toEqual(insight.constants.ChartSVG);
 
                 });
 
@@ -322,7 +322,7 @@ describe('Chart', function() {
 
                     testInit();
 
-                    expect(d3.elements['g'].attrs['class']).toEqual(insight.Constants.PlotArea);
+                    expect(d3.elements['g'].attrs['class']).toEqual(insight.constants.PlotArea);
 
                 });
 
@@ -823,7 +823,7 @@ describe('Chart', function() {
 
         beforeEach(function() {
 
-            spyOn(insight.Utils, 'getElementStyles').andReturn({});
+            spyOn(insight.utils, 'getElementStyles').andReturn({});
 
             element = document.createElement('div');
             element.id = 'testElement';

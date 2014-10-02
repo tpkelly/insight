@@ -2,7 +2,7 @@
 
     /**
      * The Axis class coordinates the domain of the series data and draws axes.
-     * @class insight.Axis
+     * @constructor
      * @param {String} axisTitle - A title that will be displayed alongside the axis.
      * @param {insight.scales.Scale} scale - One of the scales defined by {@link insight.scales}.
      */
@@ -78,7 +78,7 @@
 
         function textAnchor() {
 
-            var angleRadians = insight.Utils.degreesToRadians(self.tickLabelRotation());
+            var angleRadians = insight.utils.degreesToRadians(self.tickLabelRotation());
             var trigFunc = (self.isHorizontal()) ? Math.sin : Math.cos;
             var trigResult = parseFloat(trigFunc(angleRadians).toFixed(10));
 
@@ -249,7 +249,7 @@
             var firstTickSize = textMeasurer.measureText(firstTick, self.tickLabelFont(), self.tickLabelRotation());
             var lastTickSize = textMeasurer.measureText(lastTick, self.tickLabelFont(), self.tickLabelRotation());
 
-            var angleRadians = insight.Utils.degreesToRadians(self.tickLabelRotation());
+            var angleRadians = insight.utils.degreesToRadians(self.tickLabelRotation());
 
             switch (self.textAnchor()) {
                 case 'start':
@@ -390,14 +390,14 @@
             self.axisElement = chart.plotArea.append('g');
 
             self.axisElement
-                .attr('class', insight.Constants.AxisClass)
+                .attr('class', insight.constants.AxisClass)
                 .call(self.axis)
                 .selectAll('text')
-                .attr('class', insight.Constants.AxisTextClass);
+                .attr('class', insight.constants.AxisTextClass);
 
             self.labelElement = chart.container
                 .append('div')
-                .attr('class', insight.Constants.AxisLabelClass)
+                .attr('class', insight.constants.AxisLabelClass)
                 .style('position', 'absolute');
         };
 

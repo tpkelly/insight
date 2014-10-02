@@ -3,7 +3,7 @@
     /**
      * The ErrorContainer class is used to capture errors in operations within InsightJs.
      * An instance of the ErrorContainer class must only be passed to one function.
-     * @class insight.ErrorContainer
+     * @constructor
      */
     insight.ErrorContainer = function ErrorContainer() {
 

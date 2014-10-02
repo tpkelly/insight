@@ -2,7 +2,7 @@
 
     /**
      * The Axis gridlines represent and draw the gridlines for a given axis.
-     * @class insight.AxisGridlines
+     * @constructor
      * @param {insight.Axis} axis - The axis to draw gridlines from.
      */
     insight.AxisGridlines = function AxisGridlines(axis) {

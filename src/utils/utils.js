@@ -1,7 +1,7 @@
 /*
  * An internal module containing helper functions used throughout the library
  */
-insight.Utils = (function() {
+insight.utils = (function() {
 
     var exports = {};
 
@@ -10,7 +10,7 @@ insight.Utils = (function() {
     /*
      * This recursive function takes two values a and b, a list of sort objects [{sortFunction: function(a){return a.valueToSortOn;}, order: 'ASC'}] and an index of the current function being used to sort.
      * It returns a ordering value for a and b, as per the normal Javascript sorting rules https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
-     * @memberof! insight.Utils
+     * @memberof! insight.utils
      * @returns {Integer} sortResult - if a > b then the result = 1, -1 if a < b and 0 if a == b.
      * @param {Object} a - Description
      * @param {Object} b - Description
@@ -63,8 +63,8 @@ insight.Utils = (function() {
     exports.highlightSelector = function() {
 
         var notSelected = ':not(.selected)';
-        var selector = '.' + insight.Constants.BarClass + notSelected +
-            ',.' + insight.Constants.Bubble + notSelected;
+        var selector = '.' + insight.constants.BarClass + notSelected +
+            ',.' + insight.constants.Bubble + notSelected;
 
         return selector;
     };
@@ -79,7 +79,7 @@ insight.Utils = (function() {
 
     /*
      * Returns true/false if an object is inside an array.
-     * @memberof! insight.Utils
+     * @memberof! insight.utils
      * @param {Object[]} array - The array to check
      * @param {Object} value - The value to check for
      * @returns {Boolean} - True if the provided array contains the provided value
@@ -90,7 +90,7 @@ insight.Utils = (function() {
 
     /*
      * Adds a value to an array, only if it doesn't already belong to the array.
-     * @memberof! insight.Utils
+     * @memberof! insight.utils
      * @param {Object[]} array - The array to insert into
      * @param {Object} value - The value to insert
      */
@@ -121,7 +121,7 @@ insight.Utils = (function() {
 
     /**
      * Takes a string, and replaces all non-alphanumeric characters with underscores.
-     * @memberof! insight.Utils
+     * @memberof! insight.utils
      * @param {String} string The string to strip non-alphanumeric characters from.
      * @returns {String} - The stripped version of the input string.
      */
@@ -192,7 +192,7 @@ insight.Utils = (function() {
      */
     exports.lastElement = function(array) {
 
-        if (!insight.Utils.isArray(array) || array.length === 0) {
+        if (!insight.utils.isArray(array) || array.length === 0) {
             return undefined;
         }
 
