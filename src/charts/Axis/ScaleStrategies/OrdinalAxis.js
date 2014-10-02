@@ -58,10 +58,8 @@
             return rangeValues;
         };
 
-        self.domainIsDefault = function(domain) {
-            //Default ordinal domain is []
-            return domain.length === 0;
-        };
+        //Default ordinal domain is []
+        self.defaultDomain = d3.functor([]);
 
         self.tickValues = function(axis) {
             return axis.domain();
