@@ -44,26 +44,43 @@ img
 {
   color: #fff;
   padding: 0.2em 1em;
+  margin-top: 20px;
+  border-radius: 20px;
 }
 
 .colorbox h2 {
-  font-weight: 700;
+  font-weight: 500;
+  margin-top: 10px;
 }
 
 
-.visualization
+.features
 {
-  background-color: #43ac6a;
+  background-color: #3182bd;
+  color: #ddd;
 }
 
-.analysis
+.features b
 {
-  background-color: #5bc0de;
+  color: #fff;
 }
 
-.open {
-  background-color: #f39c12;
+.features h2
+{
+  color: #fff;
 }
+
+.features li
+{
+  margin-left: -15px;
+}
+
+.did-you-know
+{
+  background-color: #bdd7e7;
+  color: #555;
+}
+
 .open a {
   color: #34495e;
 }
@@ -78,7 +95,7 @@ img
   display: inline-block;
 }
 
-#container-body div:not(.d3-tip) {
+#container-body > div {
   margin-top: 20px;
 }
 
@@ -229,4 +246,36 @@ button.selected {
   text-align:right;
   position:absolute;
   z-index:100;
+}
+
+a.filter-link {
+    cursor: pointer;
+    font-weight: bold;
+  text-decoration: underline;
+}
+
+.show-code {
+  text-align: center;
+  width: 100%;
+}
+
+.toggle-code-background {
+    fill: #bdd7e7;
+}
+
+.toggle-code-label {
+    color: #333;
+    font-weight: 600;
+    text-anchor: middle;
+}
+
+.toggle-code-button {
+    cursor: pointer;
+    opacity: 0;
+}
+
+pre.language-javascript {
+    background-color: #222;
+    color: #eee;
+    border-radius: 5px;
 }

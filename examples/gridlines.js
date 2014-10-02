@@ -24,12 +24,12 @@ $(document)
             .width(500)
             .height(400);
 
-        var x = new insight.Axis('Country', insight.Scales.Ordinal)
-            .label('')
+        var x = new insight.Axis('Country', insight.scales.ordinal)
+            .title('')
             .textAnchor('middle');
 
-        var y = new insight.Axis('Population', insight.Scales.Linear)
-            .label('Population')
+        var y = new insight.Axis('Population', insight.scales.linear)
+            .title('Population')
             .tickLabelFormat(function(tickValue)
             {
                 var millions = tickValue / 1000000;
@@ -49,7 +49,7 @@ $(document)
             {
                 return d.population;
             })
-            .tooltipFormat(insight.Formatters.numberFormatter);
+            .tooltipFormat(insight.formatters.numberFormatter);
 
         chart.series([populations]);
 

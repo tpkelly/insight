@@ -1,55 +1,89 @@
-<div id="container-body" class="container">
+<div id="container-body" class="container" ng-escape-key="clearFilters()">
     <div class="row">
         <div class="col-sm-4">
-            <div class="visualization colorbox">
-                <h2>VISUALIZATION</h2>
-                <p>
-                    InsightJS provides many commonly used visualizations. Column, row, scatter, line and bubble series are currently available.
-                </p>
+            <div class="colorbox features">
+                <h2>Charting and Analysis</h2>
+                <ul>
+                    <li>
+                        <b>Group and sort</b> to reveal trends</li>
+                    <li>
+                        <b>Filter and highlight</b> to focus your data</li>
+                    <li>Custom theming</li>
+                    <li>Open source</li>
+                    <li>Extensive Documentation</li>
+                </ul>
             </div>
         </div>
-        <div class="col-sm-4">
-            <div class="analysis colorbox">
-                <h2>ANALYSIS</h2>
-                <p>
-                    Quickly and easily aggregate your data into more meaningful statistics to explore the patterns inside.
-                </p>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="open colorbox">
-                <h2>OPEN</h2>
-                <p>
-                    InsightJS is an open source project developed by <a href="http://scottlogic.com">Scott Logic</a>. Find out more or get involved on our <a href="http://github.com/scottlogic/insight">GitHub page</a>.
-                </p>
-            </div>
-        </div>
-    </div>
-    <div class="intro col-md-12">
-        <p>
-            The example below uses data from the public iTunes API, allowing easy visualization of the patterns in the data. Explore the charts by clicking on particular bars or bubbles to see if you can spot any interesting patterns in the App Store ecosystem.
-        </p>
-    </div>
-    <div class="col-sm-12 examples">
-        <div class="chartcontainer">
-            <div id="genre-count" class="chartbox"></div>
-        </div>
-        <div class="chartcontainer">
-            <div id="time-releases" class="chartbox"></div>
-        </div>
-    </div>
-    <div class="col-sm-12">
-        <div class="chartcontainer">
-            <div id="languages" class="chartbox"></div>
-        </div>
-        <div class="chartcontainer">
-            <div id="bubble-chart" class="chartbox"></div>
-        </div>
-        <div class="chartcontainer">
-            <div id="content-advisory" class="chartbox"></div>
-        </div>
-    </div>
+        <div class="col-sm-8">
+            <div class="colorbox did-you-know">
+                <h2>Did you know?</h2>
+                <p>From analyzing 75,000 apps from the iTunes App Store, we found that;</p>
+                <ul>
+                    <li>
+                        <a class="filter-link" ng-click="filter(['Navigation'], [])">Navigation</a>
+                        is the most expensive genre and has the largest average file size
+                    </li>
+                    <li>
+                        <a class="filter-link" ng-click="filter(['Navigation'], ['ZH'])">Chinese Navigation apps</a>
+                        are more expensive (and smaller) than
+                        <a class="filter-link" ng-click="filter(['Navigation'], ['EN'])">English Navigation apps</a>
+                    </li>
+                    <li>
+                        There are more Business apps than Games supporting
+                        <a class="filter-link" ng-click="filter(['Business', 'Games'], ['DE'])">German</a>
+                        ,
+                        <a class="filter-link" ng-click="filter(['Business', 'Games'], ['PT'])">Portuguese</a>
+                        or
+                        <a class="filter-link" ng-click="filter(['Business', 'Games'], ['RU'])">Russian</a>
 
+                    </li>
+                </ul>
+                </p>
+                <p>
+                    <a class="filter-link" ng-click="clearFilters()">Start from scratch (Esc)</a>
+                    and find your own interesting patterns by clicking the bars and bubbles below!
+                </p>
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 examples">
+            <div class="chartcontainer">
+                <div id="languages" class="chartbox"></div>
+                <br>
+                <div class="show-code">
+                    <svg width="120" height="30">
+                        <rect class="toggle-code-background" width="100%" height="100%" rx="10"></rect>
+                        <text class="toggle-code-label" x="60" y="20">See the code</text>
+                        <rect class="toggle-code-button" id="languages-code" width="100%" height="100%" ng-mouseenter="prepareTooltip('js/snippets/languageChart.js', '#languages-code')"></rect>
+                    </svg>
+                </div>
+            </div>
+            <div class="chartcontainer">
+                <div id="bubble-chart" class="chartbox"></div>
+                <br>
+                <div class="show-code">
+                    <svg width="120" height="30">
+                        <rect class="toggle-code-background" width="100%" height="100%" rx="10"></rect>
+                        <text class="toggle-code-label" x="60" y="20">See the code</text>
+                        <rect class="toggle-code-button" id="bubbles-code" width="100%" height="100%" ng-mouseenter="prepareTooltip('js/snippets/bubbleChart.js', '#bubbles-code')"></rect>
+                    </svg>
+                </div>
+            </div>
+            <div class="chartcontainer">
+                <div id="genre-count" class="chartbox"></div>
+                <br>
+                <div class="show-code">
+                    <svg width="120" height="30">
+                        <rect class="toggle-code-background" width="100%" height="100%" rx="10"></rect>
+                        <text class="toggle-code-label" x="60" y="20">See the code</text>
+                        <rect class="toggle-code-button" id="genres-code" width="100%" height="100%" ng-mouseenter="prepareTooltip('js/snippets/genreChart.js', '#genres-code')"></rect>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div id="footer" class="container">

@@ -21,16 +21,15 @@ $(document)
             var chart = new insight.Chart('Years', '#exampleChart')
                 .width(500)
                 .height(350)
-                .title('Years');
+                .title('Annual Average App Price');
 
-            var x = new insight.Axis('Year', insight.Scales.Ordinal)
+            var x = new insight.Axis('', insight.scales.ordinal)
                 .tickSize(5)
                 .tickPadding(5)
-                .tickLabelRotation(45)
                 .tickLabelFormat(d3.time.format('%Y'));
 
-            var y = new insight.Axis('Avg App Price', insight.Scales.Linear)
-                .tickLabelFormat(insight.Formatters.currencyFormatter);
+            var y = new insight.Axis('', insight.scales.linear)
+                .tickLabelFormat(insight.formatters.currencyFormatter);
 
             chart.xAxis(x)
                 .yAxis(y);
@@ -40,7 +39,7 @@ $(document)
                 {
                     return d.value.price.Average;
                 })
-                .tooltipFormat(insight.Formatters.currencyFormatter);
+                .tooltipFormat(insight.formatters.currencyFormatter);
 
             chart.series([columns]);
 

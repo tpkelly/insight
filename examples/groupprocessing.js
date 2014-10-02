@@ -11,15 +11,15 @@ $(document)
 
             var paretoChart = createEmptyChart();
 
-            var x = new insight.Axis('', insight.Scales.Ordinal, 'bottom')
+            var x = new insight.Axis('', insight.scales.ordinal, 'bottom')
                 .tickLabelOrientation('tb')
                 .isOrdered(true);
 
-            var clientRevenueAxis = new insight.Axis('', insight.Scales.Linear)
-                .tickLabelFormat(insight.Formatters.currencyFormatter);
+            var clientRevenueAxis = new insight.Axis('', insight.scales.linear)
+                .tickLabelFormat(insight.formatters.currencyFormatter);
 
-            var cumulativeRevenueAxis = new insight.Axis('', insight.Scales.Linear)
-                .tickLabelFormat(insight.Formatters.percentageFormatter)
+            var cumulativeRevenueAxis = new insight.Axis('', insight.scales.linear)
+                .tickLabelFormat(insight.formatters.percentageFormatter)
                 .hasReversedPosition(true);
 
             var clientRevenues = new insight.ColumnSeries('clientColumn', clientData, x, clientRevenueAxis)
@@ -27,10 +27,10 @@ $(document)
                 {
                     return d.value.CurrentRevenue.Sum;
                 })
-                .tooltipFormat(insight.Formatters.currencyFormatter);
+                .tooltipFormat(insight.formatters.currencyFormatter);
 
             var cumulativeRevenue = new insight.LineSeries('percentLine', clientData, x, cumulativeRevenueAxis)
-                .tooltipFormat(insight.Formatters.percentageFormatter)
+                .tooltipFormat(insight.formatters.percentageFormatter)
                 .valueFunction(function(d)
                 {
                     return d.value.Percentage;
