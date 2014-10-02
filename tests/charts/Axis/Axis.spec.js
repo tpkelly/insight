@@ -1,9 +1,9 @@
 
 var data = [
     {key:'a', value:0, date: new Date(2014,0,1)},
-    {key:'b', value:3, date: new Date(2014,0,3)}, 
-    {key:'c', value:12, date: new Date(2014,0,2)}, 
-    {key:'d', value:20, date: new Date(2014,0,14)}, 
+    {key:'b', value:3, date: new Date(2014,0,3)},
+    {key:'c', value:12, date: new Date(2014,0,2)},
+    {key:'d', value:20, date: new Date(2014,0,14)},
     {key:'e', value:13, date: new Date(2013,4,15)}
 ];
 
@@ -135,7 +135,7 @@ describe('Axis', function() {
 
     describe('domain', function() {
 
-        it('calculates min and max of linear domain', function () {
+        it('calculates min and max of linear axis', function () {
 
             //Given:
             var dataset = new insight.DataSet(data);
@@ -155,7 +155,53 @@ describe('Axis', function() {
             expect(observedResult).toEqual(expectedResult);
         });
 
-        it('calculates values of ordinal domain', function () {
+        it('has default value for linear axis if series has no data', function () {
+
+            //Given:
+            var emptyData = [];
+
+            var x = new insight.Axis('Key Axis', insight.scales.ordinal);
+            var y = new insight.Axis('Value Axis', insight.scales.linear);
+
+            var series = new insight.ColumnSeries('chart', emptyData, x, y)
+                .valueFunction(function (d) {
+                    return d.value;
+                });
+
+            // When:
+            var observedResult = y.domain();
+
+            //Then:
+            expect(observedResult).toEqual([0, 1]);
+        });
+
+        it('has zero minimum value for linear axis when all values is above zero', function () {
+
+            //Given:
+            var data = [
+                {key:'a', value:11, date: new Date(2014,0,1)},
+                {key:'b', value:3, date: new Date(2014,0,3)},
+                {key:'c', value:12, date: new Date(2014,0,2)},
+                {key:'d', value:20, date: new Date(2014,0,14)},
+                {key:'e', value:13, date: new Date(2013,4,15)}
+            ];
+
+            var x = new insight.Axis('Key Axis', insight.scales.ordinal);
+            var y = new insight.Axis('Value Axis', insight.scales.linear);
+
+            var series = new insight.ColumnSeries('chart', data, x, y)
+                .valueFunction(function (d) {
+                    return d.value;
+                });
+
+            // When:
+            var observedResult = y.domain();
+
+            //Then:
+            expect(observedResult).toEqual([0, 20]);
+        });
+
+        it('calculates values of ordinal axis', function () {
 
             //Given:
             var dataset = new insight.DataSet(data);
@@ -175,7 +221,27 @@ describe('Axis', function() {
             expect(observedResult).toEqual(expectedResult);
         });
 
-        it('calculates min max values of time scale', function () {
+        it('has default value for ordinal axis if series has no data', function () {
+
+            //Given:
+            var emptyData = [];
+
+            var x = new insight.Axis('Key Axis', insight.scales.ordinal);
+            var y = new insight.Axis('Value Axis', insight.scales.linear);
+
+            var series = new insight.ColumnSeries('chart', emptyData, x, y)
+                .valueFunction(function (d) {
+                    return d.value;
+                });
+
+            // When:
+            var observedResult = x.domain();
+
+            //Then:
+            expect(observedResult).toEqual([]);
+        });
+
+        it('calculates min max values of time axis', function () {
 
             //Given:
             var dataset = new insight.DataSet(data);
@@ -193,6 +259,26 @@ describe('Axis', function() {
             var expectedResult = [new Date(2013, 4, 15), new Date(2014, 0, 14)];
 
             expect(observedResult).toEqual(expectedResult);
+        });
+
+        it('has default value for time axis if series has no data', function () {
+
+            //Given:
+            var emptyData = [];
+
+            var x = new insight.Axis('Key Axis', insight.scales.ordinal);
+            var y = new insight.Axis('Value Axis', insight.scales.time);
+
+            var series = new insight.ColumnSeries('chart', emptyData, x, y)
+                .valueFunction(function (d) {
+                    return d.date;
+                });
+
+            // When:
+            var observedResult = y.domain();
+
+            //Then:
+            expect(observedResult).toEqual([new Date(0), new Date(1)]);
         });
     });
 

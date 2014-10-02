@@ -114,15 +114,11 @@
          * @returns {Object} - The smallest value in the datasets that use this axis
          */
         self.findMin = function(axis) {
-            var min = Number.MAX_VALUE;
-
-            axis.series.forEach(function(series) {
-                var m = series.findMin(axis);
-
-                min = m < min ? m : min;
+            var min = d3.min(axis.series, function(series) {
+                return series.findMin(axis);
             });
 
-            return min;
+            return min || 0;
         };
 
         /*
@@ -130,15 +126,11 @@
          * @returns {Object} - The largest value in the datasets that use this axis
          */
         self.findMax = function(axis) {
-            var max = 0;
-
-            axis.series.forEach(function(series) {
-                var m = series.findMax(axis);
-
-                max = m > max ? m : max;
+            var max = d3.min(axis.series, function(series) {
+                return series.findMax(axis);
             });
 
-            return max;
+            return max || 1;
         };
 
         self.nextTickValue = function(axis, currentTickValue, tickFrequency) {
