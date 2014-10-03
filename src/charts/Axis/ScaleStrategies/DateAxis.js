@@ -40,7 +40,7 @@
             var scaleDomain = axis.scale.domain();
 
             //If available (i.e. not just Jan 1st 1970), use the smarter domain provided by d3 (responds to zoom/panning, etc.)
-            if (scaleDomain[0].valueOf() !== 0 && scaleDomain[1].valueOf() !== 0) {
+            if (!self.domainIsDefault(scaleDomain)) {
                 return axis.scale.domain();
             }
 

@@ -3378,4 +3378,112 @@ describe('Axis', function() {
 
         });
     });
+
+    describe('range', function() {
+
+        describe('on linear axis', function() {
+
+            var axis;
+
+            beforeEach(function () {
+                axis = new insight.Axis('axis', insight.scales.linear);
+                axis.scale.domain([5, 1000]);
+            });
+
+            it('defaults to domain', function () {
+                //Then:
+                expect(axis.axisRange()).toEqual([5, 1000]);
+            });
+
+            it('can be overriden directly', function () {
+                //When:
+                axis.axisRange(7, 23);
+
+                //Then:
+                expect(axis.axisRange()).toEqual([7, 23]);
+            });
+
+            it('orders the range in ascending order', function() {
+                //When:
+                axis.axisRange(25, 6);
+
+                //Then:
+                expect(axis.axisRange()).toEqual([6, 25]);
+            });
+        });
+
+        describe('on time axis', function() {
+
+            var axis;
+
+            beforeEach(function () {
+                axis = new insight.Axis('axis', insight.scales.time);
+                axis.scale.domain([new Date(2014, 1), new Date(2015, 8)]);
+            });
+
+            it('defaults to domain', function () {
+                //Then:
+                expect(axis.axisRange()).toEqual([new Date(2014, 1), new Date(2015, 8)]);
+            });
+
+            it('can be overriden directly', function () {
+                //When:
+                axis.axisRange(new Date(2014, 3), new Date(2015, 1));
+
+                //Then:
+                expect(axis.axisRange()).toEqual([new Date(2014, 3), new Date(2015, 1)]);
+            });
+
+            it('orders the range in ascending order', function() {
+                //When:
+                axis.axisRange(new Date(2015, 1), new Date(2014, 3));
+
+                //Then:
+                expect(axis.axisRange()).toEqual([new Date(2014, 3), new Date(2015, 1)]);
+            });
+        });
+
+        describe('on ordinal axis', function() {
+
+            var axis,
+                categories;
+
+            beforeEach(function () {
+                // Specifically *not* alphabetically ordered; arranged by index
+                categories = ['Aston Martin', 'Bentley', 'Citroen', 'Ford',
+                    'Hyundai', 'Kia', 'Mercedes', 'Peugeot',
+                    'Toyota', 'Audi', 'BMW', 'Ferrari',
+                    'Nissan', 'Porsche', 'Vauxhall', 'Honda',
+                    'Jaguar', 'Skoda', 'Volkswagen', 'Volvo'];
+
+                var mockSeries = jasmine.createSpyObj(insight.Series, ['keys', 'findMax']);
+                mockSeries.keys.andReturn(categories);
+                mockSeries.findMax.andReturn('Volvo');
+
+                axis = new insight.Axis('axis', insight.scales.ordinal);
+                axis.series = [mockSeries];
+            });
+
+            it('defaults to domain', function () {
+                //Then:
+                expect(axis.axisRange()).toEqual(categories);
+            });
+
+            it('can be overriden directly', function () {
+                //When:
+                axis.axisRange('Kia', 'Audi');
+
+                //Then:
+                expect(axis.axisRange()).toEqual(['Kia', 'Mercedes', 'Peugeot', 'Toyota', 'Audi']);
+            });
+
+            it('orders the range in ascending order', function() {
+                //When:
+                axis.axisRange('Honda', 'BMW');
+
+                //Then:
+                expect(axis.axisRange()).toEqual(['BMW', 'Ferrari', 'Nissan', 'Porsche', 'Vauxhall', 'Honda']);
+            });
+        });
+    });
 });

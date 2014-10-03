@@ -37,6 +37,14 @@
 
         // Internal variables ---------------------------------------------------------------------------------------
 
+        self.rangeMinimum = function() {
+            return 0;
+        };
+
+        self.rangeMaximum = function() {
+            return axisStrategy.findMax(self);
+        };
+
         self.measureCanvas = document.createElement('canvas');
         self.scale = scale.scale();
         self.bounds = [0, 0];
@@ -304,7 +312,7 @@
          * @returns {Object[]} bounds - An array with two items, for the lower and upper range of this axis
          */
         self.domain = function() {
-            return axisStrategy.domain(self);
+            return self.axisRange();
         };
 
         self.tickLabelRotationTransform = function() {
@@ -987,6 +995,41 @@
                 throw new Error(insight.ErrorMessages.nonPositiveTickFrequencyException);
             }
             tickFrequency = tickFreq;
+
+            return self;
+        };
+
+        /**
+         * Gets the start and end of the axis scale range.
+         * @memberof! insight.Axis
+         * @instance
+         * @returns {Object[]} - An array of 2 values: the lower and upper limits of the axis range.
+         *
+         * @also
+         *
+         * Sets the start and end of axis scale range. The specific type of rangeMin and rangeMax will
+         * depend on which of the [insight scales]{@link insight.scales} the axis is using.
+         * @memberof! insight.Axis
+         * @instance
+         * @param {Object} rangeMin The lower limit of the axis range
+         * @param {Object} rangeMax The upper limit of the axis range
+         * @returns {this}
+         */
+        self.axisRange = function(rangeMin, rangeMax) {
+            if (!arguments.length) {
+                return axisStrategy.domain(self);
+            }
+
+            var minVal = d3.functor(rangeMin);
+            var maxVal = d3.functor(rangeMax);
+
+            //If max < min, we will need to swap the values to make the axisRange still be in ascending order.
+            var shouldReverseValues = (maxVal() < minVal());
+
+            self.rangeMinimum = (!shouldReverseValues) ? minVal : maxVal;
+            self.rangeMaximum = (!shouldReverseValues) ? maxVal : minVal;
+
+            self.scale.domain(axisStrategy.axisRange(self, self.rangeMinimum(), self.rangeMaximum()));
 
             return self;
         };

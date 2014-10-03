@@ -34,8 +34,32 @@
         // Internal functions -----------------------------------------------------------------------------------------
 
         self.domain = function(axis) {
-            return findOrdinalValues(axis);
+            return self.axisRange(axis, axis.rangeMinimum(), axis.rangeMaximum());
         };
+
+        self.axisRange = function(axis, minimum, maximum) {
+            var domain = findOrdinalValues(axis);
+            var minIndex = domain.indexOf(minimum);
+            var maxIndex = domain.indexOf(maximum);
+
+            if (minIndex === -1 || maxIndex === -1) {
+                return domain;
+            }
+
+            //Swap the indices to ensure minIndex < maxIndex
+            if (minIndex > maxIndex) {
+                var temp = minIndex;
+                minIndex = maxIndex;
+                maxIndex = temp;
+            }
+
+            var rangeValues = domain.slice(minIndex, 1 + maxIndex);
+
+            return rangeValues;
+        };
+
+        //Default ordinal domain is []
+        self.defaultDomain = d3.functor([]);
 
         self.tickValues = function(axis) {
             return axis.domain();

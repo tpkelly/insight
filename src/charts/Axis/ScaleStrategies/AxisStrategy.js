@@ -33,6 +33,17 @@
             return [0, 0];
         };
 
+        self.axisRange = function(axis, minimum, maximum) {
+            return [minimum, maximum];
+        };
+
+        self.domainIsDefault = function(domain) {
+            return insight.utils.arrayEquals(self.defaultDomain(), domain);
+        };
+
+        //Default time/linear axis domain is [0,1]
+        self.defaultDomain = d3.functor([0, 1]);
+
         self.initialTickValue = function(axis, tickFrequency) {
             return 0;
         };
