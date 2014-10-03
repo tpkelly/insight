@@ -90,6 +90,25 @@
 
             return categories[tickIndex - 1];
         };
+
+
+        /*
+         * Calculates the minimum value to be used in this axis.
+         * @returns {Object} - The smallest value in the datasets that use this axis
+         */
+        self.findMin = function(axis) {
+            var values = findOrdinalValues(axis);
+            return (values.length > 0) ? values[0] : undefined;
+        };
+
+        /*
+         * Calculates the maximum value to be used in this axis.
+         * @returns {Object} - The largest value in the datasets that use this axis
+         */
+        self.findMax = function(axis) {
+            var values = findOrdinalValues(axis);
+            return (values.length > 0) ? values[values.length - 1] : undefined;
+        };
     };
 
     insight.OrdinalAxis.prototype = Object.create(insight.AxisStrategy.prototype);

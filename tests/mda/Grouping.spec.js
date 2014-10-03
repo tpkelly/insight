@@ -1,54 +1,127 @@
-var sourceData = 
-[{'Id':1,'Forename':'Martin','Surname':'Watkins','Country':'Scotland','DisplayColour':'#38d33c','Age':1,'IQ':69,'Gender':'Male','Interests':['Ballet', 'Music', 'Climbing']},
-{'Id':2,'Forename':'Teresa','Surname':'Knight','Country':'Scotland','DisplayColour':'#6ee688','Age':20,'IQ':103,'Interests':['Triathlon', 'Music', 'Mountain Biking'],'Gender':'Female'},
-{'Id':3,'Forename':'Mary','Surname':'Lee','Country':'Wales','DisplayColour':'#8e6bc2','Age':3,'IQ':96,'Interests':['Triathlon', 'Music', 'Mountain Biking'],'Gender':'Female'},
-{'Id':4,'Forename':'Sandra','Surname':'Harrison','Country':'Northern Ireland','DisplayColour':'#02acd0','Age':16,'IQ':55, 'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'},
-{'Id':5,'Forename':'Frank','Surname':'Cox','Country':'England','DisplayColour':'#0b281c','Age':5,'IQ':105,'Interests':['Football', 'Music', 'Kayaking'], 'Gender':'Male'},
-{'Id':6,'Forename':'Mary','Surname':'Jenkins','Country':'England','DisplayColour':'#5908e3','Age':19,'IQ':69,'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'},
-{'Id':7,'Forename':'Earl','Surname':'Stone','Country':'Wales','DisplayColour':'#672542','Age':6,'IQ':60,'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Male'},
-{'Id':8,'Forename':'Ashley','Surname':'Carr','Country':'England','DisplayColour':'#f9874f','Age':18,'IQ':63,'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'},
-{'Id':9,'Forename':'Judy','Surname':'Mcdonald','Country':'Northern Ireland','DisplayColour':'#3ab1a8','Age':2,'IQ':70,'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'},
-{'Id':10,'Forename':'Earl','Surname':'Flores','Country':'England','DisplayColour':'#1be47c','Age':20,'IQ':93,'Interests':['Climbing', 'Boxing'], 'Gender':'Male'},
-{'Id':11,'Forename':'Terry','Surname':'Wheeler','Country':'Wales','DisplayColour':'#2cd57b','Age':4,'IQ':87,'Interests':['Climbing', 'Boxing'], 'Gender':'Male'},
-{'Id':12,'Forename':'Willie','Surname':'Reid','Country':'Northern Ireland','DisplayColour':'#7fcf1e','Age':7,'IQ':86,'Interests':['Climbing', 'Boxing'], 'Gender':'Male'},
-{'Id':13,'Forename':'Deborah','Surname':'Palmer','Country':'Northern Ireland','DisplayColour':'#9fd1d5','Age':5,'IQ':85,'Interests':['Climbing', 'Boxing'], 'Gender':'Female'},
-{'Id':14,'Forename':'Annie','Surname':'Jordan','Country':'England','DisplayColour':'#8f4fd1','Age':10,'IQ':100, 'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'},
-{'Id':15,'Forename':'Craig','Surname':'Gibson','Country':'England','DisplayColour':'#111ab4','Age':7,'IQ':106,'Interests':['Football', 'Music', 'Kayaking'], 'Gender':'Male'},
-{'Id':16,'Forename':'Lisa','Surname':'Parker','Country':'England','DisplayColour':'#52d5cf','Age':18,'IQ':53,'Interests':['Football', 'Music', 'Kayaking'], 'Gender':'Female'},
-{'Id':17,'Forename':'Samuel','Surname':'Willis','Country':'Wales','DisplayColour':'#e2f6cc','Age':11,'IQ':98, 'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'},
-{'Id':18,'Forename':'Lisa','Surname':'Chapman','Country':'Northern Ireland','DisplayColour':'#1c5829','Age':7,'IQ':51, 'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'},
-{'Id':19,'Forename':'Ryan','Surname':'Freeman','Country':'Scotland','DisplayColour':'#6cbc04','Age':12,'IQ':96, 'Interests':['Football', 'Music', 'Kayaking'], 'Gender':'Male'},
-{'Id':20,'Forename':'Frances','Surname':'Lawson','Country':'Northern Ireland','DisplayColour':'#e739c9','Age':14,'IQ':71, 'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'}];
-
-
 describe('Grouping', function() {
+
+    var dataAllFieldsPresent = [
+        {'Id':1,'Forename':'Martin','Surname':'Watkins','Country':'Scotland','DisplayColour':'#38d33c','Age':1,'IQ':69,'Gender':'Male','Interests':['Ballet', 'Music', 'Climbing']},
+        {'Id':2,'Forename':'Teresa','Surname':'Knight','Country':'Scotland','DisplayColour':'#6ee688','Age':20,'IQ':103,'Interests':['Triathlon', 'Music', 'Mountain Biking'],'Gender':'Female'},
+        {'Id':3,'Forename':'Mary','Surname':'Lee','Country':'Wales','DisplayColour':'#8e6bc2','Age':3,'IQ':96,'Interests':['Triathlon', 'Music', 'Mountain Biking'],'Gender':'Female'},
+        {'Id':4,'Forename':'Sandra','Surname':'Harrison','Country':'Northern Ireland','DisplayColour':'#02acd0','Age':16,'IQ':55, 'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'},
+        {'Id':5,'Forename':'Frank','Surname':'Cox','Country':'England','DisplayColour':'#0b281c','Age':5,'IQ':105,'Interests':['Football', 'Music', 'Kayaking'], 'Gender':'Male'},
+        {'Id':6,'Forename':'Mary','Surname':'Jenkins','Country':'England','DisplayColour':'#5908e3','Age':19,'IQ':69,'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'},
+        {'Id':7,'Forename':'Earl','Surname':'Stone','Country':'Wales','DisplayColour':'#672542','Age':6,'IQ':60,'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Male'},
+        {'Id':8,'Forename':'Ashley','Surname':'Carr','Country':'England','DisplayColour':'#f9874f','Age':18,'IQ':63,'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'},
+        {'Id':9,'Forename':'Judy','Surname':'Mcdonald','Country':'Northern Ireland','DisplayColour':'#3ab1a8','Age':2,'IQ':70,'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'},
+        {'Id':10,'Forename':'Earl','Surname':'Flores','Country':'England','DisplayColour':'#1be47c','Age':20,'IQ':93,'Interests':['Climbing', 'Boxing'], 'Gender':'Male'},
+        {'Id':11,'Forename':'Terry','Surname':'Wheeler','Country':'Wales','DisplayColour':'#2cd57b','Age':4,'IQ':87,'Interests':['Climbing', 'Boxing'], 'Gender':'Male'},
+        {'Id':12,'Forename':'Willie','Surname':'Reid','Country':'Northern Ireland','DisplayColour':'#7fcf1e','Age':7,'IQ':86,'Interests':['Climbing', 'Boxing'], 'Gender':'Male'},
+        {'Id':13,'Forename':'Deborah','Surname':'Palmer','Country':'Northern Ireland','DisplayColour':'#9fd1d5','Age':5,'IQ':85,'Interests':['Climbing', 'Boxing'], 'Gender':'Female'},
+        {'Id':14,'Forename':'Annie','Surname':'Jordan','Country':'England','DisplayColour':'#8f4fd1','Age':10,'IQ':100, 'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'},
+        {'Id':15,'Forename':'Craig','Surname':'Gibson','Country':'England','DisplayColour':'#111ab4','Age':7,'IQ':106,'Interests':['Football', 'Music', 'Kayaking'], 'Gender':'Male'},
+        {'Id':16,'Forename':'Lisa','Surname':'Parker','Country':'England','DisplayColour':'#52d5cf','Age':18,'IQ':53,'Interests':['Football', 'Music', 'Kayaking'], 'Gender':'Female'},
+        {'Id':17,'Forename':'Samuel','Surname':'Willis','Country':'Wales','DisplayColour':'#e2f6cc','Age':11,'IQ':98, 'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'},
+        {'Id':18,'Forename':'Lisa','Surname':'Chapman','Country':'Northern Ireland','DisplayColour':'#1c5829','Age':7,'IQ':51, 'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'},
+        {'Id':19,'Forename':'Ryan','Surname':'Freeman','Country':'Scotland','DisplayColour':'#6cbc04','Age':12,'IQ':96, 'Interests':['Football', 'Music', 'Kayaking'], 'Gender':'Male'},
+        {'Id':20,'Forename':'Frances','Surname':'Lawson','Country':'Northern Ireland','DisplayColour':'#e739c9','Age':14,'IQ':71, 'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'}
+    ];
+
+    var dataWithFieldsMissing = [
+        {'Id':1,'Forename':'Martin','Surname':'Watkins','Country':'Scotland','DisplayColour':'#38d33c','Age':1},
+        {'Id':2,'Forename':'Teresa','Surname':'Knight','Country':'Scotland','DisplayColour':'#6ee688','Age':20,'IQ':103,'Interests':['Triathlon', 'Music', 'Mountain Biking'],'Gender':'Female'},
+        {'Id':3,'Forename':'Mary','Surname':'Lee','Country':'Wales','DisplayColour':'#8e6bc2','Age':3,'IQ':96,'Interests':['Triathlon', 'Music', 'Mountain Biking'],'Gender':'Female'},
+        {'Id':4,'Forename':'Sandra','Surname':'Harrison','Country':'Northern Ireland','DisplayColour':'#02acd0','Age':16,'IQ':55, 'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'},
+        {'Id':5,'Forename':'Frank','Surname':'Cox','Country':'England','DisplayColour':'#0b281c','Age':5,'Gender':'Female'},
+        {'Id':6,'Forename':'Mary','Surname':'Jenkins','Country':'England','DisplayColour':'#5908e3','Age':19,'Gender':'Female'},
+        {'Id':7,'Forename':'Earl','Surname':'Stone','Country':'Wales','DisplayColour':'#672542','Age':6,'IQ':60,'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Male'},
+        {'Id':8,'Forename':'Ashley','Surname':'Carr','Country':'England','DisplayColour':'#f9874f','Age':18,'Gender':'Female'},
+        {'Id':9,'Forename':'Judy','Surname':'Mcdonald','Country':'Northern Ireland','DisplayColour':'#3ab1a8','Age':2,'IQ':70,'Interests':['Triathlon', 'Music', 'Mountain Biking'], 'Gender':'Female'},
+        {'Id':10,'Forename':'Earl','Surname':'Flores','Country':'Scotland','DisplayColour':'#1be47c','Age':16,'IQ':93,'Interests':['Climbing', 'Boxing', 'Music'], 'Gender':'Male'}
+    ];
+
+    var crossfilterAllFields, crossfilterMissingFields, emptyCrossfilterData;
+
+    beforeEach(function() {
+        crossfilterAllFields = crossfilter(dataAllFieldsPresent);
+        crossfilterMissingFields = crossfilter(dataWithFieldsMissing);
+        emptyCrossfilterData = crossfilter([]);
+    });
+
+    function findByKey(data, keyValue) {
+        var matches = data.filter(function(entry){
+            return entry.key==keyValue;
+        });
+        return matches[0];
+    }
+
+    function sliceByAge(d){
+        return d.Age;
+    }
+
+    function sliceByCountry(d){
+        return d.Country;
+    }
+
+    function sliceByInterests(d){
+        return d.Interests;
+    }
+
+    function sliceByGender(d) {
+        return d.Gender;
+    }
+
 
     it('will initialize without error', function() {
 
-        var dataset = new insight.DataSet(sourceData);
+        // Given:
+        var dimension = new insight.Dimension('country', crossfilterAllFields, sliceByCountry);
+        var group = new insight.Grouping(dimension);
 
-        var group =  dataset.group('country', function(d){return d.Country;});
+        // When:
+        var data = group.extractData();
 
-        var data = group.getData();
-
+        // Then:
         expect(data.length).toBe(4);
     });
 
+    it('when given empty data will initialize without error', function() {
+
+        // Given:
+        var dimension = new insight.Dimension('country', emptyCrossfilterData, sliceByCountry);
+        var group = new insight.Grouping(dimension);
+
+        // When:
+        var data = group.extractData();
+
+        // Then:
+        expect(data.length).toBe(0);
+    });
+
+    it('when given empty data will initialize multi dimension without error', function() {
+
+        // Given:
+        var dimension = new insight.Dimension('interests', emptyCrossfilterData, sliceByInterests, true);
+        var group = new insight.Grouping(dimension);
+
+        // When:
+        var data = group.extractData();
+
+        // Then:
+        expect(data.length).toBe(0);
+    });
+
     describe('sum', function() {
+
         it('will correctly sum a property', function() {
 
             // Given
-            var dataset = new insight.DataSet(sourceData);
-
-            var group =  dataset.group('country', function(d){return d.Country;});
+            var dimension = new insight.Dimension('country', crossfilterAllFields, sliceByCountry);
+            var group = new insight.Grouping(dimension);
 
             // When
             group.sum(['IQ']);
 
-            var data = group.getData();
+            var data = group.extractData();
 
-            var scotland = data.filter(function(country){ return country.key=='Scotland'; })[0];
-            var england = data.filter(function(country){ return country.key=='England'; })[0];
+            var scotland = findByKey(data, 'Scotland');
+            var england = findByKey(data, 'England');
 
             // Then
             expect(scotland.value.IQ.Sum).toBe(268);
@@ -58,79 +131,64 @@ describe('Grouping', function() {
         it('will correctly sum an optional property', function() {
 
             // Given
-            var data = [
-                { 'Name': 'Alan', 'Score' : 12 },
-                { 'Name': 'Alan' },
-                { 'Name': 'Alan', 'Score' : 22 },
-                { 'Name': 'Bethany' }
-            ];
-            var dataset = new insight.DataSet(data);
-
-            var group =  dataset.group('name', function(d){return d.Name;});
+            var dimension = new insight.Dimension('country', crossfilterMissingFields, sliceByCountry);
+            var group = new insight.Grouping(dimension);
 
             // When
-            group.sum(['Score']);
+            group.sum(['IQ']);
 
-            var data = group.getData();
+            var data = group.extractData();
 
-            var alan = data.filter(function(person){ return person.key=='Alan'; })[0];
-            var bethany = data.filter(function(person){ return person.key=='Bethany'; })[0];
+            var scotland = findByKey(data, 'Scotland');
+            var england = findByKey(data, 'England');
 
             // Then
-            expect(alan.value.Score.Sum).toBe(34);
-            expect(bethany.value.Score.Sum).toBe(0);
+            expect(scotland.value.IQ.Sum).toBe(196);
+            expect(england.value.IQ.Sum).toBe(0);
         });
     });
 
     describe('mean', function() {
+
         it('will correctly average a property', function() {
 
             // Given
-            var dataset = new insight.DataSet(sourceData);
-
-            var group =  dataset.group('country', function(d){return d.Country;});
+            var dimension = new insight.Dimension('country', crossfilterAllFields, sliceByCountry);
+            var group = new insight.Grouping(dimension);
 
             // When
             group.mean(['IQ']);
 
-            var data = group.getData();
+            var data = group.extractData();
 
-            var scotland = data.filter(function(country){ return country.key=='Scotland'; })[0];
-            var england = data.filter(function(country){ return country.key=='England'; })[0];
-
-            var actualValue = scotland.value.IQ.Average;
-            var expectedValue = 268/3;
-
-            var actualSum = scotland.value.IQ.Sum;
-            var expectedSum = 268;
+            var scotland = findByKey(data, 'Scotland');
 
             // Then
-            expect(actualValue).toBe(expectedValue);
-            expect(actualSum).toBe(expectedSum);
+            expect(scotland.value.IQ.Average).toBe(268/3);
+            expect(scotland.value.IQ.Sum).toBe(268);
         });
 
         it('will correctly average a property after a filter event', function() {
 
             // Given
-            var dataset = new insight.DataSet(sourceData);
+            var countryDimension = new insight.Dimension('country', crossfilterAllFields, sliceByCountry);
+            var ageDimension = new insight.Dimension('age', crossfilterAllFields, sliceByAge);
+            var countryGroup = new insight.Grouping(countryDimension);
 
-            var group =  dataset.group('country', function(d){return d.Country;});
-            var age =  dataset.group('age', function(d){return d.Age;});
-
-            group.mean(['IQ']);
+            countryGroup.mean(['IQ']);
 
             // When
-            var data = group.getData();
+            var data = countryGroup.extractData();
 
             //filter age by people older than 10, to remove an entry from the scotland group
-            age.dimension.crossfilterDimension.filter(function(d){
+            ageDimension.crossfilterDimension.filter(function(d){
                 return d > 10;
             });
 
-            group.recalculate();
+            countryGroup.recalculate();
 
-            var scotland = data.filter(function(country){ return country.key=='Scotland'; })[0];
-            var england = data.filter(function(country){ return country.key=='England'; })[0];
+            var scotland = findByKey(data, 'Scotland');
+            var england = findByKey(data, 'England');
 
             // Then
             expect(scotland.value.IQ.Average).toBe(199/2);
@@ -141,88 +199,67 @@ describe('Grouping', function() {
         it('will correctly average an optional property', function() {
 
             // Given
-            var data = [
-                { 'Name': 'Alan', 'Score' : 12 },
-                { 'Name': 'Alan' },
-                { 'Name': 'Alan', 'Score' : 22 },
-                { 'Name': 'Bethany' }
-            ];
-
-            var dataset = new insight.DataSet(data);
-
-            var group =  dataset.group('name', function(d){return d.Name;});
+            var dimension = new insight.Dimension('country', crossfilterMissingFields, sliceByCountry);
+            var group = new insight.Grouping(dimension);
 
             // When
-            group.mean(['Score']);
+            group.mean(['IQ']);
 
-            var data = group.getData();
+            var data = group.extractData();
 
-            var alan = data.filter(function(person){ return person.key=='Alan'; })[0];
-            var bethany = data.filter(function(person){ return person.key=='Bethany'; })[0];
+            var scotland = findByKey(data, 'Scotland');
+            var england = findByKey(data, 'England');
 
             // Then
-            expect(alan.value.Score.Average).toBe(17);
-            expect(alan.value.Score.Sum).toBe(34);
-            expect(bethany.value.Score.Average).not.toBeDefined();
-            expect(bethany.value.Score.Sum).toBe(0);
+            expect(scotland.value.IQ.Average).toBe(196/2);
+            expect(scotland.value.IQ.Sum).toBe(196);
+            expect(england.value.IQ.Average).not.toBeDefined();
+            expect(england.value.IQ.Sum).toBe(0);
         });
 
         it('will correctly average an optional property after a filter event', function() {
 
             // Given
-            var data = [
-                { 'Name': 'Alan', 'Year': 2010, 'Score' : 12 },
-                { 'Name': 'Alan', 'Year': 2010 },
-                { 'Name': 'Alan', 'Year': 2010, 'Score' : 22 },
-                { 'Name': 'Bethany', 'Year': 2010 },
-                { 'Name': 'Alan', 'Year': 2014, 'Score' : 42 },
-                { 'Name': 'Alan', 'Year': 2014, 'Score' : 60 },
-                { 'Name': 'Alan', 'Year': 2014 },
-                { 'Name': 'Bethany', 'Year': 2014 },
-            ];
-
-            var dataset = new insight.DataSet(data);
-
-            var group =  dataset.group('name', function(d){return d.Name;});
-            var yearGroup =  dataset.group('year', function(d){return d.Year;});
-
-            group.mean(['Score']);
+            var countryDimension = new insight.Dimension('country', crossfilterMissingFields, sliceByCountry);
+            var ageDimension = new insight.Dimension('age', crossfilterMissingFields, sliceByAge);
+            var group = new insight.Grouping(countryDimension);
 
             // When
+            group.mean(['IQ']);
 
-            var data = group.getData();
+            var data = group.extractData();
 
             //filter age by people older than 10, to remove an entry from the scotland group
-            yearGroup.dimension.crossfilterDimension.filter(function(d){
-                return d > 2012;
+            ageDimension.crossfilterDimension.filter(function(d){
+                return d > 18;
             });
 
             group.recalculate();
 
-            var alan = data.filter(function(person){ return person.key=='Alan'; })[0];
-            var bethany = data.filter(function(person){ return person.key=='Bethany'; })[0];
+            var scotland = findByKey(data, 'Scotland');
+            var england = findByKey(data, 'England');
 
             // Then
 
-            expect(alan.value.Score.Average).toBe(51);
-            expect(alan.value.Score.Sum).toBe(102);
-            expect(bethany.value.Score.Average).not.toBeDefined();
-            expect(bethany.value.Score.Sum).toBe(0);
+            expect(scotland.value.IQ.Average).toBe(103);
+            expect(scotland.value.IQ.Sum).toBe(103);
+            expect(england.value.IQ.Average).not.toBeDefined();
+            expect(england.value.IQ.Sum).toBe(0);
         });
     });
 
+    describe('isOrdered', function() {
 
-    describe('ordered', function() {
         it('will order data correctly, using the count by default', function() {
 
             // Given
-            var dataset = new insight.DataSet(sourceData);
+            var dimension = new insight.Dimension('country', crossfilterAllFields, sliceByCountry);
+            var group = new insight.Grouping(dimension);
 
             // When
-            var group =  dataset.group('country', function(d){return d.Country;})
-                            .isOrdered(true);
+            group.isOrdered(true);
 
-            var data = group.getData(function(a,b){return b.value.Count - a.value.Count;});
+            var data = group.extractData(function(a,b){return b.value.Count - a.value.Count;});
 
             // Then
             expect(data[0].key).toBe('England');
@@ -233,13 +270,13 @@ describe('Grouping', function() {
         it('will order data correctly, using a provided ordering function', function() {
 
             // Given
-            var dataset = new insight.DataSet(sourceData);
+            var dimension = new insight.Dimension('country', crossfilterAllFields, sliceByCountry);
+            var group = new insight.Grouping(dimension);
 
             // When
-            var group =  dataset.group('country', function(d){return d.Country;})
-                             .isOrdered(true);
+            group.isOrdered(true);
 
-            var data = group.getData(function(a,b){return b.value.Count - a.value.Count;});
+            var data = group.extractData(function(a,b){return b.value.Count - a.value.Count;});
 
             // Then
             expect(data[0].key).toBe('England');
@@ -248,17 +285,18 @@ describe('Grouping', function() {
     });
 
     describe('cumulative', function() {
+
         it('will calculate a cumulative property', function() {
 
             // Given
-            var dataset = new insight.DataSet(sourceData);
+            var dimension = new insight.Dimension('country', crossfilterAllFields, sliceByCountry);
+            var group = new insight.Grouping(dimension);
 
             // When
-            var group =  dataset.group('country', function(d){return d.Country;})
-                .mean(['IQ'])
+            group.mean(['IQ'])
                 .cumulative(['IQ.Sum','IQ.Average']);
 
-            var data = group.getData();
+            var data = group.extractData();
 
             // Then
             expect(data[data.length-1].value.IQ.SumCumulative).toBe(1616);
@@ -266,17 +304,19 @@ describe('Grouping', function() {
     });
 
     describe('count', function() {
+
         it('will correctly count the values in an value property', function() {
 
             // Given
-            var dataset = new insight.DataSet(sourceData);
+            var dimension = new insight.Dimension('country', crossfilterAllFields, sliceByCountry);
+            var group = new insight.Grouping(dimension);
 
             // When
-            var group =  dataset.group('country', function(d){return d.Country;}).count(['Gender']);
+            group.count(['Gender']);
 
-            var dataArray = group.getData();
+            var dataArray = group.extractData();
 
-            var scotland = dataArray.filter(function(country){ return country.key=='Scotland'; })[0];
+            var scotland = findByKey(dataArray, 'Scotland');
 
             // Then
             expect(scotland.value.Gender.Male).toBe(2);
@@ -287,45 +327,37 @@ describe('Grouping', function() {
         it('will correctly count the values in an optional value property', function() {
 
             // Given
-            var data = [
-                { 'School': 'High School', 'Gender' : 'Male', 'Score' : 12 },
-                { 'School': 'High School', 'Gender' : 'Male' },
-                { 'School': 'High School', 'Gender' : 'Male', 'Score' : 22 },
-                { 'School': 'High School', 'Gender' : 'Female', 'Score' : 32 },
-                { 'School': 'All Girls School', 'Gender' : 'Female', 'Score' : 9 },
-                { 'School': 'All Girls School', 'Gender' : 'Female', 'Score' : 15 }
-            ];
-
-            var dataset = new insight.DataSet(data);
+            var dimension = new insight.Dimension('country', crossfilterMissingFields, sliceByCountry);
+            var group = new insight.Grouping(dimension);
 
             // When
-            var group =  dataset.group('name', function(d){return d.School;})
-                .count(['Gender']);
+            group.count(['Gender']);
 
-            var data = group.getData();
+            var data = group.extractData();
 
-            var highSchool = data.filter(function(person){ return person.key=='High School'; })[0];
-            var allGirlsSchool = data.filter(function(person){ return person.key=='All Girls School'; })[0];
+            var scotland = findByKey(data, 'Scotland');
+            var england = findByKey(data, 'England');
 
             // Then
-            expect(highSchool.value.Gender.Male).toBe(3);
-            expect(highSchool.value.Gender.Female).toBe(1);
-            expect(allGirlsSchool.value.Gender.Male).not.toBeDefined();
-            expect(allGirlsSchool.value.Gender.Female).toBe(2);
+            expect(scotland.value.Gender.Male).toBe(1);
+            expect(scotland.value.Gender.Female).toBe(1);
+            expect(england.value.Gender.Male).not.toBeDefined();
+            expect(england.value.Gender.Female).toBe(3);
 
         });
 
         it('will correctly count the values in an array property', function() {
 
             // Given
-            var dataset = new insight.DataSet(sourceData);
+            var dimension = new insight.Dimension('country', crossfilterAllFields, sliceByCountry);
+            var group = new insight.Grouping(dimension);
 
             // When
-            var group =  dataset.group('country', function(d){return d.Country;}).count(['Interests']);
+            group.count(['Interests']);
 
-            var data = group.getData();
+            var data = group.extractData();
 
-            var scotland = data.filter(function(country){ return country.key=='Scotland'; })[0];
+            var scotland = findByKey(data, 'Scotland');
 
             // Then
             expect(scotland.value.Interests.Ballet).toBe(1);
@@ -337,48 +369,37 @@ describe('Grouping', function() {
         it('will correctly count the values in an optional array property', function() {
 
             // Given
-            var data = [
-                { 'School': 'High School', 'Gender' : 'Male', 'Alevels' : ['Math', 'Drama', 'History'] },
-                { 'School': 'High School', 'Gender' : 'Male' },
-                { 'School': 'High School', 'Gender' : 'Male', 'Alevels' : ['Math', 'Physics'] },
-                { 'School': 'High School', 'Gender' : 'Female', 'Alevels' : ['Math', 'Further Maths', 'Geography']  },
-                { 'School': 'All Girls School', 'Gender' : 'Female' },
-                { 'School': 'All Girls School', 'Gender' : 'Female' }
-            ];
-
-            var dataset = new insight.DataSet(data);
+            var dimension = new insight.Dimension('country', crossfilterMissingFields, sliceByCountry);
+            var group = new insight.Grouping(dimension);
 
             // When
-            var group =  dataset.group('name', function(d){return d.School;})
-                .count(['Alevels']);
+            group.count(['Interests']);
 
-            var data = group.getData();
+            var data = group.extractData();
 
-            var highSchool = data.filter(function(person){ return person.key=='High School'; })[0];
-            var allGirlsSchool = data.filter(function(person){ return person.key=='All Girls School'; })[0];
+            var scotland = findByKey(data, 'Scotland');
+            var england = findByKey(data, 'England');
 
             // Then
-            expect(highSchool.value.Alevels.Math).toBe(3);
-            expect(highSchool.value.Alevels.History).toBe(1);
-            expect(highSchool.value.Alevels.Total).toBe(8);
-            expect(allGirlsSchool.value.Alevels.Math).not.toBeDefined();
-            expect(allGirlsSchool.value.Alevels.Total).toBe(0);
+            expect(scotland.value.Interests.Boxing).toBe(1);
+            expect(scotland.value.Interests.Music).toBe(2);
+            expect(scotland.value.Interests.Total).toBe(6);
+            expect(england.value.Interests.Music).not.toBeDefined();
+            expect(england.value.Interests.Total).toBe(0);
 
         });
 
         it('will update the count after a dimensional filter', function() {
 
             // Given
-            var dataset = new insight.DataSet(sourceData);
-
-            var age =  dataset.group('age', function(d){return d.Age;});
-
+            var countryDimension = new insight.Dimension('country', crossfilterAllFields, sliceByCountry);
+            var ageDimension = new insight.Dimension('age', crossfilterAllFields, sliceByAge);
+            var countryGroup = new insight.Grouping(countryDimension);
 
             // When
-            var group =  dataset.group('country', function(d){return d.Country;})
-                                .count(['Gender', 'Interests']);
+            countryGroup.count(['Gender', 'Interests']);
 
-            var dataArray = group.getData();
+            var dataArray = countryGroup.extractData();
 
             var scotland = dataArray.filter(function(country){ return country.key=='Scotland'; })[0];
 
@@ -390,13 +411,13 @@ describe('Grouping', function() {
             expect(scotland.value.Interests.Total).toBe(9);
 
             //filter age by people older than 10, to remove an entry from the scotland group and hopefully trigger a recalculation of the property counts
-            age.dimension.crossfilterDimension.filter(function(d){
+            ageDimension.crossfilterDimension.filter(function(d){
                 return d > 10;
             });
 
-            group.recalculate();
+            countryGroup.recalculate();
 
-            scotland = group.getData().filter(function(country){ return country.key=='Scotland'; })[0];
+            scotland = findByKey(countryGroup.extractData(), 'Scotland');
 
             expect(scotland.value.Gender.Male).toBe(1);
             expect(scotland.value.Gender.Female).toBe(1);
@@ -409,31 +430,30 @@ describe('Grouping', function() {
         it('will correctly aggregate a multi dimension', function() {
 
             // Given
-            var ndx = new insight.DataSet(sourceData);
+            var interestsDimension = new insight.Dimension('interests', crossfilterAllFields, sliceByInterests, true);
+            var ageDimension = new insight.Dimension('age', crossfilterAllFields, sliceByAge);
 
             // When
-            var group =  ndx.group('interests', function(d){return d.Interests;}, true)
-                                .count(['Interests']);
+            var interestsGroup = new insight.Grouping(interestsDimension)
+                .count(['Interests']);
 
-            var age =  ndx.group('age', function(d){return d.Age;});
+            var data = interestsGroup.extractData();
 
-            var data = group.getData();
-
-            var ballet = group.getData().filter(function(a){ return a.key=='Ballet'; })[0];
-            var triathlon = group.getData().filter(function(a){ return a.key=='Triathlon'; })[0];
+            var ballet = findByKey(data, 'Ballet');
+            var triathlon = findByKey(data, 'Triathlon');
 
             // Then
             expect(ballet.value).toBe(1);
             expect(triathlon.value).toBe(11);
 
-            age.dimension.crossfilterDimension.filter(function(d){
+            ageDimension.crossfilterDimension.filter(function(d){
                 return d > 10;
             });
 
-            group.getData();
+            interestsGroup.extractData();
 
-            ballet = group.getData().filter(function(a){ return a.key=='Ballet'; })[0];
-            triathlon = group.getData().filter(function(a){ return a.key=='Triathlon'; })[0];
+            var ballet = findByKey(data, 'Ballet');
+            var triathlon = findByKey(data, 'Triathlon');
 
             expect(ballet.value).toBe(0);
             expect(triathlon.value).toBe(6);
@@ -443,19 +463,18 @@ describe('Grouping', function() {
         it('will correctly aggregate a sorted multi dimension', function() {
 
             // Given
-            var ndx = new insight.DataSet(sourceData);
+            var interestsDimension = new insight.Dimension('interests', crossfilterAllFields, sliceByInterests, true);
+            var ageDimension = new insight.Dimension('age', crossfilterAllFields, sliceByAge);
 
             // When
-            var group =  ndx.group('interests', function(d){return d.Interests;}, true)
-                                .count(['Interests']);
-
-            var age =  ndx.group('age', function(d){return d.Age;});
+            var interestsGroup = new insight.Grouping(interestsDimension)
+                .count(['Interests']);
 
 
-            var data = group.getData(function(a,b){return b.value - a.value;});
+            var data = interestsGroup.extractData(function(a,b){return b.value - a.value;});
 
-            var ballet = group.getData().filter(function(a){ return a.key=='Ballet'; })[0];
-            var triathlon = group.getData().filter(function(a){ return a.key=='Triathlon'; })[0];
+            var ballet = findByKey(data, 'Ballet');
+            var triathlon = findByKey(data, 'Triathlon');
 
             // Then
             expect(ballet.value).toBe(1);
@@ -468,14 +487,14 @@ describe('Grouping', function() {
                 current = d.value;
             });
 
-            age.dimension.crossfilterDimension.filter(function(d){ 
+            ageDimension.crossfilterDimension.filter(function(d){
                 return d > 10; 
             });
 
-            data = group.getData(function(a,b){return b.value - a.value;});
+            data = interestsGroup.extractData(function(a,b){return b.value - a.value;});
 
-            ballet = group.getData().filter(function(a){ return a.key=='Ballet'; })[0];
-            triathlon = group.getData().filter(function(a){ return a.key=='Triathlon'; })[0];
+            var ballet = findByKey(data, 'Ballet');
+            var triathlon = findByKey(data, 'Triathlon');
 
             expect(ballet.value).toBe(0);
             expect(triathlon.value).toBe(6);
@@ -494,16 +513,13 @@ describe('Grouping', function() {
         it('will allow custom post aggregation steps', function() {
 
             // Given
-            var dataset = new insight.DataSet(sourceData);
+            var countryDimension = new insight.Dimension('country', crossfilterAllFields, sliceByCountry);
+            var group = new insight.Grouping(countryDimension)
+                .sum(['IQ']);
 
-            var countryGroup =  dataset.group('countryGroup', function(d){ return d.Country; })
-                                    .sum(['IQ']);
-
-            var postAggregation = function(group) {
+            var postAggregation = function(groupEntry) {
                 var total = 0;
-
-
-                group.getData()
+                groupEntry.extractData()
                     .forEach(function(d)
                     {
                         d.value.IQ.PlusOne = d.value.IQ.Sum + 1;
@@ -512,9 +528,9 @@ describe('Grouping', function() {
 
             // When
 
-            countryGroup.postAggregation(postAggregation);
+            group.postAggregation(postAggregation);
 
-            var dataArray = countryGroup.getData();
+            var dataArray = group.extractData();
 
             // Then
 
@@ -528,80 +544,106 @@ describe('Grouping', function() {
             expect(plusOneData).toEqual(expectedPlusOneData);
 
         });
+
+        it('when given empty data runs without error', function() {
+
+            // Given
+            var countryDimension = new insight.Dimension('country', emptyCrossfilterData, sliceByCountry);
+            var group = new insight.Grouping(countryDimension)
+                .sum(['IQ']);
+
+            var postAggregation = function(groupEntry) {
+                var total = 0;
+                groupEntry.extractData()
+                    .forEach(function(d)
+                    {
+                        d.value.IQ.PlusOne = d.value.IQ.Sum + 1;
+                    });
+            };
+
+            // When
+            group.postAggregation(postAggregation);
+
+            var dataArray = group.extractData();
+
+            // Then - nothing to expect except a lack of exception
+
+        });
+
     });
 
     describe('correlationPairs', function() {
 
         describe('updates aggregation properties', function() {
 
-            var countryGroup;
+            var group;
 
             beforeEach(function() {
 
-                var dataset = new insight.DataSet(sourceData);
-                countryGroup =  dataset.group('countryGroup', function(d){ return d.Country; });
+                var dimension = new insight.Dimension('country', crossfilterAllFields, sliceByCountry);
+                group = new insight.Grouping(dimension);
 
             });
 
             it('sets correlationPairs', function() {
 
                 // When
-                countryGroup.correlationPairs([['IQ', 'Age']]);
+                group.correlationPairs([['IQ', 'Age']]);
 
                 // Then
-                expect(countryGroup.correlationPairs()).toEqual([['IQ', 'Age']]);
+                expect(group.correlationPairs()).toEqual([['IQ', 'Age']]);
 
             });
 
             it('sets mean if mean is not set', function() {
 
                 // verify that mean has not been set
-                expect(countryGroup.mean()).toEqual([]);
+                expect(group.mean()).toEqual([]);
 
                 // When
-                countryGroup.correlationPairs([['IQ', 'Age']]);
+                group.correlationPairs([['IQ', 'Age']]);
 
                 // Then
-                expect(countryGroup.mean()).toEqual(['IQ', 'Age']);
+                expect(group.mean()).toEqual(['IQ', 'Age']);
 
             });
 
             it('adds to mean if mean is already set', function() {
 
                 // Given
-                countryGroup.mean(['Age', 'shoesize']);
+                group.mean(['Age', 'shoesize']);
 
                 // When
-                countryGroup.correlationPairs([['IQ', 'Age']]);
+                group.correlationPairs([['IQ', 'Age']]);
 
                 // Then
-                expect(countryGroup.mean()).toEqual(['Age', 'shoesize', 'IQ']);
+                expect(group.mean()).toEqual(['Age', 'shoesize', 'IQ']);
 
             });
 
             it('sets sum if sum is not set', function() {
 
                 // verify that sum has not been set
-                expect(countryGroup.sum()).toEqual([]);
+                expect(group.sum()).toEqual([]);
 
                 // When
-                countryGroup.correlationPairs([['IQ', 'Age']]);
+                group.correlationPairs([['IQ', 'Age']]);
 
                 // Then
-                expect(countryGroup.sum()).toEqual(['IQ', 'Age']);
+                expect(group.sum()).toEqual(['IQ', 'Age']);
 
             });
 
             it('adds to sum if sum is already set', function() {
 
                 // Given
-                countryGroup.sum(['Age', 'shoesize']);
+                group.sum(['Age', 'shoesize']);
 
                 // When
-                countryGroup.correlationPairs([['IQ', 'Age']]);
+                group.correlationPairs([['IQ', 'Age']]);
 
                 // Then
-                expect(countryGroup.sum()).toEqual(['Age', 'shoesize', 'IQ']);
+                expect(group.sum()).toEqual(['Age', 'shoesize', 'IQ']);
 
             });
 
@@ -609,19 +651,18 @@ describe('Grouping', function() {
 
         it('can be calculated on given property pairs', function() {
 
-            // create a data set with a grouping on country
-            var dataset = new insight.DataSet(sourceData);
-            var countryGroup =  dataset.group('countryGroup', function(d){ return d.Country; })
-                                    .correlationPairs([['IQ', 'Age']]);
+            var countryDimension = new insight.Dimension('country', crossfilterAllFields, sliceByCountry);
+            var group = new insight.Grouping(countryDimension)
+                .correlationPairs([['IQ', 'Age']]);
 
-            // calling getData will cause the correlation calculations to be performed
-            var groupData = countryGroup.getData();
+            // calling extractData will cause the correlation calculations to be performed
+            var data = group.extractData();
 
             // get the groups for each country
-            var england = groupData.filter(function(country){ return country.key=='England'; })[0];
-            var northernIreland = groupData.filter(function(country){ return country.key=='Northern Ireland'; })[0];
-            var scotland = groupData.filter(function(country){ return country.key=='Scotland'; })[0];
-            var wales = groupData.filter(function(country){ return country.key=='Wales'; })[0];
+            var england = findByKey(data, 'England');
+            var northernIreland = findByKey(data, 'Northern Ireland');
+            var scotland = findByKey(data, 'Scotland');
+            var wales = findByKey(data, 'Wales');
 
             // verify that the values are as expected
             expect(england.value.IQ_Cor_Age).toBeCloseTo(-0.765468643);
@@ -634,14 +675,13 @@ describe('Grouping', function() {
         it('can be calculated on given property pairs after a ChartGroup filter', function() {
 
             // Given
-
-            // create a data set with a grouping on country
-            var dataset = new insight.DataSet(sourceData);
-            var countryGroup =  dataset.group('countryGroup', function(d){ return d.Country; })
-                                    .correlationPairs([['IQ', 'Age']]);
+            var countryDimension = new insight.Dimension('country', crossfilterAllFields, sliceByCountry);
+            var countryGroup = new insight.Grouping(countryDimension)
+                .correlationPairs([['IQ', 'Age']]);
 
             // we're going to filter gender so we need a gender group and a series so groups can be filtered
-            var genderGroup = dataset.group('genderGroup', function(d) { return d.Gender; });
+            var genderDimension = new insight.Dimension('genderGroup', crossfilterAllFields, sliceByGender);
+            var genderGroup = new insight.Grouping(genderDimension);
             var clickedGender = {key:'Male', value:{}};
 
             // add the groups to series
@@ -673,14 +713,14 @@ describe('Grouping', function() {
             // filter the chart group to only include Male gender
             chartGroup.filterByGrouping(genderGroup, 'Male');
 
-            // calling getData will cause the correlation calculations to be performed
-            var groupData = countryGroup.getData();
+            // calling extractData will cause the correlation calculations to be performed
+            var groupData = countryGroup.extractData();
 
             // get the groups for each country
-            var england = groupData.filter(function(country){ return country.key==='England'; })[0];
-            var northernIreland = groupData.filter(function(country){ return country.key==='Northern Ireland'; })[0];
-            var scotland = groupData.filter(function(country){ return country.key==='Scotland'; })[0];
-            var wales = groupData.filter(function(country){ return country.key==='Wales'; })[0];
+            var england = findByKey(groupData, 'England');
+            var northernIreland = findByKey(groupData, 'Northern Ireland');
+            var scotland = findByKey(groupData, 'Scotland');
+            var wales = findByKey(groupData, 'Wales');
 
 
             // Then
@@ -694,7 +734,4 @@ describe('Grouping', function() {
 
     });
 
-
-
 });
-

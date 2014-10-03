@@ -12,21 +12,6 @@
 
         // Internal functions -----------------------------------------------------------------------------------------
 
-        self.domain = function(axis) {
-            var rangeMin = axis.rangeMinimum();
-            var rangeMax = axis.rangeMaximum();
-
-            if (rangeMin === rangeMax) {
-                return axis.scale.domain();
-            }
-
-            if (axis.isZoomable() && !self.domainIsDefault(axis.scale.domain())) {
-                return axis.scale.domain();
-            }
-
-            return [rangeMin, rangeMax];
-        };
-
         self.initialTickValue = function(axis, tickFrequency) {
             var domain = axis.domain();
 
@@ -74,6 +59,14 @@
             }
 
             return tickFrequency / 2;
+        };
+
+        /*
+         * Calculates the minimum value to be used in this axis.
+         * @returns {Object} - The smallest value in the datasets that use this axis
+         */
+        self.findMin = function(axis) {
+            return 0;
         };
 
     };

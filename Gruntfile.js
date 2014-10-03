@@ -94,7 +94,7 @@ module.exports = function(grunt) {
             src: sourceFiles,
             options: {
                 specs: 'tests/**/*spec.js',
-                helpers: ['tests/charts/Mocks/d3-mocks.js'],
+                helpers: ['tests/charts/Mocks/d3-mocks.js', 'tests/insightTesting.js', 'tests/matchers/toContainSameElementsAs.js'],
                 vendor: ['./bower_components/jquery/jquery.js', './bower_components/d3/d3.js', './bower_components/crossfilter/crossfilter.js'],
                 keepRunner: true
             }
