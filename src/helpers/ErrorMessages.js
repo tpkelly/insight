@@ -7,7 +7,7 @@
 
         invalidArrayParameterException: 'Expects array parameter.',
 
-        invalidDataSetOrArrayParameterException: 'Expects insight.DataSet or an object Array parameter.',
+        invalidDataProviderOrArrayParameterException: 'Expects insight.DataProvider or an object array parameter.',
 
         invalidFunctionParameterException: 'Expects function parameter.',
 

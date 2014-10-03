@@ -38,7 +38,7 @@
         // Internal variables ---------------------------------------------------------------------------------------
 
         self.rangeMinimum = function() {
-            return 0;
+            return axisStrategy.findMin(self);
         };
 
         self.rangeMaximum = function() {
@@ -190,13 +190,15 @@
 
             var tickLabelSizes = self.measureTickValues(self.tickValues());
 
-            var maxTickLabelWidth = d3.max(tickLabelSizes, function(d) {
-                return Math.abs(d.width);
-            });
+            var maxTickLabelWidth = tickLabelSizes.length === 0 ? 0 :
+                d3.max(tickLabelSizes, function(d) {
+                    return Math.abs(d.width);
+                });
 
-            var maxTickLabelHeight = d3.max(tickLabelSizes, function(d) {
-                return Math.abs(d.height);
-            });
+            var maxTickLabelHeight = tickLabelSizes.length === 0 ? 0 :
+                d3.max(tickLabelSizes, function(d) {
+                    return Math.abs(d.height);
+                });
 
             var axisTitleWidth = Math.ceil(textMeasurer.measureText(self.title(), self.axisTitleFont()).width);
 
@@ -239,9 +241,12 @@
                 return overhangs;
             }
 
-            var textMeasurer = new insight.TextMeasurer(self.measureCanvas);
-
             var domain = self.domain();
+            if (domain.length === 0) {
+                return overhangs;
+            }
+
+            var textMeasurer = new insight.TextMeasurer(self.measureCanvas);
 
             var firstTick = self.tickLabelFormat()(domain[0]);
             var lastTick = self.tickLabelFormat()(domain[domain.length - 1]);

@@ -36,18 +36,6 @@
 
         // Internal functions -----------------------------------------------------------------------------------------
 
-        self.domain = function(axis) {
-            var scaleDomain = axis.scale.domain();
-
-            //If available (i.e. not just Jan 1st 1970), use the smarter domain provided by d3 (responds to zoom/panning, etc.)
-            if (!self.domainIsDefault(scaleDomain)) {
-                return axis.scale.domain();
-            }
-
-            //Fall back to our own date calculations
-            return [new Date(self.findMin(axis)), new Date(self.findMax(axis))];
-        };
-
         self.tickFrequency = function(axis) {
             var domain = axis.domain();
 

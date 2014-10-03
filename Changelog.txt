@@ -19,9 +19,11 @@
     * insight.Scales.Time => insight.scales.time
     * insight.Constants => insight.constants
     * insight.Utils => insight.utils
+    * insight.correlation.fromDataSet => insight.correlation.fromDataProvider
 
 * Issues fixed:
   * Date axis tick labels were jumping on interactive charts
+  * Charts were not able to be drawn with no data
 
 
 

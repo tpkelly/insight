@@ -6,7 +6,7 @@
      * @constructor
      * @extends insight.Series
      * @param {String} name - A uniquely identifying name for this chart
-     * @param {insight.DataSet | Array | insight.Grouping} data - The DataSet containing this series' data
+     * @param {insight.DataProvider | Object[]} data - An object which contains this series' data
      * @param {insight.Axis} x - The x axis
      * @param {insight.Axis} y - The y axis
      */

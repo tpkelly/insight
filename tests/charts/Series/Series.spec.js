@@ -33,6 +33,45 @@ describe('Series', function(){
         xAxis,
         yAxis;
 
+    beforeEach(function() {
+        chart = new insight.Chart('Chart', '#chart');
+        xAxis = new insight.Axis('x-axis', insight.scales.linear, 'bottom');
+        yAxis = new insight.Axis('y-axis', insight.scales.linear, 'left');
+        chart.addXAxis(xAxis);
+        chart.addYAxis(yAxis);
+    });
+
+    describe('constructor', function() {
+
+        it('wraps array data in a DataProvider', function() {
+
+            // Given
+            var series = new insight.Series('someData', seriesDataSet, xAxis, yAxis);
+
+            // When
+            var result = series.data;
+
+            // Then
+            expect(result.constructor).toBe(insight.DataProvider);
+
+        });
+
+        it('doesn\'t wrap a DataProvider in a DataProvider', function() {
+
+            // Given
+            var dataProvider = new insight.DataProvider(seriesDataSet);
+            var series = new insight.Series('someData', dataProvider, xAxis, yAxis);
+
+            // When
+            var result = series.data;
+
+            // Then
+            expect(result).toBe(dataProvider);
+
+        });
+
+    });
+
     describe('dataset', function() {
 
         function naturalOrderFunction(a, b) {
@@ -44,11 +83,6 @@ describe('Series', function(){
         }
 
         beforeEach(function() {
-            chart = new insight.Chart('Chart', '#chart');
-            xAxis = new insight.Axis('x-axis', insight.scales.linear, 'bottom');
-            yAxis = new insight.Axis('y-axis', insight.scales.linear, 'left');
-            chart.addXAxis(xAxis);
-            chart.addYAxis(yAxis);
 
             data = new insight.DataSet([3, 1, 5, 1, 4, 6]);
             series = new insight.Series('Test series', data, xAxis, yAxis);

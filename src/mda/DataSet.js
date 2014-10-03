@@ -1,128 +1,33 @@
 (function(insight) {
     /**
-     * A DataSet is wrapper around a simple object array, but providing some functions that are required by charts to load and filter data.
-     * A DataSet should be used with an array of data that is to be charted without being used in a crossfilter or dimensional dataset.
+     * DataSet allows [insight.Groupings]{@link insight.Grouping} to be easily created from an object array.
      * @constructor
-     * @param {Object[]} data - The data to be processed and represented by this DataSet.
+     * @extends insight.DataProvider
+     * @param {Object[]} collection - The data to be processed and represented by this DataSet.
      */
     insight.DataSet = function DataSet(data) {
+
+        insight.DataProvider.call(this, data);
 
         // Private variables ------------------------------------------------------------------------------------------
 
         var self = this;
 
-        // Internal variables -----------------------------------------------------------------------------------------
-
-        self.data = data;
-        self.crossfilterData = null;
-
-        // Private functions ------------------------------------------------------------------------------------------
-
-        function orderFunction(a, b) {
-            return b.value - a.value;
-        }
-
-        function filterFunction(d) {
-            return true;
-        }
-
-        // Public functions -------------------------------------------------------------------------------------------
-
-        self.initialize = function() {
-
-        };
-
         /**
-         * The function to use to filter an object from the dataset.
-         * The function should return a boolean where false means the object is not included in the dataset.
+         * Creates an {@link insight.Grouping} for this data set.
          * @memberof! insight.DataSet
          * @instance
-         * @returns {Function} - The function to use to filter an object from the dataset.
-         *
-         * @also
-         *
-         * Sets the function to use to filter an object from the dataset.
-         * The function should return a boolean where false means the object is not included in the dataset.
-         * @memberof! insight.DataSet
-         * @instance
-         * @param {Function} filterFunc The new function to use to filter an object from the dataset.
-         * @returns {this}
+         * @param {String} name The name to give to the grouping.
+         * @param {Function} groupFunction A function that returns a property value to use for grouping data.
+         * @param {Boolean} oneToMany A one-to-many grouping should be used if the groupFunction returns an
+         * array property.
+         * @returns {insight.Grouping} - A grouping which allows aggregation of a data set into groups for analysis.
          */
-        self.filterFunction = function(filterFunc) {
-
-            if (!arguments.length) {
-                return filterFunction;
-            }
-
-            filterFunction = filterFunc;
-
-            return self;
-        };
-
-        /** Fetch all the data currently held in this dataset, filtered by the `filterFunction`.
-         * @memberof! insight.DataSet
-         * @instance
-         * @param {Function} [orderFunc] If provided then the data will be returned ordered using this function.
-         * @returns {Object[]} data All data currently held by the dataset.
-         */
-        self.getData = function(orderFunc) {
-
-            var data;
-
-            if (self.data.all) {
-                data = self.data.all();
-            } else {
-                //not a crossfilter set
-                data = self.data;
-            }
-
-            if (orderFunc) {
-                data = data.sort(orderFunc);
-            }
-
-            data = data.filter(filterFunction);
-
-            return data;
-        };
-
-        /**
-         * Gets the function used to order the dataset values
-         * @memberof! insight.DataSet
-         * @instance
-         * @returns {Function} - The current ordering function
-         *
-         * @also
-         *
-         * Sets the function used to order the dataset values
-         * @memberof! insight.DataSet
-         * @instance
-         * @param {Function} orderFunc The ordering function
-         * @returns {this}
-         */
-        self.orderingFunction = function(orderFunc) {
-
-            if (!arguments.length) {
-                return orderFunction;
-            }
-
-            orderFunction = orderFunc;
-
-            return self;
-        };
-
-        self.getOrderedData = function() {
-            var data;
-
-            data = self.data
-                .filter(filterFunction)
-                .sort(orderFunction);
-
-            return data;
-        };
-
         self.group = function(name, groupFunction, oneToMany) {
 
-            self.crossfilterData = self.crossfilterData || crossfilter(self.data);
+            var arrayData = self.rawData();
+
+            self.crossfilterData = self.crossfilterData || crossfilter(arrayData);
 
             var dim = new insight.Dimension(name, self.crossfilterData, groupFunction, oneToMany);
 
@@ -132,5 +37,8 @@
         };
 
     };
+
+    insight.DataSet.prototype = Object.create(insight.DataProvider.prototype);
+    insight.DataSet.prototype.constructor = insight.DataSet;
 
 })(insight);

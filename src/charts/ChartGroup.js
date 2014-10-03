@@ -212,7 +212,11 @@
 
             // loop through the matching dimensions to filter them all
             dims.forEach(function(dim) {
-                dim.applyFilter(self.filteredDimensions, filterFunc);
+                dim.applyFilter(filterFunc);
+
+                if (dim.filters.length === 0) {
+                    insight.utils.removeItemFromArray(self.filteredDimensions, dim);
+                }
             });
 
             // the above filtering will have triggered a re-aggregation of the groupings.  We must manually

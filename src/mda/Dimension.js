@@ -58,7 +58,7 @@
             };
         };
 
-        self.applyFilter = function(filteredDimensions, filterFunc) {
+        self.applyFilter = function(filterFunc) {
 
             var nameProperty = 'name';
 
@@ -76,8 +76,6 @@
 
             // reset this dimension if no filters exist, else apply the filter to the dataset.
             if (self.filters.length === 0) {
-
-                insight.utils.removeItemFromArray(filteredDimensions, self);
                 self.crossfilterDimension.filterAll();
 
             } else {
