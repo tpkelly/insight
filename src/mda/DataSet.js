@@ -3,7 +3,7 @@
      * DataSet allows {@link insight.}.
      * @constructor
      * @extends insight.DataProvider
-     * @param {Object[]} collection - The data to be processed and represented by this DataProvider.
+     * @param {Object[]} collection - The data to be processed and represented by this DataSet.
      */
     insight.DataSet = function DataSet(data) {
 

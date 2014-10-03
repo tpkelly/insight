@@ -76,7 +76,7 @@
 
     /**
      * Calculates the pearson correlation coefficients for a given property pair in the dataset.
-     * @param {insight.DataSet|Object[]} dataset The insight.DataSet or array to calculate correlation coefficients for.
+     * @param {insight.DataProvider|Object[]} dataset The insight.DataProvider or array to calculate correlation coefficients for.
      * @param {Function} xFunction A function that will return a value from one element in the dataset.
      * The value that the function returns will be used in the correlation calculation.
      * @param {Function} yFunction A function that will return a value from one element in the dataset.
@@ -85,7 +85,7 @@
      * information about any errors that were encountered with the operation.
      * @returns {Number} - The pearson correlation coefficient for the given property pair in the dataset.
      */
-    insight.correlation.fromDataSet = function(dataset, xFunction, yFunction, errorContainer) {
+    insight.correlation.fromDataProvider = function(dataset, xFunction, yFunction, errorContainer) {
         if (!(errorContainer instanceof insight.ErrorContainer)) {
             errorContainer = new insight.ErrorContainer();
         }
@@ -94,7 +94,7 @@
 
         if (!insight.utils.isArray(dataArray)) {
 
-            errorContainer.setError(insight.ErrorMessages.invalidDataSetOrArrayParameterException);
+            errorContainer.setError(insight.ErrorMessages.invalidDataProviderOrArrayParameterException);
 
             return undefined;
 
@@ -117,7 +117,7 @@
 
     /*
      * Returns an array based on the given object.
-     * If the object is an insight.DataSet or an insight.Grouping then its data is returned, otherwise the array id returned directly.
+     * If the object is an insight.DataProvider then its data is returned, otherwise the array id returned directly.
      */
     function getArray(obj) {
 

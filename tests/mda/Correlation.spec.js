@@ -363,7 +363,7 @@ describe('Correlation', function() {
 
     });
 
-    describe('fromDataSet', function() {
+    describe('fromDataProvider', function() {
 
         var iqFunc = function(d) {
             return d.IQ;
@@ -385,7 +385,7 @@ describe('Correlation', function() {
             var dataset = new insight.DataSet(sourceData);
 
             // When
-            var result = insight.correlation.fromDataSet(dataset, iqFunc, ageFunc);
+            var result = insight.correlation.fromDataProvider(dataset, iqFunc, ageFunc);
 
             // Then
             expect(result).toBeCloseTo(-0.1246);
@@ -398,7 +398,7 @@ describe('Correlation', function() {
             var arrayData = sourceData;
 
             // When
-            var result = insight.correlation.fromDataSet(arrayData, idFunc, ageFunc);
+            var result = insight.correlation.fromDataProvider(arrayData, idFunc, ageFunc);
 
             // Then
             expect(result).toBeCloseTo(0.0712);
@@ -414,7 +414,7 @@ describe('Correlation', function() {
             var result;
 
             // When
-            result = insight.correlation.fromDataSet(notDatasetOrArray, idFunc, ageFunc);
+            result = insight.correlation.fromDataProvider(notDatasetOrArray, idFunc, ageFunc);
 
             // Then
             expect(result).not.toBeDefined();
@@ -431,13 +431,13 @@ describe('Correlation', function() {
             var result;
 
             // When
-            result = insight.correlation.fromDataSet(notDatasetOrArray, idFunc, ageFunc, errorContainer);
+            result = insight.correlation.fromDataProvider(notDatasetOrArray, idFunc, ageFunc, errorContainer);
 
             // Then
             expect(result).not.toBeDefined();
             expect(errorContainer.state()).toBe(insight.ErrorContainer.State.error);
             expect(errorContainer.data()).toBeNull();
-            expect(errorContainer.message()).toBe(insight.ErrorMessages.invalidDataSetOrArrayParameterException);
+            expect(errorContainer.message()).toBe(insight.ErrorMessages.invalidDataProviderOrArrayParameterException);
 
         });
 
@@ -447,7 +447,7 @@ describe('Correlation', function() {
             var arrayData = sourceData;
 
             // When
-            var result = insight.correlation.fromDataSet(arrayData, idFunc, ageFunc, errorContainer);
+            var result = insight.correlation.fromDataProvider(arrayData, idFunc, ageFunc, errorContainer);
 
             // Then
             expect(errorContainer.message()).toBeNull();
@@ -463,7 +463,7 @@ describe('Correlation', function() {
             var notAFunction = ['An Array'];
 
             // When
-            var result = insight.correlation.fromDataSet(arrayData, notAFunction, ageFunc);
+            var result = insight.correlation.fromDataProvider(arrayData, notAFunction, ageFunc);
 
             // Then
             expect(result).not.toBeDefined();
@@ -480,7 +480,7 @@ describe('Correlation', function() {
             };
 
             // When
-            var result = insight.correlation.fromDataSet(arrayData, ageFunc, notAFunction);
+            var result = insight.correlation.fromDataProvider(arrayData, ageFunc, notAFunction);
 
             // Then
             expect(result).not.toBeDefined();
@@ -495,7 +495,7 @@ describe('Correlation', function() {
             var notAFunction = ['An Array'];
 
             // When
-            var result = insight.correlation.fromDataSet(arrayData, notAFunction, ageFunc, errorContainer);
+            var result = insight.correlation.fromDataProvider(arrayData, notAFunction, ageFunc, errorContainer);
 
             // Then
             expect(result).not.toBeDefined();
@@ -514,7 +514,7 @@ describe('Correlation', function() {
             var notAFunction = ['An Array'];
 
             // When
-            var result = insight.correlation.fromDataSet(arrayData, ageFunc, notAFunction, errorContainer);
+            var result = insight.correlation.fromDataProvider(arrayData, ageFunc, notAFunction, errorContainer);
 
             // Then
             expect(result).not.toBeDefined();
