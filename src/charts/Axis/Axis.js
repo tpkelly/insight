@@ -38,7 +38,7 @@
         // Internal variables ---------------------------------------------------------------------------------------
 
         self.rangeMinimum = function() {
-            return 0;
+            return axisStrategy.findMin(self);
         };
 
         self.rangeMaximum = function() {

@@ -30,7 +30,18 @@
         // Internal functions -----------------------------------------------------------------------------------------
 
         self.domain = function(axis) {
-            return [0, 0];
+            var rangeMin = axis.rangeMinimum();
+            var rangeMax = axis.rangeMaximum();
+
+            if (rangeMin.valueOf() === rangeMax.valueOf()) {
+                return axis.scale.domain();
+            }
+
+            if (axis.isZoomable() && !self.domainIsDefault(axis.scale.domain())) {
+                return axis.scale.domain();
+            }
+
+            return [rangeMin, rangeMax];
         };
 
         self.axisRange = function(axis, minimum, maximum) {
@@ -137,11 +148,11 @@
          * @returns {Object} - The largest value in the datasets that use this axis
          */
         self.findMax = function(axis) {
-            var max = d3.min(axis.series, function(series) {
+            var max = d3.max(axis.series, function(series) {
                 return series.findMax(axis);
             });
 
-            return max || 1;
+            return max || 0;
         };
 
         self.nextTickValue = function(axis, currentTickValue, tickFrequency) {
