@@ -1576,7 +1576,6 @@ describe('Axis', function() {
                     });
 
                     // When
-                    debugger;
                     var result = axis.calculateLabelOverhang();
 
                     // Then

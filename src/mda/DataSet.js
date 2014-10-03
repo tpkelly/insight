@@ -1,6 +1,6 @@
 (function(insight) {
     /**
-     * DataSet allows {@link insight.}.
+     * DataSet allows [insight.Groupings]{@link insight.Grouping} to be easily created from an object array.
      * @constructor
      * @extends insight.DataProvider
      * @param {Object[]} collection - The data to be processed and represented by this DataSet.
@@ -21,7 +21,7 @@
          * @param {Function} groupFunction A function that returns a property value to use for grouping data.
          * @param {Boolean} oneToMany A one-to-many grouping should be used if the groupFunction returns an
          * array property.
-         * @returns {insight.Grouping}
+         * @returns {insight.Grouping} - A grouping which allows aggregation of a data set into groups for analysis.
          */
         self.group = function(name, groupFunction, oneToMany) {
 

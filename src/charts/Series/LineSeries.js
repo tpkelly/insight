@@ -5,6 +5,7 @@
      * @constructor
      * @extends insight.Series
      * @param {String} name - A uniquely identifying name for this series
+     * @param {insight.DataProvider | Object[]} data - An object which contains this series' data
      * @param {insight.Axis} x - The x axis
      * @param {insight.Axis} y - The y axis
      */

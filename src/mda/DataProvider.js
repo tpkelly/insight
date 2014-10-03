@@ -30,7 +30,7 @@
          * @instance
          * @param {Function} [orderFunc] If provided then the data will be ordered using this function.
          * @param {Integer} [top] If provided then the number of objects returned will be limited to the top N.
-         * @returns {Object[]}
+         * @returns {Object[]} - An object array containing the data for this DataProvider.
          */
         self.extractData = function(orderFunc, top) {
 

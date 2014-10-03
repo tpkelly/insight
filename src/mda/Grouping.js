@@ -1,6 +1,6 @@
 (function(insight) {
     /**
-     * A Grouping is generated on a dimension, to reduce the items in the data set into groups along the provided dimension
+     * A Grouping is generated on a dimension, to reduce the items in the data set into groups along the provided dimension.
      * @constructor
      * @extends insight.DataProvider
      * @param {Object} dimension - The dimension to group
@@ -713,12 +713,13 @@
         };
 
         /**
-         * Returns an object array containing one object per group in the data set. This array is produced using
-         * [crossfilter]{@link http://square.github.io/crossfilter/}.
+         * Overrides {@link insight.DataProvider.rawData} by using
+         * [crossfilter]{@link http://square.github.io/crossfilter/} to create an object array containing one object
+         * per group in a data set.
          * @virtual
          * @memberof! insight.Grouping
          * @instance
-         * @returns {Object[]}
+         * @returns {Object[]} - An object array containing one object per group in the data set.
          * */
         self.rawData = function() {
 
