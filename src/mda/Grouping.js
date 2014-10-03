@@ -26,6 +26,22 @@
 
         // Private functions ------------------------------------------------------------------------------------------
 
+        function getOneToManyRawData() {
+
+            var data;
+
+            try {
+                data = self.data.value().values;
+            } catch (e) {
+                // There is a bug in crossfilter 1.3.7 that doesn't handle empty data
+                // This was reported and fixed: https://github.com/square/crossfilter/issues/122
+                // However, we are not yet able to upgrade to 1.3.9 since there are other issues with it.
+                data = [];
+            }
+
+            return data;
+        }
+
         // The default post aggregation step is blank, and can be overriden by users if they want to calculate additional values with this Grouping
         function postAggregation(grouping) {
 
@@ -713,7 +729,7 @@
             }
 
             if (self.dimension.oneToMany) {
-                data = self.data.value().values;
+                data = getOneToManyRawData();
             } else {
                 data = self.data.all();
             }

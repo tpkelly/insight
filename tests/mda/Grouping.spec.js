@@ -94,6 +94,19 @@ describe('Grouping', function() {
         expect(data.length).toBe(0);
     });
 
+    it('when given empty data will initialize multi dimension without error', function() {
+
+        // Given:
+        var dimension = new insight.Dimension('interests', emptyCrossfilterData, sliceByInterests, true);
+        var group = new insight.Grouping(dimension);
+
+        // When:
+        var data = group.extractData();
+
+        // Then:
+        expect(data.length).toBe(0);
+    });
+
     describe('sum', function() {
 
         it('will correctly sum a property', function() {
