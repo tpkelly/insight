@@ -22,6 +22,7 @@
 
 * Issues fixed:
   * Date axis tick labels were jumping on interactive charts
+  * Charts were not able to be drawn with no data
 
 
 
